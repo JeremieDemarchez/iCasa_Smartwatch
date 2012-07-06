@@ -1,0 +1,121 @@
+environment "kitchen" {
+  position = 411 371 658 580
+	"volume" = 10
+	"temperature" = 296.15
+	"noise" = 1.23
+	"illuminance" = 10.0
+	
+	device "IKAE-79C-WXFHH-532349-K4" : "iCASA.BinaryLight" {
+	  position = 100 500
+		"service.description" = "Kitchen Lamp"
+		"light.maxIlluminance" = "150.0"
+		"state" = "activated"
+	}
+	
+	device "TermoSensor-AAA-20119215-S" : "iCASA.Thermometer" {
+	  position = 500 520
+		"service.description" = "Kitchen Thermometer Sensor 1"
+		"state" = "activated"
+	}
+	
+	device "SekuSensor-AAA-20119215-S" : "iCASA.PresenceSensor" {
+	  position = 400 520
+		"service.description" = "Kitchen Presence Sensor"
+		"state" = "activated"
+	}
+	
+	
+	device "PhotoSensor-AAA-20119215-S" : "fiCASA.Photometer" {
+	  position = 400 420
+		"service.description" = "PhotoMeter Presence Sensor"
+		"state" = "activated"
+	}
+	
+	
+
+	
+}
+
+environment "livingroom" {
+  position = 414 18 658 370
+	"volume" = 30
+	"temperature" = 296.15
+	"illuminance" = 53.6
+	"noise" = 0.07
+	
+	device "SekuSensor-AAA-20119915-F" : "iCASA.Thermometer" {
+	  position = 521 100
+		"service.description" = "Livingroom Thermometer Sensor"
+		"state" = "activated"
+	}
+	
+	device "Elektro-Halogen4000-453147-08234-88" : "iCASA.DimmerLight" {
+		position = 602 264
+		"service.description" = "Livingroom Halogen Lamp"
+		"light.maxIlluminance" = "500.0"
+		"state" = "activated"
+	}
+	
+	device "AKAIKAI-SciHiFi-867626-54000245-445564" : "iCASA.AudioSource" {
+		position = 603 150		
+		"service.description" = "Livingroom Hi-Fi"
+		"state" = "activated"
+	}
+	
+	device "TermoSensor-AAA-2597844-X" : "iCASA..Thermometer" {
+	  position = 580 240
+		"service.description" = "Livingroom Thermometer Sensor 2"
+		"state" = "activated"
+	}
+	
+	device "Heather-AAA-20119215-S" : "iCASA.SimulatedHeater" {
+	  position = 550 120
+		"service.description" = "Livingroom Heather Device"
+		"state" = "activated"
+	}
+	
+}
+
+
+
+environment "bedroom" {
+  position = 55 369 314 576
+  "volume" = 15.4
+	"temperature" = 296.15
+	"illuminance" = 0.00001
+	"noise" = 0.00001
+	
+	device "SekuSensor-AAA-201168416-D" : "iCASA.Thermometer" {
+	  position = 200 385
+		"service.description" = "Bedroom Thermometer Sensor"
+		"state" = "activated"
+	}
+	
+	device "Elektro-Halogen4000-985614-65891-78" : "iCASA.DimmerLight" {
+		position = 248 500
+		"service.description" = "Bedroom Halogen Lamp"
+		"light.maxIlluminance" = "80.0"
+		"state" = "activated"		
+	}
+	
+}
+
+environment "bathroom" {
+  position = 58 18 312 369
+	"volume" = 10
+	"temperature" = 290.15
+	
+	
+	device "IKAE-Chb-45X-DDPQS-254-33" : "iCASA.BinaryLight" {
+	    position = 100 274
+		"service.description" = "Bathroom Lamp"
+		"light.maxIlluminance" = "100.0"
+		"state" = "activated"		
+	}
+	
+	device "SekuSensor-ABC-1231234-ZZ" : "iCASA.Thermometer" {
+	  position = 265 274
+		"service.description" = "Bedroom Thermometer Sensor"
+		"state" = "activated"
+	}
+}

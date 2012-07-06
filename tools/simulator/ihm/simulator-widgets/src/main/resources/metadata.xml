@@ -1,0 +1,52 @@
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="org.apache.felix.ipojo http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd"
+  xmlns="org.apache.felix.ipojo">
+
+
+  <component name="SimulatorPortletFactory" classname="org.medical.simulator.portlet.impl.PresenceSensorPorletFactory">
+    <provides />
+  </component>
+
+  <instance name="medical-portlet-factory" component="SimulatorPortletFactory" />
+
+  <component name="ThermometerPortletFactory" classname="org.medical.simulator.portlet.impl.ThermometerPorletFactory">
+    <provides />
+  </component>
+
+  <instance name="thermometer-portlet-factory" component="ThermometerPortletFactory" />
+
+
+  <component name="BinaryLightPorletFactory" classname="org.medical.simulator.portlet.impl.BinaryLightPorletFactory">
+    <provides />
+  </component>
+
+  <instance name="binarylight-portlet-factory" component="BinaryLightPorletFactory" />
+
+  <component name="HeaterPorletFactory" classname="org.medical.simulator.portlet.impl.HeaterPorletFactory">
+    <provides />
+  </component>
+
+  <instance name="heater-portlet-factory" component="HeaterPorletFactory" />
+
+  <component name="SetTopBoxPortletFactory" classname="org.medical.simulator.portlet.impl.SetTopBoxPortletFactory">
+    <provides />
+  </component>
+
+  <instance name="settopbox-medical-portlet-factory" component="SetTopBoxPortletFactory" />
+</ipojo>

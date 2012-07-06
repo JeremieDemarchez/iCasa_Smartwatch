@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+
+	<name>Bluetooth discovery API</name>
+	<artifactId>bluetooth-discovery-api</artifactId>
+	<groupId>fr.liglab.dynamo.discovery</groupId>
+	<packaging>bundle</packaging>
+	<version>0.1</version>
+
+
+	<organization>
+		<name>Université Joseph Fourier (Grenoble, France)</name>
+		<url>http://www.ujf-grenoble.fr/</url>
+	</organization>
+	<licenses>
+		<license>
+			<name>Apache License</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+			<distribution />
+			<comments />
+		</license>
+	</licenses>
+
+
+	<properties>
+		<!-- plug-in version -->
+		<bundle.plugin.version>2.3.4</bundle.plugin.version>
+		<compiler.plugin.version>2.3.2</compiler.plugin.version>
+
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<version>${bundle.plugin.version}</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>
+							fr.liglab.dynamo.discovery.bluetooth
+						</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>${compiler.plugin.version}</version>
+				<configuration>
+					<source>1.6</source>
+					<target>1.6</target>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+</project>

@@ -1,0 +1,34 @@
+Manifest-Version: 1.0
+Export-Package: org.medical.device.portlet.impl;uses:="org.medical.app
+ lication.device.dashboards.portlet,nextapp.echo.app,fr.liglab.adele.i
+ casa.device.light,org.osgi.framework,org.medical.application.device.d
+ ashboards.impl,fr.liglab.adele.icasa.device,org.medical.application.d
+ evice.dashboards.portlet.impl,fr.liglab.adele.icasa.device.temperatur
+ e,fr.liglab.adele.icasa.device.sound,fr.liglab.adele.icasa.device.pre
+ sence"
+Built-By: ctpn9618
+Tool: Bnd-1.15.0
+Bundle-Name: ICasa :: Device Dashboards Widgets
+Created-By: Apache Maven Bundle Plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Copyright: Copyright 2011-2012 Université Joseph Fourier
+Bundle-Vendor: Adèle Team
+Bundle-ContactAddress: thomas.leveque@imag.fr
+Build-Jdk: 1.6.0_29
+Bundle-Version: 0.0.1.SNAPSHOT
+Bnd-LastModified: 1341563204037
+Bundle-ManifestVersion: 2
+Bundle-Description: Device Dashboards Widgets
+Bundle-License: Apache License - Version 2.0;link=http://www.apache.or
+ g/licenses/LICENSE-2.0.txt
+Import-Package: fr.liglab.adele.icasa.device,fr.liglab.adele.icasa.dev
+ ice.light,fr.liglab.adele.icasa.device.power,fr.liglab.adele.icasa.de
+ vice.presence,fr.liglab.adele.icasa.device.sound,fr.liglab.adele.icas
+ a.device.temperature,nextapp.echo.app,org.medical.application.device.
+ dashboards.impl,org.medical.application.device.dashboards.portlet,org
+ .medical.application.device.dashboards.portlet.impl,org.osgi.framewor
+ k;version="[1.5,2)"
+Bundle-SymbolicName: device.widgets
+Bundle-DocURL: http://wikiadele.imag.fr/index.php/iCASA
+Device-Widget-Factory: Test
+

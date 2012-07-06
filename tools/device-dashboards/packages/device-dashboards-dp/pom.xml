@@ -1,0 +1,68 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<!-- Project parent -->
+	<parent>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../../../../parent</relativePath>
+	</parent>
+
+	<!-- Project Description -->
+	<artifactId>device.dashboards.dp</artifactId>
+	<packaging>deployment-package</packaging>
+	<name>ICASA Device Dahsboards DP</name>
+	<description>${project.name}</description>
+
+	<dependencies>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>device.widgets</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>device.dashboards</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>de.akquinet.gomobile</groupId>
+				<artifactId>maven-dp-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<writeExtraData>true</writeExtraData>
+					<deploymentPackage>
+						<headers>
+							<bundleHeader>
+								<name>ICasa-Application-Id</name>
+								<value>icasa.simulator</value>
+							</bundleHeader>
+							<bundleHeader>
+								<name>ICasa-Application-Name</name>
+								<value>ICasa Simulator</value>
+							</bundleHeader>
+							<bundleHeader>
+								<name>ICasa-Application-Version</name>
+								<value>${project.version}</value>
+							</bundleHeader>
+						</headers>
+						<resources>
+							<processedResource>
+								<processor>org.osgi.deployment.rp.autoload</processor>
+								<filePath>/src/main/resources/DashboardServlet-1.cfg</filePath>
+							</processedResource>
+
+						</resources>
+					</deploymentPackage>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

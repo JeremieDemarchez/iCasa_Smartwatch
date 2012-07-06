@@ -1,0 +1,5 @@
+#surefire
+#Fri Jul 06 10:33:00 CEST 2012
+user.dir=C\:\\workspaces\\Medical\\code\\platform\\physical-devices\\upnp\\upnp-settopbox-importer
+localRepository=C\:\\dev\\mvn-repo
+basedir=C\:\\workspaces\\Medical\\code\\platform\\physical-devices\\upnp\\upnp-settopbox-importer

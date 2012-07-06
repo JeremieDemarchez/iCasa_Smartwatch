@@ -1,0 +1,152 @@
+﻿<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!-- Project parent -->
+	<parent>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>parent</artifactId>
+		<version>0.0.1-SNAPSHOT</version>
+		<relativePath>../../../../parent</relativePath>
+	</parent>
+
+	<!-- Project Description -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>fr.liglab.adele.icasa</groupId>
+  <artifactId>house.simulator</artifactId>
+  <packaging>bundle</packaging>
+
+  <!-- Project description -->
+  <name>ICasa :: Applications :: House Simulator</name>
+
+ <!-- Project repositories -->
+  <repositories>
+    <!-- iCASA third party repository -->
+    <repository>
+      <id>icasa-thirdparty-repository</id>
+      <name>iCASA third party repository</name>
+      <url>http://icasa.forge.imag.fr/repository/thirdparty</url>
+    </repository>
+  </repositories>
+  
+  <!-- Project dependencies -->
+  <dependencies>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>device.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>environment.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>clock.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>application.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>application.mock.impl</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo</artifactId>
+    </dependency>
+
+    <dependency>
+      <groupId>com.nextapp</groupId>
+      <artifactId>echo3-app</artifactId>
+      <version>3.0-beta8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nextapp</groupId>
+      <artifactId>echo3extras-app</artifactId>
+      <version>3.0-beta8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nextapp</groupId>
+      <artifactId>echo3-webcontainer</artifactId>
+      <version>3.0-beta8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.nextapp</groupId>
+      <artifactId>echo3extras-webcontainer</artifactId>
+      <version>3.0-beta8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>script.executor.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+    	<groupId>fr.liglab.adele.icasa</groupId>
+    	<artifactId>device.api</artifactId>
+    	<version>0.0.1-SNAPSHOT</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Private-Package>
+              org.medical.application.housesimulator.impl.*,
+              org.medical.application.housesimulator.impl.component.*,
+              org.medical.application.housesimulator.portlet.*              
+            </Private-Package>
+            <Export-Package>org.medical.application.housesimulator.impl,
+              org.medical.application.housesimulator.portlet,
+              nextapp.echo.*</Export-Package>
+            <Embed-Dependency>
+              echo3-app; inline=META-INF/nextapp/echo/SerialPeers.properties,
+              echo3extras-app;
+              inline=META-INF/nextapp/echo/**
+            </Embed-Dependency>
+          </instructions>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-ipojo-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>ipojo-bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+
+</project>

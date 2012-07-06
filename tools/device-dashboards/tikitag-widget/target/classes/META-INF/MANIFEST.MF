@@ -1,0 +1,28 @@
+Manifest-Version: 1.0
+Export-Package: org.medical.device.widget.tikitag.impl;uses:="org.medi
+ cal.application.device.dashboards.portlet,fr.liglab.adele.icasa.devic
+ e.presence,nextapp.echo.app,org.osgi.framework,org.medical.applicatio
+ n.device.dashboards.impl,fr.liglab.adele.icasa.device"
+Built-By: ctpn9618
+Tool: Bnd-1.15.0
+Bundle-Name: ICasa :: Tikitag Widget
+Created-By: Apache Maven Bundle Plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Copyright: Copyright 2011-2012 Université Joseph Fourier
+Bundle-Vendor: Adèle Team
+Bundle-ContactAddress: thomas.leveque@imag.fr
+Build-Jdk: 1.6.0_29
+Bundle-Version: 0.0.1.SNAPSHOT
+Bnd-LastModified: 1341563204952
+Bundle-ManifestVersion: 2
+Bundle-Description: Tikitag Widget
+Bundle-License: Apache License - Version 2.0;link=http://www.apache.or
+ g/licenses/LICENSE-2.0.txt
+Import-Package: fr.liglab.adele.icasa.device,fr.liglab.adele.icasa.dev
+ ice.presence,nextapp.echo.app,org.medical.application.device.dashboar
+ ds.impl,org.medical.application.device.dashboards.portlet,org.medical
+ .rfid.reader,org.osgi.framework;version="[1.5,2)"
+Bundle-SymbolicName: tikitag.widget
+Bundle-DocURL: http://wikiadele.imag.fr/index.php/iCASA
+Device-Widget-Factory: Test
+

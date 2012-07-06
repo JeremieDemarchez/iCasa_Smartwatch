@@ -1,0 +1,115 @@
+/**
+ *
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+package org.medical.common;
+
+/**
+ * Represents a state with a defined type.
+ * A state variable explicitly defines if it is able to push notifications of state value changes.
+ * 
+ * @author Thomas Leveque
+ *
+ */
+public interface StateVariable {
+
+	/**
+	 * Returns variable name.
+	 * 
+	 * @return variable name.
+	 */
+	public String getName();
+	
+	/**
+	 * Returns true if it is able to push notifications of state value changes.
+	 * This does not mean that it is able to push one notification for every value change but that 
+	 * a value change will be sent at least with a certain latency.
+	 * 
+	 * @return true if it is able to push notifications of state value changes.
+	 */
+	public boolean canSendNotifications();
+	
+	/**
+	 * Returns true if its value can be modified using the setValue method.
+	 * If false, this does not mean that the value cannot be changed outside current digital service.
+	 * 
+	 * @return true if its value can be modified using the setValue method.
+	 */
+	public boolean canBeModified();
+	
+	/**
+	 * Add a listener which listens of value changes.
+	 * 
+	 * @param listener a listener of value changes.
+	 */
+	public void addValueChangeListener(StateVariableListener listener);
+	
+	/**
+	 * Removes specified listener.
+	 * 
+	 * @param listener a listener of value changes.
+	 */
+	public void removeValueChangeListener(StateVariableListener listener);
+	
+	/**
+	 * Returns variable value.
+	 * Null means that there is no value defined.
+	 * 
+	 * @return variable value.
+	 */
+	public Object getValue();
+	
+	/**
+	 * Returns variable description.
+	 * 
+	 * @return variable description.
+	 */
+	public String getDescription();
+	
+	/**
+	 * Returns variable type.
+	 * 
+	 * @return variable type.
+	 */
+	public VariableType getType();
+	
+	/**
+	 * Returns variable value type.
+	 * 
+	 * @return variable value type.
+	 */
+	public Class getValueType();
+	
+	/**
+	 * Sets specified value.
+	 * 
+	 * @param value the new value to set
+	 * @throws IllegalArgumentException if this value cannot be modified.
+	 */
+	public void setValue(Object value);
+
+	/**
+	 * Returns true if this variable has a defined value.
+	 * 
+	 * @return true if this variable has a defined value.
+	 */
+	public boolean hasValue();
+
+	/**
+	 * Returns object which owns this variable.
+	 * 
+	 * @return object which owns this variable.
+	 */
+	public Object getOwner();
+}

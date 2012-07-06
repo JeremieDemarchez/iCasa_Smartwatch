@@ -1,0 +1,51 @@
+/**
+ *
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+package fr.liglab.adele.icasa.device.power;
+
+import fr.liglab.adele.icasa.device.GenericDevice;
+
+/**
+ * Common interface for Power device service descriptions
+ * 
+ * @author gunalp
+ *
+ */
+public interface PowerDevice extends GenericDevice {
+
+	/**
+	 * Service property indicating the attached devices name
+	 * 
+	 * <ul>
+     * <li>This property is <b>mandatory</b></li>
+     * <li>Type of values : <b><code>java.lang.String</code></b></li>
+     * <li>Description : value is a String indicating the attached devices name</li>
+     * </ul>
+	 */
+	String POWER_ATTACHED_DEVICE_NAME = "power.attachedDevice.name";
+	
+	/**
+	 * Service property indicating the attached devices default Power Rating expressed in watt (W)
+	 * 
+	 * <ul>
+     * <li>This property is <b>mandatory</b></li>
+     * <li>Type of values : <b><code>java.lang.Double</code></b></li>
+     * <li>Description : value is a power rating expressed in watt (W), so it is
+     * <code>always positive</code>.</li>
+     * </ul>
+	 */
+	String POWER_ATTACHED_DEVICE_WATT = "power.attachedDevice.watt";
+	
+}

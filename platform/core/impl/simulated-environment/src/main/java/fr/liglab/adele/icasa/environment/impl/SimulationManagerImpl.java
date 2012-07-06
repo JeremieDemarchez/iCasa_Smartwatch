@@ -1,0 +1,524 @@
+/**
+ *
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
+ *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+package fr.liglab.adele.icasa.environment.impl;
+
+import static fr.liglab.adele.icasa.environment.SimulatedEnvironment.PRESENCE;
+
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Random;
+import java.util.Set;
+
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Unbind;
+
+import fr.liglab.adele.icasa.context.Context;
+import fr.liglab.adele.icasa.context.ContextEvent;
+import fr.liglab.adele.icasa.context.ContextListener;
+import fr.liglab.adele.icasa.context.ContextService;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+
+/**
+ * Implementation of the simulated environment manager component, that manage
+ * the links between simulated devices and simulated environments.
+ * 
+ * @author bourretp
+ */
+@Component
+@Provides
+@Instantiate
+public class SimulationManagerImpl implements SimulationManager {
+
+    private final Random m_random = new Random();
+
+    private ContextService m_contextService;
+
+    private final Map<String, EnvironmentEntry> m_environments = new HashMap<String, EnvironmentEntry>();
+
+    private final Map<String, SimulatedDevice> m_devices = new HashMap<String, SimulatedDevice>();
+
+    private final List<DevicePositionListener> m_devicePositionListeners = new LinkedList<DevicePositionListener>();
+
+    private final List<UserPositionListener> m_userPositionListeners = new LinkedList<UserPositionListener>();
+
+    @Bind(id = "contextService")
+    public synchronized void bindContextService(
+            final ContextService contextService) {
+        m_contextService = contextService;
+        m_contextService.addContextListener(new DeviceContextListener(),
+                "/device/*");
+        m_contextService.addContextListener(new UserContextListener(),
+                "/user/*");
+    }
+
+    @Unbind(id = "contextService")
+    public synchronized void unbindContextService(
+            final ContextService contextService) {
+        m_contextService = null;
+    }
+
+    @Bind(id = "environments", aggregate = true, optional = true)
+    public synchronized void bindEnvironment(SimulatedEnvironment env,
+            Map<String, ?> properties) {
+        final int leftX = (Integer) properties.get("leftX");
+        final int rightX = (Integer) properties.get("rightX");
+        final int topY = (Integer) properties.get("topY");
+        final int bottomY = (Integer) properties.get("bottomY");
+        final Position topLeft = new Position(leftX, topY);
+        final Position bottomRight = new Position(rightX, bottomY);
+        final Zone zone = new Zone(topLeft, bottomRight);
+        final EnvironmentEntry entry = new EnvironmentEntry();
+        entry.service = env;
+        entry.zone = zone;
+        m_environments.put(env.getEnvironmentId(), entry);
+    }
+
+    @Unbind(id = "environments")
+    public synchronized void unbindEnvironment(SimulatedEnvironment env) {
+        m_environments.remove(env.getEnvironmentId());
+        // Unbind devices that were bound to the leaving environment
+        for (SimulatedDevice dev : m_devices.values()) {
+            if (env.getEnvironmentId().equals(dev.getEnvironmentId())) {
+                dev.unbindSimulatedEnvironment(env);
+            }
+        }
+    }
+
+    @Bind(id = "devices", aggregate = true, optional = true)
+    public synchronized void bindDevice(SimulatedDevice dev) {
+        m_devices.put(dev.getSerialNumber(), dev);
+    }
+
+    @Unbind(id = "devices")
+    public synchronized void unbindDevice(SimulatedDevice dev) {
+        m_devices.remove(dev.getSerialNumber());
+        // Unbind device if it were bound to an environment
+        if (dev.getEnvironmentId() != null) {
+            SimulatedEnvironment env = m_environments.get(dev
+                    .getEnvironmentId()).service;
+            dev.unbindSimulatedEnvironment(env);
+        }
+    }
+
+    @Override
+    public synchronized Set<String> getEnvironments() {
+        return Collections.unmodifiableSet(new HashSet<String>(m_environments
+                .keySet()));
+    }
+
+    @Override
+    public synchronized Set<String> getDevices() {
+        return Collections.unmodifiableSet(new HashSet<String>(m_devices
+                .keySet()));
+    }
+
+    @Override
+    public synchronized Zone getEnvironmentZone(final String environmentId) {
+        final EnvironmentEntry entry = m_environments.get(environmentId);
+        if (entry != null) {
+            return entry.zone;
+        } else {
+            // No such environment!
+            return null;
+        }
+    }
+
+    @Override
+    public synchronized String getEnvironmentFromPosition(
+            final Position position) {
+        if (position == null) {
+            return null;
+        }
+        for (Entry<String, EnvironmentEntry> e : m_environments.entrySet()) {
+            if (e.getValue().zone.contains(position)) {
+                return e.getKey();
+            }
+        }
+        // Unknown position!
+        return null;
+    }
+
+    @Override
+    public synchronized Position getDevicePosition(
+            final String deviceSerialNumber) {
+        if (deviceSerialNumber == null) {
+            throw new NullPointerException("deviceSerialNumber");
+        }
+        final Context device = getDeviceContext(deviceSerialNumber);
+        final Object x = device.getProperty("positionX");
+        final Object y = device.getProperty("positionY");
+        if (x == null || y == null || !(x instanceof Integer)
+                || !(y instanceof Integer)) {
+            return null;
+        }
+        return new Position((Integer) x, (Integer) y);
+    }
+
+    @Override
+    public synchronized void setDevicePosition(final String deviceSerialNumber,
+            final Position position) {
+        if (deviceSerialNumber == null) {
+            throw new NullPointerException("deviceSerialNumber");
+        }
+        // 1. Update the context.
+        final Context device = getDeviceContext(deviceSerialNumber);
+        if (position != null) {
+            device.setProperty("positionX", position.x);
+            device.setProperty("positionY", position.y);
+        } else {
+            device.setProperty("positionX", null);
+            device.setProperty("positionY", null);
+        }
+        // 2. Rebind the device to the environment containing the new position.
+        final String environmentId = getEnvironmentFromPosition(position);
+        unbindDeviceFromEnvironment(deviceSerialNumber);
+        bindDeviceToEnvironment(deviceSerialNumber, environmentId);
+    }
+
+    @Override
+    public synchronized void setDeviceLocation(final String deviceSerialNumber,
+            final String environmentId) {
+        // 1. get environment zone
+        final Zone zone;
+        if (environmentId != null) {
+            zone = getEnvironmentZone(environmentId);
+        } else {
+            zone = null;
+        }
+        // 2. generate a random position.
+        final Position position;
+        if (zone != null) {
+            final int x = random(zone.leftX, zone.rightX);
+            final int y = random(zone.topY, zone.bottomY);
+            position = new Position(x, y);
+        } else {
+            position = null;
+        }
+        // Set device position.
+        setDevicePosition(deviceSerialNumber, position);
+    }
+
+    @Override
+    public synchronized Position getUserPosition(final String userName) {
+        if (userName == null) {
+            throw new NullPointerException("userName");
+        }
+        final Context user = getUserContext(userName);
+        final Object x = user.getProperty("positionX");
+        final Object y = user.getProperty("positionY");
+        if (x == null || y == null || !(x instanceof Integer)
+                || !(y instanceof Integer)) {
+            return null;
+        }
+        return new Position((Integer) x, (Integer) y);
+    }
+
+    @Override
+    public synchronized void setUserPosition(final String userName,
+            final Position position) {
+        if (userName == null) {
+            throw new NullPointerException("userName");
+        }
+        // 1. Update the context.
+        final Context user = getUserContext(userName);
+        final String prevLoc = getEnvironmentFromPosition(getUserPosition(userName));
+        if (position != null) {
+            user.setProperty("positionX", position.x);
+            user.setProperty("positionY", position.y);
+        } else {
+            user.setProperty("positionX", null);
+            user.setProperty("positionY", null);
+        }
+        // 2. Unset/set presence
+        final String newLoc = getEnvironmentFromPosition(position);
+        if ((prevLoc == null && newLoc == null)
+                || (prevLoc != null && prevLoc.equals(newLoc))) {
+            // Same location => nothing to do!
+            return;
+        }
+        if (prevLoc != null) {
+            final SimulatedEnvironment env = m_environments.get(prevLoc).service;
+            env.lock();
+            try {
+                double presence = env.getProperty(PRESENCE);
+                env.setProperty(PRESENCE, presence - 1.0d);
+            } finally {
+                env.unlock();
+            }
+        }
+        if (newLoc != null) {
+            final SimulatedEnvironment env = m_environments.get(newLoc).service;
+            env.lock();
+            try {
+                double presence = env.getProperty(PRESENCE);
+                env.setProperty(PRESENCE, presence + 1.0d);
+            } finally {
+                env.unlock();
+            }
+        }
+    }
+
+    @Override
+    public synchronized void setUserLocation(final String userName,
+            final String environmentId) {
+        // 1. get environment zone
+        final Zone zone;
+        if (environmentId != null) {
+            zone = getEnvironmentZone(environmentId);
+        } else {
+            zone = null;
+        }
+        // 2. generate a random position.
+        final Position position;
+        if (zone != null) {
+            final int x = random(zone.leftX, zone.rightX);
+            final int y = random(zone.topY, zone.bottomY);
+            position = new Position(x, y);
+        } else {
+            position = null;
+        }
+        // Set user position.
+        setUserPosition(userName, position);
+    }
+
+    @Override
+    public synchronized void addDevicePositionListener(
+            final DevicePositionListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        m_devicePositionListeners.add(listener);
+    }
+
+    @Override
+    public synchronized void removeDevicePositionListener(
+            final DevicePositionListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        m_devicePositionListeners.remove(listener);
+    }
+
+    @Override
+    public synchronized void addUserPositionListener(
+            final UserPositionListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        m_userPositionListeners.add(listener);
+    }
+
+    @Override
+    public synchronized void removeUserPositionListener(
+            final UserPositionListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        m_userPositionListeners.remove(listener);
+    }
+    
+    @Override
+    public synchronized void killAllHumans() {
+        // Remove the "/user" context
+        final Context root = m_contextService.getRootContext();
+        if (root.getChild("user") != null) {
+            root.removeChild("user");
+        }
+    }
+
+ 	@Override
+   public void setEnvironmentVariable(String environmentId, String variable, Double value) {
+      if (environmentId == null) {
+         // Nothing to bind to => nothing to do!
+         return;
+     }
+     final SimulatedEnvironment env = m_environments.get(environmentId).service;
+     env.lock();
+     env.setProperty(variable, value);
+     env.unlock();
+	   
+   }
+    
+    private static class EnvironmentEntry {
+        private SimulatedEnvironment service;
+        private Zone zone;
+    }
+
+    private Context getDeviceContext(final String deviceSerialNumber) {
+        final Context root = m_contextService.getRootContext();
+        Context allDevices = root.getChild("device");
+        if (allDevices == null) {
+            allDevices = root.createChild("device");
+        }
+        final Context device = allDevices.getChild(deviceSerialNumber);
+        if (device != null) {
+            return device;
+        } else {
+            return allDevices.createChild(deviceSerialNumber);
+        }
+    }
+
+    private Context getUserContext(final String userName) {
+        final Context root = m_contextService.getRootContext();
+        Context allUsers = root.getChild("user");
+        if (allUsers == null) {
+            allUsers = root.createChild("user");
+        }
+        final Context user = allUsers.getChild(userName);
+        if (user != null) {
+            return user;
+        } else {
+            return allUsers.createChild(userName);
+        }
+    }
+
+    private int random(int min, int max) {
+        final double range = max - min;
+        if (range <= 0.0) {
+            throw new IllegalArgumentException("min >= max");
+        }
+        return min + (int) (range * m_random.nextDouble());
+    }
+
+    private void unbindDeviceFromEnvironment(final String deviceSerialNumber) {
+        final SimulatedDevice dev = m_devices.get(deviceSerialNumber);
+        if (dev == null) {
+            // No device => nothing to do!
+            return;
+        }
+        final String environmentId = dev.getEnvironmentId();
+        if (environmentId == null) {
+            // Device was not bound => nothing to do!
+            return;
+        }
+        final SimulatedEnvironment env = m_environments.get(environmentId).service;
+        dev.unbindSimulatedEnvironment(env);
+    }
+
+    private void bindDeviceToEnvironment(final String deviceSerialNumber,
+            final String environmentId) {
+        if (environmentId == null) {
+            // Nothing to bind to => nothing to do!
+            return;
+        }
+        final SimulatedDevice dev = m_devices.get(deviceSerialNumber);
+        if (dev == null) {
+            // No device => nothing to do!
+            return;
+        }
+        final SimulatedEnvironment env = m_environments.get(environmentId).service;
+        dev.bindSimulatedEnvironment(env);
+    }
+
+    private class DeviceContextListener implements ContextListener {
+
+        @Override
+        public void contextChanged(final ContextEvent event) {
+            if (event.getType() != ContextEvent.MODIFIED) {
+                // We do not care about context creation/removal.
+                return;
+            }
+            final String propertyName = event.getPropertyName();
+            if (!propertyName.equals("positionX")
+                    && !propertyName.equals("positionY")) {
+                // We only care about position properties.
+                return;
+            }
+            synchronized (SimulationManagerImpl.this) {
+                final Context root = m_contextService.getRootContext();
+                final Context allDevices = root.getChild("device");
+                final Context context = event.getContext();
+                if (event.getContext().getParent() != allDevices) {
+                    // We only care about direct children of the "/device/"
+                    // context.
+                    return;
+                }
+                // Retrieve position information
+                final Object x = context.getProperty("positionX");
+                final Object y = context.getProperty("positionY");
+                final Position position;
+                if (x == null || y == null || !(x instanceof Integer)
+                        || !(y instanceof Integer)) {
+                    position =  null;
+                } else {
+                    position = new Position((Integer) x, (Integer) y);
+                }
+                // Notify listeners
+                final String deviceSerialNumber = context.getName();
+                for(DevicePositionListener listener : m_devicePositionListeners) {
+                    listener.devicePositionChanged(deviceSerialNumber, position);
+                }
+            }
+        }
+
+    }
+
+    private class UserContextListener implements ContextListener {
+
+        @Override
+        public void contextChanged(ContextEvent event) {
+            if (event.getType() != ContextEvent.MODIFIED) {
+                // We do not care about context creation/removal.
+                return;
+            }
+            final String propertyName = event.getPropertyName();
+            if (!propertyName.equals("positionX")
+                    && !propertyName.equals("positionY")) {
+                // We only care about position properties.
+                return;
+            }
+            synchronized (SimulationManagerImpl.this) {
+                final Context root = m_contextService.getRootContext();
+                final Context allUsers = root.getChild("user");
+                final Context context = event.getContext();
+                if (event.getContext().getParent() != allUsers) {
+                    // We only care about direct children of the "/user/"
+                    // context.
+                    return;
+                }
+                // Retrieve position information
+                final Object x = context.getProperty("positionX");
+                final Object y = context.getProperty("positionY");
+                final Position position;
+                if (x == null || y == null || !(x instanceof Integer)
+                        || !(y instanceof Integer)) {
+                    position =  null;
+                } else {
+                    position = new Position((Integer) x, (Integer) y);
+                }
+                // Notify listeners
+                final String userName = context.getName();
+                for(UserPositionListener listener : m_userPositionListeners) {
+                    listener.userPositionChanged(userName, position);
+                }
+            }
+        }
+
+    }
+
+
+
+}

@@ -1,0 +1,23 @@
+Manifest-Version: 1.0
+Built-By: ctpn9618
+Tool: Bnd-1.15.0
+Bundle-Name: iCASA :: Devices :: Light
+Created-By: Apache Maven Bundle Plugin
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Copyright: Copyright 2011-2012 Université Joseph Fourier
+Bundle-Vendor: Adèle Team
+Bundle-ContactAddress: thomas.leveque@imag.fr
+Build-Jdk: 1.6.0_29
+Bundle-Version: 0.0.1.SNAPSHOT
+Bnd-LastModified: 1341563192373
+Bundle-ManifestVersion: 2
+Bundle-License: Apache License - Version 2.0;link=http://www.apache.or
+ g/licenses/LICENSE-2.0.txt
+Bundle-Description: This bundle contains the simulated devices related
+  to light emission or detection.
+Import-Package: fr.liglab.adele.icasa.device.light,fr.liglab.adele.ica
+ sa.device.util,fr.liglab.adele.icasa.environment,org.ow2.chameleon.ha
+ ndies.log;version="[0.0,1)"
+Bundle-SymbolicName: device.light
+Bundle-DocURL: http://wikiadele.imag.fr/index.php/iCASA
+
