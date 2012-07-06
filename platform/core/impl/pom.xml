@@ -34,7 +34,6 @@
 		<module>clock-system-impl</module>
 		<module>simulated-environment</module>
 		<module>context-impl</module>
-		<module>device-impl</module>
 		<module>device-manager-impl</module>
 		<module>application-impl</module>
 		<module>application-mock-impl</module>
