@@ -1,7 +1,6 @@
 
 /distribution/dev/.project
 /distribution/dev/.settings
-/distribution/dev/bin
 /distribution/dev/.classpath
 /distribution/tr-69-distrib/bin
 /platform/core/api/application-api/target
@@ -208,3 +207,8 @@
 /tools/device-dashboards/x10-widget/.settings
 /tools/device-dashboards/device-widgets/target
 /tools/device-dashboards/device-dashboards/target
+/tools/simulator/clock-simulated-impl/.settings
+/tools/simulator/script-executor-api/target
+/tools/simulator/script-executor-api/.settings
+/tools/simulator/script-executor-impl/.settings
+/tools/simulator/simulated-sensor-importer/.settings
