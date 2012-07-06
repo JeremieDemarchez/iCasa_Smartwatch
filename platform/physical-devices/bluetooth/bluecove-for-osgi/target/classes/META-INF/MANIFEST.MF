@@ -11,7 +11,7 @@ Bundle-Name: Bluecove for OSGi
 Created-By: Apache Maven Bundle Plugin
 Build-Jdk: 1.6.0_29
 Bundle-Version: 2.1.1.SNAPSHOT
-Bnd-LastModified: 1341563188397
+Bnd-LastModified: 1341576831118
 Bundle-ManifestVersion: 2
 Embed-Dependency: bluecove,bluecove-gpl
 Bundle-SymbolicName: net.sf.bluecove.for-osgi

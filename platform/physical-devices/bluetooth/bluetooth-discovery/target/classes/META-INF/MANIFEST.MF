@@ -6,7 +6,7 @@ Created-By: Apache Maven Bundle Plugin
 Bundle-Vendor: Université Joseph Fourier (Grenoble, France)
 Build-Jdk: 1.6.0_29
 Bundle-Version: 0.2.0
-Bnd-LastModified: 1341563191266
+Bnd-LastModified: 1341576837576
 Bundle-ManifestVersion: 2
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
 Import-Package: fr.liglab.dynamo.discovery.bluetooth,javax.bluetooth,o

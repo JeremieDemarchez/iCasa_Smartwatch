@@ -15,7 +15,7 @@ Bundle-NativeCode: LibusbJava.dll;osname=WindowsXP;processor=x86,Libus
 Bundle-Vendor: ADELE/LIG/ Grenoble University, France
 Build-Jdk: 1.6.0_29
 Bundle-Version: 0.0.1.SNAPSHOT
-Bnd-LastModified: 1341563184574
+Bnd-LastModified: 1341576819373
 Bundle-ManifestVersion: 2
 Bundle-Description: A Bundle implementation of the Usb Device
 Bundle-SymbolicName: org.apache.felix.usb.basedriver

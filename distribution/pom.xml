@@ -33,7 +33,6 @@
 	<modules>
 		<module>dev</module>
 		<module>asus-box</module>
-		<module>tr-69-distrib</module>
 	</modules>
 
 </project>

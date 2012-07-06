@@ -11,7 +11,7 @@ Bundle-NativeCode: nativelib/Windows/bluecove.dll;osname = Win32; osna
 Bundle-Vendor: Université Joseph Fourier (Grenoble, France)
 Build-Jdk: 1.6.0_29
 Bundle-Version: 0.1.0
-Bnd-LastModified: 1341563189531
+Bnd-LastModified: 1341576833782
 Bundle-ManifestVersion: 2
 Bundle-License: http://www.apache.org/licenses/LICENSE-2.0.txt
 Import-Package: fr.liglab.dynamo.device.bdremotecontrol,javax.bluetoot

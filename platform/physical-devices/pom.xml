@@ -32,7 +32,6 @@
 
 	<modules>
 		<module>upnp</module>
-		<module>tr-69</module>
 		<module>x10</module>
 		<module>usb</module>
 		<module>bluetooth</module>

@@ -16,7 +16,7 @@ Bundle-Vendor: Adèle Team
 Bundle-ContactAddress: thomas.leveque@imag.fr
 Build-Jdk: 1.6.0_29
 Bundle-Version: 0.0.1.SNAPSHOT
-Bnd-LastModified: 1341563580453
+Bnd-LastModified: 1341576809509
 Bundle-ManifestVersion: 2
 Bundle-Description: ICasa :: UPnP :: Settop Box importer
 Bundle-License: Apache License - Version 2.0;link=http://www.apache.or
