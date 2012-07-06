@@ -25,7 +25,7 @@ environment "kitchen" {
 	}
 	
 	
-	device "PhotoSensor-AAA-20119215-S" : "fiCASA.Photometer" {
+	device "PhotoSensor-AAA-20119215-S" : "iCASA.Photometer" {
 	  position = 400 420
 		"service.description" = "PhotoMeter Presence Sensor"
 		"state" = "activated"
