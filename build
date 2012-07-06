@@ -12,10 +12,4 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-cd dependencies
-cd osgi-deployment-admin
-mvn install
-
-cd ..
-cd ..
-mvn install
+mvn clean install
