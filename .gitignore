@@ -303,3 +303,8 @@ target
 target
 target
 target
+/tools\device-dashboards\device-widgets/target
+/tools\device-dashboards\tikitag-widget/target
+/tools\device-dashboards\upnp-widget/target
+/tools\device-dashboards\upnp-widget/target
+/tools\device-dashboards\x10-widget/target
