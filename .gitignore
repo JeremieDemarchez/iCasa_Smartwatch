@@ -295,3 +295,5 @@
 /platform/physical-devices/x10/rxtx/.settings
 /distribution/dev/felix-cache
 /platform/packages/x10-presence-sensor-core-dp/target
+target
+/platform\physical-devices\bluetooth\bluetooth-discovery/target
