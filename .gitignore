@@ -313,3 +313,4 @@ target
 /platform\physical-devices\usb\usb-discovery-rose/target
 /platform\physical-devices\usb\usb-rfid-reader-importer/target
 /tools\device-dashboards\packages\device-dashboards-dp/target
+/platform\physical-devices\bluetooth\bluetooth-discovery-api/target
