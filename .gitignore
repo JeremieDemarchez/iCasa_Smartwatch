@@ -308,3 +308,8 @@ target
 /tools\device-dashboards\upnp-widget/target
 /tools\device-dashboards\upnp-widget/target
 /tools\device-dashboards\x10-widget/target
+/platform\physical-devices\usb\rfid-reader/target
+/platform\physical-devices\usb\usb-discovery/target
+/platform\physical-devices\usb\usb-discovery-rose/target
+/platform\physical-devices\usb\usb-rfid-reader-importer/target
+/tools\device-dashboards\packages\device-dashboards-dp/target
