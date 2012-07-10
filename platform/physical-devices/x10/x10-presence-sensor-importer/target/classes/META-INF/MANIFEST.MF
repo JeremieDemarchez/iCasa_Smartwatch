@@ -12,7 +12,7 @@ Bundle-Vendor: Adèle Team
 Bundle-ContactAddress: thomas.leveque@imag.fr
 Build-Jdk: 1.6.0_17
 Bundle-Version: 0.0.1.SNAPSHOT
-Bnd-LastModified: 1341837901308
+Bnd-LastModified: 1342015308114
 Bundle-ManifestVersion: 2
 Bundle-License: Apache License - Version 2.0;link=http://www.apache.or
  g/licenses/LICENSE-2.0.txt

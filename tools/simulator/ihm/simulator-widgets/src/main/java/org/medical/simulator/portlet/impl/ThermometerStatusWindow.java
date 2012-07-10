@@ -37,7 +37,7 @@ public class ThermometerStatusWindow extends DeviceStatusWindow {
    private static final long serialVersionUID = 7214188369352385316L;
 
 
-	public ThermometerStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public ThermometerStatusWindow(HouseSimulatorGUIImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 	}
 

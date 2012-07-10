@@ -26,7 +26,17 @@
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.dashboards</artifactId>
 			<version>${project.version}</version>
+		</dependency>		
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>web.common</artifactId>
+			<version>${project.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>house.simulator</artifactId>
+			<version>${project.version}</version>
+		</dependency>		
 		<!--dependency> <groupId>fr.liglab.adele.icasa</groupId> <artifactId>house.simulator</artifactId> 
 			<version>${project.version}</version> </dependency> <dependency> <groupId>fr.liglab.adele.icasa</groupId> 
 			<artifactId>simulator.widgets</artifactId> <version>${project.version}</version> 

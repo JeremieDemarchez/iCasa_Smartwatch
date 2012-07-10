@@ -38,7 +38,7 @@ public class HeaterStatusWindow extends DeviceStatusWindow {
    private static final long serialVersionUID = 7214188369352385316L;
 
 
-	public HeaterStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public HeaterStatusWindow(HouseSimulatorGUIImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 	}
 
