@@ -25,10 +25,13 @@ import nextapp.echo.app.WindowPane;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
 import org.medical.application.device.dashboards.portlet.DeclarativeDeviceWidgetFactory;
 import org.medical.application.device.dashboards.util.DecoratedBundleResourceImageReference;
 import org.osgi.framework.Bundle;
+import org.osgi.service.packageadmin.ExportedPackage;
+import org.osgi.service.packageadmin.PackageAdmin;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
@@ -45,18 +48,45 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 	private String deviceWidgetId;
 	private Bundle _decoratorBundle;
 	
+	@Requires
+	private PackageAdmin packageAdmin;
+	
 	public DeviceWidgetFactoryImpl() {
 		_decoratorBundle = MedicalHouseSimulatorImpl.getBundle();
 	}
 
 	@Override
 	public boolean typeIsSupported(GenericDevice device) {
-		if (bundle != null) {
+		if (bundle != null && deviceInterfaceName!=null) {
+			Class deviceInterface = null ;
+			Set<Class> interfaces = null;
 			try {
-				Class deviceInterface = bundle.loadClass(deviceInterfaceName);
-				Set<Class> interfaces = new HashSet<Class>(Arrays.asList(device.getClass().getInterfaces()));
+				deviceInterface = bundle.loadClass(deviceInterfaceName);
+				interfaces = new HashSet<Class>(Arrays.asList(device.getClass().getInterfaces()));
 				return interfaces.contains(deviceInterface);
 			} catch (ClassNotFoundException e) {
+				    String[] splittedArray = deviceInterfaceName.split("\\.");
+					if (splittedArray.length < 2) {
+						e.printStackTrace();
+					}
+					
+//					String className = splittedArray[splittedArray.length-1];
+					String packagename =splittedArray[0];
+					for (int i = 1; i < (splittedArray.length-1); i++) {
+						packagename = packagename + "." + splittedArray[i];
+					}
+					
+					ExportedPackage[] packages = packageAdmin.getExportedPackages(packagename);
+					for (ExportedPackage exportedPackage : packages) {
+						try {
+							deviceInterface = exportedPackage.getExportingBundle().loadClass(deviceInterfaceName);
+							interfaces = new HashSet<Class>(Arrays.asList(device.getClass().getInterfaces()));
+							return interfaces.contains(deviceInterface);
+						} catch (ClassNotFoundException e1) {
+						
+						}
+					}
+					
 				e.printStackTrace();
 			}			
 		}
