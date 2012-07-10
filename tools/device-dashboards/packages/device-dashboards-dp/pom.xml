@@ -51,13 +51,12 @@
 								<name>ICasa-Application-Version</name>
 								<value>${project.version}</value>
 							</bundleHeader>
-						</headers>
+						</headers>						
 						<resources>
 							<processedResource>
 								<processor>org.osgi.deployment.rp.autoload</processor>
 								<filePath>/src/main/resources/DashboardServlet-1.cfg</filePath>
 							</processedResource>
-
 						</resources>
 					</deploymentPackage>
 				</configuration>
