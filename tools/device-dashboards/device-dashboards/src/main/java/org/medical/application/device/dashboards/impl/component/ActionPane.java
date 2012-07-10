@@ -195,8 +195,7 @@ public class ActionPane extends AccordionPane implements SelectedApplicationTrac
 	}
 
 	public void updateScriptList() {
-		if (m_clockPane!=null)
-			m_clockPane.updateScriptList();
+
 	}
 	
 	public void addApplication(Application service) {

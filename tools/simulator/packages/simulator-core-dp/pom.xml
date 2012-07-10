@@ -77,11 +77,13 @@
 			<artifactId>script.interpreter</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		<!--
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>tool.script.deployer</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		-->
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>clock.api</artifactId>
