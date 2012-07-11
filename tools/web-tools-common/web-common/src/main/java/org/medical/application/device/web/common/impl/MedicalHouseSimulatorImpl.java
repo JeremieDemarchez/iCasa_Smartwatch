@@ -79,10 +79,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	@Requires
 	private SimulationManager m_manager;
 	
-	@Requires
-	private DeviceManager m_deviceMgr;
-	
-
 	private DeviceWidgetFactorySelector m_portletFactorySelector;
 
 	private String houseImage;
@@ -91,8 +87,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	private String homeType;
 	
-	@Property(name = "isAndroid", mandatory = true)
-	private String isAndroidStr;
+	//@Property(name = "isAndroid", mandatory = true)
+	//private String isAndroidStr;
 	
 	@Property(name="isSimulator", mandatory = true)
 	private Boolean isSimulator;
@@ -107,9 +103,9 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	private TaskQueueHandle m_taskQueueHandle;
 
-	private Window m_window;
+	protected Window m_window;
 
-	private ComponentInstance m_controller;
+	//private ComponentInstance m_controller;
 
 	private final BundleContext m_context;
 
@@ -127,8 +123,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	public MedicalHouseSimulatorImpl(BundleContext context) {
 		m_context = context;
 		_bundle = context.getBundle();
-
-
 	}
 	
 
@@ -234,17 +228,19 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	protected abstract ActionPane getActionPane();
 	
+	
 	@Override
 	public Window init() {
 		return m_window;
 	}
+	
 
 	@Override
 	public void dispose() {
 		// Destroy the task queue.
 		removeTaskQueue(m_taskQueueHandle);
 		super.dispose();
-		m_controller.dispose();
+		//m_controller.dispose();
 	}
 	
 	public static Bundle getBundle() {
@@ -383,7 +379,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 
 	public void setComponentInstance(final ComponentInstance appInstance) {
-		m_controller = appInstance;
+		//m_controller = appInstance;
 	}
 
 	public final HousePane getHousePane() {
@@ -506,10 +502,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 
 	public boolean isAndroid() {
-		if (isAndroid == null) {
-			isAndroid = ((isAndroidStr != null) && (Boolean.valueOf(isAndroidStr)));
-		}
-
 		return isAndroid;
 	}
 	
@@ -563,6 +555,18 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	public SimulationManager getSimulationManager() {
 		return m_manager;
 	}
+
+
+
+	public void setIsSimulator(Boolean isSimulator) {
+	   this.isSimulator = isSimulator;	   
+   }
+
+
+
+	public void setIsAndroid(Boolean isAndroid) {
+		this.isAndroid = isAndroid;
+   }
 
 	
 	

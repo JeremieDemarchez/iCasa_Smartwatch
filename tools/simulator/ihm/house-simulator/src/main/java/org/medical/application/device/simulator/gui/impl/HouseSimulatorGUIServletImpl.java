@@ -57,7 +57,7 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 // @StaticServiceProperty(name = "alias", type = "java.lang.String", value =
 // "/dashboards") })
 @Provides(specifications = Servlet.class)
-public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements InstanceStateListener {
+public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements InstanceStateListener  {
 
 	@ServiceProperty(name = "alias")
 	private String alias;
@@ -100,12 +100,13 @@ public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements
 
 		String[] isAndroidParams = (String[]) getActiveConnection().getUserInstance().getInitialRequestParameterMap()
 		      .get("isAndroid");
+		
 		boolean isAndroid = false;
 		if ((isAndroidParams != null) && (isAndroidParams.length > 0)) {
 			String isAndroidStr = isAndroidParams[0];
 			isAndroid = ((isAndroidStr != null) && (Boolean.valueOf(isAndroidStr)));
 		}
-		dict.put("isAndroid", Boolean.toString(isAndroid));
+		dict.put("isAndroid", isAndroid);
 
 		// TODO: Provisional solution to share the same code in both Servlets
 		// (dashboard and simulator)
@@ -118,19 +119,26 @@ public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements
 		try {
 			appInstance = m_appFactory.createComponentInstance(dict);
 		} catch (final Exception e) {
+			System.out.println(e.getMessage());
 			throw new RuntimeException("Cannot create application instance", e);
 		}
+		
 		final String name = appInstance.getInstanceName();
 		synchronized (m_appInstances) {
 			m_appInstances.put(name, appInstance);
 			appInstance.addInstanceStateListener(this);
 		}
+		
 		final HouseSimulatorGUIImpl pojo = (HouseSimulatorGUIImpl) ((InstanceManager) appInstance).getPojoObject();
+		
+		System.out.println("The pojo instabce is ---------->>>>>> " + appInstance.getInstanceName());
+		System.out.println("The pojo instabce is ---------->>>>>> " + pojo.getWindow());
 		pojo.setComponentInstance(appInstance);
 		// m_logger.info("Application instance created : " + name);
 		return pojo;
 	}
 
+	
 	@Override
 	public void stateChanged(final ComponentInstance appInstance, final int newState) {
 		if (newState != ComponentInstance.DISPOSED) {
@@ -142,6 +150,7 @@ public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements
 		}
 		// m_logger.info("Application instance disposed : " + name);
 	}
+	
 
 	@Invalidate
 	public void cleanUp() {

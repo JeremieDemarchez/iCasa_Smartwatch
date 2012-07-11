@@ -39,7 +39,6 @@ import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.device.simulator.gui.impl.component.SimulatorActionPane;
 import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
 import org.medical.application.device.web.common.impl.component.ActionPane;
-import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
 import org.medical.clock.api.Clock;
@@ -48,7 +47,6 @@ import org.medical.device.manager.ApplicationDevice;
 import org.medical.device.manager.Device;
 import org.medical.device.manager.Service;
 import org.medical.script.executor.ScriptExecutor;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -74,8 +72,6 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	 */
 	private static final long serialVersionUID = -2887321216032546523L;
 
-	private static final int MARGIN = 10;
-
 
 	@Requires
 	private SimulationManager m_manager;
@@ -83,25 +79,15 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	@Requires
 	private ScriptExecutor m_ScriptExecutor;
 
+	@Requires
 	private ScenarioInstaller m_ScenarioInstaller;
-
-	@Property(name = "isAndroid", mandatory = true)
-	private String isAndroidStr;
-
-	@Property(name = "isSimulator", mandatory = true)
-	private Boolean isSimulator;
 
 	private SimulatorActionPane m_actionPane;
 
-	private final BundleContext m_context;
-
-	private Boolean isAndroid;
 
 	public HouseSimulatorGUIImpl(BundleContext context) {
 		super(context);
-		m_context = context;
 	}
-
 
 
 	@Validate
@@ -252,6 +238,7 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		});
 	}
 
+	/*
 	@Override
 	public void devicePositionChanged(final String deviceSerialNumber, final Position position) {
 		enqueueTask(new Runnable() {
@@ -261,6 +248,7 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 			}
 		});
 	}
+	*/
 
 	/*
 	 * public void devicePropertiesChanged(final String deviceSerialNumber, final
@@ -360,7 +348,7 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	}
 	*/
 	
-	@Property(name="houseImage")
+	@Property(name="houseImage", mandatory=true)
 	@Override
 	public void setHouseImage(String houseImage) {
 	   super.setHouseImage(houseImage);
@@ -374,36 +362,33 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	}
 	*/
 	
-	@Property(name="userImage")
+	@Property(name="userImage", mandatory=true)
 	@Override
 	public void setUserImage(String userImage) {
 	   super.setUserImage(userImage);
 	}
 	
-	@Property(name="homeType")
+	@Property(name="homeType", mandatory=true)
 	@Override
 	public void setHomeType(String homeType) {
 	   super.setHomeType(homeType);
 	}
 
-
-	public boolean isAndroid() {
-		if (isAndroid == null) {
-			isAndroid = ((isAndroidStr != null) && (Boolean.valueOf(isAndroidStr)));
-		}
-
-		return isAndroid;
+	@Property(name="isSimulator", mandatory=true)
+	public void setIsSimulator(Boolean isSimulator) {
+		super.setIsSimulator(isSimulator);
 	}
-
-	public boolean isSimulator() {
-		return isSimulator;
+	
+	@Property(name="isAndroid", mandatory=true)
+	public void setIsAndroid(Boolean isAndroid) {
+		super.setIsAndroid(isAndroid);
 	}
+	
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		@SuppressWarnings("unused")
 		Object newVal = evt.getNewValue();
-
 	}
 
 	/*
@@ -454,7 +439,7 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 						String deviceLine = "\t device " + "\"" + device + "\" : \"";
 
 						try {
-							ServiceReference[] references = m_context.getServiceReferences(
+							ServiceReference[] references = getContext().getServiceReferences(
 							      SimulatedDevice.class.getCanonicalName(), "(device.serialNumber=" + device + ")");
 							if (references != null && references.length > 0) {
 								ServiceReference reference = references[0];
@@ -485,42 +470,12 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 
 	}
 
-	@Override
-	public void addVariable(StateVariable variable, Object sourceObject) {
-		// TODO Auto-generated method stub
 
-	}
-
-	@Override
-	public void removeVariable(StateVariable variable, Object sourceObject) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue, Object sourceObject) {
-		String devId = null;
-		Object owner = variable.getOwner();
-		if (owner instanceof Device) {
-			devId = ((Device) owner).getId();
-		} else if (owner instanceof Service) {
-			devId = ((Service) owner).getDevice().getId();
-		}
-
-		if (devId != null) {
-			final ApplicationDevice dev = getDeviceBySerialNumber(devId);
-			enqueueTask(new Runnable() {
-				@Override
-				public void run() {
-					m_actionPane.changeDevice(dev.getId(), dev, Collections.EMPTY_MAP);
-				}
-			});
-		}
-	}
 
 	@Override
    protected ActionPane getActionPane() {
 	   return new SimulatorActionPane(this);
    }
+
 
 }
