@@ -3,7 +3,7 @@ Export-Package: org.medical.upnp.presence.detector.importer;uses:="org
  .apache.felix.ipojo,org.osgi.framework,org.ow2.chameleon.rose,org.osg
  i.service.log,org.osgi.service.remoteserviceadmin,org.osgi.util.track
  er,org.osgi.service.upnp"
-Built-By: ctpn9618
+Built-By: Gabriel
 Tool: Bnd-1.15.0
 Bundle-Name: ICasa :: UPnP :: Presence detector importer (Proxy)
 Created-By: Apache Maven Bundle Plugin
@@ -11,9 +11,9 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Copyright: Copyright 2011-2012 Université Joseph Fourier
 Bundle-Vendor: Adèle Team
 Bundle-ContactAddress: thomas.leveque@imag.fr
-Build-Jdk: 1.6.0_29
+Build-Jdk: 1.6.0_17
 Bundle-Version: 0.0.1.SNAPSHOT
-Bnd-LastModified: 1341576808406
+Bnd-LastModified: 1341837891733
 Bundle-ManifestVersion: 2
 Bundle-Description: UPnP :: Presence Detector Proxy
 Bundle-License: Apache License - Version 2.0;link=http://www.apache.or

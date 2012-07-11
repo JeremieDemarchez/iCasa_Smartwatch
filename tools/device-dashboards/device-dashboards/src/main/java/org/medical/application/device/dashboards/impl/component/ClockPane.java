@@ -57,7 +57,7 @@ public class ClockPane extends ContentPane {
 	 */
 	private static final long serialVersionUID = -6120148194109048391L;
 
-	private static final String NO_CLOCK_TEXT = "???? d MMMM yyyy KK : mm : ss a";
+	private static final String NO_CLOCK_TEXT = "??? Unknow ???";
 
 	public static ResourceImageReference CLOCK_IMAGE = new ResourceImageReference("/Clock.png");
 
@@ -76,14 +76,15 @@ public class ClockPane extends ContentPane {
 	private Clock m_clock;
 
 	private final TextField m_date;
-	//private final TextField m_time;
-	//private final TextField m_timeFactor2;
-	private final SelectField m_timeFactor;
-	//private final Button m_increaseTimeFactor;
-	//private final Button m_decreaseTimeFactor;
+	private final TextField m_time;
+	private final TextField m_timeFactor;
+	// private final SelectField m_timeFactor;
+	private final Button m_increaseTimeFactor;
+	private final Button m_decreaseTimeFactor;
 	private final Button m_setTimeAndDate;
-	private final SelectField scriptList;
-
+	private final SelectField m_scriptList;
+	private final SelectField m_scenarioList;
+	
 	public ClockPane(final ActionPane parent) {
 		m_parent = parent;
 		// Create the image label.
@@ -92,82 +93,121 @@ public class ClockPane extends ContentPane {
 		imageLayout.setRowSpan(2);
 		imageLayout.setColumnSpan(2);
 		image.setLayoutData(imageLayout);
-		
-		
+
 		ScriptActionListener actionListener = new ScriptActionListener();
 		// Create the date and time controls
 		m_date = new TextField();
 		m_date.setEditable(false);
 		m_date.setText(NO_CLOCK_TEXT);
+		m_time = new TextField();
+		m_time.setEditable(false);
+		m_date.setText("hh:mm:ss");
 		// Create the time factor labels and buttons.
+
+		// String[] factors = {"60", "180", "360", "720", "1440", "2880", "5760"};
+		m_timeFactor = new TextField();
+		m_timeFactor.setEditable(false);
+		m_timeFactor.setText(NO_CLOCK_TEXT);
+
 		
-		String[] factors = {"60", "180", "360", "720", "1440", "2880", "5760"};
-		m_timeFactor = new SelectField(factors);
-		
-		
-		final Button updateFactor = new Button("Update Factor");
-		updateFactor.setActionCommand("UpdateFactor");
-		updateFactor.addActionListener(actionListener);
+		m_increaseTimeFactor = new Button("+");
+		m_increaseTimeFactor.setActionCommand("IncreaseFactor");
+		m_increaseTimeFactor.addActionListener(actionListener);
+
+		m_decreaseTimeFactor = new Button("-");
+		m_decreaseTimeFactor.setActionCommand("DecreaseFactor");
+		m_decreaseTimeFactor.addActionListener(actionListener);
 
 		// Create the button used to set the time and date.
 		m_setTimeAndDate = new Button("Date Settings");
 		m_setTimeAndDate.setActionCommand("SetDate");
-		
+
 		m_setTimeAndDate.addActionListener(actionListener);
 		m_setTimeAndDate.setEnabled(false);
+
+		m_scriptList = new SelectField(new DefaultListModel(m_parent.getApplicationInstance().getScriptList().toArray()));
 		
-		
-		scriptList = new SelectField(m_parent.getApplicationInstance().getScriptFileList());
-		
+
+
 		
 		final Button refreshScript = new Button("Refresh");
 		refreshScript.setActionCommand("RefreshScriptList");
 		refreshScript.addActionListener(actionListener);
+      
 		
 		final Button startScript = new Button("Start Script");
 		startScript.setActionCommand("ExecuteScript");
 		startScript.addActionListener(actionListener);
-		
-		
-		
+
 		final Button stopScript = new Button("Stop Script");
 		stopScript.setActionCommand("StopScript");
 		stopScript.addActionListener(actionListener);
+
+		m_scenarioList = new SelectField(new DefaultListModel(m_parent.getApplicationInstance().getScenarioList().toArray()));
 		
+		final Button refreshScenario = new Button("Refresh");
+		refreshScenario.setActionCommand("RefreshScenarioList");
+		refreshScenario.addActionListener(actionListener);
+		
+		final Button installScenario = new Button("Install Scenario");
+		installScenario.setActionCommand("InstallScenario");
+		installScenario.addActionListener(actionListener);
 		
 		final Button saveButton = new Button("Save Scenario");
 		saveButton.setActionCommand("SaveScenario");
 		saveButton.addActionListener(actionListener);
+
+		// Create the grid and add all components.
+		
+		final Grid clockGrid = new Grid(4);
+		clockGrid.setInsets(new Insets(3));
+		
+		clockGrid.add(new Label("Date and Hour: "));
+		clockGrid.add(m_date);
+		clockGrid.add(m_time);
+		clockGrid.add(m_setTimeAndDate);
+		clockGrid.add(new Label("Time Factor : "));
+		clockGrid.add(m_timeFactor);
+		clockGrid.add(m_increaseTimeFactor);
+		clockGrid.add(m_decreaseTimeFactor);
+		
+		
+		final Grid scriptGrid = new Grid(5);
+		scriptGrid.setInsets(new Insets(3));
+		scriptGrid.add(new Label("Simulation Scripts : "));
+		scriptGrid.add(m_scriptList);
+		scriptGrid.add(refreshScript);
+		scriptGrid.add(startScript);
+		scriptGrid.add(stopScript);
+		scriptGrid.add(new Label("iCasa Scenarios: "));
+		scriptGrid.add(m_scenarioList);
+		scriptGrid.add(refreshScenario);
+		scriptGrid.add(installScenario);
+		scriptGrid.add(saveButton);
+		
+		
+		final Grid globalGrid = new Grid(1);					
+		globalGrid.setInsets(new Insets(10));
+		
+		globalGrid.add(clockGrid);
+		globalGrid.add(scriptGrid);
 		
 
-		
-		// Create the grid and add all components.
-		final Grid grid = new Grid(3);
-		grid.setInsets(new Insets(3));
-		grid.add(new Label("Date : "));
-		grid.add(m_date);
-		grid.add(m_setTimeAndDate);
-		grid.add(new Label("Time Factor : "));
-		grid.add(m_timeFactor);
-		grid.add(updateFactor);
-		grid.add(new Label("Simulation Scripts : "));
-		grid.add(scriptList);
-		grid.add(refreshScript);
-		grid.add(startScript);
-		grid.add(stopScript);		
-		grid.add(saveButton);
-		
-		add(grid);
+		add(globalGrid);
 	}
 
 	public synchronized void setClock(final Clock clock) {
 		m_clock = clock;
 		updateClockInfo();
 		if (m_clock != null) {
+			m_increaseTimeFactor.setEnabled(true);
+			m_decreaseTimeFactor.setEnabled(true);
 			m_setTimeAndDate.setEnabled(true);
 			startUpdaterTask();
 		} else {
 			stopUpdaterTask();
+			m_increaseTimeFactor.setEnabled(false);
+			m_decreaseTimeFactor.setEnabled(false);
 			m_setTimeAndDate.setEnabled(false);
 		}
 	}
@@ -177,8 +217,12 @@ public class ClockPane extends ContentPane {
 			long date = m_clock.currentTimeMillis();
 			final Date now = new Date(date);
 			m_date.setText(DATE_FORMAT.format(now));
+			m_time.setText(TIME_FORMAT.format(now));
+			m_timeFactor.setText(Integer.toString(m_clock.getFactor()) + "x");
 		} else {
 			m_date.setText(NO_CLOCK_TEXT);
+			m_time.setText(NO_CLOCK_TEXT);
+			m_timeFactor.setText(NO_CLOCK_TEXT);
 		}
 	}
 
@@ -288,15 +332,20 @@ public class ClockPane extends ContentPane {
 	/**
 	 * Update the script list in the client side
 	 */
-	public void updateScriptList() {
-		System.out.println("File List to be updated " + scriptList);
-		if (scriptList != null) {
-			System.out.println("Updating File List");
-			scriptList.setModel(new DefaultListModel());
-			scriptList.setModel(m_parent.getApplicationInstance().getScriptFileList());
+	private void updateScriptList() {
+		if (m_scriptList != null) {
+			m_scriptList.setModel(new DefaultListModel());
+			m_scriptList.setModel(new DefaultListModel(m_parent.getApplicationInstance().getScriptList().toArray()));
 		}
-
 	}
+	
+	private void updateScenarioList() {
+		if (m_scenarioList != null) {
+			m_scenarioList.setModel(new DefaultListModel());
+			m_scenarioList.setModel(new DefaultListModel(m_parent.getApplicationInstance().getScenarioList().toArray()));
+		}
+	}
+
 
 	class ScriptActionListener implements ActionListener {
 
@@ -309,22 +358,46 @@ public class ClockPane extends ContentPane {
 		public void actionPerformed(ActionEvent e) {
 			String command = e.getActionCommand();
 			if (command.equals("ExecuteScript")) {
-				String scriptName = (String) scriptList.getSelectedItem();
+				String scriptName = (String) m_scriptList.getSelectedItem();
 				if (scriptName != null)
 					m_parent.getApplicationInstance().executeScript(scriptName);
 			} else if (command.equals("StopScript")) {
 				m_parent.getApplicationInstance().stopScript();
 			} else if (command.equals("RefreshScriptList")) {
 				updateScriptList();
+			} else if (command.equals("RefreshScenarioList")) {
+				updateScenarioList();				
+			} else if (command.equals("InstallScenario")) {
+				String scenarioName = (String) m_scenarioList.getSelectedItem();
+				if (scenarioName != null)
+					m_parent.getApplicationInstance().installScenario(scenarioName);		
 			} else if (command.equals("SetDate")) {
 				openTimeAndDateSettings();
-			} else if (command.equals("UpdateFactor")) {
-				String newFactor = (String) m_timeFactor.getSelectedItem();
-				m_clock.setFactor(Integer.valueOf(newFactor));
+			} else if (command.equals("IncreaseFactor")) {
+				synchronized (ClockPane.this) {
+					if (m_clock == null) {
+						return;
+					}
+					int factor = m_clock.getFactor();
+					factor++;
+					m_clock.setFactor(factor);
+					m_timeFactor.setText(Integer.toString(factor) + "x");
+				}
+			} else if (command.equals("DecreaseFactor")) {
+				synchronized (ClockPane.this) {
+					if (m_clock == null) {
+						return;
+					}
+					int factor = m_clock.getFactor();
+					factor--;
+					if (factor > 0) {
+						m_clock.setFactor(factor);
+						m_timeFactor.setText(Integer.toString(factor) + "x");
+					}
+				}
 			} else if (command.equals("SaveScenario")) {
-				m_parent.getApplicationInstance().saveSimulationEnvironment();				
+				m_parent.getApplicationInstance().saveSimulationEnvironment();
 			}
-				
 
 		}
 

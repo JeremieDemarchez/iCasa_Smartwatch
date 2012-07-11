@@ -6,7 +6,7 @@ Export-Package: org.medical.upnp.settopbox.importer;uses:="org.apache.
  rvice.upnp,fr.liglab.adele.icasa.device.util,fr.liglab.adele.icasa.en
  vironment,fr.liglab.adele.icasa.device.presence,fr.liglab.adele.icasa
  .device.settopbox,org.osgi.framework"
-Built-By: ctpn9618
+Built-By: Gabriel
 Tool: Bnd-1.15.0
 Bundle-Name: ICasa :: UPnP :: Settop Box importer
 Created-By: Apache Maven Bundle Plugin
@@ -14,9 +14,9 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Copyright: Copyright 2011-2012 Université Joseph Fourier
 Bundle-Vendor: Adèle Team
 Bundle-ContactAddress: thomas.leveque@imag.fr
-Build-Jdk: 1.6.0_29
+Build-Jdk: 1.6.0_17
 Bundle-Version: 0.0.1.SNAPSHOT
-Bnd-LastModified: 1341576809509
+Bnd-LastModified: 1341837894364
 Bundle-ManifestVersion: 2
 Bundle-Description: ICasa :: UPnP :: Settop Box importer
 Bundle-License: Apache License - Version 2.0;link=http://www.apache.or

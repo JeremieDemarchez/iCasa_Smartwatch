@@ -3,7 +3,7 @@ Export-Package: org.medical.x10.presence.sensor;uses:="fr.orange.x10,o
  rg.osgi.framework,org.osgi.util.tracker,fr.liglab.adele.icasa.device.
  util,fr.liglab.adele.icasa.environment,fr.liglab.adele.icasa.device.p
  resence"
-Built-By: ctpn9618
+Built-By: Gabriel
 Tool: Bnd-1.15.0
 Bundle-Name: X10 Presence Sensor
 Created-By: Apache Maven Bundle Plugin
@@ -11,9 +11,9 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Copyright: Copyright 2011-2012 Université Joseph Fourier
 Bundle-Vendor: Adèle Team
 Bundle-ContactAddress: thomas.leveque@imag.fr
-Build-Jdk: 1.6.0_29
+Build-Jdk: 1.6.0_17
 Bundle-Version: 0.0.1.SNAPSHOT
-Bnd-LastModified: 1341576815171
+Bnd-LastModified: 1341837900190
 Bundle-ManifestVersion: 2
 Bundle-License: Apache License - Version 2.0;link=http://www.apache.or
  g/licenses/LICENSE-2.0.txt

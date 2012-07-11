@@ -16,9 +16,6 @@
 package fr.liglab.adele.icasa.script.impl;
 
 import java.io.File;
-import java.io.FileInputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Component;
@@ -26,8 +23,7 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 
-import fr.liglab.adele.icasa.script.Interpreter;
-import fr.liglab.adele.icasa.script.Script;
+import fr.liglab.adele.icasa.script.ScenarioInstaller;
 
 /**
  * Implementation of the iCASA script deployer (FileInstall extension).
@@ -39,10 +35,16 @@ import fr.liglab.adele.icasa.script.Script;
 @Instantiate
 public class DeployerImpl implements ArtifactInstaller {
 
+   /*
     private final Map<String, Script> m_scripts = new HashMap<String, Script>();
 
     @Requires
     private Interpreter m_interpreter;
+    
+    */
+    
+    @Requires
+    private ScenarioInstaller m_scenarioInstaller;
 
     @Override
     public boolean canHandle(File artifact) {
@@ -51,18 +53,8 @@ public class DeployerImpl implements ArtifactInstaller {
 
     @Override
     public void install(File artifact) throws Exception {
-        // Parse the script
-        FileInputStream in = new FileInputStream(artifact);
-        Script script;
-        try {
-            script = m_interpreter.parse(in);
-        } finally {
-            in.close();
-        }
-        // Store the script in the map
-        m_scripts.put(artifact.getCanonicalPath(), script);
-        // Start the script
-        script.start();
+   	 System.out.println("Scenario Deployer  " + artifact.getCanonicalPath());   	 
+   	 m_scenarioInstaller.installScenario(artifact.getName());
     }
 
     @Override
@@ -74,7 +66,6 @@ public class DeployerImpl implements ArtifactInstaller {
 
     @Override
     public void uninstall(File artifact) throws Exception {
-        // Stop and remove the script
-        m_scripts.remove(artifact.getCanonicalPath()).stop();
+   	 m_scenarioInstaller.uninstallCurrentScenario();
     }
 }

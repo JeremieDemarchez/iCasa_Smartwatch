@@ -41,7 +41,6 @@ import nextapp.echo.app.TaskQueueHandle;
 import nextapp.echo.app.Window;
 import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.layout.SplitPaneLayoutData;
-import nextapp.echo.app.list.DefaultListModel;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.StyleSheetLoader;
 
@@ -56,6 +55,9 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
+import org.medical.application.Application;
+import org.medical.application.ApplicationManager;
+import org.medical.application.ApplicationTracker;
 import org.medical.application.device.dashboards.impl.component.ActionPane;
 import org.medical.application.device.dashboards.impl.component.HousePane;
 import org.medical.application.device.dashboards.impl.component.SelectAppPane;
@@ -70,9 +72,6 @@ import org.medical.device.manager.Device;
 import org.medical.device.manager.DeviceDependencies;
 import org.medical.device.manager.DeviceManager;
 import org.medical.device.manager.Service;
-import org.medical.application.Application;
-import org.medical.application.ApplicationTracker;
-import org.medical.application.ApplicationManager;
 import org.medical.script.executor.ScriptExecutor;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -80,11 +79,13 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
+import fr.liglab.adele.icasa.script.ScenarioInstaller;
 
 /**
  * TODO comments.
@@ -115,6 +116,8 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 
 	@Requires
 	private ScriptExecutor m_ScriptExecutor;
+	
+	private ScenarioInstaller m_ScenarioInstaller;
 
 	private DeviceWidgetFactorySelector m_portletFactorySelector;
 
@@ -152,7 +155,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 
 	private final BundleContext m_context;
 
-	private DefaultListModel scriptFileList;
+	//private DefaultListModel scriptFileList;
 
 	private Map<String, ApplicationDevice> devices;
 
@@ -165,7 +168,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 		m_context = context;
 		_bundle = context.getBundle();
 
-		initContent();
+		//initContent();
 	}
 	
 	public static Bundle getBundle() {
@@ -187,9 +190,6 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 
 		// Create the list with porlet factories
 		portletFactories = new ArrayList<DeviceWidgetFactory>();
-
-		// Create the script list
-		scriptFileList = new DefaultListModel();
 
 		// Create the house pane.
 		m_housePane = new HousePane(this);
@@ -288,6 +288,9 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 
 	@Validate
 	public void start() {
+		
+		initContent();
+		
 		m_housePane.addPropertyChangeListener(this);
 
 		m_manager.addDevicePositionListener(this);
@@ -295,8 +298,11 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 
 		m_appMgr.addApplicationListener(this);
 
+		
+		/*
 		// Get the script file list
 		final List<String> scriptList = m_ScriptExecutor.getScriptList();
+		
 		
 		enqueueTask(new Runnable() {
 
@@ -306,6 +312,8 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 				m_actionPane.updateScriptList();
 			}
 		});
+		
+		*/
 		
 		DeviceDependencies devDep = new DeviceDependencies().requiresAll().optional().exportsTo(GenericDevice.class);
 		devDep.includes().all();
@@ -345,6 +353,17 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 		});
 	}
 
+	@Bind(id = "scenarioInstaller")
+	public void bindScenarioInstaller(ScenarioInstaller scenarioInstaller) {
+		m_ScenarioInstaller = scenarioInstaller;
+	}
+
+	@Unbind(id = "scenarioInstaller")
+	public void unbindScenarioInstaller(ScenarioInstaller scenarioInstaller) {
+		m_ScenarioInstaller = null;
+	}
+
+	
 	@Bind(id = "deviceFactories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public void bindDeviceFactory(final Factory factory) {
 		enqueueTask(new Runnable() {
@@ -371,7 +390,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				devices.put(device.getId(), device);
+				devices.put(device.getId(), device);				
 				m_actionPane.addDevice(device, properties);
 			}
 		});
@@ -512,8 +531,26 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 	/**
 	 * @return the scriptFileList
 	 */
+	/*
 	public DefaultListModel getScriptFileList() {
 		return scriptFileList;
+	}
+	*/
+	
+	public List<String> getScenarioList() {
+		return m_ScenarioInstaller.getScenarioList();
+	}
+	
+	public void installScenario(String scenarioName) {
+		try {
+	      m_ScenarioInstaller.installScenario(scenarioName);
+      } catch (Exception e) {
+	      e.printStackTrace();
+      }
+   }
+	
+	public List<String> getScriptList() {
+		return m_ScriptExecutor.getScriptList();
 	}
 
 	public void executeScript(String scriptName) {
@@ -660,15 +697,23 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 				out.println("\t position = " + zone.leftX + " " + zone.topY + " " + zone.rightX + " " + zone.bottomY);
 
 				for (String device : devices) {
+					System.out.println("Device -----> " + device);
 					Position position = m_manager.getDevicePosition(device);
 					String deviceEnv = m_manager.getEnvironmentFromPosition(position);
 					if (deviceEnv.equals(environment)) {
 						String deviceLine = "\t device " + "\"" + device + "\" : \"";
 
+						ApplicationDevice otherDevice = this.devices.get(device);
+						Set<String> props = otherDevice.getPropertyNames();
+						for (String prop : props) {
+	                  System.out.println("property --------> " + prop);
+                  }
+						
+						
 						try {
-							ServiceReference[] references = m_context.getServiceReferences((String) null,
+							ServiceReference[] references = m_context.getServiceReferences(SimulatedDevice.class.getCanonicalName(),
 							      "(device.serialNumber=" + device + ")");
-							if (references.length > 0) {
+							if (references!=null && references.length > 0) {
 								ServiceReference reference = references[0];
 								deviceLine += reference.getProperty("factory.name") + "\" {";
 								out.println(deviceLine);
@@ -734,5 +779,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 			});
 		}
 	}
+
+
 
 }
