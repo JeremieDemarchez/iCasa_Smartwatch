@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.portlet.impl;
+package org.medical.web.common.portlet.impl;
 
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
@@ -21,12 +21,11 @@ import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
-import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
-import org.medical.application.device.dashboards.portlet.DeviceStatusWindow;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 
 public class PlayerStatusWindow extends DeviceStatusWindow {

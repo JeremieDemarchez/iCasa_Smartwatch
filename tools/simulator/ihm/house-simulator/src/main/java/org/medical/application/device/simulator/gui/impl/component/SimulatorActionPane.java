@@ -20,6 +20,7 @@ import nextapp.echo.extras.app.event.TabSelectionEvent;
 import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
+import org.apache.felix.ipojo.Factory;
 import org.medical.application.device.simulator.gui.impl.HouseSimulatorGUIImpl;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.DevicePane;
@@ -47,9 +48,7 @@ public class SimulatorActionPane extends ActionPane {
    }
 	
 
-	protected void initContent() {
-		super.initContent();
-		System.out.println("init Content was invoked by " + this.getClass().getCanonicalName());
+	protected void initContent() {		
 		if (!appInstance.isSimulator()) {
 			m_devicePane = new DevicePane(this);
 			final AccordionPaneLayoutData devicePaneLayout = new AccordionPaneLayoutData();
@@ -111,22 +110,7 @@ public class SimulatorActionPane extends ActionPane {
 			statusPaneLayout.setTitle("Device Details");
 			appInstance.getStatusPane().setLayoutData(statusPaneLayout);
 			add(appInstance.getStatusPane());
-		}
-
-		
-		
-		// Create the application manager pane.
-		/*
-		m_appPane = new ApplicationManagerPane(this);
-		final AccordionPaneLayoutData appPaneLayout = new AccordionPaneLayoutData();
-		appPaneLayout.setIcon(new ResourceImageReference(
-				ApplicationManagerPane.APPLICATION_ICON.getResource(),
-				ICON_SIZE, ICON_SIZE));
-		appPaneLayout.setTitle("Applications");
-		m_appPane.setLayoutData(appPaneLayout);
-		add(m_appPane);
-		*/
-		
+		}		
 
 	}
 
@@ -143,6 +127,16 @@ public class SimulatorActionPane extends ActionPane {
 	public HouseSimulatorGUIImpl getApplicationInstance() {
 		return appInstance;
 	}
+
+
+	public void addDeviceFactory(Factory factory) {	   
+		((SimulatedDevicePane)m_devicePane).addDeviceFactory(factory);
+   }
+
+
+	public void removeDeviceFactory(Factory factory) {
+		((SimulatedDevicePane)m_devicePane).removeDeviceFactory(factory);	  
+   }
 	
 
 }

@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.portlet.impl;
+package org.medical.web.common.portlet.impl;
 
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
@@ -21,23 +21,24 @@ import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
-import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
-import org.medical.application.device.dashboards.portlet.DeviceStatusWindow;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-public class PresenceSensorStatusWindow extends DeviceStatusWindow {
+public class BinaryLightStatusWindow extends DeviceStatusWindow {
+
 
 	/**
     * 
     */
-	private static final long serialVersionUID = 5283844186926837953L;
+   private static final long serialVersionUID = 7214188369352385316L;
 
-	public PresenceSensorStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+
+	public BinaryLightStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
-		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -58,27 +59,21 @@ public class PresenceSensorStatusWindow extends DeviceStatusWindow {
 		layoutGrid.add(new Label("Serial Number: "));
 		layoutGrid.add(new Label(m_deviceSerialNumber));
 
-		if (device instanceof PresenceSensor) {
-			PresenceSensor presenceDevice = (PresenceSensor) device;
-			layoutGrid.add(new Label("Location"));
-			Label locationLabel = new Label(presenceDevice.getLocation());
-
-			locationLabel.setForeground(Color.BLUE);
+		if (device instanceof BinaryLight) {
+			BinaryLight light = (BinaryLight) device;
+			layoutGrid.add(new Label("Light Status: "));
+			
+			String status = "On";
+			if (!light.getPowerStatus())
+				status = "Off";
+			Label locationLabel = new Label(status);
+			if (light.getPowerStatus())
+				locationLabel.setForeground(Color.RED);
+			else
+				locationLabel.setForeground(Color.BLUE);
 			layoutGrid.add(locationLabel);
-
-			boolean presenceSensed = presenceDevice.getSensedPresence();
-			layoutGrid.add(new Label("Presence Sensed"));
-			Label presenceLabel;
-			if (presenceSensed) {
-				presenceLabel = new Label("Somebody in the room");
-				presenceLabel.setForeground(Color.RED);
-			} else {
-				presenceLabel = new Label("Nobody in the room");
-				presenceLabel.setForeground(Color.BLACK);
-			}
-			layoutGrid.add(presenceLabel);
-		}
-
+      }
+				
 		layoutGrid.add(new Label("Fault"));
 
 		String fault = (String) reference.getProperty("fault");
@@ -118,6 +113,7 @@ public class PresenceSensorStatusWindow extends DeviceStatusWindow {
 		}
 		
 		layoutGrid.add(stateLabel);
+		
 		add(layoutGrid);
 
 	}

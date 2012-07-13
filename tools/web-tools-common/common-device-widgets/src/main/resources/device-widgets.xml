@@ -9,7 +9,7 @@
   <!-- Light Devices -->
   <device-widget id="BinaryLightWidgetFactory" type="fr.liglab.adele.icasa.device.light.BinaryLight">
     <icon file="Lamp.png" />
-    <window-class name="org.medical.device.portlet.impl.BinaryLightStatusWindow" />
+    <window-class name="org.medical.web.common.portlet.impl.BinaryLightStatusWindow" />
   </device-widget>
   <device-widget id="DimmerLightWidgetFactory" type="fr.liglab.adele.icasa.device.light.DimmerLight">
     <icon file="DimmerLamp.png" />
@@ -21,11 +21,11 @@
   <!-- Temperature Devices -->
   <device-widget id="ThermometerWidgetFactory" type="fr.liglab.adele.icasa.device.temperature.Thermometer">
     <icon file="Thermometer.png" />
-    <window-class name="org.medical.device.portlet.impl.ThermometerStatusWindow" />
+    <window-class name="org.medical.web.common.portlet.impl.ThermometerStatusWindow" />
   </device-widget>
   <device-widget id="HeaterWidgetFactory" type="fr.liglab.adele.icasa.device.temperature.Heater">
     <icon file="Heater.png" />
-    <window-class name="org.medical.device.portlet.impl.HeaterStatusWindow" />
+    <window-class name="org.medical.web.common.portlet.impl.HeaterStatusWindow" />
   </device-widget>
   <device-widget id="CoolerWidgetFactory" type="fr.liglab.adele.icasa.device.temperature.Cooler">
     <icon file="Cooler.png" />
@@ -49,7 +49,7 @@
   <!-- Presence Devices -->
   <device-widget id="PresenceSensorWidgetFactory" type="fr.liglab.adele.icasa.device.presence.PresenceSensor">
     <icon file="Presence.png" />
-    <window-class name="org.medical.device.portlet.impl.PresenceSensorStatusWindow" />
+    <window-class name="org.medical.web.common.portlet.impl.PresenceSensorStatusWindow" />
   </device-widget>
 
 </device-widgets>

@@ -34,7 +34,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 
-@Component(name = "DeviceWidgetFactory")
+@Component(name = "CommonDeviceWidgetFactory")
 @Provides
 public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 

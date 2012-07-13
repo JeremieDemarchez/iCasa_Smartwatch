@@ -13,27 +13,27 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.portlet.impl;
+package org.medical.web.common.portlet.impl;
 
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.medical.application.device.dashboards.portlet.impl.DeviceWidgetFactoryImpl;
+import org.medical.application.device.web.common.portlet.impl.DeviceWidgetFactoryImpl;
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
 
-@Component(name = "PresenceSensorWidgetFactory")
+@Component(name = "HalogenWidgetFactory")
 //@Instantiate
 @Provides
-public class PresenceSensorWidgetFactory extends DeviceWidgetFactoryImpl {
-	
-	public PresenceSensorWidgetFactory(BundleContext context) {
+public class HalogenWidgetFactory extends DeviceWidgetFactoryImpl {
+
+	public HalogenWidgetFactory(BundleContext context) {
 		setBundle(context.getBundle());
-		setIconFileName("/Presence.png");
-		setDeviceInterfaceName(PresenceSensor.class.getName());
-		setWindowClassName(PresenceSensorStatusWindow.class.getName());
-		setDeviceWidgetId("PresenceSensorWidgetFactory");
+		setIconFileName("/DimmerLamp.png");
+		setDeviceInterfaceName(DimmerLight.class.getName());
+		setWindowClassName(HalogenStatusWindow.class.getName());
+		setDeviceWidgetId("HalogenWidgetFactory");
 	}
 
 }
+

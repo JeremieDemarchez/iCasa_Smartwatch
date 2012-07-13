@@ -31,8 +31,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * @author Gabriel Pedraza
  *
  */
-@Component(name = "PortletFactorySelector")
-@Instantiate(name = "PortletFactorySelector-0")
+@Component(name = "CommonPortletFactorySelector")
+@Instantiate(name = "CommonPortletFactorySelector-0")
 @Provides
 public class DeviceWidgetFactorySelectorImpl implements DeviceWidgetFactorySelector {
 

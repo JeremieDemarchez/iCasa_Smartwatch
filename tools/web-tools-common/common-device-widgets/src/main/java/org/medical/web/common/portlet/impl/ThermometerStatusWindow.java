@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.portlet.impl;
+package org.medical.web.common.portlet.impl;
 
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
@@ -21,14 +21,14 @@ import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
-import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
-import org.medical.application.device.dashboards.portlet.DeviceStatusWindow;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
-public class HalogenStatusWindow extends DeviceStatusWindow {
+public class ThermometerStatusWindow extends DeviceStatusWindow {
 
 
 	/**
@@ -37,7 +37,7 @@ public class HalogenStatusWindow extends DeviceStatusWindow {
    private static final long serialVersionUID = 7214188369352385316L;
 
 
-	public HalogenStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public ThermometerStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 	}
 
@@ -59,16 +59,11 @@ public class HalogenStatusWindow extends DeviceStatusWindow {
 		layoutGrid.add(new Label("Serial Number: "));
 		layoutGrid.add(new Label(m_deviceSerialNumber));
 
-		if (device instanceof DimmerLight) {
-			DimmerLight light = (DimmerLight) device;
-			layoutGrid.add(new Label("Power Level: "));
-			
-			double powerLevel = light.getPowerLevel();
-			Label locationLabel = new Label(powerLevel + "");
-			if (powerLevel < 5)
-				locationLabel.setForeground(Color.RED);
-			else
-				locationLabel.setForeground(Color.BLUE);
+		if (device instanceof Thermometer) {
+	      Thermometer thermometer = (Thermometer) device;
+			layoutGrid.add(new Label("Temperature"));
+			Label locationLabel = new Label(thermometer.getTemperature()+"");
+			locationLabel.setForeground(Color.BLUE);
 			layoutGrid.add(locationLabel);
       }
 				

@@ -64,7 +64,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 
 public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance implements DevicePositionListener,
-      PropertyChangeListener, StateVariableListener {
+      PropertyChangeListener, MedicalWebApplication {
 
 	/**
 	 * @generated
@@ -76,7 +76,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	//private static Bundle _bundle;
 	
 	
-	@Requires
 	private SimulationManager m_manager;
 	
 	private DeviceWidgetFactorySelector m_portletFactorySelector;
@@ -108,6 +107,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	//private ComponentInstance m_controller;
 
 	private final BundleContext m_context;
+	
+	protected DeviceController m_DeviceController;
 
 	//private DefaultListModel scriptFileList;
 
@@ -142,7 +143,9 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 		// Create the list with porlet factories
 		portletFactories = new ArrayList<DeviceWidgetFactory>();
+		
 
+		
 		// Create the house pane.
 		m_housePane = new HousePane(this);
 
@@ -150,8 +153,12 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		m_statusPane = new ContentPane();
 
 		// Create the action pane.
-		m_actionPane = getActionPane();
+		m_actionPane = createActionPane();
 
+		//Create the device controller
+		m_DeviceController = createDeviceController();
+		m_DeviceController.addListener(m_actionPane.getDevicePane());
+		
 		// Create a panel where user can select a digital service
 		//m_selectAppPane = new SelectAppPane(this);
 
@@ -159,8 +166,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		//m_selectAppPane.addSelectedApplicationTracker(m_actionPane);
 
 		// Create a panel which contains select service panel and action panel
-		final SplitPane dashboardPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, false);
-		dashboardPane.setResizable(false);
+		//final SplitPane dashboardPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, false);
+		//dashboardPane.setResizable(false);
 
 		
 		//SplitPaneLayoutData selectServPaneData = new SplitPaneLayoutData();
@@ -177,7 +184,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
 		m_actionPane.setLayoutData(actionPaneData);
 
-		dashboardPane.add(m_actionPane);
+		//dashboardPane.add(m_actionPane);
 
 		// Create the top split pane, that contains the house and action panes.
 		final SplitPane topPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
@@ -187,9 +194,9 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		data.setMinimumSize(new Extent(500, Extent.PX));
 		data.setMaximumSize(new Extent(900, Extent.PX));
 		data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		dashboardPane.setLayoutData(data);
+		//dashboardPane.setLayoutData(data);
 
-		topPane.add(dashboardPane);
+		topPane.add(m_actionPane);
 
 		data = new SplitPaneLayoutData();
 		data.setMinimumSize(new Extent(200, Extent.PX));
@@ -226,12 +233,16 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			m_window.setTitle("Home Dashboard");
 	}
 
-	protected abstract ActionPane getActionPane();
+	protected abstract ActionPane createActionPane();
 	
 	
 	@Override
 	public Window init() {
 		return m_window;
+	}
+	
+	public ActionPane getActionPane() {
+		return m_actionPane;
 	}
 	
 
@@ -250,8 +261,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	@Validate
 	public void start() {
 		
+
 		initContent();
-		
 		m_housePane.addPropertyChangeListener(this);
 		m_manager.addDevicePositionListener(this);
 		
@@ -282,10 +293,11 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	}
 	
+	/*
 	
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public void bindDevice(final ApplicationDevice device, final Map<String, Object> properties) {
-		device.addVariableListener(this);
+		//device.addVariableListener(this);
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
@@ -297,7 +309,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	@Unbind(id = "devices")
 	public void unbindDevice(final ApplicationDevice device) {
-		device.removeVariableListener(this);
+		//device.removeVariableListener(this);
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
@@ -307,6 +319,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		});
 	}
 
+	*/
+	
 	@Bind(id = "portletfactory", aggregate = true, optional = true)
 	public void bindPortletFactory(final DeviceWidgetFactory portletFactory) {
 		enqueueTask(new Runnable() {
@@ -402,7 +416,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.moveDevice(deviceSerialNumber, position);
+				getDeviceController().moveDevice(deviceSerialNumber, position);				
+				//m_actionPane.moveDevice(deviceSerialNumber, position);
 			}
 		});
 	}
@@ -413,7 +428,10 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.changeDevice(deviceSerialNumber, device, properties);
+				//m_DeviceController.c
+				//m_actionPane.changeDevice(deviceSerialNumber, device, properties);
+				
+				//TODO: Implementation
 			}
 		});
 	}
@@ -518,6 +536,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 
 
+	/*
 	@Override
 	public void addVariable(StateVariable variable, Object sourceObject) {
 		// TODO Auto-generated method stub
@@ -551,7 +570,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			});
 		}
 	}
-
+   */
+	
 	public SimulationManager getSimulationManager() {
 		return m_manager;
 	}
@@ -568,7 +588,33 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		this.isAndroid = isAndroid;
    }
 
+
+
+	public void bindSimulationManager(SimulationManager simulationManager) {
+	   m_manager = simulationManager;
+	   
+   }
+
+
+
+	public void unbindSimulationManager(SimulationManager simulationManager) {
+		m_manager = null;	   
+   }
+
+	public ApplicationInstance getApplicationInstance() {
+		return this;
+	}
 	
+	public Map<String, ApplicationDevice> getDevicesMap() {
+		return devices;
+	}
+	
+	
+	public abstract DeviceController createDeviceController();
+	
+	public DeviceController getDeviceController() {
+		return m_DeviceController;
+	}
 	
 
 }

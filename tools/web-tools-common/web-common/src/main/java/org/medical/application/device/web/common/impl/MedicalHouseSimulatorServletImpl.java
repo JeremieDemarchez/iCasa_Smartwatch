@@ -28,6 +28,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import nextapp.echo.app.ApplicationInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 
 import org.apache.felix.ipojo.ComponentInstance;
@@ -45,7 +46,7 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
  * 
  * @author bourretp
  */
-public class MedicalHouseSimulatorServletImpl extends WebContainerServlet implements
+public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServlet implements
         InstanceStateListener {
 
     /**
@@ -54,8 +55,10 @@ public class MedicalHouseSimulatorServletImpl extends WebContainerServlet implem
    private static final long serialVersionUID = 956410092075324420L;
    
    
+   /*
    @ServiceProperty(name = "alias")
    private String alias;
+   
    
    @Property(name="houseImage", mandatory=true)
    private String houseImage;
@@ -66,21 +69,29 @@ public class MedicalHouseSimulatorServletImpl extends WebContainerServlet implem
    @Property(name="homeType", mandatory=true)
    private String homeType;
    
+   */
+   
     /**
      * The classloader of this bundle.
      */
+   /*
     private static final ClassLoader CLASSLOADER = MedicalHouseSimulatorServletImpl.class
             .getClassLoader();
+            
+    */
 
     @Requires(filter = "(component.class=org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl)")
     private Factory m_appFactory;
 
     private final Map<String, ComponentInstance> m_appInstances = new HashMap<String, ComponentInstance>();
 
+    
+    private MedicalWebApplication m_WebApplication;
 
     /**
      * Create a new session component instance
      */
+   /*
     @Override
     public MedicalHouseSimulatorImpl newApplicationInstance() {
         // Create the application instance.
@@ -122,6 +133,7 @@ public class MedicalHouseSimulatorServletImpl extends WebContainerServlet implem
         //m_logger.info("Application instance created : " + name);
         return pojo;
     }
+    */
 
     @Override
     public void stateChanged(final ComponentInstance appInstance,
@@ -155,7 +167,7 @@ public class MedicalHouseSimulatorServletImpl extends WebContainerServlet implem
         // Echo3 uses the thread current class loader, so we need to feed it,
         // with the appropriated class loader, before any request.
         final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(CLASSLOADER);
+        Thread.currentThread().setContextClassLoader(getBundleClassLoader());
         try {
             super.service(req, res);
         } finally {
@@ -164,4 +176,17 @@ public class MedicalHouseSimulatorServletImpl extends WebContainerServlet implem
         }
     }
 
+    public abstract ClassLoader getBundleClassLoader();
+    
+    public void bindWebApplication(MedicalWebApplication webApplication) {
+   	 m_WebApplication = webApplication;
+    }
+    
+    public void unbindWebApplication(MedicalWebApplication webApplication) {
+   	 m_WebApplication = null;
+    }
+    
+    public ApplicationInstance newApplicationInstance() {
+ 		return m_WebApplication.getApplicationInstance();
+    }
 }

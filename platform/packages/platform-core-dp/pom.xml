@@ -27,21 +27,25 @@
 			<artifactId>application.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>application.impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.manager.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.manager.impl</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		
 	</dependencies>
 
 	<build>

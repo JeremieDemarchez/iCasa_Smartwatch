@@ -15,37 +15,23 @@
  */
 package org.medical.application.device.simulator.gui.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-
 import javax.servlet.Servlet;
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
 import nextapp.echo.app.serial.property.BooleanPeer;
 import nextapp.echo.extras.app.serial.property.AccordionPaneLayoutDataPeer;
 import nextapp.echo.extras.webcontainer.sync.component.GroupPeer;
-import nextapp.echo.webcontainer.WebContainerServlet;
 import nextapp.echo.webcontainer.sync.command.BrowserOpenWindowCommandPeer;
 import nextapp.echo.webcontainer.sync.component.RadioButtonPeer;
 import nextapp.echo.webcontainer.sync.property.ServedImageReferencePeer;
 
-import org.apache.felix.ipojo.ComponentInstance;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.InstanceManager;
-import org.apache.felix.ipojo.InstanceStateListener;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
+import org.apache.felix.ipojo.annotations.Unbind;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorServletImpl;
+import org.medical.application.device.web.common.impl.MedicalWebApplication;
 
 /**
  * TODO comments.
@@ -57,19 +43,15 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 // @StaticServiceProperty(name = "alias", type = "java.lang.String", value =
 // "/dashboards") })
 @Provides(specifications = Servlet.class)
-public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements InstanceStateListener  {
+public class HouseSimulatorGUIServletImpl extends MedicalHouseSimulatorServletImpl implements Servlet {
+
+	/**
+    * 
+    */
+   private static final long serialVersionUID = 1849521777163057387L;
 
 	@ServiceProperty(name = "alias")
 	private String alias;
-
-	@Property(name = "houseImage", mandatory = true)
-	private String houseImage;
-
-	@Property(name = "userImage", mandatory = true)
-	private String userImage;
-
-	@Property(name = "homeType", mandatory = true)
-	private String homeType;
 
 	Class[] peerClasses = { RadioButtonPeer.class, GroupPeer.class, BooleanPeer.class, ServedImageReferencePeer.class,
 	      BrowserOpenWindowCommandPeer.class, AccordionPaneLayoutDataPeer.class };
@@ -79,104 +61,28 @@ public class HouseSimulatorGUIServletImpl extends WebContainerServlet implements
 	 */
 	private static final ClassLoader CLASSLOADER = HouseSimulatorGUIServletImpl.class.getClassLoader();
 
-	@Requires(filter = "(factory.name=WebHouseSimulatorNew)")
-	private Factory m_appFactory;
-
-	private final Map<String, ComponentInstance> m_appInstances = new HashMap<String, ComponentInstance>();
-
-	/**
-	 * Create a new session component instance
-	 */
-	@Override
-	public HouseSimulatorGUIImpl newApplicationInstance() {
-		System.out.println(peerClasses);
-
-		// Create the application instance.
-		final ComponentInstance appInstance;
-		Dictionary<String, Object> dict = new Hashtable<String, Object>();
-		dict.put("houseImage", houseImage);
-		dict.put("userImage", userImage);
-		dict.put("homeType", homeType);
-
-		String[] isAndroidParams = (String[]) getActiveConnection().getUserInstance().getInitialRequestParameterMap()
-		      .get("isAndroid");
 		
-		boolean isAndroid = false;
-		if ((isAndroidParams != null) && (isAndroidParams.length > 0)) {
-			String isAndroidStr = isAndroidParams[0];
-			isAndroid = ((isAndroidStr != null) && (Boolean.valueOf(isAndroidStr)));
-		}
-		dict.put("isAndroid", isAndroid);
-
-		// TODO: Provisional solution to share the same code in both Servlets
-		// (dashboard and simulator)
-
-		//if (alias.equals("/simulator"))
-			dict.put("isSimulator", new Boolean(true));
-		//else
-		//	dict.put("isSimulator", new Boolean(false));
-
-		try {
-			appInstance = m_appFactory.createComponentInstance(dict);
-		} catch (final Exception e) {
-			System.out.println(e.getMessage());
-			throw new RuntimeException("Cannot create application instance", e);
-		}
-		
-		final String name = appInstance.getInstanceName();
-		synchronized (m_appInstances) {
-			m_appInstances.put(name, appInstance);
-			appInstance.addInstanceStateListener(this);
-		}
-		
-		final HouseSimulatorGUIImpl pojo = (HouseSimulatorGUIImpl) ((InstanceManager) appInstance).getPojoObject();
-		
-		System.out.println("The pojo instabce is ---------->>>>>> " + appInstance.getInstanceName());
-		System.out.println("The pojo instabce is ---------->>>>>> " + pojo.getWindow());
-		pojo.setComponentInstance(appInstance);
-		// m_logger.info("Application instance created : " + name);
-		return pojo;
-	}
-
-	
-	@Override
-	public void stateChanged(final ComponentInstance appInstance, final int newState) {
-		if (newState != ComponentInstance.DISPOSED) {
-			return;
-		}
-		final String name = appInstance.getInstanceName();
-		synchronized (m_appInstances) {
-			m_appInstances.remove(name);
-		}
-		// m_logger.info("Application instance disposed : " + name);
-	}
-	
-
 	@Invalidate
 	public void cleanUp() {
-		// m_logger.info("Destroying all applications instances");
-		final Collection<ComponentInstance> appInstances;
-		synchronized (m_appInstances) {
-			// Copy to avoid ConcurrentModificationExceptions.
-			appInstances = new ArrayList<ComponentInstance>(m_appInstances.values());
-		}
-		for (ComponentInstance appInstance : appInstances) {
-			appInstance.dispose();
-		}
+		super.cleanUp();
 	}
+
+	
+	@Override
+   public ClassLoader getBundleClassLoader() {
+	   return CLASSLOADER;
+   }
 
 	@Override
-	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
-		// Echo3 uses the thread current class loader, so we need to feed it,
-		// with the appropriated class loader, before any request.
-		final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-		Thread.currentThread().setContextClassLoader(CLASSLOADER);
-		try {
-			super.service(req, res);
-		} finally {
-			// Restore classloader
-			Thread.currentThread().setContextClassLoader(tccl);
-		}
+	@Bind(id="webApplication", optional=false)
+	public void bindWebApplication(MedicalWebApplication webApplication) {
+	   super.bindWebApplication(webApplication);
 	}
-
+	
+	@Override
+	@Unbind(id="webApplication")
+	public void unbindWebApplication(MedicalWebApplication webApplication) {
+	   super.unbindWebApplication(webApplication);
+	}
+	
 }

@@ -10,16 +10,16 @@
     <relativePath>../../../parent</relativePath>
   </parent>
 
-  <artifactId>device.widgets</artifactId>
+  <artifactId>common.device.widgets</artifactId>
   <packaging>bundle</packaging>
-  <name>ICasa :: Device Dashboards Widgets</name>
-  <description>Device Dashboards Widgets</description>
+  <name>ICasa :: Tools :: Device Widgets</name>
+  <description>ICasa :: Tools :: Device Widgets</description>
 
   <dependencies>
 
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>device.dashboards</artifactId>
+      <artifactId>web.common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
     <dependency>
@@ -38,16 +38,16 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Export-Package>org.medical.device.portlet.impl</Export-Package>
+            <Export-Package>org.medical.web.common.portlet.impl</Export-Package>
             <Import-Package>fr.liglab.adele.icasa.device, fr.liglab.adele.icasa.device.light,
               fr.liglab.adele.icasa.device.temperature,
               fr.liglab.adele.icasa.device.presence,
               fr.liglab.adele.icasa.device.sound,
               fr.liglab.adele.icasa.device.power,
               nextapp.echo.app,
-              org.medical.application.device.dashboards.*,
-              org.medical.device.*, org.osgi.framework</Import-Package>
-            <Device-Widget-Factory>Test</Device-Widget-Factory>
+              org.medical.application.device.web.*, org.osgi.framework</Import-Package>
+
+            <Common-Widget-Factory>Test</Common-Widget-Factory>
           </instructions>
         </configuration>
       </plugin>

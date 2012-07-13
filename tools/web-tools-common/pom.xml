@@ -32,5 +32,6 @@
 
 	<modules>
 		<module>web-common</module>
+		<module>common-device-widgets</module>
 	</modules>
 </project>

@@ -84,11 +84,11 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 
 	private final ActionPane m_parent;
 
-	private final Map<String, DeviceEntry> m_devices = new HashMap<String, DeviceEntry>();
+	//private final Map<String, DeviceEntry> m_devices = new HashMap<String, DeviceEntry>();
 
 	protected DeviceTableModel tableModel;
 
-	protected List<String> m_deviceSerialNumbers = new ArrayList<String>();
+	//protected List<String> m_deviceSerialNumbers = new ArrayList<String>();
 
 	private Map<Application, Set<String /* device id */>> m_devicesPerApplication = new HashMap<Application, Set<String /*
 																																								 * device
@@ -101,10 +101,10 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 
 	protected Grid m_grid;
 
-	private TextField m_description;
-	private DropDownMenu m_factory;
+	//private TextField m_description;
+	//private DropDownMenu m_factory;
 	private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
-	private final Random m_random = new Random();
+	//private final Random m_random = new Random();
 
 	public DevicePane(final ActionPane parent) {
 		m_parent = parent;
@@ -201,11 +201,13 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		return model;
 	}
 	
+	/*
 	public void addDeviceFactory(Factory factory) {
 	}
 
 	public void removeDeviceFactory(Factory factory) {
 	}
+	*/
 
 	/**
 	 * Adds a device "reference" into the GUI simulator application
@@ -215,6 +217,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 * @param properties
 	 *           properties of the device service
 	 */
+	/*
 	public void addDevice(final ApplicationDevice device, Map<String, Object> properties) {
 		DeviceEntry entry = getDeviceEntry(device, properties);
 
@@ -233,6 +236,27 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 			m_deviceSerialNumbers.add(entry.serialNumber);
 		}
 
+
+		
+		// Add device to the table
+		addDeviceInTable(entry);
+
+	}
+	
+	*/
+
+	public void addDevice(DeviceEntry entry) {
+
+
+		// Creating and adding the house pane button (icon)
+		// addDeviceWidget(device, entry.description, entry.position,
+		// entry.serialNumber, entry);
+		addDeviceWidget(entry);
+		/*
+		synchronized (m_deviceSerialNumbers) {
+			m_deviceSerialNumbers.add(entry.serialNumber);
+		}
+		*/
 		// set it as unavailable for all services by default
 		/*
 		for (Application service : getAppInstance().getAppMgr().getApplications()) {
@@ -243,9 +267,9 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		
 		// Add device to the table
 		addDeviceInTable(entry);
-
 	}
-
+	
+	
 	/**
 	 * Builds a device entry instance (gui information) from a device object
 	 * 
@@ -329,6 +353,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 * @param device
 	 *           Device instance to be removed
 	 */
+	/*
 	public void removeDevice(ApplicationDevice device) {
 
 		String serialNumber = device.getId();
@@ -342,6 +367,17 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 
 		removeDeviceWidget(entry);
 	}
+	*/
+	
+	public void removeDevice(DeviceEntry entry) {
+		removeDeviceFromTable(entry.serialNumber);		
+		/*
+		synchronized (m_deviceSerialNumbers) {		
+			m_deviceSerialNumbers.remove(entry.serialNumber);
+		}
+		*/
+		removeDeviceWidget(entry);
+	}
 
 	protected void removeDeviceWidget(DeviceEntry entry) {
 
@@ -352,11 +388,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		tableModel.removeDeviceRow(serialNumber);
 	}
 
-	public void moveDevice(final String deviceSerialNumber, Position position) {
-		DeviceEntry entry = m_devices.get(deviceSerialNumber);
-		if (entry == null) {
-			return;
-		}
+	public void moveDevice(DeviceEntry entry, Position position) {
 		if (((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_X)).getValue() == 0 && position != null) {
 			// Free the border slot.
 			int y = ((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_Y)).getValue();
@@ -379,15 +411,16 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		// re-render
 		removeDeviceWidget(entry);
 
+		String deviceSerialNumber = entry.serialNumber;
 		if (isAvailableForSelectedApplication(deviceSerialNumber))
 			// addDeviceWidget(getAppInstance().getDeviceBySerialNumber(deviceSerialNumber),
 			// entry.description, position, deviceSerialNumber, entry);
 			addDeviceWidget(entry);
 
-		updateDeviceTable(deviceSerialNumber, getAppInstance().getDeviceBySerialNumber(deviceSerialNumber));
+		updateDeviceTable(entry);
 	}
 
-	protected void showErrorWindow(final String error) {
+	public void showErrorWindow(final String error) {
 		final WindowPane window = new WindowPane();
 		// Create the icon.
 		final Label icon = new Label(new ResourceImageReference("/Error.png"));
@@ -426,6 +459,8 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 * @param deviceSerialNumber
 	 * @param device
 	 */
+	
+	/*
 	public void changeDevice(String deviceSerialNumber, ApplicationDevice device, Map<String, Object> properties) {
 		DeviceEntry entry = m_devices.get(deviceSerialNumber);
 		if (entry == null) {
@@ -448,7 +483,21 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 
 		updateDeviceTable(deviceSerialNumber, device);
 	}
+	*/
+	
+	public void changeDevice(DeviceEntry entry) {
+		removeDeviceWidget(entry);
+		if (isAvailableForSelectedApplication(entry.serialNumber))
+			addDeviceWidget(entry);		
+		updateDeviceTable(entry);
+	}
+	
+	private void updateDeviceTable(DeviceEntry entry) {
+		if (entry != null)
+			tableModel.updateDeviceRow(entry);
+	}
 
+	/*
 	private void updateDeviceTable(String deviceSerialNumber, ApplicationDevice applicationDevice) {
 		DeviceEntry entry = m_devices.get(deviceSerialNumber);
 		if (entry == null) {
@@ -456,6 +505,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		}
 		tableModel.updateDeviceRow(entry);
 	}
+	*/
 
 	/**
 	 * Gets the current application instance
@@ -641,8 +691,11 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 
 		ActionListener stateMenuActionListener = new ActionListener() {
 
+			
+			//TODO: reimplement this method
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				/*
 				int selectedIdx = stateField.getSelectionModel().getMinSelectedIndex();
 				String availableStr = (String) stateField.getModel().get(selectedIdx);
 
@@ -661,6 +714,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 				//setDeviceAvailabilityFor(deviceSerialNumber, getAppInstance().getSelectedApplication(), available);
 				tableModel.updateDeviceRow(entry);
 				updateDeviceWidgetVisibility(entry);
+				*/
 			}
 		};
 
@@ -866,9 +920,13 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 			}
 
 			if (available) {
+				//TODO: Reimplement this code
+				
+				/*
 				if (!m_devices.containsKey(deviceSerialNumber))
 					return;
-
+				*/
+				
 				deviceIds.add(deviceSerialNumber);
 			} else {
 				deviceIds.remove(deviceSerialNumber);
@@ -880,6 +938,8 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	public void notifySelectedAppChanged(Application oldSelectServ, Application newSelectedServ) {
 		recreateDeviceTable(newSelectedServ);
 
+		//TODO: Reimplement this code
+		/*
 		synchronized (m_deviceSerialNumbers) {
 			for (String deviceSerialNb : m_deviceSerialNumbers) {
 				DeviceEntry entry = m_devices.get(deviceSerialNb);
@@ -887,18 +947,22 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 				updateDeviceWidgetVisibility(entry);
 			}
 		}
+		*/
 	}
 
 	public void refreshDeviceWidgets() {
-		synchronized (m_deviceSerialNumbers) {
+		//TODO: Reimplement this code
+		/*
+		synchronized (m_deviceSerialNumbers) {			
 			for (String deviceSerialNb : m_deviceSerialNumbers) {
 				DeviceEntry entry = m_devices.get(deviceSerialNb);
 				updateDeviceWidgetVisibility(entry);
-			}
+			}			
 		}
+		*/
 	}
 
-	private void updateDeviceWidgetVisibility(DeviceEntry entry) {
+	public void updateDeviceWidgetVisibility(DeviceEntry entry) {
 		removeDeviceWidget(entry);
 
 		final String deviceSerialNumber = entry.serialNumber;
@@ -909,18 +973,6 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	}
 
 
-
-	public static class DeviceEntry {
-		public String serialNumber;
-		public Label label;
-		public FloatingButton widget;
-		public Position position;
-		public String logicPosition;
-		public String state;
-		public String fault;
-		public FloatingButtonDragSource dragSource;
-		public String description;
-	}
 
 	/**
 	 * Abstract (default) model to show devices in a echo3 table

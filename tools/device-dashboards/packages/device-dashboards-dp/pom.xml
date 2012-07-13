@@ -41,11 +41,11 @@
 						<headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
-								<value>icasa.simulator</value>
+								<value>icasa.dashboard</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Name</name>
-								<value>ICasa Simulator</value>
+								<value>ICasa Dashboard</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Version</name>

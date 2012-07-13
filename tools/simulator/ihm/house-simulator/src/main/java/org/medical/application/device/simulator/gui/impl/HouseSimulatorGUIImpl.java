@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import nextapp.echo.app.ApplicationInstance;
+
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -37,12 +39,15 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.device.simulator.gui.impl.component.SimulatorActionPane;
+import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.MedicalWebApplication;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
 import org.medical.clock.api.Clock;
 import org.medical.common.StateVariable;
+import org.medical.common.StateVariableListener;
 import org.medical.device.manager.ApplicationDevice;
 import org.medical.device.manager.Device;
 import org.medical.device.manager.Service;
@@ -63,18 +68,14 @@ import fr.liglab.adele.icasa.script.ScenarioInstaller;
  * 
  * @author bourretp
  */
-@Component(name = "WebHouseSimulatorNew")
+@Component(name = "WebHouseSimulatorNew", immediate = true)
 @Provides
-public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements UserPositionListener {
+public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements UserPositionListener, StateVariableListener {
 
 	/**
 	 * @generated
 	 */
 	private static final long serialVersionUID = -2887321216032546523L;
-
-
-	@Requires
-	private SimulationManager m_manager;
 
 	@Requires
 	private ScriptExecutor m_ScriptExecutor;
@@ -82,33 +83,21 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	@Requires
 	private ScenarioInstaller m_ScenarioInstaller;
 
-	private SimulatorActionPane m_actionPane;
-
-
+	
 	public HouseSimulatorGUIImpl(BundleContext context) {
 		super(context);
 	}
 
 
-	@Validate
-	public void start() {
-		super.start();
-		m_manager.addUserPositionListener(this);
-
-	}
-
-	@Invalidate
-	public void stop() {
-		super.stop();
-		m_manager.removeUserPositionListener(this);
-	}
+	// ---- Component dependencies methods ---- //
 
 	@Bind(id = "clock", optional = true)
 	public void bindClock(final Clock clock) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.setClock(clock);
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.setClock(clock);
 			}
 		});
 	}
@@ -118,11 +107,13 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.setClock(null);
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.setClock(null);
 			}
 		});
 	}
 
+	/*
 	@Bind(id = "scenarioInstaller")
 	public void bindScenarioInstaller(ScenarioInstaller scenarioInstaller) {
 		m_ScenarioInstaller = scenarioInstaller;
@@ -132,13 +123,15 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	public void unbindScenarioInstaller(ScenarioInstaller scenarioInstaller) {
 		m_ScenarioInstaller = null;
 	}
+	*/
 
 	@Bind(id = "deviceFactories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public void bindDeviceFactory(final Factory factory) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.addDeviceFactory(factory);
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.addDeviceFactory(factory);
 			}
 		});
 	}
@@ -148,11 +141,13 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.removeDeviceFactory(factory);
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.removeDeviceFactory(factory);
 			}
 		});
 	}
 
+	/*
 	@Override
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public void bindDevice(final ApplicationDevice device, final Map<String, Object> properties) {
@@ -163,6 +158,50 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	@Unbind(id = "devices")
 	public void unbindDevice(final ApplicationDevice device) {
 		super.unbindDevice(device);
+	}
+	*/
+
+	@Bind(id = "devices", aggregate = true, optional = true)
+	public void bindDevice(final ApplicationDevice device, final Map<String, Object> properties) {
+		device.addVariableListener(this);
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				//devices.put(device.getId(), device);				
+				//m_actionPane.addDevice(device, properties);
+				getDevicesMap().put(device.getId(), device);
+				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
+				controller.addDevice(device, properties);
+			}
+		});
+	}
+
+	@Unbind(id = "devices")
+	public void unbindDevice(final ApplicationDevice device) {
+		device.removeVariableListener(this);
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				//devices.remove(device.getId());
+				//m_actionPane.removeDevice(device);
+				getDevicesMap().remove(device.getId());
+				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
+				controller.removeDevice(device);
+				//controller.addDevice(device, properties);
+			}
+		});
+	}
+	
+	@Override
+	@Bind(id = "simulationManager")
+	public void bindSimulationManager(final SimulationManager simulationManager) {
+		super.bindSimulationManager(simulationManager);
+	}
+
+	@Override
+	@Unbind(id = "simulationManager")
+	public void unbindSimulationManager(final SimulationManager simulationManager) {
+		super.unbindSimulationManager(simulationManager);
 	}
 
 	@Override
@@ -186,232 +225,87 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		super.unbindPortletFactorySelector(portletFactorySelector);
 	}
 
-	/*
-	 * private void allDevicePropertiesChanged(DeviceWidgetFactory
-	 * portletFactory) {
-	 * 
-	 * Collection<ApplicationDevice> myDevices = devices.values(); for
-	 * (ApplicationDevice appDevice : myDevices) { GenericDevice genericDevice =
-	 * (GenericDevice) appDevice.getDeviceProxy(GenericDevice.class); if
-	 * (portletFactory.typeIsSupported(genericDevice)) {
-	 * devicePropertiesChanged(genericDevice.getSerialNumber(), appDevice, null);
-	 * } } }
-	 */
-
-	/*
-	 * public void disposeDeviceInstance(String serialNumber) { ApplicationDevice
-	 * device = devices.get(serialNumber); GenericDevice genDevice =
-	 * (GenericDevice)
-	 * device.getAvailableDevice().getDeviceProxy(GenericDevice.class); if
-	 * ((genDevice != null) && (genDevice instanceof Pojo)) { Pojo pojo = (Pojo)
-	 * device; pojo.getComponentInstance().dispose(); } }
-	 */
-	/*
-	 * public Window getWindow() { return m_window; }
-	 */
-
-	/*
-	 * public void enqueueTask(final Runnable task) {
-	 * enqueueTask(m_taskQueueHandle, task); }
-	 */
-
-	/*
-	 * public void setComponentInstance(final ComponentInstance appInstance) {
-	 * m_controller = appInstance; }
-	 */
-
-	/*
-	 * public BundleContext getContext() { return m_context; }
-	 */
-
-	/*
-	 * public SimulationManager getSimulationManager() { return m_manager; }
-	 */
-
 	@Override
 	public void userPositionChanged(final String userName, final Position position) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.moveUser(userName, position);
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.moveUser(userName, position);
 			}
 		});
 	}
 
-	/*
-	@Override
-	public void devicePositionChanged(final String deviceSerialNumber, final Position position) {
-		enqueueTask(new Runnable() {
-			@Override
-			public void run() {
-				m_actionPane.moveDevice(deviceSerialNumber, position);
-			}
-		});
-	}
-	*/
-
-	/*
-	 * public void devicePropertiesChanged(final String deviceSerialNumber, final
-	 * ApplicationDevice device, final Map<String, Object> properties) {
-	 * 
-	 * enqueueTask(new Runnable() {
-	 * 
-	 * @Override public void run() {
-	 * m_actionPane.changeDevice(deviceSerialNumber, device, properties); } }); }
-	 */
-
-	/**
-	 * @return the scriptFileList
-	 */
-	/*
-	 * public DefaultListModel getScriptFileList() { return scriptFileList; }
-	 */
-
-	public List<String> getScenarioList() {
-		return m_ScenarioInstaller.getScenarioList();
-	}
-
-	public void installScenario(String scenarioName) {
-		try {
-			m_ScenarioInstaller.installScenario(scenarioName);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
-	public List<String> getScriptList() {
-		return m_ScriptExecutor.getScriptList();
-	}
-
-	public void executeScript(String scriptName) {
-		m_ScriptExecutor.executeScript(scriptName);
-	}
-
-	public void stopScript() {
-		m_ScriptExecutor.stopExecution();
-	}
-
-	/*
-	 * public ApplicationDevice getDeviceBySerialNumber(String deviceId) { return
-	 * devices.get(deviceId); }
-	 */
-
-	/*
-	 * public WindowPane getPortlet(ApplicationDevice applicationDevice) {
-	 * GenericDevice genDevice = (GenericDevice)
-	 * applicationDevice.getDeviceProxy(GenericDevice.class);
-	 * 
-	 * List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
-	 * String selectedPortletFactoryID =
-	 * m_portletFactorySelector.selectPortletFactory(genDevice,
-	 * portletFactoriesStr); DeviceWidgetFactory portletFactory =
-	 * getPortletFactoryByID(selectedPortletFactoryID); if (portletFactory !=
-	 * null) return portletFactory.createWidget(this, applicationDevice.getId());
-	 * return null; }
-	 */
-
-	/*
-	 * public ResourceImageReference getImageForDevice(ApplicationDevice device2)
-	 * { GenericDevice genDevice = (GenericDevice)
-	 * device2.getDeviceProxy(GenericDevice.class);
-	 * 
-	 * List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
-	 * if (m_portletFactorySelector != null) { String selectedPortletFactoryID =
-	 * m_portletFactorySelector.selectPortletFactory(genDevice,
-	 * portletFactoriesStr); DeviceWidgetFactory portletFactory =
-	 * getPortletFactoryByID(selectedPortletFactoryID); if (portletFactory !=
-	 * null) return portletFactory.getDeviceIcon(genDevice); } return null; }
-	 */
-
-	/*
-	 * private List<String> getPortletFactoriesIDList(GenericDevice device) {
-	 * List<String> portletFactoriesStr = new ArrayList<String>(); for
-	 * (DeviceWidgetFactory portletFactory : portletFactories) { if
-	 * (portletFactory.typeIsSupported(device)) {
-	 * portletFactoriesStr.add(portletFactory.getID()); } } return
-	 * portletFactoriesStr; }
-	 */
-
-	/*
-	 * private DeviceWidgetFactory getPortletFactoryByID(String ID) { for
-	 * (DeviceWidgetFactory portletFactory : portletFactories) { if
-	 * (portletFactory.getID().equals(ID)) return portletFactory; } return null;
-	 * }
-	 */
-
-
-	/*
-	@Property(name="houseImage")
-	@Override
-	public String getHouseImage() {
-	   return super.getHouseImage();
-	}
-	*/
+	// ---- Component properties methods ---- //
 	
-	@Property(name="houseImage", mandatory=true)
 	@Override
+	@Property(name = "houseImage", mandatory = true)
 	public void setHouseImage(String houseImage) {
-	   super.setHouseImage(houseImage);
-	}
-	
-	/*
-	@Property(name="userImage")
-	@Override
-	public String getUserImage() {
-	   return super.getUserImage();
-	}
-	*/
-	
-	@Property(name="userImage", mandatory=true)
-	@Override
-	public void setUserImage(String userImage) {
-	   super.setUserImage(userImage);
-	}
-	
-	@Property(name="homeType", mandatory=true)
-	@Override
-	public void setHomeType(String homeType) {
-	   super.setHomeType(homeType);
+		super.setHouseImage(houseImage);
 	}
 
-	@Property(name="isSimulator", mandatory=true)
+	@Override
+	@Property(name = "userImage", mandatory = true)
+	public void setUserImage(String userImage) {
+		super.setUserImage(userImage);
+	}
+
+	@Override
+	@Property(name = "homeType", mandatory = true)
+	public void setHomeType(String homeType) {
+		super.setHomeType(homeType);
+	}
+
+	@Override
+	@Property(name = "isSimulator", mandatory = true)
 	public void setIsSimulator(Boolean isSimulator) {
 		super.setIsSimulator(isSimulator);
 	}
-	
-	@Property(name="isAndroid", mandatory=true)
+
+	@Override
+	@Property(name = "isAndroid", mandatory = true)
 	public void setIsAndroid(Boolean isAndroid) {
 		super.setIsAndroid(isAndroid);
 	}
-	
 
+	
+	// ---- Component Life cycle methods ---- //
+	
+	@Validate
+	public void start() {
+		super.start();
+		getSimulationManager().addUserPositionListener(this);
+	}
+
+	@Invalidate
+	public void stop() {
+		super.stop();
+		getSimulationManager().removeUserPositionListener(this);
+	}
+	
+	// ---- Component inherited methods ---- //
+	
+	@Override
+	protected ActionPane createActionPane() {
+		return new SimulatorActionPane(this);
+	}
+	
+	// ---- Component Business Methods ---- //
+	
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		@SuppressWarnings("unused")
 		Object newVal = evt.getNewValue();
 	}
 
-	/*
-	 * public Application getApplication(String appId) { return
-	 * m_appMgr.getApplication(appId); }
-	 */
-
-	/*
-	 * @Override public void addApplication(Application app) {
-	 * m_actionPane.addApplication(app); m_selectAppPane.addApplication(app); }
-	 * 
-	 * @Override public void removeApplication(Application app) {
-	 * m_actionPane.removeApplication(app);
-	 * m_selectAppPane.removeApplication(app); }
-	 */
-
 	/**
 	 * Saves the current simulation scenario
 	 */
 	public void saveSimulationEnvironment() {
-		Set<String> envs = m_manager.getEnvironments();
+		SimulationManager simulationManager = getSimulationManager();
+		Set<String> envs = simulationManager.getEnvironments();
 
-		Set<String> devices = m_manager.getDevices();
+		Set<String> devices = simulationManager.getDevices();
 
 		FileWriter outFile;
 		PrintWriter out;
@@ -428,13 +322,13 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 			for (String environment : envs) {
 				out.println("environment " + "\"" + environment + "\" {");
 
-				Zone zone = m_manager.getEnvironmentZone(environment);
+				Zone zone = simulationManager.getEnvironmentZone(environment);
 				out.println("\t position = " + zone.leftX + " " + zone.topY + " " + zone.rightX + " " + zone.bottomY);
 
 				for (String device : devices) {
 					System.out.println("Device -----> " + device);
-					Position position = m_manager.getDevicePosition(device);
-					String deviceEnv = m_manager.getEnvironmentFromPosition(position);
+					Position position = simulationManager.getDevicePosition(device);
+					String deviceEnv = simulationManager.getEnvironmentFromPosition(position);
 					if (deviceEnv.equals(environment)) {
 						String deviceLine = "\t device " + "\"" + device + "\" : \"";
 
@@ -469,13 +363,74 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		}
 
 	}
+	
+	public List<String> getScenarioList() {
+		return m_ScenarioInstaller.getScenarioList();
+	}
 
+	public void installScenario(String scenarioName) {
+		try {
+			m_ScenarioInstaller.installScenario(scenarioName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<String> getScriptList() {
+		return m_ScriptExecutor.getScriptList();
+	}
+
+	public void executeScript(String scriptName) {
+		m_ScriptExecutor.executeScript(scriptName);
+	}
+
+	public void stopScript() {
+		m_ScriptExecutor.stopExecution();
+	}
 
 
 	@Override
-   protected ActionPane getActionPane() {
-	   return new SimulatorActionPane(this);
+   public DeviceController createDeviceController() {
+		return new SimulatorDeviceController(getSimulationManager());
    }
 
+
+	@Override
+   public void addVariable(StateVariable arg0, Object arg1) {
+	   // TODO Auto-generated method stub
+	   
+   }
+
+
+	@Override
+	public void notifValueChange(StateVariable variable, Object oldValue,
+			Object sourceObject) {
+		String devId = null;
+		Object owner = variable.getOwner();
+		if (owner instanceof Device) {
+			devId = ((Device) owner).getId();
+		} else if (owner instanceof Service) {
+			devId = ((Service) owner).getDevice().getId();
+		}
+		
+		if (devId != null) {
+			final ApplicationDevice dev = getDeviceBySerialNumber(devId);
+			enqueueTask(new Runnable() {
+				@Override
+				public void run() {
+					SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
+					controller.changeDevice(dev.getId(), dev, Collections.EMPTY_MAP);
+				}
+			});
+		}
+	   
+   }
+
+
+	@Override
+   public void removeVariable(StateVariable arg0, Object arg1) {
+	   // TODO Auto-generated method stub
+	   
+   }
 
 }

@@ -44,12 +44,12 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-@Component(name = "DeviceWidgetFactoryListener")
-@Instantiate(name = "DeviceWidgetFactoryListener-0")
-@Extender(onArrival = "onBundleArrival", onDeparture = "onBundleDeparture", extension = "Device-Widget-Factory")
+@Component(name = "CommonDeviceWidgetFactoryListener")
+@Instantiate(name = "CommonDeviceWidgetFactoryListener-0")
+@Extender(onArrival = "onBundleArrival", onDeparture = "onBundleDeparture", extension = "Common-Widget-Factory")
 public class DeviceWidgetFactoryListenerImpl {
 
-	@Requires(filter = ("(factory.name=DeviceWidgetFactory)"))
+	@Requires(filter = ("(factory.name=CommonDeviceWidgetFactory)"))
 	private Factory deviceWidgetFactory;
 	
 	private Bundle _bundle;

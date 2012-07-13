@@ -13,27 +13,26 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.portlet.impl;
+package org.medical.web.common.portlet.impl;
 
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.medical.application.device.dashboards.portlet.impl.DeviceWidgetFactoryImpl;
+import org.medical.application.device.web.common.portlet.impl.DeviceWidgetFactoryImpl;
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-@Component(name = "HalogenWidgetFactory")
+//@Component(name = "BinaryLightWidgetFactory")
 //@Instantiate
-@Provides
-public class HalogenWidgetFactory extends DeviceWidgetFactoryImpl {
+//@Provides
+public class BinaryLightWidgetFactory extends DeviceWidgetFactoryImpl {
 
-	public HalogenWidgetFactory(BundleContext context) {
+	public BinaryLightWidgetFactory(BundleContext context) {
 		setBundle(context.getBundle());
-		setIconFileName("/DimmerLamp.png");
-		setDeviceInterfaceName(DimmerLight.class.getName());
-		setWindowClassName(HalogenStatusWindow.class.getName());
-		setDeviceWidgetId("HalogenWidgetFactory");
+		setIconFileName("/Lamp.png");
+		setDeviceInterfaceName(BinaryLight.class.getName());
+		setWindowClassName(BinaryLightStatusWindow.class.getName());
+		setDeviceWidgetId("BinaryLightWidgetFactory");
 	}
 
 }

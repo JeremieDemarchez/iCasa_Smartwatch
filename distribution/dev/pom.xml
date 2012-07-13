@@ -70,13 +70,14 @@
 		<version>0.0.1-SNAPSHOT</version>
 		<type>deployment-package</type>
 	</dependency>
+	<!--
 	<dependency>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>device.dashboards.dp</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
 		<type>deployment-package</type>
 	</dependency>
-	
+	-->
   </dependencies>
   
   <build>

@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.portlet.impl;
+package org.medical.web.common.portlet.impl;
 
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
@@ -21,24 +21,23 @@ import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
-import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
-import org.medical.application.device.dashboards.portlet.DeviceStatusWindow;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
-public class ThermometerStatusWindow extends DeviceStatusWindow {
-
+public class PresenceSensorStatusWindow extends DeviceStatusWindow {
 
 	/**
     * 
     */
-   private static final long serialVersionUID = 7214188369352385316L;
+	private static final long serialVersionUID = 5283844186926837953L;
 
-
-	public ThermometerStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public PresenceSensorStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
+		// TODO Auto-generated constructor stub
 	}
 
 	@Override
@@ -59,14 +58,27 @@ public class ThermometerStatusWindow extends DeviceStatusWindow {
 		layoutGrid.add(new Label("Serial Number: "));
 		layoutGrid.add(new Label(m_deviceSerialNumber));
 
-		if (device instanceof Thermometer) {
-	      Thermometer thermometer = (Thermometer) device;
-			layoutGrid.add(new Label("Temperature"));
-			Label locationLabel = new Label(thermometer.getTemperature()+"");
+		if (device instanceof PresenceSensor) {
+			PresenceSensor presenceDevice = (PresenceSensor) device;
+			layoutGrid.add(new Label("Location"));
+			Label locationLabel = new Label(presenceDevice.getLocation());
+
 			locationLabel.setForeground(Color.BLUE);
 			layoutGrid.add(locationLabel);
-      }
-				
+
+			boolean presenceSensed = presenceDevice.getSensedPresence();
+			layoutGrid.add(new Label("Presence Sensed"));
+			Label presenceLabel;
+			if (presenceSensed) {
+				presenceLabel = new Label("Somebody in the room");
+				presenceLabel.setForeground(Color.RED);
+			} else {
+				presenceLabel = new Label("Nobody in the room");
+				presenceLabel.setForeground(Color.BLACK);
+			}
+			layoutGrid.add(presenceLabel);
+		}
+
 		layoutGrid.add(new Label("Fault"));
 
 		String fault = (String) reference.getProperty("fault");
@@ -106,7 +118,6 @@ public class ThermometerStatusWindow extends DeviceStatusWindow {
 		}
 		
 		layoutGrid.add(stateLabel);
-		
 		add(layoutGrid);
 
 	}

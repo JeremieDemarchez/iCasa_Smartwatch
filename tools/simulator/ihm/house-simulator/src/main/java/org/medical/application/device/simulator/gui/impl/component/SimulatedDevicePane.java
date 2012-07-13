@@ -41,10 +41,8 @@ import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.medical.application.Application;
+import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
-import org.medical.application.device.web.common.impl.component.DevicePane.DeviceTableModel;
-import org.medical.application.device.web.common.impl.component.DevicePane.ServiceWithPropDeviceTableModel;
-import org.medical.application.device.web.common.impl.component.DevicePane.ServiceWithoutPropDeviceTableModel;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -101,7 +99,7 @@ public class SimulatedDevicePane extends DevicePane {
 		m_grid.add(addDeviceButton);
    }
 	
-	@Override
+
 	public void addDeviceFactory(Factory factory) {
 		if (m_factory!=null) {
 			String factoryName = factory.getName();
@@ -116,7 +114,6 @@ public class SimulatedDevicePane extends DevicePane {
 		}
 	}
 
-	@Override
 	public void removeDeviceFactory(Factory factory) {
 		if (m_factory!=null) {
 			String factoryName = factory.getName();
