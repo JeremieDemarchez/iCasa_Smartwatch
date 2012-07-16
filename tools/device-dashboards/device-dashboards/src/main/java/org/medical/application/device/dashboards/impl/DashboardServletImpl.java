@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.simulator.gui.impl;
+package org.medical.application.device.dashboards.impl;
 
 import javax.servlet.Servlet;
 
@@ -36,20 +36,19 @@ import org.medical.application.device.web.common.impl.MedicalHouseSimulatorServl
 /**
  * TODO comments.
  * 
- * @author Gabriel Pedraza
+ * @author bourretp
  */
-@Component(name = "SimulatorGUIServlet")
+@Component(name = "DashboardServlet")
 @Provides(specifications = Servlet.class)
-public class HouseSimulatorGUIServletImpl extends MedicalHouseSimulatorServletImpl implements Servlet {
+public class DashboardServletImpl extends MedicalHouseSimulatorServletImpl implements Servlet {
 
 	/**
     * 
     */
-   private static final long serialVersionUID = 1849521777163057387L;
+	private static final long serialVersionUID = 956410092075324420L;
 
 	@ServiceProperty(name = "alias")
 	private String alias;
-
 	
 	//TODO: Find other way to force BND of import the corrseponding packages
 	Class[] peerClasses = { RadioButtonPeer.class, GroupPeer.class, BooleanPeer.class, ServedImageReferencePeer.class,
@@ -58,41 +57,40 @@ public class HouseSimulatorGUIServletImpl extends MedicalHouseSimulatorServletIm
 	/**
 	 * The classloader of this bundle.
 	 */
-	private static final ClassLoader CLASSLOADER = HouseSimulatorGUIServletImpl.class.getClassLoader();
+	private static final ClassLoader CLASSLOADER = DashboardServletImpl.class.getClassLoader();
 
-		
 	@Invalidate
 	public void cleanUp() {
 		super.cleanUp();
 	}
-	
-	@Override
-   public ClassLoader getBundleClassLoader() {
-	   return CLASSLOADER;
-   }
 
 	@Override
-	@Property(name="homeType", mandatory=true)
+	public ClassLoader getBundleClassLoader() {
+		return CLASSLOADER;
+	}
+
+	@Override
+	@Property(name = "homeType", mandatory = true)
 	public void setHomeType(String homeType) {
-	   super.setHomeType(homeType);
-	}
-	
-	@Override
-	@Property(name="houseImage", mandatory=true)
-	public void setHouseImage(String houseImage) {
-	   super.setHouseImage(houseImage);
-	}
-	
-	@Override
-	@Property(name="userImage", mandatory=true)	
-	public void setUserImage(String userImage) {
-	   super.setUserImage(userImage);
+		super.setHomeType(homeType);
 	}
 
 	@Override
-	@Bind(id="appInstanceFactory", filter="(factory.name=WebHouseSimulator)")
-	public void setApplicationInstanceFactory(Factory factory) {
-	   super.setApplicationInstanceFactory(factory);
+	@Property(name = "houseImage", mandatory = true)
+	public void setHouseImage(String houseImage) {
+		super.setHouseImage(houseImage);
 	}
-			
+
+	@Override
+	@Property(name = "userImage", mandatory = true)
+	public void setUserImage(String userImage) {
+		super.setUserImage(userImage);
+	}
+
+	@Override
+	@Bind(id = "appInstanceFactory", filter = "(factory.name=WebDashboardApplication)")
+	public void setApplicationInstanceFactory(Factory factory) {
+		super.setApplicationInstanceFactory(factory);
+	}
+
 }

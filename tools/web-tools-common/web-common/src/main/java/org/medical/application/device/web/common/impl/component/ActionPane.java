@@ -15,15 +15,10 @@
  */
 package org.medical.application.device.web.common.impl.component;
 
-import java.util.Map;
-
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.AccordionPane;
 
 import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
-import org.medical.device.manager.ApplicationDevice;
-
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
  * This Pane contains actions that can be realized by user 
@@ -61,7 +56,7 @@ public abstract class ActionPane extends AccordionPane {
 	}
 
 
-
+	/*
 	public void moveDevice(String deviceSerialNumber, Position position) {
 		//m_devicePane.moveDevice(deviceSerialNumber, position);
 	}
@@ -74,6 +69,7 @@ public abstract class ActionPane extends AccordionPane {
 	public void refreshDeviceWidgets() {
 		//m_devicePane.refreshDeviceWidgets();
 	}
+	*/
 
 	public DevicePane getDevicePane() {
 		return m_devicePane;

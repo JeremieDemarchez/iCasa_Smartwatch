@@ -42,7 +42,8 @@ import nextapp.echo.app.table.TableCellRenderer;
 
 import org.medical.application.Application;
 import org.medical.application.ApplicationState;
-import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.dashboards.impl.WebDashboardApplicationImpl;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
 
 
 /**
@@ -58,11 +59,11 @@ public class ApplicationManagerPane extends ContentPane  {
 
 	public static ResourceImageReference APPLICATION_ICON = new ResourceImageReference("/Application.png");
 
-	private final ActionPane m_parent;
+	private final DashboardActionPane m_parent;
 	
 	private ApplicationTableModel tableModel;
 
-	public ApplicationManagerPane(final ActionPane parent) {
+	public ApplicationManagerPane(final DashboardActionPane parent) {
 		m_parent = parent;
 		
 		// Create the grid and add all components.		
@@ -325,8 +326,8 @@ public class ApplicationManagerPane extends ContentPane  {
 	 * 
 	 * @return
 	 */
-	private MedicalHouseSimulatorImpl getAppInstance() {
-		return m_parent.getApplicationInstance();
+	private WebDashboardApplicationImpl getAppInstance() {
+		return (WebDashboardApplicationImpl) m_parent.getApplicationInstance();
 	}
 	
 	public void removeApplication(Application service) {

@@ -15,7 +15,6 @@
  */
 package org.medical.application.device.web.common.impl;
 
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -28,7 +27,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import nextapp.echo.app.ApplicationInstance;
 import nextapp.echo.webcontainer.WebContainerServlet;
 
 import org.apache.felix.ipojo.ComponentInstance;
@@ -36,157 +34,126 @@ import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.InstanceStateListener;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-
 
 /**
  * TODO comments.
  * 
  * @author bourretp
  */
-public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServlet implements
-        InstanceStateListener {
+public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServlet implements InstanceStateListener {
 
-    /**
+	/**
     * 
     */
-   private static final long serialVersionUID = 956410092075324420L;
-   
-   
-   /*
-   @ServiceProperty(name = "alias")
-   private String alias;
-   
-   
-   @Property(name="houseImage", mandatory=true)
-   private String houseImage;
-   
-   @Property(name="userImage", mandatory=true)
-   private String userImage;
-   
-   @Property(name="homeType", mandatory=true)
-   private String homeType;
-   
-   */
-   
-    /**
-     * The classloader of this bundle.
-     */
-   /*
-    private static final ClassLoader CLASSLOADER = MedicalHouseSimulatorServletImpl.class
-            .getClassLoader();
-            
-    */
+	private static final long serialVersionUID = 956410092075324420L;
 
-    @Requires(filter = "(component.class=org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl)")
-    private Factory m_appFactory;
+	private String houseImage;
 
-    private final Map<String, ComponentInstance> m_appInstances = new HashMap<String, ComponentInstance>();
+	private String userImage;
 
-    
-    private MedicalWebApplication m_WebApplication;
+	private String homeType;
 
-    /**
-     * Create a new session component instance
-     */
-   /*
-    @Override
-    public MedicalHouseSimulatorImpl newApplicationInstance() {
-        // Create the application instance.
-        final ComponentInstance appInstance;
-        Dictionary<String, Object> dict = new Hashtable<String, Object>();
-        dict.put("houseImage", houseImage);
-        dict.put("userImage", userImage);
-        dict.put("homeType", homeType);
-        
-        String[] isAndroidParams = (String[]) getActiveConnection().getUserInstance().getInitialRequestParameterMap().get("isAndroid");
-        boolean isAndroid = false;
-        if ((isAndroidParams != null) && (isAndroidParams.length > 0)) {
-        	String isAndroidStr = isAndroidParams[0];
-        	isAndroid = ((isAndroidStr != null) && (Boolean.valueOf(isAndroidStr)));
-        }
-        dict.put("isAndroid", Boolean.toString(isAndroid));
-        
-        
-        //TODO: Provisional solution to share the same code in both Servlets (dashboard and simulator)
-        
-        if (alias.equals("/simulator"))
-      	  dict.put("isSimulator", new Boolean(true));
-        else
-      	  dict.put("isSimulator", new Boolean(false));
-        
-        try {
-            appInstance = m_appFactory.createComponentInstance(dict);
-        } catch (final Exception e) {
-            throw new RuntimeException("Cannot create application instance", e);
-        }
-        final String name = appInstance.getInstanceName();
-        synchronized (m_appInstances) {
-            m_appInstances.put(name, appInstance);
-            appInstance.addInstanceStateListener(this);
-        }
-        final MedicalHouseSimulatorImpl pojo = (MedicalHouseSimulatorImpl) ((InstanceManager) appInstance)
-                .getPojoObject();
-        pojo.setComponentInstance(appInstance);
-        //m_logger.info("Application instance created : " + name);
-        return pojo;
-    }
-    */
+	private Factory m_appFactory;
 
-    @Override
-    public void stateChanged(final ComponentInstance appInstance,
-            final int newState) {
-        if (newState != ComponentInstance.DISPOSED) {
-            return;
-        }
-        final String name = appInstance.getInstanceName();
-        synchronized (m_appInstances) {
-            m_appInstances.remove(name);
-        }
-        //m_logger.info("Application instance disposed : " + name);
-    }
+	private final Map<String, ComponentInstance> m_appInstances = new HashMap<String, ComponentInstance>();
 
-    @Invalidate
-    public void cleanUp() {
-        //m_logger.info("Destroying all applications instances");
-        final Collection<ComponentInstance> appInstances;
-        synchronized (m_appInstances) {
-            // Copy to avoid ConcurrentModificationExceptions.
-            appInstances = new ArrayList<ComponentInstance>(m_appInstances.values());
-        }
-        for (ComponentInstance appInstance : appInstances) {
-            appInstance.dispose();
-        }
-    }
 
-    @Override
-    public void service(HttpServletRequest req, HttpServletResponse res)
-            throws ServletException, IOException {
-        // Echo3 uses the thread current class loader, so we need to feed it,
-        // with the appropriated class loader, before any request.
-        final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
-        Thread.currentThread().setContextClassLoader(getBundleClassLoader());
-        try {
-            super.service(req, res);
-        } finally {
-            // Restore classloader
-            Thread.currentThread().setContextClassLoader(tccl);
-        }
-    }
+	/**
+	 * Create a new session component instance
+	 */
 
-    public abstract ClassLoader getBundleClassLoader();
-    
-    public void bindWebApplication(MedicalWebApplication webApplication) {
-   	 m_WebApplication = webApplication;
-    }
-    
-    public void unbindWebApplication(MedicalWebApplication webApplication) {
-   	 m_WebApplication = null;
-    }
-    
-    public ApplicationInstance newApplicationInstance() {
- 		return m_WebApplication.getApplicationInstance();
-    }
+	@Override
+	public MedicalHouseSimulatorImpl newApplicationInstance() {
+		
+		// Create the application instance.
+		final ComponentInstance appInstance;
+		Dictionary<String, Object> dict = new Hashtable<String, Object>();
+		dict.put("houseImage", houseImage);
+		dict.put("userImage", userImage);
+		dict.put("homeType", homeType);
+
+		String[] isAndroidParams = (String[]) getActiveConnection().getUserInstance().getInitialRequestParameterMap()
+		      .get("isAndroid");
+		boolean isAndroid = false;
+		if ((isAndroidParams != null) && (isAndroidParams.length > 0)) {
+			String isAndroidStr = isAndroidParams[0];
+			isAndroid = ((isAndroidStr != null) && (Boolean.valueOf(isAndroidStr)));
+		}
+		dict.put("isAndroid", Boolean.toString(isAndroid));
+
+
+		try {
+			appInstance = m_appFactory.createComponentInstance(dict);
+		} catch (final Exception e) {
+			throw new RuntimeException("Cannot create application instance", e);
+		}
+		final String name = appInstance.getInstanceName();
+		synchronized (m_appInstances) {
+			m_appInstances.put(name, appInstance);
+			appInstance.addInstanceStateListener(this);
+		}
+		final MedicalHouseSimulatorImpl pojo = (MedicalHouseSimulatorImpl) ((InstanceManager) appInstance)
+		      .getPojoObject();
+		pojo.setComponentInstance(appInstance);
+		// m_logger.info("Application instance created : " + name);
+		return pojo;
+	}
+
+	@Override
+	public void stateChanged(final ComponentInstance appInstance, final int newState) {
+		if (newState != ComponentInstance.DISPOSED) {
+			return;
+		}
+		final String name = appInstance.getInstanceName();
+		synchronized (m_appInstances) {
+			m_appInstances.remove(name);
+		}
+	}
+
+	@Invalidate
+	public void cleanUp() {
+		// m_logger.info("Destroying all applications instances");
+		final Collection<ComponentInstance> appInstances;
+		synchronized (m_appInstances) {
+			// Copy to avoid ConcurrentModificationExceptions.
+			appInstances = new ArrayList<ComponentInstance>(m_appInstances.values());
+		}
+		for (ComponentInstance appInstance : appInstances) {
+			appInstance.dispose();
+		}
+	}
+
+	@Override
+	public void service(HttpServletRequest req, HttpServletResponse res) throws ServletException, IOException {
+		// Echo3 uses the thread current class loader, so we need to feed it,
+		// with the appropriated class loader, before any request.
+		final ClassLoader tccl = Thread.currentThread().getContextClassLoader();
+		Thread.currentThread().setContextClassLoader(getBundleClassLoader());
+		try {
+			super.service(req, res);
+		} finally {
+			// Restore classloader
+			Thread.currentThread().setContextClassLoader(tccl);
+		}
+	}
+
+	public abstract ClassLoader getBundleClassLoader();
+
+
+	public void setHouseImage(String houseImage) {
+		this.houseImage = houseImage;
+	}
+
+	public void setHomeType(String homeType) {
+		this.homeType = homeType;
+	}
+
+	public void setUserImage(String userImage) {
+		this.userImage = userImage;
+	}
+
+	public void setApplicationInstanceFactory(Factory factory) {
+		m_appFactory = factory;
+	}
+	
 }

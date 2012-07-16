@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.dashboards.impl.component;
+package org.medical.application.device.simulator.gui.impl.component;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -41,18 +41,20 @@ import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.medical.application.Application;
+import org.medical.application.device.web.common.impl.component.DeviceEntry;
+import org.medical.application.device.web.common.impl.component.DevicePane;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-public class SimulatedDevicePane extends DevicePane {
+public class SimulatorDevicePane extends DevicePane {
 
 	private TextField m_description;
 	private DropDownMenu m_factory;
 	private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
 	private final Random m_random = new Random();
 	
-	public SimulatedDevicePane(ActionPane parent) {
+	public SimulatorDevicePane(SimulatorActionPane parent) {
 	   super(parent);
 	   
 		final Label image = new Label(new ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50), new Extent(
@@ -97,7 +99,7 @@ public class SimulatedDevicePane extends DevicePane {
 		m_grid.add(addDeviceButton);
    }
 	
-	@Override
+
 	public void addDeviceFactory(Factory factory) {
 		if (m_factory!=null) {
 			String factoryName = factory.getName();
@@ -112,7 +114,6 @@ public class SimulatedDevicePane extends DevicePane {
 		}
 	}
 
-	@Override
 	public void removeDeviceFactory(Factory factory) {
 		if (m_factory!=null) {
 			String factoryName = factory.getName();

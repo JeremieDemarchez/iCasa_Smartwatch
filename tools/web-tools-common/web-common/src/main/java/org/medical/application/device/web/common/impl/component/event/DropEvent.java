@@ -20,63 +20,69 @@ import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.extras.app.DragSource;
 
 /**
- * An event that represents a draggable Component being 
- * dropped on a valid drop target.
+ * An event that represents a draggable Component being dropped on a valid drop
+ * target.
  */
 public class DropEvent extends ActionEvent {
 
-    private Component target;
-    private Component specificTarget;
+	private Component target;
+	private Component specificTarget;
 	private int targetX;
 	private int targetY;
-    
-    /**
-     * Creates a DropEvent with the given Component as the 
-     * draggable (source) and drop target Component (target)
-     * 
-     * @param source the draggable Component
-     * @param target the configured drop target Component
-     * @param specificTarget the most specific component upon which the source was dropped
-     */
-    public DropEvent(Object source, Component target, Component specificTarget, int targetX, int targetY) {
-    	super(source, DragSource.INPUT_DROP);
-        this.target = target;
-        this.specificTarget = specificTarget;
-        this.targetX = targetX;
-        this.targetY = targetY;
-    }
-    	
-    	/**
-         * Creates a DropEvent with the given Component as the 
-         * draggable (source) and drop target Component (target)
-         * 
-         * @param source the draggable Component
-         * @param target the configured drop target Component
-         * @param specificTarget the most specific component upon which the source was dropped
-         */
-    public DropEvent(Object source, Component target, Component specificTarget) {
-        this(source, target, specificTarget, 0, 0);
-    }
-    
-    /**
-     * Returns most specific component upon which the source was dropped
-     * 
-     * @return the most specific target component 
-     */
-    public Component getSpecificTarget() {
-        return specificTarget;
-    }
-    
-    /**
-     * Returns the drop target <code>Component</code>.
-     * 
-     * @return the drop target 
-     */
-    public Object getTarget() {
-        return this.target;
-    }
-    
-    public int getTargetX() {
+
+	/**
+	 * Creates a DropEvent with the given Component as the draggable (source) and
+	 * drop target Component (target)
+	 * 
+	 * @param source
+	 *           the draggable Component
+	 * @param target
+	 *           the configured drop target Component
+	 * @param specificTarget
+	 *           the most specific component upon which the source was dropped
+	 */
+	public DropEvent(Object source, Component target, Component specificTarget, int targetX, int targetY) {
+		super(source, DragSource.INPUT_DROP);
+		this.target = target;
+		this.specificTarget = specificTarget;
+		this.targetX = targetX;
+		this.targetY = targetY;
+	}
+
+	/**
+	 * Creates a DropEvent with the given Component as the draggable (source) and
+	 * drop target Component (target)
+	 * 
+	 * @param source
+	 *           the draggable Component
+	 * @param target
+	 *           the configured drop target Component
+	 * @param specificTarget
+	 *           the most specific component upon which the source was dropped
+	 */
+	public DropEvent(Object source, Component target, Component specificTarget) {
+		this(source, target, specificTarget, 0, 0);
+	}
+
+	/**
+	 * Returns most specific component upon which the source was dropped
+	 * 
+	 * @return the most specific target component
+	 */
+	public Component getSpecificTarget() {
+		return specificTarget;
+	}
+
+	/**
+	 * Returns the drop target <code>Component</code>.
+	 * 
+	 * @return the drop target
+	 */
+	public Object getTarget() {
+		return this.target;
+	}
+
+	public int getTargetX() {
 		return targetX;
 	}
 

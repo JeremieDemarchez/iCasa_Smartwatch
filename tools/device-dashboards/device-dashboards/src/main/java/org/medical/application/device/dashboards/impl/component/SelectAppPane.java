@@ -30,7 +30,8 @@ import nextapp.echo.app.list.DefaultListModel;
 import nextapp.echo.app.list.ListSelectionModel;
 
 import org.medical.application.Application;
-import org.medical.application.device.dashboards.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.component.SelectedApplicationTracker;
 
 /**
  * Panels which allows user to select a digital service.

@@ -21,14 +21,13 @@ import java.util.EventListener;
 /**
  * Listener interface for receiving <code>DropEvent</code>s.
  */
-public interface DropListener 
-extends EventListener, Serializable {
+public interface DropListener extends EventListener, Serializable {
 
-    /**
-     * Invoked when a draggable component is dropped 
-     * onto a valid drop target.
-     * 
-     * @param event The event
-     */
-    void dropPerformed(DropEvent event);
+	/**
+	 * Invoked when a draggable component is dropped onto a valid drop target.
+	 * 
+	 * @param event
+	 *           The event
+	 */
+	void dropPerformed(DropEvent event);
 }

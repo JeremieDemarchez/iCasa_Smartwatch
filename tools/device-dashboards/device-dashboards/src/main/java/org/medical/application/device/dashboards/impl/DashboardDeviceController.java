@@ -13,20 +13,25 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.simulator.gui.impl;
+package org.medical.application.device.dashboards.impl;
 
 import java.util.Map;
+
+import nextapp.echo.app.Label;
 
 import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.device.manager.ApplicationDevice;
+import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
-public class SimulatorDeviceController extends DeviceController {
+public class DashboardDeviceController extends DeviceController {
 
+	//private SimulationManager m_SimulationManager;
 	
-	public SimulatorDeviceController(SimulationManager simulationManager) {
+	public DashboardDeviceController(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
 	
