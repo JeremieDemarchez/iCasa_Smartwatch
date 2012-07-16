@@ -47,14 +47,14 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-public class SimulatedDevicePane extends DevicePane {
+public class SimulatorDevicePane extends DevicePane {
 
 	private TextField m_description;
 	private DropDownMenu m_factory;
 	private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
 	private final Random m_random = new Random();
 	
-	public SimulatedDevicePane(SimulatorActionPane parent) {
+	public SimulatorDevicePane(SimulatorActionPane parent) {
 	   super(parent);
 	   
 		final Label image = new Label(new ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50), new Extent(

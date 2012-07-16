@@ -29,72 +29,23 @@ import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 public class SimulatorDeviceController extends DeviceController {
 
-	private SimulationManager m_SimulationManager;
+	//private SimulationManager m_SimulationManager;
 	
 	public SimulatorDeviceController(SimulationManager simulationManager) {
-		m_SimulationManager = simulationManager;
+		super(simulationManager);
 	}
 	
-	private DeviceEntry getDeviceEntry(ApplicationDevice device, Map<String, Object> properties) {
-		String description = (String) properties.get(Constants.SERVICE_DESCRIPTION);
-		if (description == null) {
-			// If service description is not defined, use the device serial number.
-			description = device.getId();
-		}
-
-		Position position = m_SimulationManager.getDevicePosition(device.getId());
-
-		if (position == null) {
-			position = generateBorderPosition();
-		}
-		final String serialNumber = device.getId();
-
-		String state = (String) properties.get("state");
-		if (state == null)
-			state = "unknown";
-
-		String fault = (String) properties.get("fault");
-		if (fault == null)
-			fault = "uknown";
-
-		String logicPosition = m_SimulationManager.getEnvironmentFromPosition(position);
-		if (logicPosition == null)
-			logicPosition = "unassigned";
-
-		final DeviceEntry entry = new DeviceEntry();
-		entry.serialNumber = serialNumber;
-		entry.state = state;
-		entry.fault = fault;
-		entry.label = new Label(description);
-		entry.position = position;
-		entry.logicPosition = logicPosition;
-		entry.description = description;
-
-		return entry;
+	private DeviceEntry createDeviceEntry(ApplicationDevice device, Map<String, Object> properties) {		
+		return createDeviceEntry(device.getId(), properties);
 	}
 	
 	public void addDevice(final ApplicationDevice device, Map<String, Object> properties) {
-		DeviceEntry entry = getDeviceEntry(device, properties);
+		DeviceEntry entry = createDeviceEntry(device, properties);
 		addDevice(entry);
 	}
 
 	public void removeDevice(ApplicationDevice device) {
 		removeDevice(device.getId());
    }
-	
-	public void changeDevice(String deviceSerialNumber, ApplicationDevice device, Map<String, Object> properties) {
-		DeviceEntry entry = m_devices.get(deviceSerialNumber);
-		if (entry == null)
-			return;
-		
-		if (properties != null) {
-			DeviceEntry newEntry = getDeviceEntry(device, properties);
-			entry.description = newEntry.description;
-			entry.logicPosition = newEntry.logicPosition;
-			entry.state = newEntry.state;
-			entry.fault = newEntry.fault;
-		}
-		
-	}
 	
 }

@@ -187,7 +187,6 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 				getDevicesMap().remove(device.getId());
 				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
 				controller.removeDevice(device);
-				//controller.addDevice(device, properties);
 			}
 		});
 	}
@@ -256,11 +255,6 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		super.setHomeType(homeType);
 	}
 
-	@Override
-	@Property(name = "isSimulator", mandatory = true)
-	public void setIsSimulator(Boolean isSimulator) {
-		super.setIsSimulator(isSimulator);
-	}
 
 	@Override
 	@Property(name = "isAndroid", mandatory = true)
@@ -288,6 +282,12 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	@Override
 	protected ActionPane createActionPane() {
 		return new SimulatorActionPane(this);
+	}
+	
+	@Override
+	protected void initContent() {
+	   super.initContent();
+	   m_window.setTitle("iCasa Simulator Platform ");
 	}
 	
 	// ---- Component Business Methods ---- //
@@ -395,11 +395,7 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
    }
 
 
-	@Override
-   public void addVariable(StateVariable arg0, Object arg1) {
-	   // TODO Auto-generated method stub
-	   
-   }
+
 
 
 	@Override
@@ -419,13 +415,17 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 				@Override
 				public void run() {
 					SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
-					controller.changeDevice(dev.getId(), dev, Collections.EMPTY_MAP);
+					controller.changeDevice(dev.getId(), Collections.EMPTY_MAP);
 				}
 			});
-		}
-	   
+		}	   
    }
 
+	@Override
+   public void addVariable(StateVariable arg0, Object arg1) {
+	   // TODO Auto-generated method stub
+	   
+   }
 
 	@Override
    public void removeVariable(StateVariable arg0, Object arg1) {

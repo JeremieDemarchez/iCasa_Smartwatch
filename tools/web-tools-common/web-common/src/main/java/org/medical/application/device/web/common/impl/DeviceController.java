@@ -19,9 +19,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import nextapp.echo.app.Label;
+
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
+import org.osgi.framework.Constants;
 
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 public abstract class DeviceController {
@@ -32,14 +36,16 @@ public abstract class DeviceController {
 	
 	private static boolean[] BORDER_POSITIONS = new boolean[20];
 	
-	public void addListener(DevicePane devicePane) {
+	protected SimulationManager m_SimulationManager;
+	
+	public DeviceController(SimulationManager manager) {
+		m_SimulationManager = manager;
+   }
+	
+	public void setDevicePane(DevicePane devicePane) {
 		m_DevicePane = devicePane;
 	}
-	
-	public void removeListener(DevicePane devicePane){
-		m_DevicePane = null;
-	}
-	
+		
 	protected void addDevice(DeviceEntry entry) {
 		if (m_DevicePane!=null) {
 			if (m_devices.containsKey(entry.serialNumber)) {
@@ -69,6 +75,65 @@ public abstract class DeviceController {
 			m_DevicePane.moveDevice(entry, position);
 		}
    }
+	
+	
+	public void changeDevice(String deviceSerialNumber, final Map<String, Object> properties) {
+		DeviceEntry entry = m_devices.get(deviceSerialNumber);
+		if (entry == null) 
+			return;
+		
+		
+		
+		DeviceEntry newEntry = createDeviceEntry(deviceSerialNumber, properties);
+		
+		entry.description = newEntry.description;
+		entry.logicPosition = newEntry.logicPosition;
+		entry.state = newEntry.state;
+		entry.fault = newEntry.fault;
+
+		changeDevice(entry);		
+		
+	}
+	
+	
+	public DeviceEntry createDeviceEntry(String deviceSerialNumber, final Map<String, Object> properties) {
+		if (properties!=null) {
+			Position position = m_SimulationManager.getDevicePosition(deviceSerialNumber);
+
+			if (position == null) {
+				position = generateBorderPosition();
+			}
+			
+			String description = (String) properties.get(Constants.SERVICE_DESCRIPTION);
+			if (description == null)
+				description = deviceSerialNumber;
+			
+			String state = (String) properties.get("state");
+			if (state == null)
+				state = "unknown";
+
+			String fault = (String) properties.get("fault");
+			if (fault == null)
+				fault = "unknown";
+			
+			String logicPosition = m_SimulationManager.getEnvironmentFromPosition(position);
+			if (logicPosition == null)
+				logicPosition = "unassigned";
+			
+			final DeviceEntry entry = new DeviceEntry();
+			entry.serialNumber = deviceSerialNumber;
+			entry.state = state;
+			entry.fault = fault;
+			entry.label = new Label(description);
+			entry.position = position;
+			entry.logicPosition = logicPosition;
+			entry.description = description;
+
+			return entry;
+		}
+		
+		return null;
+	}
 	
 	protected void changeDevice(DeviceEntry entry) {
 		if (m_DevicePane!=null) {
@@ -126,5 +191,7 @@ public abstract class DeviceController {
 		}
 		return BORDER_POSITIONS.length - 1;
 	}
+	
+
 	
 }

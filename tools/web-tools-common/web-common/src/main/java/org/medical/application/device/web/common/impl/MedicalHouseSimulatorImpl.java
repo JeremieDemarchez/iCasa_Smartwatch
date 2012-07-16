@@ -19,7 +19,6 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,20 +39,13 @@ import nextapp.echo.app.serial.StyleSheetLoader;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
-import org.medical.common.StateVariable;
-import org.medical.common.StateVariableListener;
 import org.medical.device.manager.ApplicationDevice;
-import org.medical.device.manager.Device;
-import org.medical.device.manager.DeviceManager;
-import org.medical.device.manager.Service;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -72,62 +64,106 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	private static final long serialVersionUID = -2887321216032546523L;
 
 	private static final int MARGIN = 10;
-
-	//private static Bundle _bundle;
 	
-	
+	/**
+	 * The simulation manager service
+	 */
 	private SimulationManager m_manager;
 	
-	private DeviceWidgetFactorySelector m_portletFactorySelector;
+	/**
+	 * The widget factory selector (selects the rigth incon and window)
+	 */
+	private DeviceWidgetFactorySelector m_widgetFactorySelector;
 
+	/**
+	 * The house image path
+	 */
 	private String houseImage;
 
+	/**
+	 * The user image path
+	 */
 	private String userImage;
 
+	
+	//This variable must be changed, is used to "glue" code into the application
+	/**
+	 * Home type
+	 */
 	private String homeType;
 	
-	//@Property(name = "isAndroid", mandatory = true)
-	//private String isAndroidStr;
-	
-	@Property(name="isSimulator", mandatory = true)
-	private Boolean isSimulator;
 
+	/**
+	 * (Left) Pane where are the house map and graphical icons for devices
+	 */
 	private HousePane m_housePane;
 
+	/**
+	 * (Right) pane that contains the device pane and others
+	 */
 	private ActionPane m_actionPane;
 
-	//private SelectAppPane m_selectAppPane;
-
+	/**
+	 * (Bottom) pane that contains device widgets (specific windows)
+	 */
 	private ContentPane m_statusPane;
-
+	
+	/**
+	 * Task queue used in echo3 apps 
+	 */
 	private TaskQueueHandle m_taskQueueHandle;
 
+	/**
+	 * The main application window
+	 */
 	protected Window m_window;
 
-	//private ComponentInstance m_controller;
-
+	/**
+	 * Bundle context
+	 */
 	private final BundleContext m_context;
 	
+	/**
+	 * Device controller instance
+	 */
 	protected DeviceController m_DeviceController;
 
-	//private DefaultListModel scriptFileList;
-
+	//TODO: See this map 
+	/**
+	 * A map containing all bind devices
+	 */
 	private Map<String, ApplicationDevice> devices;
 
-	private List<DeviceWidgetFactory> portletFactories;
+	/**
+	 * List of existing widgets factories
+	 */
+	private List<DeviceWidgetFactory> widgetFactories;
 
+	/**
+	 * Indicates if there is a android client using the application 
+	 */
 	private Boolean isAndroid;
+	
+	/**
+	 * Indicates if is a simulator or dashboard application instance
+	 */
+	private Boolean isSimulator;
+	
 	
 	private static Bundle _bundle;
 	
-
+	/**
+	 * Default constructor
+	 * @param context the bundle context
+	 */
 	public MedicalHouseSimulatorImpl(BundleContext context) {
 		m_context = context;
 		_bundle = context.getBundle();
 	}
 	
-
-
+	/**
+	 * Initializes the GUI applications
+	 */
 	protected void initContent() {
 		m_taskQueueHandle = createTaskQueue();
 		// Set the stylesheet.
@@ -142,9 +178,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		devices = new HashMap<String, ApplicationDevice>();
 
 		// Create the list with porlet factories
-		portletFactories = new ArrayList<DeviceWidgetFactory>();
+		widgetFactories = new ArrayList<DeviceWidgetFactory>();
 		
-
 		
 		// Create the house pane.
 		m_housePane = new HousePane(this);
@@ -157,34 +192,16 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 		//Create the device controller
 		m_DeviceController = createDeviceController();
-		m_DeviceController.addListener(m_actionPane.getDevicePane());
+		m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
 		
-		// Create a panel where user can select a digital service
-		//m_selectAppPane = new SelectAppPane(this);
-
-		// add listeners
-		//m_selectAppPane.addSelectedApplicationTracker(m_actionPane);
-
-		// Create a panel which contains select service panel and action panel
-		//final SplitPane dashboardPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, false);
-		//dashboardPane.setResizable(false);
-
-		
-		//SplitPaneLayoutData selectServPaneData = new SplitPaneLayoutData();
-		//selectServPaneData.setMinimumSize(new Extent(30, Extent.PX));
-		//selectServPaneData.setMaximumSize(new Extent(30, Extent.PX));
-		//selectServPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_HIDDEN);
-		//m_selectAppPane.setLayoutData(selectServPaneData);
-
-		//dashboardPane.add(m_selectAppPane);
 
 		SplitPaneLayoutData actionPaneData = new SplitPaneLayoutData();
 		actionPaneData.setMinimumSize(new Extent(200, Extent.PX));
-		// actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
+		actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
 		actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
 		m_actionPane.setLayoutData(actionPaneData);
 
-		//dashboardPane.add(m_actionPane);
+
 
 		// Create the top split pane, that contains the house and action panes.
 		final SplitPane topPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
@@ -194,7 +211,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		data.setMinimumSize(new Extent(500, Extent.PX));
 		data.setMaximumSize(new Extent(900, Extent.PX));
 		data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		//dashboardPane.setLayoutData(data);
 
 		topPane.add(m_actionPane);
 
@@ -227,23 +243,21 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		// status pane.
 		m_window = new Window();
 		m_window.getContent().add((nextapp.echo.app.Component) globalPane);
-		if (isSimulator())
-			m_window.setTitle("iCasa Platform Simulator");
-		else
-			m_window.setTitle("Home Dashboard");
 	}
 
+	/**
+	 * In this method must be created the action pane
+	 * @return
+	 */
 	protected abstract ActionPane createActionPane();
 	
+
 	
 	@Override
 	public Window init() {
 		return m_window;
 	}
 	
-	public ActionPane getActionPane() {
-		return m_actionPane;
-	}
 	
 
 	@Override
@@ -320,24 +334,24 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 
 	*/
-	
-	@Bind(id = "portletfactory", aggregate = true, optional = true)
-	public void bindPortletFactory(final DeviceWidgetFactory portletFactory) {
+
+
+	protected void bindPortletFactory(final DeviceWidgetFactory portletFactory) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				portletFactories.add(portletFactory);
+				widgetFactories.add(portletFactory);
 				allDevicePropertiesChanged(portletFactory);
 			}
 		});
 	}
 
-	@Unbind(id = "portletfactory")
-	public void unbindPortletFactory(final DeviceWidgetFactory portletFactory) {
+
+	protected void unbindPortletFactory(final DeviceWidgetFactory portletFactory) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				portletFactories.remove(portletFactory);
+				widgetFactories.remove(portletFactory);
 				allDevicePropertiesChanged(portletFactory);
 			}
 		});
@@ -345,18 +359,19 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	
 	@Bind(id = "portletfactorySelector", aggregate = false, optional = true)
 	public void bindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		m_portletFactorySelector = portletFactorySelector;
+		m_widgetFactorySelector = portletFactorySelector;
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.refreshDeviceWidgets();
+				m_DeviceController.refreshDeviceWidgets();
+				//m_actionPane.refreshDeviceWidgets();
 			}
 		});
 	}
 	
 	@Unbind(id = "portletfactorySelector")
 	public void unbindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		m_portletFactorySelector = null;
+		m_widgetFactorySelector = null;
 	}
 
 	/*
@@ -373,6 +388,21 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 				devicePropertiesChanged(genericDevice.getSerialNumber(), appDevice, null);
 			}
 		}
+	}
+	
+	private void devicePropertiesChanged(final String deviceSerialNumber, final ApplicationDevice device,
+	      final Map<String, Object> properties) {
+
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				m_DeviceController.changeDevice(deviceSerialNumber, properties);
+				//m_actionPane.changeDevice(deviceSerialNumber, device, properties);
+				
+				//TODO: Implementation
+				
+			}
+		});
 	}
 
 	public void disposeDeviceInstance(String serialNumber) {
@@ -416,26 +446,15 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				getDeviceController().moveDevice(deviceSerialNumber, position);				
+				m_DeviceController.moveDevice(deviceSerialNumber, position);				
 				//m_actionPane.moveDevice(deviceSerialNumber, position);
 			}
 		});
 	}
 
-	public void devicePropertiesChanged(final String deviceSerialNumber, final ApplicationDevice device,
-	      final Map<String, Object> properties) {
+	
 
-		enqueueTask(new Runnable() {
-			@Override
-			public void run() {
-				//m_DeviceController.c
-				//m_actionPane.changeDevice(deviceSerialNumber, device, properties);
-				
-				//TODO: Implementation
-			}
-		});
-	}
-
+   
 	
 
 	public ApplicationDevice getDeviceBySerialNumber(String deviceId) {
@@ -446,7 +465,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
 		
 		List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
-		String selectedPortletFactoryID = m_portletFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
+		String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
 		DeviceWidgetFactory portletFactory = getPortletFactoryByID(selectedPortletFactoryID);
 		if (portletFactory != null)
 			return portletFactory.createWidget(this, applicationDevice.getId());
@@ -457,8 +476,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		GenericDevice genDevice = (GenericDevice) device2.getDeviceProxy(GenericDevice.class);
 		
 		List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
-		if (m_portletFactorySelector != null) {
-			String selectedPortletFactoryID = m_portletFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
+		if (m_widgetFactorySelector != null) {
+			String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
 			DeviceWidgetFactory portletFactory = getPortletFactoryByID(selectedPortletFactoryID);
 			if (portletFactory != null)
 				return portletFactory.getDeviceIcon(genDevice);
@@ -468,7 +487,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	private List<String> getPortletFactoriesIDList(GenericDevice device) {
 		List<String> portletFactoriesStr = new ArrayList<String>();
-		for (DeviceWidgetFactory portletFactory : portletFactories) {
+		for (DeviceWidgetFactory portletFactory : widgetFactories) {
 			if (portletFactory.typeIsSupported(device)) {
 				portletFactoriesStr.add(portletFactory.getID());
 			}
@@ -477,7 +496,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 
 	private DeviceWidgetFactory getPortletFactoryByID(String ID) {
-		for (DeviceWidgetFactory portletFactory : portletFactories) {
+		for (DeviceWidgetFactory portletFactory : widgetFactories) {
 			if (portletFactory.getID().equals(ID))
 				return portletFactory;
 		}
@@ -523,9 +542,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return isAndroid;
 	}
 	
-	public boolean isSimulator() {
-		return isSimulator;
-	}
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -533,88 +549,63 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		Object newVal = evt.getNewValue();
 
 	}
-
-
-
-	/*
-	@Override
-	public void addVariable(StateVariable variable, Object sourceObject) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void removeVariable(StateVariable variable, Object sourceObject) {
-		// TODO Auto-generated method stub
-		
-	}
-
-	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
-			Object sourceObject) {
-		String devId = null;
-		Object owner = variable.getOwner();
-		if (owner instanceof Device) {
-			devId = ((Device) owner).getId();
-		} else if (owner instanceof Service) {
-			devId = ((Service) owner).getDevice().getId();
-		}
-		
-		if (devId != null) {
-			final ApplicationDevice dev = getDeviceBySerialNumber(devId);
-			enqueueTask(new Runnable() {
-				@Override
-				public void run() {
-					m_actionPane.changeDevice(dev.getId(), dev, Collections.EMPTY_MAP);
-				}
-			});
-		}
-	}
-   */
 	
+	/**
+	 * 
+	 * @return the simulation manager
+	 */
 	public SimulationManager getSimulationManager() {
 		return m_manager;
 	}
-
-
-
-	public void setIsSimulator(Boolean isSimulator) {
-	   this.isSimulator = isSimulator;	   
-   }
-
 
 
 	public void setIsAndroid(Boolean isAndroid) {
 		this.isAndroid = isAndroid;
    }
 
-
-
-	public void bindSimulationManager(SimulationManager simulationManager) {
-	   m_manager = simulationManager;
-	   
+	protected void bindSimulationManager(SimulationManager simulationManager) {
+	   m_manager = simulationManager;	   
    }
 
 
-
-	public void unbindSimulationManager(SimulationManager simulationManager) {
+	protected void unbindSimulationManager(SimulationManager simulationManager) {
 		m_manager = null;	   
    }
 
+	
+	@Override
 	public ApplicationInstance getApplicationInstance() {
 		return this;
 	}
 	
+	/***
+	 * 
+	 * @return the device Map
+	 */
 	public Map<String, ApplicationDevice> getDevicesMap() {
 		return devices;
 	}
 	
-	
+	/**
+	 * In this method must be created an instance of DeviceController class
+	 * @return
+	 */
 	public abstract DeviceController createDeviceController();
 	
+	/**
+	 * 
+	 * @return the device controller
+	 */
 	public DeviceController getDeviceController() {
 		return m_DeviceController;
 	}
+
+	/**
+    * @return the actionPane
+    */
+   public ActionPane getActionPane() {
+   	return m_actionPane;
+   }
 	
 
 }
