@@ -195,10 +195,6 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 	
 	// ---- Component inherited methods ---- //
 	
-	@Override
-	protected ActionPane createActionPane() {
-		return new DashboardActionPane(this);
-	}
 	
 	@Override
 	protected void initContent() {
@@ -210,10 +206,10 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 		m_statusPane = new ContentPane();
 
 		// Create the action pane.
-		m_actionPane = createActionPane();
+		m_actionPane = new DashboardActionPane(this);
 		
 		//Create the device controller
-		m_DeviceController = createDeviceController();
+		m_DeviceController = new DashboardDeviceController(getSimulationManager());
 		m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
 
 		// Create a panel where user can select a digital service
@@ -296,13 +292,6 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 	}
 
 	
-
-
-	@Override
-   public DeviceController createDeviceController() {
-		return new DashboardDeviceController(getSimulationManager());
-   }
-
 
 	@Override
 	public void notifValueChange(StateVariable variable, Object oldValue,

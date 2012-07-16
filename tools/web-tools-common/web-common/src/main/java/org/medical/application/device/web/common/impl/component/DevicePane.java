@@ -50,7 +50,6 @@ import org.medical.application.device.web.common.impl.component.event.DropEvent;
 import org.medical.application.device.web.common.impl.component.event.DropListener;
 import org.medical.application.device.web.common.portlet.impl.GenericDeviceStatusWindow;
 import org.medical.device.manager.ApplicationDevice;
-import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -92,49 +91,9 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 
 	public DevicePane(final ActionPane parent) {
 		m_parent = parent;
-
 		m_grid = new Grid(3);
 		m_grid.setInsets(new Insets(2, 3));
-
-		/*
-		 * 
-		 * if (getAppInstance().isSimulator()) {
-		 * 
-		 * final Label image = new Label(new
-		 * ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50),
-		 * new Extent(50))); final GridLayoutData imageLayout = new
-		 * GridLayoutData(); imageLayout.setRowSpan(2);
-		 * image.setLayoutData(imageLayout); // Create the device creation text
-		 * fields and button. m_description = new TextField(); m_factory = new
-		 * DropDownMenu(new DefaultMenuModel(), new DefaultMenuSelectionModel());
-		 * final GridLayoutData factoryLayoutData = new GridLayoutData();
-		 * factoryLayoutData.setColumnSpan(2);
-		 * m_factory.setLayoutData(factoryLayoutData);
-		 * 
-		 * final Button addDeviceButton = new Button("Create device");
-		 * addDeviceButton.addActionListener(new ActionListener() { private static
-		 * final long serialVersionUID = -3523127008825007357L;
-		 * 
-		 * @Override public void actionPerformed(ActionEvent e) { String
-		 * description = m_description.getText(); String factoryName =
-		 * m_factory.getSelectionModel().getSelectedId();
-		 * 
-		 * // Create the device. try { createDeviceInstance(factoryName,
-		 * description); } catch (Exception e1) { showErrorWindow(e.toString());
-		 * throw new RuntimeException(e1); } // The device will be plotted when
-		 * its service will be provided. m_description.setText(""); } }); final
-		 * GridLayoutData deviceButtonLayout = new GridLayoutData();
-		 * deviceButtonLayout.setColumnSpan(2);
-		 * addDeviceButton.setLayoutData(deviceButtonLayout);
-		 * 
-		 * m_grid.add(image); m_grid.add(m_factory); m_grid.add(m_description);
-		 * m_grid.add(addDeviceButton);
-		 * 
-		 * }
-		 */
-
 		recreateDeviceTable(null);
-
 		add(m_grid);
 	}
 
@@ -173,109 +132,17 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		return model;
 	}
 
-	/*
-	 * public void addDeviceFactory(Factory factory) { }
-	 * 
-	 * public void removeDeviceFactory(Factory factory) { }
-	 */
-
 	/**
-	 * Adds a device "reference" into the GUI simulator application
-	 * 
-	 * @param device
-	 *           device instance to be added
-	 * @param properties
-	 *           properties of the device service
+	 * Adds an device representation into the DevicePane
+	 * @param entry
 	 */
-	/*
-	 * public void addDevice(final ApplicationDevice device, Map<String, Object>
-	 * properties) { DeviceEntry entry = getDeviceEntry(device, properties);
-	 * 
-	 * // manage addition if (m_devices.containsKey(entry.serialNumber)) {
-	 * showErrorWindow("The device \"" + entry.serialNumber +
-	 * "\"already exists."); return; }
-	 * 
-	 * // Creating and adding the house pane button (icon) //
-	 * addDeviceWidget(device, entry.description, entry.position, //
-	 * entry.serialNumber, entry); addDeviceWidget(entry); synchronized
-	 * (m_deviceSerialNumbers) { m_devices.put(entry.serialNumber, entry);
-	 * m_deviceSerialNumbers.add(entry.serialNumber); }
-	 * 
-	 * 
-	 * 
-	 * // Add device to the table addDeviceInTable(entry);
-	 * 
-	 * }
-	 */
-
 	public void addDevice(DeviceEntry entry) {
-
-		// Creating and adding the house pane button (icon)
-		// addDeviceWidget(device, entry.description, entry.position,
-		// entry.serialNumber, entry);
+		// Add icon in the house pane
 		addDeviceWidget(entry);
-		/*
-		 * synchronized (m_deviceSerialNumbers) {
-		 * m_deviceSerialNumbers.add(entry.serialNumber); }
-		 */
-		// set it as unavailable for all services by default
-		/*
-		 * for (Application service :
-		 * getAppInstance().getAppMgr().getApplications()) { boolean available =
-		 * service.getId().startsWith("Digital Home Simulator");
-		 * setDeviceAvailabilityFor(entry.serialNumber, service, available); }
-		 */
-
 		// Add device to the table
 		addDeviceInTable(entry);
 	}
 
-	/**
-	 * Builds a device entry instance (gui information) from a device object
-	 * 
-	 * @param device
-	 *           the device object
-	 * @param properties
-	 *           the device properties
-	 * @return the device entry instance (gui object)
-	 */
-	private DeviceEntry getDeviceEntry(ApplicationDevice device, Map<String, Object> properties) {
-		String description = (String) properties.get(Constants.SERVICE_DESCRIPTION);
-		if (description == null) {
-			// If service description is not defined, use the device serial number.
-			description = device.getId();
-		}
-
-		Position position = getAppInstance().getSimulationManager().getDevicePosition(device.getId());
-
-		if (position == null) {
-			position = generateBorderPosition();
-		}
-		final String serialNumber = device.getId();
-
-		String state = (String) properties.get("state");
-		if (state == null)
-			state = "unknown";
-
-		String fault = (String) properties.get("fault");
-		if (fault == null)
-			fault = "uknown";
-
-		String logicPosition = getAppInstance().getSimulationManager().getEnvironmentFromPosition(position);
-		if (logicPosition == null)
-			logicPosition = "unassigned";
-
-		final DeviceEntry entry = new DeviceEntry();
-		entry.serialNumber = serialNumber;
-		entry.state = state;
-		entry.fault = fault;
-		entry.label = new Label(description);
-		entry.position = position;
-		entry.logicPosition = logicPosition;
-		entry.description = description;
-
-		return entry;
-	}
 
 	protected void addDeviceWidget(final DeviceEntry entry) {
 
@@ -303,42 +170,35 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		getAppInstance().getHousePane().getChildContainer().add(entry.dragSource);
 	}
 
+	/**
+	 * Adds an device representation into the table
+	 * @param entry
+	 */
 	private void addDeviceInTable(final DeviceEntry entry) {
 		tableModel.addDeviceRow(entry);
 	}
 
 	/**
-	 * Removes the device "references" in the GUI simulator application
-	 * 
-	 * @param device
-	 *           Device instance to be removed
+	 * Removes a device representation into the Device pane
+	 * @param entry
 	 */
-	/*
-	 * public void removeDevice(ApplicationDevice device) {
-	 * 
-	 * String serialNumber = device.getId(); removeDeviceFromTable(serialNumber);
-	 * 
-	 * DeviceEntry entry = m_devices.get(serialNumber); synchronized
-	 * (m_deviceSerialNumbers) { m_devices.remove(serialNumber);
-	 * m_deviceSerialNumbers.remove(entry.serialNumber); }
-	 * 
-	 * removeDeviceWidget(entry); }
-	 */
-
 	public void removeDevice(DeviceEntry entry) {
 		removeDeviceFromTable(entry.serialNumber);
-		/*
-		 * synchronized (m_deviceSerialNumbers) {
-		 * m_deviceSerialNumbers.remove(entry.serialNumber); }
-		 */
 		removeDeviceWidget(entry);
 	}
 
-	protected void removeDeviceWidget(DeviceEntry entry) {
-
+	/**
+	 * Removes the device icon from the House Pane
+	 * @param entry
+	 */
+	private void removeDeviceWidget(DeviceEntry entry) {
 		getAppInstance().getHousePane().getChildContainer().remove(entry.dragSource);
 	}
 
+	/**
+	 * 
+	 * @param serialNumber
+	 */
 	private void removeDeviceFromTable(String serialNumber) {
 		tableModel.removeDeviceRow(serialNumber);
 	}
@@ -375,6 +235,10 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		updateDeviceTable(entry);
 	}
 
+	/**
+	 * Utility method to show a error message in the GUI
+	 * @param error
+	 */
 	public void showErrorWindow(final String error) {
 		final WindowPane window = new WindowPane();
 		// Create the icon.
@@ -414,25 +278,6 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 * @param deviceSerialNumber
 	 * @param device
 	 */
-
-	/*
-	 * public void changeDevice(String deviceSerialNumber, ApplicationDevice
-	 * device, Map<String, Object> properties) { DeviceEntry entry =
-	 * m_devices.get(deviceSerialNumber); if (entry == null) { return; }
-	 * removeDeviceWidget(entry);
-	 * 
-	 * if (properties != null) { DeviceEntry newEntry = getDeviceEntry(device,
-	 * properties); entry.description = newEntry.description; entry.logicPosition
-	 * = newEntry.logicPosition; entry.state = newEntry.state; entry.fault =
-	 * newEntry.fault; }
-	 * 
-	 * if (isAvailableForSelectedApplication(deviceSerialNumber)) //
-	 * addDeviceWidget(device, entry.description, entry.position, //
-	 * deviceSerialNumber, entry); addDeviceWidget(entry);
-	 * 
-	 * updateDeviceTable(deviceSerialNumber, device); }
-	 */
-
 	public void changeDevice(DeviceEntry entry) {
 		removeDeviceWidget(entry);
 		if (isAvailableForSelectedApplication(entry.serialNumber))
@@ -445,12 +290,6 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 			tableModel.updateDeviceRow(entry);
 	}
 
-	/*
-	 * private void updateDeviceTable(String deviceSerialNumber,
-	 * ApplicationDevice applicationDevice) { DeviceEntry entry =
-	 * m_devices.get(deviceSerialNumber); if (entry == null) { return; }
-	 * tableModel.updateDeviceRow(entry); }
-	 */
 
 	/**
 	 * Gets the current application instance
@@ -492,7 +331,6 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		}
 
 		return new ResourceImageReference("/Device-Icasa.png");
-
 	}
 
 	private static Position generateBorderPosition() {
@@ -706,94 +544,11 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		return faultStateField;
 	}
 
-	class DeviceTableCellRenderer implements TableCellRenderer {
+	
+	
+	
 
-		/**
-	    * 
-	    */
-		private static final long serialVersionUID = -2146113024393976876L;
 
-		int LOCATION_COLUMN_INDEX = 1;
-		int STATE_COLUMN_INDEX = 2;
-		int FAULT_COLUMN_INDEX = 3;
-		int DETAIL_COLUMN_INDEX = 4;
-		int DELETE_COLUMN_INDEX = 5;
-
-		@Override
-		public Component getTableCellRendererComponent(Table table, final Object value, int column, int row) {
-			if (value == null) {
-				return null;
-			}
-
-			final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
-			String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
-
-			if (column == LOCATION_COLUMN_INDEX) {
-				return createLocationList(deviceSerialNumber, (String) value);
-			}
-			if (column == STATE_COLUMN_INDEX) {
-				if (deviceTableModel.useState())
-					return createStateList(deviceSerialNumber, (String) value);
-				else
-					return createUsedList(deviceSerialNumber, (Boolean) value);
-			}
-
-			if (column == FAULT_COLUMN_INDEX) {
-				if (deviceTableModel.useEditableFault())
-					return createFaultList(deviceSerialNumber, (String) value);
-				else
-					return createNonEditableFaultList(deviceSerialNumber, (String) value);
-			}
-			if (column == DETAIL_COLUMN_INDEX) {
-				Button detailButton = new Button("...");
-
-				detailButton.setActionCommand(value.toString());
-				detailButton.addActionListener(new DeviceSpotActionListener());
-				return detailButton;
-			}
-			if (column == DELETE_COLUMN_INDEX) {
-				Button deleteButton = new Button(new ResourceImageReference("/Remove.png"));
-				deleteButton.addActionListener(new ActionListener() {
-
-					/**
-               * 
-               */
-					private static final long serialVersionUID = 264629139995718720L;
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						getAppInstance().disposeDeviceInstance(value.toString());
-					}
-				});
-				return deleteButton;
-			}
-
-			return new Label(value.toString());
-		}
-
-	}
-
-	class DeviceHeaderTableCellRenderer implements TableCellRenderer {
-
-		/**
-       * 
-       */
-		private static final long serialVersionUID = -396501832386443994L;
-
-		private final Font headerFont = new Font(Font.HELVETICA, Font.BOLD, new Extent(11, Extent.PT));
-
-		@Override
-		public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
-			if (value == null) {
-				return null;
-			} else {
-				Label alLabel = new Label(value.toString());
-				alLabel.setFont(headerFont);
-				return alLabel;
-			}
-		}
-
-	}
 
 	abstract class StringListActionListener implements ActionListener {
 
@@ -903,6 +658,103 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		}
 	}
 
+	
+	// ------ Utility classes used into the DevicePane ----- //
+	
+	
+	/**
+	 * Renders the cells of the table
+	 */
+	class DeviceTableCellRenderer implements TableCellRenderer {
+
+		private static final long serialVersionUID = -2146113024393976876L;
+
+		int LOCATION_COLUMN_INDEX = 1;
+		int STATE_COLUMN_INDEX = 2;
+		int FAULT_COLUMN_INDEX = 3;
+		int DETAIL_COLUMN_INDEX = 4;
+		int DELETE_COLUMN_INDEX = 5;
+
+		@Override
+		public Component getTableCellRendererComponent(Table table, final Object value, int column, int row) {
+			if (value == null) {
+				return null;
+			}
+
+			final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
+			String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
+
+			if (column == LOCATION_COLUMN_INDEX) {
+				return createLocationList(deviceSerialNumber, (String) value);
+			}
+			if (column == STATE_COLUMN_INDEX) {
+				if (deviceTableModel.useState())
+					return createStateList(deviceSerialNumber, (String) value);
+				else
+					return createUsedList(deviceSerialNumber, (Boolean) value);
+			}
+
+			if (column == FAULT_COLUMN_INDEX) {
+				if (deviceTableModel.useEditableFault())
+					return createFaultList(deviceSerialNumber, (String) value);
+				else
+					return createNonEditableFaultList(deviceSerialNumber, (String) value);
+			}
+			if (column == DETAIL_COLUMN_INDEX) {
+				Button detailButton = new Button("...");
+
+				detailButton.setActionCommand(value.toString());
+				detailButton.addActionListener(new DeviceSpotActionListener());
+				return detailButton;
+			}
+			if (column == DELETE_COLUMN_INDEX) {
+				Button deleteButton = new Button(new ResourceImageReference("/Remove.png"));
+				deleteButton.addActionListener(new ActionListener() {
+
+					/**
+               * 
+               */
+					private static final long serialVersionUID = 264629139995718720L;
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						getAppInstance().disposeDeviceInstance(value.toString());
+					}
+				});
+				return deleteButton;
+			}
+
+			return new Label(value.toString());
+		}
+
+	}
+
+	
+	/**
+	 * Render the headers of the table
+	 */
+	class DeviceHeaderTableCellRenderer implements TableCellRenderer {
+
+		/**
+       * 
+       */
+		private static final long serialVersionUID = -396501832386443994L;
+
+		private final Font headerFont = new Font(Font.HELVETICA, Font.BOLD, new Extent(11, Extent.PT));
+
+		@Override
+		public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+			if (value == null) {
+				return null;
+			} else {
+				Label alLabel = new Label(value.toString());
+				alLabel.setFont(headerFont);
+				return alLabel;
+			}
+		}
+
+	}
+	
 	/**
 	 * Abstract (default) model to show devices in a echo3 table
 	 * 

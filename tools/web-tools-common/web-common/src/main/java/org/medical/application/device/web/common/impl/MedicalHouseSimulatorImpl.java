@@ -25,14 +25,10 @@ import java.util.Map;
 
 import nextapp.echo.app.ApplicationInstance;
 import nextapp.echo.app.ContentPane;
-import nextapp.echo.app.Extent;
-import nextapp.echo.app.Pane;
 import nextapp.echo.app.ResourceImageReference;
-import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.TaskQueueHandle;
 import nextapp.echo.app.Window;
 import nextapp.echo.app.WindowPane;
-import nextapp.echo.app.layout.SplitPaneLayoutData;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.StyleSheetLoader;
 
@@ -54,7 +50,6 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
-
 public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance implements DevicePositionListener,
       PropertyChangeListener {
 
@@ -63,17 +58,13 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 */
 	private static final long serialVersionUID = -2887321216032546523L;
 
-<<<<<<< HEAD
 	protected static final int MARGIN = 10;
-=======
-	private static final int MARGIN = 10;
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
-	
+
 	/**
 	 * The simulation manager service
 	 */
 	private SimulationManager m_manager;
-	
+
 	/**
 	 * The widget factory selector (selects the rigth incon and window)
 	 */
@@ -89,14 +80,11 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 */
 	private String userImage;
 
-	
-	//This variable must be changed, is used to "glue" code into the application
+	// This variable must be changed, is used to "glue" code into the application
 	/**
 	 * Home type
 	 */
 	private String homeType;
-	
-<<<<<<< HEAD
 
 	/**
 	 * (Left) Pane where are the house map and graphical icons for devices
@@ -107,30 +95,15 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 * (Right) pane that contains the device pane and others
 	 */
 	protected ActionPane m_actionPane;
-=======
-
-	/**
-	 * (Left) Pane where are the house map and graphical icons for devices
-	 */
-	private HousePane m_housePane;
-
-	/**
-	 * (Right) pane that contains the device pane and others
-	 */
-	private ActionPane m_actionPane;
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 
 	/**
 	 * (Bottom) pane that contains device widgets (specific windows)
 	 */
-<<<<<<< HEAD
+
 	protected ContentPane m_statusPane;
-=======
-	private ContentPane m_statusPane;
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
-	
+
 	/**
-	 * Task queue used in echo3 apps 
+	 * Task queue used in echo3 apps
 	 */
 	private TaskQueueHandle m_taskQueueHandle;
 
@@ -143,13 +116,13 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 * Bundle context
 	 */
 	private final BundleContext m_context;
-	
+
 	/**
 	 * Device controller instance
 	 */
 	protected DeviceController m_DeviceController;
 
-	//TODO: See this map 
+	// TODO: See this map
 	/**
 	 * A map containing all bind devices
 	 */
@@ -161,30 +134,23 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	private List<DeviceWidgetFactory> widgetFactories;
 
 	/**
-	 * Indicates if there is a android client using the application 
+	 * Indicates if there is a android client using the application
 	 */
 	private Boolean isAndroid;
-	
-<<<<<<< HEAD
-=======
-	/**
-	 * Indicates if is a simulator or dashboard application instance
-	 */
-	private Boolean isSimulator;
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
-	
-	
+
 	private static Bundle _bundle;
-	
+
 	/**
 	 * Default constructor
-	 * @param context the bundle context
+	 * 
+	 * @param context
+	 *           the bundle context
 	 */
 	public MedicalHouseSimulatorImpl(BundleContext context) {
 		m_context = context;
 		_bundle = context.getBundle();
 	}
-	
+
 	/**
 	 * Initializes the GUI applications
 	 */
@@ -203,150 +169,110 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 		// Create the list with porlet factories
 		widgetFactories = new ArrayList<DeviceWidgetFactory>();
-		
-<<<<<<< HEAD
-		
+
 		/*
-=======
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
-		
-		// Create the house pane.
-		m_housePane = new HousePane(this);
+		 * 
+		 * // Create the house pane. m_housePane = new HousePane(this);
+		 * 
+		 * // Create the status pane. m_statusPane = new ContentPane();
+		 * 
+		 * // Create the action pane. m_actionPane = createActionPane();
+		 * 
+		 * //Create the device controller m_DeviceController =
+		 * createDeviceController();
+		 * m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
+		 * 
+		 * 
+		 * SplitPaneLayoutData actionPaneData = new SplitPaneLayoutData();
+		 * actionPaneData.setMinimumSize(new Extent(200, Extent.PX));
+		 * actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
+		 * actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
+		 * m_actionPane.setLayoutData(actionPaneData);
+		 * 
+		 * 
+		 * 
+		 * // Create the top split pane, that contains the house and action panes.
+		 * final SplitPane topPane = new
+		 * SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
+		 * topPane.setResizable(true);
+		 * 
+		 * SplitPaneLayoutData data = new SplitPaneLayoutData();
+		 * data.setMinimumSize(new Extent(500, Extent.PX));
+		 * data.setMaximumSize(new Extent(900, Extent.PX));
+		 * data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
+		 * 
+		 * topPane.add(m_actionPane);
+		 * 
+		 * data = new SplitPaneLayoutData(); data.setMinimumSize(new Extent(200,
+		 * Extent.PX)); data.setMaximumSize(new Extent(900, Extent.PX));
+		 * data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
+		 * m_housePane.setLayoutData(data);
+		 * 
+		 * topPane.add(m_housePane);
+		 * 
+		 * // Create the global split pane, that contains the top split pane and
+		 * // the status pane. Pane globalPane; if (isAndroid()) { ContentPane
+		 * pane = new ContentPane(); pane.add(topPane);
+		 * 
+		 * globalPane = pane; } else { SplitPane pane = new
+		 * SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, new
+		 * Extent(HousePane.HEIGHT + MARGIN)); pane.add(topPane);
+		 * pane.add(m_statusPane);
+		 * 
+		 * globalPane = pane; }
+		 * 
+		 * // Create the top level window, that contains top split pane and the //
+		 * status pane. m_window = new Window();
+		 * m_window.getContent().add((nextapp.echo.app.Component) globalPane);
+		 */
 
-		// Create the status pane.
-		m_statusPane = new ContentPane();
-
-		// Create the action pane.
-		m_actionPane = createActionPane();
-
-		//Create the device controller
-		m_DeviceController = createDeviceController();
-		m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
-		
-
-		SplitPaneLayoutData actionPaneData = new SplitPaneLayoutData();
-		actionPaneData.setMinimumSize(new Extent(200, Extent.PX));
-		actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
-		actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		m_actionPane.setLayoutData(actionPaneData);
-
-
-
-		// Create the top split pane, that contains the house and action panes.
-		final SplitPane topPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
-		topPane.setResizable(true);
-
-		SplitPaneLayoutData data = new SplitPaneLayoutData();
-		data.setMinimumSize(new Extent(500, Extent.PX));
-		data.setMaximumSize(new Extent(900, Extent.PX));
-		data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-
-		topPane.add(m_actionPane);
-
-		data = new SplitPaneLayoutData();
-		data.setMinimumSize(new Extent(200, Extent.PX));
-		data.setMaximumSize(new Extent(900, Extent.PX));
-		data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		m_housePane.setLayoutData(data);
-
-		topPane.add(m_housePane);
-
-		// Create the global split pane, that contains the top split pane and
-		// the status pane.
-		Pane globalPane;
-		if (isAndroid()) {
-			ContentPane pane = new ContentPane();
-			pane.add(topPane);
-
-			globalPane = pane;
-		} else {
-			SplitPane pane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM,
-			      new Extent(HousePane.HEIGHT + MARGIN));
-			pane.add(topPane);
-			pane.add(m_statusPane);
-
-			globalPane = pane;
-		}
-
-		// Create the top level window, that contains top split pane and the
-		// status pane.
-		m_window = new Window();
-		m_window.getContent().add((nextapp.echo.app.Component) globalPane);
-<<<<<<< HEAD
-		*/
-=======
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	}
 
-	/**
-	 * In this method must be created the action pane
-	 * @return
-	 */
-	protected abstract ActionPane createActionPane();
-	
 
-	
 	@Override
 	public Window init() {
 		return m_window;
 	}
-	
-	
 
 	@Override
 	public void dispose() {
 		// Destroy the task queue.
 		removeTaskQueue(m_taskQueueHandle);
 		super.dispose();
-		//m_controller.dispose();
+		// m_controller.dispose();
 	}
-	
+
 	public static Bundle getBundle() {
 		return _bundle;
 	}
 
 	@Validate
 	public void start() {
-		
 
 		initContent();
 		m_housePane.addPropertyChangeListener(this);
 		m_manager.addDevicePositionListener(this);
-		
-		
-		
-		/*
-		// Get the script file list
-		final List<String> scriptList = m_ScriptExecutor.getScriptList();
-		
-		
-		enqueueTask(new Runnable() {
 
-			@Override
-			public void run() {
-				scriptFileList = new DefaultListModel(scriptList.toArray());
-				m_actionPane.updateScriptList();
-			}
-		});
-		
-		*/
-		
+		/*
+		 * // Get the script file list final List<String> scriptList =
+		 * m_ScriptExecutor.getScriptList();
+		 * 
+		 * 
+		 * enqueueTask(new Runnable() {
+		 * 
+		 * @Override public void run() { scriptFileList = new
+		 * DefaultListModel(scriptList.toArray());
+		 * m_actionPane.updateScriptList(); } });
+		 */
+
 	}
 
-	
 	public void stop() {
 		m_housePane.removePropertyChangeListener(this);
 		m_manager.removeDevicePositionListener(this);
 
 	}
-	
 
-<<<<<<< HEAD
-=======
-	*/
-
-
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	protected void bindPortletFactory(final DeviceWidgetFactory portletFactory) {
 		enqueueTask(new Runnable() {
 			@Override
@@ -357,7 +283,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		});
 	}
 
-
 	protected void unbindPortletFactory(final DeviceWidgetFactory portletFactory) {
 		enqueueTask(new Runnable() {
 			@Override
@@ -367,29 +292,26 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			}
 		});
 	}
-	
-	@Bind(id = "portletfactorySelector", aggregate = false, optional = true)
-	public void bindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+
+	protected void bindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
 		m_widgetFactorySelector = portletFactorySelector;
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
 				m_DeviceController.refreshDeviceWidgets();
-				//m_actionPane.refreshDeviceWidgets();
+				// m_actionPane.refreshDeviceWidgets();
 			}
 		});
 	}
-	
-	@Unbind(id = "portletfactorySelector")
-	public void unbindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+
+	protected void unbindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
 		m_widgetFactorySelector = null;
 	}
 
 	/*
-	public Application getSelectedApplication() {
-		return m_selectAppPane.getSelectedApplication();
-	}
-	*/
+	 * public Application getSelectedApplication() { return
+	 * m_selectAppPane.getSelectedApplication(); }
+	 */
 
 	private void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory) {
 		Collection<ApplicationDevice> myDevices = devices.values();
@@ -400,7 +322,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			}
 		}
 	}
-	
+
 	private void devicePropertiesChanged(final String deviceSerialNumber, final ApplicationDevice device,
 	      final Map<String, Object> properties) {
 
@@ -408,10 +330,11 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			@Override
 			public void run() {
 				m_DeviceController.changeDevice(deviceSerialNumber, properties);
-				//m_actionPane.changeDevice(deviceSerialNumber, device, properties);
-				
-				//TODO: Implementation
-				
+				// m_actionPane.changeDevice(deviceSerialNumber, device,
+				// properties);
+
+				// TODO: Implementation
+
 			}
 		});
 	}
@@ -434,14 +357,12 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 
 	public void setComponentInstance(final ComponentInstance appInstance) {
-		//m_controller = appInstance;
+		// m_controller = appInstance;
 	}
 
 	public final HousePane getHousePane() {
 		return m_housePane;
 	}
-	
-	
 
 	public final ContentPane getStatusPane() {
 		return m_statusPane;
@@ -451,22 +372,16 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return m_context;
 	}
 
-
 	@Override
 	public void devicePositionChanged(final String deviceSerialNumber, final Position position) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_DeviceController.moveDevice(deviceSerialNumber, position);				
-				//m_actionPane.moveDevice(deviceSerialNumber, position);
+				m_DeviceController.moveDevice(deviceSerialNumber, position);
+				// m_actionPane.moveDevice(deviceSerialNumber, position);
 			}
 		});
 	}
-
-	
-
-   
-	
 
 	public ApplicationDevice getDeviceBySerialNumber(String deviceId) {
 		return devices.get(deviceId);
@@ -474,7 +389,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	public WindowPane getPortlet(ApplicationDevice applicationDevice) {
 		GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
-		
+
 		List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
 		String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
 		DeviceWidgetFactory portletFactory = getPortletFactoryByID(selectedPortletFactoryID);
@@ -485,7 +400,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 
 	public ResourceImageReference getImageForDevice(ApplicationDevice device2) {
 		GenericDevice genDevice = (GenericDevice) device2.getDeviceProxy(GenericDevice.class);
-		
+
 		List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
 		if (m_widgetFactorySelector != null) {
 			String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
@@ -514,11 +429,10 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return null;
 	}
 
-
 	public void setHouseImage(String houseImage) {
 		this.houseImage = houseImage;
 	}
-	
+
 	/**
 	 * 
 	 * @return
@@ -530,7 +444,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	public void setUserImage(String userImage) {
 		this.userImage = userImage;
 	}
-	
+
 	/**
 	 * @return the userImage
 	 */
@@ -541,7 +455,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	public void setHomeType(String homeType) {
 		this.homeType = homeType;
 	}
-	
+
 	/**
 	 * @return the homeType
 	 */
@@ -552,7 +466,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	public boolean isAndroid() {
 		return isAndroid;
 	}
-	
 
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
@@ -560,7 +473,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		Object newVal = evt.getNewValue();
 
 	}
-	
+
 	/**
 	 * 
 	 * @return the simulation manager
@@ -569,45 +482,27 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return m_manager;
 	}
 
-
 	public void setIsAndroid(Boolean isAndroid) {
 		this.isAndroid = isAndroid;
-   }
+	}
 
 	protected void bindSimulationManager(SimulationManager simulationManager) {
-	   m_manager = simulationManager;	   
-   }
-
+		m_manager = simulationManager;
+	}
 
 	protected void unbindSimulationManager(SimulationManager simulationManager) {
-		m_manager = null;	   
-   }
-<<<<<<< HEAD
-	
-	/**
-=======
-
-	
-	@Override
-	public ApplicationInstance getApplicationInstance() {
-		return this;
+		m_manager = null;
 	}
-	
-	/***
->>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
+
+	/**
 	 * 
 	 * @return the device Map
 	 */
 	public Map<String, ApplicationDevice> getDevicesMap() {
 		return devices;
 	}
-	
-	/**
-	 * In this method must be created an instance of DeviceController class
-	 * @return
-	 */
-	public abstract DeviceController createDeviceController();
-	
+
+
 	/**
 	 * 
 	 * @return the device controller
@@ -617,11 +512,10 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 
 	/**
-    * @return the actionPane
-    */
-   public ActionPane getActionPane() {
-   	return m_actionPane;
-   }
-	
+	 * @return the actionPane
+	 */
+	public ActionPane getActionPane() {
+		return m_actionPane;
+	}
 
 }

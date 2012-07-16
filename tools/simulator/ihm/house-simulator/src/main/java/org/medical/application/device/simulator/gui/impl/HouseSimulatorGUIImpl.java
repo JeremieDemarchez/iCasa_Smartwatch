@@ -255,11 +255,7 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	
 	// ---- Component inherited methods ---- //
 	
-	@Override
-	protected ActionPane createActionPane() {
-		return new SimulatorActionPane(this);
-	}
-	
+
 	@Override
 	protected void initContent() {
 	   super.initContent();
@@ -270,10 +266,10 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 		m_statusPane = new ContentPane();
 
 		// Create the action pane.
-		m_actionPane = createActionPane();
+		m_actionPane = new SimulatorActionPane(this);
 
 		//Create the device controller
-		m_DeviceController = createDeviceController();
+		m_DeviceController = new SimulatorDeviceController(getSimulationManager());
 		m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
 		
 
@@ -426,12 +422,6 @@ public class HouseSimulatorGUIImpl extends MedicalHouseSimulatorImpl implements 
 	public void stopScript() {
 		m_ScriptExecutor.stopExecution();
 	}
-
-
-	@Override
-   public DeviceController createDeviceController() {
-		return new SimulatorDeviceController(getSimulationManager());
-   }
 
 
 
