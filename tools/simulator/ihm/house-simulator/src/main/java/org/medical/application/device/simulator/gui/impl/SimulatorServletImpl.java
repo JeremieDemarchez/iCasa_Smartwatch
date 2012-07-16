@@ -40,7 +40,7 @@ import org.medical.application.device.web.common.impl.MedicalHouseSimulatorServl
  */
 @Component(name = "SimulatorGUIServlet")
 @Provides(specifications = Servlet.class)
-public class HouseSimulatorGUIServletImpl extends MedicalHouseSimulatorServletImpl implements Servlet {
+public class SimulatorServletImpl extends MedicalHouseSimulatorServletImpl implements Servlet {
 
 	/**
     * 
@@ -58,7 +58,7 @@ public class HouseSimulatorGUIServletImpl extends MedicalHouseSimulatorServletIm
 	/**
 	 * The classloader of this bundle.
 	 */
-	private static final ClassLoader CLASSLOADER = HouseSimulatorGUIServletImpl.class.getClassLoader();
+	private static final ClassLoader CLASSLOADER = SimulatorServletImpl.class.getClassLoader();
 
 		
 	@Invalidate

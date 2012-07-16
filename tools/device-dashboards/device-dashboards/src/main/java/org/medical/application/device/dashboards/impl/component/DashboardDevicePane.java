@@ -29,7 +29,7 @@ import nextapp.echo.app.table.DefaultTableModel;
 
 import org.apache.felix.ipojo.Factory;
 import org.medical.application.Application;
-import org.medical.application.device.dashboards.impl.WebDashboardApplicationImpl;
+import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
 import org.medical.device.manager.ApplicationDevice;
@@ -95,7 +95,7 @@ public class DashboardDevicePane extends DevicePane {
 	}
 
 	public boolean isAvailableForSelectedApplication(String deviceSerialNumber) {
-		Application service = ((WebDashboardApplicationImpl)getAppInstance()).getSelectedApplication();
+		Application service = ((DashboardApplicationImpl)getAppInstance()).getSelectedApplication();
 		if (service == null)
 			return true;
 

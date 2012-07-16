@@ -21,7 +21,7 @@ import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
 import org.apache.felix.ipojo.Factory;
-import org.medical.application.device.simulator.gui.impl.HouseSimulatorGUIImpl;
+import org.medical.application.device.simulator.gui.impl.SimulatorApplicationImpl;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.DevicePane;
 import org.medical.clock.api.Clock;
@@ -35,13 +35,13 @@ public class SimulatorActionPane extends ActionPane {
     */
 	private static final long serialVersionUID = 3069372724489038894L;
 
-	private HouseSimulatorGUIImpl appInstance;
+	private SimulatorApplicationImpl appInstance;
 
 	private UserPane m_userPane;
 
 	private ClockPane m_clockPane;
 
-	public SimulatorActionPane(HouseSimulatorGUIImpl appInstance) {
+	public SimulatorActionPane(SimulatorApplicationImpl appInstance) {
 		super(appInstance);
 		this.appInstance = appInstance;
 		initContent();
@@ -106,7 +106,7 @@ public class SimulatorActionPane extends ActionPane {
 			m_userPane.moveUser(userName, position);
 	}
 
-	public HouseSimulatorGUIImpl getApplicationInstance() {
+	public SimulatorApplicationImpl getApplicationInstance() {
 		return appInstance;
 	}
 

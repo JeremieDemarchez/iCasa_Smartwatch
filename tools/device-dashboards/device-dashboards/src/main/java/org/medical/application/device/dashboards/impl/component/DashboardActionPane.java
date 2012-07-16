@@ -20,7 +20,7 @@ import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
 import org.medical.application.Application;
-import org.medical.application.device.dashboards.impl.WebDashboardApplicationImpl;
+import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.SelectedApplicationTracker;
 
@@ -38,7 +38,7 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 
 	public static Extent ICON_SIZE = new Extent(25);
 
-	private WebDashboardApplicationImpl appInstance;
+	private DashboardApplicationImpl appInstance;
 
 	//private DashboardDevicePane m_devicePane;
 
@@ -46,7 +46,7 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 
 
 
-	public DashboardActionPane(WebDashboardApplicationImpl appInstance) {
+	public DashboardActionPane(DashboardApplicationImpl appInstance) {
 		super(appInstance);
 		this.appInstance = appInstance;
 		initContent();

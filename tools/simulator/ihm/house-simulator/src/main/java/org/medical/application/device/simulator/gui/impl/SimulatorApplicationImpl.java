@@ -13,11 +13,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.dashboards.impl;
+package org.medical.application.device.simulator.gui.impl;
 
 import java.beans.PropertyChangeEvent;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
@@ -26,6 +34,7 @@ import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.Window;
 import nextapp.echo.app.layout.SplitPaneLayoutData;
 
+import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -34,37 +43,39 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
-import org.medical.application.Application;
-import org.medical.application.ApplicationManager;
-import org.medical.application.device.dashboards.impl.component.DashboardActionPane;
-import org.medical.application.device.dashboards.impl.component.SelectAppPane;
+import org.medical.application.device.simulator.gui.impl.component.SimulatorActionPane;
 import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
+import org.medical.clock.api.Clock;
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableListener;
 import org.medical.device.manager.ApplicationDevice;
-import org.medical.device.manager.DependRegistration;
 import org.medical.device.manager.Device;
-import org.medical.device.manager.DeviceDependencies;
-import org.medical.device.manager.DeviceManager;
 import org.medical.device.manager.Service;
+import org.medical.script.executor.ScriptExecutor;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManager.Position;
+import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
+import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
+import fr.liglab.adele.icasa.script.ScenarioInstaller;
 
 /**
  * TODO comments.
  * 
  * @author bourretp
  */
-@Component(name = "WebDashboardApplication", immediate = true)
+@Component(name = "WebHouseSimulator", immediate = true)
 @Provides
-public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl implements StateVariableListener {
+public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implements UserPositionListener, StateVariableListener {
 
 	/**
 	 * @generated
@@ -72,17 +83,61 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 	private static final long serialVersionUID = -2887321216032546523L;
 
 	@Requires
-	private ApplicationManager m_appMgr;
-	
+	private ScriptExecutor m_ScriptExecutor;
+
 	@Requires
-	private DeviceManager m_deviceMgr;
+	private ScenarioInstaller m_ScenarioInstaller;
+
 	
-	private DependRegistration _devDepReg;
-	
-	private SelectAppPane m_selectAppPane;
-	
-	public WebDashboardApplicationImpl(BundleContext context) {
+	public SimulatorApplicationImpl(BundleContext context) {
 		super(context);
+	}
+
+
+	// ---- Component dependencies methods ---- //
+
+	@Bind(id = "clock", optional = true)
+	public void bindClock(final Clock clock) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.setClock(clock);
+			}
+		});
+	}
+
+	@Unbind(id = "clock")
+	public void unbindClock(final Clock clock) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.setClock(null);
+			}
+		});
+	}
+
+	@Bind(id = "deviceFactories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
+	public void bindDeviceFactory(final Factory factory) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.addDeviceFactory(factory);
+			}
+		});
+	}
+
+	@Unbind(id = "deviceFactories")
+	public void unbindDeviceFactory(final Factory factory) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.removeDeviceFactory(factory);
+			}
+		});
 	}
 
 
@@ -93,7 +148,7 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 			@Override
 			public void run() {
 				getDevicesMap().put(device.getId(), device);
-				DashboardDeviceController controller = (DashboardDeviceController) getDeviceController();
+				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
 				controller.addDevice(device, properties);
 			}
 		});
@@ -106,7 +161,7 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 			@Override
 			public void run() {
 				getDevicesMap().remove(device.getId());
-				DashboardDeviceController controller = (DashboardDeviceController) getDeviceController();
+				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
 				controller.removeDevice(device);
 			}
 		});
@@ -145,6 +200,16 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 		super.unbindPortletFactorySelector(portletFactorySelector);
 	}
 
+	@Override
+	public void userPositionChanged(final String userName, final Position position) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.moveUser(userName, position);
+			}
+		});
+	}
 
 	// ---- Component properties methods ---- //
 	
@@ -178,24 +243,19 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 	
 	@Validate
 	public void start() {
-		super.start();		
-		DeviceDependencies devDep = new DeviceDependencies().requiresAll().optional().exportsTo(GenericDevice.class);
-		devDep.includes().all();
-		_devDepReg = m_deviceMgr.addDependencies(devDep);
+		super.start();
+		getSimulationManager().addUserPositionListener(this);
 	}
 
 	@Invalidate
 	public void stop() {
 		super.stop();
-		if (_devDepReg != null) {
-			_devDepReg.unregister();
-			_devDepReg = null;
-		}
+		getSimulationManager().removeUserPositionListener(this);
 	}
 	
 	// ---- Component inherited methods ---- //
 	
-	
+
 	@Override
 	protected void initContent() {
 	   super.initContent();
@@ -206,37 +266,20 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 		m_statusPane = new ContentPane();
 
 		// Create the action pane.
-		m_actionPane = new DashboardActionPane(this);
-		
+		m_actionPane = new SimulatorActionPane(this);
+
 		//Create the device controller
-		m_DeviceController = new DashboardDeviceController(getSimulationManager());
+		m_DeviceController = new SimulatorDeviceController(getSimulationManager());
 		m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
-
-		// Create a panel where user can select a digital service
-		m_selectAppPane = new SelectAppPane(this);
-
-		// add listeners
-		m_selectAppPane.addSelectedApplicationTracker((DashboardActionPane)m_actionPane);
-
-		// Create a panel which contains select service panel and action panel
-		final SplitPane dashboardPane = new SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, false);
-		dashboardPane.setResizable(false);
-
-		SplitPaneLayoutData selectServPaneData = new SplitPaneLayoutData();
-		selectServPaneData.setMinimumSize(new Extent(30, Extent.PX));
-		selectServPaneData.setMaximumSize(new Extent(30, Extent.PX));
-		selectServPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_HIDDEN);
-		m_selectAppPane.setLayoutData(selectServPaneData);
-
-		dashboardPane.add(m_selectAppPane);
+		
 
 		SplitPaneLayoutData actionPaneData = new SplitPaneLayoutData();
 		actionPaneData.setMinimumSize(new Extent(200, Extent.PX));
-		// actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
+		actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
 		actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
 		m_actionPane.setLayoutData(actionPaneData);
 
-		dashboardPane.add(m_actionPane);
+
 
 		// Create the top split pane, that contains the house and action panes.
 		final SplitPane topPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
@@ -246,9 +289,8 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 		data.setMinimumSize(new Extent(500, Extent.PX));
 		data.setMaximumSize(new Extent(900, Extent.PX));
 		data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		dashboardPane.setLayoutData(data);
 
-		topPane.add(dashboardPane);
+		topPane.add(m_actionPane);
 
 		data = new SplitPaneLayoutData();
 		data.setMinimumSize(new Extent(200, Extent.PX));
@@ -280,7 +322,7 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 		m_window = new Window();
 		m_window.getContent().add((nextapp.echo.app.Component) globalPane);
 
-	   m_window.setTitle("iCasa Dashboard");
+	   m_window.setTitle("iCasa Simulator Platform ");
 	}
 	
 	// ---- Component Business Methods ---- //
@@ -291,7 +333,99 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 		Object newVal = evt.getNewValue();
 	}
 
+	/**
+	 * Saves the current simulation scenario
+	 */
+	public void saveSimulationEnvironment() {
+		SimulationManager simulationManager = getSimulationManager();
+		Set<String> envs = simulationManager.getEnvironments();
+
+		Set<String> devices = simulationManager.getDevices();
+
+		FileWriter outFile;
+		PrintWriter out;
+		try {
+			SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy-HHmmss");
+
+			File directory = new java.io.File("scenarios");
+			if (!directory.exists())
+				directory.mkdir();
+			String fileName = "scenarios" + File.separator + "simulation-" + formatter.format(new Date()) + ".icasa";
+			outFile = new FileWriter(new File(fileName));
+			out = new PrintWriter(outFile);
+
+			for (String environment : envs) {
+				out.println("environment " + "\"" + environment + "\" {");
+
+				Zone zone = simulationManager.getEnvironmentZone(environment);
+				out.println("\t position = " + zone.leftX + " " + zone.topY + " " + zone.rightX + " " + zone.bottomY);
+
+				for (String device : devices) {
+					System.out.println("Device -----> " + device);
+					Position position = simulationManager.getDevicePosition(device);
+					String deviceEnv = simulationManager.getEnvironmentFromPosition(position);
+					if (deviceEnv.equals(environment)) {
+						String deviceLine = "\t device " + "\"" + device + "\" : \"";
+
+						try {
+							ServiceReference[] references = getContext().getServiceReferences(
+							      SimulatedDevice.class.getCanonicalName(), "(device.serialNumber=" + device + ")");
+							if (references != null && references.length > 0) {
+								ServiceReference reference = references[0];
+								deviceLine += reference.getProperty("factory.name") + "\" {";
+								out.println(deviceLine);
+								out.println("\t\t position = " + position.x + " " + position.y);
+								String description = (String) reference.getProperty("service.description");
+								if (description != null)
+									out.println("\t\t \"service.description\" = \"" + description + "\"");
+								String state = (String) reference.getProperty("state");
+								if (state != null)
+									out.println("\t\t \"state\" = \"" + state + "\"");
+							}
+						} catch (InvalidSyntaxException e) {
+							e.printStackTrace();
+						}
+						out.println("\t}");
+					}
+				}
+				out.println("}");
+				out.println();
+			}
+
+			out.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+
+	}
 	
+	public List<String> getScenarioList() {
+		return m_ScenarioInstaller.getScenarioList();
+	}
+
+	public void installScenario(String scenarioName) {
+		try {
+			m_ScenarioInstaller.installScenario(scenarioName);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	public List<String> getScriptList() {
+		return m_ScriptExecutor.getScriptList();
+	}
+
+	public void executeScript(String scriptName) {
+		m_ScriptExecutor.executeScript(scriptName);
+	}
+
+	public void stopScript() {
+		m_ScriptExecutor.stopExecution();
+	}
+
+
+
+
 
 	@Override
 	public void notifValueChange(StateVariable variable, Object oldValue,
@@ -309,7 +443,7 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 			enqueueTask(new Runnable() {
 				@Override
 				public void run() {
-					DashboardDeviceController controller = (DashboardDeviceController) getDeviceController();
+					SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
 					controller.changeDevice(dev.getId(), Collections.EMPTY_MAP);
 				}
 			});
@@ -329,13 +463,5 @@ public class WebDashboardApplicationImpl extends MedicalHouseSimulatorImpl imple
 	   // TODO Auto-generated method stub
 	   
    }
-	
-	public Application getApplication(String appId) {
-		return m_appMgr.getApplication(appId);
-	}
 
-
-	public Application getSelectedApplication() {
-		return m_selectAppPane.getSelectedApplication();
-   }
 }
