@@ -25,6 +25,10 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 
 public class SimulatorDeviceController extends DeviceController {
 
+<<<<<<< HEAD
+=======
+	//private SimulationManager m_SimulationManager;
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	
 	public SimulatorDeviceController(SimulationManager simulationManager) {
 		super(simulationManager);

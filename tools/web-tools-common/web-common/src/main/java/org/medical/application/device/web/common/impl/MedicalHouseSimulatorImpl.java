@@ -63,7 +63,11 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 */
 	private static final long serialVersionUID = -2887321216032546523L;
 
+<<<<<<< HEAD
 	protected static final int MARGIN = 10;
+=======
+	private static final int MARGIN = 10;
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	
 	/**
 	 * The simulation manager service
@@ -92,6 +96,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 */
 	private String homeType;
 	
+<<<<<<< HEAD
 
 	/**
 	 * (Left) Pane where are the house map and graphical icons for devices
@@ -102,11 +107,27 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 * (Right) pane that contains the device pane and others
 	 */
 	protected ActionPane m_actionPane;
+=======
+
+	/**
+	 * (Left) Pane where are the house map and graphical icons for devices
+	 */
+	private HousePane m_housePane;
+
+	/**
+	 * (Right) pane that contains the device pane and others
+	 */
+	private ActionPane m_actionPane;
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 
 	/**
 	 * (Bottom) pane that contains device widgets (specific windows)
 	 */
+<<<<<<< HEAD
 	protected ContentPane m_statusPane;
+=======
+	private ContentPane m_statusPane;
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	
 	/**
 	 * Task queue used in echo3 apps 
@@ -144,6 +165,13 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 */
 	private Boolean isAndroid;
 	
+<<<<<<< HEAD
+=======
+	/**
+	 * Indicates if is a simulator or dashboard application instance
+	 */
+	private Boolean isSimulator;
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	
 	
 	private static Bundle _bundle;
@@ -176,8 +204,11 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		// Create the list with porlet factories
 		widgetFactories = new ArrayList<DeviceWidgetFactory>();
 		
+<<<<<<< HEAD
 		
 		/*
+=======
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 		
 		// Create the house pane.
 		m_housePane = new HousePane(this);
@@ -241,7 +272,10 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		// status pane.
 		m_window = new Window();
 		m_window.getContent().add((nextapp.echo.app.Component) globalPane);
+<<<<<<< HEAD
 		*/
+=======
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	}
 
 	/**
@@ -307,6 +341,12 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	}
 	
 
+<<<<<<< HEAD
+=======
+	*/
+
+
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	protected void bindPortletFactory(final DeviceWidgetFactory portletFactory) {
 		enqueueTask(new Runnable() {
 			@Override
@@ -542,8 +582,19 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	protected void unbindSimulationManager(SimulationManager simulationManager) {
 		m_manager = null;	   
    }
+<<<<<<< HEAD
 	
 	/**
+=======
+
+	
+	@Override
+	public ApplicationInstance getApplicationInstance() {
+		return this;
+	}
+	
+	/***
+>>>>>>> f0434dda5556da5a3bce6af35794e41250620cac
 	 * 
 	 * @return the device Map
 	 */
