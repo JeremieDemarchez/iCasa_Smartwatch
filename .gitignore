@@ -314,3 +314,8 @@ target
 /platform\physical-devices\usb\usb-rfid-reader-importer/target
 /tools\device-dashboards\packages\device-dashboards-dp/target
 /platform\physical-devices\bluetooth\bluetooth-discovery-api/target
+/platform\physical-devices\upnp\presence-detector-upnp-exporter/target
+/platform\physical-devices\upnp\upnp-presence-detector/target
+/platform\physical-devices\upnp\upnp-presence-detector-importer/target
+/platform\physical-devices\upnp\upnp-presence-detector-proxy/target
+/platform\physical-devices\upnp\upnp-settopbox-importer/target
