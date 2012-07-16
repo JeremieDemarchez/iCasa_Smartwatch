@@ -164,8 +164,8 @@ public class ActionPane extends AccordionPane implements SelectedApplicationTrac
 			m_clockPane.setClock(clock);
 	}
 
-	public void addDevice(ApplicationDevice device, Map<String, Object> properties) {
-		m_devicePane.addDevice(device, properties);
+	public void addDevice(ApplicationDevice device) {
+		m_devicePane.addDevice(device);
 	}
 
 	public void removeDevice(ApplicationDevice device) {
@@ -190,8 +190,8 @@ public class ActionPane extends AccordionPane implements SelectedApplicationTrac
 	}
 
 	public void changeDevice(String deviceSerialNumber,
-			final ApplicationDevice device, Map<String, Object> properties) {
-		m_devicePane.changeDevice(deviceSerialNumber, device, properties);
+			final ApplicationDevice device) {
+		m_devicePane.changeDevice(deviceSerialNumber, device);
 	}
 
 	public void updateScriptList() {

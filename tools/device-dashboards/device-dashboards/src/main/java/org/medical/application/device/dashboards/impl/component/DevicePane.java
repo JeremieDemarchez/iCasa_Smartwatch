@@ -74,6 +74,10 @@ import fr.liglab.adele.icasa.environment.SimulationManager.Position;
  */
 public class DevicePane extends ContentPane implements SelectedApplicationTracker {
 
+	public static final String FAULT_PROP_NAME = "fault";
+
+	public static final String STATE_PROP_NAME = "State";
+
 	/**
 	 * @Generated
 	 */
@@ -215,8 +219,8 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 * @param properties
 	 *           properties of the device service
 	 */
-	public void addDevice(final ApplicationDevice device, Map<String, Object> properties) {
-		DeviceEntry entry = getDeviceEntry(device, properties);
+	public void addDevice(final ApplicationDevice device) {
+		DeviceEntry entry = getDeviceEntry(device);
 
 		// manage addition
 		if (m_devices.containsKey(entry.serialNumber)) {
@@ -253,12 +257,8 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 *           the device properties
 	 * @return the device entry instance (gui object)
 	 */
-	private DeviceEntry getDeviceEntry(ApplicationDevice device, Map<String, Object> properties) {
-		String description = (String) properties.get(Constants.SERVICE_DESCRIPTION);
-		if (description == null) {
-			// If service description is not defined, use the device serial number.
-			description = device.getId();
-		}
+	private DeviceEntry getDeviceEntry(ApplicationDevice device) {
+		String description = device.getId();
 
 		Position position = getAppInstance().getSimulationManager().getDevicePosition(device.getId());
 
@@ -267,11 +267,11 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		}
 		final String serialNumber = device.getId();
 
-		String state = (String) properties.get("state");
+		String state = (String) device.getPropertyValue(STATE_PROP_NAME);
 		if (state == null)
 			state = "unknown";
 
-		String fault = (String) properties.get("fault");
+		String fault = (String) device.getPropertyValue(FAULT_PROP_NAME);
 		if (fault == null)
 			fault = "uknown";
 
@@ -424,20 +424,18 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 	 * @param deviceSerialNumber
 	 * @param device
 	 */
-	public void changeDevice(String deviceSerialNumber, ApplicationDevice device, Map<String, Object> properties) {
+	public void changeDevice(String deviceSerialNumber, ApplicationDevice device) {
 		DeviceEntry entry = m_devices.get(deviceSerialNumber);
 		if (entry == null) {
 			return;
 		}
 		removeDeviceWidget(entry);
 
-		if (properties != null) {
-			DeviceEntry newEntry = getDeviceEntry(device, properties);
-			entry.description = newEntry.description;
-			entry.logicPosition = newEntry.logicPosition;
-			entry.state = newEntry.state;
-			entry.fault = newEntry.fault;
-		}
+		DeviceEntry newEntry = getDeviceEntry(device);
+		entry.description = newEntry.description;
+		entry.logicPosition = newEntry.logicPosition;
+		entry.state = newEntry.state;
+		entry.fault = newEntry.fault;
 
 		if (isAvailableForSelectedApplication(deviceSerialNumber))
 			// addDeviceWidget(device, entry.description, entry.position,

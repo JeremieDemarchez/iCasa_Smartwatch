@@ -391,7 +391,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 			@Override
 			public void run() {
 				devices.put(device.getId(), device);				
-				m_actionPane.addDevice(device, properties);
+				m_actionPane.addDevice(device);
 			}
 		});
 	}
@@ -523,7 +523,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_actionPane.changeDevice(deviceSerialNumber, device, properties);
+				m_actionPane.changeDevice(deviceSerialNumber, device);
 			}
 		});
 	}
@@ -774,7 +774,7 @@ public class MedicalHouseSimulatorImpl extends ApplicationInstance implements De
 			enqueueTask(new Runnable() {
 				@Override
 				public void run() {
-					m_actionPane.changeDevice(dev.getId(), dev, Collections.EMPTY_MAP);
+					m_actionPane.changeDevice(dev.getId(), dev);
 				}
 			});
 		}
