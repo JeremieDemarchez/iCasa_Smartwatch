@@ -32,11 +32,8 @@ import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.StyleSheetLoader;
 
-import org.apache.felix.ipojo.ComponentInstance;
+//import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.Pojo;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Unbind;
-import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
@@ -170,62 +167,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		// Create the list with porlet factories
 		widgetFactories = new ArrayList<DeviceWidgetFactory>();
 
-		/*
-		 * 
-		 * // Create the house pane. m_housePane = new HousePane(this);
-		 * 
-		 * // Create the status pane. m_statusPane = new ContentPane();
-		 * 
-		 * // Create the action pane. m_actionPane = createActionPane();
-		 * 
-		 * //Create the device controller m_DeviceController =
-		 * createDeviceController();
-		 * m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
-		 * 
-		 * 
-		 * SplitPaneLayoutData actionPaneData = new SplitPaneLayoutData();
-		 * actionPaneData.setMinimumSize(new Extent(200, Extent.PX));
-		 * actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
-		 * actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		 * m_actionPane.setLayoutData(actionPaneData);
-		 * 
-		 * 
-		 * 
-		 * // Create the top split pane, that contains the house and action panes.
-		 * final SplitPane topPane = new
-		 * SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
-		 * topPane.setResizable(true);
-		 * 
-		 * SplitPaneLayoutData data = new SplitPaneLayoutData();
-		 * data.setMinimumSize(new Extent(500, Extent.PX));
-		 * data.setMaximumSize(new Extent(900, Extent.PX));
-		 * data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		 * 
-		 * topPane.add(m_actionPane);
-		 * 
-		 * data = new SplitPaneLayoutData(); data.setMinimumSize(new Extent(200,
-		 * Extent.PX)); data.setMaximumSize(new Extent(900, Extent.PX));
-		 * data.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
-		 * m_housePane.setLayoutData(data);
-		 * 
-		 * topPane.add(m_housePane);
-		 * 
-		 * // Create the global split pane, that contains the top split pane and
-		 * // the status pane. Pane globalPane; if (isAndroid()) { ContentPane
-		 * pane = new ContentPane(); pane.add(topPane);
-		 * 
-		 * globalPane = pane; } else { SplitPane pane = new
-		 * SplitPane(SplitPane.ORIENTATION_VERTICAL_TOP_BOTTOM, new
-		 * Extent(HousePane.HEIGHT + MARGIN)); pane.add(topPane);
-		 * pane.add(m_statusPane);
-		 * 
-		 * globalPane = pane; }
-		 * 
-		 * // Create the top level window, that contains top split pane and the //
-		 * status pane. m_window = new Window();
-		 * m_window.getContent().add((nextapp.echo.app.Component) globalPane);
-		 */
-
 	}
 
 
@@ -246,25 +187,11 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return _bundle;
 	}
 
-	@Validate
-	public void start() {
 
+	public void start() {
 		initContent();
 		m_housePane.addPropertyChangeListener(this);
 		m_manager.addDevicePositionListener(this);
-
-		/*
-		 * // Get the script file list final List<String> scriptList =
-		 * m_ScriptExecutor.getScriptList();
-		 * 
-		 * 
-		 * enqueueTask(new Runnable() {
-		 * 
-		 * @Override public void run() { scriptFileList = new
-		 * DefaultListModel(scriptList.toArray());
-		 * m_actionPane.updateScriptList(); } });
-		 */
-
 	}
 
 	public void stop() {
@@ -330,11 +257,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			@Override
 			public void run() {
 				m_DeviceController.changeDevice(deviceSerialNumber, properties);
-				// m_actionPane.changeDevice(deviceSerialNumber, device,
-				// properties);
-
-				// TODO: Implementation
-
 			}
 		});
 	}
@@ -356,9 +278,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		enqueueTask(m_taskQueueHandle, task);
 	}
 
-	public void setComponentInstance(final ComponentInstance appInstance) {
-		// m_controller = appInstance;
-	}
 
 	public final HousePane getHousePane() {
 		return m_housePane;

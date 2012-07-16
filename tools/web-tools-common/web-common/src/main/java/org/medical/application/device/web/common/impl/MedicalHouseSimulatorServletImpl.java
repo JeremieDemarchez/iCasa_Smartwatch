@@ -94,7 +94,7 @@ public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServl
 		}
 		final MedicalHouseSimulatorImpl pojo = (MedicalHouseSimulatorImpl) ((InstanceManager) appInstance)
 		      .getPojoObject();
-		pojo.setComponentInstance(appInstance);
+		//pojo.setComponentInstance(appInstance);
 		// m_logger.info("Application instance created : " + name);
 		return pojo;
 	}
