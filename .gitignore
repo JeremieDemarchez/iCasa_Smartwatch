@@ -24,3 +24,5 @@ felix-cache
 /distribution/dev/bundle/deployment-package-api-1.0.1-SNAPSHOT.jar
 /distribution/dev/bundle/autoconf-resource-processor-1.0.1-SNAPSHOT.jar
 /platform/physical-devices/upnp/upnp-presence-detector-proxy/Zone.sav
+
+/platform/core/api/common/bin
