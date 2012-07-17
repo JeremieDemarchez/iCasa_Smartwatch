@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Vector;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -47,6 +48,7 @@ import org.medical.device.manager.DeviceRequest;
 import org.medical.device.manager.GlobalDeviceManager;
 import org.medical.device.manager.KnownDevice;
 import org.medical.device.manager.ProvidedDevice;
+import org.medical.device.manager.ServPropManager;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
@@ -475,13 +477,16 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 
 	public Object createDeviceProxy(ApplicationDevice appDev, Class... interfaces) {
 		Object devProxy = null;
+		DeviceExporter usedExporter = null;
 		for (DeviceExporter exporter : _exporters) {
 			if (!exporter.canExportTo(appDev, interfaces))
 				continue;
 			
 			devProxy = exporter.createsProxy(appDev, interfaces);
-			if (devProxy != null)
+			if (devProxy != null) {
+				usedExporter = exporter;
 				break;
+			}
 		}
 		if (devProxy == null)
 			return null;
@@ -491,7 +496,16 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 		
 		List<ServiceRegistration> registeredServs = new ArrayList<ServiceRegistration>();
 		for (Class interf : interfaces) {
-			ServiceRegistration registAppDev = _context.registerService(interf.getName(), devProxy, new Hashtable());
+			ServPropManager propMgr = usedExporter.getCustomServicePropManager();
+			Properties props = new Properties();
+			if (propMgr != null) {
+				try {
+					propMgr.registerService(appDev, devProxy, props);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			ServiceRegistration registAppDev = _context.registerService(interf.getName(), devProxy, props);
 			registeredServs.add(registAppDev);
 		}
 		

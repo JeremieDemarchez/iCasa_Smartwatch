@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.medical.application.Application;
@@ -31,6 +32,7 @@ import org.medical.device.manager.Device;
 import org.medical.device.manager.DeviceExporter;
 import org.medical.device.manager.ProvidedDevice;
 import org.medical.device.manager.FilterDeviceContrib;
+import org.medical.device.manager.ServPropManager;
 import org.medical.device.manager.Service;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -61,6 +63,15 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 	private Map<String, ServiceRegistration> _providedProxyRegs = new HashMap<String, ServiceRegistration>();
 
 	private PollingThread _thread;
+
+	private ServPropManager _servPropMgr = new ServPropManager() {
+
+		@Override
+		public void registerService(ApplicationDevice device, Object proxy,
+				Properties props) {
+			props.put(GenericDevice.DEVICE_SERIAL_NUMBER, device.getId());
+		}
+	};
 	
 	private class PollingThread extends Thread {
 		
@@ -248,6 +259,11 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 	@Override
 	public void destructsProxy(Object proxy) {
 		// do nothing
+	}
+
+	@Override
+	public ServPropManager getCustomServicePropManager() {
+		return _servPropMgr;
 	}
 
 }

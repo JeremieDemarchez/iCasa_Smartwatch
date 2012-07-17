@@ -44,6 +44,15 @@ public interface DeviceExporter {
 	public Object createsProxy(ApplicationDevice device, Class... interfaces);
 	
 	/**
+	 * Allows this exporter to add, remove and modify properties of registered service which corresponds to a device proxy.
+	 * Returns null if this exporter do not want to manage service properties.
+	 * This method should implement the singleton design pattern.
+	 * 
+	 * @return a service property manager.
+	 */
+	public ServPropManager getCustomServicePropManager();
+	
+	/**
 	 * Destructs specified device proxy.
 	 * 
 	 * @param proxy a device proxy created by this exporter
