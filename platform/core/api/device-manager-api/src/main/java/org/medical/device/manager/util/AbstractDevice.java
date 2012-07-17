@@ -64,7 +64,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 		((StateVariableImpl) getStateVariable(ID_PROP_NAME)).setDescription("Id");
 		addStateVariable(new StateVariableImpl(NAME_PROP_NAME, name, String.class, VariableType.HUMAN_READABLE_DESCRIPTION, "Name", true, true, this));
 		addStateVariable(new StateVariableImpl(VENDOR_PROP_NAME, vendor, String.class, VariableType.HUMAN_READABLE_DESCRIPTION, "Vendor", true, true, this));
-		addStateVariable(new StateVariableImpl(FAULTS_PROP_NAME, _faults, _faults.getClass(), VariableType.STATE, "Faults", false, true, this));
+		addStateVariable(new ManagedStateVariableImpl(FAULTS_PROP_NAME, _faults, _faults.getClass(), VariableType.STATE, "Faults", false, true, this));
 		addStateVariable(new StateVariableImpl(TYPE_PROP_NAME, typeId, String.class, VariableType.FORMAL_DESCRIPTION, "Type", false, true, this));
 		addStateVariable(new StateVariableImpl(AVAILABLE_PROP_NAME, true, Boolean.class, VariableType.STATE, "Type", false, true, this));
 		
@@ -118,11 +118,31 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 	 * @param fault a device fault
 	 */
 	protected void addFault(DetailedFault fault) {
+		List<DetailedFault> oldFaults = null;
 		synchronized(_faults) {
+			oldFaults = clone(getDetailedFaults());
 			_faults.add(fault);
 		}
+		notifyFaultListeners(oldFaults);
 	}
 	
+	private void notifyFaultListeners(List<DetailedFault> oldFaults) {
+		((ManagedStateVariableImpl) getStateVariable(FAULTS_PROP_NAME)).sendValueChangeNotifs(oldFaults);
+	}
+
+	private List<DetailedFault> clone(List<DetailedFault> detailedFaults) {
+		List<DetailedFault> clonedList = new ArrayList<DetailedFault>();
+		for (DetailedFault fault : detailedFaults) {
+			try {
+				clonedList.add(fault.clone());
+			} catch (CloneNotSupportedException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		return Collections.unmodifiableList(clonedList);
+	}
+
 	/**
 	 * Add specified fault to the fault list and removes all faults related to the same source.
 	 * 

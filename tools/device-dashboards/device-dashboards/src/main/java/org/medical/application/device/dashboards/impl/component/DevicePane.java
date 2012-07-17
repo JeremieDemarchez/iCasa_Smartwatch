@@ -54,6 +54,7 @@ import org.medical.application.device.dashboards.impl.component.event.DropEvent;
 import org.medical.application.device.dashboards.impl.component.event.DropListener;
 import org.medical.application.device.dashboards.portlet.impl.GenericDeviceStatusWindow;
 import org.medical.device.manager.ApplicationDevice;
+import org.medical.device.manager.Fault;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -271,9 +272,14 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		if (state == null)
 			state = "unknown";
 
-		String fault = (String) device.getPropertyValue(FAULT_PROP_NAME);
-		if (fault == null)
-			fault = "uknown";
+		String faultStr = "unknown";
+		Fault fault = device.getGlobalFault();
+		if (fault != null) {
+			if (Fault.YES.equals(fault))
+				faultStr = "yes";
+			if (Fault.NO.equals(fault))
+				faultStr = "no";
+		}
 
 		String logicPosition = getAppInstance().getSimulationManager().getEnvironmentFromPosition(position);
 		if (logicPosition == null)
@@ -282,7 +288,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		final DeviceEntry entry = new DeviceEntry();
 		entry.serialNumber = serialNumber;
 		entry.state = state;
-		entry.fault = fault;
+		entry.fault = faultStr;
 		entry.label = new Label(description);
 		entry.position = position;
 		entry.logicPosition = logicPosition;
