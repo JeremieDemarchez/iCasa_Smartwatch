@@ -697,8 +697,7 @@ public class DevicePane extends ContentPane implements SelectedApplicationTracke
 		StringListActionListener locationMenuActionListener = new StringListActionListener(deviceSerialNumber, stateField) {
 			protected void performSet(String newValueId) {
 				ApplicationDevice device = getAppInstance().getDeviceBySerialNumber(deviceSerialNumber);
-				GenericDevice genericDevice = (GenericDevice) device.getDeviceProxy(GenericDevice.class);
-				genericDevice.setFault(newValueId);
+				device.setPropertyValue("Fault", newValueId);
 			}
 		};
 

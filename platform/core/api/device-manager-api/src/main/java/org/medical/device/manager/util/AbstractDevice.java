@@ -109,7 +109,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 
 	@Override
 	public List<DetailedFault> getDetailedFaults() {
-		return Collections.unmodifiableList(_faults);
+		return Collections.unmodifiableList((List<DetailedFault>) getPropertyValue(FAULTS_PROP_NAME));
 	}
 	
 	/**
@@ -120,7 +120,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 	protected void addFault(DetailedFault fault) {
 		List<DetailedFault> oldFaults = null;
 		synchronized(_faults) {
-			oldFaults = clone(getDetailedFaults());
+			oldFaults = FaultUtil.clone(getDetailedFaults());
 			_faults.add(fault);
 		}
 		notifyFaultListeners(oldFaults);
@@ -128,19 +128,6 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 	
 	private void notifyFaultListeners(List<DetailedFault> oldFaults) {
 		((ManagedStateVariableImpl) getStateVariable(FAULTS_PROP_NAME)).sendValueChangeNotifs(oldFaults);
-	}
-
-	private List<DetailedFault> clone(List<DetailedFault> detailedFaults) {
-		List<DetailedFault> clonedList = new ArrayList<DetailedFault>();
-		for (DetailedFault fault : detailedFaults) {
-			try {
-				clonedList.add(fault.clone());
-			} catch (CloneNotSupportedException e) {
-				e.printStackTrace();
-			}
-		}
-		
-		return Collections.unmodifiableList(clonedList);
 	}
 
 	/**
@@ -153,14 +140,14 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 			List<Integer> faultIdxs = new ArrayList<Integer>();
 			for (int idx = 0; idx < _faults.size(); idx++) {
 				DetailedFault curFault = _faults.get(idx);
-				if (same(fault.getSource(), curFault.getSource()))
+				if (FaultUtil.same(fault.getSource(), curFault.getSource()))
 					faultIdxs.add(faultIdxs.size(), idx);
 			}
 			
 			boolean sameFaultExists = false;
 			for (int idx = 0; idx < faultIdxs.size(); idx++) {
 				DetailedFault curFault = _faults.get(idx);
-				if (sameFault(fault, curFault))
+				if (FaultUtil.sameFault(fault, curFault))
 					sameFaultExists = true;
 				else
 					_faults.remove(idx);
@@ -169,16 +156,6 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 			if (!sameFaultExists)
 				_faults.add(fault);
 		}
-	}
-	
-	private boolean sameFault(DetailedFault fault, DetailedFault otherFault) {
-		return same(fault.getCause(), otherFault.getCause()) && 
-				same(fault.getFault(), otherFault.getFault()) &&
-				same(fault.getSource(), otherFault.getSource());
-	}
-
-	protected boolean same(Object oldValue, Object newValue) {
-		return ((oldValue == null) && (newValue == null)) || ((oldValue != null) && oldValue.equals(newValue));
 	}
 
 	@Override

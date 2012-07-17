@@ -39,6 +39,7 @@ import org.medical.common.VariableType;
 import org.medical.common.impl.StateVariableImpl;
 import org.medical.device.manager.ApplicationDevice;
 import org.medical.device.manager.AvailableDevice;
+import org.medical.device.manager.DependRegistration;
 import org.medical.device.manager.Device;
 import org.medical.device.manager.DeviceDependencies;
 import org.medical.device.manager.DeviceManager;
@@ -62,6 +63,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 /**
  * Integration test for the device manager component.
@@ -142,8 +144,7 @@ public class DeviceManagerTest extends ICasaAbstractTest {
     @Test
     public void testGlobalDeviceMgrAvailability() {
     	//wait for the service to be available.
-        waitForIt(100);
-        
+        osgi.waitForService(GlobalDeviceManager.class.getName(), null, SERV_TIMEOUT);
         GlobalDeviceManager devManagerDelegate = getGlobalDeviceManagerService(); 
         
         assertNotNull(devManagerDelegate); 
@@ -152,8 +153,7 @@ public class DeviceManagerTest extends ICasaAbstractTest {
     @Test
     public void testApplicationMgrAvailability() {
     	//wait for the service to be available.
-        waitForIt(100);
-        
+    	osgi.waitForService(ApplicationManager.class.getName(), null, SERV_TIMEOUT);
         ApplicationManager appManager = getApplicationManagerService(); 
         
         assertNotNull(appManager); 
@@ -162,7 +162,7 @@ public class DeviceManagerTest extends ICasaAbstractTest {
     @Test
     public void testListApplicationsAndDeviceManagerAvailability() {
     	//wait for the service to be available.
-        waitForIt(100);
+    	osgi.waitForService(ApplicationManager.class.getName(), null, SERV_TIMEOUT);
         
         ApplicationManager appMgr = getApplicationManagerService(); 
         final List<Application> applications = appMgr.getApplications();
@@ -253,6 +253,7 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 		when(deviceImpl.getId()).thenReturn(devId);
 		ServiceRegistration sr = icasa.registerService(deviceImpl, ProvidedDevice.class);
         
+		osgi.waitForService(GlobalDeviceManager.class.getName(), null, SERV_TIMEOUT);
         List<AvailableDevice> devices = getGlobalDeviceManagerService().getAvailableDevices();
         assertNotNull(devices);
         assertEquals(1, devices.size());
@@ -272,6 +273,7 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 		when(deviceImpl.getId()).thenReturn(devId);
 		ServiceRegistration sr = icasa.registerService(deviceImpl, ProvidedDevice.class);
         
+		osgi.waitForService(GlobalDeviceManager.class.getName(), null, SERV_TIMEOUT);
         List<KnownDevice> devices = getGlobalDeviceManagerService().getKnownDevices();
         assertNotNull(devices);
         assertEquals(1, devices.size());
@@ -342,8 +344,10 @@ public class DeviceManagerTest extends ICasaAbstractTest {
         DeviceDependencies dependencies = new DeviceDependencies();
         dependencies.includes().all();
         
-        deviceMgr.addDependencies(dependencies);
+        DependRegistration depReg = deviceMgr.addDependencies(dependencies);
+        waitForResolution(depReg);
         
+        waitForService(ApplicationDevice.class, app1Context);
         app1Device = (ApplicationDevice) getServiceObject(ApplicationDevice.class, app1Context);
         assertNotNull(app1Device);
 		assertEquals(devId, app1Device.getId());
@@ -386,7 +390,8 @@ public class DeviceManagerTest extends ICasaAbstractTest {
         DeviceDependencies dependencies = new DeviceDependencies();
         dependencies.includes().all();
         
-        deviceMgr.addDependencies(dependencies);
+        DependRegistration depReg = deviceMgr.addDependencies(dependencies);
+        waitForResolution(depReg);
         
         // predefined methods
         Device app1device = (Device) getServiceObject(ApplicationDevice.class, app1Context);
@@ -459,7 +464,8 @@ public class DeviceManagerTest extends ICasaAbstractTest {
         DeviceDependencies dependencies = new DeviceDependencies();
         dependencies.includes().all();
         
-        deviceMgr.addDependencies(dependencies);
+        DependRegistration depReg = deviceMgr.addDependencies(dependencies);
+        waitForResolution(depReg);
         
         // predefined methods
         Device app1device = (Device) getServiceObject(ApplicationDevice.class, app1Context);
@@ -612,6 +618,22 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 			return protectedAppDevEvent; 
 		}
 		
+	}
+	
+	private void waitForService(Class itfClass, BundleContext context) {
+		OSGiHelper helper = new OSGiHelper(context);
+		helper.waitForService(itfClass.getName(), null, SERV_TIMEOUT);
+	}
+	
+	private void waitForResolution(DependRegistration depReg) {
+		int NB_TIMES = 5;
+		for (int i = 0; i < NB_TIMES; i++) {
+			if (depReg.isResolved()) {
+				break;
+			}
+			if (i == NB_TIMES - 1)
+				waitForIt(100);
+		}
 	}
 }
 

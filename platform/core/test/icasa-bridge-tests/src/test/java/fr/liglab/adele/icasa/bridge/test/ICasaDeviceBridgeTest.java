@@ -214,7 +214,7 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         assertEquals(deviceImpl.getSerialNumber(), app1device.getId());
         assertEquals(deviceImpl.getLocation(), app1device.getPropertyValue("Location"));
         assertEquals(deviceImpl.getState(), app1device.getPropertyValue("State"));
-//        assertEquals(deviceImpl.getFault().equals(GenericDevice.FAULT_YES), app1device.getGlobalFault().equals(Fault.YES));
+        assertEquals(deviceImpl.getFault().equals(GenericDevice.FAULT_YES), app1device.getGlobalFault().equals(Fault.YES));
         
         //cleanup
 		depReg.unregister();
@@ -252,7 +252,7 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         assertEquals(deviceImpl.getState(), app1device.getState());
         assertEquals(deviceImpl.getLocation(), app1device.getLocation());
         
-        //TODO check service attributes
+        //TODO check device service attributes
         
         //cleanup
 		depReg.unregister();

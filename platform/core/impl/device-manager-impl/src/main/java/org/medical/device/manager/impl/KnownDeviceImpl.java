@@ -31,6 +31,7 @@ import org.medical.device.manager.KnownDevice;
 import org.medical.device.manager.Operation;
 import org.medical.device.manager.OperationParameter;
 import org.medical.device.manager.Service;
+import org.medical.device.manager.impl.util.AppendFaultIfPossibleStateVar;
 import org.medical.device.manager.util.AbstractDevice;
 
 /**
@@ -55,7 +56,7 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 	protected void customizeVariables() {
 		replaceByDelegateVar(NAME_PROP_NAME);
 		replaceByDelegateVar(VENDOR_PROP_NAME);
-		replaceByDelegateVar(FAULTS_PROP_NAME);
+		replaceByDelegateAppendVar(FAULTS_PROP_NAME);
 		replaceByDelegateVar(TYPE_PROP_NAME);
 		
 		// availability attribute
@@ -63,6 +64,15 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 		removeStateVariable(originalVar);
 		StateVariable derivVar = new AvailabilityStateVar(originalVar, _device);
 		addStateVariable(derivVar);
+	}
+	
+	private StateVariable replaceByDelegateAppendVar(String varName) {
+		StateVariable originalVar = getStateVariable(varName);
+		removeStateVariable(originalVar);
+		StateVariable derivVar = new AppendFaultIfPossibleStateVar(originalVar, _device);
+		addStateVariable(derivVar);
+		
+		return derivVar;
 	}
 
 	private StateVariable replaceByDelegateVar(String varName) {
@@ -138,8 +148,13 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 		device.setKnownDevice(this);
 		
 		device.addVariableListener(this);
-		
 		synchronizeWithAvailable();
+		for (StateVariable var : getStateVariables()) {
+			if (!(var instanceof DeriveIfPossibleStateVar))
+				continue;
+
+			((DeriveIfPossibleStateVar) var).setDelegateObj(_device);
+		}
 	}
 
 	private void synchronizeWithAvailable() {

@@ -28,8 +28,20 @@ public class AvailabilityStateVar extends DeriveIfPossibleStateVar {
 	public void setDelegateObj(Attributable delegateObj) {
 		synchronized (_lockDelegate) {
 			super.setDelegateObj(delegateObj);
-			if (delegateObj == null) 
-				setValue(false);
+			setValue(delegateObj != null);
 		}
+	}
+	
+	@Override
+	public Object getValue() {
+		boolean value;
+		synchronized (_lockDelegate) {
+			value = (getDelegateObj() != null);
+		}
+		
+		if (_originalVar != null)
+			_originalVar.setValue(value);
+		
+		return value;
 	}
 }

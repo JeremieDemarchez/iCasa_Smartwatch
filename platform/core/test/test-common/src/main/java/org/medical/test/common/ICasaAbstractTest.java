@@ -67,6 +67,8 @@ public abstract class ICasaAbstractTest {
      * Number of mock object by test.
      */
 	protected static final int MAX_MOCK = 10;
+	
+	protected final static int SERV_TIMEOUT = 1000;
 
     @Inject
     protected BundleContext context;

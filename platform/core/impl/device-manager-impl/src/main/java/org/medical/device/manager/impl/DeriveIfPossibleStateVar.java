@@ -21,34 +21,30 @@ import org.medical.common.StateVariableListener;
 import org.medical.common.impl.StateVariableImpl;
 import org.medical.device.manager.Device;
 
-public class DeriveIfPossibleStateVar extends StateVariableImpl {
+public class DeriveIfPossibleStateVar extends StateVariableImpl implements StateVariableListener {
 
 	private Attributable _delegateObj;
 	
-	private StateVariable _originalVar;
+	protected final StateVariable _originalVar;
 	
 	protected Object _lockDelegate = new Object();
 
+	private StateVariable _delegateVar;
+
 	public DeriveIfPossibleStateVar(StateVariable originalVar, Attributable delegateObj) {
 		super(originalVar);
-		_delegateObj = delegateObj;
 		_originalVar = originalVar;
+		setDelegateObj(delegateObj);
 	}
 
 	@Override
 	public Object getValue() {
 		Object value;
 		synchronized (_lockDelegate) {
-			if (_delegateObj == null) {
-				return super.getValue();
-			}
-
-			StateVariable delegateVar = _delegateObj
-					.getStateVariable(getName());
-			if (delegateVar == null)
+			if (_delegateVar == null)
 				return super.getValue();
 
-			value = delegateVar.getValue();
+			value = _delegateVar.getValue();
 		}
 		
 		if (_originalVar != null)
@@ -67,15 +63,10 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl {
 		if (_originalVar != null)
 			_originalVar.setValue(value);
 		
-		StateVariable delegateVar;
 		synchronized (_lockDelegate) {
-			if (_delegateObj == null)
-				return;
-
-			delegateVar = _delegateObj.getStateVariable(getName());
+			if (_delegateVar != null)
+				_delegateVar.setValue(value);
 		}
-		if (delegateVar != null)
-			delegateVar.setValue(value);
 	}
 	
 	public final Attributable getDelegateObj() {
@@ -85,6 +76,16 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl {
 	public void setDelegateObj(Attributable delegateObj) {
 		synchronized (_lockDelegate) {
 			_delegateObj = delegateObj;
+			
+			if (_delegateObj != null) {
+				_delegateVar = _delegateObj.getStateVariable(getName());
+				if (_delegateVar != null)
+					_delegateVar.addValueChangeListener(this);
+			} else {
+				if (_delegateVar != null)
+					_delegateVar.removeValueChangeListener(this);
+				_delegateVar = null;
+			}
 		}
 	}
 
@@ -99,6 +100,44 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl {
 	public void removeValueChangeListener(StateVariableListener listener) {
 		synchronized (_listeners ) {
 			_listeners.remove(listener);
+		}
+	}
+
+	@Override
+	public void addVariable(StateVariable variable, Object sourceObject) {
+		if (variable.getName().equals(getName()))
+			updateDelegateVar(variable);
+	}
+
+	protected void updateDelegateVar(StateVariable newVar) {
+		synchronized (_lockDelegate) {
+			if (_delegateVar != null)
+				_delegateVar.removeValueChangeListener(this);
+			
+			_delegateVar = newVar;
+			if (newVar != null) {
+				_delegateVar.addValueChangeListener(this);
+			}
+		}
+	}
+
+	@Override
+	public void removeVariable(StateVariable variable, Object sourceObject) {
+		if (variable.getName().equals(getName()))
+			updateDelegateVar(null);
+	}
+
+	@Override
+	public void notifValueChange(StateVariable variable, Object oldValue,
+			Object sourceObject) {
+		if (variable.getName().equals(getName())) {
+			getValue(); // update the internal value and send notifs
+		}
+	}
+	
+	protected StateVariable getDelegateVar() {
+		synchronized(_lockDelegate) {
+			return _delegateVar;
 		}
 	}
 }
