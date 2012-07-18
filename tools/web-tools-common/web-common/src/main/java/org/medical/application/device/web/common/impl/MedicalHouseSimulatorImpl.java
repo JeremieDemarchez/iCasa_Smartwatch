@@ -15,11 +15,8 @@
  */
 package org.medical.application.device.web.common.impl;
 
-import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,13 +29,10 @@ import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.StyleSheetLoader;
 
-//import org.apache.felix.ipojo.ComponentInstance;
-import org.apache.felix.ipojo.Pojo;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
-import org.medical.device.manager.ApplicationDevice;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
@@ -63,7 +57,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	private SimulationManager m_manager;
 
 	/**
-	 * The widget factory selector (selects the rigth incon and window)
+	 * The widget factory selector (selects the right icon and window)
 	 */
 	private DeviceWidgetFactorySelector m_widgetFactorySelector;
 
@@ -119,11 +113,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 */
 	protected DeviceController m_DeviceController;
 
-	// TODO: See this map
-	/**
-	 * A map containing all bind devices
-	 */
-	private Map<String, ApplicationDevice> devices;
+
 
 	/**
 	 * List of existing widgets factories
@@ -160,9 +150,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			// m_logger.warning("Cannot load stylesheet", e);
 			// Ignore style shit!
 		}
-
-		// Create the map with devices
-		devices = new HashMap<String, ApplicationDevice>();
 
 		// Create the list with porlet factories
 		widgetFactories = new ArrayList<DeviceWidgetFactory>();
@@ -240,35 +227,8 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 * m_selectAppPane.getSelectedApplication(); }
 	 */
 
-	private void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory) {
-		Collection<ApplicationDevice> myDevices = devices.values();
-		for (ApplicationDevice appDevice : myDevices) {
-			GenericDevice genericDevice = (GenericDevice) appDevice.getDeviceProxy(GenericDevice.class);
-			if (portletFactory.typeIsSupported(genericDevice)) {
-				devicePropertiesChanged(genericDevice.getSerialNumber(), appDevice, null);
-			}
-		}
-	}
 
-	private void devicePropertiesChanged(final String deviceSerialNumber, final ApplicationDevice device,
-	      final Map<String, Object> properties) {
 
-		enqueueTask(new Runnable() {
-			@Override
-			public void run() {
-				m_DeviceController.changeDevice(deviceSerialNumber, properties);
-			}
-		});
-	}
-
-	public void disposeDeviceInstance(String serialNumber) {
-		ApplicationDevice device = devices.get(serialNumber);
-		GenericDevice genDevice = (GenericDevice) device.getAvailableDevice().getDeviceProxy(GenericDevice.class);
-		if ((genDevice != null) && (genDevice instanceof Pojo)) {
-			Pojo pojo = (Pojo) device;
-			pojo.getComponentInstance().dispose();
-		}
-	}
 
 	public Window getWindow() {
 		return m_window;
@@ -297,57 +257,16 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 			@Override
 			public void run() {
 				m_DeviceController.moveDevice(deviceSerialNumber, position);
-				// m_actionPane.moveDevice(deviceSerialNumber, position);
 			}
 		});
 	}
 
+	/*
 	public ApplicationDevice getDeviceBySerialNumber(String deviceId) {
 		return devices.get(deviceId);
 	}
-
-	public WindowPane getPortlet(ApplicationDevice applicationDevice) {
-		GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
-
-		List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
-		String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
-		DeviceWidgetFactory portletFactory = getPortletFactoryByID(selectedPortletFactoryID);
-		if (portletFactory != null)
-			return portletFactory.createWidget(this, applicationDevice.getId());
-		return null;
-	}
-
-	public ResourceImageReference getImageForDevice(ApplicationDevice device2) {
-		GenericDevice genDevice = (GenericDevice) device2.getDeviceProxy(GenericDevice.class);
-
-		List<String> portletFactoriesStr = getPortletFactoriesIDList(genDevice);
-		if (m_widgetFactorySelector != null) {
-			String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genDevice, portletFactoriesStr);
-			DeviceWidgetFactory portletFactory = getPortletFactoryByID(selectedPortletFactoryID);
-			if (portletFactory != null)
-				return portletFactory.getDeviceIcon(genDevice);
-		}
-		return null;
-	}
-
-	private List<String> getPortletFactoriesIDList(GenericDevice device) {
-		List<String> portletFactoriesStr = new ArrayList<String>();
-		for (DeviceWidgetFactory portletFactory : widgetFactories) {
-			if (portletFactory.typeIsSupported(device)) {
-				portletFactoriesStr.add(portletFactory.getID());
-			}
-		}
-		return portletFactoriesStr;
-	}
-
-	private DeviceWidgetFactory getPortletFactoryByID(String ID) {
-		for (DeviceWidgetFactory portletFactory : widgetFactories) {
-			if (portletFactory.getID().equals(ID))
-				return portletFactory;
-		}
-		return null;
-	}
-
+	*/
+	
 	public void setHouseImage(String houseImage) {
 		this.houseImage = houseImage;
 	}
@@ -386,20 +305,6 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return isAndroid;
 	}
 
-	@Override
-	public void propertyChange(PropertyChangeEvent evt) {
-		@SuppressWarnings("unused")
-		Object newVal = evt.getNewValue();
-
-	}
-
-	/**
-	 * 
-	 * @return the simulation manager
-	 */
-	public SimulationManager getSimulationManager() {
-		return m_manager;
-	}
 
 	public void setIsAndroid(Boolean isAndroid) {
 		this.isAndroid = isAndroid;
@@ -413,15 +318,27 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		m_manager = null;
 	}
 
+	
+	// ---- Gets methods ---- //
+	
 	/**
 	 * 
 	 * @return the device Map
 	 */
+	/*
 	public Map<String, ApplicationDevice> getDevicesMap() {
 		return devices;
 	}
+	*/
 
-
+	/**
+	 * 
+	 * @return the simulation manager
+	 */
+	public SimulationManager getSimulationManager() {
+		return m_manager;
+	}
+	
 	/**
 	 * 
 	 * @return the device controller
@@ -437,4 +354,101 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		return m_actionPane;
 	}
 
+	
+	// ---- Some business methods ---- //
+	
+	
+	/**
+	 * Gets the details window for a GenericDevice (using the WidgetFactory)
+	 * @param genericDevice
+	 * @return
+	 */
+	protected WindowPane getDeviceWidget(GenericDevice genericDevice) {
+		List<String> portletFactoriesStr = getWidgetFactoryIDsList(genericDevice);
+		String selectedPortletFactoryID = m_widgetFactorySelector.selectPortletFactory(genericDevice, portletFactoriesStr);
+		DeviceWidgetFactory portletFactory = getWidgetFactoryByID(selectedPortletFactoryID);
+		if (portletFactory != null)
+			return portletFactory.createWidget(this, genericDevice.getSerialNumber());
+		return null;
+	}
+
+	/**
+	 * Gets the icon for a GenericDevice (using the WidgetFactory)
+	 * @param genericDevice
+	 * @return
+	 */
+	protected ResourceImageReference getImageForDevice(GenericDevice genericDevice) {
+		List<String> portletFactoriesStr = getWidgetFactoryIDsList(genericDevice);
+		if (m_widgetFactorySelector != null) {
+			String selectedWidgetFactoryID = m_widgetFactorySelector.selectPortletFactory(genericDevice, portletFactoriesStr);
+			DeviceWidgetFactory widgetFactory = getWidgetFactoryByID(selectedWidgetFactoryID);
+			if (widgetFactory != null)
+				return widgetFactory.getDeviceIcon(genericDevice);
+		}
+		return null;
+	}
+	
+	/**
+	 * Gets the list of WidgetFactory that match a Generic Device
+	 * @param device the Generic Device
+	 * @return A list with ids of WidgetFactory
+	 */
+	private List<String> getWidgetFactoryIDsList(GenericDevice device) {
+		List<String> portletFactoriesStr = new ArrayList<String>();
+		for (DeviceWidgetFactory portletFactory : widgetFactories) {
+			if (portletFactory.typeIsSupported(device)) {
+				portletFactoriesStr.add(portletFactory.getID());
+			}
+		}
+		return portletFactoriesStr;
+	}
+
+
+	/**
+	 * Gets a WidgetFactory using its ID
+	 * @param ID WidgetFactory ID
+	 * @return Matching WidgetFactory
+	 */
+	private DeviceWidgetFactory getWidgetFactoryByID(String ID) {
+		for (DeviceWidgetFactory portletFactory : widgetFactories) {
+			if (portletFactory.getID().equals(ID))
+				return portletFactory;
+		}
+		return null;
+	}
+	
+	
+	/*
+	private void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory) {		
+		Collection<ApplicationDevice> myDevices = devices.values();
+		for (ApplicationDevice appDevice : myDevices) {
+			GenericDevice genericDevice = (GenericDevice) appDevice.getDeviceProxy(GenericDevice.class);
+			if (portletFactory.typeIsSupported(genericDevice)) {
+				devicePropertiesChanged(genericDevice.getSerialNumber(), appDevice, null);
+			}
+		}		
+	}
+	*/
+
+	
+	
+	protected void devicePropertiesChanged(final String deviceSerialNumber, final Map<String, Object> properties) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				m_DeviceController.changeDevice(deviceSerialNumber, properties);
+			}
+		});
+	}
+	// ---- Abstract Methods ---- //
+	
+	public abstract WindowPane getDeviceWidget(String deviceSerialNumber);
+	
+	public abstract ResourceImageReference getImageForDevice(String deviceSerialNumber);
+	
+	public abstract GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber);
+	
+	public abstract void disposeDeviceInstance(String deviceSerialNumber);
+
+	protected abstract void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory);
 }

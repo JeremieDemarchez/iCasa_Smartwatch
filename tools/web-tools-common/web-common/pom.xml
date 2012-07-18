@@ -48,12 +48,14 @@
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>script.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
-    </dependency>    
+    </dependency>   
+    <!--  
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>application.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+     -->
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.ipojo.annotations</artifactId>
@@ -102,11 +104,13 @@
       <artifactId>script.executor.api</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <!-- 
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>device.manager.api</artifactId>
       <version>${project.version}</version>
     </dependency>
+     -->
   </dependencies>
 
   <build>
@@ -117,17 +121,19 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+           
             <Export-Package>org.medical.application.device.web.common.impl,
               org.medical.application.device.web.common.impl.component,
               org.medical.application.device.web.common.portlet,
               org.medical.application.device.web.common.portlet.impl,
               org.medical.application.device.web.common.util,
-              nextapp.echo.*</Export-Package>
+              nextapp.echo.*</Export-Package>           
             <Embed-Dependency>
               echo3-app; inline=META-INF/nextapp/echo/SerialPeers.properties,
               echo3extras-app;
               inline=META-INF/nextapp/echo/**
             </Embed-Dependency>
+            
           </instructions>
         </configuration>
       </plugin>

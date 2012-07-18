@@ -17,16 +17,19 @@
 	<description>${project.name}</description>
 
 	<dependencies>
+		<!--
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.widgets</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+		-->
+		
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.dashboards</artifactId>
 			<version>${project.version}</version>
-		</dependency>
+		</dependency>		
 	</dependencies>
 
 	<build>

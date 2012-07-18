@@ -23,9 +23,11 @@ import java.util.NoSuchElementException;
 import java.util.Random;
 
 import nextapp.echo.app.Button;
+import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
+import nextapp.echo.app.Table;
 import nextapp.echo.app.TextField;
 import nextapp.echo.app.event.ActionEvent;
 import nextapp.echo.app.event.ActionListener;
@@ -40,25 +42,31 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
-import org.medical.application.Application;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
+import org.medical.application.device.web.common.impl.component.DevicePane.DeviceTableCellRenderer;
+import org.medical.application.device.web.common.impl.component.DevicePane.DeviceTableModel;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 public class SimulatorDevicePane extends DevicePane {
 
+	/**
+	 * Serial Version UID for Serializable class
+	 */
+	private static final long serialVersionUID = 8910837590839771921L;
+
 	private TextField m_description;
 	private DropDownMenu m_factory;
 	private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
 	private final Random m_random = new Random();
-	
+
 	public SimulatorDevicePane(SimulatorActionPane parent) {
-	   super(parent);
-	   
-		final Label image = new Label(new ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50), new Extent(
-		      50)));
+		super(parent);
+
+		final Label image = new Label(new ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50),
+		      new Extent(50)));
 		final GridLayoutData imageLayout = new GridLayoutData();
 		imageLayout.setRowSpan(2);
 		image.setLayoutData(imageLayout);
@@ -97,11 +105,10 @@ public class SimulatorDevicePane extends DevicePane {
 		m_grid.add(m_factory);
 		m_grid.add(m_description);
 		m_grid.add(addDeviceButton);
-   }
-	
+	}
 
 	public void addDeviceFactory(Factory factory) {
-		if (m_factory!=null) {
+		if (m_factory != null) {
 			String factoryName = factory.getName();
 			m_deviceFactories.put(factoryName, factory);
 			DefaultMenuModel model = ((DefaultMenuModel) m_factory.getModel());
@@ -110,12 +117,12 @@ public class SimulatorDevicePane extends DevicePane {
 			m_factory.setModel(model);
 			if (model.getItemCount() == 1) {
 				m_factory.getSelectionModel().setSelectedId(factoryName);
-			}			
+			}
 		}
 	}
 
 	public void removeDeviceFactory(Factory factory) {
-		if (m_factory!=null) {
+		if (m_factory != null) {
 			String factoryName = factory.getName();
 			m_deviceFactories.remove(factoryName);
 			DefaultMenuModel model = ((DefaultMenuModel) m_factory.getModel());
@@ -130,7 +137,7 @@ public class SimulatorDevicePane extends DevicePane {
 			m_factory.setModel(model);
 		}
 	}
-	
+
 	/**
 	 * Creates a device instance
 	 * 
@@ -165,22 +172,33 @@ public class SimulatorDevicePane extends DevicePane {
 		// getAppInstance().getSimulationManager().setDevicePosition(serialNumber,
 		// new Position(x, y));
 	}
-	
+
+	/*
+	 * @Override protected DeviceTableModel createTableModel(Application service)
+	 * { DeviceTableModel model = null; if (service == null) model = new
+	 * SimulatedDeviceTableModel(0); else if (service.getId().startsWith("Safe"))
+	 * model = new ServiceWithPropDeviceTableModel(0); else model = new
+	 * ServiceWithoutPropDeviceTableModel(0); return model; }
+	 */
+
 	@Override
-	protected DeviceTableModel createTableModel(Application service) {
-		DeviceTableModel model = null;
-		if (service == null)
-			model = new SimulatedDeviceTableModel(0);
-		else if (service.getId().startsWith("Safe"))
-			model = new ServiceWithPropDeviceTableModel(0);
-		else
-			model = new ServiceWithoutPropDeviceTableModel(0);
-		return model;
+	protected DeviceTableModel createTableModel() {
+		return new SimulatedDeviceTableModel(0);
+	};
+
+	@Override
+	protected DeviceTableCellRenderer createTableCellRenderer() {
+		return new SimulatorDeviceTableRenderer();
 	}
-		
+	
 	public class SimulatedDeviceTableModel extends DeviceTableModel {
 
-		private final String[] columns = { "Device Name", "Location", "Usable *", "Fault", "Details", "Remove" };
+		/**
+		 * Serial Version UID for Serializable class
+		 */
+		private static final long serialVersionUID = 4559599690425279667L;
+
+		private final String[] columns = { "Device", "Location", "State", "Fault", "Details", "Remove" };
 
 		static final int DEVICE_DESC_COL_IDX = 0;
 		static final int DEVICE_LOCATION_COL_IDX = 1;
@@ -218,15 +236,35 @@ public class SimulatorDevicePane extends DevicePane {
 		}
 
 		@Override
-      public boolean useState() {
-	      return true;
-      }
+		public boolean useState() {
+			return true;
+		}
 
 		@Override
-      public boolean useEditableFault() {
-	      return true;
-      }
-		
+		public boolean useEditableFault() {
+			return true;
+		}
+
 	}
-	
+
+	public class SimulatorDeviceTableRenderer extends DeviceTableCellRenderer {
+
+		@Override
+		public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+			Component component = super.getTableCellRendererComponent(table, value, column, row);
+			final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
+			String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
+
+			if (column == STATE_COLUMN_INDEX)
+				component = createStateList(deviceSerialNumber, (String) value);
+
+			if (column == FAULT_COLUMN_INDEX)
+				component = createFaultList(deviceSerialNumber, (String) value);
+
+			return component;
+		}
+	}
+
+
+
 }

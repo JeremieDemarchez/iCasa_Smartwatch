@@ -19,8 +19,8 @@ import java.util.Map;
 
 import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
-import org.medical.device.manager.ApplicationDevice;
 
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 
 public class SimulatorDeviceController extends DeviceController {
@@ -29,17 +29,13 @@ public class SimulatorDeviceController extends DeviceController {
 		super(simulationManager);
 	}
 	
-	private DeviceEntry createDeviceEntry(ApplicationDevice device, Map<String, Object> properties) {		
-		return createDeviceEntry(device.getId(), properties);
-	}
-	
-	public void addDevice(final ApplicationDevice device, Map<String, Object> properties) {
-		DeviceEntry entry = createDeviceEntry(device, properties);
+	public void addDevice(final GenericDevice device, Map<String, Object> properties) {
+		DeviceEntry entry = createDeviceEntry(device.getSerialNumber(), properties);
 		addDevice(entry);
 	}
-
-	public void removeDevice(ApplicationDevice device) {
-		removeDevice(device.getId());
+		
+	public void removeDevice(GenericDevice device) {
+		removeDevice(device.getSerialNumber());
    }
-	
+		
 }

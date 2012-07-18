@@ -144,7 +144,8 @@ public abstract class DeviceController {
 			Set<String> keys = m_devices.keySet();
 			for (String key : keys) {
 				DeviceEntry entry = m_devices.get(key);
-				m_DevicePane.updateDeviceWidgetVisibility(entry);
+				//m_DevicePane.updateDeviceWidgetVisibility(entry);
+				m_DevicePane.changeDevice(entry);
 			}
 		}
 	}

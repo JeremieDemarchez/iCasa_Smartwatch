@@ -21,8 +21,11 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.text.SimpleDateFormat;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -30,11 +33,14 @@ import java.util.Set;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Pane;
+import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.Window;
+import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.layout.SplitPaneLayoutData;
 
 import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -44,23 +50,18 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.device.simulator.gui.impl.component.SimulatorActionPane;
-import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
-import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
 import org.medical.clock.api.Clock;
-import org.medical.common.StateVariable;
-import org.medical.common.StateVariableListener;
-import org.medical.device.manager.ApplicationDevice;
-import org.medical.device.manager.Device;
-import org.medical.device.manager.Service;
 import org.medical.script.executor.ScriptExecutor;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
 
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
@@ -75,7 +76,7 @@ import fr.liglab.adele.icasa.script.ScenarioInstaller;
  */
 @Component(name = "WebHouseSimulator", immediate = true)
 @Provides
-public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implements UserPositionListener, StateVariableListener {
+public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implements UserPositionListener {
 
 	/**
 	 * @generated
@@ -87,12 +88,14 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 
 	@Requires
 	private ScenarioInstaller m_ScenarioInstaller;
+	
+	private Map<String, GenericDevice> devices;
 
+	private DeviceServiceTracker serviceTracker;
 	
 	public SimulatorApplicationImpl(BundleContext context) {
 		super(context);
 	}
-
 
 	// ---- Component dependencies methods ---- //
 
@@ -140,14 +143,12 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		});
 	}
 
-
 	@Bind(id = "devices", aggregate = true, optional = true)
-	public void bindDevice(final ApplicationDevice device, final Map<String, Object> properties) {
-		device.addVariableListener(this);
+	public void bindDevice(final GenericDevice device, final Map<String, Object> properties) {
+		devices.put(device.getSerialNumber(), device);
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				getDevicesMap().put(device.getId(), device);
 				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
 				controller.addDevice(device, properties);
 			}
@@ -155,18 +156,37 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 	}
 
 	@Unbind(id = "devices")
-	public void unbindDevice(final ApplicationDevice device) {
-		device.removeVariableListener(this);
+	public void unbindDevice(final GenericDevice device) {
+		devices.remove(device);
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				getDevicesMap().remove(device.getId());
 				SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
 				controller.removeDevice(device);
 			}
 		});
 	}
-	
+
+	/*
+	 * 
+	 * @Bind(id = "devices", aggregate = true, optional = true) public void
+	 * bindDevice(final ApplicationDevice device, final Map<String, Object>
+	 * properties) { device.addVariableListener(this); enqueueTask(new Runnable()
+	 * {
+	 * 
+	 * @Override public void run() { getDevicesMap().put(device.getId(), device);
+	 * SimulatorDeviceController controller = (SimulatorDeviceController)
+	 * getDeviceController(); controller.addDevice(device, properties); } }); }
+	 * 
+	 * @Unbind(id = "devices") public void unbindDevice(final ApplicationDevice
+	 * device) { device.removeVariableListener(this); enqueueTask(new Runnable()
+	 * {
+	 * 
+	 * @Override public void run() { getDevicesMap().remove(device.getId());
+	 * SimulatorDeviceController controller = (SimulatorDeviceController)
+	 * getDeviceController(); controller.removeDevice(device); } }); }
+	 */
+
 	@Override
 	@Bind(id = "simulationManager")
 	public void bindSimulationManager(final SimulationManager simulationManager) {
@@ -212,7 +232,7 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 	}
 
 	// ---- Component properties methods ---- //
-	
+
 	@Override
 	@Property(name = "houseImage", mandatory = true)
 	public void setHouseImage(String houseImage) {
@@ -231,34 +251,38 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		super.setHomeType(homeType);
 	}
 
-
 	@Override
 	@Property(name = "isAndroid", mandatory = true)
 	public void setIsAndroid(Boolean isAndroid) {
 		super.setIsAndroid(isAndroid);
 	}
 
-	
 	// ---- Component Life cycle methods ---- //
-	
+
 	@Validate
 	public void start() {
 		super.start();
 		getSimulationManager().addUserPositionListener(this);
+		serviceTracker = new DeviceServiceTracker(getContext());
+		serviceTracker.open();
 	}
 
 	@Invalidate
 	public void stop() {
 		super.stop();
 		getSimulationManager().removeUserPositionListener(this);
+		serviceTracker.close();
 	}
-	
+
 	// ---- Component inherited methods ---- //
-	
 
 	@Override
 	protected void initContent() {
-	   super.initContent();
+		super.initContent();
+		
+		// Create the map with devices
+		devices = new HashMap<String, GenericDevice>();
+		
 		// Create the house pane.
 		m_housePane = new HousePane(this);
 
@@ -268,18 +292,15 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		// Create the action pane.
 		m_actionPane = new SimulatorActionPane(this);
 
-		//Create the device controller
+		// Create the device controller
 		m_DeviceController = new SimulatorDeviceController(getSimulationManager());
 		m_DeviceController.setDevicePane(m_actionPane.getDevicePane());
-		
 
 		SplitPaneLayoutData actionPaneData = new SplitPaneLayoutData();
 		actionPaneData.setMinimumSize(new Extent(200, Extent.PX));
-		actionPaneData.setMaximumSize(new Extent(900 , Extent.PX));
+		actionPaneData.setMaximumSize(new Extent(900, Extent.PX));
 		actionPaneData.setOverflow(SplitPaneLayoutData.OVERFLOW_AUTO);
 		m_actionPane.setLayoutData(actionPaneData);
-
-
 
 		// Create the top split pane, that contains the house and action panes.
 		final SplitPane topPane = new SplitPane(SplitPane.ORIENTATION_HORIZONTAL_RIGHT_LEFT, true);
@@ -322,11 +343,57 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		m_window = new Window();
 		m_window.getContent().add((nextapp.echo.app.Component) globalPane);
 
-	   m_window.setTitle("iCasa Simulator Platform ");
+		m_window.setTitle("iCasa Simulator Platform ");
+	}
+
+	@Override
+	public WindowPane getDeviceWidget(String deviceSerialNumber) {
+		/*
+		ApplicationDevice applicationDevice = getDevicesMap().get(deviceSerialNumber);
+		if (applicationDevice != null) {
+			GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
+			return getDeviceWidget(genDevice);
+		}
+		*/
+		GenericDevice genDevice = devices.get(deviceSerialNumber);
+		if (genDevice!=null)
+			return getDeviceWidget(genDevice);
+		return null;
+	}
+
+	@Override
+	public ResourceImageReference getImageForDevice(String deviceSerialNumber) {
+		/*
+		ApplicationDevice applicationDevice = getDevicesMap().get(deviceSerialNumber);
+		if (applicationDevice != null) {
+			GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
+			return getImageForDevice(genDevice);
+		}
+		return null;
+		*/
+		GenericDevice genDevice = devices.get(deviceSerialNumber);
+		if (genDevice!=null)
+			return getImageForDevice(genDevice);
+		return null;
 	}
 	
-	// ---- Component Business Methods ---- //
+	@Override
+	public void disposeDeviceInstance(String deviceSerialNumber) {
+		GenericDevice genDevice = devices.get(deviceSerialNumber);
+		if ((genDevice != null) && (genDevice instanceof Pojo)) {
+			Pojo pojo = (Pojo) genDevice;
+			pojo.getComponentInstance().dispose();
+		}	   
+	}
 	
+	
+	@Override
+	public GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber) {
+	   return devices.get(deviceSerialNumber);
+	}
+
+	// ---- Component Business Methods ---- //
+
 	@Override
 	public void propertyChange(PropertyChangeEvent evt) {
 		@SuppressWarnings("unused")
@@ -398,7 +465,7 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		}
 
 	}
-	
+
 	public List<String> getScenarioList() {
 		return m_ScenarioInstaller.getScenarioList();
 	}
@@ -423,13 +490,9 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		m_ScriptExecutor.stopExecution();
 	}
 
-
-
-
-
+	/*
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
-			Object sourceObject) {
+	public void notifValueChange(StateVariable variable, Object oldValue, Object sourceObject) {
 		String devId = null;
 		Object owner = variable.getOwner();
 		if (owner instanceof Device) {
@@ -437,7 +500,7 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		} else if (owner instanceof Service) {
 			devId = ((Service) owner).getDevice().getId();
 		}
-		
+
 		if (devId != null) {
 			final ApplicationDevice dev = getDeviceBySerialNumber(devId);
 			enqueueTask(new Runnable() {
@@ -447,21 +510,56 @@ public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implemen
 					controller.changeDevice(dev.getId(), Collections.EMPTY_MAP);
 				}
 			});
+		}
+	}
+	*/
+
+	/*
+	@Override
+	public void addVariable(StateVariable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void removeVariable(StateVariable arg0, Object arg1) {
+		// TODO Auto-generated method stub
+
+	}
+   */
+	
+	class DeviceServiceTracker extends ServiceTracker {
+
+		public DeviceServiceTracker(BundleContext context) {
+	      super(context, GenericDevice.class.getCanonicalName(), null);
+      }
+
+		@Override
+		public void modifiedService(ServiceReference reference, Object service) {
+			String deviceSerialNumber = (String)reference.getProperty("device.serialNumber");
+			m_DeviceController.changeDevice(deviceSerialNumber, getProperties(reference));
+		}
+		
+		private Map<String, Object> getProperties(ServiceReference reference) {
+			Map<String, Object> map = new Hashtable<String, Object>();
+			
+			String[] keys = reference.getPropertyKeys();
+			for (String key : keys) {
+	         map.put(key, reference.getProperty(key));
+         }
+			return map;
+		}
+		
+	}
+
+
+	@Override
+   protected void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory) {
+		Collection<GenericDevice> myDevices = devices.values();
+		for (GenericDevice genericDevice : myDevices) {			
+			if (portletFactory.typeIsSupported(genericDevice)) {
+				devicePropertiesChanged(genericDevice.getSerialNumber(), Collections.EMPTY_MAP);
+			}
 		}	   
    }
-	
-	
-
-	@Override
-   public void addVariable(StateVariable arg0, Object arg1) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void removeVariable(StateVariable arg0, Object arg1) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
 }

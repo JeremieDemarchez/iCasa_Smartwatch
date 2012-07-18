@@ -55,22 +55,6 @@ public abstract class ActionPane extends AccordionPane {
 		return m_appInstance;
 	}
 
-
-	/*
-	public void moveDevice(String deviceSerialNumber, Position position) {
-		//m_devicePane.moveDevice(deviceSerialNumber, position);
-	}
-
-	public void changeDevice(String deviceSerialNumber,
-			final ApplicationDevice device, Map<String, Object> properties) {
-		//m_devicePane.changeDevice(deviceSerialNumber, device, properties);
-	}
-	
-	public void refreshDeviceWidgets() {
-		//m_devicePane.refreshDeviceWidgets();
-	}
-	*/
-
 	public DevicePane getDevicePane() {
 		return m_devicePane;
 	}

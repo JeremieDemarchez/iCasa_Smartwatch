@@ -22,7 +22,6 @@ import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 import org.medical.application.Application;
 import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
 import org.medical.application.device.web.common.impl.component.ActionPane;
-import org.medical.application.device.web.common.impl.component.SelectedApplicationTracker;
 
 /**
  * This Pane contains actions that can be realized by user
@@ -79,13 +78,14 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 
 	public void notifySelectedAppChanged(Application oldSelectServ, Application newSelectedServ) {
 		updateDeviceTabTitle();
-		m_devicePane.notifySelectedAppChanged(oldSelectServ, newSelectedServ);
+		((DashboardDevicePane)m_devicePane).notifySelectedAppChanged(oldSelectServ, newSelectedServ);
 	}
 
 	public void refreshDeviceWidgets() {
-		m_devicePane.refreshDeviceWidgets();
+		((DashboardDevicePane)m_devicePane).refreshDeviceWidgets();
 	}
 
+	
 	@Override
    protected void initContent() {
 		m_devicePane = new DashboardDevicePane(this);
@@ -119,5 +119,7 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 
 	   
    }
+	
+
 
 }

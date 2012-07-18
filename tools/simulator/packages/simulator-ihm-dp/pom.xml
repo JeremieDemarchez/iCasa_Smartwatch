@@ -17,16 +17,18 @@
 	<description>${project.name}</description>
 
 	<dependencies>
+		<!--
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.widgets</artifactId>
 			<version>${project.version}</version>
 		</dependency>		
+		-->
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.dashboards</artifactId>
 			<version>${project.version}</version>
-		</dependency>				
+		</dependency>						
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>web.common</artifactId>
@@ -57,7 +59,7 @@
 				<configuration>
 					<writeExtraData>true</writeExtraData>
 					<deploymentPackage>
-						
+						<!--
 						<headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
@@ -72,7 +74,7 @@
 								<value>${project.version}</value>
 							</bundleHeader>
 						</headers>
-						
+						-->
 						<resources>
 							<processedResource>
 								<processor>org.osgi.deployment.rp.autoload</processor>

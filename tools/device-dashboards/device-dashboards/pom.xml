@@ -34,6 +34,16 @@
       <artifactId>web.common</artifactId>
       <version>0.0.1-SNAPSHOT</version>
     </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>application.api</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>    
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>device.manager.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>    
   </dependencies>
   
   <build>

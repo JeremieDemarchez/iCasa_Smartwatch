@@ -16,14 +16,18 @@
 package org.medical.application.device.dashboards.impl;
 
 import java.beans.PropertyChangeEvent;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Pane;
+import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.SplitPane;
 import nextapp.echo.app.Window;
+import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.layout.SplitPaneLayoutData;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -38,9 +42,7 @@ import org.medical.application.Application;
 import org.medical.application.ApplicationManager;
 import org.medical.application.device.dashboards.impl.component.DashboardActionPane;
 import org.medical.application.device.dashboards.impl.component.SelectAppPane;
-import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
-import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
@@ -62,7 +64,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  * 
  * @author bourretp
  */
-@Component(name = "WebDashboardApplication", immediate = true)
+@Component(name = "DashboardApplication", immediate = true)
 @Provides
 public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implements StateVariableListener {
 
@@ -81,6 +83,12 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 	
 	private SelectAppPane m_selectAppPane;
 	
+	/**
+	 * A map containing all bind devices
+	 */
+	private Map<String, ApplicationDevice> devices;
+	
+	
 	public DashboardApplicationImpl(BundleContext context) {
 		super(context);
 	}
@@ -92,7 +100,7 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				getDevicesMap().put(device.getId(), device);
+				devices.put(device.getId(), device);
 				DashboardDeviceController controller = (DashboardDeviceController) getDeviceController();
 				controller.addDevice(device, properties);
 			}
@@ -105,7 +113,7 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				getDevicesMap().remove(device.getId());
+				devices.remove(device.getId());
 				DashboardDeviceController controller = (DashboardDeviceController) getDeviceController();
 				controller.removeDevice(device);
 			}
@@ -199,6 +207,10 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 	@Override
 	protected void initContent() {
 	   super.initContent();
+	   
+		// Create the map with devices
+		devices = new HashMap<String, ApplicationDevice>();
+		
 		// Create the house pane.
 		m_housePane = new HousePane(this);
 
@@ -283,6 +295,39 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 	   m_window.setTitle("iCasa Dashboard");
 	}
 	
+	
+	@Override
+	public WindowPane getDeviceWidget(String deviceSerialNumber) {
+		ApplicationDevice applicationDevice = devices.get(deviceSerialNumber);
+		if (applicationDevice!=null) {
+			GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
+			return getDeviceWidget(genDevice);
+		}
+		return null;
+	}
+	
+	@Override
+	public ResourceImageReference getImageForDevice(String deviceSerialNumber) {
+	   ApplicationDevice applicationDevice = devices.get(deviceSerialNumber);
+	   if (applicationDevice!=null) {
+			GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
+			return getImageForDevice(genDevice);
+		}
+	   return null;
+	}
+	
+	@Override
+	public void disposeDeviceInstance(String deviceSerialNumber) {
+		//Nothing to do in the dash board application
+	}
+	
+	@Override
+	public GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber) {
+		ApplicationDevice device = devices.get(deviceSerialNumber);
+		GenericDevice genericDevice = (GenericDevice) device.getDeviceProxy(GenericDevice.class);
+	   return genericDevice;
+	}
+	
 	// ---- Component Business Methods ---- //
 	
 	@Override
@@ -305,7 +350,7 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 		}
 		
 		if (devId != null) {
-			final ApplicationDevice dev = getDeviceBySerialNumber(devId);
+			final ApplicationDevice dev = devices.get(devId);
 			enqueueTask(new Runnable() {
 				@Override
 				public void run() {
@@ -338,4 +383,20 @@ public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implemen
 	public Application getSelectedApplication() {
 		return m_selectAppPane.getSelectedApplication();
    }
+
+
+	@Override
+   protected void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory) {
+		Collection<ApplicationDevice> myDevices = devices.values();
+		for (ApplicationDevice appDevice : myDevices) {
+			GenericDevice genericDevice = (GenericDevice) appDevice.getDeviceProxy(GenericDevice.class);
+			if (portletFactory.typeIsSupported(genericDevice)) {
+				devicePropertiesChanged(genericDevice.getSerialNumber(), null);
+			}
+		}		   
+   }
+	
+	public ApplicationDevice getDeviceBySerialNumber(String deviceSerialNumber) {
+		return devices.get(deviceSerialNumber);
+	}
 }

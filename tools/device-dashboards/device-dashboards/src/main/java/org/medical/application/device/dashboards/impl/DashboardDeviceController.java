@@ -17,33 +17,24 @@ package org.medical.application.device.dashboards.impl;
 
 import java.util.Map;
 
-import nextapp.echo.app.Label;
-
 import org.medical.application.device.web.common.impl.DeviceController;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.device.manager.ApplicationDevice;
-import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 public class DashboardDeviceController extends DeviceController {
 
-	//private SimulationManager m_SimulationManager;
 	
 	public DashboardDeviceController(SimulationManager simulationManager) {
 		super(simulationManager);
 	}
-	
-	private DeviceEntry createDeviceEntry(ApplicationDevice device, Map<String, Object> properties) {		
-		return createDeviceEntry(device.getId(), properties);
-	}
-	
+		
 	public void addDevice(final ApplicationDevice device, Map<String, Object> properties) {
-		DeviceEntry entry = createDeviceEntry(device, properties);
+		DeviceEntry entry = createDeviceEntry(device.getId(), properties);
 		addDevice(entry);
 	}
-
+	
 	public void removeDevice(ApplicationDevice device) {
 		removeDevice(device.getId());
    }

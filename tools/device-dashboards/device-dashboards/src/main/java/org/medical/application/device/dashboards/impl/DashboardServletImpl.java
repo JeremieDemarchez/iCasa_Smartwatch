@@ -88,7 +88,7 @@ public class DashboardServletImpl extends MedicalHouseSimulatorServletImpl imple
 	}
 
 	@Override
-	@Bind(id = "appInstanceFactory", filter = "(factory.name=WebDashboardApplication)")
+	@Bind(id = "appInstanceFactory", filter = "(factory.name=DashboardApplication)")
 	public void setApplicationInstanceFactory(Factory factory) {
 		super.setApplicationInstanceFactory(factory);
 	}

@@ -22,12 +22,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import nextapp.echo.app.Grid;
+import nextapp.echo.app.Component;
 import nextapp.echo.app.ResourceImageReference;
+import nextapp.echo.app.SelectField;
 import nextapp.echo.app.Table;
-import nextapp.echo.app.table.DefaultTableModel;
+import nextapp.echo.app.event.ActionEvent;
+import nextapp.echo.app.event.ActionListener;
+import nextapp.echo.app.list.DefaultListModel;
+import nextapp.echo.app.list.ListSelectionModel;
 
-import org.apache.felix.ipojo.Factory;
 import org.medical.application.Application;
 import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
@@ -39,7 +42,7 @@ import org.medical.device.manager.ApplicationDevice;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-public class DashboardDevicePane extends DevicePane {
+public class DashboardDevicePane extends DevicePane implements SelectedApplicationTracker {
 
 	/**
 	 * @Generated
@@ -61,26 +64,25 @@ public class DashboardDevicePane extends DevicePane {
 																																								 * device
 																																								 * id
 																																								 */>>();
+	/**
+	 * Selected service in pane
+	 */
+	private Application service;
 
-	private static boolean[] BORDER_POSITIONS = new boolean[20];
+	//private static boolean[] BORDER_POSITIONS = new boolean[20];
 
-	private Table m_deviceTable;
+	//private Table m_deviceTable;
 
-	protected Grid m_grid;
+	//protected Grid m_grid;
 
 	//private TextField m_description;
 	//private DropDownMenu m_factory;
-	private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
+	//private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
 	//private final Random m_random = new Random();
 
 	public DashboardDevicePane(DashboardActionPane parent) {
 		super(parent);
 	}
-
-
-
-
-
 
 	public boolean isAvailableFor(String deviceSerialNumber, Application service) {
 		if (service == null)
@@ -126,8 +128,8 @@ public class DashboardDevicePane extends DevicePane {
 
 	@Override
 	public void notifySelectedAppChanged(Application oldSelectServ, Application newSelectedServ) {
-		recreateDeviceTable(newSelectedServ);
-
+		service = newSelectedServ;
+		recreateDeviceTable();
 		synchronized (m_deviceSerialNumbers) {
 			for (String deviceSerialNb : m_deviceSerialNumbers) {
 				DeviceEntry entry = m_devices.get(deviceSerialNb);
@@ -135,6 +137,15 @@ public class DashboardDevicePane extends DevicePane {
 				updateDeviceWidgetVisibility(entry);
 			}
 		}
+		
+		// TODO: Reimplement this code
+		/*
+		 * synchronized (m_deviceSerialNumbers) { for (String deviceSerialNb :
+		 * m_deviceSerialNumbers) { DeviceEntry entry =
+		 * m_devices.get(deviceSerialNb); tableModel.addDeviceRow(entry);
+		 * updateDeviceWidgetVisibility(entry); } }
+		 */
+
 	}
 
 	public void refreshDeviceWidgets() {
@@ -145,6 +156,276 @@ public class DashboardDevicePane extends DevicePane {
 			}
 		}
 	}
+
+	@Override
+   protected DeviceTableModel createTableModel() {
+		DeviceTableModel model = null;
+		if (service == null)
+			model = new HomeDeviceTableModel(0);
+		else if (service.getId().startsWith("Safe"))
+			model = new ServiceWithPropDeviceTableModel(0);
+		else
+			model = new ServiceWithoutPropDeviceTableModel(0);
+		return model;
+   }
+	
+	@Override
+   protected DeviceTableCellRenderer createTableCellRenderer() {
+	   return new DashboardDeviceTableRenderer();
+   }
+
+	public void updateDeviceWidgetVisibility(DeviceEntry entry) {
+		removeDevice(entry);
+
+		final String deviceSerialNumber = entry.serialNumber;
+		if (isAvailableForSelectedApplication(deviceSerialNumber)) {
+			ApplicationDevice device = ((DashboardApplicationImpl)getAppInstance()).getDeviceBySerialNumber(deviceSerialNumber);
+			addDeviceWidget(entry);
+		}
+	}
+	
+	private SelectField createUsedList(final String deviceSerialNumber, Boolean value) {
+		final SelectField stateField = new SelectField();
+
+		DefaultListModel model = new DefaultListModel();
+		final String[] states = { "yes", "no" };
+		int deviceStateIdx = -1;
+		for (int idx = 0; idx < states.length; idx++) {
+			String state = states[idx];
+			model.add(state);
+		}
+		stateField.setModel(model);
+		if (value == null)
+			deviceStateIdx = 1; // by default not used
+		else if (value)
+			deviceStateIdx = 0;
+		else
+			deviceStateIdx = 1;
+
+		stateField.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+
+		stateField.getSelectionModel().setSelectedIndex(deviceStateIdx, true);
+
+		ActionListener stateMenuActionListener = new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int selectedIdx = stateField.getSelectionModel().getMinSelectedIndex();
+				String availableStr = (String) stateField.getModel().get(selectedIdx);
+
+				DeviceEntry entry = m_devices.get(deviceSerialNumber);
+				if (entry == null)
+					return;
+
+				int stateIdx = -1;
+				for (int idx = 0; idx < states.length; idx++) {
+					String state = states[idx];
+					if (state.equals(availableStr))
+						stateIdx = idx;
+				}
+				boolean available = (stateIdx == 0);
+				
+				Application selectedApplication = ((DashboardApplicationImpl)getAppInstance()).getSelectedApplication();
+				
+				setDeviceAvailabilityFor(deviceSerialNumber, selectedApplication, available);
+				tableModel.updateDeviceRow(entry);
+				updateDeviceWidgetVisibility(entry);
+			}
+		};
+
+		stateField.addActionListener(stateMenuActionListener);
+
+		return stateField;
+	}
+	
+
+	/**
+	 * Table model to show devices (with properties) by application using echo3
+	 * 
+	 * @author Gabriel
+	 * 
+	 */
+	public class ServiceWithPropDeviceTableModel extends DeviceTableModel {
+
+		private final String[] columns = { "Device Description", "Location *", "Used *", "Fault", "Details" };
+
+		static final int DEVICE_DESC_COL_IDX = 0;
+		static final int DEVICE_LOCATION_COL_IDX = 1;
+		static final int DEVICE_STATE_COL_IDX = 2;
+		static final int DEVICE_FAULT_STATE_COL_IDX = 3;
+
+		public ServiceWithPropDeviceTableModel(int rows) {
+			super(5, rows);
+			for (int i = 0; i < columns.length; i++) {
+				setColumnName(i, columns[i]);
+			}
+		}
+
+		public void updateDeviceRow(DeviceEntry entry) {
+			int rowIdx = deviceSerialNumbers.indexOf(entry.serialNumber);
+			if (rowIdx < 0)
+				return;
+
+			setValueAt(entry.label.getText(), DEVICE_DESC_COL_IDX, rowIdx);
+			setValueAt(isAvailableForSelectedApplication(entry.serialNumber), DEVICE_STATE_COL_IDX, rowIdx);
+			setValueAt(entry.logicPosition, DEVICE_LOCATION_COL_IDX, rowIdx);
+			setValueAt(entry.fault, DEVICE_FAULT_STATE_COL_IDX, rowIdx);
+		}
+
+		public synchronized void addDeviceRow(DeviceEntry entry) {
+			Object data[] = new Object[columns.length];
+			data[DEVICE_DESC_COL_IDX] = entry.label.getText();
+			data[DEVICE_LOCATION_COL_IDX] = entry.logicPosition;
+			data[DEVICE_STATE_COL_IDX] = isAvailableForSelectedApplication(entry.serialNumber);
+			data[DEVICE_FAULT_STATE_COL_IDX] = entry.fault;
+			data[columns.length - 1] = entry.serialNumber;
+			deviceSerialNumbers.add(entry.serialNumber);
+			addRow(data);
+		}
+
+		public boolean useState() {
+			return false;
+		}
+
+		@Override
+		public boolean useEditableFault() {
+			return false;
+		}
+	}
+	
+	/**
+	 * Table model to show devices (with properties) by application using echo3
+	 * 
+	 * @author Gabriel
+	 * 
+	 */
+	public class ServiceWithoutPropDeviceTableModel extends DeviceTableModel {
+
+		private final String[] columns = { "Device Description", "Location", "Used *", "Fault", "Details" };
+
+		static final int DEVICE_DESC_COL_IDX = 0;
+		static final int DEVICE_LOCATION_COL_IDX = 1;
+		static final int DEVICE_STATE_COL_IDX = 2;
+		static final int DEVICE_FAULT_STATE_COL_IDX = 3;
+
+		public ServiceWithoutPropDeviceTableModel(int rows) {
+			super(5, rows);
+			for (int i = 0; i < columns.length; i++) {
+				setColumnName(i, columns[i]);
+			}
+		}
+
+		public void updateDeviceRow(DeviceEntry entry) {
+			int rowIdx = deviceSerialNumbers.indexOf(entry.serialNumber);
+			if (rowIdx < 0)
+				return;
+
+			setValueAt(entry.label.getText(), DEVICE_DESC_COL_IDX, rowIdx);
+			setValueAt(entry.logicPosition, DEVICE_LOCATION_COL_IDX, rowIdx);
+			setValueAt(isAvailableForSelectedApplication(entry.serialNumber), DEVICE_STATE_COL_IDX, rowIdx);
+			setValueAt(entry.fault, DEVICE_FAULT_STATE_COL_IDX, rowIdx);
+		}
+
+		public synchronized void addDeviceRow(DeviceEntry entry) {
+			Object data[] = new Object[columns.length];
+			data[DEVICE_DESC_COL_IDX] = entry.label.getText();
+			data[DEVICE_LOCATION_COL_IDX] = entry.logicPosition;
+			data[DEVICE_STATE_COL_IDX] = isAvailableForSelectedApplication(entry.serialNumber);
+			data[DEVICE_FAULT_STATE_COL_IDX] = entry.fault;
+			data[columns.length - 1] = entry.serialNumber;
+			deviceSerialNumbers.add(entry.serialNumber);
+			addRow(data);
+		}
+
+		public boolean useState() {
+			return false;
+		}
+
+		@Override
+		public boolean useEditableFault() {
+			return false;
+		}
+	}
+
+	
+	/**
+	 * Table model to show all devices presents in the platform using echo3
+	 * 
+	 * @author Gabriel
+	 * 
+	 */
+	public class HomeDeviceTableModel extends DeviceTableModel {
+
+		private final String[] columns = { "Device Name", "Location", "Usable *", "Fault", "Details" };
+
+		static final int DEVICE_DESC_COL_IDX = 0;
+		static final int DEVICE_LOCATION_COL_IDX = 1;
+		static final int DEVICE_USABLE_STATE_COL_IDX = 2;
+		static final int DEVICE_FAULT_STATE_COL_IDX = 3;
+
+		public HomeDeviceTableModel(int rows) {
+			super(5, rows);
+			for (int i = 0; i < columns.length; i++) {
+				setColumnName(i, columns[i]);
+			}
+		}
+
+		public void updateDeviceRow(DeviceEntry entry) {
+			int rowIdx = deviceSerialNumbers.indexOf(entry.serialNumber);
+			if (rowIdx < 0)
+				return;
+
+			setValueAt(entry.label.getText(), DEVICE_DESC_COL_IDX, rowIdx);
+			setValueAt(entry.logicPosition, DEVICE_LOCATION_COL_IDX, rowIdx);
+			setValueAt(entry.state, DEVICE_USABLE_STATE_COL_IDX, rowIdx);
+			setValueAt(entry.fault, DEVICE_FAULT_STATE_COL_IDX, rowIdx);
+		}
+
+		public synchronized void addDeviceRow(DeviceEntry entry) {
+			String data[] = new String[columns.length];
+			data[DEVICE_DESC_COL_IDX] = entry.label.getText();
+			data[DEVICE_LOCATION_COL_IDX] = entry.logicPosition;
+			data[DEVICE_USABLE_STATE_COL_IDX] = entry.state;
+			data[DEVICE_FAULT_STATE_COL_IDX] = entry.fault;
+			data[columns.length - 1] = entry.serialNumber;
+			deviceSerialNumbers.add(entry.serialNumber);
+			addRow(data);
+		}
+
+		public boolean useState() {
+			return true;
+		}
+
+		@Override
+		public boolean useEditableFault() {
+			return false;
+		}
+	}
+	
+	public class DashboardDeviceTableRenderer extends DeviceTableCellRenderer {
+		
+		@Override
+		public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+		   Component component = super.getTableCellRendererComponent(table, value, column, row);
+		   final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
+		   String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
+		   
+			if (column == STATE_COLUMN_INDEX) {
+				if (deviceTableModel.useState())
+					component = createStateList(deviceSerialNumber, (String) value);
+				else
+					component = createUsedList(deviceSerialNumber, (Boolean) value);
+			}
+			if (column == FAULT_COLUMN_INDEX) {
+				if (deviceTableModel.useEditableFault())
+					component = createFaultList(deviceSerialNumber, (String) value);
+				else
+					component = createNonEditableFaultList(deviceSerialNumber, (String) value);
+			}
+		   return component;
+		}
+	}
+
 
 
 }
