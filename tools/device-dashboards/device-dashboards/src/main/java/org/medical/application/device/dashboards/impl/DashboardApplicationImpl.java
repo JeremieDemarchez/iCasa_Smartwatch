@@ -40,6 +40,7 @@ import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.Application;
 import org.medical.application.ApplicationManager;
+import org.medical.application.ApplicationTracker;
 import org.medical.application.device.dashboards.impl.component.DashboardActionPane;
 import org.medical.application.device.dashboards.impl.component.SelectAppPane;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
@@ -66,7 +67,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  */
 @Component(name = "DashboardApplication", immediate = true)
 @Provides
-public class DashboardApplicationImpl extends BaseHouseApplication implements StateVariableListener {
+public class DashboardApplicationImpl extends BaseHouseApplication implements ApplicationTracker, StateVariableListener {
 
 	/**
 	 * @generated
@@ -399,4 +400,19 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements St
 	public ApplicationDevice getDeviceBySerialNumber(String deviceSerialNumber) {
 		return devices.get(deviceSerialNumber);
 	}
+
+
+	
+	@Override
+   public void addApplication(Application app) {
+		((DashboardActionPane)m_actionPane).addApplication(app);
+		m_selectAppPane.addApplication(app);	   
+   }
+
+
+	@Override
+   public void removeApplication(Application app) {
+		((DashboardActionPane)m_actionPane).removeApplication(app);
+		m_selectAppPane.removeApplication(app);	   
+   }
 }
