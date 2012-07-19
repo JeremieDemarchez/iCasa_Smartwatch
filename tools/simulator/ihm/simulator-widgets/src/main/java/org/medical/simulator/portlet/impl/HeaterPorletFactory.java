@@ -28,7 +28,7 @@ import fr.liglab.adele.icasa.device.temperature.Heater;
 public class HeaterPorletFactory implements PortletFactory {
 
 	@Override
-	public WindowPane createPortlet(MedicalHouseSimulatorImpl parent,
+	public WindowPane createPortlet(HouseSimulatorGUIImpl parent,
 			String deviceId) {
 		return new HeaterStatusWindow(parent, deviceId);
 	}

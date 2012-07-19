@@ -31,7 +31,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<modules>
-		<module>simulator-widgets</module>
+		<!--<module>simulator-widgets</module>-->
 		<module>house-simulator</module>
 	</modules>
 

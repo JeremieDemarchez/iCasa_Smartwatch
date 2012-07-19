@@ -27,7 +27,7 @@ import fr.liglab.adele.icasa.device.temperature.Thermometer;
 public class ThermometerPorletFactory implements PortletFactory {
 
 	@Override
-	public WindowPane createPortlet(MedicalHouseSimulatorImpl parent,
+	public WindowPane createPortlet(HouseSimulatorGUIImpl parent,
 			String deviceId) {
 		return new ThermometerStatusWindow(parent, deviceId);
 	}

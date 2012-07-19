@@ -27,7 +27,7 @@ import fr.liglab.adele.icasa.device.settopbox.SetTopBox;
 public class SetTopBoxPortletFactory implements PortletFactory {
 
 	@Override
-	public WindowPane createPortlet(MedicalHouseSimulatorImpl parent, String deviceId) {
+	public WindowPane createPortlet(HouseSimulatorGUIImpl parent, String deviceId) {
 		return new SetTopBoxStatusWindow(parent, deviceId);
 	}
 

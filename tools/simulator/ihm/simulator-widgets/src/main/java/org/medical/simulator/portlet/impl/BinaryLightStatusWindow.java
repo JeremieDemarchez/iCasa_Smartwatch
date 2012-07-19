@@ -37,7 +37,7 @@ public class BinaryLightStatusWindow extends DeviceStatusWindow {
    private static final long serialVersionUID = 7214188369352385316L;
 
 
-	public BinaryLightStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public BinaryLightStatusWindow(HouseSimulatorGUIImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 	}
 

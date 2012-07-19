@@ -1,28 +1,11 @@
 # Eclipse files
 
-*.project
-*.settings
-*.classpath
+.project
+.settings
+.classpath
 
 # maven folders
 
 target
 load
 felix-cache
-
-
-/distribution/tr-69-distrib/bin
-/platform/physical-devices/usb/usb-discovery/Zone.sav
-/distribution/asus-box/bundle/deployment-package-api-1.0.1-SNAPSHOT.jar
-/distribution/asus-box/bundle/autoconf-resource-processor-1.0.1-SNAPSHOT.jar
-/distribution/asus-box/bundle/autoload.res.processor-0.0.1-SNAPSHOT.jar
-/distribution/asus-box/bundle/deployment.package.file.install-0.0.1-SNAPSHOT.jar
-/distribution/asus-box/bundle/deployment-admin-impl-1.0.1-SNAPSHOT.jar
-/distribution/dev/bundle/autoload.res.processor-0.0.1-SNAPSHOT.jar
-/distribution/dev/bundle/deployment.package.file.install-0.0.1-SNAPSHOT.jar
-/distribution/dev/bundle/deployment-admin-impl-1.0.1-SNAPSHOT.jar
-/distribution/dev/bundle/deployment-package-api-1.0.1-SNAPSHOT.jar
-/distribution/dev/bundle/autoconf-resource-processor-1.0.1-SNAPSHOT.jar
-/platform/physical-devices/upnp/upnp-presence-detector-proxy/Zone.sav
-
-/platform/core/api/common/bin

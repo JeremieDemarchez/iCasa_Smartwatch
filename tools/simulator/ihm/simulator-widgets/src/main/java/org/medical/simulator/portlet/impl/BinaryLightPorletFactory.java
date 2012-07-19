@@ -27,7 +27,7 @@ import fr.liglab.adele.icasa.device.light.BinaryLight;
 public class BinaryLightPorletFactory implements PortletFactory {
 
 	@Override
-	public WindowPane createPortlet(MedicalHouseSimulatorImpl parent,
+	public WindowPane createPortlet(HouseSimulatorGUIImpl parent,
 			String deviceId) {
 		return new BinaryLightStatusWindow(parent, deviceId);
 	}

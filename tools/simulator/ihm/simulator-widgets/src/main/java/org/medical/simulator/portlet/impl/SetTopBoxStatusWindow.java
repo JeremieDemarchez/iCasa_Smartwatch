@@ -36,7 +36,7 @@ public class SetTopBoxStatusWindow extends DeviceStatusWindow {
     */
 	private static final long serialVersionUID = 5283844186926837953L;
 
-	public SetTopBoxStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public SetTopBoxStatusWindow(HouseSimulatorGUIImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 	}
 

@@ -32,10 +32,12 @@
 
 	<modules>
 		<module>device-dashboards</module>
+		<!--
 		<module>device-widgets</module>
 		<module>tikitag-widget</module>
 		<module>upnp-widget</module>
 		<module>x10-widget</module>
+		-->
 		<module>packages</module>
 	</modules>
 </project>

@@ -28,7 +28,7 @@ import fr.liglab.adele.icasa.device.settopbox.SetTopBox;
 public class PresenceSensorPorletFactory implements PortletFactory {
 
 	@Override
-	public WindowPane createPortlet(MedicalHouseSimulatorImpl parent,
+	public WindowPane createPortlet(HouseSimulatorGUIImpl parent,
 			String deviceId) {
 		return new PresenceSensorStatusWindow(parent, deviceId);
 	}

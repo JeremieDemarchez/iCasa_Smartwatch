@@ -31,6 +31,7 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<modules>
-		
+		<module>web-common</module>
+		<module>common-device-widgets</module>
 	</modules>
 </project>

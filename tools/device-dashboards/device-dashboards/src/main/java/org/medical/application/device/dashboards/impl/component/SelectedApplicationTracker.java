@@ -18,21 +18,22 @@ package org.medical.application.device.dashboards.impl.component;
 import org.medical.application.Application;
 
 /**
- * Allow objects implementing this interface to be notified about digital service selection changes.
+ * Allow objects implementing this interface to be notified about digital
+ * service selection changes.
  * 
  * @author Thomas Leveque
- *
+ * 
  */
 public interface SelectedApplicationTracker {
 
 	/**
-	 * Called every time, a new service is selected.
-	 * When a tracker is added, a notification is sent with oldSelectServ set to null.
+	 * Called every time, a new service is selected. When a tracker is added, a
+	 * notification is sent with oldSelectServ set to null.
 	 * 
-	 * @param oldSelectServ old selected service (not relevant for first notification)
-	 * @param newSelectedServ new selected service
+	 * @param oldSelectServ
+	 *           old selected service (not relevant for first notification)
+	 * @param newSelectedServ
+	 *           new selected service
 	 */
-	public void notifySelectedAppChanged(Application oldSelectApp,
-			Application newSelectedApp);
-
+	public void notifySelectedAppChanged(Application oldSelectServ, Application newSelectedServ);
 }

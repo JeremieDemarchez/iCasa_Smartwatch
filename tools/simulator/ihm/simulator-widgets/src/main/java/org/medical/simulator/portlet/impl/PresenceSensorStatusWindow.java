@@ -35,7 +35,7 @@ public class PresenceSensorStatusWindow extends DeviceStatusWindow {
     */
 	private static final long serialVersionUID = 5283844186926837953L;
 
-	public PresenceSensorStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public PresenceSensorStatusWindow(HouseSimulatorGUIImpl parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 		// TODO Auto-generated constructor stub
 	}
