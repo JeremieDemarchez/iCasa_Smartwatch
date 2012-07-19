@@ -31,6 +31,7 @@ import org.medical.device.manager.FilterDeviceContrib;
 import org.medical.device.manager.GlobalDeviceManager;
 import org.medical.device.manager.KnownDevice;
 import org.medical.device.manager.ProvidedDevice;
+import org.medical.device.manager.impl.DeviceManagerImpl;
 import org.medical.device.manager.impl.PolicyManager;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -69,14 +70,15 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 		try {
 			// only application bundles get filtered services
 			final Bundle bundle = context.getBundle();
-			if (_context.equals(context) || bundle.getBundleId() == 0
-					|| !_appMgr.isApplicationBundle(bundle)) {
+			if (_context.equals(context) || bundle.getBundleId() == 0) {
 				return;
 			}
 
-			Application app = _appMgr.getApplicationOfBundle(bundle
+			Application app = null;
+			if (_appMgr.isApplicationBundle(bundle)) {
+				app = _appMgr.getApplicationOfBundle(bundle
 					.getSymbolicName());
-			String appId = app.getId();
+			}
 
 			Iterator<ServiceReference> iterator = references.iterator();
 			while (iterator.hasNext()) {
@@ -93,32 +95,41 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 	}
 
 	private boolean filterServices(Application app, BundleContext context, ServiceReference sr, String[] interfaces) {
+		boolean isFromApp = (app != null);
+		
 		if (_filterDevContribs != null) {
 			for (FilterDeviceContrib devFilter : _filterDevContribs) {
-				if (devFilter.hideDevice(app, sr, interfaces))
-					return true;
+				try {
+					if (devFilter.hideDevice(app, sr, interfaces))
+						return true;
+				} catch (Exception e) {
+					e.printStackTrace();
+					return false;
+				}
 			}
 		}
 		
-		String appId = app.getId();
 		for (String spec : interfaces) {
 			// manage isolation of private core services
 			if (GlobalDeviceManager.class.getName().equals(spec)
 					|| KnownDevice.class.getName().equals(spec)
 					|| ProvidedDevice.class.getName().equals(spec)
 					|| AvailableDevice.class.getName().equals(spec)) {
-				return true;
+				return isFromApp;
 			}
 			
-			// 
+			// manage access to application management
 			if (ApplicationManager.class.getName().equals(spec)) {
-				return !(_policyMgr.allowAccess(app, sr));
+				return isFromApp && !(_policyMgr.allowAccess(app, sr));
 			}
 
 			if (ApplicationDevice.class.getName().equals(spec)) {
-				// remove device manager of other applications
+				if (!isFromApp)
+					return true;
+				
 				ApplicationDevice appDev = (ApplicationDevice) context.getService(sr);
 				context.ungetService(sr);
+				String appId = app.getId();
 				if (!appDev.getApplication().getId().equals(appId))
 					return true;
 			}
@@ -127,7 +138,11 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 				// remove device manager of other applications
 				DeviceManager devMgr = (DeviceManager) context.getService(sr);
 				context.ungetService(sr);
-				if (!devMgr.getApplication().getId().equals(appId))
+				
+				if (!isFromApp && devMgr.getApplication().getId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID))
+					return false;
+				
+				if (!devMgr.getApplication().getId().equals(app.getId()))
 					return true;
 			}
 		}
@@ -144,12 +159,16 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 			BundleContext context = iterator.next();
 			Bundle bundle = context.getBundle();
 			long bundleId  = bundle.getBundleId();
-			// only application bundles get filtered services
-			if (!_appMgr.isApplicationBundle(bundle))
+			
+			if (_context.equals(context) || bundle.getBundleId() == 0) {
 				continue;
+			}
 
-			Application app = _appMgr.getApplicationOfBundle(bundle
+			Application app = null;
+			if (_appMgr.isApplicationBundle(bundle)) {
+				app = _appMgr.getApplicationOfBundle(bundle
 					.getSymbolicName());
+			}
 			
 			if (filterServices(app, context, sr, interfaces))
 				contexts.remove(context);

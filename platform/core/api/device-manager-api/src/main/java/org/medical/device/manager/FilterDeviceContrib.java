@@ -28,6 +28,7 @@ public interface FilterDeviceContrib {
 
 	/**
 	 * Returns true if the specified service must be hide from specified application. 
+	 * If application parameter is equal to null, it means that it is a call from the internal framework.
 	 * 
 	 * @param app application which want to access to this service
 	 * @param sr service reference
