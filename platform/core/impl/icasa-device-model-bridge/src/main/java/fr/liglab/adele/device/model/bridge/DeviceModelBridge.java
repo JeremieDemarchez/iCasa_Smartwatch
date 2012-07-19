@@ -209,6 +209,9 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 			return hide;
 		}
 		
+		if (!isFromApp && isGenDevice && isAppProxy)
+			return true;
+		
 		return false;
 	}
 

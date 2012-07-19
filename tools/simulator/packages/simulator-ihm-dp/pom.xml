@@ -60,7 +60,7 @@
 					<writeExtraData>true</writeExtraData>
 					<deploymentPackage>
 						
-						<headers>
+						<!--headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
 								<value>icasa.simulator</value>
@@ -73,7 +73,7 @@
 								<name>ICasa-Application-Version</name>
 								<value>${project.version}</value>
 							</bundleHeader>
-						</headers>
+						</headers-->
 						
 						<resources>
 							<processedResource>
