@@ -41,8 +41,7 @@ import nextapp.echo.app.list.ListSelectionModel;
 import nextapp.echo.app.table.DefaultTableModel;
 import nextapp.echo.app.table.TableCellRenderer;
 
-import org.medical.application.device.web.common.impl.DeviceController;
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.event.DropEvent;
 import org.medical.application.device.web.common.impl.component.event.DropListener;
 import org.medical.application.device.web.common.portlet.impl.GenericDeviceStatusWindow;
@@ -70,19 +69,16 @@ public abstract class DevicePane extends ContentPane {
 
 	protected DeviceTableModel tableModel;
 
-	private static boolean[] BORDER_POSITIONS = new boolean[20];
-
 	private Table m_deviceTable;
 
 	protected Grid m_grid;
 
 	public DevicePane(final ActionPane parent) {
 		m_parent = parent;
-		m_grid = new Grid(3);
-		m_grid.setInsets(new Insets(2, 3));
-		recreateDeviceTable();
-		add(m_grid);
+		initContent();
 	}
+	
+
 
 	protected void recreateDeviceTable() {
 		if (m_deviceTable != null)
@@ -108,11 +104,9 @@ public abstract class DevicePane extends ContentPane {
 		return aTable;
 	}
 
-	
-
-	
 	/**
 	 * Adds an device representation into the DevicePane
+	 * 
 	 * @param entry
 	 */
 	public void addDevice(DeviceEntry entry) {
@@ -122,10 +116,10 @@ public abstract class DevicePane extends ContentPane {
 		addDeviceInTable(entry);
 	}
 
-
 	protected void addDeviceWidget(final DeviceEntry entry) {
 
-		//ApplicationDevice device2 = getAppInstance().getDeviceBySerialNumber(entry.serialNumber);
+		// ApplicationDevice device2 =
+		// getAppInstance().getDeviceBySerialNumber(entry.serialNumber);
 		ResourceImageReference imageForDevice = getImageForDevice(entry.serialNumber);
 
 		entry.widget = new FloatingButton(entry.position.x, entry.position.y, imageForDevice, entry.description);
@@ -151,6 +145,7 @@ public abstract class DevicePane extends ContentPane {
 
 	/**
 	 * Adds an device representation into the table
+	 * 
 	 * @param entry
 	 */
 	private void addDeviceInTable(final DeviceEntry entry) {
@@ -159,6 +154,7 @@ public abstract class DevicePane extends ContentPane {
 
 	/**
 	 * Removes a device representation into the Device pane
+	 * 
 	 * @param entry
 	 */
 	public void removeDevice(DeviceEntry entry) {
@@ -168,6 +164,7 @@ public abstract class DevicePane extends ContentPane {
 
 	/**
 	 * Removes the device icon from the House Pane
+	 * 
 	 * @param entry
 	 */
 	private void removeDeviceWidget(DeviceEntry entry) {
@@ -183,8 +180,10 @@ public abstract class DevicePane extends ContentPane {
 	}
 
 	public void moveDevice(DeviceEntry entry, Position position) {
-		if (((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_X)).getValue() == 0 && position != null) {
-			// Free the border slot.
+
+		/*
+		
+		if (((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_X)).getValue() == 0 && position != null) { 			
 			int y = ((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_Y)).getValue();
 			BORDER_POSITIONS[y / 20] = false;
 		}
@@ -201,26 +200,22 @@ public abstract class DevicePane extends ContentPane {
 
 		entry.position = position;
 		entry.logicPosition = logicPosition;
+		
+		*/
 
 		// re-render
 		removeDeviceWidget(entry);
 
-		addDeviceWidget(entry);
 		
-		String deviceSerialNumber = entry.serialNumber;
-		
-		/*
-		if (isAvailableForSelectedApplication(deviceSerialNumber))
-			// addDeviceWidget(getAppInstance().getDeviceBySerialNumber(deviceSerialNumber),
-			// entry.description, position, deviceSerialNumber, entry);
+		if (deviceMustBeShown(entry.serialNumber))
 			addDeviceWidget(entry);
-		*/
 
 		updateDeviceTable(entry);
 	}
 
 	/**
 	 * Utility method to show a error message in the GUI
+	 * 
 	 * @param error
 	 */
 	public void showErrorWindow(final String error) {
@@ -264,11 +259,8 @@ public abstract class DevicePane extends ContentPane {
 	 */
 	public void changeDevice(DeviceEntry entry) {
 		removeDeviceWidget(entry);
-		/*
-		if (isAvailableForSelectedApplication(entry.serialNumber))
+		if (deviceMustBeShown(entry.serialNumber))
 			addDeviceWidget(entry);
-		*/
-		addDevice(entry);
 		updateDeviceTable(entry);
 	}
 
@@ -277,68 +269,27 @@ public abstract class DevicePane extends ContentPane {
 			tableModel.updateDeviceRow(entry);
 	}
 
-
 	/**
 	 * Gets the current application instance
 	 * 
 	 * @return
 	 */
-	protected MedicalHouseSimulatorImpl getAppInstance() {
+	protected BaseHouseApplication getAppInstance() {
 		return m_parent.getApplicationInstance();
 	}
 
-	
 	private ResourceImageReference getImageForDevice(String deviceSerialNumber) {
 		ResourceImageReference image = getAppInstance().getImageForDevice(deviceSerialNumber);
 		if (image != null)
 			return image;
 		return new ResourceImageReference("/Device-Icasa.png");
 	}
-	
-	/**
-	 * Gets the corresponding image for a device
-	 * 
-	 * @param device2
-	 * @return
-	 */
+
+
 	/*
-	private ResourceImageReference getImageForDevice(final ApplicationDevice device) {
-		
-		ResourceImageReference image = getAppInstance().getImageForDevice(device);
-		if (image != null)
-			return image;
-
-		// This code is only use to force BND to import the package
-		if (device instanceof DimmerLight) {
-			new ResourceImageReference("/DimmerLamp.png");
-		} else if (device instanceof BinaryLight) {
-			new ResourceImageReference("/Lamp.png");
-		} else if (device instanceof Thermometer) {
-			new ResourceImageReference("/Thermometer.png");
-		} else if (device instanceof Heater) {
-			new ResourceImageReference("/Heater.png");
-		} else if (device instanceof AudioSource) {
-			new ResourceImageReference("/Player.png");
-		} else if (device instanceof PresenceSensor) {
-			new ResourceImageReference("/Player.png");
-		} else if (device instanceof PowerSwitchmeter) {
-			new ResourceImageReference("/Player.png");
-		} else {
-			new ResourceImageReference("/Device-Icasa.png");
-		}
-		
-		return new ResourceImageReference("/Device-Icasa.png");
-	}
-	*/
-	
-	
-
-	private static Position generateBorderPosition() {
-		// Find the next slot available.
-		int i = nextSlotAvailable();
-		BORDER_POSITIONS[i] = true;
-		return new Position(20, (30 * i) + 20);
-	}
+	private static Position generateBorderPosition() { // Find the next slot 
+	  int i = nextSlotAvailable(); BORDER_POSITIONS[i] = true; return
+	  new Position(20, (30 * i) + 20); }
 
 	private static int nextSlotAvailable() {
 		for (int i = 0; i < BORDER_POSITIONS.length; i++) {
@@ -348,6 +299,7 @@ public abstract class DevicePane extends ContentPane {
 		}
 		return BORDER_POSITIONS.length - 1;
 	}
+	*/
 
 	private class DeviceSpotActionListener implements ActionListener {
 
@@ -361,14 +313,12 @@ public abstract class DevicePane extends ContentPane {
 			// Display the device in the status pane.
 
 			String deviceId = e.getActionCommand();
-			MedicalHouseSimulatorImpl app = getAppInstance();
+			BaseHouseApplication app = getAppInstance();
 
 			if (app.getStatusPane().getComponent(deviceId) != null) {
 				return;
 			}
 
-			// Portlet Binding
-			//WindowPane portlet = app.getDeviceWidget((app.getDeviceBySerialNumber(deviceId)));
 			WindowPane widget = app.getDeviceWidget(deviceId);
 			if (widget == null)
 				widget = new GenericDeviceStatusWindow(app, deviceId);
@@ -381,6 +331,12 @@ public abstract class DevicePane extends ContentPane {
 
 	}
 
+	/**
+	 * 
+	 * @param deviceSerialNumber
+	 * @param deviceLocation
+	 * @return
+	 */
 	private SelectField createLocationList(String deviceSerialNumber, String deviceLocation) {
 		final SelectField locationField = new SelectField();
 
@@ -417,6 +373,12 @@ public abstract class DevicePane extends ContentPane {
 		return locationField;
 	}
 
+	/**
+	 * 
+	 * @param deviceSerialNumber
+	 * @param deviceState
+	 * @return
+	 */
 	protected SelectField createStateList(String deviceSerialNumber, String deviceState) {
 		final SelectField stateField = new SelectField();
 
@@ -440,10 +402,8 @@ public abstract class DevicePane extends ContentPane {
 
 		StringListActionListener locationMenuActionListener = new StringListActionListener(deviceSerialNumber, stateField) {
 			protected void performSet(String newValueId) {
-				//ApplicationDevice device = getAppInstance().getDeviceBySerialNumber(deviceSerialNumber);
-				//GenericDevice genericDevice = (GenericDevice) device.getDeviceProxy(GenericDevice.class);
 				GenericDevice genericDevice = getAppInstance().getGenericDeviceBySerialNumber(deviceSerialNumber);
-				if (genericDevice!=null)
+				if (genericDevice != null)
 					genericDevice.setState(newValueId);
 			}
 		};
@@ -453,7 +413,12 @@ public abstract class DevicePane extends ContentPane {
 		return stateField;
 	}
 
-
+	/**
+	 * 
+	 * @param deviceSerialNumber
+	 * @param deviceState
+	 * @return
+	 */
 	protected SelectField createFaultList(String deviceSerialNumber, String deviceState) {
 		final SelectField stateField = new SelectField();
 
@@ -472,17 +437,14 @@ public abstract class DevicePane extends ContentPane {
 
 		stateField.getSelectionModel().setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 
-		//ApplicationDevice device = getAppInstance().getDeviceBySerialNumber(deviceSerialNumber);
 
 		if (deviceState != null)
 			stateField.getSelectionModel().setSelectedIndex(deviceStateIdx, true);
 
 		StringListActionListener locationMenuActionListener = new StringListActionListener(deviceSerialNumber, stateField) {
 			protected void performSet(String newValueId) {
-				//ApplicationDevice device = getAppInstance().getDeviceBySerialNumber(deviceSerialNumber);
-				//GenericDevice genericDevice = (GenericDevice) device.getDeviceProxy(GenericDevice.class);
 				GenericDevice genericDevice = getAppInstance().getGenericDeviceBySerialNumber(deviceSerialNumber);
-				if (genericDevice!=null)
+				if (genericDevice != null)
 					genericDevice.setFault(newValueId);
 			}
 		};
@@ -498,27 +460,36 @@ public abstract class DevicePane extends ContentPane {
 		return faultStateField;
 	}
 
-	
-	
-	
-
-
-
-
-
-	
 	// ----- Abstract methods delegated to concrete Device Panes ---- //
-	
+
 	/**
 	 * Creates the instance of table model to be used in the device table
+	 * 
 	 * @return Devices table model
 	 */
 	protected abstract DeviceTableModel createTableModel();
-	
+
+	/**
+	 * Creates an instance of the device table cell renderer
+	 * @return
+	 */
 	protected abstract DeviceTableCellRenderer createTableCellRenderer();
 	
-	// ------ Utility classes used into the DevicePane ----- //
+	/**
+	 * Initializes the GUI components
+	 */
+	protected abstract void initContent();
 	
+	
+	/**
+	 * Determines if the device must be shown in the house pane (house plan)
+	 * @param deviceSerialNumber the device serial number
+	 * @return
+	 */
+	protected abstract boolean deviceMustBeShown(String deviceSerialNumber);
+
+	// ------ Utility classes used into the DevicePane ----- //
+
 	abstract class StringListActionListener implements ActionListener {
 
 		/**
@@ -550,6 +521,7 @@ public abstract class DevicePane extends ContentPane {
 	
 	/**
 	 * Renders the cells of the table
+	 * @author Gabriel
 	 */
 	public class DeviceTableCellRenderer implements TableCellRenderer {
 
@@ -573,7 +545,7 @@ public abstract class DevicePane extends ContentPane {
 			if (column == LOCATION_COLUMN_INDEX) {
 				return createLocationList(deviceSerialNumber, (String) value);
 			}
-						
+
 			if (column == DETAIL_COLUMN_INDEX) {
 				Button detailButton = new Button("...");
 
@@ -600,12 +572,9 @@ public abstract class DevicePane extends ContentPane {
 
 			return new Label(value.toString());
 		}
-		
-		
 
 	}
 
-	
 	/**
 	 * Render the headers of the table
 	 */
@@ -629,8 +598,7 @@ public abstract class DevicePane extends ContentPane {
 			}
 		}
 	}
-	
-	
+
 	/**
 	 * Abstract (default) model to show devices in a echo3 table
 	 * 

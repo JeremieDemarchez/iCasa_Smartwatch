@@ -23,7 +23,7 @@ import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.WindowPane;
 
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -45,7 +45,7 @@ public class DeviceStatusPane extends WindowPane implements ServiceTrackerCustom
 	 */
 	private static final long serialVersionUID = 5806176061741930702L;
 
-	private final MedicalHouseSimulatorImpl m_parent;
+	private final BaseHouseApplication m_parent;
 
 	private final String m_deviceSerialNumber;
 
@@ -55,7 +55,7 @@ public class DeviceStatusPane extends WindowPane implements ServiceTrackerCustom
 
 	private boolean m_disposalRequested = false;
 
-	public DeviceStatusPane(final MedicalHouseSimulatorImpl parent, final String deviceSerialNumber) {
+	public DeviceStatusPane(final BaseHouseApplication parent, final String deviceSerialNumber) {
 		setId(deviceSerialNumber);
 		m_parent = parent;
 		m_deviceSerialNumber = deviceSerialNumber;

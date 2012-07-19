@@ -18,7 +18,7 @@ package org.medical.application.device.web.common.impl.component;
 import nextapp.echo.app.Extent;
 import nextapp.echo.extras.app.AccordionPane;
 
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 
 /**
  * This Pane contains actions that can be realized by user 
@@ -34,13 +34,13 @@ public abstract class ActionPane extends AccordionPane {
 
 	public static Extent ICON_SIZE = new Extent(25);
 
-	private final MedicalHouseSimulatorImpl m_appInstance;
+	private final BaseHouseApplication m_appInstance;
 
 	protected DevicePane m_devicePane;
 
 	
 
-	public ActionPane(final MedicalHouseSimulatorImpl appInstance) {
+	public ActionPane(final BaseHouseApplication appInstance) {
 		m_appInstance = appInstance;
 			
 	}
@@ -51,7 +51,7 @@ public abstract class ActionPane extends AccordionPane {
 		return "Devices for " + serviceName;
 	}
 
-	public MedicalHouseSimulatorImpl getApplicationInstance() {
+	public BaseHouseApplication getApplicationInstance() {
 		return m_appInstance;
 	}
 

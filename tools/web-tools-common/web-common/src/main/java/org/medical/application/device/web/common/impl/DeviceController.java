@@ -19,33 +19,64 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import nextapp.echo.app.Extent;
 import nextapp.echo.app.Label;
 
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
+import org.medical.application.device.web.common.impl.component.FloatingButton;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
+/**
+ * Controller class that is notified in changes of the devices environment.
+ * Subclasses have to transform original device model into
+ * <code>DeviceEntry</code> model before invoke this class methods
+ * 
+ * @author Gabriel Pedraza
+ * 
+ */
 public abstract class DeviceController {
 
+	private static boolean[] BORDER_POSITIONS = new boolean[20];
+	
+	/**
+	 * The <code>DevicePane</code> use to show modifications
+	 */
 	private DevicePane m_DevicePane;
 
+	/**
+	 * Map of added devices (<code>DeviceEntry</code>) into the GUI
+	 */
 	protected final Map<String, DeviceEntry> m_devices = new HashMap<String, DeviceEntry>();
 
-	private static boolean[] BORDER_POSITIONS = new boolean[20];
-
+	/**
+	 * The iCasa Simulation Manager (used to determine device position)
+	 */
 	protected SimulationManager m_SimulationManager;
 
+	/**
+	 * Default constructor
+	 * @param manager iCasa SimulationManager
+	 */
 	public DeviceController(SimulationManager manager) {
 		m_SimulationManager = manager;
 	}
 
+	/**
+	 * Sets the devicePane used to show device information
+	 * @param devicePane the device pane
+	 */
 	public void setDevicePane(DevicePane devicePane) {
 		m_DevicePane = devicePane;
 	}
 
+	/**
+	 * Adds a device representation into the GUI
+	 * @param entry the device representation
+	 */
 	protected void addDevice(DeviceEntry entry) {
 		if (m_DevicePane != null) {
 			if (m_devices.containsKey(entry.serialNumber)) {
@@ -57,6 +88,10 @@ public abstract class DeviceController {
 		}
 	}
 
+	/**
+	 * Removes a device representation from the GUI
+	 * @param serialNumber the serial number of device to remove 
+	 */
 	protected void removeDevice(String serialNumber) {
 		if (m_DevicePane != null) {
 			if (!m_devices.containsKey(serialNumber))
@@ -67,15 +102,43 @@ public abstract class DeviceController {
 
 	}
 
+	/**
+	 * Move the device into a new position
+	 * @param deviceSerialNumber the serial number of device to move 
+	 * @param position the new position (x, y coordinates)
+	 */
 	public void moveDevice(String deviceSerialNumber, Position position) {
 		if (m_DevicePane != null) {
 			DeviceEntry entry = m_devices.get(deviceSerialNumber);
 			if (entry == null)
 				return;
+			
+			if (((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_X)).getValue() == 0 && position != null) { 			
+				int y = ((Extent) entry.widget.get(FloatingButton.PROPERTY_POSITION_Y)).getValue();
+				BORDER_POSITIONS[y / 20] = false;
+			}
+			if (position == null) {
+				position = generateBorderPosition();
+			}
+			String logicPosition = m_SimulationManager.getEnvironmentFromPosition(position);
+			if (logicPosition == null)
+				logicPosition = "unassigned";
+
+			if (entry.position.equals(position) && logicPosition.equals(entry.logicPosition))
+				return;
+
+			entry.position = position;
+			entry.logicPosition = logicPosition;
+			
 			m_DevicePane.moveDevice(entry, position);
 		}
 	}
 
+	/**
+	 * Change the device information (properties)
+	 * @param deviceSerialNumber the serial number of device to change
+	 * @param properties the new properties
+	 */
 	public void changeDevice(String deviceSerialNumber, final Map<String, Object> properties) {
 		DeviceEntry entry = m_devices.get(deviceSerialNumber);
 		if (entry == null)
@@ -83,17 +146,25 @@ public abstract class DeviceController {
 
 		DeviceEntry newEntry = createDeviceEntry(deviceSerialNumber, properties);
 
-		if (newEntry!=null) {
+		if (newEntry != null) {
 			entry.description = newEntry.description;
 			entry.logicPosition = newEntry.logicPosition;
 			entry.state = newEntry.state;
 			entry.fault = newEntry.fault;
-
-			changeDevice(entry);			
+			
+			if (m_DevicePane != null) 
+				m_DevicePane.changeDevice(entry);
+			
 		}
-
+		
 	}
 
+	/**
+	 * Creates a new device representation (<code>DeviceEntry</code>) using its serial number and properties
+	 * @param deviceSerialNumber the device serial number
+	 * @param properties the device properties
+	 * @return the new entry
+	 */
 	public DeviceEntry createDeviceEntry(String deviceSerialNumber, final Map<String, Object> properties) {
 		if (properties != null) {
 			Position position = m_SimulationManager.getDevicePosition(deviceSerialNumber);
@@ -133,30 +204,34 @@ public abstract class DeviceController {
 		return null;
 	}
 
-	protected void changeDevice(DeviceEntry entry) {
-		if (m_DevicePane != null) {
-			m_DevicePane.changeDevice(entry);
-		}
-	}
-
+	/**
+	 * Refresh the device GUI representation
+	 */
 	public void refreshDeviceWidgets() {
 		if (m_DevicePane != null) {
 			Set<String> keys = m_devices.keySet();
 			for (String key : keys) {
 				DeviceEntry entry = m_devices.get(key);
-				//m_DevicePane.updateDeviceWidgetVisibility(entry);
 				m_DevicePane.changeDevice(entry);
 			}
 		}
 	}
 
-	protected static Position generateBorderPosition() {
+	/**
+	 * Generates a position in the left side of GUI
+	 * @return a new Position (x, y coordinates)
+	 */
+	private static Position generateBorderPosition() {
 		// Find the next slot available.
 		int i = nextSlotAvailable();
 		BORDER_POSITIONS[i] = true;
 		return new Position(20, (30 * i) + 20);
 	}
 
+	/**
+	 * Calculates the next slot (site) available into the left side of GUI
+	 * @return
+	 */
 	private static int nextSlotAvailable() {
 		for (int i = 0; i < BORDER_POSITIONS.length; i++) {
 			if (!BORDER_POSITIONS[i]) {

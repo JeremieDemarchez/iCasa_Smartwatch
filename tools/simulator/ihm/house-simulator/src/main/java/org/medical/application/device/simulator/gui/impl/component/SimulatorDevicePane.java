@@ -25,6 +25,8 @@ import java.util.Random;
 import nextapp.echo.app.Button;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Extent;
+import nextapp.echo.app.Grid;
+import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.Table;
@@ -64,7 +66,13 @@ public class SimulatorDevicePane extends DevicePane {
 
 	public SimulatorDevicePane(SimulatorActionPane parent) {
 		super(parent);
+	}
 
+	@Override
+	protected void initContent() {
+		m_grid = new Grid(3);
+		m_grid.setInsets(new Insets(2, 3));
+		
 		final Label image = new Label(new ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50),
 		      new Extent(50)));
 		final GridLayoutData imageLayout = new GridLayoutData();
@@ -105,8 +113,12 @@ public class SimulatorDevicePane extends DevicePane {
 		m_grid.add(m_factory);
 		m_grid.add(m_description);
 		m_grid.add(addDeviceButton);
+		
+		recreateDeviceTable();		
+		add(m_grid);
 	}
-
+	
+	
 	public void addDeviceFactory(Factory factory) {
 		if (m_factory != null) {
 			String factoryName = factory.getName();
@@ -173,13 +185,6 @@ public class SimulatorDevicePane extends DevicePane {
 		// new Position(x, y));
 	}
 
-	/*
-	 * @Override protected DeviceTableModel createTableModel(Application service)
-	 * { DeviceTableModel model = null; if (service == null) model = new
-	 * SimulatedDeviceTableModel(0); else if (service.getId().startsWith("Safe"))
-	 * model = new ServiceWithPropDeviceTableModel(0); else model = new
-	 * ServiceWithoutPropDeviceTableModel(0); return model; }
-	 */
 
 	@Override
 	protected DeviceTableModel createTableModel() {
@@ -189,6 +194,11 @@ public class SimulatorDevicePane extends DevicePane {
 	@Override
 	protected DeviceTableCellRenderer createTableCellRenderer() {
 		return new SimulatorDeviceTableRenderer();
+	}
+	
+	@Override
+	protected boolean deviceMustBeShown(String deviceSerialNumber) {
+	   return true;
 	}
 	
 	public class SimulatedDeviceTableModel extends DeviceTableModel {

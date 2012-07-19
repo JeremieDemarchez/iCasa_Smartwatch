@@ -42,7 +42,7 @@ import org.medical.application.Application;
 import org.medical.application.ApplicationManager;
 import org.medical.application.device.dashboards.impl.component.DashboardActionPane;
 import org.medical.application.device.dashboards.impl.component.SelectAppPane;
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
@@ -66,7 +66,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  */
 @Component(name = "DashboardApplication", immediate = true)
 @Provides
-public class DashboardApplicationImpl extends MedicalHouseSimulatorImpl implements StateVariableListener {
+public class DashboardApplicationImpl extends BaseHouseApplication implements StateVariableListener {
 
 	/**
 	 * @generated

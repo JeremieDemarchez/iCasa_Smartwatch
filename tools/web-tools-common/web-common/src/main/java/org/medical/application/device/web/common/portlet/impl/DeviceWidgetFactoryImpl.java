@@ -25,7 +25,7 @@ import nextapp.echo.app.WindowPane;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.portlet.DeclarativeDeviceWidgetFactory;
 import org.medical.application.device.web.common.util.DecoratedBundleResourceImageReference;
 import org.osgi.framework.Bundle;
@@ -46,7 +46,7 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 	private Bundle _decoratorBundle;
 	
 	public DeviceWidgetFactoryImpl() {
-		_decoratorBundle = MedicalHouseSimulatorImpl.getBundle();
+		_decoratorBundle = BaseHouseApplication.getBundle();
 	}
 
 	@Override
@@ -64,7 +64,7 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 	}
 
 	@Override
-	public WindowPane createWidget(MedicalHouseSimulatorImpl parent, String deviceId) {
+	public WindowPane createWidget(BaseHouseApplication parent, String deviceId) {
 		if (windowClassName==null) {
 			WindowPane windowPane = new GenericDeviceStatusWindow(parent, deviceId);
 			return windowPane;
@@ -73,7 +73,7 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 		if (bundle != null) {
 			try {
 				Class windowClass = bundle.loadClass(windowClassName);
-				Constructor constructor = windowClass.getConstructor(MedicalHouseSimulatorImpl.class, String.class);
+				Constructor constructor = windowClass.getConstructor(BaseHouseApplication.class, String.class);
 				Object arglist[] = { parent, deviceId };
 				WindowPane windowPane = (WindowPane) constructor.newInstance(arglist);
 				return windowPane;

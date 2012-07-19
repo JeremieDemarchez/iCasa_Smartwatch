@@ -59,7 +59,7 @@
 				<configuration>
 					<writeExtraData>true</writeExtraData>
 					<deploymentPackage>
-						<!--
+						
 						<headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
@@ -74,7 +74,7 @@
 								<value>${project.version}</value>
 							</bundleHeader>
 						</headers>
-						-->
+						
 						<resources>
 							<processedResource>
 								<processor>org.osgi.deployment.rp.autoload</processor>

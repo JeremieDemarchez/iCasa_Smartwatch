@@ -20,7 +20,7 @@ import nextapp.echo.app.Label;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.Row;
 
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 
 /**
  * TODO comments.
@@ -51,7 +51,7 @@ public class HousePane extends ContentPaneWithFloatScroll {
 	 * 
 	 * @param servlet
 	 */
-	public HousePane(final MedicalHouseSimulatorImpl application) {
+	public HousePane(final BaseHouseApplication application) {
 		// m_application = application;
 		setRenderId(HOUSE_PANE_RENDER_ID);
 		setStyleName("housePane");

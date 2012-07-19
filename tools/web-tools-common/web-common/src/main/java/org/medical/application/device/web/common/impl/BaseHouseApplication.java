@@ -41,7 +41,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
-public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance implements DevicePositionListener,
+public abstract class BaseHouseApplication extends ApplicationInstance implements DevicePositionListener,
       PropertyChangeListener {
 
 	/**
@@ -133,7 +133,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 	 * @param context
 	 *           the bundle context
 	 */
-	public MedicalHouseSimulatorImpl(BundleContext context) {
+	public BaseHouseApplication(BundleContext context) {
 		m_context = context;
 		_bundle = context.getBundle();
 	}
@@ -145,7 +145,7 @@ public abstract class MedicalHouseSimulatorImpl extends ApplicationInstance impl
 		m_taskQueueHandle = createTaskQueue();
 		// Set the stylesheet.
 		try {
-			setStyleSheet(StyleSheetLoader.load("/Stylesheet.xml", MedicalHouseSimulatorImpl.class.getClassLoader()));
+			setStyleSheet(StyleSheetLoader.load("/Stylesheet.xml", BaseHouseApplication.class.getClassLoader()));
 		} catch (final SerialException e) {
 			// m_logger.warning("Cannot load stylesheet", e);
 			// Ignore style shit!

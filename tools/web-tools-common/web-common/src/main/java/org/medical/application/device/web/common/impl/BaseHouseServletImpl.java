@@ -40,7 +40,7 @@ import org.apache.felix.ipojo.annotations.Invalidate;
  * 
  * @author bourretp
  */
-public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServlet implements InstanceStateListener {
+public abstract class BaseHouseServletImpl extends WebContainerServlet implements InstanceStateListener {
 
 	/**
     * 
@@ -63,7 +63,7 @@ public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServl
 	 */
 
 	@Override
-	public MedicalHouseSimulatorImpl newApplicationInstance() {
+	public BaseHouseApplication newApplicationInstance() {
 		
 		// Create the application instance.
 		final ComponentInstance appInstance;
@@ -92,7 +92,7 @@ public abstract class MedicalHouseSimulatorServletImpl extends WebContainerServl
 			m_appInstances.put(name, appInstance);
 			appInstance.addInstanceStateListener(this);
 		}
-		final MedicalHouseSimulatorImpl pojo = (MedicalHouseSimulatorImpl) ((InstanceManager) appInstance)
+		final BaseHouseApplication pojo = (BaseHouseApplication) ((InstanceManager) appInstance)
 		      .getPojoObject();
 		//pojo.setComponentInstance(appInstance);
 		// m_logger.info("Application instance created : " + name);

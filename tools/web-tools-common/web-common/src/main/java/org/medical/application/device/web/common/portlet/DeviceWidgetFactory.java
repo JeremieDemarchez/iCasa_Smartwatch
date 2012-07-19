@@ -18,13 +18,13 @@ package org.medical.application.device.web.common.portlet;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.WindowPane;
 
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 public interface DeviceWidgetFactory {
 
-	public WindowPane createWidget(MedicalHouseSimulatorImpl parent, String deviceId);
+	public WindowPane createWidget(BaseHouseApplication parent, String deviceId);
 	
 	public boolean typeIsSupported(GenericDevice device);
 	

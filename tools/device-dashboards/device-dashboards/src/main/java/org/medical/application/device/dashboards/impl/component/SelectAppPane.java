@@ -30,7 +30,7 @@ import nextapp.echo.app.list.DefaultListModel;
 import nextapp.echo.app.list.ListSelectionModel;
 
 import org.medical.application.Application;
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 
 /**
  * Panels which allows user to select a digital service.
@@ -42,7 +42,7 @@ public class SelectAppPane extends ContentPane implements ActionListener {
 
 	public static final String UNDEFINED_SERV_NAME = "Home (All)";
 
-	private final MedicalHouseSimulatorImpl m_appInstance;
+	private final BaseHouseApplication m_appInstance;
 	
 	private Application _selectedServ;
 	
@@ -56,7 +56,7 @@ public class SelectAppPane extends ContentPane implements ActionListener {
 
 	private SelectField _servListField;
 	
-	public SelectAppPane(final MedicalHouseSimulatorImpl appInstance) {
+	public SelectAppPane(final BaseHouseApplication appInstance) {
 		m_appInstance = appInstance;
 		
 		// create widgets
@@ -203,7 +203,7 @@ public class SelectAppPane extends ContentPane implements ActionListener {
 		}
 	}
 	
-	public MedicalHouseSimulatorImpl getApplicationInstance() {
+	public BaseHouseApplication getApplicationInstance() {
 		return m_appInstance;
 	}
 

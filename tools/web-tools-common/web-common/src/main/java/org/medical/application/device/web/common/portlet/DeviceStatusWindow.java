@@ -18,7 +18,7 @@ package org.medical.application.device.web.common.portlet;
 import static fr.liglab.adele.icasa.device.GenericDevice.DEVICE_SERIAL_NUMBER;
 import nextapp.echo.app.WindowPane;
 
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -40,7 +40,7 @@ public abstract class DeviceStatusWindow extends WindowPane implements ServiceTr
 	 */
 	private static final long serialVersionUID = 5806176061741930702L;
 
-	protected final MedicalHouseSimulatorImpl m_parent;
+	protected final BaseHouseApplication m_parent;
 
 	protected final String m_deviceSerialNumber;
 
@@ -48,7 +48,7 @@ public abstract class DeviceStatusWindow extends WindowPane implements ServiceTr
 
 	private boolean m_disposalRequested = false;
 
-	public DeviceStatusWindow(final MedicalHouseSimulatorImpl parent, final String deviceSerialNumber) {
+	public DeviceStatusWindow(final BaseHouseApplication parent, final String deviceSerialNumber) {
 		setId(deviceSerialNumber);
 		m_parent = parent;
 		m_deviceSerialNumber = deviceSerialNumber;

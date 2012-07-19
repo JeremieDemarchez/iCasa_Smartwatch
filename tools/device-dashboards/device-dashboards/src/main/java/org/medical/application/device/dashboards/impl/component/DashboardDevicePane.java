@@ -23,6 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 import nextapp.echo.app.Component;
+import nextapp.echo.app.Grid;
+import nextapp.echo.app.Insets;
 import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.SelectField;
 import nextapp.echo.app.Table;
@@ -52,7 +54,7 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 	public static ResourceImageReference DEVICE_IMAGE = new ResourceImageReference("/Device.png");
 	public static ResourceImageReference BIG_DEVICE_IMAGE = new ResourceImageReference("/BigDevice.png");
 
-//	private final DashboardActionPane m_parent;
+	// private final DashboardActionPane m_parent;
 
 	private final Map<String, DeviceEntry> m_devices = new HashMap<String, DeviceEntry>();
 
@@ -69,41 +71,113 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 	 */
 	private Application service;
 
-	//private static boolean[] BORDER_POSITIONS = new boolean[20];
+	// private static boolean[] BORDER_POSITIONS = new boolean[20];
 
-	//private Table m_deviceTable;
+	// private Table m_deviceTable;
 
-	//protected Grid m_grid;
+	// protected Grid m_grid;
 
-	//private TextField m_description;
-	//private DropDownMenu m_factory;
-	//private final Map<String, Factory> m_deviceFactories = new HashMap<String, Factory>();
-	//private final Random m_random = new Random();
+	// private TextField m_description;
+	// private DropDownMenu m_factory;
+	// private final Map<String, Factory> m_deviceFactories = new HashMap<String,
+	// Factory>();
+	// private final Random m_random = new Random();
 
 	public DashboardDevicePane(DashboardActionPane parent) {
 		super(parent);
 	}
 
-	public boolean isAvailableFor(String deviceSerialNumber, Application service) {
-		if (service == null)
-			return true;
-
-		Set<String> deviceIds = m_devicesPerApplication.get(service);
-		if (deviceIds == null) {
-			return false;
-		}
-
-		return (deviceIds.contains(deviceSerialNumber));
+	@Override
+	protected void initContent() {
+		m_grid = new Grid(3);
+		m_grid.setInsets(new Insets(2, 3));
+		recreateDeviceTable();
+		add(m_grid);
 	}
 
-	public boolean isAvailableForSelectedApplication(String deviceSerialNumber) {
-		Application service = ((DashboardApplicationImpl)getAppInstance()).getSelectedApplication();
+	@Override
+	public void notifySelectedAppChanged(Application oldSelectServ, Application newSelectedServ) {
+		service = newSelectedServ;
+		recreateDeviceTable();
+		synchronized (m_deviceSerialNumbers) {
+			for (String deviceSerialNb : m_deviceSerialNumbers) {
+				DeviceEntry entry = m_devices.get(deviceSerialNb);
+				tableModel.addDeviceRow(entry);
+				updateDeviceWidgetVisibility(entry);
+			}
+		}
+
+		// TODO: Reimplement this code
+		/*
+		 * synchronized (m_deviceSerialNumbers) { for (String deviceSerialNb :
+		 * m_deviceSerialNumbers) { DeviceEntry entry =
+		 * m_devices.get(deviceSerialNb); tableModel.addDeviceRow(entry);
+		 * updateDeviceWidgetVisibility(entry); } }
+		 */
+
+	}
+
+	public void refreshDeviceWidgets() {
+		synchronized (m_deviceSerialNumbers) {
+			for (String deviceSerialNb : m_deviceSerialNumbers) {
+				DeviceEntry entry = m_devices.get(deviceSerialNb);
+				updateDeviceWidgetVisibility(entry);
+			}
+		}
+	}
+
+	@Override
+	protected DeviceTableModel createTableModel() {
+		DeviceTableModel model = null;
+		if (service == null)
+			model = new HomeDeviceTableModel(0);
+		else if (service.getId().startsWith("Safe"))
+			model = new ServiceWithPropDeviceTableModel(0);
+		else
+			model = new ServiceWithoutPropDeviceTableModel(0);
+		return model;
+	}
+
+	@Override
+	protected DeviceTableCellRenderer createTableCellRenderer() {
+		return new DashboardDeviceTableRenderer();
+	}
+
+	@Override
+	public boolean deviceMustBeShown(String deviceSerialNumber) {
+		Application service = ((DashboardApplicationImpl) getAppInstance()).getSelectedApplication();
 		if (service == null)
 			return true;
 
 		return isAvailableFor(deviceSerialNumber, service);
 	}
 
+	/**
+	 * Determines if a device is available for a device in a determinate
+	 * application
+	 * 
+	 * @param deviceSerialNumber the device serial number
+	 * @param service the application
+	 * @return
+	 */
+	private boolean isAvailableFor(String deviceSerialNumber, Application service) {
+		if (service == null)
+			return true;
+
+		Set<String> deviceIds = m_devicesPerApplication.get(service);
+		if (deviceIds == null)
+			return false;
+
+		return (deviceIds.contains(deviceSerialNumber));
+	}
+
+	/**
+	 * Modifies the availability for a device into the application
+	 * 
+	 * @param deviceSerialNumber the device serial number
+	 * @param service the application
+	 * @param available a boolean indicating availability
+	 */
 	private void setDeviceAvailabilityFor(String deviceSerialNumber, Application service, boolean available) {
 		if (service == null)
 			return;
@@ -126,64 +200,17 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 		}
 	}
 
-	@Override
-	public void notifySelectedAppChanged(Application oldSelectServ, Application newSelectedServ) {
-		service = newSelectedServ;
-		recreateDeviceTable();
-		synchronized (m_deviceSerialNumbers) {
-			for (String deviceSerialNb : m_deviceSerialNumbers) {
-				DeviceEntry entry = m_devices.get(deviceSerialNb);
-				tableModel.addDeviceRow(entry);
-				updateDeviceWidgetVisibility(entry);
-			}
-		}
-		
-		// TODO: Reimplement this code
-		/*
-		 * synchronized (m_deviceSerialNumbers) { for (String deviceSerialNb :
-		 * m_deviceSerialNumbers) { DeviceEntry entry =
-		 * m_devices.get(deviceSerialNb); tableModel.addDeviceRow(entry);
-		 * updateDeviceWidgetVisibility(entry); } }
-		 */
-
-	}
-
-	public void refreshDeviceWidgets() {
-		synchronized (m_deviceSerialNumbers) {
-			for (String deviceSerialNb : m_deviceSerialNumbers) {
-				DeviceEntry entry = m_devices.get(deviceSerialNb);
-				updateDeviceWidgetVisibility(entry);
-			}
-		}
-	}
-
-	@Override
-   protected DeviceTableModel createTableModel() {
-		DeviceTableModel model = null;
-		if (service == null)
-			model = new HomeDeviceTableModel(0);
-		else if (service.getId().startsWith("Safe"))
-			model = new ServiceWithPropDeviceTableModel(0);
-		else
-			model = new ServiceWithoutPropDeviceTableModel(0);
-		return model;
-   }
-	
-	@Override
-   protected DeviceTableCellRenderer createTableCellRenderer() {
-	   return new DashboardDeviceTableRenderer();
-   }
-
 	public void updateDeviceWidgetVisibility(DeviceEntry entry) {
 		removeDevice(entry);
 
 		final String deviceSerialNumber = entry.serialNumber;
-		if (isAvailableForSelectedApplication(deviceSerialNumber)) {
-			ApplicationDevice device = ((DashboardApplicationImpl)getAppInstance()).getDeviceBySerialNumber(deviceSerialNumber);
+		if (deviceMustBeShown(deviceSerialNumber)) {
+			// ApplicationDevice device =
+			// ((DashboardApplicationImpl)getAppInstance()).getDeviceBySerialNumber(deviceSerialNumber);
 			addDeviceWidget(entry);
 		}
 	}
-	
+
 	private SelectField createUsedList(final String deviceSerialNumber, Boolean value) {
 		final SelectField stateField = new SelectField();
 
@@ -224,9 +251,9 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 						stateIdx = idx;
 				}
 				boolean available = (stateIdx == 0);
-				
-				Application selectedApplication = ((DashboardApplicationImpl)getAppInstance()).getSelectedApplication();
-				
+
+				Application selectedApplication = ((DashboardApplicationImpl) getAppInstance()).getSelectedApplication();
+
 				setDeviceAvailabilityFor(deviceSerialNumber, selectedApplication, available);
 				tableModel.updateDeviceRow(entry);
 				updateDeviceWidgetVisibility(entry);
@@ -237,7 +264,6 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 
 		return stateField;
 	}
-	
 
 	/**
 	 * Table model to show devices (with properties) by application using echo3
@@ -267,7 +293,7 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 				return;
 
 			setValueAt(entry.label.getText(), DEVICE_DESC_COL_IDX, rowIdx);
-			setValueAt(isAvailableForSelectedApplication(entry.serialNumber), DEVICE_STATE_COL_IDX, rowIdx);
+			setValueAt(deviceMustBeShown(entry.serialNumber), DEVICE_STATE_COL_IDX, rowIdx);
 			setValueAt(entry.logicPosition, DEVICE_LOCATION_COL_IDX, rowIdx);
 			setValueAt(entry.fault, DEVICE_FAULT_STATE_COL_IDX, rowIdx);
 		}
@@ -276,7 +302,7 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 			Object data[] = new Object[columns.length];
 			data[DEVICE_DESC_COL_IDX] = entry.label.getText();
 			data[DEVICE_LOCATION_COL_IDX] = entry.logicPosition;
-			data[DEVICE_STATE_COL_IDX] = isAvailableForSelectedApplication(entry.serialNumber);
+			data[DEVICE_STATE_COL_IDX] = deviceMustBeShown(entry.serialNumber);
 			data[DEVICE_FAULT_STATE_COL_IDX] = entry.fault;
 			data[columns.length - 1] = entry.serialNumber;
 			deviceSerialNumbers.add(entry.serialNumber);
@@ -292,7 +318,7 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 			return false;
 		}
 	}
-	
+
 	/**
 	 * Table model to show devices (with properties) by application using echo3
 	 * 
@@ -322,7 +348,7 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 
 			setValueAt(entry.label.getText(), DEVICE_DESC_COL_IDX, rowIdx);
 			setValueAt(entry.logicPosition, DEVICE_LOCATION_COL_IDX, rowIdx);
-			setValueAt(isAvailableForSelectedApplication(entry.serialNumber), DEVICE_STATE_COL_IDX, rowIdx);
+			setValueAt(deviceMustBeShown(entry.serialNumber), DEVICE_STATE_COL_IDX, rowIdx);
 			setValueAt(entry.fault, DEVICE_FAULT_STATE_COL_IDX, rowIdx);
 		}
 
@@ -330,7 +356,7 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 			Object data[] = new Object[columns.length];
 			data[DEVICE_DESC_COL_IDX] = entry.label.getText();
 			data[DEVICE_LOCATION_COL_IDX] = entry.logicPosition;
-			data[DEVICE_STATE_COL_IDX] = isAvailableForSelectedApplication(entry.serialNumber);
+			data[DEVICE_STATE_COL_IDX] = deviceMustBeShown(entry.serialNumber);
 			data[DEVICE_FAULT_STATE_COL_IDX] = entry.fault;
 			data[columns.length - 1] = entry.serialNumber;
 			deviceSerialNumbers.add(entry.serialNumber);
@@ -347,7 +373,6 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 		}
 	}
 
-	
 	/**
 	 * Table model to show all devices presents in the platform using echo3
 	 * 
@@ -401,15 +426,15 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 			return false;
 		}
 	}
-	
+
 	public class DashboardDeviceTableRenderer extends DeviceTableCellRenderer {
-		
+
 		@Override
 		public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
-		   Component component = super.getTableCellRendererComponent(table, value, column, row);
-		   final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
-		   String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
-		   
+			Component component = super.getTableCellRendererComponent(table, value, column, row);
+			final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
+			String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
+
 			if (column == STATE_COLUMN_INDEX) {
 				if (deviceTableModel.useState())
 					component = createStateList(deviceSerialNumber, (String) value);
@@ -422,10 +447,8 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 				else
 					component = createNonEditableFaultList(deviceSerialNumber, (String) value);
 			}
-		   return component;
+			return component;
 		}
 	}
-
-
 
 }

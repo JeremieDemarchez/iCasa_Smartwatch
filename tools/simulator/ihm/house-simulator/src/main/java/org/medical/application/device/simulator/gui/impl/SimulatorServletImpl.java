@@ -31,7 +31,7 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorServletImpl;
+import org.medical.application.device.web.common.impl.BaseHouseServletImpl;
 
 /**
  * TODO comments.
@@ -40,7 +40,7 @@ import org.medical.application.device.web.common.impl.MedicalHouseSimulatorServl
  */
 @Component(name = "SimulatorGUIServlet")
 @Provides(specifications = Servlet.class)
-public class SimulatorServletImpl extends MedicalHouseSimulatorServletImpl implements Servlet {
+public class SimulatorServletImpl extends BaseHouseServletImpl implements Servlet {
 
 	/**
     * 

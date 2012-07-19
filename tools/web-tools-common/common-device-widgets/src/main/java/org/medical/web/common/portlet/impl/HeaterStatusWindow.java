@@ -21,7 +21,7 @@ import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
@@ -37,7 +37,7 @@ public class HeaterStatusWindow extends DeviceStatusWindow {
    private static final long serialVersionUID = 7214188369352385316L;
 
 
-	public HeaterStatusWindow(MedicalHouseSimulatorImpl parent, String deviceSerialNumber) {
+	public HeaterStatusWindow(BaseHouseApplication parent, String deviceSerialNumber) {
 		super(parent, deviceSerialNumber);
 	}
 

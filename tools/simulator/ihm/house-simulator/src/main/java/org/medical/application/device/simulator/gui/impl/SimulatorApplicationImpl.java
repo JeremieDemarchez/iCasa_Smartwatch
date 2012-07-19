@@ -50,7 +50,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.medical.application.device.simulator.gui.impl.component.SimulatorActionPane;
-import org.medical.application.device.web.common.impl.MedicalHouseSimulatorImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.HousePane;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
 import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
@@ -76,7 +76,7 @@ import fr.liglab.adele.icasa.script.ScenarioInstaller;
  */
 @Component(name = "WebHouseSimulator", immediate = true)
 @Provides
-public class SimulatorApplicationImpl extends MedicalHouseSimulatorImpl implements UserPositionListener {
+public class SimulatorApplicationImpl extends BaseHouseApplication implements UserPositionListener {
 
 	/**
 	 * @generated
