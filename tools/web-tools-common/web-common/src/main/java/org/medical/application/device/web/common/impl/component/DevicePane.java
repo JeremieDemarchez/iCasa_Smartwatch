@@ -44,7 +44,7 @@ import nextapp.echo.app.table.TableCellRenderer;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.event.DropEvent;
 import org.medical.application.device.web.common.impl.component.event.DropListener;
-import org.medical.application.device.web.common.portlet.impl.GenericDeviceStatusWindow;
+import org.medical.application.device.web.common.widget.impl.GenericDeviceStatusWindow;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;

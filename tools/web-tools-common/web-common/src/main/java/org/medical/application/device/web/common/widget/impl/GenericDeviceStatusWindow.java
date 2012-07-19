@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.web.common.portlet.impl;
+package org.medical.application.device.web.common.widget.impl;
 
 import nextapp.echo.app.Color;
 import nextapp.echo.app.Component;
@@ -22,7 +22,7 @@ import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
-import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
+import org.medical.application.device.web.common.widget.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;

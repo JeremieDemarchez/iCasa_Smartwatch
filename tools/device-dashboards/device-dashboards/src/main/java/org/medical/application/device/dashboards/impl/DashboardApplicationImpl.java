@@ -44,8 +44,8 @@ import org.medical.application.device.dashboards.impl.component.DashboardActionP
 import org.medical.application.device.dashboards.impl.component.SelectAppPane;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.HousePane;
-import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
-import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
+import org.medical.application.device.web.common.widget.DeviceWidgetFactory;
+import org.medical.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableListener;
 import org.medical.device.manager.ApplicationDevice;

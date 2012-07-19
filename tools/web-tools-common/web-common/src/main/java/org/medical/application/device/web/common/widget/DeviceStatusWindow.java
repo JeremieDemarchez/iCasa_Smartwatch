@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.web.common.portlet;
+package org.medical.application.device.web.common.widget;
 
 import static fr.liglab.adele.icasa.device.GenericDevice.DEVICE_SERIAL_NUMBER;
 import nextapp.echo.app.WindowPane;

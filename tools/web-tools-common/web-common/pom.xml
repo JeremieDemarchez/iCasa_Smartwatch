@@ -124,8 +124,8 @@
            
             <Export-Package>org.medical.application.device.web.common.impl,
               org.medical.application.device.web.common.impl.component,
-              org.medical.application.device.web.common.portlet,
-              org.medical.application.device.web.common.portlet.impl,
+              org.medical.application.device.web.common.widget,
+              org.medical.application.device.web.common.widget.impl,
               org.medical.application.device.web.common.util,
               nextapp.echo.*</Export-Package>           
             <Embed-Dependency>

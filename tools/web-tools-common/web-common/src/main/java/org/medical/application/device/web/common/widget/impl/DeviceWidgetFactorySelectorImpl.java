@@ -16,14 +16,14 @@
 /**
  * 
  */
-package org.medical.application.device.web.common.portlet.impl;
+package org.medical.application.device.web.common.widget.impl;
 
 import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
+import org.medical.application.device.web.common.widget.DeviceWidgetFactorySelector;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
@@ -31,8 +31,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * @author Gabriel Pedraza
  *
  */
-@Component(name = "CommonPortletFactorySelector")
-@Instantiate(name = "CommonPortletFactorySelector-0")
+@Component(name = "WidgetFactorySelector")
+@Instantiate(name = "WidgetFactorySelector-0")
 @Provides
 public class DeviceWidgetFactorySelectorImpl implements DeviceWidgetFactorySelector {
 

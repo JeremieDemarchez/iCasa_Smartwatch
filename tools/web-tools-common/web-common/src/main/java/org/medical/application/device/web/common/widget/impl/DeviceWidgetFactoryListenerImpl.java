@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.web.common.portlet.impl;
+package org.medical.application.device.web.common.widget.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -37,19 +37,19 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.apache.felix.ipojo.extender.Extender;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
-import org.medical.application.device.web.common.portlet.DeclarativeDeviceWidgetFactory;
+import org.medical.application.device.web.common.widget.DeclarativeDeviceWidgetFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-@Component(name = "CommonDeviceWidgetFactoryListener")
-@Instantiate(name = "CommonDeviceWidgetFactoryListener-0")
+@Component(name = "DeviceWidgetFactoryListener")
+@Instantiate(name = "DeviceWidgetFactoryListener-0")
 @Extender(onArrival = "onBundleArrival", onDeparture = "onBundleDeparture", extension = "Common-Widget-Factory")
 public class DeviceWidgetFactoryListenerImpl {
 
-	@Requires(filter = ("(factory.name=CommonDeviceWidgetFactory)"))
+	@Requires(filter = ("(factory.name=DeviceWidgetFactory)"))
 	private Factory deviceWidgetFactory;
 	
 	private Bundle _bundle;

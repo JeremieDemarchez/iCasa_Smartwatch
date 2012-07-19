@@ -31,8 +31,8 @@ import nextapp.echo.app.serial.StyleSheetLoader;
 
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.HousePane;
-import org.medical.application.device.web.common.portlet.DeviceWidgetFactory;
-import org.medical.application.device.web.common.portlet.DeviceWidgetFactorySelector;
+import org.medical.application.device.web.common.widget.DeviceWidgetFactory;
+import org.medical.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 

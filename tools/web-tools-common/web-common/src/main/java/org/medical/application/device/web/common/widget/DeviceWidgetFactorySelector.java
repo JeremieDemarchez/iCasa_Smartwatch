@@ -13,23 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.web.common.portlet;
+package org.medical.application.device.web.common.widget;
 
-import nextapp.echo.app.ResourceImageReference;
-import nextapp.echo.app.WindowPane;
-
-import org.medical.application.device.web.common.impl.BaseHouseApplication;
+import java.util.List;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-public interface DeviceWidgetFactory {
+public interface DeviceWidgetFactorySelector {
 
-	public WindowPane createWidget(BaseHouseApplication parent, String deviceId);
-	
-	public boolean typeIsSupported(GenericDevice device);
-	
-	public ResourceImageReference getDeviceIcon(GenericDevice device);
-	
-	public String getID();
+	/**
+	 * Selects a device portlet to be used in the GUI
+	 * @param device
+	 * @param widgetFactories
+	 * @return
+	 */
+	public String selectPortletFactory(GenericDevice device, List<String> widgetFactories);
 	
 }

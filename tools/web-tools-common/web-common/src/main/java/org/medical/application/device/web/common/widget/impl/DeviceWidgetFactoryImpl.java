@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.application.device.web.common.portlet.impl;
+package org.medical.application.device.web.common.widget.impl;
 
 import java.lang.reflect.Constructor;
 import java.util.Arrays;
@@ -27,8 +27,8 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
-import org.medical.application.device.web.common.portlet.DeclarativeDeviceWidgetFactory;
 import org.medical.application.device.web.common.util.DecoratedBundleResourceImageReference;
+import org.medical.application.device.web.common.widget.DeclarativeDeviceWidgetFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.service.packageadmin.ExportedPackage;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -37,7 +37,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 
-@Component(name = "CommonDeviceWidgetFactory")
+@Component(name = "DeviceWidgetFactory")
 @Provides
 public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 

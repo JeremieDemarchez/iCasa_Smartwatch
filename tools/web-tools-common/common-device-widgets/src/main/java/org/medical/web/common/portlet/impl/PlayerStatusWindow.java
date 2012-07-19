@@ -22,7 +22,7 @@ import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
 
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
-import org.medical.application.device.web.common.portlet.DeviceStatusWindow;
+import org.medical.application.device.web.common.widget.DeviceStatusWindow;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
