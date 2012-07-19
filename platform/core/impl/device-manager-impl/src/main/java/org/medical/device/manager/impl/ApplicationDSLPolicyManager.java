@@ -55,6 +55,9 @@ public class ApplicationDSLPolicyManager implements PolicyManager {
 		if (app.getId().equals("icasa.simulator"))
 			return true;
 		
+		if (app.getId().equals("icasa.dashboard"))
+			return true;
+		
 		return false;
 	}
 
@@ -65,6 +68,9 @@ public class ApplicationDSLPolicyManager implements PolicyManager {
 			return true;
 		
 		if (app.getId().equals("icasa.simulator"))
+			return true;
+		
+		if (app.getId().equals("icasa.dashboard"))
 			return true;
 		
 		return false;
