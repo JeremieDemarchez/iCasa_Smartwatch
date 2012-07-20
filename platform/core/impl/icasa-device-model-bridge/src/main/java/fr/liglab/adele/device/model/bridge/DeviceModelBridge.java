@@ -28,6 +28,7 @@ import org.apache.felix.ipojo.annotations.*;
 import org.medical.application.Application;
 import org.medical.common.StateVariable;
 import org.medical.device.manager.ApplicationDevice;
+import org.medical.device.manager.ApplicationDeviceProxy;
 import org.medical.device.manager.Device;
 import org.medical.device.manager.DeviceExporter;
 import org.medical.device.manager.ProvidedDevice;

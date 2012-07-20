@@ -620,11 +620,6 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 		
 	}
 	
-	private void waitForService(Class itfClass, BundleContext context) {
-		OSGiHelper helper = new OSGiHelper(context);
-		helper.waitForService(itfClass.getName(), null, SERV_TIMEOUT);
-	}
-	
 	private void waitForResolution(DependRegistration depReg) {
 		int NB_TIMES = 5;
 		for (int i = 0; i < NB_TIMES; i++) {

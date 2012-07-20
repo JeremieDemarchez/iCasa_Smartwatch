@@ -35,6 +35,7 @@ import org.junit.runner.RunWith;
 import org.medical.application.Application;
 import org.medical.application.ApplicationManager;
 import org.medical.device.manager.ApplicationDevice;
+import org.medical.device.manager.ApplicationDeviceProxy;
 import org.medical.device.manager.AvailableDevice;
 import org.medical.device.manager.DependRegistration;
 import org.medical.device.manager.Device;
@@ -44,6 +45,7 @@ import org.medical.device.manager.Fault;
 import org.medical.device.manager.GlobalDeviceManager;
 import org.medical.device.manager.KnownDevice;
 import org.medical.device.manager.ProvidedDevice;
+
 import fr.liglab.adele.icasa.bridge.test.app1.App1;
 import fr.liglab.adele.icasa.bridge.test.app1.App1Activator;
 import fr.liglab.adele.icasa.bridge.test.app2.App2;
@@ -63,6 +65,7 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 /**
  * Integration test for the device manager component.
@@ -258,6 +261,37 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 		depReg.unregister();
         sr.unregister();
     }
+    
+    @Test
+    public void testGenericDeviceVisibilityFromInternal() {
+    	//wait for the service to be available.
+        waitForIt(100);
+        
+        GenericDevice deviceImpl = mock(GenericDevice.class);
+        final String devId = "123f56";
+		when(deviceImpl.getSerialNumber()).thenReturn(devId);
+		when(deviceImpl.getFault()).thenReturn(GenericDevice.FAULT_NO);
+		when(deviceImpl.getState()).thenReturn(GenericDevice.STATE_ACTIVATED);
+		when(deviceImpl.getLocation()).thenReturn("Undefined");
+		ServiceRegistration sr = icasa.registerService(deviceImpl, GenericDevice.class);
+        
+        BundleContext app1Context = getBundleContext(APP1_ID);
+    
+        DeviceManager deviceMgr = (DeviceManager) getServiceObject(DeviceManager.class, app1Context);
+        DeviceDependencies dependencies = new DeviceDependencies();
+        dependencies.exportsTo(GenericDevice.class).includes().all();
+        
+        DependRegistration depReg = deviceMgr.addDependencies(dependencies);
+        waitForResolution(depReg);
+        
+        // should only see the original generic device
+        waitForService(GenericDevice.class, context);
+        checkNoService(GenericDevice.class, context, ApplicationDeviceProxy.class);
+        
+        //cleanup
+		depReg.unregister();
+        sr.unregister();
+    }
 
 	private void waitForResolution(DependRegistration depReg) {
 		int NB_TIMES = 5;
@@ -287,6 +321,8 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 	private GlobalDeviceManager getGlobalDeviceManagerService() {
 		return icasa.getServiceObject(GlobalDeviceManager.class);
 	}
+	
+	
 	
 	@SuppressWarnings("unchecked")
 	public <T> T getServiceObject(Class<T> klass, BundleContext specContext) {
