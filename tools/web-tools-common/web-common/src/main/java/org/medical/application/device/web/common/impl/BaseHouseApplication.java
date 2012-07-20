@@ -147,7 +147,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 			setStyleSheet(StyleSheetLoader.load("/Stylesheet.xml", BaseHouseApplication.class.getClassLoader()));
 		} catch (final SerialException e) {
 			// m_logger.warning("Cannot load stylesheet", e);
-			// Ignore style shit!
 		}
 
 		// Create the list with widgets factories
@@ -166,46 +165,68 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		removeTaskQueue(m_taskQueueHandle);
 		super.dispose();
 	}
-
+	
+	/**
+	 * 
+	 * @return the bundle
+	 */
 	public static Bundle getBundle() {
 		return _bundle;
 	}
 
-
+	/**
+	 * Life cycle method, it must be invoked when the component is validated
+	 */
 	public void start() {
 		initContent();
 		m_housePane.addPropertyChangeListener(this);
 		m_manager.addDevicePositionListener(this);
 	}
 
+	/**
+	 * Life cycle method, it must be invoked when the component is invalidated
+	 */
 	public void stop() {
 		m_housePane.removePropertyChangeListener(this);
 		m_manager.removeDevicePositionListener(this);
 
 	}
-
-	protected void bindPortletFactory(final DeviceWidgetFactory portletFactory) {
+	
+	/**
+	 * Binds a WidgetFactory instance
+	 * @param widgetFactory the WidgetFactory instance
+	 */
+	protected void bindPortletFactory(final DeviceWidgetFactory widgetFactory) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				widgetFactories.add(portletFactory);
-				allDevicePropertiesChanged(portletFactory);
+				widgetFactories.add(widgetFactory);
+				allDevicePropertiesChanged(widgetFactory);
 			}
 		});
 	}
 
-	protected void unbindPortletFactory(final DeviceWidgetFactory portletFactory) {
+	/**
+	 * Removes a WidgetFactory instance
+	 * @param widgetFactory the WidgetFactory instance
+	 */
+	protected void unbindPortletFactory(final DeviceWidgetFactory widgetFactory) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				widgetFactories.remove(portletFactory);
-				allDevicePropertiesChanged(portletFactory);
+				widgetFactories.remove(widgetFactory);
+				allDevicePropertiesChanged(widgetFactory);
 			}
 		});
 	}
 
-	protected void bindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		m_widgetFactorySelector = portletFactorySelector;
+	
+	/**
+	 * Binds a WidgetFactorySelector instance
+	 * @param widgetFactorySelector the WidgetFactorySelector instance
+	 */
+	protected void bindWidgetFactorySelector(DeviceWidgetFactorySelector widgetFactorySelector) {
+		m_widgetFactorySelector = widgetFactorySelector;
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
@@ -215,35 +236,50 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		});
 	}
 
-	protected void unbindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+	/**
+	 * Removes a WidgetFactorySelector instance
+	 * @param widgetFactorySelector the WidgetFactorySelector instance
+	 */
+	protected void unbindWidgetFactorySelector(DeviceWidgetFactorySelector widgetFactorySelector) {
 		m_widgetFactorySelector = null;
 	}
 
-	/*
-	 * public Application getSelectedApplication() { return
-	 * m_selectAppPane.getSelectedApplication(); }
+	/**
+	 * 
+	 * @return the main application window
 	 */
-
-
-
-
 	public Window getWindow() {
 		return m_window;
 	}
 
+	/**
+	 * Adds a new task to the Application using the mechanism impose by echo3 
+	 * @param task
+	 */
 	public void enqueueTask(final Runnable task) {
 		enqueueTask(m_taskQueueHandle, task);
 	}
 
-
+	/**
+	 * 
+	 * @return the house pane
+	 */
 	public final HousePane getHousePane() {
 		return m_housePane;
 	}
 
+	/**
+	 * 
+	 * @return the status pane
+	 */
 	public final ContentPane getStatusPane() {
 		return m_statusPane;
 	}
 
+	/**
+	 * 
+	 * @return the bundle context
+	 */
 	public BundleContext getContext() {
 		return m_context;
 	}
@@ -258,24 +294,26 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		});
 	}
 
-	/*
-	public ApplicationDevice getDeviceBySerialNumber(String deviceId) {
-		return devices.get(deviceId);
-	}
-	*/
-	
+	/**
+	 * Sets the house image
+	 * @param houseImage
+	 */
 	public void setHouseImage(String houseImage) {
 		this.houseImage = houseImage;
 	}
 
 	/**
 	 * 
-	 * @return
+	 * @return the house image
 	 */
 	public String getHouseImage() {
 		return houseImage;
 	}
 
+	/**
+	 * Sets the user image
+	 * @param userImage
+	 */
 	public void setUserImage(String userImage) {
 		this.userImage = userImage;
 	}
@@ -287,6 +325,10 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		return userImage;
 	}
 
+	/**
+	 * Sets the home type
+	 * @param homeType
+	 */
 	public void setHomeType(String homeType) {
 		this.homeType = homeType;
 	}
@@ -298,36 +340,39 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		return homeType;
 	}
 
+	/**
+	 * Determines if application is being executed in a Android client
+	 * @return
+	 */
 	public boolean isAndroid() {
 		return isAndroid;
 	}
 
-
+	/**
+	 * Sets the isAndroid parameter
+	 * @param isAndroid
+	 */
 	public void setIsAndroid(Boolean isAndroid) {
 		this.isAndroid = isAndroid;
 	}
 
+	/**
+	 * Binds a SimulationManager instance
+	 * @param simulationManager the SimulationManager instance
+	 */
 	protected void bindSimulationManager(SimulationManager simulationManager) {
 		m_manager = simulationManager;
 	}
 
+	/**
+	 * Removes a SimulationManager instance
+	 * @param simulationManager the SimulationManager instance
+	 */
 	protected void unbindSimulationManager(SimulationManager simulationManager) {
 		m_manager = null;
 	}
 
 	
-	// ---- Gets methods ---- //
-	
-	/**
-	 * 
-	 * @return the device Map
-	 */
-	/*
-	public Map<String, ApplicationDevice> getDevicesMap() {
-		return devices;
-	}
-	*/
-
 	/**
 	 * 
 	 * @return the simulation manager
@@ -414,21 +459,11 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		return null;
 	}
 	
-	
-	/*
-	private void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory) {		
-		Collection<ApplicationDevice> myDevices = devices.values();
-		for (ApplicationDevice appDevice : myDevices) {
-			GenericDevice genericDevice = (GenericDevice) appDevice.getDeviceProxy(GenericDevice.class);
-			if (portletFactory.typeIsSupported(genericDevice)) {
-				devicePropertiesChanged(genericDevice.getSerialNumber(), appDevice, null);
-			}
-		}		
-	}
-	*/
-
-	
-	
+	/**
+	 * It must invoked when device properties have been changed	
+	 * @param deviceSerialNumber the device serial number
+	 * @param properties the new properties
+	 */
 	protected void devicePropertiesChanged(final String deviceSerialNumber, final Map<String, Object> properties) {
 		enqueueTask(new Runnable() {
 			@Override
@@ -437,15 +472,32 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 			}
 		});
 	}
+	
 	// ---- Abstract Methods ---- //
 	
+
+	/**
+	 * Returns a window showing details of the device
+	 * @param deviceSerialNumber
+	 * @return
+	 */
 	public abstract WindowPane getDeviceWidget(String deviceSerialNumber);
 	
+	/**
+	 * Returns an icon associated with the device
+	 * @param deviceSerialNumber
+	 * @return
+	 */
 	public abstract ResourceImageReference getImageForDevice(String deviceSerialNumber);
 	
+	/**
+	 * Returns an instance of a GenericDevice representation of the device
+	 * @param deviceSerialNumber
+	 * @return
+	 */
 	public abstract GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber);
 	
-	public abstract void disposeDeviceInstance(String deviceSerialNumber);
+
 
 	protected abstract void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory);
 }

@@ -145,13 +145,13 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 	}
 
 	@Bind(id = "portletfactorySelector", aggregate = false, optional = true)
-	public void bindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		super.bindPortletFactorySelector(portletFactorySelector);
+	public void bindWidgetFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+		super.bindWidgetFactorySelector(portletFactorySelector);
 	}
 
 	@Unbind(id = "portletfactorySelector")
-	public void unbindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		super.unbindPortletFactorySelector(portletFactorySelector);
+	public void unbindWidgetFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+		super.unbindWidgetFactorySelector(portletFactorySelector);
 	}
 
 
@@ -320,12 +320,7 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 		}
 	   return null;
 	}
-	
-	@Override
-	public void disposeDeviceInstance(String deviceSerialNumber) {
-		//Nothing to do in the dash board application
-	}
-	
+		
 	@Override
 	public GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber) {
 		ApplicationDevice device = devices.get(deviceSerialNumber);

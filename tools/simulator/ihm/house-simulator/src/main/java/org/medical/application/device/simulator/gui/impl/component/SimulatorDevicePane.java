@@ -44,6 +44,7 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
+import org.medical.application.device.simulator.gui.impl.SimulatorApplicationImpl;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
 import org.medical.application.device.web.common.impl.component.DevicePane.DeviceTableCellRenderer;
@@ -260,7 +261,7 @@ public class SimulatorDevicePane extends DevicePane {
 	public class SimulatorDeviceTableRenderer extends DeviceTableCellRenderer {
 
 		@Override
-		public Component getTableCellRendererComponent(Table table, Object value, int column, int row) {
+		public Component getTableCellRendererComponent(Table table, final Object value, int column, int row) {
 			Component component = super.getTableCellRendererComponent(table, value, column, row);
 			final DeviceTableModel deviceTableModel = (DeviceTableModel) table.getModel();
 			String deviceSerialNumber = deviceTableModel.getDeviceSerialNumber(row);
@@ -270,6 +271,23 @@ public class SimulatorDevicePane extends DevicePane {
 
 			if (column == FAULT_COLUMN_INDEX)
 				component = createFaultList(deviceSerialNumber, (String) value);
+			
+			if (column == DELETE_COLUMN_INDEX) {
+				Button deleteButton = new Button(new ResourceImageReference("/Remove.png"));
+				deleteButton.addActionListener(new ActionListener() {
+
+					/**
+               * 
+               */
+					private static final long serialVersionUID = 264629139995718720L;
+
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						((SimulatorApplicationImpl) getAppInstance()).disposeDeviceInstance(value.toString());
+					}
+				});
+				return deleteButton;
+			}
 
 			return component;
 		}
