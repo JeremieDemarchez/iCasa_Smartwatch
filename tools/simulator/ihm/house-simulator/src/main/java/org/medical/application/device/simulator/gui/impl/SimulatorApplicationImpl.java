@@ -535,9 +535,14 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
       }
 
 		@Override
-		public void modifiedService(ServiceReference reference, Object service) {
-			String deviceSerialNumber = (String)reference.getProperty("device.serialNumber");
-			m_DeviceController.changeDevice(deviceSerialNumber, getProperties(reference));
+		public void modifiedService(final ServiceReference reference, Object service) {
+			final String deviceSerialNumber = (String)reference.getProperty("device.serialNumber");
+			enqueueTask(new Runnable() {
+				@Override
+				public void run() {
+					m_DeviceController.changeDevice(deviceSerialNumber, getProperties(reference));
+				}
+			});
 		}
 		
 		private Map<String, Object> getProperties(ServiceReference reference) {

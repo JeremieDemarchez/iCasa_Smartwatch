@@ -158,7 +158,6 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 		while (iterator.hasNext()) {
 			BundleContext context = iterator.next();
 			Bundle bundle = context.getBundle();
-			long bundleId  = bundle.getBundleId();
 			
 			if (_context.equals(context) || bundle.getBundleId() == 0) {
 				continue;
