@@ -211,13 +211,13 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	}
 
 	@Bind(id = "portletfactorySelector", aggregate = false, optional = true)
-	public void bindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		super.bindPortletFactorySelector(portletFactorySelector);
+	public void bindWidgetFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+		super.bindWidgetFactorySelector(portletFactorySelector);
 	}
 
 	@Unbind(id = "portletfactorySelector")
-	public void unbindPortletFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
-		super.unbindPortletFactorySelector(portletFactorySelector);
+	public void unbindWidgetFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
+		super.unbindWidgetFactorySelector(portletFactorySelector);
 	}
 
 	@Override
@@ -377,7 +377,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		return null;
 	}
 	
-	@Override
+	
 	public void disposeDeviceInstance(String deviceSerialNumber) {
 		GenericDevice genDevice = devices.get(deviceSerialNumber);
 		if ((genDevice != null) && (genDevice instanceof Pojo)) {

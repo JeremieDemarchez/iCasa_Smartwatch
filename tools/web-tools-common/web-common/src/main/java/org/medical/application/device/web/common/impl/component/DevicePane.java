@@ -553,22 +553,7 @@ public abstract class DevicePane extends ContentPane {
 				detailButton.addActionListener(new DeviceSpotActionListener());
 				return detailButton;
 			}
-			if (column == DELETE_COLUMN_INDEX) {
-				Button deleteButton = new Button(new ResourceImageReference("/Remove.png"));
-				deleteButton.addActionListener(new ActionListener() {
-
-					/**
-               * 
-               */
-					private static final long serialVersionUID = 264629139995718720L;
-
-					@Override
-					public void actionPerformed(ActionEvent e) {
-						getAppInstance().disposeDeviceInstance(value.toString());
-					}
-				});
-				return deleteButton;
-			}
+		
 
 			return new Label(value.toString());
 		}
