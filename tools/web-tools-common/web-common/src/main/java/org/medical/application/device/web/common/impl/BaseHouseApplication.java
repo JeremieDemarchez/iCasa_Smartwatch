@@ -71,7 +71,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	private String userImage;
 
-	// This variable must be changed, is used to "glue" code into the application
+	// TODO: This variable must be changed, is used to "glue" code into the application
 	/**
 	 * Home type
 	 */
@@ -113,8 +113,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	protected DeviceController m_DeviceController;
 
-
-
 	/**
 	 * List of existing widgets factories
 	 */
@@ -125,6 +123,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	private Boolean isAndroid;
 
+	
 	private static Bundle _bundle;
 
 	/**
@@ -151,9 +150,8 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 			// Ignore style shit!
 		}
 
-		// Create the list with porlet factories
+		// Create the list with widgets factories
 		widgetFactories = new ArrayList<DeviceWidgetFactory>();
-
 	}
 
 
@@ -167,7 +165,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		// Destroy the task queue.
 		removeTaskQueue(m_taskQueueHandle);
 		super.dispose();
-		// m_controller.dispose();
 	}
 
 	public static Bundle getBundle() {
