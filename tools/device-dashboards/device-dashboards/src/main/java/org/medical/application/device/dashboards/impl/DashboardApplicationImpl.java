@@ -189,8 +189,11 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 	public void start() {
 		super.start();		
 		DeviceDependencies devDep = new DeviceDependencies().requiresAll().optional().exportsTo(GenericDevice.class);
+		
 		devDep.includes().all();
 		_devDepReg = m_deviceMgr.addDependencies(devDep);
+		
+		m_appMgr.addApplicationListener(this);
 	}
 
 	@Invalidate
@@ -200,6 +203,7 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 			_devDepReg.unregister();
 			_devDepReg = null;
 		}
+		m_appMgr.removeApplicationListener(this);
 	}
 	
 	// ---- Component inherited methods ---- //
