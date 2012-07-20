@@ -36,7 +36,6 @@ import org.osgi.service.packageadmin.PackageAdmin;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
-
 @Component(name = "DeviceWidgetFactory")
 @Provides
 public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
@@ -47,59 +46,41 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 	private String iconFileName;
 	private String deviceWidgetId;
 	private Bundle _decoratorBundle;
-	
-	@Requires
-	private PackageAdmin packageAdmin;
-	
+
 	public DeviceWidgetFactoryImpl() {
 		_decoratorBundle = BaseHouseApplication.getBundle();
 	}
 
 	@Override
 	public boolean typeIsSupported(GenericDevice device) {
-		if (bundle != null && deviceInterfaceName!=null) {
-			Class deviceInterface = null ;
-			Set<Class> interfaces = null;
-			try {
-				deviceInterface = bundle.loadClass(deviceInterfaceName);
-				interfaces = new HashSet<Class>(Arrays.asList(device.getClass().getInterfaces()));
-				return interfaces.contains(deviceInterface);
-			} catch (ClassNotFoundException e) {
-				    String[] splittedArray = deviceInterfaceName.split("\\.");
-					if (splittedArray.length < 2) {
-						e.printStackTrace();
-					}
-					
-//					String className = splittedArray[splittedArray.length-1];
-					String packagename =splittedArray[0];
-					for (int i = 1; i < (splittedArray.length-1); i++) {
-						packagename = packagename + "." + splittedArray[i];
-					}
-					
-					ExportedPackage[] packages = packageAdmin.getExportedPackages(packagename);
-					for (ExportedPackage exportedPackage : packages) {
-						try {
-							deviceInterface = exportedPackage.getExportingBundle().loadClass(deviceInterfaceName);
-							interfaces = new HashSet<Class>(Arrays.asList(device.getClass().getInterfaces()));
-							return interfaces.contains(deviceInterface);
-						} catch (ClassNotFoundException e1) {
-						
-						}
-					}
-					
-				e.printStackTrace();
-			}			
+		if (bundle != null && deviceInterfaceName != null) {
+			Set<String> interfaces = null;
+			interfaces = getInterfaceNames(device.getClass().getInterfaces());
+			return interfaces.contains(deviceInterfaceName);
 		}
 		return false;
 	}
 
+	/**
+	 * Return the list of interfaces names
+	 * @param interfaces
+	 * @return
+	 */
+	private Set<String> getInterfaceNames(Class[] interfaces) {
+		HashSet<String> names = new HashSet<String>();
+		for (Class interfaze : interfaces) {
+			names.add(interfaze.getCanonicalName());
+		}
+		return names;
+	}
+
 	@Override
 	public WindowPane createWidget(BaseHouseApplication parent, String deviceId) {
-		if (windowClassName==null) {
+		if (windowClassName == null) {
 			WindowPane windowPane = new GenericDeviceStatusWindow(parent, deviceId);
 			return windowPane;
 		}
-			
+
 		if (bundle != null) {
 			try {
 				Class windowClass = bundle.loadClass(windowClassName);
@@ -109,7 +90,7 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 				return windowPane;
 			} catch (Exception e) {
 				e.printStackTrace();
-			} 
+			}
 		}
 		return null;
 	}
@@ -118,26 +99,26 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 	public ResourceImageReference getDeviceIcon(GenericDevice device) {
 		if (bundle == null)
 			return null;
-		
+
 		String stateDecoratorImg = null;
 		String eventDecoratorImg = null;
-		
-		if (device.getState().equals("deactivated")) {
-				stateDecoratorImg = "progress_stop.png";
-			} else if (device.getState().equals("activated")) {
-				if (device.getFault().equals("yes"))
-					stateDecoratorImg = "warning.png";
-				else
-					stateDecoratorImg = "play.png";
 
-				if (device instanceof PresenceSensor) {
-					if (((PresenceSensor) device)
-							.getSensedPresence())
-						eventDecoratorImg = "39px-Crystal_Project_cache.png";
-				}
+		if (device.getState().equals("deactivated")) {
+			stateDecoratorImg = "progress_stop.png";
+		} else if (device.getState().equals("activated")) {
+			if (device.getFault().equals("yes"))
+				stateDecoratorImg = "warning.png";
+			else
+				stateDecoratorImg = "play.png";
+
+			if (device instanceof PresenceSensor) {
+				if (((PresenceSensor) device).getSensedPresence())
+					eventDecoratorImg = "39px-Crystal_Project_cache.png";
 			}
-		
-		return new DecoratedBundleResourceImageReference(iconFileName, stateDecoratorImg, eventDecoratorImg, bundle, _decoratorBundle);
+		}
+
+		return new DecoratedBundleResourceImageReference(iconFileName, stateDecoratorImg, eventDecoratorImg, bundle,
+		      _decoratorBundle);
 	}
 
 	@Override

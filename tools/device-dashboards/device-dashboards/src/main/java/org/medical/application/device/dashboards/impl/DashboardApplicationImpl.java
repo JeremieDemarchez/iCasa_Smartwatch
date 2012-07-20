@@ -405,7 +405,6 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 		return devices.get(deviceSerialNumber);
 	}
 
-
 	
 	@Override
    public void addApplication(Application app) {
