@@ -19,6 +19,7 @@ import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertNotNull;
 import static junit.framework.Assert.assertNull;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
@@ -73,7 +74,7 @@ public abstract class ICasaAbstractTest {
     @Inject
     protected BundleContext context;
 
-    protected OSGiHelper osgi;
+    protected ICasaOSGiHelper osgi;
     
     protected IPOJOHelper ipojo;
     
@@ -87,7 +88,7 @@ public abstract class ICasaAbstractTest {
      */
     @Before
     public void setUp() {
-        osgi = new OSGiHelper(context);
+        osgi = new ICasaOSGiHelper(context);
         ipojo = new IPOJOHelper(context);
         icasa = new ICasaHelper(context);
         
@@ -129,5 +130,27 @@ public abstract class ICasaAbstractTest {
     public static Option[] mockitoBundle() {
         return options(JUnitOptions.mockitoBundles());
     }
-
+    
+    protected void waitForService(Class itfClass, BundleContext context) {
+    	ICasaOSGiHelper helper = new ICasaOSGiHelper(context);
+		helper.waitForService(itfClass.getName(), null, SERV_TIMEOUT);
+		helper.dispose();
+	}
+    
+    protected void waitForService(Class itfClass, BundleContext context, Class... implementedClasses) {
+    	ICasaOSGiHelper helper = new ICasaOSGiHelper(context);
+//    	String[] implementedClStr = new String[implementedClasses.length];
+//    	for (int i = 0; i < implementedClStr.length; i++) {
+//    		implementedClStr[i] = implementedClasses[i].getName();
+//		}
+		helper.waitForService(itfClass.getName(), null, SERV_TIMEOUT, implementedClasses);
+		helper.dispose();
+	}
+    
+    protected void checkNoService(Class itfClass, BundleContext context, Class... implementedClasses) {
+    	ICasaOSGiHelper helper = new ICasaOSGiHelper(context);
+		helper.checkUnavailableService(itfClass.getName(), null, SERV_TIMEOUT, implementedClasses);
+		helper.dispose();
+	}
+    
 }

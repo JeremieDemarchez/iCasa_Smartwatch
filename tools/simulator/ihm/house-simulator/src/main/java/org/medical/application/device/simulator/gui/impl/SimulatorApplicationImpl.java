@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -145,6 +146,10 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public void bindDevice(final GenericDevice device, final Map<String, Object> properties) {
+		//TODO workaround to ignore proxies created by device manager
+		if (isDeviceManagerProxy(device))
+			return;
+		
 		devices.put(device.getSerialNumber(), device);
 		enqueueTask(new Runnable() {
 			@Override
@@ -155,8 +160,27 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		});
 	}
 
+	private boolean isDeviceManagerProxy(GenericDevice device) {
+		Set<String> interfaces = getInterfaceNames(device.getClass().getInterfaces());
+	 	return interfaces.contains("org.medical.device.manager.ApplicationDeviceProxy");
+	}
+	
+
+	private Set<String> getInterfaceNames(Class[] interfaces) {
+		HashSet<String> names = new HashSet<String>();
+		for (Class interfaze : interfaces) {
+			names.add(interfaze.getCanonicalName());
+		}
+
+		return names;
+	}
+
 	@Unbind(id = "devices")
 	public void unbindDevice(final GenericDevice device) {
+		//TODO workaround to ignore proxies created by device manager
+		if (isDeviceManagerProxy(device))
+			return;
+		
 		devices.remove(device);
 		enqueueTask(new Runnable() {
 			@Override

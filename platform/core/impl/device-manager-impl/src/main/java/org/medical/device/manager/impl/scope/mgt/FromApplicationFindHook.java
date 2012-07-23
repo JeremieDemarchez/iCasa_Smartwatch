@@ -89,7 +89,7 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 					iterator.remove();
 			}
 
-		} catch (Exception ex) {
+		} catch (Throwable ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -139,10 +139,15 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 				DeviceManager devMgr = (DeviceManager) context.getService(sr);
 				context.ungetService(sr);
 				
-				if (!isFromApp && devMgr.getApplication().getId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID))
+				if (!isFromApp && devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
 					return false;
+				}
 				
-				if (!devMgr.getApplication().getId().equals(app.getId()))
+				if (!isFromApp && !devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
+					return true;
+				}
+					
+				if (!devMgr.getApplicationId().equals(app.getId()))
 					return true;
 			}
 		}
@@ -174,34 +179,39 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public void event(ServiceEvent event,
 			Collection contexts) {
 		
 		final ServiceReference serviceReference = event.getServiceReference();
 		
-		switch (event.getType()) {
+		try {
+			switch (event.getType()) {
 
-		case ServiceEvent.REGISTERED: {
+			case ServiceEvent.REGISTERED: {
 
-			filterContextsByApp(serviceReference, contexts);
+				filterContextsByApp(serviceReference, contexts);
 
-			break;
-		}
+				break;
+			}
 
-		case ServiceEvent.UNREGISTERING: {
+			case ServiceEvent.UNREGISTERING: {
 
-			filterContextsByApp(serviceReference, contexts);
+				filterContextsByApp(serviceReference, contexts);
 
-			break;
-		}
+				break;
+			}
 
-		case ServiceEvent.MODIFIED:
-		case ServiceEvent.MODIFIED_ENDMATCH: {
+			case ServiceEvent.MODIFIED:
+			case ServiceEvent.MODIFIED_ENDMATCH: {
 
-			filterContextsByApp(serviceReference, contexts);
+				filterContextsByApp(serviceReference, contexts);
 
-			break;
-		}
+				break;
+			}
+			}
+		} catch (Throwable e) {
+			e.printStackTrace();
 		}
 	}
 

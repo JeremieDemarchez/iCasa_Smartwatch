@@ -95,7 +95,7 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 	}
 
 
-	@Bind(id = "devices", aggregate = true, optional = true)
+	@Bind(id = "devices2", aggregate = true, optional = true)
 	public void bindDevice(final ApplicationDevice device, final Map<String, Object> properties) {
 		device.addVariableListener(this);
 		enqueueTask(new Runnable() {
@@ -108,7 +108,7 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 		});
 	}
 
-	@Unbind(id = "devices")
+	@Unbind(id = "devices2")
 	public void unbindDevice(final ApplicationDevice device) {
 		device.removeVariableListener(this);
 		enqueueTask(new Runnable() {

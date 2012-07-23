@@ -23,6 +23,7 @@ import java.util.Set;
 
 import org.medical.common.Attributable;
 import org.medical.device.manager.ApplicationDevice;
+import org.medical.device.manager.ApplicationDeviceProxy;
 import org.medical.device.manager.Device;
 import org.medical.device.manager.Operation;
 import org.medical.device.manager.Service;

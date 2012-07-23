@@ -13,12 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.device.model.bridge;
+package org.medical.device.manager;
 
 import org.medical.application.Application;
 
 /**
  * Used to distinguish application device proxies from original icasa generic devices.
+ * All device proxies which exports application device must implements this interface.
  * 
  * @author Thomas Leveque
  *
