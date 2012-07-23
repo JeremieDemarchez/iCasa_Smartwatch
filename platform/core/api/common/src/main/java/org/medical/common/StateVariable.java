@@ -53,14 +53,14 @@ public interface StateVariable {
 	 * 
 	 * @param listener a listener of value changes.
 	 */
-	public void addValueChangeListener(StateVariableListener listener);
+	public void addListener(StateVariableListener listener);
 	
 	/**
 	 * Removes specified listener.
 	 * 
 	 * @param listener a listener of value changes.
 	 */
-	public void removeValueChangeListener(StateVariableListener listener);
+	public void removeListener(StateVariableListener listener);
 	
 	/**
 	 * Returns variable value.

@@ -69,14 +69,14 @@ public class StateVariableImpl implements StateVariable {
 	}
 
 	@Override
-	public void addValueChangeListener(StateVariableListener listener) {
+	public void addListener(StateVariableListener listener) {
 		synchronized (_listeners ) {
 			_listeners.add(listener);
 		}
 	}
 
 	@Override
-	public void removeValueChangeListener(StateVariableListener listener) {
+	public void removeListener(StateVariableListener listener) {
 		synchronized (_listeners ) {
 			_listeners.remove(listener);
 		}

@@ -24,6 +24,7 @@ import org.medical.application.Application;
 import org.medical.common.Attributable;
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableListener;
+import org.medical.common.impl.StateVariableProxy;
 import org.medical.common.impl.StateVariableImpl;
 import org.medical.device.manager.ApplicationDevice;
 import org.medical.device.manager.AvailableDevice;
@@ -60,28 +61,18 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 		replaceByDelegateVar(TYPE_PROP_NAME);
 		
 		// availability attribute
-		StateVariable originalVar = getStateVariable(AVAILABLE_PROP_NAME);
-		removeStateVariable(originalVar);
-		StateVariable derivVar = new AvailabilityStateVar(originalVar, _device);
-		addStateVariable(derivVar);
+		StateVariable originalVar = getInternalVariable(AVAILABLE_PROP_NAME);
+		changeVariableImplem(new AvailabilityStateVar(originalVar, _device));
 	}
 	
-	private StateVariable replaceByDelegateAppendVar(String varName) {
-		StateVariable originalVar = getStateVariable(varName);
-		removeStateVariable(originalVar);
-		StateVariable derivVar = new AppendFaultIfPossibleStateVar(originalVar, _device);
-		addStateVariable(derivVar);
-		
-		return derivVar;
+	private void replaceByDelegateAppendVar(String varName) {
+		StateVariable originalVar = getInternalVariable(varName);
+		changeVariableImplem(new AppendFaultIfPossibleStateVar(originalVar, _device));
 	}
 
-	private StateVariable replaceByDelegateVar(String varName) {
-		StateVariable originalVar = getStateVariable(varName);
-		removeStateVariable(originalVar);
-		StateVariable derivVar = new DeriveIfPossibleStateVar(originalVar, _device);
-		addStateVariable(derivVar);
-		
-		return derivVar;
+	private void replaceByDelegateVar(String varName) {
+		StateVariable originalVar = getInternalVariable(varName);
+		changeVariableImplem(new DeriveIfPossibleStateVar(originalVar, _device));
 	}
 
 	@Override
@@ -134,7 +125,7 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 			_device.removeVariableListener(this);
 			_device = null;
 
-			for (StateVariable var : getStateVariables()) {
+			for (StateVariable var : getInternalStateVariables()) {
 				if (!(var instanceof DeriveIfPossibleStateVar))
 					continue;
 
@@ -149,7 +140,7 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 		
 		device.addVariableListener(this);
 		synchronizeWithAvailable();
-		for (StateVariable var : getStateVariables()) {
+		for (StateVariable var : getInternalStateVariables()) {
 			if (!(var instanceof DeriveIfPossibleStateVar))
 				continue;
 
@@ -194,7 +185,10 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 	private void mergeVars(Attributable delegateAttributable, Attributable originalAttributable) {
 		final List<StateVariable> deviceVars = delegateAttributable.getStateVariables();
 		for (StateVariable delegateVar : deviceVars) {
-			StateVariable var = originalAttributable.getStateVariable(delegateVar.getName());
+			StateVariable varProxy = originalAttributable.getStateVariable(delegateVar.getName());
+			StateVariable var = null;
+			if (varProxy != null)
+				var = ((StateVariableProxy) varProxy).getInternalVariable();
 			if (var != null) {
 				if (!(var instanceof DeriveIfPossibleStateVar))
 					continue;

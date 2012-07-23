@@ -42,7 +42,7 @@ public class EntityImpl implements Identifiable, Attributable {
 	
 	public static final String ID_PROP_NAME = "#id";
 	
-	private Map<String, StateVariable> attributeValues = new ConcurrentHashMap<String, StateVariable>();
+	private Map<String, StateVariableProxy> attributeValues = new ConcurrentHashMap<String, StateVariableProxy>();
 	
 	private List<StateVariableExtender> _extenders = new ArrayList<StateVariableExtender>();
 	
@@ -76,6 +76,21 @@ public class EntityImpl implements Identifiable, Attributable {
 		
 		return stateVar;
 	}
+	
+	/**
+	 * Returns the variable implementation of specified variable.
+	 * Should not be used by client code.
+	 * 
+	 * @param propertyName name of an state variable
+	 * @return the variable implementation of specified variable.
+	 */
+	protected final StateVariable getInternalVariable(String propertyName) {
+		StateVariableProxy stateVar = attributeValues.get(propertyName);
+		if (stateVar == null)
+			return null;
+		
+		return stateVar.getInternalVariable();
+	}
 
 	@Override
 	public final void setPropertyValue(String propertyName, Object value) {
@@ -88,8 +103,18 @@ public class EntityImpl implements Identifiable, Attributable {
 
 	@Override
 	public final List<StateVariable> getStateVariables() {
-		final Collection<StateVariable> stateVars = attributeValues.values();
+		final Collection<StateVariableProxy> stateVars = attributeValues.values();
 		return new ArrayList<StateVariable>(stateVars);
+	}
+	
+	public final List<StateVariable> getInternalStateVariables() {
+		final Collection<StateVariableProxy> stateVars = attributeValues.values();
+		List<StateVariable> internalVars = new ArrayList<StateVariable>();
+		for (StateVariableProxy proxy : stateVars) {
+			internalVars.add(proxy.getInternalVariable());
+		}
+		
+		return internalVars;
 	}
 
 	@Override
@@ -116,6 +141,25 @@ public class EntityImpl implements Identifiable, Attributable {
 		return (String) getPropertyValue(ID_PROP_NAME);
 	}
 	
+	/**
+	 * Change the implementation of the specified variable.
+	 * Client variable references will not be changed.
+	 * Variables are considered as not changed, that is why there is no event sent to listeners.
+	 * 
+	 * @param var a state variable
+	 */
+	protected final void changeVariableImplem(StateVariable var) {
+		synchronized (_lockStructChanges) {
+			final String propName = var.getName();
+			StateVariableProxy varProxy = attributeValues.get(propName);
+			if (varProxy == null)
+				throw new IllegalArgumentException("Property " + propName
+						+ " already exists.");
+
+			varProxy.setInternalVariable(var);
+		}
+	}
+	
 	protected final void addStateVariable(StateVariable var) {
 		synchronized (_lockStructChanges) {
 			final String propName = var.getName();
@@ -124,27 +168,31 @@ public class EntityImpl implements Identifiable, Attributable {
 				throw new IllegalArgumentException("Property " + propName
 						+ " already exists.");
 
-			attributeValues.put(propName, var);
+			attributeValues.put(propName, new StateVariableProxy(var));
 		}
 		
 		synchronized(_listeners) {
 			for (StateVariableListener listener : _listeners) {
 				listener.addVariable(var, this);
-				var.addValueChangeListener(listener);
+				var.addListener(listener);
 			}
 		}
 	}
 	
 	protected final void removeStateVariable(StateVariable var) {
+		StateVariableProxy varProxy = null;
 		synchronized (_lockStructChanges) {
 			final String propName = var.getName();
-			attributeValues.remove(propName);
+			varProxy = attributeValues.remove(propName);
 		}
+		
+		if (varProxy == null)
+			return;
 		
 		synchronized(_listeners) {
 			for (StateVariableListener listener : _listeners) {
-				var.removeValueChangeListener(listener);
-				listener.removeVariable(var, this);
+				varProxy.removeListener(listener);
+				listener.removeVariable(varProxy, this);
 			}
 		}
 	}
@@ -172,7 +220,7 @@ public class EntityImpl implements Identifiable, Attributable {
 		synchronized(_listeners) {
 			_listeners.add(listener);
 			for (StateVariable var : getStateVariables()) {
-				var.addValueChangeListener(listener);
+				var.addListener(listener);
 			}
 		}
 	}
@@ -182,7 +230,7 @@ public class EntityImpl implements Identifiable, Attributable {
 		synchronized(_listeners) {
 			_listeners.remove(listener);
 			for (StateVariable var : getStateVariables()) {
-				var.removeValueChangeListener(listener);
+				var.removeListener(listener);
 			}
 		}
 	}
