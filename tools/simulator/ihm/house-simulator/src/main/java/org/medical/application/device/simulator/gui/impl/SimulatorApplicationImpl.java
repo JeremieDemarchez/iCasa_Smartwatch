@@ -482,52 +482,27 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		return m_ScriptExecutor.getScriptList();
 	}
 
+	/**
+	 * 
+	 * @param scriptName
+	 */
 	public void executeScript(String scriptName) {
 		m_ScriptExecutor.executeScript(scriptName);
 	}
 
+	/**
+	 * Stops the current script execution
+	 */
 	public void stopScript() {
 		m_ScriptExecutor.stopExecution();
 	}
 
-	/*
-	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue, Object sourceObject) {
-		String devId = null;
-		Object owner = variable.getOwner();
-		if (owner instanceof Device) {
-			devId = ((Device) owner).getId();
-		} else if (owner instanceof Service) {
-			devId = ((Service) owner).getDevice().getId();
-		}
-
-		if (devId != null) {
-			final ApplicationDevice dev = getDeviceBySerialNumber(devId);
-			enqueueTask(new Runnable() {
-				@Override
-				public void run() {
-					SimulatorDeviceController controller = (SimulatorDeviceController) getDeviceController();
-					controller.changeDevice(dev.getId(), Collections.EMPTY_MAP);
-				}
-			});
-		}
-	}
-	*/
-
-	/*
-	@Override
-	public void addVariable(StateVariable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void removeVariable(StateVariable arg0, Object arg1) {
-		// TODO Auto-generated method stub
-
-	}
-   */
-	
+	/**
+	 * Service tracker on devices instances
+	 * 
+	 * @author Gabriel Pedraza
+	 *
+	 */
 	class DeviceServiceTracker extends ServiceTracker {
 
 		public DeviceServiceTracker(BundleContext context) {
