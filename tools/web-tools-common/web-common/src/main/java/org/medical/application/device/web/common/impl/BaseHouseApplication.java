@@ -42,6 +42,12 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
+/**
+ * Base class to applications in echo3 showing device information
+ * 
+ * @author Gabriel Pedraza Ferreira
+ *
+ */
 public abstract class BaseHouseApplication extends ApplicationInstance implements DevicePositionListener,
       PropertyChangeListener {
 
@@ -128,7 +134,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	public BaseHouseApplication(BundleContext context) {
 		m_context = context;
-		//_bundle = context.getBundle();
 	}
 
 	/**
@@ -176,7 +181,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	public void stop() {
 		m_housePane.removePropertyChangeListener(this);
 		m_manager.removeDevicePositionListener(this);
-
 	}
 	
 	/**
@@ -476,6 +480,9 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	public abstract GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber);
 	
 
-
+	/**
+	 * Updates GUI for each device on the platform
+	 * @param portletFactory the portletFactory
+	 */
 	protected abstract void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory);
 }

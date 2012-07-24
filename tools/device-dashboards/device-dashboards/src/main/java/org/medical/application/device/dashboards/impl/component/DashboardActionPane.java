@@ -21,7 +21,10 @@ import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
 import org.medical.application.Application;
 import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.ActionPane;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
+import org.osgi.framework.Bundle;
 
 /**
  * This Pane contains actions that can be realized by user
@@ -88,10 +91,11 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 	
 	@Override
    protected void initContent() {
+		Bundle bundle = BaseHouseApplication.getBundle();
 		m_devicePane = new DashboardDevicePane(this);
 		final AccordionPaneLayoutData devicePaneLayout = new AccordionPaneLayoutData();
-		devicePaneLayout.setIcon(new ResourceImageReference(DashboardDevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
-		      ICON_SIZE));
+		devicePaneLayout.setIcon(new BundleResourceImageReference(DashboardDevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
+		      ICON_SIZE, bundle));
 		devicePaneLayout.setTitle(getDeviceTabName(SelectAppPane.UNDEFINED_SERV_NAME));
 		m_devicePane.setLayoutData(devicePaneLayout);
 		add(m_devicePane);
@@ -99,8 +103,8 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 		// Create the devices status controller pane
 		if (appInstance.isAndroid()) {
 			final AccordionPaneLayoutData statusPaneLayout = new AccordionPaneLayoutData();
-			statusPaneLayout.setIcon(new ResourceImageReference(DashboardDevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
-			      ICON_SIZE));
+			statusPaneLayout.setIcon(new BundleResourceImageReference(DashboardDevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
+			      ICON_SIZE, bundle));
 			statusPaneLayout.setTitle("Device Details");
 			appInstance.getStatusPane().setLayoutData(statusPaneLayout);
 			add(appInstance.getStatusPane());

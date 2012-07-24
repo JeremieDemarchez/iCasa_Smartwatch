@@ -43,6 +43,8 @@ import nextapp.echo.app.table.TableCellRenderer;
 import org.medical.application.Application;
 import org.medical.application.ApplicationState;
 import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 
 
 /**
@@ -56,7 +58,7 @@ public class ApplicationManagerPane extends ContentPane  {
 	 */
 	private static final long serialVersionUID = -4434232249787264347L;
 
-	public static ResourceImageReference APPLICATION_ICON = new ResourceImageReference("/Application.png");
+	public static ResourceImageReference APPLICATION_ICON = new BundleResourceImageReference("/Application.png", BaseHouseApplication.getBundle());
 
 	private final DashboardActionPane m_parent;
 	
