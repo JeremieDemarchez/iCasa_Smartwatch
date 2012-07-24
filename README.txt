@@ -1,10 +1,6 @@
-!!! YOU MUST execute following commands for the first build !!!
-cd dependencies
-cd osgi-deployment-admin
-mvn clean install
 
 To build complete repository, execute mvn install from this directory
-or you can use the script file build.bat or build.
+or you can use the build.bat script file (or build on Linux).
 
 Prerequisites:
 - install Maven 3.x
