@@ -50,7 +50,6 @@ import org.medical.script.executor.impl.actions.MovePersonAction;
 import org.medical.script.executor.impl.actions.RemoveDeviceAction;
 import org.medical.script.executor.impl.actions.RepairDeviceAction;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.ow2.chameleon.rose.RoseMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -73,7 +72,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * The ROSE machine
 	 */
-	private RoseMachine roseMachine;
+	//private RoseMachine roseMachine;
 	
 	/**
 	 * The OSGi ConfigAdmin service 
@@ -198,12 +197,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		return devices;
 	}
 
-	/**
-	 * @return the roseMachine
-	 */
-	public RoseMachine getRoseMachine() {
-		return roseMachine;
-	}
 
 	/**
 	 * @return the environmentManager

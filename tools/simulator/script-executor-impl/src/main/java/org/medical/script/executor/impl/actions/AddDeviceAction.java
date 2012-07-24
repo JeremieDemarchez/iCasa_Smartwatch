@@ -18,7 +18,6 @@ package org.medical.script.executor.impl.actions;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Random;
 
 import org.apache.felix.ipojo.ConfigurationException;
@@ -26,9 +25,6 @@ import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.medical.script.executor.impl.ScriptExecutorImpl;
-import org.osgi.framework.Constants;
-import org.osgi.service.remoteserviceadmin.EndpointDescription;
-import org.osgi.service.remoteserviceadmin.RemoteConstants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,6 +76,7 @@ public class AddDeviceAction extends DeviceAction {
 
 	}
 
+	/*
 	private void registerSensorInROSE(String sensorID) {
 		Map<String, Object> props = new Hashtable<String, Object>();
 
@@ -97,5 +94,5 @@ public class AddDeviceAction extends DeviceAction {
 		this.scriptExecutorImpl.getRoseMachine().putRemote(sensorID, epd);
 		logger.info("Endpoint registed in ROSE");
 	}
-
+	*/
 }

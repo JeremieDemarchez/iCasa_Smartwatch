@@ -69,11 +69,6 @@ public class DashboardServletImpl extends BaseHouseServletImpl implements Servle
 		return CLASSLOADER;
 	}
 
-	@Override
-	@Property(name = "homeType", mandatory = true)
-	public void setHomeType(String homeType) {
-		super.setHomeType(homeType);
-	}
 
 	@Override
 	@Property(name = "houseImage", mandatory = true)

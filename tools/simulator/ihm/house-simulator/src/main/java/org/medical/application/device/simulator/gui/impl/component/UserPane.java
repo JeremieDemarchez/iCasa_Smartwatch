@@ -36,9 +36,14 @@ import nextapp.echo.extras.app.menu.DefaultMenuModel;
 import nextapp.echo.extras.app.menu.DefaultMenuSelectionModel;
 import nextapp.echo.extras.app.menu.DefaultOptionModel;
 
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.FloatingButton;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
+import org.osgi.framework.Bundle;
 
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
+import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
 
 /**
  * TODO comments.
@@ -52,7 +57,7 @@ public class UserPane extends ContentPane {
 	 */
 	private static final long serialVersionUID = 974309121082722498L;
 
-	public static ResourceImageReference USER_IMAGE = new ResourceImageReference("/User.png");
+	private ResourceImageReference USER_IMAGE = new ResourceImageReference("/User.png");
 
 	private final SimulatorActionPane m_parent;
 
@@ -75,13 +80,19 @@ public class UserPane extends ContentPane {
 		addRoomPosition("--- Outside ---", -1, -1);
 		outsideRoomPosition = roomPositions.get("--- Outside ---");
 		
-		initializeRoomPositions();
+		//initializeRoomPositions();
 		
-		USER_IMAGE =  new ResourceImageReference(m_parent.getApplicationInstance().getUserImage());
+		m_parent.getApplicationInstance();
+		//USER_IMAGE =  new ResourceImageReference(m_parent.getApplicationInstance().getUserImage());
+		Bundle bundle = BaseHouseApplication.getBundle();
+		USER_IMAGE =  new BundleResourceImageReference(m_parent.getApplicationInstance().getUserImage(), bundle);
 		
 		// Create the image label.
+		
 		final Label image = new Label(
-		      new ResourceImageReference(USER_IMAGE.getResource(), new Extent(50), new Extent(50)));
+		      new BundleResourceImageReference(USER_IMAGE.getResource(), new Extent(50), new Extent(50), bundle));
+		
+		
 		final GridLayoutData imageLayout = new GridLayoutData();
 		imageLayout.setRowSpan(2);
 		image.setLayoutData(imageLayout);
@@ -120,8 +131,10 @@ public class UserPane extends ContentPane {
 		add(grid);
 	}
 	
-	private void initializeRoomPositions() {
+	public void initializeRoomPositions() {
+		/*
 		String homeType = m_parent.getApplicationInstance().getHomeType(); 
+		
 		if (homeType.equals("type1")) {
 			addRoomPosition("livingroom", 220, 220);
 			addRoomPosition("kitchen", 115, 450);
@@ -141,6 +154,19 @@ public class UserPane extends ContentPane {
 			addRoomPosition("bathroom", 530, 450);
 			addRoomPosition("Entrance", 325, 533);
 		}
+		*/
+		SimulationManager simulationManager = m_parent.getApplicationInstance().getSimulationManager();
+		
+		Set<String> envs = simulationManager.getEnvironments();
+		for (String env : envs) {
+	      Zone zone = simulationManager.getEnvironmentZone(env);
+	      if (zone!=null) {
+	      	// User position when (s)he is moved
+	      	int x = ((zone.leftX + zone.rightX) / 2)-20;
+	      	int y = ((zone.topY + zone.bottomY) / 2)-20;
+	      	addRoomPosition(env, x, y);
+	      }
+      }
 	   
    }
 

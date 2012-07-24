@@ -34,7 +34,7 @@ public class RemoveDeviceAction extends DeviceAction {
 	 */
 	public void run() {
 		scriptExecutorImpl.getSimulationManager().setDevicePosition(deviceId, null);
-		scriptExecutorImpl.getRoseMachine().removeRemote(deviceId);
+		//scriptExecutorImpl.getRoseMachine().removeRemote(deviceId);
 	}
 
 }

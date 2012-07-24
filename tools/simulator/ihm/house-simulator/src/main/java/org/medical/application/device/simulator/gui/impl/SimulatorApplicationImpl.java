@@ -243,6 +243,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	public void unbindWidgetFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
 		super.unbindWidgetFactorySelector(portletFactorySelector);
 	}
+		
 
 	@Override
 	public void userPositionChanged(final String userName, final Position position) {
@@ -269,11 +270,6 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		super.setUserImage(userImage);
 	}
 
-	@Override
-	@Property(name = "homeType", mandatory = true)
-	public void setHomeType(String homeType) {
-		super.setHomeType(homeType);
-	}
 
 	@Override
 	@Property(name = "isAndroid", mandatory = true)
@@ -497,6 +493,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	public void installScenario(String scenarioName) {
 		try {
 			m_ScenarioInstaller.installScenario(scenarioName);
+			((SimulatorActionPane)m_actionPane).initializeEnvironments();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

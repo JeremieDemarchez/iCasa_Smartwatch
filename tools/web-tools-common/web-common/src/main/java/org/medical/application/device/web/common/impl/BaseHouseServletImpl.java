@@ -51,8 +51,6 @@ public abstract class BaseHouseServletImpl extends WebContainerServlet implement
 
 	private String userImage;
 
-	private String homeType;
-
 	private Factory m_appFactory;
 
 	private final Map<String, ComponentInstance> m_appInstances = new HashMap<String, ComponentInstance>();
@@ -70,7 +68,7 @@ public abstract class BaseHouseServletImpl extends WebContainerServlet implement
 		Dictionary<String, Object> dict = new Hashtable<String, Object>();
 		dict.put("houseImage", houseImage);
 		dict.put("userImage", userImage);
-		dict.put("homeType", homeType);
+		//dict.put("homeType", homeType);
 
 		String[] isAndroidParams = (String[]) getActiveConnection().getUserInstance().getInitialRequestParameterMap()
 		      .get("isAndroid");
@@ -142,10 +140,6 @@ public abstract class BaseHouseServletImpl extends WebContainerServlet implement
 
 	public void setHouseImage(String houseImage) {
 		this.houseImage = houseImage;
-	}
-
-	public void setHomeType(String homeType) {
-		this.homeType = homeType;
 	}
 
 	public void setUserImage(String userImage) {

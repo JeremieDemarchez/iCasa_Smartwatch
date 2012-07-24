@@ -22,8 +22,10 @@ import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
 import org.apache.felix.ipojo.Factory;
 import org.medical.application.device.simulator.gui.impl.SimulatorApplicationImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.DevicePane;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 import org.medical.clock.api.Clock;
 
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
@@ -59,7 +61,8 @@ public class SimulatorActionPane extends ActionPane {
 		// Create the user controller pane.
 		m_userPane = new UserPane(this);
 		final AccordionPaneLayoutData userPaneLayout = new AccordionPaneLayoutData();
-		userPaneLayout.setIcon(new ResourceImageReference(UserPane.USER_IMAGE.getResource(), ICON_SIZE, ICON_SIZE));
+		getApplicationInstance();
+		userPaneLayout.setIcon(new BundleResourceImageReference(getApplicationInstance().getUserImage(), ICON_SIZE, ICON_SIZE, BaseHouseApplication.getBundle()));
 		userPaneLayout.setTitle("Simulated Users");
 		m_userPane.setLayoutData(userPaneLayout);
 		add(m_userPane);
@@ -116,6 +119,11 @@ public class SimulatorActionPane extends ActionPane {
 
 	public void removeDeviceFactory(Factory factory) {
 		((SimulatorDevicePane) m_devicePane).removeDeviceFactory(factory);
+	}
+	
+	public void initializeEnvironments() {
+		if (m_userPane!=null)
+			m_userPane.initializeRoomPositions();
 	}
 
 }
