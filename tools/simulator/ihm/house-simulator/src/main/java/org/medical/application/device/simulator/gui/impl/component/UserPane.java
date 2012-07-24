@@ -57,7 +57,7 @@ public class UserPane extends ContentPane {
 	 */
 	private static final long serialVersionUID = 974309121082722498L;
 
-	private ResourceImageReference USER_IMAGE = new ResourceImageReference("/User.png");
+	private ResourceImageReference USER_IMAGE = new BundleResourceImageReference("/User.png", BaseHouseApplication.getBundle());
 
 	private final SimulatorActionPane m_parent;
 
@@ -212,7 +212,7 @@ public class UserPane extends ContentPane {
 
 		});
 		// Create the remove button.
-		entry.removeButton = new Button(new ResourceImageReference("/Remove.png"));
+		entry.removeButton = new Button(new BundleResourceImageReference("/Remove.png", BaseHouseApplication.getBundle()));
 		entry.removeButton.addActionListener(new ActionListener() {
 			private static final long serialVersionUID = 1797893813768038434L;
 
@@ -284,7 +284,7 @@ public class UserPane extends ContentPane {
 	private void showErrorWindow(final String error) {
 		final WindowPane window = new WindowPane();
 		// Create the icon.
-		final Label icon = new Label(new ResourceImageReference("/Error.png"));
+		final Label icon = new Label(new BundleResourceImageReference("/Error.png", BaseHouseApplication.getBundle()));
 		// Create the message label.
 		final Label message = new Label(error);
 		// Create the confirmation button.

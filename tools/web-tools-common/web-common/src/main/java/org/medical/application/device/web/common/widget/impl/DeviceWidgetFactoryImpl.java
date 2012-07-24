@@ -16,7 +16,6 @@
 package org.medical.application.device.web.common.widget.impl;
 
 import java.lang.reflect.Constructor;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -25,13 +24,10 @@ import nextapp.echo.app.WindowPane;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.util.DecoratedBundleResourceImageReference;
 import org.medical.application.device.web.common.widget.DeclarativeDeviceWidgetFactory;
 import org.osgi.framework.Bundle;
-import org.osgi.service.packageadmin.ExportedPackage;
-import org.osgi.service.packageadmin.PackageAdmin;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
@@ -104,7 +100,7 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 		String eventDecoratorImg = null;
 
 		if (device.getState().equals("deactivated")) {
-			stateDecoratorImg = "progress_stop.png";
+			stateDecoratorImg = "stop.png";
 		} else if (device.getState().equals("activated")) {
 			if (device.getFault().equals("yes"))
 				stateDecoratorImg = "warning.png";
@@ -113,7 +109,7 @@ public class DeviceWidgetFactoryImpl implements DeclarativeDeviceWidgetFactory {
 
 			if (device instanceof PresenceSensor) {
 				if (((PresenceSensor) device).getSensedPresence())
-					eventDecoratorImg = "39px-Crystal_Project_cache.png";
+					eventDecoratorImg = "event.png";
 			}
 		}
 

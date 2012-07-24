@@ -42,7 +42,8 @@ import nextapp.echo.app.layout.GridLayoutData;
 import nextapp.echo.app.list.DefaultListModel;
 import nextapp.echo.extras.app.CalendarSelect;
 
-import org.medical.application.device.web.common.impl.component.ActionPane;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 import org.medical.clock.api.Clock;
 
 /**
@@ -59,7 +60,7 @@ public class ClockPane extends ContentPane {
 
 	private static final String NO_CLOCK_TEXT = "??? Unknow ???";
 
-	public static ResourceImageReference CLOCK_IMAGE = new ResourceImageReference("/Clock.png");
+	public static ResourceImageReference CLOCK_IMAGE = new BundleResourceImageReference("/Clock.png", BaseHouseApplication.getBundle());
 
 	private static final DateFormat DATE_FORMAT = new SimpleDateFormat("EEEE d MMMM yyyy KK : mm : ss a");
 
@@ -274,7 +275,7 @@ public class ClockPane extends ContentPane {
 		grid.add(okButton);
 		// Populate the window.
 		window.setTitle("Time and date settings");
-		window.setIcon(new ResourceImageReference(ClockPane.CLOCK_IMAGE.getResource(), ICON_SIZE, ICON_SIZE));
+		window.setIcon(new BundleResourceImageReference(ClockPane.CLOCK_IMAGE.getResource(), ICON_SIZE, ICON_SIZE, BaseHouseApplication.getBundle()));
 		window.setModal(true);
 		window.setMaximizeEnabled(false);
 		window.setDefaultCloseOperation(WindowPane.DISPOSE_ON_CLOSE);

@@ -73,7 +73,7 @@ import fr.liglab.adele.icasa.script.ScenarioInstaller;
 /**
  * TODO comments.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 @Component(name = "WebHouseSimulator", immediate = true)
 @Provides

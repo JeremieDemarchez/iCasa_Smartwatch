@@ -44,6 +44,7 @@ import nextapp.echo.app.table.TableCellRenderer;
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.event.DropEvent;
 import org.medical.application.device.web.common.impl.component.event.DropListener;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 import org.medical.application.device.web.common.widget.impl.GenericDeviceStatusWindow;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -62,8 +63,8 @@ public abstract class DevicePane extends ContentPane {
 	 */
 	private static final long serialVersionUID = 3778184066500074285L;
 
-	public static ResourceImageReference DEVICE_IMAGE = new ResourceImageReference("/Device.png");
-	public static ResourceImageReference BIG_DEVICE_IMAGE = new ResourceImageReference("/BigDevice.png");
+	public static ResourceImageReference DEVICE_IMAGE = new BundleResourceImageReference("/Device.png", BaseHouseApplication.getBundle());
+	public static ResourceImageReference BIG_DEVICE_IMAGE = new BundleResourceImageReference("/BigDevice.png", BaseHouseApplication.getBundle());
 
 	private final ActionPane m_parent;
 
@@ -221,7 +222,7 @@ public abstract class DevicePane extends ContentPane {
 	public void showErrorWindow(final String error) {
 		final WindowPane window = new WindowPane();
 		// Create the icon.
-		final Label icon = new Label(new ResourceImageReference("/Error.png"));
+		final Label icon = new Label(new BundleResourceImageReference("/Error.png", BaseHouseApplication.getBundle()));
 		// Create the message label.
 		final Label message = new Label(error);
 		// Create the confirmation button.
@@ -282,7 +283,7 @@ public abstract class DevicePane extends ContentPane {
 		ResourceImageReference image = getAppInstance().getImageForDevice(deviceSerialNumber);
 		if (image != null)
 			return image;
-		return new ResourceImageReference("/Device-Icasa.png");
+		return new BundleResourceImageReference("/Device-Icasa.png", BaseHouseApplication.getBundle());
 	}
 
 

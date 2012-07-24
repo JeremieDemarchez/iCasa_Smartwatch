@@ -43,7 +43,6 @@ import nextapp.echo.app.table.TableCellRenderer;
 import org.medical.application.Application;
 import org.medical.application.ApplicationState;
 import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
-import org.medical.application.device.web.common.impl.BaseHouseApplication;
 
 
 /**

@@ -25,7 +25,6 @@ import java.util.Set;
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
-import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.SelectField;
 import nextapp.echo.app.Table;
 import nextapp.echo.app.event.ActionEvent;
@@ -37,7 +36,6 @@ import org.medical.application.Application;
 import org.medical.application.device.dashboards.impl.DashboardApplicationImpl;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
-import org.medical.device.manager.ApplicationDevice;
 
 /**
  * TODO comments.
@@ -51,8 +49,8 @@ public class DashboardDevicePane extends DevicePane implements SelectedApplicati
 	 */
 	private static final long serialVersionUID = 3778184066500074285L;
 
-	public static ResourceImageReference DEVICE_IMAGE = new ResourceImageReference("/Device.png");
-	public static ResourceImageReference BIG_DEVICE_IMAGE = new ResourceImageReference("/BigDevice.png");
+	//public static ResourceImageReference DEVICE_IMAGE = new ResourceImageReference("/Device.png");
+	//public static ResourceImageReference BIG_DEVICE_IMAGE = new ResourceImageReference("/BigDevice.png");
 
 	// private final DashboardActionPane m_parent;
 

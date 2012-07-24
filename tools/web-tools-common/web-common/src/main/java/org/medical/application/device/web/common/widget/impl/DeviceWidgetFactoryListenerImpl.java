@@ -36,7 +36,6 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.apache.felix.ipojo.extender.Extender;
-import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.widget.DeclarativeDeviceWidgetFactory;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
