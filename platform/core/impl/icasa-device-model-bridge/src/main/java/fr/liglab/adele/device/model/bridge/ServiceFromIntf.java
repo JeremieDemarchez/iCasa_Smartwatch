@@ -60,7 +60,7 @@ public class ServiceFromIntf extends AbstractService {
 				reifiedMethods.add(setterMethod);
 			}
 			if ((getterMethod != null) || (setterMethod != null)) {
-				DerivedStateVariableFromIntf var = (DerivedStateVariableFromIntf) getStateVariable(attrName);
+				DerivedStateVariableFromIntf var = (DerivedStateVariableFromIntf) getInternalVariable(attrName);
 				if (var != null)
 					continue; // ignore it, case of multiple attribute with different types
 				

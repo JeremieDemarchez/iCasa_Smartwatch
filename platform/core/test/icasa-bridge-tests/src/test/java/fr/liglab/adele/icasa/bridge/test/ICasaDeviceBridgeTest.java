@@ -78,7 +78,8 @@ import org.ow2.chameleon.testing.helpers.OSGiHelper;
 public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
     
 
-    private static final String APP1_ID = "app1";
+    private static final String STATE_GENERIC_PROP_NAME = "State";
+	private static final String APP1_ID = "app1";
 	private static final String APP2_ID = "app2";
 
 	@Before
@@ -171,6 +172,7 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         DependRegistration depReg = deviceMgr.addDependencies(dependencies);
         waitForResolution(depReg);
         
+        waitForService(ApplicationDevice.class, app1Context);
         ApplicationDevice app1device = (ApplicationDevice) getServiceObject(ApplicationDevice.class, app1Context);
         assertNotNull(app1device);
         assertEquals(deviceImpl.getSerialNumber(), app1device.getId());
@@ -232,13 +234,9 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
     	//wait for the service to be available.
         waitForIt(100);
         
-        GenericDevice deviceImpl = mock(PPDevice.class);
         final String devId = "123f5";
-		when(deviceImpl.getSerialNumber()).thenReturn(devId);
-		when(deviceImpl.getFault()).thenReturn(GenericDevice.FAULT_YES);
-		String state = GenericDevice.STATE_ACTIVATED;
-		when(deviceImpl.getState()).thenReturn(state);
-		when(deviceImpl.getLocation()).thenReturn("Undefined");
+        String state = GenericDevice.STATE_ACTIVATED;
+        GenericDevice deviceImpl = new PPDeviceMockImpl(devId, state, "Undefined", GenericDevice.FAULT_YES);
 		ServiceRegistration sr = icasa.registerService(deviceImpl, GenericDevice.class);
         
         BundleContext app1Context = getBundleContext(APP1_ID);
@@ -257,10 +255,12 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         app1device.addVariableListener(varListener);
         
         state = GenericDevice.STATE_DEACTIVATED;
-        //TODO create a mock generic device to change state
-//        waitForIt(1000);
-//        assertEquals(deviceImpl.getState(), app1device.getPropertyValue("State"));
-//        assertEquals(state, varListener.getLastValueChangeEvent("State").getVariable().getValue());
+        deviceImpl.setState(state);
+
+        waitForIt(1000);
+        assertEquals(deviceImpl.getState(), app1device.getPropertyValue(STATE_GENERIC_PROP_NAME));
+        assertTrue(varListener.hasValueChangeEvent(STATE_GENERIC_PROP_NAME));
+        assertEquals(state, varListener.getLastValueChangeEvent(STATE_GENERIC_PROP_NAME).getNewValue());
         
         //cleanup
 		depReg.unregister();
@@ -386,13 +386,26 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 
 		private StateVariable _var;
 		private Object _oldValue;
+		private Object _newValue;
 		private Object _sourceObj;
+		private boolean _isAddition = false;
+		private boolean _isRemoval = false;
+		private boolean _isValChange = false;
 
 		public VariableEvent(StateVariable variable, Object oldValue,
 				Object sourceObject) {
 			_var = variable;
 			_oldValue = oldValue;
+			_newValue = variable.getValue();
 			_sourceObj = sourceObject;
+			_isValChange = true;
+		}
+		
+		public VariableEvent(StateVariable variable, Object sourceObject, boolean isAddition) {
+			_var = variable;
+			_sourceObj = sourceObject;
+			_isAddition = isAddition;
+			_isRemoval = !isAddition;
 		}
 		
 		public StateVariable getVariable() {
@@ -402,20 +415,54 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 		public Object getOldValue() {
 			return _oldValue;
 		}
+		
+		public Object getNewValue() {
+			return _newValue;
+		}
 
 		public Object getSourceObj() {
 			return _sourceObj;
+		}
+		
+		public boolean isAddition() {
+			return _isAddition;
+		}
+		
+		public boolean isRemoval() {
+			return _isRemoval;
+		}
+		
+		public boolean isValChange() {
+			return _isValChange;
 		}
 	}
 	
 	public class VariableNotifListener implements StateVariableListener  {
 
-		public boolean valueChangeEvent = false;
-		
 		private List<VariableEvent> events = new ArrayList<VariableEvent>();
 		
 		public boolean hasValueChangeEvent() {
-			return valueChangeEvent;
+			for (VariableEvent event : events) {
+				if (event.isValChange())
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean hasAdditionEvent() {
+			for (VariableEvent event : events) {
+				if (event.isAddition())
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean hasRemovalEvent() {
+			for (VariableEvent event : events) {
+				if (event.isRemoval())
+					return true;
+			}
+			return false;
 		}
 		
 		public boolean hasValueChangeEvent(String propName) {
@@ -425,7 +472,7 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 		public VariableEvent getLastValueChangeEvent(String propName) {
 			VariableEvent valueChangeEvent = null;
 			for (VariableEvent event : events) {
-				if (event.getVariable().getName().equals(propName))
+				if (event.getVariable().getName().equals(propName) &&  event.isValChange())
 					valueChangeEvent = event;
 			}
 			
@@ -434,21 +481,22 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 
 		@Override
 		public void addVariable(StateVariable variable, Object sourceObject) {
-			// TODO Auto-generated method stub
-			
+			events.add(new VariableEvent(variable, sourceObject, true));
 		}
 
 		@Override
 		public void removeVariable(StateVariable variable, Object sourceObject) {
-			// TODO Auto-generated method stub
-			
+			events.add(new VariableEvent(variable, sourceObject, false));
 		}
 
 		@Override
 		public void notifValueChange(StateVariable variable, Object oldValue,
 				Object sourceObject) {
-			valueChangeEvent = true;
 			events.add(new VariableEvent(variable, oldValue, sourceObject));
+		}
+		
+		public void reset() {
+			events.clear();
 		}
 	}
 	

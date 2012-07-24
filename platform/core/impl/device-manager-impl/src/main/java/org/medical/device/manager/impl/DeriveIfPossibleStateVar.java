@@ -34,6 +34,27 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 	public DeriveIfPossibleStateVar(StateVariable originalVar, Attributable delegateObj) {
 		super(originalVar);
 		_originalVar = originalVar;
+		_originalVar.addListener(new StateVariableListener() {
+
+			@Override
+			public void addVariable(StateVariable variable, Object sourceObject) {
+				// do nothing
+			}
+
+			@Override
+			public void removeVariable(StateVariable variable,
+					Object sourceObject) {
+				_originalVar.removeListener(this);
+			}
+
+			@Override
+			public void notifValueChange(StateVariable variable,
+					Object oldValue, Object sourceObject) {
+				setValue(variable.getValue());
+				notifyValueChange(oldValue);
+			}
+			
+		});
 		setDelegateObj(delegateObj);
 	}
 
@@ -80,24 +101,24 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 			if (_delegateObj != null) {
 				_delegateVar = _delegateObj.getStateVariable(getName());
 				if (_delegateVar != null)
-					_delegateVar.addValueChangeListener(this);
+					_delegateVar.addListener(this);
 			} else {
 				if (_delegateVar != null)
-					_delegateVar.removeValueChangeListener(this);
+					_delegateVar.removeListener(this);
 				_delegateVar = null;
 			}
 		}
 	}
 
 	@Override
-	public void addValueChangeListener(StateVariableListener listener) {
+	public void addListener(StateVariableListener listener) {
 		synchronized (_listeners ) {
 			_listeners.add(listener);
 		}
 	}
 
 	@Override
-	public void removeValueChangeListener(StateVariableListener listener) {
+	public void removeListener(StateVariableListener listener) {
 		synchronized (_listeners ) {
 			_listeners.remove(listener);
 		}
@@ -112,11 +133,11 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 	protected void updateDelegateVar(StateVariable newVar) {
 		synchronized (_lockDelegate) {
 			if (_delegateVar != null)
-				_delegateVar.removeValueChangeListener(this);
+				_delegateVar.removeListener(this);
 			
 			_delegateVar = newVar;
 			if (newVar != null) {
-				_delegateVar.addValueChangeListener(this);
+				_delegateVar.addListener(this);
 			}
 		}
 	}

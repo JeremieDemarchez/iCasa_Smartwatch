@@ -134,22 +134,22 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 					return true;
 			}
 
-			if (DeviceManager.class.getName().equals(spec)) {
-				// remove device manager of other applications
-				DeviceManager devMgr = (DeviceManager) context.getService(sr);
-				context.ungetService(sr);
-				
-				if (!isFromApp && devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
-					return false;
-				}
-				
-				if (!isFromApp && !devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
-					return true;
-				}
-					
-				if (!devMgr.getApplicationId().equals(app.getId()))
-					return true;
-			}
+//			if (DeviceManager.class.getName().equals(spec)) {
+//				// remove device manager of other applications
+//				DeviceManager devMgr = (DeviceManager) context.getService(sr);
+//				context.ungetService(sr);
+//				
+//				if (!isFromApp && devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
+//					return false;
+//				}
+//				
+//				if (!isFromApp && !devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
+//					return true;
+//				}
+//					
+//				if (!devMgr.getApplicationId().equals(app.getId()))
+//					return true;
+//			}
 		}
 		
 		return false;

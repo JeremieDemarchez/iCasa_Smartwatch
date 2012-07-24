@@ -61,7 +61,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 	public AbstractDevice(String id, String name, String vendor, String typeId) {
 		super(id);
 		
-		((StateVariableImpl) getStateVariable(ID_PROP_NAME)).setDescription("Id");
+		((StateVariableImpl) getInternalVariable(ID_PROP_NAME)).setDescription("Id");
 		addStateVariable(new StateVariableImpl(NAME_PROP_NAME, name, String.class, VariableType.HUMAN_READABLE_DESCRIPTION, "Name", true, true, this));
 		addStateVariable(new StateVariableImpl(VENDOR_PROP_NAME, vendor, String.class, VariableType.HUMAN_READABLE_DESCRIPTION, "Vendor", true, true, this));
 		addStateVariable(new ManagedStateVariableImpl(FAULTS_PROP_NAME, _faults, _faults.getClass(), VariableType.STATE, "Faults", false, true, this));
@@ -255,7 +255,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 		synchronized(_listeners) {
 			_listeners.add(listener);
 			for (StateVariable var : getStateVariables()) {
-				var.addValueChangeListener(listener);
+				var.addListener(listener);
 			}
 			for (Service service : getServices())
 				service.addVariableListener(listener);

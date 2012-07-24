@@ -27,6 +27,7 @@ import java.util.Properties;
 import org.apache.felix.ipojo.annotations.*;
 import org.medical.application.Application;
 import org.medical.common.StateVariable;
+import org.medical.common.impl.StateVariableProxy;
 import org.medical.device.manager.ApplicationDevice;
 import org.medical.device.manager.ApplicationDeviceProxy;
 import org.medical.device.manager.Device;
@@ -76,6 +77,10 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 	
 	private class PollingThread extends Thread {
 		
+		public PollingThread() {
+			super("iCasa device model bridge updater");
+		}
+		
 		private boolean _killed = false;
 		
 		@Override
@@ -107,6 +112,8 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 
 		private void updateDerivedVariables(List<StateVariable> variables) {
 			for (StateVariable var : variables) {
+				if (var instanceof StateVariableProxy)
+					var = ((StateVariableProxy) var).getInternalVariable();
 				if (var instanceof DerivedStateVariableFromIntf)
 					var.getValue(); // use it to update value
 			}
@@ -175,6 +182,7 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 	public void start() {
 		_genericDeviceTracker.open();
 		_thread = new PollingThread();
+		_thread.start();
 	}
 	
 	@Invalidate
