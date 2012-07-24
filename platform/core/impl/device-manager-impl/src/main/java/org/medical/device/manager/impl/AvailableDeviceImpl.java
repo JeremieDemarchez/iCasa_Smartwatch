@@ -84,18 +84,18 @@ public class AvailableDeviceImpl implements AvailableDevice {
 	}
 
 	@Override
-	public Set<String> getPropertyNames() {
-		return  _device.getPropertyNames();
+	public Set<String> getVariableNames() {
+		return  _device.getVariableNames();
 	}
 
 	@Override
-	public Object getPropertyValue(String propertyName) {
-		return  _device.getPropertyValue(propertyName);
+	public Object getVariableValue(String propertyName) {
+		return  _device.getVariableValue(propertyName);
 	}
 
 	@Override
-	public void setPropertyValue(String propertyName, Object value) {
-		_device.setPropertyValue(propertyName, value);
+	public void setVariableValue(String propertyName, Object value) {
+		_device.setVariableValue(propertyName, value);
 	}
 
 	@Override
@@ -197,5 +197,10 @@ public class AvailableDeviceImpl implements AvailableDevice {
 		}
 		
 		return _device;
+	}
+
+	@Override
+	public boolean hasStateVariable(String varName) {
+		return _device.hasStateVariable(varName);
 	}
 }

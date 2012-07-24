@@ -64,7 +64,7 @@ public class ApplicationImpl extends EntityImpl implements Application {
 
 	@Override
 	public String getVendor() {
-		return (String) getPropertyValue(VENDOR_PROP_NAME);
+		return (String) getVariableValue(VENDOR_PROP_NAME);
 	}
 
 	@Override
@@ -100,11 +100,11 @@ public class ApplicationImpl extends EntityImpl implements Application {
 
 	@Override
 	public ApplicationState getState() {
-		return (ApplicationState) getPropertyValue(ACTIVATION_STATE_PROP_NAME);
+		return (ApplicationState) getVariableValue(ACTIVATION_STATE_PROP_NAME);
 	}
 	
 	public void setState(ApplicationState newState) {
-		setPropertyValue(ACTIVATION_STATE_PROP_NAME, newState);
+		setVariableValue(ACTIVATION_STATE_PROP_NAME, newState);
 	}
 
 	@Override

@@ -18,7 +18,6 @@ package org.medical.common.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -56,12 +55,12 @@ public class EntityImpl implements Identifiable, Attributable {
 	}
 
 	@Override
-	public final Set<String> getPropertyNames() {
+	public final Set<String> getVariableNames() {
 		return attributeValues.keySet();
 	}
 
 	@Override
-	public final Object getPropertyValue(String propertyName) {
+	public final Object getVariableValue(String propertyName) {
 		StateVariable stateVar = attributeValues.get(propertyName);
 		if (stateVar == null)
 			return null;
@@ -93,7 +92,7 @@ public class EntityImpl implements Identifiable, Attributable {
 	}
 
 	@Override
-	public final void setPropertyValue(String propertyName, Object value) {
+	public final void setVariableValue(String propertyName, Object value) {
 		StateVariable stateVar = attributeValues.get(propertyName);
 		if (stateVar == null)
 			throw new IllegalArgumentException("Property " + propertyName + " does not exist.");
@@ -138,7 +137,7 @@ public class EntityImpl implements Identifiable, Attributable {
 
 	@Override
 	public final String getId() {
-		return (String) getPropertyValue(ID_PROP_NAME);
+		return (String) getVariableValue(ID_PROP_NAME);
 	}
 	
 	/**
@@ -161,6 +160,7 @@ public class EntityImpl implements Identifiable, Attributable {
 	}
 	
 	protected final void addStateVariable(StateVariable var) {
+		StateVariableProxy varProxy;
 		synchronized (_lockStructChanges) {
 			final String propName = var.getName();
 			StateVariable stateVar = attributeValues.get(propName);
@@ -168,21 +168,26 @@ public class EntityImpl implements Identifiable, Attributable {
 				throw new IllegalArgumentException("Property " + propName
 						+ " already exists.");
 
-			attributeValues.put(propName, new StateVariableProxy(var));
+			varProxy = new StateVariableProxy(var);
+			attributeValues.put(propName, varProxy);
 		}
 		
 		synchronized(_listeners) {
 			for (StateVariableListener listener : _listeners) {
-				listener.addVariable(var, this);
-				var.addListener(listener);
+				listener.addVariable(varProxy, this);
+				varProxy.addListener(listener);
 			}
 		}
 	}
 	
 	protected final void removeStateVariable(StateVariable var) {
+		removeStateVariable(var.getName());
+	}
+	
+	protected final void removeStateVariable(String varName) {
 		StateVariableProxy varProxy = null;
 		synchronized (_lockStructChanges) {
-			final String propName = var.getName();
+			final String propName = varName;
 			varProxy = attributeValues.remove(propName);
 		}
 		
@@ -191,8 +196,8 @@ public class EntityImpl implements Identifiable, Attributable {
 		
 		synchronized(_listeners) {
 			for (StateVariableListener listener : _listeners) {
-				varProxy.removeListener(listener);
 				listener.removeVariable(varProxy, this);
+				varProxy.removeListener(listener);
 			}
 		}
 	}
@@ -233,6 +238,11 @@ public class EntityImpl implements Identifiable, Attributable {
 				var.removeListener(listener);
 			}
 		}
+	}
+
+	@Override
+	public boolean hasStateVariable(String varName) {
+		return getStateVariable(varName) != null;
 	}
 
 	

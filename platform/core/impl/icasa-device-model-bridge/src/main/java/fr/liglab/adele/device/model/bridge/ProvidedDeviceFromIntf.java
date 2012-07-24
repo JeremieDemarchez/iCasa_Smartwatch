@@ -109,7 +109,7 @@ public class ProvidedDeviceFromIntf extends AbstractProvidedDevice implements St
 	}
 	
 	private void updateFaultState() {
-		String deviceFault = (String) getPropertyValue(FAULT_ATTR_NAME);
+		String deviceFault = (String) getVariableValue(FAULT_ATTR_NAME);
 		boolean hasFault = (deviceFault != null) && (deviceFault.equalsIgnoreCase("yes"));
 		Fault fault = hasFault ? Fault.YES : Fault.NO ;
 		changeFault(new DetailedFault(fault, "Unknown", this.getClass().getName() + ":" + _device.getSerialNumber()));

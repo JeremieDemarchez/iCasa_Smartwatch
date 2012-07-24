@@ -15,30 +15,13 @@
  */
 package org.medical.device.manager.impl;
 
-import org.medical.common.StateVariable;
-import org.medical.device.manager.Device;
-import org.medical.device.manager.Operation;
-import org.medical.device.manager.util.AbstractService;
-
-public class KnownDeviceServiceImpl extends AbstractService {
-	
-	public KnownDeviceServiceImpl(String serviceId, Device device) {
-		super(serviceId, device);
-	}
-
-	public void addVar(StateVariable var) {
-		addStateVariable(var);
-	}
-	
-	public void removeVar(StateVariable var) {
-		removeStateVariable(var);
-	}
-	
-	public void removeVar(String varName) {
-		removeStateVariable(varName);
-	}
-	
-	public void addOp(Operation op) {
-		addOperation(op);
-	}
+/**
+ * Represents the lifecycle of a variable.
+ * Usually, it is synchronized to an entity lifecycle.
+ * 
+ * @author Thomas Leveque
+ *
+ */
+public enum VariableLifeCycle {
+	AVAILABLE_SYNC /* exists only when the provider device is available */ , ALWAYS /* always exists */
 }

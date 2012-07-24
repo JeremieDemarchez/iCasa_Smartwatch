@@ -134,10 +134,10 @@ public class DynamicProxyFactory {
 					// case of attribute
 					if (ReflectUtil.isGetterMethod(method)) {
 						String attrName = ReflectUtil.getAttrName(method);
-						return attributable.getPropertyValue(attrName);
+						return attributable.getVariableValue(attrName);
 					} else if (ReflectUtil.isSetterMethod(method)) {
 						String attrName = ReflectUtil.getAttrName(method);
-						attributable.setPropertyValue(attrName, args[0]);
+						attributable.setVariableValue(attrName, args[0]);
 						return null;
 					}
 					

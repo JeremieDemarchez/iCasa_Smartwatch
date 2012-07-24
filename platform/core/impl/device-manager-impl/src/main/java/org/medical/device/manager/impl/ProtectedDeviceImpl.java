@@ -40,18 +40,18 @@ public class ProtectedDeviceImpl implements ApplicationDevice  {
 	}
 
 	@Override
-	public Set<String> getPropertyNames() {
-		return _appDev.getPropertyNames();
+	public Set<String> getVariableNames() {
+		return _appDev.getVariableNames();
 	}
 
 	@Override
-	public Object getPropertyValue(String propertyName) {
-		return _appDev.getPropertyValue(propertyName);
+	public Object getVariableValue(String propertyName) {
+		return _appDev.getVariableValue(propertyName);
 	}
 
 	@Override
-	public void setPropertyValue(String propertyName, Object value) {
-		_appDev.setPropertyValue(propertyName, value);
+	public void setVariableValue(String propertyName, Object value) {
+		_appDev.setVariableValue(propertyName, value);
 	}
 
 	@Override
@@ -187,6 +187,11 @@ public class ProtectedDeviceImpl implements ApplicationDevice  {
 	@Override
 	public void removeVariableListener(StateVariableListener listener) {
 		_appDev.removeVariableListener(listener);
+	}
+
+	@Override
+	public boolean hasStateVariable(String varName) {
+		return _appDev.hasStateVariable(varName);
 	}
 
 }

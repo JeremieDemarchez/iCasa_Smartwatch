@@ -77,12 +77,12 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 
 	@Override
 	public String getName() {
-		return (String) getPropertyValue(NAME_PROP_NAME);
+		return (String) getVariableValue(NAME_PROP_NAME);
 	}
 
 	@Override
 	public String getVendor() {
-		return (String) getPropertyValue(VENDOR_PROP_NAME);
+		return (String) getVariableValue(VENDOR_PROP_NAME);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 
 	@Override
 	public List<DetailedFault> getDetailedFaults() {
-		return Collections.unmodifiableList((List<DetailedFault>) getPropertyValue(FAULTS_PROP_NAME));
+		return Collections.unmodifiableList((List<DetailedFault>) getVariableValue(FAULTS_PROP_NAME));
 	}
 	
 	/**
@@ -160,7 +160,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 
 	@Override
 	public boolean isAvailable() {
-		return (Boolean) getPropertyValue(AVAILABLE_PROP_NAME);
+		return (Boolean) getVariableValue(AVAILABLE_PROP_NAME);
 	}
 
 	@Override
@@ -175,7 +175,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 
 	@Override
 	public String getTypeId() {
-		return (String) getPropertyValue(TYPE_PROP_NAME);
+		return (String) getVariableValue(TYPE_PROP_NAME);
 	}
 
 	@Override

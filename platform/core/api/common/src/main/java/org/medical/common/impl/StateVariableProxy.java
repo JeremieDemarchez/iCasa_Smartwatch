@@ -17,6 +17,7 @@ package org.medical.common.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableListener;
@@ -31,6 +32,8 @@ import org.medical.common.VariableType;
 public class StateVariableProxy implements StateVariable, StateVariableListener {
 	
 	private StateVariable _var;
+	
+	private String _varName;
 	
 	protected List<StateVariableListener> _listeners = new ArrayList<StateVariableListener>();
 
@@ -48,12 +51,13 @@ public class StateVariableProxy implements StateVariable, StateVariableListener 
 	}
 
 	public StateVariableProxy(StateVariable var) {
+		_varName = var.getName();
 		setInternalVariable(var);
 	}
 
 	@Override
 	public synchronized String getName() {
-		return _var.getName();
+		return _varName;
 	}
 
 	@Override
@@ -141,6 +145,26 @@ public class StateVariableProxy implements StateVariable, StateVariableListener 
 				listener.notifValueChange(this, oldValue, sourceObject);
 			}
 		}
+	}
+
+	@Override
+	public boolean hasMetadata(String name) {
+		return _var.hasMetadata(name);
+	}
+
+	@Override
+	public Object getMetadataValue(String name) {
+		return _var.getMetadataValue(name);
+	}
+
+	@Override
+	public void setMetadataValue(String name, Object value) {
+		_var.setMetadataValue(name, value);
+	}
+
+	@Override
+	public Map<String, Object> getMetadataValues() {
+		return _var.getMetadataValues();
 	}
 
 }

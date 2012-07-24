@@ -17,8 +17,10 @@ package org.medical.device.manager.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.medical.application.Application;
 import org.medical.common.Attributable;
@@ -42,6 +44,8 @@ import org.medical.device.manager.util.AbstractDevice;
  *
  */
 public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, StateVariableListener {
+
+	private static final String LIFECYCLE_METADATA = "lifecycle";
 
 	private AvailableDeviceImpl _device;
 	
@@ -183,6 +187,8 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 	}
 
 	private void mergeVars(Attributable delegateAttributable, Attributable originalAttributable) {
+		
+		// add and update variables provided by available device
 		final List<StateVariable> deviceVars = delegateAttributable.getStateVariables();
 		for (StateVariable delegateVar : deviceVars) {
 			StateVariable varProxy = originalAttributable.getStateVariable(delegateVar.getName());
@@ -199,10 +205,28 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 			
 			StateVariable newVar = new StateVariableImpl(delegateVar);
 			StateVariable derivVar = new DeriveIfPossibleStateVar(newVar, delegateAttributable);
+			derivVar.setMetadataValue(LIFECYCLE_METADATA, VariableLifeCycle.AVAILABLE_SYNC);
 			if (originalAttributable == this)
 				addStateVariable(derivVar);
 			else
 				((KnownDeviceServiceImpl) originalAttributable).addVar(derivVar);
+		}
+		
+		// remove variables which came from available device and are no more provided
+		Set<String> propsToRem = new HashSet<String>();
+		for (StateVariable var : originalAttributable.getStateVariables()) {
+			if (!VariableLifeCycle.AVAILABLE_SYNC.equals(var.getMetadataValue(LIFECYCLE_METADATA)))
+				continue;
+			
+			String varName = var.getName();
+			if (!delegateAttributable.hasStateVariable(varName))
+				propsToRem.add(varName);
+		}
+		for (String varName : propsToRem) {
+			if (originalAttributable == this)
+				removeStateVariable(varName);
+			else
+				((KnownDeviceServiceImpl) originalAttributable).removeVar(varName);
 		}
 	}
 

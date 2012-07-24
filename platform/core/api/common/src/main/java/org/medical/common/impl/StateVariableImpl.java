@@ -16,7 +16,10 @@
 package org.medical.common.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableListener;
@@ -33,6 +36,7 @@ public class StateVariableImpl implements StateVariable {
 	protected List<StateVariableListener> _listeners = new ArrayList<StateVariableListener>();
 	private String _description;
 	private Object _owner;
+	private Map<String, Object> _metadata = new ConcurrentHashMap<String, Object>();
 	
 	public StateVariableImpl(String name, Object value, Class type, VariableType varType,
 			String description, boolean canBeModified, boolean canSendNotif, Object owner) {
@@ -142,6 +146,26 @@ public class StateVariableImpl implements StateVariable {
 	@Override
 	public Object getOwner() {
 		return _owner;
+	}
+
+	@Override
+	public boolean hasMetadata(String name) {
+		return _metadata.containsKey(name);
+	}
+
+	@Override
+	public Object getMetadataValue(String name) {
+		return _metadata.get(name);
+	}
+
+	@Override
+	public void setMetadataValue(String name, Object value) {
+		_metadata.put(name, value);
+	}
+
+	@Override
+	public Map<String, Object> getMetadataValues() {
+		return Collections.unmodifiableMap(_metadata );
 	}
 
 }

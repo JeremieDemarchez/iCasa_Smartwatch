@@ -28,37 +28,37 @@ import java.util.Set;
 public interface Attributable {
 
 	/**
-	 * Returns a set containing all property names.
+	 * Returns a set containing all variable names.
 	 * 
-	 * @return a set containing all property names.
+	 * @return a set containing all variable names.
 	 */
-	public Set<String> getPropertyNames();
+	public Set<String> getVariableNames();
 	
 	/**
-	 * Returns value of specified property.
-	 * Returns null if there is no specified property
+	 * Returns value of specified variable.
+	 * Returns null if there is no specified variable
 	 * 
-	 * @param propertyName name of considered property
-	 * @return value of specified property.
+	 * @param variableName name of considered variable
+	 * @return value of specified variable.
 	 */
-	public Object getPropertyValue(String propertyName);
+	public Object getVariableValue(String variableName);
 	
 	/**
 	 * Returns variable with specified name.
 	 * Returns null if there is no such variable
 	 * 
-	 * @param propertyName name of considered variable
+	 * @param variableName name of considered variable
 	 * @return variable with specified name.
 	 */
-	public StateVariable getStateVariable(String propertyName);
+	public StateVariable getStateVariable(String variableName);
 	
 	/**
-	 * Sets value of specified property.
+	 * Sets value of specified variable.
 	 * 
-	 * @param propertyName name of considered property
-	 * @param value property value to set
+	 * @param variableName name of considered variable
+	 * @param value variable value to set
 	 */
-	public void setPropertyValue(String propertyName, Object value);
+	public void setVariableValue(String variableName, Object value);
 	
 	/**
 	 * Returns list of state variables which represent all properties.
@@ -101,4 +101,12 @@ public interface Attributable {
 	 * @param listener a listener
 	 */
 	public void removeVariableListener(StateVariableListener listener);
+
+	/**
+	 * Returns true if a variable with specified name exists.
+	 * 
+	 * @param varName a variable name
+	 * @return true if a variable with specified name exists.
+	 */
+	public boolean hasStateVariable(String varName);
 }
