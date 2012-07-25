@@ -26,5 +26,5 @@ felix-cache
 /platform/core/test/test-common/src/main/java/org/medical/test/common/ICasaOSGiHelper.java
 /platform/physical-devices/upnp/upnp-presence-detector-proxy/Zone.sav
 /platform/physical-devices/usb/usb-discovery/Zone.sav
-
+/platform/physical-devices/.settings/
 /tools/web-tools-common/web-common/bin
