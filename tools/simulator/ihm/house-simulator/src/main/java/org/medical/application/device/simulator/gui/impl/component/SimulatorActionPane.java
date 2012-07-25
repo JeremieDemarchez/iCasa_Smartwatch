@@ -109,6 +109,17 @@ public class SimulatorActionPane extends ActionPane {
 		if (m_userPane != null)
 			m_userPane.moveUser(userName, position);
 	}
+	
+	public void addUser(String userName) {
+		if (m_userPane != null)
+			m_userPane.addUser(userName);	   
+   }
+
+	public void removeUser(String userName) {
+		if (m_userPane != null)
+			m_userPane.removeUser(userName);	   
+   }
+
 
 	public SimulatorApplicationImpl getApplicationInstance() {
 		return appInstance;
@@ -124,7 +135,8 @@ public class SimulatorActionPane extends ActionPane {
 	
 	public void initializeEnvironments() {
 		if (m_userPane!=null)
-			m_userPane.initializeRoomPositions();
+			m_userPane.initializedSimulatedRooms();
 	}
+
 
 }

@@ -273,6 +273,10 @@ public interface SimulationManager {
      */
     void killAllHumans();
     
+    void addUser(String userName);
+    
+    void removeUser(String userName);
+    
 
     /**
      * Sets an environment variable
@@ -283,9 +287,13 @@ public interface SimulationManager {
     void setEnvironmentVariable(String environmentId, String variable, Double value);
        
 
+    // --- Device and User events listeners methods and classes --- //
+    
     
     /**
      * 
+     * @author Gabriel Pedraza Ferreira
+     *
      */
     public static interface DevicePositionListener extends EventListener {
 
@@ -299,10 +307,16 @@ public interface SimulationManager {
 
     /**
      * 
+     * @author Gabriel Pedraza Ferreira
+     *
      */
     public static interface UserPositionListener extends EventListener {
 
         void userPositionChanged(String userName, Position position);
+        
+        void userAdded(String userName);
+        
+        void userRemoved(String userName);
 
     }
 

@@ -255,6 +255,28 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			}
 		});
 	}
+	
+	@Override
+   public void userAdded(final String userName) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.addUser(userName);
+			}
+		});	   
+   }
+
+	@Override
+   public void userRemoved(final String userName) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.removeUser(userName);
+			}
+		});		   
+   }
 
 	// ---- Component properties methods ---- //
 
@@ -566,4 +588,6 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			}
 		}	   
    }
+
+
 }
