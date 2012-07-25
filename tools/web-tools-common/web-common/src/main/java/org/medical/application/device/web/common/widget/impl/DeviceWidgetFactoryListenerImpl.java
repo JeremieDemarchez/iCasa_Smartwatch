@@ -45,7 +45,7 @@ import org.xml.sax.helpers.DefaultHandler;
 
 @Component(name = "DeviceWidgetFactoryListener")
 @Instantiate(name = "DeviceWidgetFactoryListener-0")
-@Extender(onArrival = "onBundleArrival", onDeparture = "onBundleDeparture", extension = "Common-Widget-Factory")
+@Extender(onArrival = "onBundleArrival", onDeparture = "onBundleDeparture", extension = "Widget-Factory")
 public class DeviceWidgetFactoryListenerImpl {
 
 	@Requires(filter = ("(factory.name=DeviceWidgetFactory)"))
