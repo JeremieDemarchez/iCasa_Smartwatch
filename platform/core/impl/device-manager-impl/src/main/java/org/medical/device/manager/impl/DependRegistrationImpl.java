@@ -97,14 +97,6 @@ public class DependRegistrationImpl implements DependRegistration, Devicetracker
 	private void addResolvedDevice(ApplicationDevice device) {
 		synchronized(_resolvedDevices) {
 			_resolvedDevices.add(device);
-
-			final List<Class> exportedInterfaces = _deps.getExportedInterfaces();
-			if (exportedInterfaces.isEmpty())
-				return;
-		
-			for (ApplicationDevice appDev : _resolvedDevices) {
-				_devMgr.createDeviceProxy(appDev);
-			}
 		}
 	}
 	
@@ -150,14 +142,10 @@ public class DependRegistrationImpl implements DependRegistration, Devicetracker
 	}
 
 	private ApplicationDevice createApplicationDevice(KnownDevice knownDev) {
-		ApplicationDevice appDev = _devMgr.createApplicationDevice(getApplication(), knownDev);
+		
 		final List<Class> exportedInterfaces = _deps.getExportedInterfaces();
-		if (exportedInterfaces.isEmpty())
-			return appDev;
 		
-		Object devproxy = _devMgr.createDeviceProxy(appDev, exportedInterfaces.toArray(new Class[exportedInterfaces.size()]));
-		
-		return appDev;
+		return _devMgr.createApplicationDevice(getApplication(), knownDev, exportedInterfaces);
 	}
 
 	private boolean computeResolveStatus() {

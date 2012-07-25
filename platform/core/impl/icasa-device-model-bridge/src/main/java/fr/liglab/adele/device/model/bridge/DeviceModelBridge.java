@@ -90,7 +90,6 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 				Collection<ProvidedDevice> providedDevices = null;
 				synchronized(_providedProxyDevs) {
 					providedDevices = _providedProxyDevs.values();
-				}
 				
 				for (ProvidedDevice device : providedDevices) {
 					updateDerivedVariables(device.getStateVariables());
@@ -98,6 +97,7 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 					for (Service serv : device.getServices()) {
 						updateDerivedVariables(serv.getStateVariables());
 					}
+				}
 				}
 				
 				synchronized (this) {

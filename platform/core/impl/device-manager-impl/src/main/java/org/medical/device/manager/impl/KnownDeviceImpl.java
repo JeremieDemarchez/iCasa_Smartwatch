@@ -126,7 +126,8 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 
 	public void removeAvailableDevice() {
 		synchronized (_lockStructChanges) {
-			_device.removeVariableListener(this);
+			if (_device != null)
+				_device.removeVariableListener(this);
 			_device = null;
 
 			for (StateVariable var : getInternalStateVariables()) {

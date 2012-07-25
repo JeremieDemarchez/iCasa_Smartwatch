@@ -51,6 +51,9 @@ public class ApplicationDSLPolicyManager implements PolicyManager {
 
 	@Override
 	public boolean canGiveUnprotectedDevTo(Application app) {
+		if (app == null)
+			return true;
+		
 		//TODO implement it
 		if (app.getId().equals("icasa.simulator"))
 			return true;
