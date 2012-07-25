@@ -41,7 +41,7 @@ import org.medical.script.executor.ScriptExecutor;
 import org.medical.script.executor.impl.actions.Action;
 import org.medical.script.executor.impl.actions.ActivateDeviceAction;
 import org.medical.script.executor.impl.actions.AddDeviceAction;
-import org.medical.script.executor.impl.actions.ConfigureDeviceAction;
+import org.medical.script.executor.impl.actions.MoveDeviceAction;
 import org.medical.script.executor.impl.actions.DeactivateDeviceAction;
 import org.medical.script.executor.impl.actions.FaultDeviceAction;
 import org.medical.script.executor.impl.actions.ModifyDeviceValueAction;
@@ -285,11 +285,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 							logger.info("--------------- Remove Device ------------------ ");
 						}
 
-						if (childNode.getNodeName().equals("configure-device")) {
+						if (childNode.getNodeName().equals("move-device")) {
 							Element element = (Element) childNode;
 							String room = element.getAttribute("room");
 							String deviceId = element.getAttribute("deviceID");
-							list.add(new ConfigureDeviceAction(ScriptExecutorImpl.this, delay, deviceId, room));
+							list.add(new MoveDeviceAction(ScriptExecutorImpl.this, delay, deviceId, room));
 							logger.info("================ Configure Device ================== ");
 						}
 
@@ -310,7 +310,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 						if (childNode.getNodeName().equals("activate-device")) {
 							Element element = (Element) childNode;
 							String deviceId = element.getAttribute("deviceID");
-							list.add(new ActivateDeviceAction(ScriptExecutorImpl.this, delay,deviceId));
+							list.add(new ActivateDeviceAction(ScriptExecutorImpl.this, delay, deviceId));
 							logger.info(" //////////////// Activate Device ///////////////// ");
 						}
 						

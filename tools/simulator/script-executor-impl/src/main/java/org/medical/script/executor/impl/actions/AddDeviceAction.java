@@ -17,7 +17,6 @@ package org.medical.script.executor.impl.actions;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map;
 import java.util.Random;
 
 import org.apache.felix.ipojo.ConfigurationException;
@@ -25,8 +24,6 @@ import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.medical.script.executor.impl.ScriptExecutorImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
@@ -39,7 +36,6 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public class AddDeviceAction extends DeviceAction {
 
-	private static final Logger logger = LoggerFactory.getLogger(AddDeviceAction.class);
 
 	private String deviceType;
 

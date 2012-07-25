@@ -25,6 +25,8 @@ import nextapp.echo.extras.app.DragSource;
  */
 public class DropEvent extends ActionEvent {
 
+   private static final long serialVersionUID = 5554555074771882441L;
+   
 	private Component target;
 	private Component specificTarget;
 	private int targetX;

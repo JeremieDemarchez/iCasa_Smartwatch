@@ -397,7 +397,10 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		return null;
 	}
 	
-	
+	/**
+	 * Removes the intance of a device
+	 * @param deviceSerialNumber
+	 */
 	public void disposeDeviceInstance(String deviceSerialNumber) {
 		GenericDevice genDevice = devices.get(deviceSerialNumber);
 		if ((genDevice != null) && (genDevice instanceof Pojo)) {

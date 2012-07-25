@@ -124,6 +124,7 @@
            
             <Export-Package>org.medical.application.device.web.common.impl,
               org.medical.application.device.web.common.impl.component,
+              org.medical.application.device.web.common.impl.component.event,
               org.medical.application.device.web.common.widget,
               org.medical.application.device.web.common.widget.impl,
               org.medical.application.device.web.common.util,
@@ -132,8 +133,7 @@
               echo3-app; inline=META-INF/nextapp/echo/SerialPeers.properties,
               echo3extras-app;
               inline=META-INF/nextapp/echo/**
-            </Embed-Dependency>
-            
+            </Embed-Dependency>            
           </instructions>
         </configuration>
       </plugin>

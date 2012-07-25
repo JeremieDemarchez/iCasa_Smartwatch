@@ -28,13 +28,13 @@ import org.slf4j.LoggerFactory;
  * @author Gabriel
  *
  */
-public class ConfigureDeviceAction extends DeviceAction {
+public class MoveDeviceAction extends DeviceAction {
 
 	private String location;
 	
-	private static final Logger logger = LoggerFactory.getLogger(ConfigureDeviceAction.class);
+	private static final Logger logger = LoggerFactory.getLogger(MoveDeviceAction.class);
 
-	public ConfigureDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId, String location) {
+	public MoveDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId, String location) {
 	   super(simulatedBehavior, delay, deviceId);
 	   this.location = location;
    }
@@ -43,9 +43,7 @@ public class ConfigureDeviceAction extends DeviceAction {
 	public void run() {
 		GenericDevice device = scriptExecutorImpl.getDevices().get(deviceId);
 		if (device!=null) {							
-			//PresenceSensor sensor = (PresenceSensor) device;
-			//sensor.setState("activated");
-			device.setState("activated");
+			//device.setState("activated");
 			findEnvironment(deviceId, location);			
 		}
 	}
