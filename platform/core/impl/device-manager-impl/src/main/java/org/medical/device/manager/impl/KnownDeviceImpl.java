@@ -17,8 +17,10 @@ package org.medical.device.manager.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.medical.application.Application;
 import org.medical.common.Attributable;
@@ -32,6 +34,7 @@ import org.medical.device.manager.KnownDevice;
 import org.medical.device.manager.Operation;
 import org.medical.device.manager.OperationParameter;
 import org.medical.device.manager.Service;
+import org.medical.device.manager.VariableLifeCycle;
 import org.medical.device.manager.impl.util.AppendFaultIfPossibleStateVar;
 import org.medical.device.manager.util.AbstractDevice;
 
@@ -41,9 +44,7 @@ import org.medical.device.manager.util.AbstractDevice;
  * @author Thomas Leveque
  *
  */
-public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, StateVariableListener {
-
-	private AvailableDeviceImpl _device;
+public class KnownDeviceImpl extends SynchronizedDevice implements KnownDevice {
 	
 	private Application _ownerApp;
 
@@ -62,22 +63,12 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 		
 		// availability attribute
 		StateVariable originalVar = getInternalVariable(AVAILABLE_PROP_NAME);
-		changeVariableImplem(new AvailabilityStateVar(originalVar, _device));
-	}
-	
-	private void replaceByDelegateAppendVar(String varName) {
-		StateVariable originalVar = getInternalVariable(varName);
-		changeVariableImplem(new AppendFaultIfPossibleStateVar(originalVar, _device));
-	}
-
-	private void replaceByDelegateVar(String varName) {
-		StateVariable originalVar = getInternalVariable(varName);
-		changeVariableImplem(new DeriveIfPossibleStateVar(originalVar, _device));
+		changeVariableImplem(new AvailabilityStateVar(originalVar, getAvailableDevice()));
 	}
 
 	@Override
 	public AvailableDevice getAvailableDevice() {
-		return _device;
+		return (AvailableDevice) getDelegateDevice();
 	}
 
 	@Override
@@ -92,10 +83,11 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 
 	@Override
 	public boolean hasExclusiveAccess() {
-		if (_device == null)
+		AvailableDevice device = getAvailableDevice();
+		if (device == null)
 			return false;
 		
-		return  _device.hasExclusiveAccess();//TODO
+		return  device.hasExclusiveAccess();//TODO
 	}
 
 	public void addApplicationDevice(ApplicationDevice appDev) {
@@ -121,88 +113,13 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 	}
 
 	public void removeAvailableDevice() {
-		synchronized (_lockStructChanges) {
-			_device.removeVariableListener(this);
-			_device = null;
-
-			for (StateVariable var : getInternalStateVariables()) {
-				if (!(var instanceof DeriveIfPossibleStateVar))
-					continue;
-
-				((DeriveIfPossibleStateVar) var).setDelegateObj(null);
-			}
-		}
+		setDelegateDevice(null);
 	}
 
 	public void addAvailableDevice(AvailableDeviceImpl device) {
-		_device = device;
-		device.setKnownDevice(this);
-		
-		device.addVariableListener(this);
-		synchronizeWithAvailable();
-		for (StateVariable var : getInternalStateVariables()) {
-			if (!(var instanceof DeriveIfPossibleStateVar))
-				continue;
-
-			((DeriveIfPossibleStateVar) var).setDelegateObj(_device);
-		}
-	}
-
-	private void synchronizeWithAvailable() {
 		synchronized (_lockStructChanges) {
-			mergeVars(_device, this);
-			for (Service delegateService : _device.getServices()) {
-				Service service = getService(delegateService.getTypeId());
-				if (service == null) {
-					service = new KnownDeviceServiceImpl(
-							delegateService.getId(), this);
-					addService(service);
-				}
-				mergeVars(delegateService, service);
-				mergeOps(delegateService, service);
-			}
-		}
-	}
-	
-	private void mergeOps(Service delegateService, Service service) {
-		for (Operation delegateOp : delegateService.getOperations()) {
-			List<OperationParameter> delegateParams = delegateOp.getParameters();
-			Class[] paramTypes = new Class[delegateParams.size()];
-			for (int i = 0; i < delegateParams.size(); i++) {
-				OperationParameter delegateParam = delegateParams.get(i);
-				paramTypes[i] = delegateParam.getValueType();
-			}
-			Operation op = service.getOperation(delegateOp.getName(), paramTypes);
-			if (op == null) {
-				op = new KnownDeviceServOpImpl(delegateOp, service, _device);
-				((KnownDeviceServiceImpl) service).addOp(op);
-			} else {
-				((KnownDeviceServOpImpl) service).setDelegateDevice(_device);
-			}
-		}
-	}
-
-	private void mergeVars(Attributable delegateAttributable, Attributable originalAttributable) {
-		final List<StateVariable> deviceVars = delegateAttributable.getStateVariables();
-		for (StateVariable delegateVar : deviceVars) {
-			StateVariable varProxy = originalAttributable.getStateVariable(delegateVar.getName());
-			StateVariable var = null;
-			if (varProxy != null)
-				var = ((StateVariableProxy) varProxy).getInternalVariable();
-			if (var != null) {
-				if (!(var instanceof DeriveIfPossibleStateVar))
-					continue;
-				
-				((DeriveIfPossibleStateVar) var).setDelegateObj(delegateAttributable);
-				continue;
-			}
-			
-			StateVariable newVar = new StateVariableImpl(delegateVar);
-			StateVariable derivVar = new DeriveIfPossibleStateVar(newVar, delegateAttributable);
-			if (originalAttributable == this)
-				addStateVariable(derivVar);
-			else
-				((KnownDeviceServiceImpl) originalAttributable).addVar(derivVar);
+			device.setKnownDevice(this);
+			setDelegateDevice(device);
 		}
 	}
 
@@ -222,22 +139,6 @@ public class KnownDeviceImpl extends AbstractDevice implements KnownDevice, Stat
 		
 		KnownDevice other = (KnownDevice) obj;
 		return other.getId().equals(getId());
-	}
-
-	@Override
-	public void addVariable(StateVariable variable, Object sourceObject) {
-		synchronizeWithAvailable();
-	}
-
-	@Override
-	public void removeVariable(StateVariable variable, Object sourceObject) {
-		synchronizeWithAvailable();
-	}
-
-	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
-			Object sourceObject) {
-		// do nothing
 	}
 	
 }

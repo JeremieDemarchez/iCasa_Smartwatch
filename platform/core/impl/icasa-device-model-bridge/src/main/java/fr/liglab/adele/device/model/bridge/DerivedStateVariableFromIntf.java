@@ -62,6 +62,6 @@ public class DerivedStateVariableFromIntf extends StateVariableImpl {
 	private void updateInternalValue(Object value) {
 		Object oldValue = _value;
 		_value = value;
-		notifyValueChange(oldValue);
+		notifyValueChange(oldValue, _value);
 	}
 }

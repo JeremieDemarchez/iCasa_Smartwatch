@@ -176,7 +176,7 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         ApplicationDevice app1device = (ApplicationDevice) getServiceObject(ApplicationDevice.class, app1Context);
         assertNotNull(app1device);
         assertEquals(deviceImpl.getSerialNumber(), app1device.getId());
-        assertEquals(deviceImpl.getLocation(), app1device.getPropertyValue("Location"));
+        assertEquals(deviceImpl.getLocation(), app1device.getVariableValue("Location"));
         
         app1GenDevice = (GenericDevice) getServiceObject(GenericDevice.class, app1Context);
         assertNull(app1GenDevice);
@@ -220,8 +220,8 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         ApplicationDevice app1device = (ApplicationDevice) getServiceObject(ApplicationDevice.class, app1Context);
         assertNotNull(app1device);
         assertEquals(deviceImpl.getSerialNumber(), app1device.getId());
-        assertEquals(deviceImpl.getLocation(), app1device.getPropertyValue("Location"));
-        assertEquals(deviceImpl.getState(), app1device.getPropertyValue("State"));
+        assertEquals(deviceImpl.getLocation(), app1device.getVariableValue("Location"));
+        assertEquals(deviceImpl.getState(), app1device.getVariableValue("State"));
         assertEquals(deviceImpl.getFault().equals(GenericDevice.FAULT_YES), app1device.getGlobalFault().equals(Fault.YES));
         
         //cleanup
@@ -258,7 +258,7 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
         deviceImpl.setState(state);
 
         waitForIt(1000);
-        assertEquals(deviceImpl.getState(), app1device.getPropertyValue(STATE_GENERIC_PROP_NAME));
+        assertEquals(deviceImpl.getState(), app1device.getVariableValue(STATE_GENERIC_PROP_NAME));
         assertTrue(varListener.hasValueChangeEvent(STATE_GENERIC_PROP_NAME));
         assertEquals(state, varListener.getLastValueChangeEvent(STATE_GENERIC_PROP_NAME).getNewValue());
         
@@ -393,10 +393,10 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 		private boolean _isValChange = false;
 
 		public VariableEvent(StateVariable variable, Object oldValue,
-				Object sourceObject) {
+				Object newValue, Object sourceObject) {
 			_var = variable;
 			_oldValue = oldValue;
-			_newValue = variable.getValue();
+			_newValue = newValue;
 			_sourceObj = sourceObject;
 			_isValChange = true;
 		}
@@ -490,9 +490,9 @@ public class ICasaDeviceBridgeTest extends ICasaAbstractTest {
 		}
 
 		@Override
-		public void notifValueChange(StateVariable variable, Object oldValue,
+		public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
 				Object sourceObject) {
-			events.add(new VariableEvent(variable, oldValue, sourceObject));
+			events.add(new VariableEvent(variable, oldValue, newValue, sourceObject));
 		}
 		
 		public void reset() {

@@ -15,6 +15,7 @@
  */
 package org.medical.device.manager.impl;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
@@ -23,8 +24,10 @@ import org.medical.application.Application;
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableExtender;
 import org.medical.common.StateVariableListener;
+import org.medical.common.impl.EntityImpl;
 import org.medical.device.manager.AvailableDevice;
 import org.medical.device.manager.DetailedFault;
+import org.medical.device.manager.Device;
 import org.medical.device.manager.DeviceProxy;
 import org.medical.device.manager.DiscoveryRecord;
 import org.medical.device.manager.Fault;
@@ -34,93 +37,35 @@ import org.medical.device.manager.Service;
 import org.medical.device.manager.ApplicationDevice;
 import org.omg.CORBA._PolicyStub;
 
-public class AvailableDeviceImpl implements AvailableDevice {
+/**
+ * 
+ * 
+ * @author Thomas Leveque
+ *
+ */
+public class AvailableDeviceImpl extends SynchronizedDevice implements AvailableDevice {
 
-	private ProvidedDevice _device;
 	private KnownDevice _knownDevice;
 
 	public AvailableDeviceImpl(ProvidedDevice device) {
-		_device = device;
+		super(device);
 	}
-
-	@Override
-	public String getName() {
-		return _device.getName();
-	}
-
-	@Override
-	public String getVendor() {
-		return _device.getVendor();
-	}
-
-	@Override
-	public boolean hasFault() {
-		return _device.hasFault();
-	}
-
-	@Override
-	public Fault getGlobalFault() {
-		return _device.getGlobalFault();
+	
+	protected void customizeVariables() {
+		replaceByDelegateVar(NAME_PROP_NAME);
+		replaceByDelegateVar(VENDOR_PROP_NAME);
+		replaceByDelegateAppendVar(FAULTS_PROP_NAME);
+		replaceByDelegateVar(TYPE_PROP_NAME);
 	}
 
 	@Override
 	public List<DetailedFault> getDetailedFaults() {
-		return  _device.getDetailedFaults();
-	}
-
-	@Override
-	public boolean isAvailable() {
-		return  _device.isAvailable();
+		return  getDelegateDevice().getDetailedFaults();
 	}
 
 	@Override
 	public boolean hasExclusiveAccess() {
-		return  _device.hasExclusiveAccess();//TODO
-	}
-
-	@Override
-	public List<Service> getServices() {
-		return  _device.getServices();
-	}
-
-	@Override
-	public Set<String> getPropertyNames() {
-		return  _device.getPropertyNames();
-	}
-
-	@Override
-	public Object getPropertyValue(String propertyName) {
-		return  _device.getPropertyValue(propertyName);
-	}
-
-	@Override
-	public void setPropertyValue(String propertyName, Object value) {
-		_device.setPropertyValue(propertyName, value);
-	}
-
-	@Override
-	public List<StateVariable> getStateVariables() {
-		return _device.getStateVariables();
-	}
-
-	@Override
-	public void addVariableExtender(StateVariableExtender extender) {
-		_device.addVariableExtender(extender);
-	}
-
-	@Override
-	public void removeVariableExtender(StateVariableExtender extender) {
-		_device.removeVariableExtender(extender);
-	}
-
-	@Override
-	public List<StateVariableExtender> getVariableExtenders() {
-		return _device.getVariableExtenders();
-	}
-
-	@Override
-	public String getId() {
-		return _device.getId();
+		return  getDelegateDevice().hasExclusiveAccess();//TODO
 	}
 
 	@Override
@@ -129,7 +74,7 @@ public class AvailableDeviceImpl implements AvailableDevice {
 	}
 
 	@Override
-	public List<ApplicationDevice> getVisibleDevices() {
+	public synchronized List<ApplicationDevice> getVisibleDevices() {
 		if (_knownDevice == null)
 			return null;
 		
@@ -137,7 +82,7 @@ public class AvailableDeviceImpl implements AvailableDevice {
 	}
 
 	@Override
-	public Application getApplicationOwner() {
+	public synchronized Application getApplicationOwner() {
 		if (_knownDevice == null)
 			return null;
 		
@@ -146,56 +91,31 @@ public class AvailableDeviceImpl implements AvailableDevice {
 
 	@Override
 	public List<DeviceProxy> getDeviceProxies() {
-		return Collections.emptyList(); //TODO
+		List<DeviceProxy> proxies = new ArrayList<DeviceProxy>();
+		Device delegateDev = getDelegateDevice();
+		if (delegateDev != null)
+			proxies.add(new DeviceProxy(delegateDev, null)); //TODO manage discovery records
+		return proxies;
 	}
 
-	@Override
-	public String getTypeId() {
-		return _device.getTypeId();
-	}
-
-	public void setKnownDevice(KnownDevice knownDevice) {
+	public synchronized void setKnownDevice(KnownDevice knownDevice) {
 		_knownDevice = knownDevice;
 	}
 
 	@Override
-	public KnownDevice getKnownDevice() {
+	public synchronized KnownDevice getKnownDevice() {
 		return _knownDevice;
-	}
-
-	@Override
-	public boolean hasServiceType(String spec) {
-		return _knownDevice.hasServiceType(spec);
-	}
-
-	@Override
-	public Service getService(String servicetype) {
-		return _device.getService(servicetype);
-	}
-
-	@Override
-	public StateVariable getStateVariable(String propertyName) {
-		return _device.getStateVariable(propertyName);
-	}
-	
-	@Override
-	public void addVariableListener(StateVariableListener listener) {
-		_device.addVariableListener(listener);
-	}
-
-	@Override
-	public void removeVariableListener(StateVariableListener listener) {
-		_device.removeVariableListener(listener);
 	}
 
 	@Override
 	public Object getDeviceProxy(Class... interfaces) {
 		//TODO use getDeviceProxies
+		Device delegateDev = getDelegateDevice();
 		for (Class interf : interfaces) {
-			if (!(interf.isInstance(_device)))
+			if (!(interf.isInstance(delegateDev)))
 				return null;
 		}
 		
-		return _device;
+		return delegateDev;
 	}
 }

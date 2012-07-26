@@ -36,6 +36,10 @@ public class ProvidedDeviceMock extends AbstractProvidedDevice implements
 		super.addStateVariable(var);
 	}
 	
+	public void removeVariable(StateVariable var) {
+		super.removeStateVariable(var);
+	}
+	
 	public void addServ(Service service) {
 		super.addService(service);
 	}

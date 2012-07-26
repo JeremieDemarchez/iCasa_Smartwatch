@@ -300,6 +300,8 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 		ApplicationDevice applicationDevice = devices.get(deviceSerialNumber);
 		if (applicationDevice!=null) {
 			GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
+			if (genDevice == null)
+				System.out.println("cannot get generic device");
 			return getDeviceWidget(genDevice);
 		}
 		return null;
@@ -310,6 +312,8 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 	   ApplicationDevice applicationDevice = devices.get(deviceSerialNumber);
 	   if (applicationDevice!=null) {
 			GenericDevice genDevice = (GenericDevice) applicationDevice.getDeviceProxy(GenericDevice.class);
+			if (genDevice == null)
+				System.out.println("cannot get generic device");
 			return getImageForDevice(genDevice);
 		}
 	   return null;
@@ -333,7 +337,7 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 	
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
 			Object sourceObject) {
 		String devId = null;
 		Object owner = variable.getOwner();
@@ -344,12 +348,12 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 		}
 		
 		if (devId != null) {
-			final ApplicationDevice dev = devices.get(devId);
+			final String devIdImm = devId;
 			enqueueTask(new Runnable() {
 				@Override
 				public void run() {
 					DashboardDeviceController controller = (DashboardDeviceController) getDeviceController();
-					controller.changeDevice(dev.getId(), Collections.EMPTY_MAP);
+					controller.changeDevice(devIdImm, Collections.EMPTY_MAP);
 				}
 			});
 		}	   

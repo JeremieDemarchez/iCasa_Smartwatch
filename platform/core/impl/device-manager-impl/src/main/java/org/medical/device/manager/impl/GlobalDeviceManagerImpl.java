@@ -115,19 +115,26 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 	}
 
 	public ApplicationDevice createApplicationDevice(Application app,
-			KnownDevice knownDev) {
+			KnownDevice knownDev, List<Class> exportedInterfaces) {
 		ApplicationDevice appDev = _policyMgr.createApplicationDevice((KnownDeviceImpl) knownDev, app);
 		boolean useUnprotected = _policyMgr.canGiveUnprotectedDevTo(app);
 		ApplicationDevice protectedAppDev = null;
 		if (!useUnprotected)
 			protectedAppDev = appDev.getProtectedDevice();
 		
-		List<ServiceRegistration> registeredServs = new ArrayList<ServiceRegistration>();
+		for (Class exportedIntf : exportedInterfaces) {
+			Class[] curExportedIntfs = new Class[1];
+			curExportedIntfs[0] = exportedIntf;
+			createDeviceProxy(appDev, curExportedIntfs);
+		}
+		
+		List<ServiceRegistration> registeredServs = _appDevRegistServs.get(appDev);
+		if (registeredServs == null)
+			registeredServs = new ArrayList<ServiceRegistration>();
 		ServiceRegistration registAppDev = _context.registerService(ApplicationDevice.class.getName(), 
 				useUnprotected ? appDev : protectedAppDev, 
 				new Hashtable());
 		registeredServs.add(registAppDev);
-		
 		_appDevRegistServs.put(appDev, registeredServs);
 		
 		notifyDeviceEvent(new DeviceEvent(EventType.ADD, appDev));
@@ -136,6 +143,15 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 		
 		notifyDeviceEvent(new DeviceEvent(EventType.ADD, protectedAppDev)); //TODO check that it is required
 		return protectedAppDev;
+	}
+
+	public void registerAppDev(ApplicationDevice appDev) {
+		boolean useUnprotected = _policyMgr.canGiveUnprotectedDevTo(appDev.getApplication());
+		ApplicationDevice protectedAppDev = null;
+		if (!useUnprotected)
+			protectedAppDev = appDev.getProtectedDevice();
+		
+		
 	}
 
 	public List<ApplicationDevice> getApplicationDevices(Application app) {
@@ -416,8 +432,10 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 				synchronized (_availableDevs) {
 					// unregister application devices
 					List<ServiceRegistration> servRegs = _appDevRegistServs.remove(appDev);
-					for (ServiceRegistration servReg : servRegs)
+					if (servRegs != null) {
+						for (ServiceRegistration servReg : servRegs)
 							servReg.unregister();
+					}
 					
 					for (Object devProxy : appDev.getDeviceProxies())
 						notifyDeviceEvent(new DeviceEvent(EventType.REMOVE, appDev, devProxy));
@@ -443,8 +461,10 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 				
 				// unregister device proxies
 				List<ServiceRegistration> proxyServRegs = _devproxyRegistServs.remove(appDev);
-				for (ServiceRegistration servReg : proxyServRegs)
+				if (proxyServRegs != null) {
+					for (ServiceRegistration servReg : proxyServRegs)
 						servReg.unregister();
+				}
 				
 				notifyDeviceListeners(event);
 				return;
@@ -517,7 +537,7 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 	}
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue, Object source) {
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue, Object source) {
 		if (source == null)
 			return; // ignore it
 		

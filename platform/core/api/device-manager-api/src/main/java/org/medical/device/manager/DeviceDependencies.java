@@ -149,6 +149,7 @@ public class DeviceDependencies {
 	
 	/**
 	 * Defines that all matching devices will be exported as proxies which implements specified interfaces.
+	 * There could be a different generated proxy for each specfied interface.
 	 * 
 	 * @param proxyInterfaces implemented interfaces by created proxies
 	 * @return 

@@ -15,6 +15,8 @@
  */
 package org.medical.common;
 
+import java.util.Map;
+
 /**
  * Represents a state with a defined type.
  * A state variable explicitly defines if it is able to push notifications of state value changes.
@@ -112,4 +114,36 @@ public interface StateVariable {
 	 * @return object which owns this variable.
 	 */
 	public Object getOwner();
+	
+	/**
+	 * Returns true if a metadata with specified has been set.
+	 * 
+	 * @param name a metadata name
+	 * @return true if a metadata with specified has been set.
+	 */
+	public boolean hasMetadata(String name);
+	
+	/**
+	 * Returns value of specified metadata.
+	 * Returns null if there is no such metadata.
+	 * 
+	 * @param name a metadata name
+	 * @return value of specified metadata.
+	 */
+	public Object getMetadataValue(String name);
+	
+	/**
+	 * Sets specified value to corresponding metadata. 
+	 * 
+	 * @param name a metadata name
+	 * @param value metadata value to set
+	 */
+	public void setMetadataValue(String name, Object value);
+	
+	/**
+	 * Returns a map containing all metadata of this variable. 
+	 * 
+	 * @return a map containing all metadata of this variable.
+	 */
+	public Map<String, Object> getMetadataValues();
 }

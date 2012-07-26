@@ -27,6 +27,8 @@ import org.medical.common.Identifiable;
  *
  */
 public interface Device extends Attributable, Identifiable {
+	
+	public static final String LIFECYCLE_METADATA = "lifecycle";
 
 	/**
 	 * Returns the human readable service name.

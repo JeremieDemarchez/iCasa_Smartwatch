@@ -13,24 +13,25 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.manager.impl;
+package org.medical.common.impl;
 
-import org.medical.common.StateVariable;
-import org.medical.device.manager.Device;
-import org.medical.device.manager.Operation;
-import org.medical.device.manager.util.AbstractService;
+/**
+ * Util methods to compare objects.
+ * 
+ * @author Thomas Leveque
+ *
+ */
+public class ComparisonUtil {
 
-public class KnownDeviceServiceImpl extends AbstractService {
-	
-	public KnownDeviceServiceImpl(String serviceId, Device device) {
-		super(serviceId, device);
-	}
-
-	public void addVar(StateVariable var) {
-		addStateVariable(var);
-	}
-	
-	public void addOp(Operation op) {
-		addOperation(op);
+	/**
+	 * Returns true if the specified objects are equal.
+	 * This method allows arguments to be null.
+	 * 
+	 * @param obj1 an object
+	 * @param obj2 an object
+	 * @return true if the specified objects are equal.
+	 */
+	public static boolean same(Object obj1, Object obj2) {
+		return ((obj1 == null) && (obj2 == null)) || ((obj1 != null) && obj1.equals(obj2));
 	}
 }

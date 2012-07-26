@@ -13,29 +13,22 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.manager.util;
+package org.medical.device.manager.impl;
 
-import org.medical.common.VariableType;
-import org.medical.common.impl.StateVariableImpl;
+import org.medical.device.manager.Device;
 
 /**
- * This class allows externals to force sending value change notifications.
+ * Represents an object which delegate some computation to a device.
  * 
  * @author Thomas Leveque
  *
  */
-public class ManagedStateVariableImpl extends StateVariableImpl {
+public interface DelegateToDevice {
 
-	public ManagedStateVariableImpl(String name, Object value, Class type,
-			VariableType varType, String description, boolean canBeModified,
-			boolean canSendNotif, Object owner) {
-		super(name, value, type, varType, description, canBeModified, canSendNotif,
-				owner);
-	}
-
-	public void sendValueChangeNotifs(Object oldValue, Object newValue) {
-		notifyValueChange(oldValue, newValue);
-	}
-
-	
+	/**
+	 * Returns the device used to perform computation when delegation is required.
+	 * 
+	 * @return the device used to perform computation when delegation is required.
+	 */
+	public Device getDelegateDevice();
 }

@@ -49,6 +49,8 @@ public class ApplicationDeviceImpl implements ApplicationDevice {
 	private ApplicationDevice _protectedDevice;
 	
 	private List<Object> _proxies = new ArrayList<Object>();
+	
+	//protected List<StateVariableListener> _listeners = new ArrayList<StateVariableListener>();
 
 	public ApplicationDeviceImpl(KnownDeviceImpl knownDev, Application app) {
 		_app = app;
@@ -106,18 +108,18 @@ public class ApplicationDeviceImpl implements ApplicationDevice {
 	}
 
 	@Override
-	public Set<String> getPropertyNames() {
-		return _knownDev.getPropertyNames();
+	public Set<String> getVariableNames() {
+		return _knownDev.getVariableNames();
 	}
 
 	@Override
-	public Object getPropertyValue(String propertyName) {
-		return _knownDev.getPropertyValue(propertyName);
+	public Object getVariableValue(String propertyName) {
+		return _knownDev.getVariableValue(propertyName);
 	}
 
 	@Override
-	public void setPropertyValue(String propertyName, Object value) {
-		_knownDev.setPropertyValue(propertyName, value);
+	public void setVariableValue(String propertyName, Object value) {
+		_knownDev.setVariableValue(propertyName, value);
 	}
 
 	@Override
@@ -263,5 +265,10 @@ public class ApplicationDeviceImpl implements ApplicationDevice {
 	
 	public void setKnownDevice(KnownDevice dev) {
 		_knownDev = dev;
+	}
+
+	@Override
+	public boolean hasStateVariable(String varName) {
+		return _knownDev.hasStateVariable(varName);
 	}
 }

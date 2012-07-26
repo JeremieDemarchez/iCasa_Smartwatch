@@ -47,5 +47,5 @@ public interface StateVariableListener {
 	 * @param oldValue old variable value
 	 * @param sourceObject the object which owns this variable. May be null (not all variables are attached to objects).
 	 */
-	public void notifValueChange(StateVariable variable, Object oldValue, Object sourceObject);
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue, Object sourceObject);
 }

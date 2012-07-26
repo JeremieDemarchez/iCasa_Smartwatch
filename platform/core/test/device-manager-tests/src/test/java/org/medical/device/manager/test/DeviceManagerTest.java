@@ -26,6 +26,7 @@ import static org.mockito.Mockito.when;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -35,6 +36,7 @@ import org.junit.runner.RunWith;
 import org.medical.application.Application;
 import org.medical.application.ApplicationManager;
 import org.medical.common.StateVariable;
+import org.medical.common.StateVariableListener;
 import org.medical.common.VariableType;
 import org.medical.common.impl.StateVariableImpl;
 import org.medical.device.manager.ApplicationDevice;
@@ -63,7 +65,6 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 /**
  * Integration test for the device manager component.
@@ -512,6 +513,66 @@ public class DeviceManagerTest extends ICasaAbstractTest {
         sr.unregister();
     }
     
+    @Test
+    public void testDeviceAttrNotifs() {
+    	//wait for the service to be available.
+        waitForIt(100);
+        
+        final String devId = "123f56";
+        String devName = "deviceName1";
+        String vendor = "vendor1";
+        String devType = "devType1";
+        ProvidedDeviceMock deviceImpl = new ProvidedDeviceMock(devId, devName, vendor, devType);
+        
+        ServiceRegistration sr = icasa.registerService(deviceImpl, ProvidedDevice.class);
+        
+        BundleContext app1Context = getBundleContext(APP1_ID);
+        DeviceManager deviceMgr = (DeviceManager) getServiceObject(DeviceManager.class, app1Context);
+        DeviceDependencies dependencies = new DeviceDependencies();
+        dependencies.includes().all();
+        
+        DependRegistration depReg = deviceMgr.addDependencies(dependencies);
+        waitForResolution(depReg);
+        
+        // predefined methods
+        Device app1device = (Device) getServiceObject(ApplicationDevice.class, app1Context);
+        assertNotNull(app1device);
+        
+        
+        VariableNotifListener varListener = new VariableNotifListener();
+        app1device.addVariableListener(varListener);
+        
+        // variable addition
+        StateVariable var1 = new StateVariableImpl("var1", 1, Integer.class, VariableType.FORMAL_DESCRIPTION, "var1 Desc", true, true, deviceImpl);
+        deviceImpl.addVariable(var1);
+		
+        waitForIt(1000);
+        assertTrue(varListener.hasAdditionEvent("var1"));
+        
+        varListener.reset();
+        
+        // variable value change
+        var1.setValue(2);
+        
+        waitForIt(1000);
+        assertTrue(varListener.hasValueChangeEvent("var1"));
+        assertEquals(1,varListener.getLastValueChangeEvent("var1").getOldValue());
+        assertEquals(2,varListener.getLastValueChangeEvent("var1").getNewValue());
+        
+        varListener.reset();
+        
+        // variable removal
+        deviceImpl.removeVariable(var1);
+        
+        waitForIt(1000);
+        assertTrue(varListener.hasRemovalEvent("var1"));
+        
+        varListener.reset();
+		
+        //cleanup
+        sr.unregister();
+    }
+    
     private void checkEqualVar(StateVariable varFound, StateVariable var) {
 		assertEquals(var.getName(), varFound.getName());
 		assertEquals(var.getDescription(), varFound.getDescription());
@@ -545,6 +606,7 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 	}
 	
 	private BundleContext getBundleContext(String appId) {
+		waitForService(ApplicationManager.class, context);
 		Application app = getApplicationManagerService().getApplication(appId);
 		
 		return app.getBundles().iterator().next().getBundleContext();
@@ -570,6 +632,144 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 			return service;
 		} else {
 			return null;
+		}
+	}
+	
+	public class VariableEvent {
+
+		private StateVariable _var;
+		private Object _oldValue;
+		private Object _newValue;
+		private Object _sourceObj;
+		private boolean _isAddition = false;
+		private boolean _isRemoval = false;
+		private boolean _isValChange = false;
+
+		public VariableEvent(StateVariable variable, Object oldValue,
+				Object newValue, Object sourceObject) {
+			_var = variable;
+			_oldValue = oldValue;
+			_newValue = newValue;
+			_sourceObj = sourceObject;
+			_isValChange = true;
+		}
+		
+		public VariableEvent(StateVariable variable, Object sourceObject, boolean isAddition) {
+			_var = variable;
+			_sourceObj = sourceObject;
+			_isAddition = isAddition;
+			_isRemoval = !isAddition;
+		}
+		
+		public StateVariable getVariable() {
+			return _var;
+		}
+
+		public Object getOldValue() {
+			return _oldValue;
+		}
+		
+		public Object getNewValue() {
+			return _newValue;
+		}
+
+		public Object getSourceObj() {
+			return _sourceObj;
+		}
+		
+		public boolean isAddition() {
+			return _isAddition;
+		}
+		
+		public boolean isRemoval() {
+			return _isRemoval;
+		}
+		
+		public boolean isValChange() {
+			return _isValChange;
+		}
+	}
+	
+	public class VariableNotifListener implements StateVariableListener  {
+
+		private List<VariableEvent> events = new ArrayList<VariableEvent>();
+		
+		public boolean hasValueChangeEvent() {
+			for (VariableEvent event : events) {
+				if (event.isValChange())
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean hasAdditionEvent() {
+			for (VariableEvent event : events) {
+				if (event.isAddition())
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean hasRemovalEvent() {
+			for (VariableEvent event : events) {
+				if (event.isRemoval())
+					return true;
+			}
+			return false;
+		}
+		
+		public boolean hasValueChangeEvent(String propName) {
+			return (getLastValueChangeEvent(propName) != null);
+		}
+		
+		public VariableEvent getLastValueChangeEvent(String propName) {
+			VariableEvent valueChangeEvent = null;
+			for (VariableEvent event : events) {
+				if (event.getVariable().getName().equals(propName) &&  event.isValChange())
+					valueChangeEvent = event;
+			}
+			
+			return valueChangeEvent;
+		}
+		
+		public boolean hasAdditionEvent(String propName) {
+			VariableEvent foundEvent = null;
+			for (VariableEvent event : events) {
+				if (event.getVariable().getName().equals(propName) &&  event.isAddition())
+					return true;
+			}
+			
+			return false;
+		}
+		
+		public boolean hasRemovalEvent(String propName) {
+			VariableEvent foundEvent = null;
+			for (VariableEvent event : events) {
+				if (event.getVariable().getName().equals(propName) &&  event.isRemoval())
+					return true;
+			}
+			
+			return false;
+		}
+
+		@Override
+		public void addVariable(StateVariable variable, Object sourceObject) {
+			events.add(new VariableEvent(variable, sourceObject, true));
+		}
+
+		@Override
+		public void removeVariable(StateVariable variable, Object sourceObject) {
+			events.add(new VariableEvent(variable, sourceObject, false));
+		}
+
+		@Override
+		public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
+				Object sourceObject) {
+			events.add(new VariableEvent(variable, oldValue, newValue, sourceObject));
+		}
+		
+		public void reset() {
+			events.clear();
 		}
 	}
 	

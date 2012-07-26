@@ -80,12 +80,12 @@ public class ApplicationImpl extends EntityImpl implements Application, ServiceT
 
 	@Override
 	public String getName() {
-		return (String) getPropertyValue(NAME_PROP_NAME);
+		return (String) getVariableValue(NAME_PROP_NAME);
 	}
 
 	@Override
 	public String getVendor() {
-		return (String) getPropertyValue(VENDOR_PROP_NAME);
+		return (String) getVariableValue(VENDOR_PROP_NAME);
 	}
 
 	@Override
@@ -128,21 +128,21 @@ public class ApplicationImpl extends EntityImpl implements Application, ServiceT
 
 	@Override
 	public ApplicationState getState() {
-		return (ApplicationState) getPropertyValue(ACTIVATION_STATE_PROP_NAME);
+		return (ApplicationState) getVariableValue(ACTIVATION_STATE_PROP_NAME);
 	}
 	
 	public void setState(ApplicationState newState) {
-		setPropertyValue(ACTIVATION_STATE_PROP_NAME, newState);
+		setVariableValue(ACTIVATION_STATE_PROP_NAME, newState);
 		//manage state changed
 	}
 
 	@Override
 	public String getVersion() {
-		return (String) getPropertyValue(VERSION_PROP_NAME);
+		return (String) getVariableValue(VERSION_PROP_NAME);
 	}
 	
 	public void setVersion(String version) {
-		setPropertyValue(VERSION_PROP_NAME, version);
+		setVariableValue(VERSION_PROP_NAME, version);
 	}
 
 	@Override
