@@ -17,15 +17,15 @@ package org.medical.application.device.web.common.impl.component;
 
 import nextapp.echo.app.Component;
 import nextapp.echo.app.Label;
-import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.Row;
 
 import org.medical.application.device.web.common.impl.BaseHouseApplication;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 
 /**
  * TODO comments.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 public class HousePane extends ContentPaneWithFloatScroll {
 
@@ -42,9 +42,6 @@ public class HousePane extends ContentPaneWithFloatScroll {
 
 	private Row childContainer;
 
-	// private final MedicalHouseSimulatorImpl m_application;
-
-	// private final Label m_overlay;
 
 	/**
 	 * TODO comments.
@@ -64,15 +61,9 @@ public class HousePane extends ContentPaneWithFloatScroll {
 		add(childContainer);
 		
 		// add house image
-		Label imageWidget = new Label(new ResourceImageReference(houseImage));
+		Label imageWidget = new Label(new BundleResourceImageReference(houseImage, BaseHouseApplication.getBundle()));
 		childContainer.add(imageWidget);
-		
-		// Create the overlay image.
-		// final BufferedImage overlayImage = new BufferedImage(WIDTH, HEIGHT,
-		// TYPE_INT_ARGB);
-		// // m_overlayGraphics = overlayImage.getGraphics();
-		// m_overlay = new Label(new AwtImageReference(overlayImage));
-		// add(m_overlay);
+
 	}
 	
 	public Component getChildContainer() {

@@ -15,10 +15,13 @@
  */
 package org.medical.application.device.simulator.gui.impl.component;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 
 import nextapp.echo.app.Button;
+import nextapp.echo.app.Color;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Font;
@@ -36,14 +39,22 @@ import nextapp.echo.extras.app.menu.DefaultMenuModel;
 import nextapp.echo.extras.app.menu.DefaultMenuSelectionModel;
 import nextapp.echo.extras.app.menu.DefaultOptionModel;
 
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.FloatingButton;
+import org.medical.application.device.web.common.impl.component.FloatingButtonDragSource;
+import org.medical.application.device.web.common.impl.component.HousePane;
+import org.medical.application.device.web.common.impl.component.event.DropEvent;
+import org.medical.application.device.web.common.impl.component.event.DropListener;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
+import org.osgi.framework.Bundle;
 
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
  * TODO comments.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 public class UserPane extends ContentPane {
 
@@ -52,7 +63,8 @@ public class UserPane extends ContentPane {
 	 */
 	private static final long serialVersionUID = 974309121082722498L;
 
-	public static ResourceImageReference USER_IMAGE = new ResourceImageReference("/User.png");
+	private ResourceImageReference USER_IMAGE = new BundleResourceImageReference("/User.png",
+	      BaseHouseApplication.getBundle());
 
 	private final SimulatorActionPane m_parent;
 
@@ -60,28 +72,29 @@ public class UserPane extends ContentPane {
 
 	private final Grid m_grid;
 
-	private RoomPosition outsideRoomPosition;
-	
 	private final HashMap<String, UserEntry> m_users = new HashMap<String, UserEntry>();
 	
-	private final HashMap<String, RoomPosition> roomPositions = new HashMap<String, RoomPosition>();
+	private final List<String> rooms = new ArrayList<String>();
+		
+	private static String OUT_SIDE = "--- Outside ---";
 	
-	
-
 	public UserPane(final SimulatorActionPane parent) {
 		m_parent = parent;
-				
+
 		// Add the deafult room position
-		addRoomPosition("--- Outside ---", -1, -1);
-		outsideRoomPosition = roomPositions.get("--- Outside ---");
-		
-		initializeRoomPositions();
-		
-		USER_IMAGE =  new ResourceImageReference(m_parent.getApplicationInstance().getUserImage());
-		
+
+		rooms.add(OUT_SIDE);
+
+		m_parent.getApplicationInstance();
+		// USER_IMAGE = new
+		Bundle bundle = BaseHouseApplication.getBundle();
+		USER_IMAGE = new BundleResourceImageReference(m_parent.getApplicationInstance().getUserImage(), bundle);
+
 		// Create the image label.
-		final Label image = new Label(
-		      new ResourceImageReference(USER_IMAGE.getResource(), new Extent(50), new Extent(50)));
+
+		final Label image = new Label(new BundleResourceImageReference(USER_IMAGE.getResource(), new Extent(50),
+		      new Extent(50), bundle));
+
 		final GridLayoutData imageLayout = new GridLayoutData();
 		imageLayout.setRowSpan(2);
 		image.setLayoutData(imageLayout);
@@ -93,7 +106,8 @@ public class UserPane extends ContentPane {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				addUser(m_userName.getText());
+				//addUser(m_userName.getText());
+				createUser(m_userName.getText());
 				m_userName.setText("");
 			}
 		});
@@ -119,40 +133,16 @@ public class UserPane extends ContentPane {
 		grid.add(m_grid);
 		add(grid);
 	}
-	
-	private void initializeRoomPositions() {
-		String homeType = m_parent.getApplicationInstance().getHomeType(); 
-		if (homeType.equals("type1")) {
-			addRoomPosition("livingroom", 220, 220);
-			addRoomPosition("kitchen", 115, 450);
-			addRoomPosition("bedroom", 568, 268);
-			addRoomPosition("bathroom", 530, 450);
-			addRoomPosition("Entrance", 325, 533);			
-		} else if (homeType.equals("type2")) {
-			addRoomPosition("livingroom", 500, 180);
-			addRoomPosition("kitchen", 490, 405);
-			addRoomPosition("bedroom", 130, 400);
-			addRoomPosition("bathroom", 140, 108);
-			addRoomPosition("Entrance", 325, 533);						
-		} else {
-			addRoomPosition("livingroom", 220, 220);
-			addRoomPosition("kitchen", 115, 450);
-			addRoomPosition("bedroom", 568, 268);
-			addRoomPosition("bathroom", 530, 450);
-			addRoomPosition("Entrance", 325, 533);
-		}
-	   
-   }
 
-	public void addRoomPosition(String roomName, int x, int y) {		
-		RoomPosition roomPosition =  new RoomPosition(roomName);
-		roomPosition.x = x;
-		roomPosition.y = y;
-		roomPositions.put(roomName, roomPosition);
+	public void initializedSimulatedRooms() {
+		SimulationManager simulationManager = m_parent.getApplicationInstance().getSimulationManager();
+		Set<String> envs = simulationManager.getEnvironments();
+		rooms.addAll(envs);
 	}
-
-	private synchronized void addUser(final String name) {
-		final String normalizedName = name.trim();
+	
+	
+	private synchronized void createUser(String userName) {
+		final String normalizedName = userName.trim();
 		if (normalizedName.isEmpty()) {
 			showErrorWindow("The name of the user is empty.");
 			return;
@@ -160,21 +150,27 @@ public class UserPane extends ContentPane {
 			showErrorWindow("The user \"" + normalizedName + "\"already exists.");
 			return;
 		}
+		m_parent.getApplicationInstance().getSimulationManager().addUser(normalizedName);
+	}
+	
+	public void addUser(final String userName) {
+		
 		final UserEntry entry = new UserEntry();
-		entry.name = normalizedName;
-		entry.label = new Label(normalizedName);
+		entry.name = userName;
+		entry.label = new Label(userName);
 		// Create the location selection menu.
 		final DefaultMenuModel model = new DefaultMenuModel();
 
-		Set<String> rooms = roomPositions.keySet();
+		//Set<String> rooms = roomPositions.keySet();
 		for (String room : rooms) {
 			model.addItem(new DefaultOptionModel(room, room, null));
-      }
-		
+		}
+
 		final DefaultMenuSelectionModel menuSelect = new DefaultMenuSelectionModel();
 		entry.locationMenu = new DropDownMenu(model, menuSelect);
-		menuSelect.setSelectedId(outsideRoomPosition.roomName);
-		entry.roomPosition = outsideRoomPosition;
+		menuSelect.setSelectedId(OUT_SIDE);
+		//entry.roomPosition = outsideRoomPosition;
+		entry.location = UserPane.OUT_SIDE;
 		entry.locationMenu.addActionListener(new ActionListener() {
 			private static final long serialVersionUID = 1797893813768038434L;
 
@@ -186,79 +182,83 @@ public class UserPane extends ContentPane {
 
 		});
 		// Create the remove button.
-		entry.removeButton = new Button(new ResourceImageReference("/Remove.png"));
+		entry.removeButton = new Button(new BundleResourceImageReference("/Remove.png", BaseHouseApplication.getBundle()));
 		entry.removeButton.addActionListener(new ActionListener() {
 			private static final long serialVersionUID = 1797893813768038434L;
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				// Remove the user.
-				m_users.remove(normalizedName);
-				m_grid.remove(entry.label);
-				m_grid.remove(entry.locationMenu);
-				m_grid.remove(entry.removeButton);
-				if (entry.image != null) {
-					m_parent.getApplicationInstance().getHousePane().remove(entry.image);
-				}
+				m_parent.getApplicationInstance().getSimulationManager().removeUser(userName);				
 			}
 		});
+		
 		// Add the created components to the grid.
 		m_grid.add(entry.label);
 		m_grid.add(entry.locationMenu);
 		m_grid.add(entry.removeButton);
-		m_users.put(normalizedName, entry);
+		m_users.put(userName, entry);
 	}
 
+	public void removeUser(String userName) {
+		// Remove the user in GUI
+		UserEntry entry = m_users.remove(userName);
+		m_grid.remove(entry.label);
+		m_grid.remove(entry.locationMenu);
+		m_grid.remove(entry.removeButton);
+		if (entry.widget != null) {
+			m_parent.getApplicationInstance().getHousePane().getChildContainer().remove(entry.dragSource);
+		}
+	   
+   }
+	
 	public synchronized void moveUser(final String userName, final Position position) {
-		if (!m_users.containsKey(userName)) {
-			addUser(userName);
-		}
+		SimulationManager simulationManager = m_parent.getApplicationInstance().getSimulationManager();
 		final UserEntry entry = m_users.get(userName);
-		final String envId = m_parent.getApplicationInstance().getSimulationManager()
-		      .getEnvironmentFromPosition(position);
-		RoomPosition roomPosition = null;
-		if (envId != null) {
-			try {
-				roomPosition = roomPositions.get(envId);
-				//newLocation = Location.valueOf(envId.toUpperCase());
-			} catch (Exception e) {
-				// Ouch !
-				e.printStackTrace();
-				roomPosition = outsideRoomPosition;
-			}
-		} else {
-			roomPosition = outsideRoomPosition;
-		}
-		if (roomPosition!=null) {
-			moveUserToLocation(entry, roomPosition);
-			entry.locationMenu.getSelectionModel().setSelectedId(roomPosition.roomName);
-			// TODO update selected item of entry menu!!!			
-		}
+		String envId = simulationManager.getEnvironmentFromPosition(position);
+		if (envId==null)
+			envId = OUT_SIDE;
+		moveUserWidget(entry, position, envId);		
+		entry.locationMenu.getSelectionModel().setSelectedId(envId);
 	}
 
-	private void moveUserToLocation(final UserEntry entry,
-	      final RoomPosition roomPosition) {
-		if (entry.roomPosition == roomPosition) {
-			return;
-		}
-		if (entry.roomPosition != outsideRoomPosition) {
-			// Remove the previous image.
-			m_parent.getApplicationInstance().getHousePane().remove(entry.image);
-		}
-		if (roomPosition != outsideRoomPosition) {
+
+	
+	private void moveUserWidget(final UserEntry entry, final Position position, String location) {
+		
+
+		
+		m_parent.getApplicationInstance().getHousePane().getChildContainer().remove(entry.dragSource);
+		
+		if (position != null) {
 			// Create the new image.
-			entry.image = new FloatingButton(roomPosition.x, roomPosition.y, USER_IMAGE, entry.name);
-			m_parent.getApplicationInstance().getHousePane().add(entry.image);
+			entry.widget = new FloatingButton(position.x, position.y, USER_IMAGE, entry.name);
+
+			// add support of drag and drop
+			final FloatingButtonDragSource dragSource = new FloatingButtonDragSource(entry.widget);
+			dragSource.setBackground(Color.YELLOW);
+			dragSource.addDropTarget(HousePane.HOUSE_PANE_RENDER_ID);
+			dragSource.addDropListener(new DropListener() {
+
+				@Override
+				public void dropPerformed(DropEvent event) {
+					//RoomPosition newRoomPosition = getRoomPosition( new Position(event.getTargetX(), event.getTargetY()));
+					m_parent.getApplicationInstance().getSimulationManager().setUserPosition(entry.name, new Position(event.getTargetX(), event.getTargetY()));
+				}
+			});
+
+			entry.dragSource = dragSource;
+
+			m_parent.getApplicationInstance().getHousePane().getChildContainer().add(entry.dragSource);
 		}
-		entry.roomPosition = roomPosition;
+		
+		entry.location = location;
 	}
-
-
-
+	
+	
 	private void showErrorWindow(final String error) {
 		final WindowPane window = new WindowPane();
 		// Create the icon.
-		final Label icon = new Label(new ResourceImageReference("/Error.png"));
+		final Label icon = new Label(new BundleResourceImageReference("/Error.png", BaseHouseApplication.getBundle()));
 		// Create the message label.
 		final Label message = new Label(error);
 		// Create the confirmation button.
@@ -289,27 +289,16 @@ public class UserPane extends ContentPane {
 		window.add(content);
 		m_parent.getApplicationInstance().getWindow().getContent().add(window);
 	}
-	
+
 	private static class UserEntry {
 		private String name;
 		private Label label;
 		private DropDownMenu locationMenu;
 		private Button removeButton;
-		private FloatingButton image;
-		//private Location location;
-		private RoomPosition roomPosition;
-	}
-	
-	private class RoomPosition {
-		private String roomName;
-		public int x;
-		public int y;
-		
-		RoomPosition(String roomName) {
-			this.roomName = roomName;
-			x = 0;
-			y = 0;
-		}		
+		private FloatingButton widget;
+		//private RoomPosition roomPosition;
+		private String location;
+		private FloatingButtonDragSource dragSource;
 	}
 
 }

@@ -41,7 +41,7 @@ import org.medical.script.executor.ScriptExecutor;
 import org.medical.script.executor.impl.actions.Action;
 import org.medical.script.executor.impl.actions.ActivateDeviceAction;
 import org.medical.script.executor.impl.actions.AddDeviceAction;
-import org.medical.script.executor.impl.actions.ConfigureDeviceAction;
+import org.medical.script.executor.impl.actions.MoveDeviceAction;
 import org.medical.script.executor.impl.actions.DeactivateDeviceAction;
 import org.medical.script.executor.impl.actions.FaultDeviceAction;
 import org.medical.script.executor.impl.actions.ModifyDeviceValueAction;
@@ -50,7 +50,6 @@ import org.medical.script.executor.impl.actions.MovePersonAction;
 import org.medical.script.executor.impl.actions.RemoveDeviceAction;
 import org.medical.script.executor.impl.actions.RepairDeviceAction;
 import org.osgi.service.cm.ConfigurationAdmin;
-import org.ow2.chameleon.rose.RoseMachine;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -73,7 +72,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * The ROSE machine
 	 */
-	private RoseMachine roseMachine;
+	//private RoseMachine roseMachine;
 	
 	/**
 	 * The OSGi ConfigAdmin service 
@@ -198,12 +197,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		return devices;
 	}
 
-	/**
-	 * @return the roseMachine
-	 */
-	public RoseMachine getRoseMachine() {
-		return roseMachine;
-	}
 
 	/**
 	 * @return the environmentManager
@@ -292,11 +285,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 							logger.info("--------------- Remove Device ------------------ ");
 						}
 
-						if (childNode.getNodeName().equals("configure-device")) {
+						if (childNode.getNodeName().equals("move-device")) {
 							Element element = (Element) childNode;
 							String room = element.getAttribute("room");
 							String deviceId = element.getAttribute("deviceID");
-							list.add(new ConfigureDeviceAction(ScriptExecutorImpl.this, delay, deviceId, room));
+							list.add(new MoveDeviceAction(ScriptExecutorImpl.this, delay, deviceId, room));
 							logger.info("================ Configure Device ================== ");
 						}
 
@@ -317,7 +310,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 						if (childNode.getNodeName().equals("activate-device")) {
 							Element element = (Element) childNode;
 							String deviceId = element.getAttribute("deviceID");
-							list.add(new ActivateDeviceAction(ScriptExecutorImpl.this, delay,deviceId));
+							list.add(new ActivateDeviceAction(ScriptExecutorImpl.this, delay, deviceId));
 							logger.info(" //////////////// Activate Device ///////////////// ");
 						}
 						

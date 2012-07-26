@@ -15,7 +15,10 @@
  */
 package org.medical.script.executor.impl.actions;
 
+import org.apache.felix.ipojo.Pojo;
 import org.medical.script.executor.impl.ScriptExecutorImpl;
+
+import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Action that removes devices from the environment
@@ -33,8 +36,11 @@ public class RemoveDeviceAction extends DeviceAction {
 	 * @see org.medical.simulated.behavior.action.Action#run()
 	 */
 	public void run() {
-		scriptExecutorImpl.getSimulationManager().setDevicePosition(deviceId, null);
-		scriptExecutorImpl.getRoseMachine().removeRemote(deviceId);
+		GenericDevice device = scriptExecutorImpl.getDevices().get(deviceId);
+		if ((device != null) && (device instanceof Pojo)) {
+			Pojo pojo = (Pojo) device;
+			pojo.getComponentInstance().dispose();
+		}	   		
 	}
-
+	
 }

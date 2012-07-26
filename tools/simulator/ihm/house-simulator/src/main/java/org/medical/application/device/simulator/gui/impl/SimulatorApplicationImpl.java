@@ -73,7 +73,7 @@ import fr.liglab.adele.icasa.script.ScenarioInstaller;
 /**
  * TODO comments.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 @Component(name = "WebHouseSimulator", immediate = true)
 @Provides
@@ -243,6 +243,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	public void unbindWidgetFactorySelector(DeviceWidgetFactorySelector portletFactorySelector) {
 		super.unbindWidgetFactorySelector(portletFactorySelector);
 	}
+		
 
 	@Override
 	public void userPositionChanged(final String userName, final Position position) {
@@ -254,6 +255,28 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			}
 		});
 	}
+	
+	@Override
+   public void userAdded(final String userName) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.addUser(userName);
+			}
+		});	   
+   }
+
+	@Override
+   public void userRemoved(final String userName) {
+		enqueueTask(new Runnable() {
+			@Override
+			public void run() {
+				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
+				actionPane.removeUser(userName);
+			}
+		});		   
+   }
 
 	// ---- Component properties methods ---- //
 
@@ -269,11 +292,6 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		super.setUserImage(userImage);
 	}
 
-	@Override
-	@Property(name = "homeType", mandatory = true)
-	public void setHomeType(String homeType) {
-		super.setHomeType(homeType);
-	}
 
 	@Override
 	@Property(name = "isAndroid", mandatory = true)
@@ -401,7 +419,10 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		return null;
 	}
 	
-	
+	/**
+	 * Removes the intance of a device
+	 * @param deviceSerialNumber
+	 */
 	public void disposeDeviceInstance(String deviceSerialNumber) {
 		GenericDevice genDevice = devices.get(deviceSerialNumber);
 		if ((genDevice != null) && (genDevice instanceof Pojo)) {
@@ -497,6 +518,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	public void installScenario(String scenarioName) {
 		try {
 			m_ScenarioInstaller.installScenario(scenarioName);
+			((SimulatorActionPane)m_actionPane).initializeEnvironments();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -566,4 +588,6 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			}
 		}	   
    }
+
+
 }

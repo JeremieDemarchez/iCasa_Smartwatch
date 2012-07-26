@@ -34,7 +34,7 @@
 		<module>upnp</module>
 		<module>x10</module>
 		<module>usb</module>
-		<module>bluetooth</module>
+		<!--<module>bluetooth</module>-->
 	</modules>
 
 </project>

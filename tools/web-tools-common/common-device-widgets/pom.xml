@@ -47,7 +47,7 @@
               nextapp.echo.app,
               org.medical.application.device.web.*, org.osgi.framework</Import-Package>
 
-            <Common-Widget-Factory>Test</Common-Widget-Factory>
+            <Widget-Factory>Test</Widget-Factory>
           </instructions>
         </configuration>
       </plugin>

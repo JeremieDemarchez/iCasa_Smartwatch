@@ -28,7 +28,6 @@ import nextapp.echo.app.Extent;
 import nextapp.echo.app.Grid;
 import nextapp.echo.app.Insets;
 import nextapp.echo.app.Label;
-import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.app.Table;
 import nextapp.echo.app.TextField;
 import nextapp.echo.app.event.ActionEvent;
@@ -45,10 +44,10 @@ import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.medical.application.device.simulator.gui.impl.SimulatorApplicationImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.DeviceEntry;
 import org.medical.application.device.web.common.impl.component.DevicePane;
-import org.medical.application.device.web.common.impl.component.DevicePane.DeviceTableCellRenderer;
-import org.medical.application.device.web.common.impl.component.DevicePane.DeviceTableModel;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -74,8 +73,8 @@ public class SimulatorDevicePane extends DevicePane {
 		m_grid = new Grid(3);
 		m_grid.setInsets(new Insets(2, 3));
 		
-		final Label image = new Label(new ResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50),
-		      new Extent(50)));
+		final Label image = new Label(new BundleResourceImageReference(BIG_DEVICE_IMAGE.getResource(), new Extent(50),
+		      new Extent(50), BaseHouseApplication.getBundle()));
 		final GridLayoutData imageLayout = new GridLayoutData();
 		imageLayout.setRowSpan(2);
 		image.setLayoutData(imageLayout);
@@ -273,7 +272,7 @@ public class SimulatorDevicePane extends DevicePane {
 				component = createFaultList(deviceSerialNumber, (String) value);
 			
 			if (column == DELETE_COLUMN_INDEX) {
-				Button deleteButton = new Button(new ResourceImageReference("/Remove.png"));
+				Button deleteButton = new Button(new BundleResourceImageReference("/Remove.png", BaseHouseApplication.getBundle()));
 				deleteButton.addActionListener(new ActionListener() {
 
 					/**

@@ -35,12 +35,19 @@ import org.medical.application.device.web.common.widget.DeviceWidgetFactory;
 import org.medical.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.FrameworkUtil;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
+/**
+ * Base class to applications in echo3 showing device information
+ * 
+ * @author Gabriel Pedraza Ferreira
+ *
+ */
 public abstract class BaseHouseApplication extends ApplicationInstance implements DevicePositionListener,
       PropertyChangeListener {
 
@@ -71,11 +78,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	private String userImage;
 
-	// TODO: This variable must be changed, is used to "glue" code into the application
-	/**
-	 * Home type
-	 */
-	private String homeType;
 
 	/**
 	 * (Left) Pane where are the house map and graphical icons for devices
@@ -122,9 +124,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 * Indicates if there is a android client using the application
 	 */
 	private Boolean isAndroid;
-
 	
-	private static Bundle _bundle;
 
 	/**
 	 * Default constructor
@@ -134,7 +134,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	public BaseHouseApplication(BundleContext context) {
 		m_context = context;
-		_bundle = context.getBundle();
 	}
 
 	/**
@@ -166,13 +165,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		super.dispose();
 	}
 	
-	/**
-	 * 
-	 * @return the bundle
-	 */
-	public static Bundle getBundle() {
-		return _bundle;
-	}
 
 	/**
 	 * Life cycle method, it must be invoked when the component is validated
@@ -189,7 +181,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	public void stop() {
 		m_housePane.removePropertyChangeListener(this);
 		m_manager.removeDevicePositionListener(this);
-
 	}
 	
 	/**
@@ -231,7 +222,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 			@Override
 			public void run() {
 				m_DeviceController.refreshDeviceWidgets();
-				// m_actionPane.refreshDeviceWidgets();
 			}
 		});
 	}
@@ -243,7 +233,8 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	protected void unbindWidgetFactorySelector(DeviceWidgetFactorySelector widgetFactorySelector) {
 		m_widgetFactorySelector = null;
 	}
-
+	
+	
 	/**
 	 * 
 	 * @return the main application window
@@ -325,20 +316,6 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		return userImage;
 	}
 
-	/**
-	 * Sets the home type
-	 * @param homeType
-	 */
-	public void setHomeType(String homeType) {
-		this.homeType = homeType;
-	}
-
-	/**
-	 * @return the homeType
-	 */
-	public String getHomeType() {
-		return homeType;
-	}
 
 	/**
 	 * Determines if application is being executed in a Android client
@@ -473,6 +450,11 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 		});
 	}
 	
+	
+	public static Bundle getBundle() {
+		return FrameworkUtil.getBundle(BaseHouseApplication.class);
+	}
+	
 	// ---- Abstract Methods ---- //
 	
 
@@ -498,6 +480,9 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	public abstract GenericDevice getGenericDeviceBySerialNumber(String deviceSerialNumber);
 	
 
-
+	/**
+	 * Updates GUI for each device on the platform
+	 * @param portletFactory the portletFactory
+	 */
 	protected abstract void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory);
 }

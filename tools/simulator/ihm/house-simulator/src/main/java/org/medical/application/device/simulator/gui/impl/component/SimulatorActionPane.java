@@ -15,16 +15,18 @@
  */
 package org.medical.application.device.simulator.gui.impl.component;
 
-import nextapp.echo.app.ResourceImageReference;
 import nextapp.echo.extras.app.event.TabSelectionEvent;
 import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
 import org.apache.felix.ipojo.Factory;
 import org.medical.application.device.simulator.gui.impl.SimulatorApplicationImpl;
+import org.medical.application.device.web.common.impl.BaseHouseApplication;
 import org.medical.application.device.web.common.impl.component.ActionPane;
 import org.medical.application.device.web.common.impl.component.DevicePane;
+import org.medical.application.device.web.common.util.BundleResourceImageReference;
 import org.medical.clock.api.Clock;
+import org.osgi.framework.Bundle;
 
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
@@ -48,10 +50,11 @@ public class SimulatorActionPane extends ActionPane {
 	}
 
 	protected void initContent() {
+		Bundle bundle = BaseHouseApplication.getBundle();
+		
 		m_devicePane = new SimulatorDevicePane(this);
-		final AccordionPaneLayoutData devicePaneLayout = new AccordionPaneLayoutData();
-		devicePaneLayout.setIcon(new ResourceImageReference(DevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE, ICON_SIZE));
-		// devicePaneLayout.setTitle(getDeviceTabName(SelectAppPane.UNDEFINED_SERV_NAME));
+		final AccordionPaneLayoutData devicePaneLayout = new AccordionPaneLayoutData();		
+		devicePaneLayout.setIcon(new BundleResourceImageReference(DevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE, ICON_SIZE, bundle));
 		devicePaneLayout.setTitle("Device List");
 		m_devicePane.setLayoutData(devicePaneLayout);
 		add(m_devicePane);
@@ -59,7 +62,8 @@ public class SimulatorActionPane extends ActionPane {
 		// Create the user controller pane.
 		m_userPane = new UserPane(this);
 		final AccordionPaneLayoutData userPaneLayout = new AccordionPaneLayoutData();
-		userPaneLayout.setIcon(new ResourceImageReference(UserPane.USER_IMAGE.getResource(), ICON_SIZE, ICON_SIZE));
+		getApplicationInstance();
+		userPaneLayout.setIcon(new BundleResourceImageReference(getApplicationInstance().getUserImage(), ICON_SIZE, ICON_SIZE, bundle));
 		userPaneLayout.setTitle("Simulated Users");
 		m_userPane.setLayoutData(userPaneLayout);
 		add(m_userPane);
@@ -67,7 +71,7 @@ public class SimulatorActionPane extends ActionPane {
 		// Create the clock controller pane.
 		m_clockPane = new ClockPane(this);
 		final AccordionPaneLayoutData clockPaneLayout = new AccordionPaneLayoutData();
-		clockPaneLayout.setIcon(new ResourceImageReference(ClockPane.CLOCK_IMAGE.getResource(), ICON_SIZE, ICON_SIZE));
+		clockPaneLayout.setIcon(new BundleResourceImageReference(ClockPane.CLOCK_IMAGE.getResource(), ICON_SIZE, ICON_SIZE, bundle));
 		clockPaneLayout.setTitle("Simulated Time & Date");
 		m_clockPane.setLayoutData(clockPaneLayout);
 		add(m_clockPane);
@@ -87,8 +91,8 @@ public class SimulatorActionPane extends ActionPane {
 		// Create the devices status controller pane
 		if (appInstance.isAndroid()) {
 			final AccordionPaneLayoutData statusPaneLayout = new AccordionPaneLayoutData();
-			statusPaneLayout.setIcon(new ResourceImageReference(DevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
-			      ICON_SIZE));
+			statusPaneLayout.setIcon(new BundleResourceImageReference(DevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
+			      ICON_SIZE, bundle));
 			statusPaneLayout.setTitle("Device Details");
 			appInstance.getStatusPane().setLayoutData(statusPaneLayout);
 			add(appInstance.getStatusPane());
@@ -105,6 +109,17 @@ public class SimulatorActionPane extends ActionPane {
 		if (m_userPane != null)
 			m_userPane.moveUser(userName, position);
 	}
+	
+	public void addUser(String userName) {
+		if (m_userPane != null)
+			m_userPane.addUser(userName);	   
+   }
+
+	public void removeUser(String userName) {
+		if (m_userPane != null)
+			m_userPane.removeUser(userName);	   
+   }
+
 
 	public SimulatorApplicationImpl getApplicationInstance() {
 		return appInstance;
@@ -117,5 +132,11 @@ public class SimulatorActionPane extends ActionPane {
 	public void removeDeviceFactory(Factory factory) {
 		((SimulatorDevicePane) m_devicePane).removeDeviceFactory(factory);
 	}
+	
+	public void initializeEnvironments() {
+		if (m_userPane!=null)
+			m_userPane.initializedSimulatedRooms();
+	}
+
 
 }

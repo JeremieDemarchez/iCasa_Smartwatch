@@ -23,7 +23,7 @@
     <provides />
     <requires field="clock" optional="false" />
     <requires field="simulationManager" />
-    <requires field="roseMachine" />
+    <!-- <requires field="roseMachine" />  -->
     <requires field="configAdmin" />
     <requires aggregate="true" optional="true" id="devices">
       <callback type="bind" method="bindDevice" />

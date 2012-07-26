@@ -169,12 +169,6 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 		super.setUserImage(userImage);
 	}
 
-	@Override
-	@Property(name = "homeType", mandatory = true)
-	public void setHomeType(String homeType) {
-		super.setHomeType(homeType);
-	}
-
 
 	@Override
 	@Property(name = "isAndroid", mandatory = true)

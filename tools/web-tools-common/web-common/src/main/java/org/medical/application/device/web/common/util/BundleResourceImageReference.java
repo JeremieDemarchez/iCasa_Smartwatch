@@ -19,9 +19,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 
-import org.osgi.framework.Bundle;
-
+import nextapp.echo.app.Extent;
 import nextapp.echo.app.ResourceImageReference;
+
+import org.osgi.framework.Bundle;
 
 
 /**
@@ -36,7 +37,7 @@ public class BundleResourceImageReference extends ResourceImageReference {
    private static final long serialVersionUID = 3152621476928787288L;
 
    /**
-    * Bundle that has the image as resource
+    * Bundle that contains the image as resource
     */
    private Bundle bundle;
    
@@ -48,6 +49,11 @@ public class BundleResourceImageReference extends ResourceImageReference {
    
    public BundleResourceImageReference(String resource, Bundle bundle) {
    	super(resource);
+   	this.bundle = bundle;
+   }
+   
+   public BundleResourceImageReference(String resource, Extent width, Extent height, Bundle bundle) {
+   	super(resource, width, height);
    	this.bundle = bundle;
    }
    
