@@ -37,9 +37,7 @@ public class DeriveIfPossibleStateVar implements StateVariable {
 	
 	protected List<StateVariableListener> _listeners = new ArrayList<StateVariableListener>();
 	
-	private Object _originalValNotifToIgnore = new Object();
-	
-	private StateVariableListener _originalVarListener = new StateVariableListener() {
+	protected StateVariableListener _originalVarListener = new StateVariableListener() {
 
 		@Override
 		public void addVariable(StateVariable variable, Object sourceObject) {
@@ -56,9 +54,7 @@ public class DeriveIfPossibleStateVar implements StateVariable {
 		public void notifValueChange(StateVariable variable,
 				Object oldValue, Object newValue, Object sourceObject) {
 			synchronized (this) {
-				if (!ComparisonUtil.same(newValue, _originalValNotifToIgnore)) {
-					setDelegateValue(newValue);
-				}
+				setDelegateValue(newValue);
 				notifyValueChange(oldValue, newValue);
 			}
 		}
@@ -114,14 +110,14 @@ public class DeriveIfPossibleStateVar implements StateVariable {
 		setDelegateValue(value);
 	}
 
-	private void setDelegateValue(Object value) {
+	protected void setDelegateValue(Object value) {
 		synchronized (_lockDelegate) {
 			if (_delegateVar != null)
 				_delegateVar.setValue(value);
 		}
 	}
 
-	private void setOriginalValue(Object value) {
+	protected void setOriginalValue(Object value) {
 		if (_originalVar != null)
 			_originalVar.setValue(value);
 	}

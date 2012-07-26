@@ -432,8 +432,10 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 				synchronized (_availableDevs) {
 					// unregister application devices
 					List<ServiceRegistration> servRegs = _appDevRegistServs.remove(appDev);
-					for (ServiceRegistration servReg : servRegs)
+					if (servRegs != null) {
+						for (ServiceRegistration servReg : servRegs)
 							servReg.unregister();
+					}
 					
 					for (Object devProxy : appDev.getDeviceProxies())
 						notifyDeviceEvent(new DeviceEvent(EventType.REMOVE, appDev, devProxy));
@@ -459,8 +461,10 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 				
 				// unregister device proxies
 				List<ServiceRegistration> proxyServRegs = _devproxyRegistServs.remove(appDev);
-				for (ServiceRegistration servReg : proxyServRegs)
+				if (proxyServRegs != null) {
+					for (ServiceRegistration servReg : proxyServRegs)
 						servReg.unregister();
+				}
 				
 				notifyDeviceListeners(event);
 				return;

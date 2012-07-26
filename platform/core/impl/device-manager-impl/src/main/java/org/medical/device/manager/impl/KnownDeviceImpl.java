@@ -65,16 +65,6 @@ public class KnownDeviceImpl extends SynchronizedDevice implements KnownDevice {
 		StateVariable originalVar = getInternalVariable(AVAILABLE_PROP_NAME);
 		changeVariableImplem(new AvailabilityStateVar(originalVar, getAvailableDevice()));
 	}
-	
-	private void replaceByDelegateAppendVar(String varName) {
-		StateVariable originalVar = getInternalVariable(varName);
-		changeVariableImplem(new AppendFaultIfPossibleStateVar(originalVar, getAvailableDevice()));
-	}
-
-	private void replaceByDelegateVar(String varName) {
-		StateVariable originalVar = getInternalVariable(varName);
-		changeVariableImplem(new DeriveIfPossibleStateVar(originalVar, getAvailableDevice()));
-	}
 
 	@Override
 	public AvailableDevice getAvailableDevice() {

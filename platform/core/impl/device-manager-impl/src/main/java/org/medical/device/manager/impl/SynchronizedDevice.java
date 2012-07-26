@@ -29,6 +29,7 @@ import org.medical.device.manager.Operation;
 import org.medical.device.manager.OperationParameter;
 import org.medical.device.manager.Service;
 import org.medical.device.manager.VariableLifeCycle;
+import org.medical.device.manager.impl.util.AppendFaultIfPossibleStateVar;
 import org.medical.device.manager.util.AbstractDevice;
 
 
@@ -59,6 +60,16 @@ public class SynchronizedDevice extends AbstractDevice implements DelegateToDevi
 	public SynchronizedDevice(Device device) {
 		super(device.getId(), device.getName(), device.getVendor(), device.getTypeId());
 		setDelegateDevice(device);
+	}
+	
+	protected void replaceByDelegateAppendVar(String varName) {
+		StateVariable originalVar = getInternalVariable(varName);
+		changeVariableImplem(new AppendFaultIfPossibleStateVar(originalVar, getDelegateDevice()));
+	}
+
+	protected void replaceByDelegateVar(String varName) {
+		StateVariable originalVar = getInternalVariable(varName);
+		changeVariableImplem(new DeriveIfPossibleStateVar(originalVar, getDelegateDevice()));
 	}
 
 	protected void setDelegateDevice(Device device) {

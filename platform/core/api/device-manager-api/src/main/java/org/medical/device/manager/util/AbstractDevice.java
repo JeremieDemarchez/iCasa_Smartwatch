@@ -118,16 +118,17 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 	 * @param fault a device fault
 	 */
 	protected void addFault(DetailedFault fault) {
-		List<DetailedFault> oldFaults = null;
+		List<DetailedFault> oldFaults, newFaults;
 		synchronized(_faults) {
 			oldFaults = FaultUtil.clone(getDetailedFaults());
 			_faults.add(fault);
+			newFaults = FaultUtil.clone(_faults);
 		}
-		notifyFaultListeners(oldFaults);
+		notifyFaultListeners(oldFaults, newFaults);
 	}
 	
-	private void notifyFaultListeners(List<DetailedFault> oldFaults) {
-		((ManagedStateVariableImpl) getStateVariable(FAULTS_PROP_NAME)).sendValueChangeNotifs(oldFaults, _faults);
+	private void notifyFaultListeners(List<DetailedFault> oldFaults, List<DetailedFault> newFaults) {
+		((ManagedStateVariableImpl) getStateVariable(FAULTS_PROP_NAME)).sendValueChangeNotifs(oldFaults, newFaults);
 	}
 
 	/**

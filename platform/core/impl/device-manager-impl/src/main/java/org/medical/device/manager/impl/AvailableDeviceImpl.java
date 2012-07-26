@@ -50,6 +50,13 @@ public class AvailableDeviceImpl extends SynchronizedDevice implements Available
 	public AvailableDeviceImpl(ProvidedDevice device) {
 		super(device);
 	}
+	
+	protected void customizeVariables() {
+		replaceByDelegateVar(NAME_PROP_NAME);
+		replaceByDelegateVar(VENDOR_PROP_NAME);
+		replaceByDelegateAppendVar(FAULTS_PROP_NAME);
+		replaceByDelegateVar(TYPE_PROP_NAME);
+	}
 
 	@Override
 	public List<DetailedFault> getDetailedFaults() {
