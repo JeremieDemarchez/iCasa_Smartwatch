@@ -15,13 +15,17 @@
  */
 package org.medical.device.manager.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.medical.common.Attributable;
 import org.medical.common.StateVariable;
 import org.medical.common.StateVariableListener;
-import org.medical.common.impl.StateVariableImpl;
-import org.medical.device.manager.Device;
+import org.medical.common.VariableType;
+import org.medical.common.impl.ComparisonUtil;
 
-public class DeriveIfPossibleStateVar extends StateVariableImpl implements StateVariableListener {
+public class DeriveIfPossibleStateVar implements StateVariable {
 
 	private Attributable _delegateObj;
 	
@@ -30,31 +34,58 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 	protected Object _lockDelegate = new Object();
 
 	private StateVariable _delegateVar;
+	
+	protected List<StateVariableListener> _listeners = new ArrayList<StateVariableListener>();
+	
+	private Object _originalValNotifToIgnore = new Object();
+	
+	private StateVariableListener _originalVarListener = new StateVariableListener() {
+
+		@Override
+		public void addVariable(StateVariable variable, Object sourceObject) {
+			// do nothing
+		}
+
+		@Override
+		public void removeVariable(StateVariable variable,
+				Object sourceObject) {
+			_originalVar.removeListener(this);
+		}
+
+		@Override
+		public void notifValueChange(StateVariable variable,
+				Object oldValue, Object newValue, Object sourceObject) {
+			synchronized (this) {
+				if (!ComparisonUtil.same(newValue, _originalValNotifToIgnore)) {
+					setDelegateValue(newValue);
+				}
+				notifyValueChange(oldValue, newValue);
+			}
+		}
+	};
+	
+	protected StateVariableListener _delegateVarListener = new StateVariableListener() {
+
+		@Override
+		public void addVariable(StateVariable variable, Object sourceObject) {
+			updateDelegateVar(variable);
+		}
+
+		@Override
+		public void removeVariable(StateVariable variable, Object sourceObject) {
+			updateDelegateVar(null);
+		}
+
+		@Override
+		public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
+				Object sourceObject) {
+			setOriginalValue(newValue);
+		}
+	};
 
 	public DeriveIfPossibleStateVar(StateVariable originalVar, Attributable delegateObj) {
-		super(originalVar);
 		_originalVar = originalVar;
-		_originalVar.addListener(new StateVariableListener() {
-
-			@Override
-			public void addVariable(StateVariable variable, Object sourceObject) {
-				// do nothing
-			}
-
-			@Override
-			public void removeVariable(StateVariable variable,
-					Object sourceObject) {
-				_originalVar.removeListener(this);
-			}
-
-			@Override
-			public void notifValueChange(StateVariable variable,
-					Object oldValue, Object sourceObject) {
-				setValue(variable.getValue());
-				notifyValueChange(oldValue);
-			}
-			
-		});
+		_originalVar.addListener(_originalVarListener);
 		setDelegateObj(delegateObj);
 	}
 
@@ -63,13 +94,12 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 		Object value;
 		synchronized (_lockDelegate) {
 			if (_delegateVar == null)
-				return super.getValue();
+				return _originalVar.getValue();
 
 			value = _delegateVar.getValue();
 		}
 		
-		if (_originalVar != null)
-			_originalVar.setValue(value);
+//		setOriginalValue(value); //TODO check that it is not needed
 		
 		return value;
 	}
@@ -79,15 +109,21 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 		return getValue() != null;
 	}
 	
-	@Override
 	protected void setValueInternal(Object value) {
-		if (_originalVar != null)
-			_originalVar.setValue(value);
-		
+		setOriginalValue(value);
+		setDelegateValue(value);
+	}
+
+	private void setDelegateValue(Object value) {
 		synchronized (_lockDelegate) {
 			if (_delegateVar != null)
 				_delegateVar.setValue(value);
 		}
+	}
+
+	private void setOriginalValue(Object value) {
+		if (_originalVar != null)
+			_originalVar.setValue(value);
 	}
 	
 	public final Attributable getDelegateObj() {
@@ -101,10 +137,10 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 			if (_delegateObj != null) {
 				_delegateVar = _delegateObj.getStateVariable(getName());
 				if (_delegateVar != null)
-					_delegateVar.addListener(this);
+					_delegateVar.addListener(_delegateVarListener);
 			} else {
 				if (_delegateVar != null)
-					_delegateVar.removeListener(this);
+					_delegateVar.removeListener(_delegateVarListener);
 				_delegateVar = null;
 			}
 		}
@@ -123,42 +159,93 @@ public class DeriveIfPossibleStateVar extends StateVariableImpl implements State
 			_listeners.remove(listener);
 		}
 	}
-
-	@Override
-	public void addVariable(StateVariable variable, Object sourceObject) {
-		if (variable.getName().equals(getName()))
-			updateDelegateVar(variable);
+	
+	protected StateVariable getDelegateVar() {
+		synchronized(_lockDelegate) {
+			return _delegateVar;
+		}
 	}
-
+	
 	protected void updateDelegateVar(StateVariable newVar) {
 		synchronized (_lockDelegate) {
 			if (_delegateVar != null)
-				_delegateVar.removeListener(this);
+				_delegateVar.removeListener(_delegateVarListener);
 			
 			_delegateVar = newVar;
 			if (newVar != null) {
-				_delegateVar.addListener(this);
+				_delegateVar.addListener(_delegateVarListener);
 			}
 		}
 	}
 
 	@Override
-	public void removeVariable(StateVariable variable, Object sourceObject) {
-		if (variable.getName().equals(getName()))
-			updateDelegateVar(null);
+	public String getName() {
+		return _originalVar.getName();
 	}
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
-			Object sourceObject) {
-		if (variable.getName().equals(getName())) {
-			getValue(); // update the internal value and send notifs
-		}
+	public boolean canSendNotifications() {
+		return _originalVar.canSendNotifications();
+	}
+
+	@Override
+	public boolean canBeModified() {
+		return _originalVar.canBeModified();
+	}
+
+	@Override
+	public String getDescription() {
+		return _originalVar.getDescription();
+	}
+
+	@Override
+	public VariableType getType() {
+		return _originalVar.getType();
+	}
+
+	@Override
+	public Class getValueType() {
+		return _originalVar.getValueType();
+	}
+
+	@Override
+	public void setValue(Object value) {
+		setValueInternal(value);
+	}
+
+	@Override
+	public Object getOwner() {
+		return _originalVar.getOwner();
+	}
+
+	@Override
+	public boolean hasMetadata(String name) {
+		return _originalVar.hasMetadata(name);
+	}
+
+	@Override
+	public Object getMetadataValue(String name) {
+		return _originalVar.getMetadataValue(name);
+	}
+
+	@Override
+	public void setMetadataValue(String name, Object value) {
+		_originalVar.setMetadataValue(name, value);
+	}
+
+	@Override
+	public Map<String, Object> getMetadataValues() {
+		return _originalVar.getMetadataValues();
 	}
 	
-	protected StateVariable getDelegateVar() {
-		synchronized(_lockDelegate) {
-			return _delegateVar;
+	protected void notifyValueChange(Object oldValue, Object newValue) {
+		if (ComparisonUtil.same(oldValue, _originalVar.getValue()))
+			return;
+		
+		synchronized (_listeners ) {
+			for (StateVariableListener listener  : _listeners) {
+				listener.notifValueChange(this, oldValue, newValue, _originalVar.getOwner());
+			}
 		}
 	}
 }

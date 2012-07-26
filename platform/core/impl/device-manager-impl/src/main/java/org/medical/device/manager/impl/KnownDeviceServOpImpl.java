@@ -25,11 +25,11 @@ import org.medical.device.manager.Service;
 import org.medical.device.manager.util.AbstractOperation;
 import org.medical.device.manager.util.OperationParameterImpl;
 
-public class KnownDeviceServOpImpl extends AbstractOperation {
+public class KnownDeviceServOpImpl extends AbstractOperation implements DelegateToDevice {
 	
-	private Object _lockDelegate = new Object();
-
-	private Device _delegateDevice; 
+	private Device _device;
+	
+	protected Object _lockDelegate = new Object();
 
 	public KnownDeviceServOpImpl(Operation delegateOp, Service service, Device delegateDevice) {
 		super(delegateOp.getName(), service);
@@ -44,11 +44,11 @@ public class KnownDeviceServOpImpl extends AbstractOperation {
 	@Override
 	public Object invoke(Object... args) {
 		synchronized (_lockDelegate) {
-			if (_delegateDevice == null)
+			if (getDelegateDevice() == null)
 				throw new IllegalStateException(
 						"Cannot call delegate from this operation.");
 
-			Service delegateServ = _delegateDevice.getService(getService()
+			Service delegateServ = getDelegateDevice().getService(getService()
 					.getTypeId());
 
 			List<OperationParameter> delegateParams = getParameters();
@@ -84,14 +84,15 @@ public class KnownDeviceServOpImpl extends AbstractOperation {
 			params[params.length - 1].setValue(returnObj);
 	}
 
-	public Device getDelegateDevice() {
-		return _delegateDevice;
-	}
-
 	public void setDelegateDevice(Device delegateDevice) {
 		synchronized (_lockDelegate) {
-			_delegateDevice = delegateDevice;
+			_device = delegateDevice;
 		}
+	}
+
+	@Override
+	public Device getDelegateDevice() {
+		return _device;
 	}
 
 }

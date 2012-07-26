@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.manager.impl;
+package org.medical.device.manager;
 
 /**
  * Represents the lifecycle of a variable.
@@ -23,5 +23,21 @@ package org.medical.device.manager.impl;
  *
  */
 public enum VariableLifeCycle {
-	AVAILABLE_SYNC /* exists only when the provider device is available */ , ALWAYS /* always exists */
+	KNOWN_SYNC /* exists only when the known device exists */, 
+	AVAILABLE_SYNC /* exists only when the available device exists */, 
+	PROVIDED_SYNC /* exists only when the provider device exists */ , 
+	APPLICATION_SYNC /* exists only when the application device exists */ , 
+	ALWAYS /* always exists */;
+
+	public static Object getLifeCycle(Device device) {
+		if (device instanceof AvailableDevice)
+			return AVAILABLE_SYNC;
+		if (device instanceof ProvidedDevice)
+			return PROVIDED_SYNC;
+		if (device instanceof KnownDevice)
+			return KNOWN_SYNC;
+		if (device instanceof KnownDevice)
+			return APPLICATION_SYNC;
+		return null;
+	}
 }

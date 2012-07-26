@@ -127,7 +127,7 @@ public abstract class AbstractDevice extends EntityImpl implements Device {
 	}
 	
 	private void notifyFaultListeners(List<DetailedFault> oldFaults) {
-		((ManagedStateVariableImpl) getStateVariable(FAULTS_PROP_NAME)).sendValueChangeNotifs(oldFaults);
+		((ManagedStateVariableImpl) getStateVariable(FAULTS_PROP_NAME)).sendValueChangeNotifs(oldFaults, _faults);
 	}
 
 	/**

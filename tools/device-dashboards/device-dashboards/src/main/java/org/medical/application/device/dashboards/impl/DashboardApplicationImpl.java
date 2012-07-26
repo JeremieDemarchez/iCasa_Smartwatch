@@ -343,7 +343,7 @@ public class DashboardApplicationImpl extends BaseHouseApplication implements Ap
 	
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
 			Object sourceObject) {
 		String devId = null;
 		Object owner = variable.getOwner();

@@ -646,10 +646,10 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 		private boolean _isValChange = false;
 
 		public VariableEvent(StateVariable variable, Object oldValue,
-				Object sourceObject) {
+				Object newValue, Object sourceObject) {
 			_var = variable;
 			_oldValue = oldValue;
-			_newValue = variable.getValue();
+			_newValue = newValue;
 			_sourceObj = sourceObject;
 			_isValChange = true;
 		}
@@ -763,9 +763,9 @@ public class DeviceManagerTest extends ICasaAbstractTest {
 		}
 
 		@Override
-		public void notifValueChange(StateVariable variable, Object oldValue,
+		public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
 				Object sourceObject) {
-			events.add(new VariableEvent(variable, oldValue, sourceObject));
+			events.add(new VariableEvent(variable, oldValue, newValue, sourceObject));
 		}
 		
 		public void reset() {

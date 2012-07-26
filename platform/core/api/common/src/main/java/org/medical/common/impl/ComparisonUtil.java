@@ -13,29 +13,25 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package org.medical.device.manager.util;
-
-import org.medical.common.VariableType;
-import org.medical.common.impl.StateVariableImpl;
+package org.medical.common.impl;
 
 /**
- * This class allows externals to force sending value change notifications.
+ * Util methods to compare objects.
  * 
  * @author Thomas Leveque
  *
  */
-public class ManagedStateVariableImpl extends StateVariableImpl {
+public class ComparisonUtil {
 
-	public ManagedStateVariableImpl(String name, Object value, Class type,
-			VariableType varType, String description, boolean canBeModified,
-			boolean canSendNotif, Object owner) {
-		super(name, value, type, varType, description, canBeModified, canSendNotif,
-				owner);
+	/**
+	 * Returns true if the specified objects are equal.
+	 * This method allows arguments to be null.
+	 * 
+	 * @param obj1 an object
+	 * @param obj2 an object
+	 * @return true if the specified objects are equal.
+	 */
+	public static boolean same(Object obj1, Object obj2) {
+		return ((obj1 == null) && (obj2 == null)) || ((obj1 != null) && obj1.equals(obj2));
 	}
-
-	public void sendValueChangeNotifs(Object oldValue, Object newValue) {
-		notifyValueChange(oldValue, newValue);
-	}
-
-	
 }

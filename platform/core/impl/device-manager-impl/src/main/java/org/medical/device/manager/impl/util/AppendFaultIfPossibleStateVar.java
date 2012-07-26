@@ -21,6 +21,7 @@ import java.util.List;
 
 import org.medical.common.Attributable;
 import org.medical.common.StateVariable;
+import org.medical.common.StateVariableListener;
 import org.medical.device.manager.DetailedFault;
 import org.medical.device.manager.impl.DeriveIfPossibleStateVar;
 import org.medical.device.manager.util.FaultUtil;
@@ -32,10 +33,29 @@ import org.medical.device.manager.util.FaultUtil;
  * @author Thomas Leveque
  *
  */
-public class AppendFaultIfPossibleStateVar extends DeriveIfPossibleStateVar
-		implements StateVariable {
+public class AppendFaultIfPossibleStateVar extends DeriveIfPossibleStateVar {
 
 	private List<DetailedFault> _oldDelegateFaults;
+	
+	protected StateVariableListener _delegateVarListener = new StateVariableListener() {
+
+		@Override
+		public void addVariable(StateVariable variable, Object sourceObject) {
+			updateDelegateVar(variable);
+		}
+
+		@Override
+		public void removeVariable(StateVariable variable, Object sourceObject) {
+			updateDelegateVar(null);
+		}
+
+		@Override
+		public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
+				Object sourceObject) {
+			_oldDelegateFaults = (List<DetailedFault>) oldValue;
+			updateFaults(); // update the internal value and send notifs
+		}
+	};
 
 	public AppendFaultIfPossibleStateVar(StateVariable originalVar,
 			Attributable delegateObj) {
@@ -57,12 +77,12 @@ public class AppendFaultIfPossibleStateVar extends DeriveIfPossibleStateVar
 	public Object getValue() {
 		synchronized (_lockDelegate) {
 			if (getDelegateVar() == null)
-				return super.getValue();
+				return _originalVar.getValue();
 
 			updateFaults();
 		}
 		
-		return super.getValue();
+		return _originalVar.getValue();
 	}
 
 	private void updateFaults() {
@@ -81,15 +101,6 @@ public class AppendFaultIfPossibleStateVar extends DeriveIfPossibleStateVar
 					.getValue();
 			FaultUtil.mergeFaults(_oldDelegateFaults, delegateFaults,
 					mergedFaults);
-		}
-	}
-
-	@Override
-	public synchronized void notifValueChange(StateVariable variable, Object oldValue,
-			Object sourceObject) {
-		if (variable.getName().equals(getName())) {
-			_oldDelegateFaults = (List<DetailedFault>) oldValue;
-			updateFaults(); // update the internal value and send notifs
 		}
 	}
 }

@@ -533,7 +533,7 @@ public class GlobalDeviceManagerImpl implements GlobalDeviceManager, DeviceListe
 	}
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue, Object source) {
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue, Object source) {
 		if (source == null)
 			return; // ignore it
 		

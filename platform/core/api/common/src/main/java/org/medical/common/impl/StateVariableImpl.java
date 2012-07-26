@@ -50,11 +50,15 @@ public class StateVariableImpl implements StateVariable {
 		_owner = owner;
 	}
 
-	public StateVariableImpl(StateVariable delegateVar) {
-		this(delegateVar.getName(), delegateVar.getValue(), delegateVar //TODO should clone value
-				.getValueType(), delegateVar.getType(), delegateVar
-				.getDescription(), delegateVar.canBeModified(), delegateVar
-				.canSendNotifications(), delegateVar.getOwner());
+	public StateVariableImpl(StateVariable varToClone) {
+		this(varToClone.getName(), clone(varToClone.getValue()), varToClone
+				.getValueType(), varToClone.getType(), varToClone
+				.getDescription(), varToClone.canBeModified(), varToClone
+				.canSendNotifications(), varToClone.getOwner());
+	}
+
+	private static Object clone(Object value) {
+		return value; //TODO should clone value
 	}
 
 	@Override
@@ -117,22 +121,18 @@ public class StateVariableImpl implements StateVariable {
 		setValueInternal(value);
 		_value = value;
 
-		notifyValueChange(oldValue);
+		notifyValueChange(oldValue, _value);
 	}
 
-	protected void notifyValueChange(Object oldValue) {
-		if (same(oldValue, _value))
+	protected void notifyValueChange(Object oldValue, Object newValue) {
+		if (ComparisonUtil.same(oldValue, _value))
 			return;
 		
 		synchronized (_listeners ) {
 			for (StateVariableListener listener  : _listeners) {
-				listener.notifValueChange(this, oldValue, _owner);
+				listener.notifValueChange(this, oldValue, newValue, _owner);
 			}
 		}
-	}
-	
-	protected boolean same(Object oldValue, Object newValue) {
-		return ((oldValue == null) && (newValue == null)) || ((oldValue != null) && oldValue.equals(newValue));
 	}
 
 	protected void setValueInternal(Object value) {

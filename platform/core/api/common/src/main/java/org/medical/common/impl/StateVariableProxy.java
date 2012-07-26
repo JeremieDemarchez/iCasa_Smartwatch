@@ -138,11 +138,11 @@ public class StateVariableProxy implements StateVariable, StateVariableListener 
 	}
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
 			Object sourceObject) {
 		synchronized (_listeners ) {
 			for (StateVariableListener listener  : _listeners) {
-				listener.notifValueChange(this, oldValue, sourceObject);
+				listener.notifValueChange(this, oldValue, newValue, sourceObject);
 			}
 		}
 	}

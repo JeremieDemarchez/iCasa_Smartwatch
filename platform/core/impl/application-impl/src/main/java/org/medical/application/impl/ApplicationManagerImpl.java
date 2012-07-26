@@ -23,6 +23,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -33,9 +34,9 @@ import org.apache.felix.ipojo.annotations.Validate;
 import org.apache.felix.ipojo.extender.Extender;
 import org.medical.application.Application;
 import org.medical.application.ApplicationCategory;
-import org.medical.application.ApplicationTracker;
 import org.medical.application.ApplicationManager;
 import org.medical.application.ApplicationState;
+import org.medical.application.ApplicationTracker;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.log.LogService;
@@ -70,6 +71,8 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	private Map<Application, Set<String> /* bundle symbolic names */> _bundlesPerAppId = new HashMap<Application, Set<String>>();
 	
 	private Map<String /* bundle symbolic name */, ApplicationImpl> _appPerBundle = new HashMap<String, ApplicationImpl>();
+	
+	private Map<String /* bundle symbolic name */, Boolean> _isAppPerBundle = new ConcurrentHashMap<String, Boolean>();
 
 	private ApplicationCategoryImpl _undefinedCateg;
 
@@ -142,6 +145,10 @@ public class ApplicationManagerImpl implements ApplicationManager {
 				notifyStop(listener);
 			}
 		}
+		_appPerId.clear();
+		_isAppPerBundle.clear();
+		_bundlesPerAppId.clear();
+		_apps.clear();
 	}
 
 	private void notifyStop(ApplicationTracker listener) {
@@ -153,14 +160,31 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	@Override
 	public Application getApplicationOfBundle(String bundleSymbolicName) {
 		synchronized (_appPerBundle) {
-			return _appPerBundle.get(bundleSymbolicName);
+			Boolean isApp = _isAppPerBundle.get(bundleSymbolicName);
+			if (isApp == null) {
+				Bundle bundle = getBundle(bundleSymbolicName);
+				if (bundle != null)
+					onBundleArrival(bundle);
+			}
+			
+			Application app = _appPerBundle.get(bundleSymbolicName);
+			if (app != null)
+				return app;
+				
+			return app;
 		}
 	}
 	
 	private void onAppBundleArrival(Bundle bundle, String header) {
+		onBundleArrival(bundle);
+	}
+
+	private void onBundleArrival(Bundle bundle) {
 		final Dictionary headers = bundle.getHeaders();
 		String appId = (String) headers.get(Application.APP_ID_BUNDLE_HEADER);
-		if (appId == null)
+		boolean isApp = (appId != null);
+		_isAppPerBundle.put(bundle.getSymbolicName(), isApp);
+		if (!isApp)
 			return; // not an application bundle
 		
 		String appName = (String) headers.get(Application.APP_NAME_BUNDLE_HEADER);
@@ -183,11 +207,12 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	}
 
 	private boolean addApplication(Bundle bundle, String appId, String appName, String version) {
-		// cannot have multiple versions of the same app
-		ApplicationImpl app = _appPerId.get(appId);
-		boolean isNewApp = (app == null);
-		
+			
         synchronized (_appPerBundle) {
+        	// cannot have multiple versions of the same app
+        	ApplicationImpl app = _appPerId.get(appId);
+        	boolean isNewApp = (app == null);
+        	
         	if (isNewApp) {
     			app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
     			app.setVersion(version);
@@ -200,9 +225,9 @@ public class ApplicationManagerImpl implements ApplicationManager {
 			_appPerBundle.put(symbolicName, app);
         	Set<String> bundleIds = getBundleIds(app);
         	bundleIds.add(symbolicName);
+        	
+        	return isNewApp;
         }
-        
-        return isNewApp;
 	}
 
 	private Set<String> getBundleIds(Application app) {
@@ -244,7 +269,7 @@ public class ApplicationManagerImpl implements ApplicationManager {
 	private Bundle getBundle(String symbolicName) {
 	    Bundle result = null;
 	    for (Bundle candidate : _context.getBundles()) {
-	        if (candidate.getSymbolicName().equals(symbolicName)) {
+	        if (symbolicName.equals(candidate.getSymbolicName())) {
 	            if (result == null || result.getVersion().compareTo(candidate.getVersion()) < 0) {
 	                result = candidate;
 	            }

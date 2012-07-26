@@ -20,9 +20,9 @@ import org.medical.device.manager.Device;
 import org.medical.device.manager.Operation;
 import org.medical.device.manager.util.AbstractService;
 
-public class KnownDeviceServiceImpl extends AbstractService {
+public class DeviceServiceImpl extends AbstractService {
 	
-	public KnownDeviceServiceImpl(String serviceId, Device device) {
+	public DeviceServiceImpl(String serviceId, Device device) {
 		super(serviceId, device);
 	}
 

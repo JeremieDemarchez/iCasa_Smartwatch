@@ -49,6 +49,8 @@ public class ApplicationDeviceImpl implements ApplicationDevice {
 	private ApplicationDevice _protectedDevice;
 	
 	private List<Object> _proxies = new ArrayList<Object>();
+	
+	//protected List<StateVariableListener> _listeners = new ArrayList<StateVariableListener>();
 
 	public ApplicationDeviceImpl(KnownDeviceImpl knownDev, Application app) {
 		_app = app;

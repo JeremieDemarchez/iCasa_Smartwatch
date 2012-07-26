@@ -122,7 +122,7 @@ public class ProvidedDeviceFromIntf extends AbstractProvidedDevice implements St
 	}
 
 	@Override
-	public void notifValueChange(StateVariable variable, Object oldValue,
+	public void notifValueChange(StateVariable variable, Object oldValue, Object newValue,
 			Object sourceObject) {
 		if (variable.getName().equals(FAULT_ATTR_NAME))
 			updateFaultState();

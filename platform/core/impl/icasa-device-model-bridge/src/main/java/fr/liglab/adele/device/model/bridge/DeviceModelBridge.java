@@ -88,16 +88,10 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 			while(!_killed) {
 				
 				Collection<ProvidedDevice> providedDevices = null;
-				synchronized(_providedProxyDevs) {
+				synchronized (_providedProxyDevs) {
 					providedDevices = _providedProxyDevs.values();
-				
-				for (ProvidedDevice device : providedDevices) {
-					updateDerivedVariables(device.getStateVariables());
-					
-					for (Service serv : device.getServices()) {
-						updateDerivedVariables(serv.getStateVariables());
-					}
-				}
+
+					updateDevices(providedDevices);
 				}
 				
 				synchronized (this) {
@@ -107,15 +101,6 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 						// do nothing
 					}
 				}
-			}
-		}
-
-		private void updateDerivedVariables(List<StateVariable> variables) {
-			for (StateVariable var : variables) {
-				if (var instanceof StateVariableProxy)
-					var = ((StateVariableProxy) var).getInternalVariable();
-				if (var instanceof DerivedStateVariableFromIntf)
-					var.getValue(); // use it to update value
 			}
 		}
 
@@ -152,7 +137,15 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 			
 			@Override
 			public void modifiedService(ServiceReference reference, Object service) {
-				// do nothing
+				if (!(service instanceof GenericDevice))
+					return;
+				
+				GenericDevice device = (GenericDevice) service;
+				ProvidedDevice provDev = null;
+				synchronized (_providedProxyDevs) {
+					provDev = _providedProxyDevs.get(device.getSerialNumber());
+					updateDevice(provDev);
+				}
 			}
 			
 			@Override
@@ -176,6 +169,29 @@ public class DeviceModelBridge implements FilterDeviceContrib, DeviceExporter {
 				return device;
 			}
 		});
+	}
+	
+	private void updateDevices(Collection<ProvidedDevice> providedDevices) {
+		for (ProvidedDevice device : providedDevices) {
+			updateDevice(device);
+		}
+	}
+
+	private void updateDevice(ProvidedDevice device) {
+		updateDerivedVariables(device.getStateVariables());
+		
+		for (Service serv : device.getServices()) {
+			updateDerivedVariables(serv.getStateVariables());
+		}
+	}
+	
+	private void updateDerivedVariables(List<StateVariable> variables) {
+		for (StateVariable var : variables) {
+			if (var instanceof StateVariableProxy)
+				var = ((StateVariableProxy) var).getInternalVariable();
+			if (var instanceof DerivedStateVariableFromIntf)
+				var.getValue(); // use it to update value
+		}
 	}
 
 	@Validate

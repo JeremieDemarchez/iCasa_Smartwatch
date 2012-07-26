@@ -97,6 +97,28 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 	private boolean filterServices(Application app, BundleContext context, ServiceReference sr, String[] interfaces) {
 		boolean isFromApp = (app != null);
 		
+		for (String spec : interfaces) {
+			if (DeviceManager.class.getName().equals(spec)) {
+				// remove device manager of other applications
+				DeviceManager devMgr = (DeviceManager) context.getService(sr);
+				context.ungetService(sr);
+				
+				if (devMgr == null)
+					return true;
+				
+				if (!isFromApp && devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
+					return false;
+				}
+				
+				if (!isFromApp && !devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
+					return true;
+				}
+					
+				if (!devMgr.getApplicationId().equals(app.getId()))
+					return true;
+			}
+		}
+		
 		if (_filterDevContribs != null) {
 			for (FilterDeviceContrib devFilter : _filterDevContribs) {
 				try {
@@ -134,22 +156,6 @@ public class FromApplicationFindHook implements FindHook, EventHook {
 					return true;
 			}
 
-//			if (DeviceManager.class.getName().equals(spec)) {
-//				// remove device manager of other applications
-//				DeviceManager devMgr = (DeviceManager) context.getService(sr);
-//				context.ungetService(sr);
-//				
-//				if (!isFromApp && devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
-//					return false;
-//				}
-//				
-//				if (!isFromApp && !devMgr.getApplicationId().equals(DeviceManagerImpl.INTERNAL_MANAGER_APP_ID)) {
-//					return true;
-//				}
-//					
-//				if (!devMgr.getApplicationId().equals(app.getId()))
-//					return true;
-//			}
 		}
 		
 		return false;

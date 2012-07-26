@@ -32,7 +32,7 @@
 
 	<modules>
 		<module>core</module>
-		<module>physical-devices</module>
+		<!--module>physical-devices</module-->
 		<module>simulated-devices</module>
 		<module>packages</module>
 	</modules>
