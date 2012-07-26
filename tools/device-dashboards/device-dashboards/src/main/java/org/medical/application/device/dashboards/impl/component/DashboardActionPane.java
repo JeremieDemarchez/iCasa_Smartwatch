@@ -113,8 +113,8 @@ public class DashboardActionPane extends ActionPane implements SelectedApplicati
 		// Create the application manager pane.
 		m_appPane = new ApplicationManagerPane(this);
 		final AccordionPaneLayoutData appPaneLayout = new AccordionPaneLayoutData();
-		appPaneLayout.setIcon(new ResourceImageReference(ApplicationManagerPane.APPLICATION_ICON.getResource(),
-		      ICON_SIZE, ICON_SIZE));
+		appPaneLayout.setIcon(new BundleResourceImageReference(ApplicationManagerPane.APPLICATION_ICON.getResource(),
+		      ICON_SIZE, ICON_SIZE, bundle));
 		appPaneLayout.setTitle("Applications");
 		m_appPane.setLayoutData(appPaneLayout);
 		add(m_appPane);

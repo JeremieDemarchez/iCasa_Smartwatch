@@ -52,7 +52,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
- * TODO comments.
+ * The simulator user pane
  * 
  * @author Gabriel Pedraza Ferreira
  */

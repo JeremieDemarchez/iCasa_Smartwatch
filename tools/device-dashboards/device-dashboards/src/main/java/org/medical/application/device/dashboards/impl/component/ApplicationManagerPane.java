@@ -292,7 +292,7 @@ public class ApplicationManagerPane extends ContentPane  {
 	private void showErrorWindow(final String error) {
 		final WindowPane window = new WindowPane();
 		// Create the icon.
-		final Label icon = new Label(new ResourceImageReference("/Error.png"));
+		final Label icon = new Label(new BundleResourceImageReference("/Error.png", BaseHouseApplication.getBundle()));
 		// Create the message label.
 		final Label message = new Label(error);
 		// Create the confirmation button.
