@@ -79,7 +79,8 @@ public class ClockPane extends ContentPane {
 	private final TextField m_date;
 	private final TextField m_time;
 	private final TextField m_timeFactor;
-	// private final SelectField m_timeFactor;
+	private final TextField m_scenario;
+
 	private final Button m_increaseTimeFactor;
 	private final Button m_decreaseTimeFactor;
 	private final Button m_setTimeAndDate;
@@ -145,14 +146,20 @@ public class ClockPane extends ContentPane {
 		stopScript.addActionListener(actionListener);
 
 		m_scenarioList = new SelectField(new DefaultListModel(m_parent.getApplicationInstance().getScenarioList().toArray()));
-		
+			
 		final Button refreshScenario = new Button("Refresh");
 		refreshScenario.setActionCommand("RefreshScenarioList");
 		refreshScenario.addActionListener(actionListener);
 		
-		final Button installScenario = new Button("Install Scenario");
+		final Button installScenario = new Button("Install");
 		installScenario.setActionCommand("InstallScenario");
 		installScenario.addActionListener(actionListener);
+		
+		final Button uninstallScenario = new Button("Uninstall");
+		uninstallScenario.setActionCommand("UninstallScenario");
+		uninstallScenario.addActionListener(actionListener);
+		
+		m_scenario = new TextField();
 		
 		final Button saveButton = new Button("Save Scenario");
 		saveButton.setActionCommand("SaveScenario");
@@ -180,11 +187,19 @@ public class ClockPane extends ContentPane {
 		scriptGrid.add(refreshScript);
 		scriptGrid.add(startScript);
 		scriptGrid.add(stopScript);
-		scriptGrid.add(new Label("iCasa Scenarios: "));
-		scriptGrid.add(m_scenarioList);
-		scriptGrid.add(refreshScenario);
-		scriptGrid.add(installScenario);
-		scriptGrid.add(saveButton);
+
+		
+		final Grid scenarioGrid = new Grid(4);
+		scenarioGrid.setInsets(new Insets(3));
+		scenarioGrid.add(new Label("iCasa Scenarios: "));
+		scenarioGrid.add(m_scenarioList);
+		scenarioGrid.add(refreshScenario);
+		scenarioGrid.add(installScenario);
+		scenarioGrid.add(uninstallScenario);
+		scenarioGrid.add(new Label("New scenario name: "));
+		scenarioGrid.add(m_scenario);
+		scenarioGrid.add(saveButton);
+		scenarioGrid.add(refreshScenario);
 		
 		
 		final Grid globalGrid = new Grid(1);					
@@ -192,7 +207,7 @@ public class ClockPane extends ContentPane {
 		
 		globalGrid.add(clockGrid);
 		globalGrid.add(scriptGrid);
-		
+		globalGrid.add(scenarioGrid);
 
 		add(globalGrid);
 	}
@@ -372,7 +387,9 @@ public class ClockPane extends ContentPane {
 				String scenarioName = (String) m_scenarioList.getSelectedItem();
 				if (scenarioName != null)
 					m_parent.getApplicationInstance().installScenario(scenarioName);		
-			} else if (command.equals("SetDate")) {
+			} else if (command.equals("UninstallScenario")) {				
+					m_parent.getApplicationInstance().uninstallScenario();						
+		   } else if (command.equals("SetDate")) {
 				openTimeAndDateSettings();
 			} else if (command.equals("IncreaseFactor")) {
 				synchronized (ClockPane.this) {
@@ -397,7 +414,9 @@ public class ClockPane extends ContentPane {
 					}
 				}
 			} else if (command.equals("SaveScenario")) {
-				m_parent.getApplicationInstance().saveSimulationEnvironment();
+				String scenarioName = m_scenario.getText().trim();
+				if (!scenarioName.isEmpty())
+					m_parent.getApplicationInstance().saveSimulationEnvironment(scenarioName);
 			}
 
 		}

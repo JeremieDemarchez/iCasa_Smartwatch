@@ -153,15 +153,19 @@ public class InterpreterImpl implements Interpreter {
 			m_manager.setDeviceLocation(device.getId(), null);
 			System.out.println("\t\tDevice is now unbound from environment " + model.getId());
 			ComponentInstance instance = instances.remove(device.getId());
-			instance.dispose();
-			System.out.println("\t\tDevice destroyed");
+			if (instance!=null) {
+				instance.dispose();
+				System.out.println("\t\tDevice destroyed");				
+			}
 		}
 		// TODO unbind external devices that are bound to the environment (need
 		// to add methods to envManager)
 		// Now we can destroy the environment
 		ComponentInstance instance = instances.remove(model.getId());
-		instance.dispose();
-		System.out.println("\tEnvironment destroyed");
+		if (instance!=null) {
+			instance.dispose();
+			System.out.println("\tEnvironment destroyed");
+		}
 	}
 
 	private void createDevice(Map<String, ComponentInstance> instances, DeviceModel model)

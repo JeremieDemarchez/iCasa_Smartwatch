@@ -20,10 +20,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Hashtable;
@@ -448,7 +446,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	/**
 	 * Saves the current simulation scenario
 	 */
-	public void saveSimulationEnvironment() {
+	public void saveSimulationEnvironment(String scenarioName) {
 		SimulationManager simulationManager = getSimulationManager();
 		Set<String> envs = simulationManager.getEnvironments();
 
@@ -457,12 +455,12 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		FileWriter outFile;
 		PrintWriter out;
 		try {
-			SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy-HHmmss");
+			//SimpleDateFormat formatter = new SimpleDateFormat("ddMMyyyy-HHmmss");
 
 			File directory = new java.io.File("scenarios");
 			if (!directory.exists())
 				directory.mkdir();
-			String fileName = "scenarios" + File.separator + "simulation-" + formatter.format(new Date()) + ".icasa";
+			String fileName = "scenarios" + File.separator + scenarioName + ".icasa";
 			outFile = new FileWriter(new File(fileName));
 			out = new PrintWriter(outFile);
 
@@ -523,6 +521,14 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			e.printStackTrace();
 		}
 	}
+	
+	public void uninstallScenario() {
+		try {
+	      m_ScenarioInstaller.uninstallCurrentScenario();
+      } catch (Exception e) {
+	      e.printStackTrace();
+      }
+   }
 
 	public List<String> getScriptList() {
 		return m_ScriptExecutor.getScriptList();
@@ -588,6 +594,8 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			}
 		}	   
    }
+
+
 
 
 }

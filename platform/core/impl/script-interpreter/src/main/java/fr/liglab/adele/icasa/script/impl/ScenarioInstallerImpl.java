@@ -92,6 +92,9 @@ public class ScenarioInstallerImpl implements ScenarioInstaller, ArtifactInstall
 	        } finally {
 	            in.close();
 	        }
+	        
+	        currentScenario = script;
+	        
 	        // Start the script
 	        script.start();
 		}			   
@@ -106,6 +109,7 @@ public class ScenarioInstallerImpl implements ScenarioInstaller, ArtifactInstall
 	@Override
    public void uninstallCurrentScenario() throws Exception {
 		if (currentScenario!=null)
-			currentScenario.stop();	   
+			currentScenario.stop();
+		currentScenario = null;
    }
 }

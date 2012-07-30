@@ -72,7 +72,7 @@ public class SimulatorActionPane extends ActionPane {
 		m_clockPane = new ClockPane(this);
 		final AccordionPaneLayoutData clockPaneLayout = new AccordionPaneLayoutData();
 		clockPaneLayout.setIcon(new BundleResourceImageReference(ClockPane.CLOCK_IMAGE.getResource(), ICON_SIZE, ICON_SIZE, bundle));
-		clockPaneLayout.setTitle("Simulated Time & Date");
+		clockPaneLayout.setTitle("Scenarios and Scripts");
 		m_clockPane.setLayoutData(clockPaneLayout);
 		add(m_clockPane);
 		addTabSelectionListener(new TabSelectionListener() {
