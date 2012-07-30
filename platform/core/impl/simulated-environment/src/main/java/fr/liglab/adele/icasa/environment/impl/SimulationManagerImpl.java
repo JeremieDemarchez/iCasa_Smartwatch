@@ -403,7 +403,7 @@ public class SimulationManagerImpl implements SimulationManager {
 			return new HashSet<String>();
 		}
 		final SimulatedEnvironment env = m_environments.get(environmentId).service;		
-		return new HashSet<String>(env.getPropertyNames());	  
+		return  Collections.unmodifiableSet(env.getPropertyNames());	  
    }
 	
 	@Override
