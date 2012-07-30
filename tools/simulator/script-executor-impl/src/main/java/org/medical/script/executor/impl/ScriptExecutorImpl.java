@@ -131,7 +131,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	
 	private void executeScript(List<Action> actions, final Date startDate, final int factor) {
 		try {
-	      simulationManager.killAllHumans();
+	      simulationManager.removeAllUsers();
 	      cancelTask();
 	      
 	      scheduler.schedule(new Runnable() {

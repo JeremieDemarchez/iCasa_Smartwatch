@@ -379,7 +379,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public synchronized void killAllHumans() {
+	public synchronized void removeAllUsers() {
 		// Remove the "/user" context
 		final Context root = m_contextService.getRootContext();
 		if (root.getChild("user") != null) {
@@ -387,6 +387,25 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 	}
 
+	@Override
+   public Double getVariableValue(String environmentId, String variable) {
+		if (environmentId == null) {
+			// Nothing to bind to => nothing to do!
+			return 0.0;
+		}
+		final SimulatedEnvironment env = m_environments.get(environmentId).service;		
+		return env.getProperty(variable);	   
+	}
+
+	@Override
+   public Set<String> getEnvironmentVariables(String environmentId) {
+		if (environmentId == null) {
+			return new HashSet<String>();
+		}
+		final SimulatedEnvironment env = m_environments.get(environmentId).service;		
+		return new HashSet<String>(env.getPropertyNames());	  
+   }
+	
 	@Override
 	public void setEnvironmentVariable(String environmentId, String variable, Double value) {
 		if (environmentId == null) {
@@ -568,5 +587,9 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 
 	}
+
+
+
+
 
 }

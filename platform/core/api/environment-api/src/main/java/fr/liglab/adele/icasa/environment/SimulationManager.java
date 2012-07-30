@@ -271,13 +271,17 @@ public interface SimulationManager {
      * </p>
      * 
      */
-    void killAllHumans();
+    void removeAllUsers();
     
     void addUser(String userName);
     
     void removeUser(String userName);
     
 
+    Set<String> getEnvironmentVariables(String environmentId);
+    
+    Double getVariableValue(String environmentId, String variable);
+    
     /**
      * Sets an environment variable
      * @param environmentId the environment id

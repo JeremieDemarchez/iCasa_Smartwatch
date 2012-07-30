@@ -470,6 +470,13 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 				Zone zone = simulationManager.getEnvironmentZone(environment);
 				out.println("\t position = " + zone.leftX + " " + zone.topY + " " + zone.rightX + " " + zone.bottomY);
 
+				Set<String> envVariables = simulationManager.getEnvironmentVariables(environment);
+				for (String envVariable : envVariables) {
+					Double value = simulationManager.getVariableValue(environment, envVariable);
+					if (value!=null)
+						out.println("\t\"" +  envVariable + "\" = " + value);
+            }
+				
 				for (String device : devices) {
 					System.out.println("Device -----> " + device);
 					Position position = simulationManager.getDevicePosition(device);
