@@ -19,25 +19,27 @@
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>parent</relativePath>
+		<relativePath>../parent</relativePath>
 	</parent>
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.liglab.adele.icasa</groupId>
-	<artifactId>root</artifactId>
+	<artifactId>applications</artifactId>
 	<packaging>pom</packaging>
-	<name>ICasa :: Root</name>
+	<name>ICasa :: Applications</name>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<modules>
-		<module>parent</module>
-		<module>dependencies</module>
-		<module>platform</module>
-		<module>tools</module>		
-		<module>applications</module>
-		<module>application-store</module>
-		<module>distribution</module>
+		
 	</modules>
 
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>com.google.code.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
 </project>
