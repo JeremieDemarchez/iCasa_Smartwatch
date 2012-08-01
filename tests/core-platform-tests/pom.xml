@@ -19,15 +19,15 @@
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../../../parent</relativePath>
+		<relativePath>../../parent</relativePath>
 	</parent>
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>fr.liglab.adele.icasa</groupId>
-	<artifactId>platform.core.tests</artifactId>
+	<artifactId>core.platform.tests</artifactId>
 	<packaging>pom</packaging>
-	<name>ICasa :: Platform Tests</name>
+	<name>ICasa :: Device Manager Tests</name>
 	<version>0.0.1-SNAPSHOT</version>
 
 	<modules>

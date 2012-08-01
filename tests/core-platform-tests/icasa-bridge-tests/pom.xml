@@ -9,15 +9,15 @@
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>../../../../parent</relativePath>
+		<relativePath>../../../parent</relativePath>
 	</parent>
 
 	<!-- Description of the project -->
-	<artifactId>device.manager.tests</artifactId>
-	<name>ICasa : Device manager integration tests</name>
+	<artifactId>icasa.bridge.tests</artifactId>
+	<name>ICasa : Icasa Bridge integration tests</name>
 	<version>0.1.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
-	<description>ICasa : Device manager integration tests</description>
+	<description>ICasa : Icasa Bridge integration tests</description>
 
 	<properties>
 
@@ -218,6 +218,16 @@
 			<artifactId>application.impl</artifactId>
 			<version>0.0.1-SNAPSHOT</version>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>icasa.device.model.bridge</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>device.api</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
 		</dependency>
 
 		<dependency>

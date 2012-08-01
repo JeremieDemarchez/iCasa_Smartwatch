@@ -38,6 +38,7 @@
 		<module>applications</module>
 		<module>application-store</module>
 		<module>distribution</module>
+		<module>tests</module>
 	</modules>
 
 </project>
