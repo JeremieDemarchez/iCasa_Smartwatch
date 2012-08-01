@@ -98,11 +98,11 @@
 					<artifactId>log4j</artifactId>
 					<version>1.2.16</version>
 				</artifactItem>
-				<!--artifactItem>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>org.apache.felix.ipojo-log-handler</artifactId>
+				<artifactItem>
+					<groupId>org.ow2.chameleon.handies</groupId>
+					<artifactId>ipojo-log-handler</artifactId>
 					<version>0.0.1-SNAPSHOT</version>
-				</artifactItem-->
+				</artifactItem>
 				<artifactItem>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>org.apache.felix.configadmin</artifactId>
@@ -276,13 +276,12 @@
 		  <!-- copy inherited config files -->
           <execution>
 			<id>copy-inherited-config</id>
-            <phase>process-resources</phase>
+            <phase>compile</phase>
             <goals>
               <goal>run</goal>
             </goals>
             <configuration>
               <target>
-				<echo>${project.build.directory}/distrib-temp/</echo>
                 <copy failonerror="true"
 					overwrite="true"
 					todir="${basedir}/">
@@ -339,7 +338,9 @@
 						<include>bundle/*</include>
 						<include>bin</include>
 						<include>bundle</include>
+						<include>felix-cache/**/*</include>
 						<include>felix-cache</include>
+						<include>load/*</include>
 						<include>load</include>
 						<include>iCASA.bat</include>
 						<include>iCASADebug.bat</include>

@@ -24,6 +24,7 @@
 	<groupId>fr.liglab.adele.icasa</groupId>
 	<artifactId>distribution.base</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
+	<relativePath>../base</relativePath>
   </parent>
 
   <!-- Project coordinates -->
