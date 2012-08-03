@@ -31,15 +31,9 @@
 	<version>0.0.1-SNAPSHOT</version>
 
 	<modules>
-		<module>clock-system-impl</module>
-		<module>simulated-environment</module>
-		<module>context-impl</module>
 		<module>device-manager-impl</module>
 		<module>application-impl</module>
 		<module>application-mock-impl</module>
-		<module>script-interpreter</module>
-		<module>script-deployer</module>
-		<module>icasa-device-model-bridge</module>
 	</modules>
 
 </project>

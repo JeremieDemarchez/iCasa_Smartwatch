@@ -32,8 +32,8 @@
 
 	<modules>
 		<module>web-tools-common</module>
-		<module>device-dashboards</module>		
 		<module>simulator</module>
+		<module>device-dashboards</module>
 	</modules>
 
 	<build>

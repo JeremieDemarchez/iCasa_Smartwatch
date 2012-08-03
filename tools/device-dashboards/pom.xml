@@ -32,6 +32,7 @@
 
 	<modules>
 		<module>device-dashboards</module>
+		<module>icasa-device-model-bridge</module>
 		<!--
 		<module>device-widgets</module>
 		<module>tikitag-widget</module>
