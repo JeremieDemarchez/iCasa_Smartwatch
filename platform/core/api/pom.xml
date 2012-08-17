@@ -34,11 +34,6 @@
 		<module>common</module>
 		<module>application-api</module>
 		<module>device-manager-api</module>
-		<module>clock-api</module>
-		<module>context-api</module>
-		<module>device-api</module>
-		<module>environment-api</module>
-		<module>script-api</module>
 	</modules>
 
 </project>
