@@ -29,6 +29,7 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
+		<module>parent</module>
 		<module>simulator</module>
 		<module>web-tools-common</module>
 		<module>ihm</module>
