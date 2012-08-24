@@ -52,13 +52,24 @@
 
 	<!-- Project repositories -->
 	<repositories>
-		<!-- iCASA snapshot repository -->
-		<repository>
-			<id>icasa-snapshot-repository</id>
-			<name>iCASA Snapshot repository</name>
+		<!-- iCASA repositories -->
+		<pluginRepository>
+			<id>icasa-plugin-snapshot-repository</id>
+			<name>iCASA Plugin Snapshot repository</name>
 			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-		</repository>
-	
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+
+		<pluginRepository>
+			<id>icasa-plugin-snapshot-repository</id>
+			<name>iCASA Plugin Snapshot repository</name>
+			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
 	
 		<!-- OW2 projects repositories (mainly Chameleon) -->
 		<repository>
