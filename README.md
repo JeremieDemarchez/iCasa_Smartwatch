@@ -22,13 +22,13 @@ Add the following maven repositories to your build.
 ```xml
 <repository>
 	<id>maven-icasa-repository-release</id>
-	<name>RoSe - Release</name>
+	<name>iCasa - Release</name>
 	<url>https://repository-icasa.forge.cloudbees.com/release/</url>
 	<layout>default</layout>
 </repository>
 <repository>
 	<id>maven-icasa-repository-snapshot</id>
-	<name>RoSe - Snapshot</name>
+	<name>iCasa - Snapshot</name>
 	<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
 	<layout>default</layout>
 </repository>
