@@ -19,27 +19,17 @@
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>parent</relativePath>
+		<relativePath>../parent</relativePath>
 	</parent>
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>root</artifactId>
+	<artifactId>web.tools.common</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>simulator</module>
-		<module>web-tools-common</module>
-		<module>ihm</module>
+		<module>web-common</module>
+		<module>common-device-widgets</module>
 	</modules>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.google.code.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>

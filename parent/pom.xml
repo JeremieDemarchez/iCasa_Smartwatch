@@ -19,10 +19,22 @@
 	<packaging>pom</packaging>
 
 	<!-- Project description -->
-	<name>ICasa :: Parent Project</name>
-	<description>ICasa project.</description>
-	<inceptionYear>2011</inceptionYear>
+	<name>${productName} :: ${projectName}</name>
+	<description>${project.name}</description>
+	<inceptionYear>2012</inceptionYear>
 
+	<!-- Project common properties -->
+	<properties>
+		<productName>iCasa</productName>
+		<productVersion>0.0.1-SNAPSHOT</productVersion>
+		<projectName>${project.artifactId}</projectName>
+		
+		<iCasaVersion>${productVersion}</iCasaVersion>
+		
+		<!-- By default, all sources are UTF-8-encoded. -->
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+	</properties>
+	
 	<!-- Project organization -->
 	<organization>
 		<name>Adèle Team</name>
@@ -40,21 +52,6 @@
 
 	<!-- Project repositories -->
 	<repositories>
-	
-		<!-- iCASA snapshot repository -->
-		<repository>
-			<id>icasa-snapshot-repository</id>
-			<name>iCASA Snapshot repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-		</repository>
-	
-		<!-- iCASA third party repository -->
-		<repository>
-			<id>icasa-thirdparty-repository</id>
-			<name>iCASA third party repository</name>
-			<url>http://icasa.forge.imag.fr/repository/thirdparty</url>
-		</repository>
-		
 		<!-- OW2 projects repositories (mainly Chameleon) -->
 		<repository>
 			<id>ow2-release-repository</id>
@@ -65,13 +62,6 @@
 			<id>ow2-snapshot-repository</id>
 			<name>OW2 Snapshot repository</name>
 			<url>http://maven.ow2.org/maven2-snapshot</url>
-		</repository>
-
-		<!-- Cilia mediation framework repository -->
-		<repository>
-			<id>cilia-repository</id>
-			<name>Cilia repository</name>
-			<url>http://cilia.ligforge.imag.fr/repo</url>
 		</repository>
 		
 		<!-- ROSE repository -->
@@ -87,41 +77,22 @@
 			<url>https://repository-barjo.forge.cloudbees.com/snapshot/</url>
 			<layout>default</layout>
 		</repository>
-
 	</repositories>
 	
-	 <pluginRepositories>
-		<pluginRepository>
-			<id>elca-services</id>
-			<url>http://el4.elca-services.ch/el4j/maven2repository</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-		</pluginRepository>
+	<pluginRepositories>
 		
-		<!-- iCASA snapshot repository -->
-		<pluginRepository>
-			<id>icasa-plugin-snapshot-repository</id>
-			<name>iCASA Plugin Snapshot repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-		</pluginRepository>
 	</pluginRepositories>
-
-	<!-- Project properties -->
-	<properties>
-		<!-- By default, all sources are UTF-8-encoded. -->
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
 
 	<!-- Dependencies version management -->
 	<dependencyManagement>
 		<dependencies>
-
-			<!-- medical -->
-
+		
+			<!-- Loggers -->
+			<dependency>
+				<groupId>org.slf4j</groupId>
+				<artifactId>slf4j-api</artifactId>
+				<version>1.6.1</version>
+			</dependency>
 
 			<!-- The OSGi r4.2 API -->
 			<dependency>
@@ -222,68 +193,17 @@
 					</exclusion>
 				</exclusions>
 			</dependency>
-
-			<!-- OW2 CILIA -->
 			<dependency>
-				<groupId>fr.liglab.adele.cilia</groupId>
-				<artifactId>cilia-core</artifactId>
-				<version>1.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.cilia</groupId>
-				<artifactId>cilia-ipojo-compendium</artifactId>
-				<version>1.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.cilia</groupId>
-				<artifactId>cilia-ipojo-runtime</artifactId>
-				<version>1.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.cilia</groupId>
-				<artifactId>cilia-deployer</artifactId>
-				<version>2.2.1</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.cilia</groupId>
-				<artifactId>cilia-chain-parser</artifactId>
-				<version>1.2.3</version>
-			</dependency>
-
-			<!-- ROSE -->
-			<dependency>
-				<groupId>org.ow2.chameleon.rose</groupId>
-				<artifactId>rose-core</artifactId>
-				<version>0.3.1-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.ow2.chameleon.rose</groupId>
-				<artifactId>json-configurator</artifactId>
-				<version>0.1.3-SNAPSHOT</version>
-			</dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.fileinstall</artifactId>
+                <version>3.1.10</version>
+            </dependency>
 
 			<!-- OW2 JSON service -->
 			<dependency>
 				<groupId>org.ow2.chameleon.json</groupId>
 				<artifactId>json-service-json.org</artifactId>
 				<version>0.4.0</version>
-			</dependency>
-
-			<!-- Jersey -->
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>1.8</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-core</artifactId>
-				<version>1.8</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-server</artifactId>
-				<version>1.8</version>
 			</dependency>
 
 			<!-- OW2 Chameleon handies & annotations -->
@@ -297,35 +217,99 @@
 				<artifactId>ipojo-log-handler</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
 			</dependency>
-
-			<!-- UPNP -->
+			
+			<!-- iCasa -->
 			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.upnp.basedriver</artifactId>
-				<version>0.8.0</version>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>clock.api</artifactId>
+				<version>${iCasaVersion}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.upnp.extra</artifactId>
-				<version>0.4.0</version>
-			</dependency>
-
-			<!-- JUnit 4 and Mockito for tests -->
-			<dependency>
-				<groupId>junit</groupId>
-				<artifactId>junit</artifactId>
-				<version>4.8.2</version>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>clock.simulated.impl</artifactId>
+				<version>${iCasaVersion}</version>
 			</dependency>
 			<dependency>
-				<groupId>org.mockito</groupId>
-				<artifactId>mockito-all</artifactId>
-				<version>1.7</version>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>clock.system.impl</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>context.api</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>context.impl</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.api</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>environment.api</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>file.install.script.executor</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>script.api</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>script.deployer</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>script.executor.api</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>script.executor.impl</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>script.interpreter</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>simulated.devices</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>simulated.environment</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>simulated.sensor.importer</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>web.common</artifactId>
+				<version>${iCasaVersion}</version>
 			</dependency>
 			
+			<!-- ROSE -->
 			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.http.jetty</artifactId>
-				<version>2.2.0</version>
+				<groupId>org.ow2.chameleon.rose</groupId>
+				<artifactId>rose-core</artifactId>
+				<version>0.3.1-SNAPSHOT</version>
 			</dependency>
 
 		</dependencies>
@@ -361,11 +345,11 @@
 							<Bundle-Name>${project.name}</Bundle-Name>
 							<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 							<Bundle-Version>${project.version}</Bundle-Version>
-							<Bundle-Vendor>Adèle Team</Bundle-Vendor>
-							<Bundle-DocURL>http://wikiadele.imag.fr/index.php/iCASA</Bundle-DocURL>
+							<Bundle-Vendor>Adele Team</Bundle-Vendor>
+							<Bundle-DocURL>https://github.com/AdeleResearchGroup/iCasa</Bundle-DocURL>
 							<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
-							<Bundle-ContactAddress>thomas.leveque@imag.fr</Bundle-ContactAddress>
-							<Bundle-Copyright>Copyright 2011-2012 Université Joseph Fourier</Bundle-Copyright>
+							<Bundle-ContactAddress>leveque.thomas@gmail.com</Bundle-ContactAddress>
+							<Bundle-Copyright>Copyright 2011-2012 Joseph Fourier University</Bundle-Copyright>
 							<Bundle-License>Apache License - Version 2.0;
 								link=http://www.apache.org/licenses/LICENSE-2.0.txt</Bundle-License>
 						</instructions>
@@ -393,7 +377,7 @@
 					<artifactId>maven-license-plugin</artifactId>
 					<version>1.4.0</version>
 					<configuration>
-						<header>${basedir}/../parent/license.txt</header>
+						<header>${basedir}/parent/license.txt</header>
 						<aggregate>true</aggregate>
 						<excludes>
 							<exclude>license.txt</exclude>
@@ -404,6 +388,8 @@
 							<exclude>**/*.bhv</exclude>
 							<exclude>**/*.cfg</exclude>
 							<exclude>**/*.dp</exclude>
+							<exclude>**/*.xcf</exclude>
+							<exclude>.git/**/*</exclude>
 						</excludes>
 					</configuration>
 					<executions>
@@ -454,15 +440,40 @@
 
 		<!-- Build extensions -->
 		<extensions>
-			<!-- Enable SSH transport for deployment -->
-			<!--extension> <groupId>org.apache.maven.wagon</groupId> <artifactId>wagon-ssh</artifactId> 
-				<version>1.0-beta-7</version> </extension -->
 			
-			<extension> 
-				<groupId>de.akquinet.gomobile</groupId>
-				<artifactId>maven-dp-plugin</artifactId>
-				<version>1.0.1-SNAPSHOT</version>
-			</extension>
 		</extensions>
+		
+		<plugins>
+		  <plugin>
+            <groupId>org.codehaus.groovy.maven</groupId>
+            <artifactId>gmaven-plugin</artifactId>
+            <version>1.0</version>
+            <executions>
+                <execution>
+                    <phase>initialize</phase>
+                    <goals>
+                        <goal>execute</goal>
+                  </goals>
+                   <configuration>
+                      <source>
+                      import org.apache.commons.lang.StringUtils
+					  
+                      transformName = project.properties["projectName"].replaceAll("\\.", " ")
+					  def words = transformName.split(" ")
+                      def capitalizedStr = []
+                      for ( i in 0..(words.size() - 1) ) {
+                        def w = words[i]
+						def capW = w[0].toUpperCase()
+                        def leafW = w[1..-1]
+                        capitalizedStr += (capW + leafW)
+                      }
+					  
+                      project.properties["projectName"] = capitalizedStr.join(' ')
+                     </source>
+                 </configuration>
+             </execution>
+            </executions>
+          </plugin>
+		</plugins>
 	</build>
 </project>

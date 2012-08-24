@@ -19,27 +19,31 @@
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
 		<version>0.0.1-SNAPSHOT</version>
-		<relativePath>parent</relativePath>
+		<relativePath>../parent</relativePath>
 	</parent>
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>root</artifactId>
+	<artifactId>simulator</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>simulator</module>
-		<module>web-tools-common</module>
-		<module>ihm</module>
+		<module>clock-api</module>
+		<module>clock-simulated-impl</module>
+		<module>clock-system-impl</module>
+		<module>context-api</module>
+		<module>context-impl</module>
+		<module>device-api</module>
+		<module>environment-api</module>
+		<module>simulated-environment</module>
+		<module>script-api</module>
+		<module>script-interpreter</module>
+		<module>script-deployer</module>
+		<module>script-executor-api</module>		
+	    <module>script-executor-impl</module>		
+		<module>simulated-sensor-importer</module>
+		<module>simulated-devices</module>
 	</modules>
-
-	<build>
-		<plugins>
-			<plugin>
-				<groupId>com.google.code.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-			</plugin>
-		</plugins>
-	</build>
 </project>
+
