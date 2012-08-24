@@ -52,6 +52,14 @@
 
 	<!-- Project repositories -->
 	<repositories>
+		<!-- iCASA snapshot repository -->
+		<repository>
+			<id>icasa-snapshot-repository</id>
+			<name>iCASA Snapshot repository</name>
+			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
+		</repository>
+	
+	
 		<!-- OW2 projects repositories (mainly Chameleon) -->
 		<repository>
 			<id>ow2-release-repository</id>
