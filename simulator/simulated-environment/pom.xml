@@ -28,7 +28,7 @@
   </parent>
   
   <!-- Project coordinates -->
-  <artifactId>simulated.env</artifactId>
+  <artifactId>simulated.environment</artifactId>
   <packaging>bundle</packaging>
   <name>${productName} :: ${projectName}</name>
   
