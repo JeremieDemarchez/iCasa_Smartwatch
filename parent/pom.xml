@@ -390,7 +390,7 @@
 							<Bundle-Name>${project.name}</Bundle-Name>
 							<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
 							<Bundle-Version>${project.version}</Bundle-Version>
-							<Bundle-Vendor>Adele Team</Bundle-Vendor>
+							<Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
 							<Bundle-DocURL>https://github.com/AdeleResearchGroup/iCasa</Bundle-DocURL>
 							<Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
 							<Bundle-ContactAddress>leveque.thomas@gmail.com</Bundle-ContactAddress>
