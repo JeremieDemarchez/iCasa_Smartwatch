@@ -296,6 +296,31 @@
 			</dependency>
 			<dependency>
 				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.light</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.power</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.presence</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.sound</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.temperature</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
 				<artifactId>environment.api</artifactId>
 				<version>${iCasaVersion}</version>
 			</dependency>
@@ -346,7 +371,17 @@
 			</dependency>
 			<dependency>
 				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>common.device.widgets</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
 				<artifactId>web.common</artifactId>
+				<version>${iCasaVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>house.simulator</artifactId>
 				<version>${iCasaVersion}</version>
 			</dependency>
 			
