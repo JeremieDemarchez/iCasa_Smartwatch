@@ -14,6 +14,38 @@ License
 
 This project relies to Apache v2 license.
 
+Repository 
+=====
+
+Add the following maven repositories to your build.
+
+```xml
+<repository>
+	<id>maven-icasa-repository-release</id>
+	<name>RoSe - Release</name>
+	<url>https://repository-icasa.forge.cloudbees.com/release/</url>
+	<layout>default</layout>
+</repository>
+<repository>
+	<id>maven-icasa-repository-snapshot</id>
+	<name>RoSe - Snapshot</name>
+	<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
+	<layout>default</layout>
+</repository>
+```
+
+Released Version semantic
+====
+
+ major.minor.revision 
+
+ * _major_ changed when there are modification or addition in the functionalities. 
+ * _minor_ changed when minor features or critical fixes have been added.
+ * _revision_ changed when minor bugs are fixed.
+
+Contribute to this project
+====
+ 
 If you want to contribute to this project, you MUST follow the developper guidelines:
 - Use Sun naming convention in your code.
 - You should prefix private class member by an underscore (e.g. : _bundleContext).
