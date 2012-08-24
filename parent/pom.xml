@@ -370,6 +370,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
+					<version>2.5.1</version>
 					<configuration>
 						<!-- By default, compile Java 1.5 sources for JRE 1.5. for better support of 32 bit native libraries -->
 						<source>1.6</source>
