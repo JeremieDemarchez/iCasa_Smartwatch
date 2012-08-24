@@ -53,23 +53,22 @@
 	<!-- Project repositories -->
 	<repositories>
 		<!-- iCASA repositories -->
-		<pluginRepository>
-			<id>icasa-plugin-snapshot-repository</id>
-			<name>iCASA Plugin Snapshot repository</name>
+		<repository>
+			<id>icasa-snapshot-repository</id>
+			<name>iCASA Snapshot repository</name>
 			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
 			<releases>
 				<enabled>false</enabled>
 			</releases>
-		</pluginRepository>
-
-		<pluginRepository>
-			<id>icasa-plugin-snapshot-repository</id>
-			<name>iCASA Plugin Snapshot repository</name>
+		</repository>
+		<repository>
+			<id>icasa-release-repository</id>
+			<name>iCASA Release repository</name>
 			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
 			<releases>
 				<enabled>true</enabled>
 			</releases>
-		</pluginRepository>
+		</repository>
 	
 		<!-- OW2 projects repositories (mainly Chameleon) -->
 		<repository>
@@ -87,19 +86,35 @@
 		<repository>
 			<id>maven-barjo-repository-release</id>
 			<name>RoSe - Release</name>
-			<url>https://repository-barjo.forge.cloudbees.com/release/</url>
+			<url>http://repository-barjo.forge.cloudbees.com/release/</url>
 			<layout>default</layout>
 		</repository>
 		<repository>
 			<id>maven-barjo-repository-snapshot</id>
 			<name>RoSe - Snapshot</name>
-			<url>https://repository-barjo.forge.cloudbees.com/snapshot/</url>
+			<url>http://repository-barjo.forge.cloudbees.com/snapshot/</url>
 			<layout>default</layout>
 		</repository>
 	</repositories>
 	
 	<pluginRepositories>
-		
+		<!-- iCASA repositories -->
+		<pluginRepository>
+			<id>icasa-plugin-snapshot-repository</id>
+			<name>iCASA Plugin Snapshot repository</name>
+			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+		</pluginRepository>
+		<pluginRepository>
+			<id>icasa-plugin-release-repository</id>
+			<name>iCASA Plugin Release repository</name>
+			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
 	</pluginRepositories>
 
 	<!-- Dependencies version management -->
@@ -399,6 +414,7 @@
 						<header>${basedir}/parent/license.txt</header>
 						<aggregate>true</aggregate>
 						<excludes>
+							<exclude>.gitignore</exclude>
 							<exclude>license.txt</exclude>
 							<exclude>**/src/test/resources/**</exclude>
 							<exclude>**/src/test/data/**</exclude>
@@ -408,6 +424,8 @@
 							<exclude>**/*.cfg</exclude>
 							<exclude>**/*.dp</exclude>
 							<exclude>**/*.xcf</exclude>
+							<exclude>**/*.md</exclude>
+							<exclude>**/*.jj</exclude>
 							<exclude>.git/**/*</exclude>
 						</excludes>
 					</configuration>

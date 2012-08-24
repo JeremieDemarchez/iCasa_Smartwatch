@@ -42,8 +42,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
-            <Export-Package>fr.liglab.adele.icasa.simulated.sensor.importer</Export-Package> <!-- YOUR_EXPORTED_PACKAGES -->
+            <Export-Package>fr.liglab.adele.icasa.simulated.sensor.importer</Export-Package>
           </instructions>
         </configuration>
       </plugin>

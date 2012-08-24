@@ -31,8 +31,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
-            <Export-Package>fr.liglab.adele.icasa.script.executor</Export-Package> <!-- YOUR_EXPORTED_PACKAGES -->
+            <Export-Package>fr.liglab.adele.icasa.script.executor</Export-Package>
           </instructions>
         </configuration>
       </plugin>

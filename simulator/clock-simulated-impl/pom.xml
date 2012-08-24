@@ -34,7 +34,7 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Bundle-SymbolicName>${pom.artifactId}</Bundle-SymbolicName>
+            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
             <Import-Package>*</Import-Package> <!-- YOUR_IMPORTED_PACKAGES -->
             <Export-Package>fr.liglab.adele.icasa.clock.impl</Export-Package> <!-- YOUR_EXPORTED_PACKAGES -->
           </instructions>

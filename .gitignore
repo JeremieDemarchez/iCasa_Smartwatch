@@ -12,3 +12,4 @@ felix-cache
 
 # other folders
 bin
+/simulator/script-interpreter/src/main/javacc/.gitignore
