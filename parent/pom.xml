@@ -126,6 +126,15 @@
 				<enabled>false</enabled>
 			</snapshots>
 		</pluginRepository>
+
+               <!-- dependency tools repository -->
+               <pluginRepository>
+    		       <id>elca-services</id>
+                       <url>http://el4.elca-services.ch/el4j/maven2repository</url>
+                       <releases>
+                           <enabled>true</enabled>
+                      </releases>
+               </pluginRepository>
 	</pluginRepositories>
 
 	<!-- Dependencies version management -->
