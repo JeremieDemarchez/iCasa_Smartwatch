@@ -13,8 +13,16 @@ Contributors
 =====
 
 The main contributors are 
-- Adele team
-- Orange Labs
+- _Adele team_
+- _Orange Labs_
+
+Source Organization
+====
+
+- _ihm_: Contains android applications and web application to use the simulator.  
+- _parent_: Contain the global build configuration including licensing information.
+- _simulator_: Contains technical services of the simulator. 
+- _web-tools-common_: Contains web librayr used to implement the simulator web application.
 
 How to use it
 =====
