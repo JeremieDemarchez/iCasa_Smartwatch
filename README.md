@@ -3,21 +3,73 @@ iCasa
 
 This project aims at providing a simulator to do funtional testing of digital home application.
 
-Prerequisites
+License
 =====
+
+This project has been created by the LIG laboratory Adele team of Grenoble University.
+This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENSE-2.0.html>).
+
+Contributors
+=====
+
+The main contributors are 
+- Adele team
+- Orange Labs
+
+How to use it
+=====
+
+Use a Distribution
+----
+
+1. Install jdk 6 (NOT java 7 !!!)
+2. Unzip one of the distribution
+3. Execute PRODUCT file (or PRODUCT.bat file on Windows)
+
+Build a new distribution
+----
+
+Add the following maven repositories to your project pom.xml file.
+```xml
+<repository>
+	<id>maven-icasa-repository-release</id>
+	<name>iCasa - Release</name>
+	<url>https://repository-icasa.forge.cloudbees.com/release/</url>
+	<layout>default</layout>
+</repository>
+<repository>
+	<id>maven-icasa-repository-snapshot</id>
+	<name>iCasa - Snapshot</name>
+	<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
+	<layout>default</layout>
+</repository>
+```
+
+TODO
+
+Build
+=====
+
+Prerequisites
+-----
 
 - install Maven 3.x
 - install jdk 6 (NOT java 7 !!!)
 
-License
-=====
+Instructions
+----
 
-This project relies to Apache v2 license.
+Use the following command to compile the project
+> mvn clean install
 
-Repository 
-=====
+Continuous Integration
+----
 
-Add the following maven repositories to your build.
+The project is built every week on the following continuous integration server :
+<https://icasa.ci.cloudbees.com/>
+
+Maven Repositories
+----
 
 ```xml
 <repository>
@@ -34,8 +86,11 @@ Add the following maven repositories to your build.
 </repository>
 ```
 
-Released Version semantic
+Contribute to this project
 ====
+
+Released Version semantic
+----
 
  major.minor.revision 
 
@@ -43,8 +98,8 @@ Released Version semantic
  * _minor_ changed when minor features or critical fixes have been added.
  * _revision_ changed when minor bugs are fixed.
 
-Contribute to this project
-====
+Developer Guidelines
+----
  
 If you want to contribute to this project, you MUST follow the developper guidelines:
 - Use Sun naming convention in your code.
