@@ -33,6 +33,7 @@
 		<module>simulator</module>
 		<module>web-tools-common</module>
 		<module>ihm</module>
+		<!--<module>distribution</module>-->
 	</modules>
 
 	<build>

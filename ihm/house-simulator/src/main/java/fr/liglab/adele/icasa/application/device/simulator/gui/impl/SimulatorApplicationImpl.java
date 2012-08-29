@@ -94,6 +94,9 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	
 	public SimulatorApplicationImpl(BundleContext context) {
 		super(context);
+		
+		// Create the map with devices
+		devices = new HashMap<String, GenericDevice>();
 	}
 
 	// ---- Component dependencies methods ---- //
@@ -148,6 +151,9 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		if (isDeviceManagerProxy(device))
 			return;
 		
+		System.out.println("Device SN -------------> " + device.getSerialNumber());
+		System.out.println("Devices ---------------->" + devices);
+				
 		devices.put(device.getSerialNumber(), device);
 		enqueueTask(new Runnable() {
 			@Override
@@ -319,10 +325,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	@Override
 	protected void initContent() {
 		super.initContent();
-		
-		// Create the map with devices
-		devices = new HashMap<String, GenericDevice>();
-		
+				
 		// Create the house pane.
 		m_housePane = new HousePane(this);
 
