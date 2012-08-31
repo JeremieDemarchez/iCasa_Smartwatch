@@ -6,12 +6,12 @@ This project aims at providing a simulator to do funtional testing of digital ho
 License
 =====
 
-This project has been created by the LIG laboratory Adele team of Grenoble University.
 This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENSE-2.0.html>).
 
 Contributors
 =====
 
+This project has been created by the LIG laboratory Adele team of Grenoble University.
 The main contributors are 
 - _Adele team_
 - _Orange Labs_
