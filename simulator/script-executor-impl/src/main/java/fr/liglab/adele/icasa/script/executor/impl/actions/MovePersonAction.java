@@ -50,28 +50,16 @@ public class MovePersonAction extends Action {
 		this.person = person;
 	}
 
+	
 	/*
 	 * (non-Javadoc)
 	 * 
 	 * @see java.lang.Runnable#run()
 	 */
-	/*
-	public void runOld() {
-		SimulatedEnvironment environment = (SimulatedEnvironment) this.simulatedBehavior.getEnvironments().get(environmentId);
-		if (environment != null) {
-			logger.info("Executing moving to room ------> " + environmentId);
-			environment.setProperty("presence", new Double(1.0));
-			for (SimulatedEnvironment otherEnvironment : this.simulatedBehavior.getEnvironments().values()) {
-				if (otherEnvironment != environment)
-					otherEnvironment.setProperty("presence", new Double(0.0));
-			}
-		}
-	}
-	*/
-	
 	public void run() {
 		logger.info("Executing moving :: " +  person + " to room ------> " + environmentId);
 		
+		simulatedBehavior.getSimulationManager().addUser(person);
 		if (person!=null && (!person.isEmpty()))
 			simulatedBehavior.getSimulationManager().setUserLocation(person, environmentId);
 		else
