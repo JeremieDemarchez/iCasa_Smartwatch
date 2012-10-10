@@ -22,7 +22,7 @@
 		<relativePath>../parent</relativePath>
 	</parent>
 
-	<!-- Project Descrkiption -->
+	<!-- Project Description -->
 	<modelVersion>4.0.0</modelVersion>
 	<artifactId>simulator.ihm</artifactId>
 	<packaging>pom</packaging>
