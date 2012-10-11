@@ -22,7 +22,8 @@ require.config({
 
     map: {
         '*': {
-            'css': 'frameworks/require/require-css/css'
+            'css': 'frameworks/require/require-css/css',
+            'text': 'frameworks/require/require-text/text'
         }
     },
 
