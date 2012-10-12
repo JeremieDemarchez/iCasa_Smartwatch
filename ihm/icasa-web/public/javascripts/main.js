@@ -9,10 +9,12 @@ require.config({
     paths: {
         'backbone' : 'frameworks/backbone/backbone-min',
         'bootstrap.dir' : 'frameworks/bootstrap',
+        'bootstrap' : 'frameworks/bootstrap/js/bootstrap.min',
         'comp' : 'components',
         'hubu' : 'frameworks/hubu/hubu-all',
         'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min',
-        'jquery.ui' : 'frameworks/jquery/ui/js/jquery-ui-1.8.24.custom.min',
+        'jquery.ui.dir':'frameworks/jquery/ui/1.9/',
+        'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         //TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
@@ -40,14 +42,12 @@ require.config({
         'bootstrap': [
             'jquery',
             'css!bootstrap.dir/css/bootstrap.min',
-            'css!bootstrap.dir/css/bootstrap-responsive.min',
-            'bootstrap.dir/js/bootstrap.min'],
+            'css!bootstrap.dir/css/bootstrap-responsive.min'],
 
         'hubu': {
             exports: "hub"
         },
 
-        // does export nothing
         'jquery.ui.touch': ['jquery.ui'],
 
         'underscore': {
@@ -57,13 +57,21 @@ require.config({
 
 });
 
+define('jquery.ui',
+    ['jquery',
+     'css!jquery.ui.dir/css/smoothness/jquery-ui-1.9.0.custom.min'],
+    function () {
+      return window.jQuery.ui;
+});
+
 // launch application
 require([
     'jquery',
     'hubu',
     'comp/backend',
-    'comp/frontend'
-    ], function($, hub, backend, frontend) {
+    'comp/frontend',
+    'jquery.ui'
+    ], function($, hub, backend, frontend, ui) {
 
         $(document).ready(function(){
 
