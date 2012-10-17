@@ -6,6 +6,24 @@
  * To change this template use File | Settings | File Templates.
  */
 define(['knockout', 'handlebars', 'text!templates/deviceTable.html'], function(ko, HandleBars, devTableHtml) {
+
+    ko.bindingHandlers.handlebarTemplate = {
+        init: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            // This will be called when the binding is first applied to an element
+
+
+            var htmlString = Handlebars.compile(devTableHtml);
+            $(element).html(htmlString);
+
+            return { controlsDescendantBindings: false };
+        },
+        update: function(element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) {
+            // This will be called once when the binding is first applied to an element,
+            // and again whenever the associated observable changes value.
+            //TODO check removal is ok
+        }
+    };
+
     function Zone(id, name, isRoom) {
         var self = this;
 
@@ -27,9 +45,7 @@ define(['knockout', 'handlebars', 'text!templates/deviceTable.html'], function(k
         self.id = id;
         self.name = ko.observable(name);
 
-        self.tableDevTemplate = Handlebars.compile(devTableHtml);
-
-        self.content = self.tableDevTemplate();
+        self.content = devTableHtml;
     }
 
     return function ICasaViewModel() {
