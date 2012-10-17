@@ -3,28 +3,50 @@
 @main("iCasa") {
 <header>
     <!--img src="@routes.Assets.at("images/favicon.png")" alt="iCasaLogo" /-->
-    <h1>iCasa Simulator</h1>
-    <nav>
-        <ul>
-            <li><a href="#">Home</a></li>
-            <li><a href="#">AppStore</a></li>
-            <li><a href="#">Wiki</a></li>
-            <li><a href="#">Contacts</a></li>
-        </ul>
-    </nav>
+    <div class="navbar navbar-inverse navbar-fixed-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="#">iCasa Simulator</a>
+                <nav class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li class="active"><a href="#">Home</a></li>
+                        <li><a href="#">AppStore</a></li>
+                        <li><a href="#wiki">Wiki</a></li>
+                        <li><a href="#contact">Contact</a></li>
+                    </ul>
+                </nav><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
 </header>
 <section>
-    <article>
-        <section id="map">
-
+    <article id="map">
+        <section>
+            <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
+            <div data-bind="foreach: devices">
+                <img class="deviceWidget"
+                     data-bind="attr: { id: id, alt: name }"
+                     src="@routes.Assets.at("images/NewDevice.png")""/>
+            </div>
         </section>
     </article>
-    <aside>
-
+    <aside id="actionTabs">
+        <div id="accordion" data-bind="foreach: tabs">
+            <h3 data-bind="text: name"></h3>
+            <div data-bind="html: content">
+                Loading...
+            </div>
+        </div>
     </aside>
 </section>
 <section>
-    <article>
+    <article id="statusWindows">
 
     </article>
 </section>
