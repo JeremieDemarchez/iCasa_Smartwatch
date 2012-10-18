@@ -20,7 +20,7 @@ require.config({
         # TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
-        'knockback' : 'frameworks/knocback/knockback', # AMD module
+        'knockback' : 'frameworks/knockback/knockback', # AMD module
         'knockout' : 'frameworks/knockout/knockout-2.1.0', # AMD module
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
@@ -92,11 +92,20 @@ require([
         });
         $("#map").resizable({
             animate: true,
-            aspectRatio : true
+            aspectRatio : true,
+            ghost: true
         });
         $("#actionTabs").resizable({
             animate: true,
-            aspectRatio : false
+            aspectRatio : false,
+            ghost: true,
+            handles: "e, s, se, sw, w"
+        });
+        $("#statusWindows").resizable({
+            animate: true,
+            aspectRatio : false,
+            ghost: true,
+            handles: "e, s, se, sw"
         });
         $(".deviceWidget").draggable( {
             scroll: true

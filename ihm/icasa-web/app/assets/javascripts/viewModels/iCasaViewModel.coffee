@@ -1,12 +1,17 @@
 
-define(['knockout', 'handlebars', 'text!templates/deviceTable.html'], (ko, HandleBars, devTableHtml) ->
+define(['knockout',
+        'knockback',
+        'handlebars',
+        'text!templates/deviceTable.html',
+        'text!templates/personTable.html'],
+  (ko, kb, HandleBars, devTabHtml, personTabHtml) ->
 
     ko.bindingHandlers.handlebarTemplate = {
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
 
 
-            htmlString = Handlebars.compile(devTableHtml);
+            htmlString = Handlebars.compile(viewModel.tabTemplate);
             $(element).html(htmlString);
 
             return { controlsDescendantBindings: false };
@@ -14,28 +19,31 @@ define(['knockout', 'handlebars', 'text!templates/deviceTable.html'], (ko, Handl
         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called once when the binding is first applied to an element,
             # and again whenever the associated observable changes value.
-
-            # TODO check removal is ok
     };
 
-    class Zone
+    class Zone extends kb.ViewModel
         constructor: (model) ->
             @id = model.id;
             @name = ko.observable(model.name);
             @isRoom = ko.observable(model.isRoom);
 
-    class  Device
+    class Device extends kb.ViewModel
         constructor: (model) ->
             @id = model.id;
             @name = ko.observable(model.name);
 
-    class Tab
+    class Person extends kb.ViewModel
         constructor: (model) ->
             @id = model.id;
             @name = ko.observable(model.name);
-            @content = model.template;
 
-    class ICasaViewModel
+    class Tab extends kb.ViewModel
+        constructor: (model) ->
+            @id = model.id;
+            @name = ko.observable(model.name);
+            @tabTemplate = model.template;
+
+    class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
             @zones = ko.observableArray([
                 new Zone {
@@ -54,8 +62,8 @@ define(['knockout', 'handlebars', 'text!templates/deviceTable.html'], (ko, Handl
 
             @devices = ko.observableArray([
                 new Device {
-                    id: "1",
-                    name: "LivingRoom Temp Sensor" },
+                     id: "1",
+                     name: "LivingRoom Temp Sensor" },
                 new Device {
                     id: "2",
                     name: "Livebox" },
@@ -64,26 +72,40 @@ define(['knockout', 'handlebars', 'text!templates/deviceTable.html'], (ko, Handl
                     name: "iPod" }
             ]);
 
+            @persons = ko.observableArray([
+                new Person {
+                    id: "paul",
+                    name: "Paul" }
+            ]);
+
             @tabs = ko.observableArray([
                 new Tab {
                     id: "devices",
-                    name: "Devices" },
+                    name: "Devices",
+                    template: devTabHtml},
                 new Tab {
                     id: "rooms",
-                    name: "Rooms" },
+                    name: "Rooms",
+                    template: devTabHtml},
                 new Tab {
                     id: "zones",
-                    name: "Zones" },
+                    name: "Zones" ,
+                    template: devTabHtml},
                 new Tab {
                     id: "persons",
-                    name: "Persons" },
+                    name: "Persons" ,
+                    template: personTabHtml},
                 new Tab {
                     id: "script-player",
-                    name: "Script Player" }
+                    name: "Script Player" ,
+                    template: devTabHtml}
             ]);
 
             @removeDevice = (device) =>
               @devices.remove(device);
+
+            @removePerson = (person) =>
+              @persons.remove(person);
 
     return ICasaViewModel;
 );
