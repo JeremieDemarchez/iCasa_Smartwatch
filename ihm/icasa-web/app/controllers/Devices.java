@@ -13,11 +13,6 @@ import static play.libs.Json.toJson;
 
 public class Devices extends Controller {
 
-//    public static Result pushData(){
-//        // DeviceStreams$.MODULE$ is used to get the scala object DeviceStreams
-//        return Results.Status.feed(DeviceStreams.deviceStream().through(DeviceStreams$.MODULE$.asJson().compose(EventSource$.MODULE$))).as("text/event-stream"));
-//    }
-
     public static Result getAll() { // GET
 
         List<Device> list = Device.find.orderBy("id").findList();
