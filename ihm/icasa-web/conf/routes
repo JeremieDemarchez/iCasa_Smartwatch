@@ -14,4 +14,4 @@ GET     /service/device/:id         controllers.Devices.getById(id: Long)
 POST    /service/device             controllers.Devices.create()
 PUT     /service/device/:id         controllers.Devices.update(id: Long)
 DELETE  /service/device/:id         controllers.Devices.delete(id: Long)
-
+GET     /service/devices/pushdata   controllers.Application.streamDeviceEvents()

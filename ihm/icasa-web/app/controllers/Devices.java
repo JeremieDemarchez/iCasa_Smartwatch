@@ -3,12 +3,20 @@ package controllers;
 import models.*;
 import play.data.*;
 import play.mvc.*;
-
+import scala.util.Random;
+import play.api.libs.iteratee.*;
+import play.api.libs.concurrent.*;
 import java.util.List;
+import play.api.libs.EventSource$;
 
 import static play.libs.Json.toJson;
 
 public class Devices extends Controller {
+
+//    public static Result pushData(){
+//        // DeviceStreams$.MODULE$ is used to get the scala object DeviceStreams
+//        return Results.Status.feed(DeviceStreams.deviceStream().through(DeviceStreams$.MODULE$.asJson().compose(EventSource$.MODULE$))).as("text/event-stream"));
+//    }
 
     public static Result getAll() { // GET
 
@@ -25,7 +33,6 @@ public class Devices extends Controller {
         } else {
             return badRequest("not found");
         }
-
     }
 
     public static Result create() { //POST

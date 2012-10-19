@@ -1,10 +1,11 @@
 
 define(['knockout',
+        'backbone',
         'knockback',
         'handlebars',
         'text!templates/deviceTable.html',
         'text!templates/personTable.html'],
-  (ko, kb, HandleBars, devTabHtml, personTabHtml) ->
+  (ko, Backbone, kb, HandleBars, devTabHtml, personTabHtml) ->
 
     ko.bindingHandlers.handlebarTemplate = {
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
@@ -42,6 +43,34 @@ define(['knockout',
             @id = model.id;
             @name = ko.observable(model.name);
             @tabTemplate = model.template;
+
+    Models = {};
+    Collections = {};
+
+    Models.Device = Backbone.Model.extend({
+      urlRoot  : "/service/device"
+    });
+
+    Collections.Devices = Backbone.Collection.extend({
+      url : "/service/devices",
+      model : Models.Device
+    });
+
+    devicesCollection = new Collections.Devices();
+    devicesCollection.fetch({
+        success : (data) -> console.log(data);
+        error : (err) -> throw err;
+    });
+
+    feed = new EventSource('/service/devices/pushdata');
+    feed.addEventListener('message',
+      (event) ->
+        data = JSON.parse(event.data);
+        console.log("received data: " + event.data);
+
+        return
+
+      , false);
 
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->

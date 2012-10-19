@@ -3,7 +3,7 @@
 # --- !Ups
 
 CREATE SEQUENCE device_id_seq;
-CREATE TABLE task (
+CREATE TABLE device (
     id integer NOT NULL DEFAULT nextval('device_id_seq'),
     name varchar(255)
 );
