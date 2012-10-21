@@ -8,12 +8,16 @@ define(['knockout',
   (ko, Backbone, kb, HandleBars, devTabHtml, personTabHtml) ->
 
     ko.bindingHandlers.handlebarTemplate = {
+
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
-
+            idx = 0;
 
             htmlString = Handlebars.compile(viewModel.tabTemplate);
             $(element).html(htmlString);
+#            $(element).find(".changeInputToLabelWhenNoClick").addClass("tabCellIsNotEdited").before('<label class="changeInputToLabelWhenNoClick tabCellIsNotEdited" data-bind="text: name"></label>').click(() ->
+#              $("this").toggleClass("tabCellIsEdited");
+#            );
 
             return { controlsDescendantBindings: false };
 
