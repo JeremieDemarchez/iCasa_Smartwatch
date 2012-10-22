@@ -54,7 +54,6 @@
             <plugin>
                 <groupId>de.akquinet.innovation.play2</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
-                <version>1.2.0</version>
                 <extensions>true</extensions>
             </plugin>
 
@@ -67,6 +66,28 @@
                     <target>1.6</target>
                 </configuration>
             </plugin>
+
+            <!--plugin>
+                <groupId>de.akquinet.innovation.play2</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <extensions>true<extensions>
+                <configuration>
+                    <play2Home>${user.home}/opt/play-${play2.version}</play2Home>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>play-installation</id>
+                        <goals>
+                            <goal>install-play</goal>
+                        </goals>
+                        <phase>pre-clean</phase>
+                        <configuration>
+                            <play2version>${play2.version}</play2version>
+                            <play2basedir>${user.home}/opt</play2basedir>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin-->
 
         </plugins>
 
