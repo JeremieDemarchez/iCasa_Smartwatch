@@ -15,7 +15,8 @@ define(['knockout',
 
             htmlString = Handlebars.compile(viewModel.tabTemplate);
             $(element).html(htmlString);
-#            $(element).find(".changeInputToLabelWhenNoClick").addClass("tabCellIsNotEdited").before('<label class="changeInputToLabelWhenNoClick tabCellIsNotEdited" data-bind="text: name"></label>').click(() ->
+#            $(element).find(".changeInputToLabelWhenNoClick").addClass("tabCellIsNotEdited").before(
+#                '<label class="changeInputToLabelWhenNoClick tabCellIsNotEdited" data-bind="text: name"></label>').click(() ->
 #              $("this").toggleClass("tabCellIsEdited");
 #            );
 
