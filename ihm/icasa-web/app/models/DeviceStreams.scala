@@ -39,8 +39,4 @@ object DeviceStreams {
       toJson(Map("event" -> toJson(deviceEvent.event), "data" -> toJson(deviceEvent.data)))
   }
 
-//  val events: Enumerator[DeviceEvent] = {
-//    deviceStream
-//  }
-
 }
