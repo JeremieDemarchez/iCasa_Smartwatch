@@ -44,15 +44,15 @@ define(['knockout',
       error : (err) -> throw err;
     });
 
-    #    feed = new EventSource('/service/devices/pushdata');
-    #    feed.addEventListener('message',
-    #      (event) ->
-    #        data = JSON.parse(event.data);
-    #        console.log("received data: " + event.data);
-    #
-    #        return
-    #
-    #      , false);
+#        feed = new EventSource('/service/devices/pushdata');
+#        feed.addEventListener('message',
+#          (event) ->
+#            data = JSON.parse(event.data);
+#            console.log("received data: " + event.data);
+#
+#            return
+#
+#          , false);
 
     # View models
 
