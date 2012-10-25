@@ -486,6 +486,8 @@
 							<exclude>license.txt</exclude>
 							<exclude>**/src/test/resources/**</exclude>
 							<exclude>**/src/test/data/**</exclude>
+							<exclude>**/public/javascripts/frameworks/**</exclude>
+							<exclude>**/app/assets/javascripts/frameworks/**</exclude>
 							<exclude>**/*.so</exclude>
 							<exclude>**/*.dll</exclude>
 							<exclude>**/*.bhv</exclude>
