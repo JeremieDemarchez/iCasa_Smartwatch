@@ -27,6 +27,36 @@ define(['knockout',
             # and again whenever the associated observable changes value.
     };
 
+    # Data models
+
+    Models = {};
+    Collections = {};
+
+    class Models.Device extends Backbone.Model
+      urlRoot  : "/service/device"
+
+    class Collections.Devices extends Backbone.Collection
+      url : "/service/devices"
+      model : Models.Device
+
+    devicesCollection = new Collections.Devices();
+    devicesCollection.fetch({
+      success : (data) -> console.log(data);
+      error : (err) -> throw err;
+    });
+
+    #    feed = new EventSource('/service/devices/pushdata');
+    #    feed.addEventListener('message',
+    #      (event) ->
+    #        data = JSON.parse(event.data);
+    #        console.log("received data: " + event.data);
+    #
+    #        return
+    #
+    #      , false);
+
+    # View models
+
     class Zone extends kb.ViewModel
         constructor: (model) ->
             @id = model.id;
@@ -48,34 +78,6 @@ define(['knockout',
             @id = model.id;
             @name = ko.observable(model.name);
             @tabTemplate = model.template;
-
-    Models = {};
-    Collections = {};
-
-    Models.Device = Backbone.Model.extend({
-      urlRoot  : "/service/device"
-    });
-
-    Collections.Devices = Backbone.Collection.extend({
-      url : "/service/devices",
-      model : Models.Device
-    });
-
-    devicesCollection = new Collections.Devices();
-    devicesCollection.fetch({
-        success : (data) -> console.log(data);
-        error : (err) -> throw err;
-    });
-
-    feed = new EventSource('/service/devices/pushdata');
-    feed.addEventListener('message',
-      (event) ->
-        data = JSON.parse(event.data);
-        console.log("received data: " + event.data);
-
-        return
-
-      , false);
 
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
