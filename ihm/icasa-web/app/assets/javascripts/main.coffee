@@ -7,6 +7,7 @@ require.config({
 
     # paths MUST not include .js extension
     paths: {
+        'atmosphere' : 'frameworks/atmosphere/jquery.atmosphere',
         'backbone' : 'frameworks/backbone/backbone-min',
         'bootstrap.dir' : 'frameworks/bootstrap',
         'bootstrap' : 'frameworks/bootstrap/js/bootstrap.min',
@@ -38,6 +39,12 @@ require.config({
 
     # configuration of libraries not packaged using Require.js
     shim: {
+        'atmosphere': {
+          deps: ['jquery']
+
+          exports: 'jQuery.atmosphere'
+        },
+
         'backbone': {
             # These script dependencies should be loaded before loading
             # backbone.js
