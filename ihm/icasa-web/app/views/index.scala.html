@@ -17,7 +17,24 @@
 -->
 @()
 
-@main("iCasa") {
+<!DOCTYPE html>
+
+<html>
+<head>
+    <title>iCasa</title>
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap.min.css")">
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+    <!-- Use to add browser prefix automatically -->
+    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
+
+    <!-- Load the script "javascripts/main.coffee" as our entry point -->
+    <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
+
+    </head>
+            <body>
 <header>
     <!--img src="@routes.Assets.at("images/favicon.png")" alt="iCasaLogo" /-->
     <div class="navbar navbar-inverse navbar-fixed-top">
@@ -70,4 +87,6 @@
 <footer>
     <p>Copyright LIG, ADELE team - All right reserved</p>
 </footer>
-}
+
+            </body>
+    </html>
