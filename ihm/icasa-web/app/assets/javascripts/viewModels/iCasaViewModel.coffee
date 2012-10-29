@@ -1,11 +1,13 @@
 
 define(['knockout',
-        'backbone',
         'knockback',
         'handlebars',
+        'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html'],
-  (ko, Backbone, kb, HandleBars, devTabHtml, personTabHtml) ->
+  (ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml) ->
+
+    # HTML custom bindings
 
     ko.bindingHandlers.handlebarTemplate = {
 
@@ -27,46 +29,19 @@ define(['knockout',
             # and again whenever the associated observable changes value.
     };
 
-    # Data models
-
-    Models = {};
-    Collections = {};
-
-    class Models.Device extends Backbone.Model
-      urlRoot  : "/service/device"
-
-    class Collections.Devices extends Backbone.Collection
-      url : "/service/devices"
-      model : Models.Device
-
-    devicesCollection = new Collections.Devices();
-    devicesCollection.fetch({
-      success : (data) -> console.log(data);
-      error : (err) -> throw err;
-    });
-
-#        feed = new EventSource('/service/devices/pushdata');
-#        feed.addEventListener('message',
-#          (event) ->
-#            data = JSON.parse(event.data);
-#            console.log("received data: " + event.data);
-#
-#            return
-#
-#          , false);
-
     # View models
 
     class Zone extends kb.ViewModel
         constructor: (model) ->
-            @id = model.id;
-            @name = ko.observable(model.name);
-            @isRoom = ko.observable(model.isRoom);
+          @id = model.id;
+          @name = ko.observable(model.name);
+          @isRoom = ko.observable(model.isRoom);
 
     class Device extends kb.ViewModel
         constructor: (model) ->
-            @id = model.id;
-            @name = ko.observable(model.name);
+          super(model, {internals: ['deviceId', 'name']})
+          @id = kb.defaultObservable(@_deviceId, 'Undefined');
+          @name = kb.defaultObservable(@_name, 'Undefined');
 
     class Person extends kb.ViewModel
         constructor: (model) ->
@@ -96,17 +71,7 @@ define(['knockout',
                      isRoom: false }
             ]);
 
-            @devices = ko.observableArray([
-                new Device {
-                     id: "1",
-                     name: "LivingRoom Temp Sensor" },
-                new Device {
-                    id: "2",
-                    name: "Livebox" },
-                new Device {
-                    id: "3",
-                    name: "iPod" }
-            ]);
+            @devices = kb.collectionObservable(DataModel.collections.devices);
 
             @persons = ko.observableArray([
                 new Person {
@@ -136,6 +101,15 @@ define(['knockout',
                     name: "Script Player" ,
                     template: devTabHtml}
             ]);
+
+            @newDeviceType = ko.observable("");
+
+            @newDeviceName = ko.observable("");
+
+            @createDevice = (iCasaViewModel) =>
+              newDevice = new DataModel.Models.Device({ deviceId: "newId", name: "MyDevice" });
+              newDevice.save();
+              @devices.push(new Device(newDevice));
 
             @removeDevice = (device) =>
               @devices.remove(device);
