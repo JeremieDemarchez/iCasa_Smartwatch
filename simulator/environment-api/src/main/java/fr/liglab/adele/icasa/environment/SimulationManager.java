@@ -27,126 +27,6 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public interface SimulationManager {
 
-    public final class Position {
-        public final int x;
-        public final int y;
-
-        public Position(final int x, final int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        @Override
-        public String toString() {
-            return x + ":" + y;
-        }
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + x;
-			result = prime * result + y;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Position other = (Position) obj;
-			if (x != other.x)
-				return false;
-			if (y != other.y)
-				return false;
-			return true;
-		}
-
-    }
-
-    public final class Zone {
-        public final int leftX;
-        public final int rightX;
-        public final int topY;
-        public final int bottomY;
-
-        public Zone(final int leftX, final int topY, final int rightX,
-                final int bottomY) {
-            if (leftX >= rightX) {
-                throw new IllegalArgumentException("leftX >= rightX");
-            } else if (topY >= bottomY) {
-                throw new IllegalArgumentException("topY >= bottomY");
-            }
-            this.leftX = leftX;
-            this.topY = topY;
-            this.rightX = rightX;
-            this.bottomY = bottomY;
-        }
-
-        public Zone(final Position topLeftCorner,
-                final Position bottomRightCorner) {
-            if (topLeftCorner == null) {
-                throw new NullPointerException("topLeftCorner");
-            } else if (bottomRightCorner == null) {
-                throw new NullPointerException("bottomRightCorner");
-            } else if (topLeftCorner.x >= bottomRightCorner.x) {
-                throw new IllegalArgumentException(
-                        "topLeftCorner.x >= bottomRightCorner.x");
-            } else if (topLeftCorner.y >= bottomRightCorner.y) {
-                throw new IllegalArgumentException(
-                        "topLeftCorner.y >= bottomRightCorner.y");
-            }
-            this.leftX = topLeftCorner.x;
-            this.topY = topLeftCorner.y;
-            this.rightX = bottomRightCorner.x;
-            this.bottomY = bottomRightCorner.y;
-        }
-
-        public boolean contains(final Position position) {
-            if (position == null) {
-                throw new NullPointerException("position");
-            }
-            return position.x >= leftX && position.x <= rightX
-                    && position.y >= topY && position.y <= bottomY;
-        }
-
-		@Override
-		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
-			result = prime * result + bottomY;
-			result = prime * result + leftX;
-			result = prime * result + rightX;
-			result = prime * result + topY;
-			return result;
-		}
-
-		@Override
-		public boolean equals(Object obj) {
-			if (this == obj)
-				return true;
-			if (obj == null)
-				return false;
-			if (getClass() != obj.getClass())
-				return false;
-			Zone other = (Zone) obj;
-			if (bottomY != other.bottomY)
-				return false;
-			if (leftX != other.leftX)
-				return false;
-			if (rightX != other.rightX)
-				return false;
-			if (topY != other.topY)
-				return false;
-			return true;
-		}
-        
-        
-    }
 
     /**
      * Return the identifiers of all the simulated environments.
@@ -291,6 +171,28 @@ public interface SimulationManager {
     void setEnvironmentVariable(String environmentId, String variable, Double value);
        
 
+    /**
+     * @param listener
+     */
+    void addDevicePositionListener(DevicePositionListener listener);
+
+    /**
+     * @param listener
+     */
+    void removeDevicePositionListener(DevicePositionListener listener);
+
+    /**
+     * @param listener
+     */
+    void addUserPositionListener(UserPositionListener listener);
+
+    /**
+     * @param listener
+     */
+    void removeUserPositionListener(UserPositionListener listener);
+    
+    
+    
     // --- Device and User events listeners methods and classes --- //
     
     
@@ -323,25 +225,128 @@ public interface SimulationManager {
         void userRemoved(String userName);
 
     }
+    
+    public final class Position {
+       public final int x;
+       public final int y;
 
-    /**
-     * @param listener
-     */
-    void addDevicePositionListener(DevicePositionListener listener);
+       public Position(final int x, final int y) {
+           this.x = x;
+           this.y = y;
+       }
 
-    /**
-     * @param listener
-     */
-    void removeDevicePositionListener(DevicePositionListener listener);
+       @Override
+       public String toString() {
+           return x + ":" + y;
+       }
 
-    /**
-     * @param listener
-     */
-    void addUserPositionListener(UserPositionListener listener);
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + x;
+			result = prime * result + y;
+			return result;
+		}
 
-    /**
-     * @param listener
-     */
-    void removeUserPositionListener(UserPositionListener listener);
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Position other = (Position) obj;
+			if (x != other.x)
+				return false;
+			if (y != other.y)
+				return false;
+			return true;
+		}
+
+   }
+
+   public final class Zone {
+       public final int leftX;
+       public final int rightX;
+       public final int topY;
+       public final int bottomY;
+
+       public Zone(final int leftX, final int topY, final int rightX,
+               final int bottomY) {
+           if (leftX >= rightX) {
+               throw new IllegalArgumentException("leftX >= rightX");
+           } else if (topY >= bottomY) {
+               throw new IllegalArgumentException("topY >= bottomY");
+           }
+           this.leftX = leftX;
+           this.topY = topY;
+           this.rightX = rightX;
+           this.bottomY = bottomY;
+       }
+
+       public Zone(final Position topLeftCorner,
+               final Position bottomRightCorner) {
+           if (topLeftCorner == null) {
+               throw new NullPointerException("topLeftCorner");
+           } else if (bottomRightCorner == null) {
+               throw new NullPointerException("bottomRightCorner");
+           } else if (topLeftCorner.x >= bottomRightCorner.x) {
+               throw new IllegalArgumentException(
+                       "topLeftCorner.x >= bottomRightCorner.x");
+           } else if (topLeftCorner.y >= bottomRightCorner.y) {
+               throw new IllegalArgumentException(
+                       "topLeftCorner.y >= bottomRightCorner.y");
+           }
+           this.leftX = topLeftCorner.x;
+           this.topY = topLeftCorner.y;
+           this.rightX = bottomRightCorner.x;
+           this.bottomY = bottomRightCorner.y;
+       }
+
+       public boolean contains(final Position position) {
+           if (position == null) {
+               throw new NullPointerException("position");
+           }
+           return position.x >= leftX && position.x <= rightX
+                   && position.y >= topY && position.y <= bottomY;
+       }
+
+		@Override
+		public int hashCode() {
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + bottomY;
+			result = prime * result + leftX;
+			result = prime * result + rightX;
+			result = prime * result + topY;
+			return result;
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			Zone other = (Zone) obj;
+			if (bottomY != other.bottomY)
+				return false;
+			if (leftX != other.leftX)
+				return false;
+			if (rightX != other.rightX)
+				return false;
+			if (topY != other.topY)
+				return false;
+			return true;
+		}
+       
+       
+   }
+
+
 
 }
