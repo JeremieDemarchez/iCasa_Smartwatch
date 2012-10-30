@@ -36,7 +36,7 @@ import fr.liglab.adele.icasa.command.ICommandService;
         @StaticServiceProperty(type = "java.lang.String", name = ICommandService.PROP_DESCRIPTION, value="Hello say hello $1")
 })
 @Instantiate
-public class CHello implements ICommandService{
+public class CHello implements ICommandService {
 
 	public Object execute(InputStream in, OutputStream out,
 			JSONObject param) throws JSONException {
