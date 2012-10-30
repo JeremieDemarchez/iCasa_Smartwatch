@@ -16,8 +16,8 @@
 
 -->
 <table class="table table-striped table-bordered">
-    <p>Device name: <input data-bind="value: newDeviceName" /></p>
-    <p>Device Type: <input data-bind="value: newDeviceType" /></p>
+    <p>Device name: <input data-bind="value: $root.newDeviceName" /></p>
+    <p>Device Type: <input data-bind="value: $root.newDeviceType" /></p>
     <button data-bind="click: $root.createDevice">Create A Device</button>
 
     <thead>

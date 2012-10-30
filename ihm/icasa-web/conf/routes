@@ -10,8 +10,8 @@ GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
 # REST service for Devices
 GET     /service/devices            controllers.Devices.getAll()
-GET     /service/device/:id         controllers.Devices.getById(id: Long)
+GET     /service/device/:id         controllers.Devices.getById(id: Integer)
 POST    /service/device             controllers.Devices.create()
-PUT     /service/device/:id         controllers.Devices.update(id: Long)
-DELETE  /service/device/:id         controllers.Devices.delete(id: Long)
+PUT     /service/device/:id         controllers.Devices.update(id: Integer)
+DELETE  /service/device/:id         controllers.Devices.delete(id: Integer)
 GET     /service/devices/pushdata   controllers.Application.streamDeviceEvents()

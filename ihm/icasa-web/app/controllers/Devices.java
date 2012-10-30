@@ -34,7 +34,7 @@ public class Devices extends Controller {
         return ok(toJson(list));
     }
 
-    public static Result getById(Long id) { // GET
+    public static Result getById(Integer id) { // GET
 
         Device modelToFind = Device.find.byId(id);
 
@@ -53,7 +53,7 @@ public class Devices extends Controller {
         return ok(toJson(model));
     }
 
-    public static Result update(Long id) { //PUT
+    public static Result update(Integer id) { //PUT
 
         Form<Device> form = form(Device.class).bindFromRequest();
         Device model = form.get();
@@ -63,7 +63,7 @@ public class Devices extends Controller {
     }
 
 
-    public static Result delete(Long id) { // DELETE
+    public static Result delete(Integer id) { // DELETE
 
         Device modelToFind = Device.find.byId(id);
         if(modelToFind!=null) {
