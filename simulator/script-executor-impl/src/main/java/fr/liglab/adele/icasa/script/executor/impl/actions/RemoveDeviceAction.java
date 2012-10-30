@@ -15,7 +15,12 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import org.apache.felix.ipojo.Pojo;
+import org.json.JSONObject;
+
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -28,8 +33,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public class RemoveDeviceAction extends DeviceAction {
 
-	public RemoveDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId) {
-		super(simulatedBehavior, delay, deviceId);
+	public RemoveDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay) {
+		super(simulatedBehavior, delay);
 	}
 
 	/* (non-Javadoc)
@@ -42,5 +47,17 @@ public class RemoveDeviceAction extends DeviceAction {
 			pojo.getComponentInstance().dispose();
 		}	   		
 	}
+
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+		configure(param);
+		run();
+	   return null;
+   }
 	
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.deviceId = param.getString("deviceId");	   
+	}
 }

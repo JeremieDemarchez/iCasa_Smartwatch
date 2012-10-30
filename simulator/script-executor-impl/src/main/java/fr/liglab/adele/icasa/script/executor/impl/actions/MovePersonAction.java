@@ -16,7 +16,12 @@
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,24 +37,17 @@ public class MovePersonAction extends Action {
 	/**
 	 * Environment ID used to place a person
 	 */
-	private String environmentId;
+	private String location;
 	
 	private String person;
 	
 	private static final Logger logger = LoggerFactory.getLogger(MovePersonAction.class);
 	
-	/**
-    * 
-    */
-   private final ScriptExecutorImpl simulatedBehavior;
-
-	public MovePersonAction(ScriptExecutorImpl simulatedBehavior, String environmentId, int delay, String person) {
+	
+	public MovePersonAction(ScriptExecutorImpl simulatedBehavior, int delay) {
 		super(simulatedBehavior, delay);
-		this.environmentId = environmentId;
-		this.simulatedBehavior = simulatedBehavior;
-		this.person = person;
 	}
-
+	
 	
 	/*
 	 * (non-Javadoc)
@@ -57,13 +55,29 @@ public class MovePersonAction extends Action {
 	 * @see java.lang.Runnable#run()
 	 */
 	public void run() {
-		logger.info("Executing moving :: " +  person + " to room ------> " + environmentId);
+		logger.info("Executing moving :: " +  person + " to room ------> " + location);
 		
-		simulatedBehavior.getSimulationManager().addUser(person);
+		scriptExecutorImpl.getSimulationManager().addUser(person);
 		if (person!=null && (!person.isEmpty()))
-			simulatedBehavior.getSimulationManager().setUserLocation(person, environmentId);
+			scriptExecutorImpl.getSimulationManager().setUserLocation(person, location);
 		else
-			simulatedBehavior.getSimulationManager().setUserLocation("uknown", environmentId);
+			scriptExecutorImpl.getSimulationManager().setUserLocation("uknown", location);
 	}
+
+
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+	   configure(param);
+	   run();
+	   return null;
+   }
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.person = param.getString("person");
+		this.location = param.getString("location");	   
+	}
+	
+	
 
 }

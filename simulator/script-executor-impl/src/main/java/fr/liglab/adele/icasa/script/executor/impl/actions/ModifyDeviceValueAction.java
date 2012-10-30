@@ -19,10 +19,14 @@
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
+
+import org.json.JSONObject;
 import org.osgi.service.cm.Configuration;
 
 /**
@@ -35,12 +39,8 @@ public class ModifyDeviceValueAction extends DeviceAction {
 	private String variable;
 	
 	
-	
-	
-	public ModifyDeviceValueAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId, String variable, String value) {
-	   super(simulatedBehavior, delay, deviceId);
-	   this.variable = variable;
-	   this.value = value;
+	public ModifyDeviceValueAction(ScriptExecutorImpl simulatedBehavior, int delay) {
+	   super(simulatedBehavior, delay);
    }
 
 	/*
@@ -64,14 +64,26 @@ public class ModifyDeviceValueAction extends DeviceAction {
 
 			config.update(dict);
 			
-			System.out.println("Modify Device Value Executed");
 			  
       } catch (IOException e) {
 	      // TODO Auto-generated catch block
 	      e.printStackTrace();
       }
 
+	}
 
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+		configure(param);
+		run();
+		return null;
+   }
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.deviceId = param.getString("deviceId");
+		this.variable = param.getString("variable");
+		this.value = param.getString("value");
 	}
 
 }

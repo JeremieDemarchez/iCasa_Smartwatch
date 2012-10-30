@@ -16,8 +16,13 @@
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,8 +37,8 @@ public class FaultDeviceAction extends DeviceAction {
 
 	private static final Logger logger = LoggerFactory.getLogger(FaultDeviceAction.class);
 	
-	public FaultDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId) {
-		super(simulatedBehavior, delay, deviceId);
+	public FaultDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay) {
+		super(simulatedBehavior, delay);
 	}
 
 	@Override
@@ -44,6 +49,18 @@ public class FaultDeviceAction extends DeviceAction {
 			device.setFault("yes");
 			logger.info("Device fault state has been set to Yes");
 		}
+	}
+
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+		configure(param);
+		run();
+	   return null;
+   }
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.deviceId = param.getString("deviceId");	   
 	}
 
 }

@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
+import org.json.JSONObject;
+
+import fr.liglab.adele.icasa.command.ICommandService;
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
 
 /**
@@ -24,7 +27,7 @@ import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
  * @author Gabriel
  *
  */
-public abstract class Action implements Runnable {
+public abstract class Action implements Runnable, ICommandService {
 
 	/**
 	 * Delay (in ms) from precedent action 
@@ -58,5 +61,7 @@ public abstract class Action implements Runnable {
 	 * @see java.lang.Runnable#run()
 	 */
 	public abstract void run();
+	
+	public abstract void configure(JSONObject param) throws Exception;
 
 }
