@@ -22,12 +22,19 @@ import javax.persistence.*;
  * @author Thomas Leveque
  */
 @Entity
+@Table(name="DEVICE")
 public class Device extends Model {
 
     @Id
-    public Long id;
+    @Column(name="id")
+    public Integer id;
+
+    @Column(name="name")
     public String name;
 
-    public static Finder<Long, Device> find =
-            new Finder<Long, Device>(Long.class, Device.class);
+    @Column(name="deviceId")
+    public String deviceId;
+
+    public static Finder<Integer, Device> find =
+            new Finder<Integer, Device>(Integer.class, Device.class);
 }

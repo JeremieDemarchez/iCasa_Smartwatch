@@ -17,13 +17,21 @@
 
 # --- !Ups
 
-CREATE SEQUENCE device_id_seq;
-CREATE TABLE device (
-    id integer NOT NULL DEFAULT nextval('device_id_seq'),
-    name varchar(255)
-);
+-- SET @OLD_UNIQUE_CHECKS=@@UNIQUE_CHECKS, UNIQUE_CHECKS=0;
+-- SET @OLD_FOREIGN_KEY_CHECKS=@@FOREIGN_KEY_CHECKS, FOREIGN_KEY_CHECKS=0;
+-- SET @OLD_SQL_MODE=@@SQL_MODE, SQL_MODE='TRADITIONAL,ALLOW_INVALID_DATES';
+
+-- CREATE SCHEMA IF NOT EXISTS `iCasaDB`;
+
+-- -----------------------------------------------------
+-- Table `iCasaDB`.`DEVICE`
+-- -----------------------------------------------------
+CREATE  TABLE IF NOT EXISTS `DEVICE` (
+  `id` INT NOT NULL AUTO_INCREMENT ,
+  `deviceId` VARCHAR(255) NULL ,
+  `name` VARCHAR(150) NULL ,
+  PRIMARY KEY (`id`))
 
 # --- !Downs
 
-DROP TABLE device;
-DROP SEQUENCE device_id_seq;
+DROP TABLE 'DEVICE';
