@@ -463,6 +463,16 @@
 				<artifactId>house.simulator</artifactId>
 				<version>${iCasaVersion}</version>
 			</dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>simulator.remote</artifactId>
+                <version>${iCasaVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>gogo.adapter</artifactId>
+                <version>${iCasaVersion}</version>
+            </dependency>
 			
 			<!-- ROSE -->
 			<dependency>
