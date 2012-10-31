@@ -50,6 +50,81 @@
 		</license>
 	</licenses>
 
+    <developers>
+        <developer>
+            <name>Philippe Lalanda</name>
+            <email> philippe.lalanda @nospam@ imag.fr	</email>
+            <roles>
+                <role>Project Manager</role>
+            </roles>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+        </developer>
+        <developer>
+            <name>Catherine Hamon</name>
+            <email> Catherine.Hamon @nospam@ orange-ftgroup.com	</email>
+            <roles>
+                <role>Project Manager</role>
+            </roles>
+            <organization>Orange Labs</organization>
+            <organizationUrl>http://orange-ftgroup.com</organizationUrl>
+        </developer>
+        <developer>
+            <name>Thomas Leveque</name>
+            <email> leveque.thomas @nospam@ gmail.com	</email>
+            <roles>
+                <role>Project Manager</role>
+            </roles>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+        </developer>
+        <developer>
+            <name>Bassem Debbabi</name>
+            <email>bassem @nospam@ debbabi.net</email>
+            <roles>
+            </roles>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+        </developer>
+        <developer>
+            <name>Issac Noé Garcia Garza</name>
+            <email> 	 torito @nospam@ gmail.com</email>
+            <roles>
+            </roles>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+        </developer>
+        <developer>
+            <name>Gabriel Pedraza Ferreira</name>
+            <email>gabriel.pedraza-ferreira @nospam@ imag.fr</email>
+            <roles>
+            </roles>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+        </developer>
+    </developers>
+
+    <contributors>
+        <contributor>
+            <name>Elmehdi Damou</name>
+            <email>elmehdi.damou @nospam@ imag.fr</email>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Pierre Bourret</name>
+            <email> 	 bourretp @nospam@ gmail.com</email>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </contributor>
+    </contributors>
+
 	<!-- Project repositories -->
 	<repositories>
 		<repository>
@@ -473,6 +548,13 @@
 		</dependencies>
 	</dependencyManagement>
 
+    <scm>
+        <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
+        <url>http://github.com/AdeleResearchGroup/iCasa/</url>
+        <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+
 	<build>
 
 		<!-- Plugins version management -->
@@ -605,13 +687,42 @@
                 	<artifactId>play2-maven-plugin</artifactId>
                 	<version>1.2.1</version>
             	</plugin>
+
+                <!-- Release plugins -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-release-plugin</artifactId>
+                    <version>2.3.2</version>
+                    <configuration>
+                        <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
+                        <autoVersionSubmodules>true</autoVersionSubmodules>
+                        <releaseProfiles>release</releaseProfiles>
+                    </configuration>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-surefire-plugin</artifactId>
+                    <version>2.12</version>
+                </plugin>
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-javadoc-plugin</artifactId>
+                    <version>2.8.1</version>
+                    <configuration>
+                        <excludePackageNames>*.internal,*.internal.*,*.impl,*.impl.*</excludePackageNames>
+                    </configuration>
+                </plugin>
 				
 			</plugins>
 		</pluginManagement>
 
 		<!-- Build extensions -->
 		<extensions>
-			
+            <!--extension>
+                <groupId>org.apache.maven.wagon</groupId>
+                <artifactId>wagon-webdav-jackrabbit</artifactId>
+                <version>2.2</version>
+            </extension-->
 		</extensions>
 		
 		<plugins>
@@ -647,4 +758,12 @@
           </plugin>
 		</plugins>
 	</build>
+
+    <distributionManagement>
+        <repository>
+            <id>cloudbees-release</id>
+            <name>Cloudbees Private Repository</name>
+            <url>dav:https://repository-icasa.forge.cloudbees.com/release</url>
+        </repository>
+    </distributionManagement>
 </project>
