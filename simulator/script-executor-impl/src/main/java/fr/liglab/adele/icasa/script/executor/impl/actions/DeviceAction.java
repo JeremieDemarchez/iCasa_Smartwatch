@@ -34,11 +34,9 @@ public abstract class DeviceAction extends Action {
 	 * @param delay
 	 * @param deviceId
 	 */
-	public DeviceAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId) {
+	public DeviceAction(ScriptExecutorImpl simulatedBehavior, int delay) {
 	   super(simulatedBehavior, delay);
-	   this.deviceId = deviceId;
    }
-
 
 	
 }

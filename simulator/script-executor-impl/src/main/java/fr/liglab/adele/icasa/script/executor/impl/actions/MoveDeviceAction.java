@@ -16,8 +16,13 @@
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
+
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,16 +39,14 @@ public class MoveDeviceAction extends DeviceAction {
 	
 	private static final Logger logger = LoggerFactory.getLogger(MoveDeviceAction.class);
 
-	public MoveDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay, String deviceId, String location) {
-	   super(simulatedBehavior, delay, deviceId);
-	   this.location = location;
+	public MoveDeviceAction(ScriptExecutorImpl simulatedBehavior, int delay) {
+	   super(simulatedBehavior, delay);
    }
 
 	@Override
 	public void run() {
 		GenericDevice device = scriptExecutorImpl.getDevices().get(deviceId);
 		if (device!=null) {							
-			//device.setState("activated");
 			findEnvironment(deviceId, location);			
 		}
 	}
@@ -56,6 +59,19 @@ public class MoveDeviceAction extends DeviceAction {
 	private void findEnvironment(String deviceID, String location) {
 		logger.info("Tryng to bind the device " + deviceID + " -- to  environment " + location);
 		scriptExecutorImpl.getSimulationManager().setDeviceLocation(deviceID, location);
+	}
+
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+		configure(param);
+		run();
+	   return null;
+   }
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.deviceId = param.getString("deviceId");
+		this.location = param.getString("location");
 	}
 	
 }

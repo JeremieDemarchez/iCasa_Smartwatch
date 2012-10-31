@@ -16,9 +16,12 @@
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
 
+import java.io.InputStream;
+import java.io.OutputStream;
+
+import org.json.JSONObject;
+
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * 
@@ -38,45 +41,30 @@ public class ModifyEnvironmentAction extends Action {
 	
 	private String value;
 	
-
 	
-	private static final Logger logger = LoggerFactory.getLogger(ModifyEnvironmentAction.class);
-	
-	/**
-    * 
-    */
-   private final ScriptExecutorImpl simulatedBehavior;
 
-	public ModifyEnvironmentAction(ScriptExecutorImpl simulatedBehavior, String environmentId, int delay, String variable, String value) {
+	public ModifyEnvironmentAction(ScriptExecutorImpl simulatedBehavior, int delay) {
 		super(simulatedBehavior, delay);
-		this.environmentId = environmentId;
-		this.simulatedBehavior = simulatedBehavior;
-		this.variable = variable;
-		this.value = value;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Runnable#run()
-	 */
-	/*
-	public void runOld() {
-		SimulatedEnvironment environment = (SimulatedEnvironment) this.simulatedBehavior.getEnvironments().get(environmentId);
-		if (environment != null) {
-			logger.info("Executing moving to room ------> " + environmentId);
-			environment.setProperty("presence", new Double(1.0));
-			for (SimulatedEnvironment otherEnvironment : this.simulatedBehavior.getEnvironments().values()) {
-				if (otherEnvironment != environment)
-					otherEnvironment.setProperty("presence", new Double(0.0));
-			}
-		}
-	}
-	*/
 	
 	public void run() {
-		simulatedBehavior.getSimulationManager().setEnvironmentVariable(environmentId, variable, Double.valueOf(value));
+		scriptExecutorImpl.getSimulationManager().setEnvironmentVariable(environmentId, variable, Double.valueOf(value));
 		System.out.println("Modifying environment: " + environmentId + " variable: " + variable + " value: " + value);		
 	}
 
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+		configure(param);
+		run();
+		return null;
+   }
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.environmentId = param.getString("environmentId");
+		this.variable = param.getString("variable");
+		this.value = param.getString("value");	  
+	}
+	
 }

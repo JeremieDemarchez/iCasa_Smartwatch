@@ -18,6 +18,11 @@
   <dependencies>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>gogo.adapter</artifactId>
+      <version>0.0.1-SNAPSHOT</version>
+    </dependency>  
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>script.executor.api</artifactId>
     </dependency>
     <dependency>

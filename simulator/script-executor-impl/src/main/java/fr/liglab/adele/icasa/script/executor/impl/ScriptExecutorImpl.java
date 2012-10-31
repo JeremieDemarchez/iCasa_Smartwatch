@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl;
 
-
 import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
@@ -36,19 +35,7 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.Factory;
-import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
-import fr.liglab.adele.icasa.script.executor.impl.actions.Action;
-import fr.liglab.adele.icasa.script.executor.impl.actions.ActivateDeviceAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.AddDeviceAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.MoveDeviceAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.DeactivateDeviceAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.FaultDeviceAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.ModifyDeviceValueAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.ModifyEnvironmentAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.MovePersonAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.RemoveDeviceAction;
-import fr.liglab.adele.icasa.script.executor.impl.actions.RepairDeviceAction;
+import org.json.JSONObject;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,8 +45,21 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.script.executor.impl.actions.Action;
+import fr.liglab.adele.icasa.script.executor.impl.actions.ActivateDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.AddDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.DeactivateDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.FaultDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.ModifyDeviceValueAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.ModifyEnvironmentAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.MoveDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.MovePersonAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.RemoveDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.actions.RepairDeviceAction;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -72,22 +72,19 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * The ROSE machine
 	 */
-	//private RoseMachine roseMachine;
-	
+	// private RoseMachine roseMachine;
+
 	/**
-	 * The OSGi ConfigAdmin service 
+	 * The OSGi ConfigAdmin service
 	 */
 	private ConfigurationAdmin configAdmin;
-	
+
 	/**
 	 * The Simulation Mananeger service provided by iCASA simulation platform
 	 */
 	private SimulationManager simulationManager;
-	
+
 	private Map<String, Factory> factories = new Hashtable<String, Factory>();
-	
-	
-	
 
 	private List<ScheduledFuture> tasks = new ArrayList<ScheduledFuture>();
 
@@ -95,68 +92,66 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private Map<String, GenericDevice> devices;
 
-
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
-	
-	//private List<String> scriptList = new ArrayList<String>();
-	
+
+	// private List<String> scriptList = new ArrayList<String>();
+
 	private Map<String, File> scriptMap = new HashMap<String, File>();
-	
+
 	public void executeScript(String scriptName) {
 		File scriptFile = scriptMap.get(scriptName);
-		if (scriptFile!=null)
+		if (scriptFile != null)
 			executeScript(scriptFile);
 	}
-	
+
 	public void executeScript(String scriptName, final Date startDate, final int factor) {
 		File scriptFile = scriptMap.get(scriptName);
-		if (scriptFile!=null) {
+		if (scriptFile != null) {
 			executeScript(scriptFile, startDate, factor);
-		}		
+		}
 	}
-	
+
 	private void executeScript(File file) {
 		ScriptParser parser = new ScriptParserImpl();
 		List<Action> actions = parser.parse(file);
 		final Date startDate = parser.getStartDate();
 		final int factor = parser.getFactor();
-		executeScript(actions, startDate, factor);	   
-   }
+		executeScript(actions, startDate, factor);
+	}
 
 	private void executeScript(File file, final Date startDate, final int factor) {
 		ScriptParser parser = new ScriptParserImpl();
 		List<Action> actions = parser.parse(file);
 		executeScript(actions, startDate, factor);
-   }
-	
+	}
+
 	private void executeScript(List<Action> actions, final Date startDate, final int factor) {
 		try {
-	      simulationManager.removeAllUsers();
-	      cancelTask();
-	      
-	      scheduler.schedule(new Runnable() {
-				
+			simulationManager.removeAllUsers();
+			cancelTask();
+
+			scheduler.schedule(new Runnable() {
+
 				public void run() {
 					startClock(startDate, factor);
-					
+
 				}
 			}, 0, TimeUnit.MILLISECONDS);
 
-	      for (Action action : actions) {
-	      	ScheduledFuture futureTask = scheduler.schedule(action, action.getDelay(), TimeUnit.MILLISECONDS);
-	      	tasks.add(futureTask);
-	      }
-	      
-	      
-      } catch (Exception e) {
-	      e.printStackTrace();
-      }	   
+			for (Action action : actions) {
+				ScheduledFuture futureTask = scheduler.schedule(action, action.getDelay(), TimeUnit.MILLISECONDS);
+				tasks.add(futureTask);
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void stopExecution() {
-		cancelTask();	   
-   }
-	
+		cancelTask();
+	}
+
 	public void bindDevice(GenericDevice device) {
 		if (devices == null)
 			devices = new HashMap<String, GenericDevice>();
@@ -189,7 +184,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		}
 	}
 
-
 	/**
 	 * @return the devices
 	 */
@@ -197,14 +191,13 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		return devices;
 	}
 
-
 	/**
 	 * @return the environmentManager
 	 */
 	public SimulationManager getSimulationManager() {
 		return simulationManager;
 	}
-	
+
 	public void stop() {
 		scheduler.shutdownNow();
 	}
@@ -213,14 +206,14 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		public List<Action> parse(File file);
 
 		public Date getStartDate();
-		
+
 		public int getFactor();
 	}
 
 	class ScriptParserImpl implements ScriptParser {
 
 		private String startdateStr;
-		
+
 		private int factor = 360;
 
 		public List<Action> parse(File file) {
@@ -245,91 +238,149 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 					try {
 						factor = Integer.parseInt(factorStr);
 					} catch (NumberFormatException e) {
-						//System.out.println("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO");
-						//e.printStackTrace();
-					} 
+
+					}
 
 					NodeList nodeList = root.getChildNodes();
 
 					int delay = 0;
+					Action action = null;
 					for (int i = 0; i < nodeList.getLength(); i++) {
 						// Get child node
 						Node childNode = nodeList.item(i);
+						JSONObject param = null;
 						if (childNode.getNodeName().equals("move")) {
 							Element element = (Element) childNode;
-							String room = element.getAttribute("room");
-							String person = element.getAttribute("person");
-							list.add(new MovePersonAction(ScriptExecutorImpl.this, room, delay, person));
-							logger.info("Move --- <<<<< ROOM >>>>>>>>> " + room);
-						}
-						if (childNode.getNodeName().equals("modify-environment")) {
-							Element element = (Element) childNode;
-							String room = element.getAttribute("room");
-							String variable = element.getAttribute("variable");
-							String value = element.getAttribute("value");							
-							list.add(new ModifyEnvironmentAction(ScriptExecutorImpl.this, room, delay, variable, value));
-							logger.info("Modify --- /////// ROOM ////// " + room);
-						}
-						if (childNode.getNodeName().equals("add-device")) {
-							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							String deviceType = element.getAttribute("type");
-							list.add(new AddDeviceAction(ScriptExecutorImpl.this, delay, deviceId, deviceType));
-							logger.info("++++++++++++++++++ Add Device ++++++++++++++++++");
-						}
 
-						if (childNode.getNodeName().equals("remove-device")) {
+							param = new JSONObject();
+							try {
+								param.put("location", element.getAttribute("room"));
+								param.put("person", element.getAttribute("person"));
+								action = new MovePersonAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (childNode.getNodeName().equals("modify-environment")) {
 							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							list.add(new RemoveDeviceAction(ScriptExecutorImpl.this, delay, deviceId));
-							logger.info("--------------- Remove Device ------------------ ");
-						}
 
-						if (childNode.getNodeName().equals("move-device")) {
+							param = new JSONObject();
+							try {
+								param.put("environmentId", element.getAttribute("room"));
+								param.put("variable", element.getAttribute("variable"));
+								param.put("value", element.getAttribute("value"));
+								action = new ModifyEnvironmentAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (childNode.getNodeName().equals("add-device")) {
 							Element element = (Element) childNode;
-							String room = element.getAttribute("room");
-							String deviceId = element.getAttribute("deviceID");
-							list.add(new MoveDeviceAction(ScriptExecutorImpl.this, delay, deviceId, room));
-							logger.info("================ Configure Device ================== ");
-						}
 
-						if (childNode.getNodeName().equals("fault-device")) {
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								param.put("deviceType", element.getAttribute("type"));
+								action = new AddDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (childNode.getNodeName().equals("remove-device")) {
 							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							list.add(new FaultDeviceAction(ScriptExecutorImpl.this, delay, deviceId));
-							logger.info("================ Configure Device ================== ");
-						}
 
-						if (childNode.getNodeName().equals("repair-device")) {
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								action = new RemoveDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (childNode.getNodeName().equals("move-device")) {
 							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							list.add(new RepairDeviceAction(ScriptExecutorImpl.this, delay, deviceId));
-							logger.info("================ Configure Device ================== ");
-						}
 
-						if (childNode.getNodeName().equals("activate-device")) {
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								param.put("location", element.getAttribute("room"));
+								action = new MoveDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (childNode.getNodeName().equals("fault-device")) {
 							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							list.add(new ActivateDeviceAction(ScriptExecutorImpl.this, delay, deviceId));
-							logger.info(" //////////////// Activate Device ///////////////// ");
-						}
-						
-						if (childNode.getNodeName().equals("modify-device-value")) {
+
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								action = new FaultDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+						} else if (childNode.getNodeName().equals("repair-device")) {
 							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							String variable = element.getAttribute("variable");
-							String value = element.getAttribute("value");
-							list.add(new ModifyDeviceValueAction(ScriptExecutorImpl.this, delay,deviceId, variable, value));
-							logger.info(" //////****************///// Modify Device Value ////////***********///////// ");
-						}
-						
-						if (childNode.getNodeName().equals("deactivate-device")) {
+
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								action = new RepairDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+						} else if (childNode.getNodeName().equals("activate-device")) {
 							Element element = (Element) childNode;
-							String deviceId = element.getAttribute("deviceID");
-							list.add(new DeactivateDeviceAction(ScriptExecutorImpl.this, delay,deviceId));
-							logger.info(" |||||||||||||||||||| Deactivate Device |||||||||||||||||||| ");
-						}
-						if (childNode.getNodeName().equals("delay")) {
+
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								action = new ActivateDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+						} else if (childNode.getNodeName().equals("modify-device-value")) {
+							Element element = (Element) childNode;
+
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								param.put("variable", element.getAttribute("variable"));
+								param.put("value", element.getAttribute("value"));
+								action = new ModifyDeviceValueAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+						} else if (childNode.getNodeName().equals("deactivate-device")) {
+							Element element = (Element) childNode;
+
+							param = new JSONObject();
+							try {
+								param.put("deviceId", element.getAttribute("deviceID"));
+								action = new DeactivateDeviceAction(ScriptExecutorImpl.this, delay);
+								action.configure(param);
+								list.add(action);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
+
+						} else if (childNode.getNodeName().equals("delay")) {
 							Element element = (Element) childNode;
 							String delayStr = element.getAttribute("value");
 							delay += (Integer.valueOf(delayStr).intValue() * 60 * 1000) / factor;
@@ -361,7 +412,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				try {
 					startDate = formatter.parse(startdateStr);
 				} catch (ParseException e) {
-					//e.printStackTrace();
+					// e.printStackTrace();
 				} finally {
 					if (startDate == null)
 						startDate = new Date(System.currentTimeMillis());
@@ -372,54 +423,50 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		}
 
 		public int getFactor() {
-	      return factor;
-      }
+			return factor;
+		}
 	}
-	
-	
+
 	public ConfigurationAdmin getConfigAdmin() {
 		return configAdmin;
 	}
-	
 
 	public boolean canHandle(File artifact) {
 		if (artifact.getName().endsWith(".bhv")) {
 			return true;
 		}
 		return false;
-   }
+	}
 
 	public void install(File artifact) throws Exception {
 		System.out.println("--------------------  New Script File added : " + artifact.getName());
-	   scriptMap.put(artifact.getName(), artifact);	   
-   }
+		scriptMap.put(artifact.getName(), artifact);
+	}
 
 	public void update(File artifact) throws Exception {
-	   // Nothing to be done!	   
-   }
+		// Nothing to be done!
+	}
 
 	public void uninstall(File artifact) throws Exception {
 		scriptMap.remove(artifact);
-	   
-   }
+
+	}
 
 	public List<String> getScriptList() {
-	   List<String> list = new ArrayList<String>(scriptMap.keySet());
-	   return list;
-   }
-
-	
-	public void bindDeviceFactory(final Factory factory) {
-			factories.put(factory.getName(), factory);
+		List<String> list = new ArrayList<String>(scriptMap.keySet());
+		return list;
 	}
-	
+
+	public void bindDeviceFactory(final Factory factory) {
+		factories.put(factory.getName(), factory);
+	}
+
 	public void unbindDeviceFactory(final Factory factory) {
 		factories.remove(factory.getName());
 	}
-	
+
 	public Factory getFactory(String name) {
 		return factories.get(name);
 	}
-
 
 }

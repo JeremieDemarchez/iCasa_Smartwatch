@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.actions;
 
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Random;
@@ -23,6 +25,8 @@ import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
+import org.json.JSONObject;
+
 import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -39,11 +43,8 @@ public class AddDeviceAction extends DeviceAction {
 
 	private String deviceType;
 
-	public AddDeviceAction(ScriptExecutorImpl scriptExecutorImpl, int delay, String deviceId, String deviceType) {
-		super(scriptExecutorImpl, delay, deviceId);
-		this.scriptExecutorImpl = scriptExecutorImpl;
-		this.deviceId = deviceId;
-		this.deviceType = deviceType;
+	public AddDeviceAction(ScriptExecutorImpl scriptExecutorImpl, int delay) {
+		super(scriptExecutorImpl, delay);
 	}
 
 	public void run() {
@@ -72,23 +73,18 @@ public class AddDeviceAction extends DeviceAction {
 
 	}
 
-	/*
-	private void registerSensorInROSE(String sensorID) {
-		Map<String, Object> props = new Hashtable<String, Object>();
+	@Override
+   public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+		configure(param);
+		run();
+	   return null;
+   }
 
-		props.put(RemoteConstants.ENDPOINT_ID, sensorID);
-		props.put(RemoteConstants.SERVICE_IMPORTED_CONFIGS, "simulated-zigbee");
-		if (deviceType != null)
-			props.put("objectClass", new String[] { deviceType });
-		else
-			props.put("objectClass", new String[] { "unknowType" });
-
-		props.put("id", sensorID);
-		props.put("device.serialNumber", sensorID);
-
-		EndpointDescription epd = new EndpointDescription(props);
-		this.scriptExecutorImpl.getRoseMachine().putRemote(sensorID, epd);
-		logger.info("Endpoint registed in ROSE");
+	
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.deviceId = param.getString("deviceId");
+		this.deviceType = param.getString("deviceType");
 	}
-	*/
+
 }
