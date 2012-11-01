@@ -491,14 +491,6 @@
 				<version>0.1.0-SNAPSHOT</version>			
 			</dependency>
 
-            <!-- Jersey -->
-            <!-- OW2 JSON service -->
-            <dependency>
-                <groupId>org.ow2.chameleon.json</groupId>
-                <artifactId>json-service-json.org</artifactId>
-                <version>0.4.0</version>
-            </dependency>
-
             <!-- Jersey ROSE exporter -->
             <dependency>
                 <groupId>com.sun.jersey</groupId>
@@ -531,19 +523,7 @@
                 <version>2.2.1</version>
             </dependency>
 
-            <!-- OW2 Chameleon handies & annotations -->
-            <dependency>
-                <groupId>org.ow2.chameleon.handies</groupId>
-                <artifactId>annotations</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-            <dependency>
-                <groupId>org.ow2.chameleon.handies</groupId>
-                <artifactId>ipojo-log-handler</artifactId>
-                <version>0.0.1-SNAPSHOT</version>
-            </dependency>
-
-			<!-- Gogo command dependencies -->
+            <!-- Gogo command dependencies -->
 			<dependency>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>org.apache.felix.gogo.runtime</artifactId>
