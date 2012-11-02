@@ -33,9 +33,23 @@
       <callback type="bind" method="bindDeviceFactory" />
       <callback type="unbind" method="unbindDeviceFactory" />
     </requires>    
-    
+    <requires aggregate="true" optional="true" id="commands">
+      <callback type="bind" method="bindCommand" />
+      <callback type="unbind" method="unbindCommand" />
+    </requires> 
     <callback transition="invalidate" method="stop"/>
   </component>
 
   <instance name="script-executor" component="ScriptExecutor" />
+  
+  <component name="MovePersonCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.MovePersonCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String"/>
+      <property name="name" value="move" type="java.lang.String"/>
+      <property name="description" value="move person $1 to room $2" type="java.lang.String"/>
+    </provides>
+  </component>
+  
+  <instance name="move-command" component="MovePersonCommand" />
+
 </ipojo>
