@@ -155,12 +155,38 @@
 			<id>ow2-release-repository</id>
 			<name>OW2 release repository</name>
 			<url>http://maven.ow2.org/maven2</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
 		</repository>
 		<repository>
 			<id>ow2-snapshot-repository</id>
 			<name>OW2 Snapshot repository</name>
 			<url>http://maven.ow2.org/maven2-snapshot</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
 		</repository>
+
+        <!-- Java.net repo -->
+        <repository>
+            <id>maven2-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/2/</url>
+            <layout>default</layout>
+        </repository>
+        <repository>
+            <id>maven-glassfish-repository.dev.java.net</id>
+            <name>Java.net Repository for Maven</name>
+            <url>http://download.java.net/maven/glassfish/</url>
+            <layout>default</layout>
+        </repository>
 		
 		<!-- ROSE repository -->
 		<repository>
@@ -239,6 +265,13 @@
 				<artifactId>org.osgi.enterprise</artifactId>
 				<version>4.2.0</version>
 			</dependency>
+
+            <!-- felix framework -->
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.main</artifactId>
+                <version>3.0.8</version>
+            </dependency>
 
 			<!-- Servlet 2.5 API -->
 			<dependency>
@@ -708,11 +741,11 @@
 
 		<!-- Build extensions -->
 		<extensions>
-            <!--extension>
+            <extension>
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-webdav-jackrabbit</artifactId>
                 <version>2.2</version>
-            </extension-->
+            </extension>
 		</extensions>
 		
 		<plugins>
@@ -751,9 +784,14 @@
 
     <distributionManagement>
         <repository>
-            <id>cloudbees-release</id>
-            <name>Cloudbees Private Repository</name>
+            <id>icasa-deploy-cloudbees-release</id>
+            <name>iCasa Cloudbees Release Private Repository</name>
             <url>dav:https://repository-icasa.forge.cloudbees.com/release</url>
         </repository>
+        <snapshotRepository>
+            <id>icasa-deploy-cloudbees-snapshot</id>
+            <name>iCasa Cloudbees Snapshot Private Repository</name>
+            <url>dav:https://repository-icasa.forge.cloudbees.com/snapshot</url>
+        </snapshotRepository>
     </distributionManagement>
 </project>

@@ -10,7 +10,7 @@
 
 	<!-- Project Description -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>icasa.web</artifactId>
+	<artifactId>play2.osgi</artifactId>
 	<packaging>play2</packaging>
 	<name>${productName} :: ${projectName}</name>
 	
@@ -26,11 +26,14 @@
     </repositories>
 
     <dependencies>
-        <!-- modules -->
+        <!-- bundle dependencies -->
         <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>play2.osgi</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.main</artifactId>
         </dependency>
 
         <!-- Play Framework Dependencies -->
@@ -62,6 +65,7 @@
                 <extensions>true</extensions>
 				<configuration>
                     <play2Home>${user.home}/opt/play-${play2.version}</play2Home>
+                    <buildDist>false</buildDist>
                 </configuration>
                 <executions>
                     <execution>
