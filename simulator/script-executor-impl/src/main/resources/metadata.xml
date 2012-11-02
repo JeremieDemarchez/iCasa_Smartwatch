@@ -90,7 +90,7 @@
       <property name="name" value="modify-device-value" type="java.lang.String" />
       <property name="description" value="modify-environment" type="java.lang.String" />
     </provides>
-    <requires field="simulationManager" optional="false" />
+    <requires field="configAdmin" optional="false" />
   </component>  
 
   <instance name="modify-environment-command" component="ModifyEnvironmentCommand" />
