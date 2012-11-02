@@ -192,6 +192,10 @@ public interface SimulationManager {
     void removeUserPositionListener(UserPositionListener listener);
     
     
+    void setDeviceFault(String deviceId, boolean value);
+    
+    void setDeviceState(String deviceId, boolean value);
+    
     
     // --- Device and User events listeners methods and classes --- //
     

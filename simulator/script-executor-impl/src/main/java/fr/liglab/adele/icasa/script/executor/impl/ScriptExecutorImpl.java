@@ -32,10 +32,13 @@ import java.util.concurrent.TimeUnit;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.Factory;
 import org.json.JSONObject;
+import org.osgi.framework.ServiceReference;
 import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -46,6 +49,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.command.ICommandService;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
@@ -60,6 +64,7 @@ import fr.liglab.adele.icasa.script.executor.impl.actions.MoveDeviceAction;
 import fr.liglab.adele.icasa.script.executor.impl.actions.MovePersonAction;
 import fr.liglab.adele.icasa.script.executor.impl.actions.RemoveDeviceAction;
 import fr.liglab.adele.icasa.script.executor.impl.actions.RepairDeviceAction;
+import fr.liglab.adele.icasa.script.executor.impl.commands.RunnableCommandAdapter;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -88,13 +93,14 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private List<ScheduledFuture> tasks = new ArrayList<ScheduledFuture>();
 
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	private Map<String, GenericDevice> devices;
+		
+	private Map<String, ICommandService> commands;
+	
 
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
-
-	// private List<String> scriptList = new ArrayList<String>();
 
 	private Map<String, File> scriptMap = new HashMap<String, File>();
 
@@ -102,6 +108,8 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		File scriptFile = scriptMap.get(scriptName);
 		if (scriptFile != null)
 			executeScript(scriptFile);
+		
+		
 	}
 
 	public void executeScript(String scriptName, final Date startDate, final int factor) {
@@ -112,11 +120,56 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	private void executeScript(File file) {
+		
+		/*
 		ScriptParser parser = new ScriptParserImpl();
 		List<Action> actions = parser.parse(file);
 		final Date startDate = parser.getStartDate();
 		final int factor = parser.getFactor();
 		executeScript(actions, startDate, factor);
+		*/
+		
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		try {
+	      SAXParser saxParser = factory.newSAXParser();
+	      ScenarioSAXHandler handler = new ScenarioSAXHandler(this);
+	      saxParser.parse(file, handler);
+	      
+	      
+	      List<ActionDescription> actions = handler.getActionList();
+	      
+	      
+	      
+	      for (ActionDescription actionDescription : actions) {
+	         String commandName = actionDescription.getCommandName();
+	         ICommandService commandService = commands.get(commandName);
+	         
+	         
+	         
+	         if (commandService!=null) {
+	         	
+	         	
+	         	RunnableCommandAdapter adapter = new RunnableCommandAdapter(commandService, actionDescription.getConfiguration());
+	         	scheduler.schedule(adapter, 2, TimeUnit.SECONDS);
+
+	         }
+	      	
+         }
+	      
+         
+	      
+      } catch (ParserConfigurationException e) {
+	      e.printStackTrace();
+      } catch (SAXException e) {
+	      e.printStackTrace();
+      } catch (IOException e) {
+	      e.printStackTrace();
+      }
+		
+      
+      
+		
+		
 	}
 
 	private void executeScript(File file, final Date startDate, final int factor) {
@@ -159,8 +212,22 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	public void unbindDevice(GenericDevice device) {
-		devices.remove(device);
+		devices.remove(device.getSerialNumber());
 	}
+	
+	public void bindCommand(ICommandService commandService, ServiceReference reference) {
+		String name = (String) reference.getProperty("name");
+		if (commands == null)
+			commands = new HashMap<String, ICommandService>();
+		commands.put(name, commandService);
+	}
+	
+	public void unbindCommand(ServiceReference reference) {
+		String name = (String) reference.getProperty("name");
+		commands.remove(name);
+	}
+	
+	
 
 	/**
 	 * 
@@ -202,13 +269,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		scheduler.shutdownNow();
 	}
 
-	interface ScriptParser {
-		public List<Action> parse(File file);
-
-		public Date getStartDate();
-
-		public int getFactor();
-	}
 
 	class ScriptParserImpl implements ScriptParser {
 

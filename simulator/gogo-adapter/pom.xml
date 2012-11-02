@@ -33,8 +33,8 @@
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.json</groupId>
-			<artifactId>json</artifactId>
+			<groupId>org.ow2.chameleon.json</groupId>
+			<artifactId>json-service-json.org</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -49,7 +49,7 @@
 				<configuration>
 					<instructions>
 						<Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-						<Private-Package>org.json.*,fr.liglab.adele.icasa.command.impl,fr.liglab.adele.osgi.shell.gogo.adapter</Private-Package>
+						<Private-Package>fr.liglab.adele.icasa.command.impl,fr.liglab.adele.osgi.shell.gogo.adapter</Private-Package>
 						<Export-Package>fr.liglab.adele.icasa.command</Export-Package>
 					</instructions>
 				</configuration>

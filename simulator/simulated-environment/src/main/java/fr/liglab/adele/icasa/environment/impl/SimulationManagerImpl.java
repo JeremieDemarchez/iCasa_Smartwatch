@@ -272,6 +272,30 @@ public class SimulationManagerImpl implements SimulationManager {
 		*/
 	}
 	
+	
+	@Override
+   public void setDeviceFault(String deviceId, boolean value) {
+	   SimulatedDevice device = m_devices.get(deviceId);
+	   if (device!=null) {
+	   	if (value)
+	   		device.setFault(SimulatedDevice.FAULT_YES);
+	   	else
+	   		device.setFault(SimulatedDevice.FAULT_NO);
+	   }	   
+   }
+
+	@Override
+   public void setDeviceState(String deviceId, boolean value) {
+	   SimulatedDevice device = m_devices.get(deviceId);
+	   if (device!=null) {
+	   	if (value)
+	   		device.setState(SimulatedDevice.STATE_ACTIVATED);
+	   	else
+	   		device.setState(SimulatedDevice.STATE_DEACTIVATED);
+	   }	   
+   }
+	
+	
 	private void calculatePrensenceVariable(String previousLocation, String newLocation) {
 		if ((previousLocation == null && newLocation == null) || (previousLocation != null && previousLocation.equals(newLocation))) {
 			// Same location => nothing to do!
@@ -587,6 +611,8 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 
 	}
+
+
 
 
 

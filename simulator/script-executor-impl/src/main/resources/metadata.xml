@@ -1,20 +1,8 @@
-<!--
-
-
-      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
-      Licensed under the Apache License, Version 2.0 (the "License");
-      you may not use this file except in compliance with the License.
-      You may obtain a copy of the License at
-
-        http://www.apache.org/licenses/LICENSE-2.0
-
-      Unless required by applicable law or agreed to in writing, software
-      distributed under the License is distributed on an "AS IS" BASIS,
-      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-      See the License for the specific language governing permissions and
-      limitations under the License.
-
--->
+<!-- Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team Licensed under the Apache License, Version 2.0 (the "License"); 
+  you may not use this file except in compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
+  Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS 
+  IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language 
+  governing permissions and limitations under the License. -->
 <ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="org.apache.felix.ipojo http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd"
   xmlns="org.apache.felix.ipojo">
 
@@ -23,7 +11,7 @@
     <provides />
     <requires field="clock" optional="false" />
     <requires field="simulationManager" />
-    <!-- <requires field="roseMachine" />  -->
+    <!-- <requires field="roseMachine" /> -->
     <requires field="configAdmin" />
     <requires aggregate="true" optional="true" id="devices">
       <callback type="bind" method="bindDevice" />
@@ -32,10 +20,85 @@
     <requires aggregate="true" optional="true" id="deviceFactories">
       <callback type="bind" method="bindDeviceFactory" />
       <callback type="unbind" method="unbindDeviceFactory" />
-    </requires>    
-    
-    <callback transition="invalidate" method="stop"/>
+    </requires>
+    <requires aggregate="true" optional="true" id="commands">
+      <callback type="bind" method="bindCommand" />
+      <callback type="unbind" method="unbindCommand" />
+    </requires>
+    <callback transition="invalidate" method="stop" />
   </component>
 
   <instance name="script-executor" component="ScriptExecutor" />
+
+  <component name="MovePersonCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.MovePersonCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="move" type="java.lang.String" />
+      <property name="description" value="move person $1 to room $2" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
+  <component name="FaultDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.FaultDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="fault-device" type="java.lang.String" />
+      <property name="description" value="fault-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
+  <component name="RepairDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.RepairDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="repair-device" type="java.lang.String" />
+      <property name="description" value="repair-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
+  <component name="ActivateDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ActivateDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="activate-device" type="java.lang.String" />
+      <property name="description" value="activate-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
+  <component name="DeactivateDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.DeactivateDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="deactivated-device" type="java.lang.String" />
+      <property name="description" value="activate-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+  
+  <component name="ModifyEnvironmentCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ModifyEnvironmentCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="modify-environment" type="java.lang.String" />
+      <property name="description" value="modify-environment" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>  
+  
+  <component name="ModifyDeviceValueCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ModifyDeviceValueCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="modify-device-value" type="java.lang.String" />
+      <property name="description" value="modify-environment" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>  
+
+  <instance name="modify-environment-command" component="ModifyEnvironmentCommand" />
+  <instance name="modify-device-value-command" component="ModifyDeviceValueCommand" />
+  <instance name="activate-device-command" component="ActivateDeviceCommand" />
+  <instance name="deactivate-device-command" component="DeactivateDeviceCommand" />
+  <instance name="move-command" component="MovePersonCommand" />
+  <instance name="fault-device-command" component="FaultDeviceCommand" />
+  <instance name="repair-device-command" component="RepairDeviceCommand" />
+
 </ipojo>
