@@ -15,49 +15,41 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
-
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
 
 /**
  * 
- * Moves a person between the simulated environments 
+ * Moves a person between the simulated environments
  * 
  * @author Gabriel
- *
+ * 
  */
-public class MovePersonCommand extends AbstractCommand {
+public class ModifyEnvironmentCommand extends AbstractCommand {
 
 	/**
 	 * Environment ID used to place a person
 	 */
 	private String location;
+
+	private String variable;
 	
-	private String person;
-	
+	private String value;
+
 	private SimulationManager simulationManager;
-	
 
 	@Override
 	public Object execute() throws Exception {
-		System.out.println("Move Person --> " + person + " Room --> " + location);
-		System.out.println("Thread " + Thread.currentThread().getId());
-		simulationManager.addUser(person);
-		if (person!=null && (!person.isEmpty()))
-			simulationManager.setUserLocation(person, location);
-		else
-			simulationManager.setUserLocation("uknown", location);
+		simulationManager.setEnvironmentVariable(location, variable, Double.valueOf(value));
 		return null;
 	}
-	
-	
+
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.location = param.getString("room");	   
+		this.variable = param.getString("variable");
+		this.value = param.getString("value");
+		this.location = param.getString("room");
 	}
-	
-	
 
 }

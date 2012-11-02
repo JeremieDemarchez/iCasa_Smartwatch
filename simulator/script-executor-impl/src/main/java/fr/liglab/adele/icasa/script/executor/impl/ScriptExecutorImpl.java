@@ -93,7 +93,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private List<ScheduledFuture> tasks = new ArrayList<ScheduledFuture>();
 
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(4);
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
 	private Map<String, GenericDevice> devices;
 		
@@ -135,21 +135,28 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	      ScenarioSAXHandler handler = new ScenarioSAXHandler(this);
 	      saxParser.parse(file, handler);
 	      
-	      /*
+	      
 	      List<ActionDescription> actions = handler.getActionList();
+	      
+	      
 	      
 	      for (ActionDescription actionDescription : actions) {
 	         String commandName = actionDescription.getCommandName();
 	         ICommandService commandService = commands.get(commandName);
 	         
+	         
+	         
 	         if (commandService!=null) {
+	         	
+	         	
 	         	RunnableCommandAdapter adapter = new RunnableCommandAdapter(commandService, actionDescription.getConfiguration());
-	         	Thread thread = new Thread(adapter);
-	         	thread.run();
+	         	scheduler.schedule(adapter, 2, TimeUnit.SECONDS);
+
 	         }
 	      	
          }
-         */
+	      
+         
 	      
       } catch (ParserConfigurationException e) {
 	      e.printStackTrace();
