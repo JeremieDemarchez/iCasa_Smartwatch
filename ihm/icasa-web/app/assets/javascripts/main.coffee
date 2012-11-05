@@ -88,7 +88,7 @@ require([
     'jquery',
     'jquery.ui',
     'knockout',
-    'viewModels/ICasaViewModel',
+    'viewModels/iCasaViewModel',
     'bootstrap',
     'domReady'
     ],

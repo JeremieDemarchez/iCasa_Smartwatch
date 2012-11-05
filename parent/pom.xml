@@ -506,6 +506,18 @@
                 <artifactId>gogo.adapter</artifactId>
                 <version>${iCasaVersion}</version>
             </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>play2.osgi</artifactId>
+                <version>${iCasaVersion}</version>
+                <type>play2</type>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>icasa.web</artifactId>
+                <version>${iCasaVersion}</version>
+                <type>play2</type>
+            </dependency>
 			
 			<!-- ROSE -->
 			<dependency>
@@ -695,7 +707,7 @@
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.6</version>
+					<version>1.7</version>
 				</plugin>
 				
 				<plugin>
@@ -745,6 +757,11 @@
                 <groupId>org.apache.maven.wagon</groupId>
                 <artifactId>wagon-webdav-jackrabbit</artifactId>
                 <version>2.2</version>
+            </extension>
+            <extension>
+                <groupId>de.akquinet.innovation.play2</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <version>1.2.1</version>
             </extension>
 		</extensions>
 		
