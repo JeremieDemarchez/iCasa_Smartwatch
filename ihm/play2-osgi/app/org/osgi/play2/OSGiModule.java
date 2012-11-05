@@ -27,6 +27,13 @@ public class OSGiModule extends Plugin implements BeanSource {
 
     public static boolean started = true;
 
+    private final Application application;
+
+    public OSGiModule(Application application)
+    {
+        this.application = application;
+    }
+
     public void $init$() {
         // do nothing
     }
@@ -49,6 +56,7 @@ public class OSGiModule extends Plugin implements BeanSource {
     public void onStop() {
         if (started) {
             OSGiBootstrap.stopOSGiFramework();
+            started = false;
         }
     }
 
