@@ -18,8 +18,10 @@ package fr.liglab.adele.icasa.environment.impl;
 import static fr.liglab.adele.icasa.environment.SimulatedEnvironment.PRESENCE;
 
 import java.util.Collections;
+import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -27,6 +29,11 @@ import java.util.Map.Entry;
 import java.util.Random;
 import java.util.Set;
 
+import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.MissingHandlerException;
+import org.apache.felix.ipojo.Pojo;
+import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -37,6 +44,7 @@ import fr.liglab.adele.icasa.context.Context;
 import fr.liglab.adele.icasa.context.ContextEvent;
 import fr.liglab.adele.icasa.context.ContextListener;
 import fr.liglab.adele.icasa.context.ContextService;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.SimulationManager;
@@ -59,6 +67,8 @@ public class SimulationManagerImpl implements SimulationManager {
 	private final Map<String, EnvironmentEntry> m_environments = new HashMap<String, EnvironmentEntry>();
 
 	private final Map<String, SimulatedDevice> m_devices = new HashMap<String, SimulatedDevice>();
+	
+	private final Map<String, Factory> m_factories = new Hashtable<String, Factory>();
 
 	private final List<DevicePositionListener> m_devicePositionListeners = new LinkedList<DevicePositionListener>();
 
@@ -117,6 +127,16 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 	}
 
+	@Bind(id = "factories", aggregate = true, optional = true, filter ="(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
+	public synchronized void bindFactory(Factory factory) {
+		m_factories.put(factory.getName(), factory);
+	}
+
+	@Unbind(id = "factories")
+	public synchronized void unbindFactory(Factory factory) {
+		m_factories.remove(factory.getName());
+	}
+	
 	@Override
 	public synchronized Set<String> getEnvironments() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_environments.keySet()));
@@ -442,6 +462,46 @@ public class SimulationManagerImpl implements SimulationManager {
 		env.unlock();
 
 	}
+	
+	
+	@Override
+   public void createDevice(String factoryName, String deviceId) {
+		Factory factory = m_factories.get(factoryName);
+		if (factory != null) {
+			// Create the device
+			Dictionary<String, String> properties = new Hashtable<String, String>();
+			properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+			properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+			properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
+			//properties.put(Constants.SERVICE_DESCRIPTION, description);
+			properties.put("instance.name", factoryName + "-"+ deviceId);
+			try {
+	         factory.createComponentInstance(properties);
+         } catch (UnacceptableConfiguration e) {
+	         e.printStackTrace();
+         } catch (MissingHandlerException e) {
+	         e.printStackTrace();
+         } catch (ConfigurationException e) {
+	         e.printStackTrace();
+         }
+		}
+   }
+
+	
+	@Override
+	public void removeDevice(String deviceId) {
+		SimulatedDevice device = m_devices.get(deviceId);
+		if ((device != null) && (device instanceof Pojo)) {
+			Pojo pojo = (Pojo) device;
+			pojo.getComponentInstance().dispose();
+		}	 
+	}
+	
+	
+	@Override
+	public synchronized Set<String> getDeviceFactories() {
+		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
+	}
 
 	private static class EnvironmentEntry {
 		private SimulatedEnvironment service;
@@ -611,6 +671,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 
 	}
+
 
 
 

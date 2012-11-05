@@ -74,7 +74,7 @@
     </provides>
     <requires field="simulationManager" optional="false" />
   </component>
-  
+
   <component name="ModifyEnvironmentCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ModifyEnvironmentCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -82,8 +82,8 @@
       <property name="description" value="modify-environment" type="java.lang.String" />
     </provides>
     <requires field="simulationManager" optional="false" />
-  </component>  
-  
+  </component>
+
   <component name="ModifyDeviceValueCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ModifyDeviceValueCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -91,7 +91,25 @@
       <property name="description" value="modify-environment" type="java.lang.String" />
     </provides>
     <requires field="configAdmin" optional="false" />
-  </component>  
+  </component>
+
+  <component name="AddDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.AddDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="add-device" type="java.lang.String" />
+      <property name="description" value="add-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
+  <component name="RemoveDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.RemoveDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="remove-device" type="java.lang.String" />
+      <property name="description" value="remove-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
 
   <instance name="modify-environment-command" component="ModifyEnvironmentCommand" />
   <instance name="modify-device-value-command" component="ModifyDeviceValueCommand" />
@@ -100,5 +118,7 @@
   <instance name="move-command" component="MovePersonCommand" />
   <instance name="fault-device-command" component="FaultDeviceCommand" />
   <instance name="repair-device-command" component="RepairDeviceCommand" />
+  <instance name="add-device-command" component="AddDeviceCommand" />
+  <instance name="remove-device-command" component="RemoveDeviceCommand" />
 
 </ipojo>

@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.environment;
 
 import java.util.EventListener;
+import java.util.List;
 import java.util.Set;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -195,6 +196,14 @@ public interface SimulationManager {
     void setDeviceFault(String deviceId, boolean value);
     
     void setDeviceState(String deviceId, boolean value);
+    
+    //List<String> getDeviceFactories();
+    
+    void createDevice(String factoryName, String deviceId);
+    
+    void removeDevice(String deviceId);
+    
+    Set<String> getDeviceFactories();
     
     
     // --- Device and User events listeners methods and classes --- //
