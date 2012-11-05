@@ -25,13 +25,14 @@ import org.osgi.play2.*;
 
 public class OSGiModule extends Plugin implements BeanSource {
 
-    public static boolean started = true;
+    public boolean started = false;
 
     private final Application application;
 
     public OSGiModule(Application application)
     {
         this.application = application;
+        started = false;
     }
 
     public void $init$() {

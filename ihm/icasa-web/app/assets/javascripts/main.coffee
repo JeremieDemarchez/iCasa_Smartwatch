@@ -16,7 +16,6 @@ require.config({
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
         'hubu' : 'frameworks/hubu/hubu-all',
         'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
-        'jquery.ui.dir':'frameworks/jquery/ui/1.9/',
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         # TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
@@ -68,8 +67,7 @@ require.config({
         },
 
         'jquery.ui': {
-            deps: ['jquery',
-                'css!jquery.ui.dir/css/smoothness/jquery-ui-1.9.0.custom.modified'],
+            deps: ['jquery'],
 
             exports: 'window.jQuery.ui'
         },
