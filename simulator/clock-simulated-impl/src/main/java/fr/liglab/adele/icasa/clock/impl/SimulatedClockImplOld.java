@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.clock.system.impl;
+package fr.liglab.adele.icasa.clock.impl;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,39 +24,53 @@ import fr.liglab.adele.icasa.clock.api.Clock;
  * @author Gabriel Pedraza Ferreira
  *
  */
-public class SystemClockImpl implements Clock {
+public class SimulatedClockImplOld implements Clock {
 
-	private static final Logger logger = LoggerFactory.getLogger(SystemClockImpl.class);
+   private long realDate;
    
-	
-	private long initDate;
-	
+   private long fakeDate;
+   
+   private int factor;
+   
+   
+	private static final Logger logger = LoggerFactory.getLogger(SimulatedClockImplOld.class);
+   
    /* (non-Javadoc)
     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#currentTimeMillis()
     */
-   public long currentTimeMillis() {     
-      return System.currentTimeMillis(); 
+   public long currentTimeMillis() {
+      long diference = (System.currentTimeMillis() - realDate) * factor;
+      long temp = fakeDate + (diference);      
+      //logger.info("+++++++ " + temp);
+      return temp; 
    }
 
    /* (non-Javadoc)
     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#getFactor()
     */
    public int getFactor() {
-      return 1;
+      return factor;
    }
 
    /* (non-Javadoc)
     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
     */
    public void setFactor(int factor) {
-      // do nothing, cannot change factor or system clock
+      this.factor = factor;
    }
 
    /* (non-Javadoc)
     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setStartDate(long)
     */
    public void setStartDate(long startDate) {
-   	initDate = startDate;
+      this.fakeDate = startDate;
+      this.realDate = System.currentTimeMillis();
+   }
+   
+   public void start() {
+   	long startDate = System.currentTimeMillis();
+      this.fakeDate = startDate;
+      this.realDate = startDate;
    }
 
 	@Override
@@ -66,20 +80,21 @@ public class SystemClockImpl implements Clock {
    }
 
 	@Override
-   public void resume() {
+   public void resume()  {
 	   // TODO Auto-generated method stub
 	   
    }
 
 	@Override
-   public void reset() {
+   public void reset()  {
 	   // TODO Auto-generated method stub
 	   
    }
 
 	@Override
    public long getElapsedTime() {
-	   return currentTimeMillis() - initDate;
+	   // TODO Auto-generated method stub
+	   return 0;
    }
 
 }

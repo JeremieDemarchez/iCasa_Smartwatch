@@ -118,6 +118,14 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			executeScript(scriptFile, startDate, factor);
 		}
 	}
+	
+	public ICommandService getCommand(String commandName) {
+		return commands.get(commandName);
+	}
+	
+	public Clock getClock() {
+		return clock;
+	}
 
 	private void executeScript(File file) {
 		
@@ -135,6 +143,16 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	      ScenarioSAXHandler handler = new ScenarioSAXHandler(this);
 	      saxParser.parse(file, handler);
 	      
+	      System.out.println("Start date" + handler.getStartDate());
+	      System.out.println("Factor " + handler.getFactor());
+	      
+	      CommandExecutor commandExecutor = new CommandExecutor(this);
+	      commandExecutor.setStartDate(handler.getStartDate());
+	      clock.setFactor(handler.getFactor());
+	      commandExecutor.setActionDescriptions(handler.getActionList());
+	      commandExecutor.start();
+	      
+	      /*
 	      
 	      List<ActionDescription> actions = handler.getActionList();
 	      
@@ -155,7 +173,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	         }
 	      	
          }
-	      
+	      */
          
 	      
       } catch (ParserConfigurationException e) {

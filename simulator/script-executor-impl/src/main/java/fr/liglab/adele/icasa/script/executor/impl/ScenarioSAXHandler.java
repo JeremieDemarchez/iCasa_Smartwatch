@@ -15,7 +15,10 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.json.JSONException;
@@ -24,48 +27,75 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-
 public class ScenarioSAXHandler extends DefaultHandler {
 
 	ScriptExecutorImpl scriptExecutorImpl;
 	List<ActionDescription> list = new ArrayList<ActionDescription>();
 	private int delay;
-	
+
+	private int factor;
+	private String startdateStr;
+
 	public ScenarioSAXHandler(ScriptExecutorImpl scriptExecutorImpl) {
 		this.scriptExecutorImpl = scriptExecutorImpl;
 	}
-	
+
 	@Override
 	public void startDocument() throws SAXException {
 		delay = 0;
 	}
-	
+
 	@Override
-	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {		
-		if (!qName.equals("delay")) {
-			list.add(new ActionDescription(delay, qName, createParameters(attributes)));
-		} else {
+	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
+		if (qName.equals("behavior")) {
+			startdateStr = attributes.getValue("startdate");
+			String factorStr = attributes.getValue("factor");
+			factor = Integer.parseInt(factorStr);
+		} else if (qName.equals("delay")) {
 			delay += Integer.valueOf(attributes.getValue("value"));
+		} else {
+			list.add(new ActionDescription(delay, qName, createParameters(attributes)));
 		}
 	}
-	
-	
-	private JSONObject createParameters(Attributes attributes) {		
+
+	private JSONObject createParameters(Attributes attributes) {
 		JSONObject param = new JSONObject();
 		for (int i = 0; i < attributes.getLength(); i++) {
-	      String name = attributes.getQName(i);
-	      String value = attributes.getValue(i);
-	      try {
-	         param.put(name, value);
-         } catch (JSONException e) {
-	         e.printStackTrace();
-         }
-      }
+			String name = attributes.getQName(i);
+			String value = attributes.getValue(i);
+			try {
+				param.put(name, value);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 		return param;
 	}
-	
+
 	public List<ActionDescription> getActionList() {
 		return list;
 	}
+
+	public long getStartDate() {
+		if (startdateStr != null && (!startdateStr.isEmpty())) {
+			SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
+			Date startDate = null;
+
+			try {
+				startDate = formatter.parse(startdateStr);
+			} catch (ParseException e) {
+				// e.printStackTrace();
+			} finally {
+				if (startDate == null)
+					startDate = new Date(System.currentTimeMillis());
+			}
+			return startDate.getTime();
+		} else
+			return System.currentTimeMillis();
+	}
 	
+	public int getFactor() {
+	   return factor;
+   }
+
 }

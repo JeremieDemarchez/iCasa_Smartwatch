@@ -15,61 +15,119 @@
  */
 package fr.liglab.adele.icasa.clock.impl;
 
-import fr.liglab.adele.icasa.clock.api.Clock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fr.liglab.adele.icasa.clock.api.Clock;
+
 /**
  * @author Gabriel Pedraza Ferreira
- *
+ * 
  */
 public class SimulatedClockImpl implements Clock {
 
-   private long realDate;
-   
-   private long fakeDate;
-   
-   private int factor;
-   
-   
+	private long initDate;
+
+	private volatile long elapsedTime;
+
+	private int factor;
+
+	private boolean pause = true;
+	
+	private static final int TIME_THREAD_STEEP = 20;
+
+	Thread timeThread;
+
 	private static final Logger logger = LoggerFactory.getLogger(SimulatedClockImpl.class);
-   
-   /* (non-Javadoc)
-    * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#currentTimeMillis()
-    */
-   public long currentTimeMillis() {
-      long diference = (System.currentTimeMillis() - realDate) * factor;
-      long temp = fakeDate + (diference);      
-      //logger.info("+++++++ " + temp);
-      return temp; 
-   }
 
-   /* (non-Javadoc)
-    * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#getFactor()
-    */
-   public int getFactor() {
-      return factor;
-   }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#currentTimeMillis()
+	 */
+	public long currentTimeMillis() {
+		return initDate + elapsedTime;
+	}
 
-   /* (non-Javadoc)
-    * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
-    */
-   public void setFactor(int factor) {
-      this.factor = factor;
-   }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#getFactor()
+	 */
+	public int getFactor() {
+		return factor;
+	}
 
-   /* (non-Javadoc)
-    * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setStartDate(long)
-    */
-   public void setStartDate(long startDate) {
-      this.fakeDate = startDate;
-      this.realDate = System.currentTimeMillis();
-   }
-   
-   public void start() {
-   	long startDate = System.currentTimeMillis();
-      this.fakeDate = startDate;
-      this.realDate = startDate;
-   }
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
+	 */
+	public void setFactor(int factor) {
+		this.factor = factor;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setStartDate(long)
+	 */
+	public void setStartDate(long startDate) {
+		initDate = startDate;		
+	}
+
+	@Override
+	public void pause() {
+		pause = true;
+	}
+
+	@Override
+	public void resume() {
+		pause = false;
+	}
+		
+
+	@Override
+	public void reset(){
+		elapsedTime = 0;
+	}
+	
+	@Override
+	public long getElapsedTime() {
+	   return elapsedTime;
+	}
+	
+	public void start() {
+		
+		timeThread = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				boolean execute = true;
+				while (execute) {					
+					try {						
+						long enterTime = System.currentTimeMillis();						
+						Thread.sleep(TIME_THREAD_STEEP);						
+						if (!pause) {
+							long realElapsedTime = System.currentTimeMillis() - enterTime;
+							elapsedTime += realElapsedTime * factor;
+						}							
+					} catch (InterruptedException e) {
+						execute = false;
+					}
+				}
+			}
+		});
+		timeThread.start();
+	}
+	
+	public void stop() {
+		try {
+			timeThread.interrupt();
+	      timeThread.join();
+      } catch (InterruptedException e) {
+	      e.printStackTrace();
+      }
+	}
 
 }
