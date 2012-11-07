@@ -10,17 +10,6 @@
   <component name="ScriptExecutor" classname="fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl">
     <provides />
     <requires field="clock" optional="false" />
-    <requires field="simulationManager" />
-    <!-- <requires field="roseMachine" /> -->
-    <requires field="configAdmin" />
-    <requires aggregate="true" optional="true" id="devices">
-      <callback type="bind" method="bindDevice" />
-      <callback type="unbind" method="unbindDevice" />
-    </requires>
-    <requires aggregate="true" optional="true" id="deviceFactories">
-      <callback type="bind" method="bindDeviceFactory" />
-      <callback type="unbind" method="unbindDeviceFactory" />
-    </requires>
     <requires aggregate="true" optional="true" id="commands">
       <callback type="bind" method="bindCommand" />
       <callback type="unbind" method="unbindCommand" />

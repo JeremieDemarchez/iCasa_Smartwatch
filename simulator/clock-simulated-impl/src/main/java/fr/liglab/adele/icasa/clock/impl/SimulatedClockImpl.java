@@ -83,13 +83,14 @@ public class SimulatedClockImpl implements Clock {
 
 	@Override
 	public void resume() {
-		pause = false;
+		pause = false;		
 	}
 		
 
 	@Override
 	public void reset(){
-		elapsedTime = 0;
+		pause();
+		elapsedTime = 0;		
 	}
 	
 	@Override

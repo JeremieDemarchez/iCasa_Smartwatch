@@ -34,4 +34,8 @@ public interface ScriptExecutor {
 
 	public void stopExecution();
 	
+	public void pauseExecution();
+	
+	public void resumeExecution();
+	
 }
