@@ -6,11 +6,13 @@ define(['backbone'],
             Collections : {}
             collections : {}
 
+         serverUrl = "http://localhost:8080";
+
          class DataModel.Models.Device extends Backbone.Model
-            urlRoot : "/service/device"
+            urlRoot : "#server#/device".replace /#server#/, serverUrl
 
          class DataModel.Collections.Devices extends Backbone.Collection
-            url: "/service/devices"
+            url: "#server#/devices".replace /#server#/, serverUrl
             model: DataModel.Models.Device
 
          DataModel.collections.devices = new DataModel.Collections.Devices();

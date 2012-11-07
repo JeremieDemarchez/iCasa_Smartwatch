@@ -85,6 +85,13 @@ public class DeviceREST {
         return deviceJSON;
     }
 
+    @GET
+    @Produces("text/plain")
+    public String get() {
+        return "<html><body>toto</body></html>";
+    }
+
+
     /**
      * Retrieve a device.
      *
