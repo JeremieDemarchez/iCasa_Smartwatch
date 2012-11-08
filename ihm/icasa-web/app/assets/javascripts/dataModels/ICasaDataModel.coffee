@@ -6,7 +6,7 @@ define(['backbone'],
             Collections : {}
             collections : {}
 
-         serverUrl = "http://localhost:8080";
+         serverUrl = "http://localhost:8080/icasa";
 
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/device".replace /#server#/, serverUrl
