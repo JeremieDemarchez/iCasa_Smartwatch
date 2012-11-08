@@ -30,6 +30,9 @@
 		<projectName>${project.artifactId}</projectName>
 		
 		<iCasaVersion>${productVersion}</iCasaVersion>
+
+        <!-- dependencies -->
+        <iPojoVersion>1.8.4</iPojoVersion>
 		
 		<!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -303,12 +306,12 @@
 			<dependency>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>org.apache.felix.ipojo.annotations</artifactId>
-				<version>1.8.0</version>
+				<version>${iPojoVersion}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>org.apache.felix.ipojo</artifactId>
-				<version>1.8.0</version>
+				<version>${iPojoVersion}</version>
 				<exclusions>
 					<!-- Do not include older OSGi API (4.0.0). -->
 					<exclusion>
@@ -641,7 +644,7 @@
 				<plugin>
 					<groupId>org.apache.felix</groupId>
 					<artifactId>maven-ipojo-plugin</artifactId>
-					<version>1.8.0</version>
+					<version>1.8.6</version>
 					<!-- Attach the iPOJO bundle manipulation to the project lifecycle. -->
 					<executions>
 						<execution>

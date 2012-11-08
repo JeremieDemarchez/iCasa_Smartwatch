@@ -40,7 +40,7 @@ import org.json.*;
 @Component(name="remote-rest-device")
 @Instantiate(name="remote-rest-device-0")
 @Provides(specifications={DeviceREST.class})
-@Path(value="/device/{deviceId}")
+@Path(value="/")
 public class DeviceREST {
 
     @Requires(optional=true)
@@ -59,7 +59,7 @@ public class DeviceREST {
         JSONArray currentDevices = new JSONArray();
         for (GenericDevice device : _devices) {
             JSONObject deviceJSON = getDeviceJSON(device);
-            if (currentDevices == null)
+            if (deviceJSON == null)
                 continue;
 
             currentDevices.put(deviceJSON);
@@ -85,12 +85,42 @@ public class DeviceREST {
         return deviceJSON;
     }
 
-    @GET
-    @Produces("text/plain")
-    public String get() {
-        return "<html><body>toto</body></html>";
+    private String getDeviceTypeJSON(Factory deviceFactory) {
+        return deviceFactory.getName();
     }
 
+    /**
+     * Returns a JSON array containing all devices.
+     *
+     * @return a JSON array containing all devices.
+     */
+    public String getDeviceTypes() {
+        boolean atLeastOne = false;
+        JSONArray currentDevices = new JSONArray();
+        for (Factory deviceFactory : _deviceFactories) {
+            String deviceType = getDeviceTypeJSON(deviceFactory);
+            if (deviceType == null)
+                continue;
+
+            currentDevices.put(deviceType);
+        }
+
+        return currentDevices.toString();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path(value="/deviceTypes/")
+    public Response deviceTypes() {
+        return Response.ok(getDeviceTypes()).build();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path(value="/devices/")
+    public Response devices() {
+        return Response.ok(getDeviceIds()).build();
+    }
 
     /**
      * Retrieve a device.
@@ -102,6 +132,7 @@ public class DeviceREST {
      */
     @GET
     @Produces("application/json")
+    @Path(value="/device/{deviceId}")
     public Response device(@PathParam("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
             return Response.ok(getDeviceIds()).build();
@@ -113,7 +144,7 @@ public class DeviceREST {
         } else {
             JSONObject foundDeviceJSON = getDeviceJSON(foundDevice);
 
-            return Response.ok(foundDeviceJSON).build();
+            return Response.ok(foundDeviceJSON.toString()).build();
         }
     }
 
@@ -140,6 +171,7 @@ public class DeviceREST {
      */
     @POST
     @Produces("application/json")
+    @Path(value="/device/{deviceId}")
     public Response createDevice(@PathParam("deviceId") String deviceId, @FormParam("type") String type,
                              @FormParam("name") String deviceName, @FormParam("fault") String fault,
                              @FormParam("location") String location, @FormParam("state") String state) {
@@ -198,6 +230,7 @@ public class DeviceREST {
      */
     @DELETE
     @Produces("application/json")
+    @Path(value="/device/{deviceId}")
     public Response deleteDevice(@PathParam("deviceId") String deviceId) {
 
         GenericDevice foundDevice = findDevice(deviceId);
