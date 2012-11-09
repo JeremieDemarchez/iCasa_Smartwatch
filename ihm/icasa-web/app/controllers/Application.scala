@@ -9,7 +9,10 @@ import models.DeviceStreams._
 object Application extends Controller {
   
   def index = Action {
-    Ok(views.html.index())
+    Ok(views.html.index()).withHeaders(
+      "Access-Control-Allow-Origin" -> "*",
+      "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS"
+    )
   }
 
   def streamDeviceEvents() = Action {
