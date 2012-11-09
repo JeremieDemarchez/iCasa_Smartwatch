@@ -29,6 +29,7 @@ import org.ow2.chameleon.json.JSONService;
 import java.util.*;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.ResponseBuilder;
 import java.text.ParseException;
 
 import org.json.*;
@@ -48,6 +49,27 @@ public class DeviceREST {
 
     @Requires(optional=true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
     private Factory[] _deviceFactories;
+
+    /*
+     * Methods to manage cross domain requests
+     */
+    private String _corsHeaders;
+
+    private Response makeCORS(ResponseBuilder req, String returnMethod) {
+        ResponseBuilder rb = req
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+
+        if (!"".equals(returnMethod)) {
+            rb.header("Access-Control-Allow-Headers", returnMethod);
+        }
+
+        return rb.build();
+    }
+
+    private Response makeCORS(ResponseBuilder req) {
+        return makeCORS(req, _corsHeaders);
+    }
 
     /**
      * Returns a JSON array containing all devices.
@@ -119,7 +141,7 @@ public class DeviceREST {
     @Produces("application/json")
     @Path(value="/devices/")
     public Response devices() {
-        return Response.ok(getDeviceIds()).build();
+        return makeCORS(Response.ok(getDeviceIds()));
     }
 
     /**
