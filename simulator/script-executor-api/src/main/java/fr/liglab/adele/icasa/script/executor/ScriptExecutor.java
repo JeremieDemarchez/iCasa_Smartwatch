@@ -28,14 +28,14 @@ public interface ScriptExecutor {
 
 	public List<String> getScriptList();
 	
-	public void executeScript(String scriptName);
+	public void execute(String scriptName);
 	
-	public void executeScript(String scriptName, Date startDate, int factor);
+	public void execute(String scriptName, Date startDate, int factor);
 
-	public void stopExecution();
+	public void stop();
 	
-	public void pauseExecution();
+	public void pause();
 	
-	public void resumeExecution();
+	public void resume();
 	
 }

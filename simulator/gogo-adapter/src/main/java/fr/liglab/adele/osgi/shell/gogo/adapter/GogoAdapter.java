@@ -29,7 +29,7 @@ import org.apache.felix.service.command.Function;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 
 /**
  * <p>
@@ -70,15 +70,15 @@ public class GogoAdapter {
 	}
 
 	@Bind
-	void bindCommand(ICommandService command, Map iCommandProperties) {
+	void bindCommand(SimulatorCommand command, Map iCommandProperties) {
 		// Create an adapter for the command
 		AdaptedFunction function = new AdaptedFunction(command);
 
 		// Read the adapted command properties
 		String commandName = (String) iCommandProperties
-				.get(ICommandService.PROP_NAME);
+				.get(SimulatorCommand.PROP_NAME);
 		String commandNamespace = (String) iCommandProperties
-				.get(ICommandService.PROP_NAMESPACE);
+				.get(SimulatorCommand.PROP_NAMESPACE);
 
 
 		// Register the command
@@ -95,12 +95,12 @@ public class GogoAdapter {
 	}
 
 	@Unbind
-	void unbindCommand(ICommandService command, Map iCommandProperties) {
+	void unbindCommand(SimulatorCommand command, Map iCommandProperties) {
 		// Read the adapted command properties
 		String commandName = (String) iCommandProperties
-				.get(ICommandService.PROP_NAME);
+				.get(SimulatorCommand.PROP_NAME);
 		String commandNamespace = (String) iCommandProperties
-				.get(ICommandService.PROP_NAMESPACE);
+				.get(SimulatorCommand.PROP_NAMESPACE);
 
 		// Unregister the adapted command
 		ServiceRegistration commandRegistration = m_functions

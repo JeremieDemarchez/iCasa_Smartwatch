@@ -17,14 +17,14 @@ package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 
 public class RunnableCommandAdapter implements Runnable {
 
-	private ICommandService commandService;
+	private SimulatorCommand commandService;
 	private JSONObject param;
 	
-	public RunnableCommandAdapter(ICommandService commandService, JSONObject param) {
+	public RunnableCommandAdapter(SimulatorCommand commandService, JSONObject param) {
 		this.commandService = commandService;
 		this.param = param;
 	}

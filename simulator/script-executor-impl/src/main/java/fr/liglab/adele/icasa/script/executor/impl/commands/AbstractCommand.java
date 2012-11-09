@@ -20,9 +20,9 @@ import java.io.OutputStream;
 
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 
-public abstract class AbstractCommand implements ICommandService {
+public abstract class AbstractCommand implements SimulatorCommand {
 
 	@Override
 	public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {

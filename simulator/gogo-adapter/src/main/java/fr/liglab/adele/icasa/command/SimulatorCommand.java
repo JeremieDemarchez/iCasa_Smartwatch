@@ -26,7 +26,7 @@ import org.json.JSONObject;
  * It can execute a block of code and then returns the result object of
  * executing this code.
  */
-public interface ICommandService {
+public interface SimulatorCommand {
 
 	
 	

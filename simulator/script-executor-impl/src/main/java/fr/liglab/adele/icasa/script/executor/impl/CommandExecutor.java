@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 
 public class CommandExecutor {
 
@@ -71,12 +71,14 @@ public class CommandExecutor {
 	}
 	
 	public void pause() {
+		System.out.println("pausing script execution");
 		synchronized (clock) {
-			clock.resume();
+			clock.pause();
       }
 	}
 	
 	public void resume() {
+		System.out.println("resuming script execution");
 		synchronized (clock) {
 			clock.resume();
       }
@@ -151,7 +153,7 @@ public class CommandExecutor {
    			synchronized (clock) {
       			clock.pause();
       			for (ActionDescription actionDescription : toExecute) {
-      				ICommandService command = scriptExecutorImpl.getCommand(actionDescription.getCommandName());
+      				SimulatorCommand command = scriptExecutorImpl.getCommand(actionDescription.getCommandName());
       				if (command != null) {
       					try {
       						command.execute(null, null, actionDescription.getConfiguration());

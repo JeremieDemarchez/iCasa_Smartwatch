@@ -549,16 +549,30 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	 * @param scriptName
 	 */
 	public void executeScript(String scriptName) {
-		m_ScriptExecutor.executeScript(scriptName);
+		m_ScriptExecutor.execute(scriptName);
 	}
 
 	/**
 	 * Stops the current script execution
 	 */
 	public void stopScript() {
-		m_ScriptExecutor.stopExecution();
+		m_ScriptExecutor.stop();
 	}
 
+	/**
+	 * Stops the current script execution
+	 */
+	public void pauseScript() {
+		m_ScriptExecutor.pause();
+	}
+	
+	/**
+	 * Stops the current script execution
+	 */
+	public void resumeScript() {
+		m_ScriptExecutor.resume();
+	}
+	
 	/**
 	 * Service tracker on devices instances
 	 * 

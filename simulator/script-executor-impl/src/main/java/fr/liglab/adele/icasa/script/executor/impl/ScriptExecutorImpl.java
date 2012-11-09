@@ -29,13 +29,12 @@ import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.osgi.framework.ServiceReference;
-import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 
 /**
@@ -45,40 +44,31 @@ import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private Clock clock;
-
-
-	/**
-	 * The OSGi ConfigAdmin service
-	 */
-	private ConfigurationAdmin configAdmin;
-
 		
-	private Map<String, ICommandService> commands;
+	private Map<String, SimulatorCommand> commands;
 	
-
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
 
 	private Map<String, File> scriptMap = new HashMap<String, File>();
 
 	private CommandExecutor commandExecutor = new CommandExecutor(this);
 	
-	
-	public void executeScript(String scriptName) {
+	@Override
+	public void execute(String scriptName) {
 		File scriptFile = scriptMap.get(scriptName);
 		if (scriptFile != null)
 			executeScript(scriptFile);			
 	}
 
-	
-	
-	public void executeScript(String scriptName, final Date startDate, final int factor) {
+	@Override
+	public void execute(String scriptName, final Date startDate, final int factor) {
 		File scriptFile = scriptMap.get(scriptName);
 		if (scriptFile != null) {
 			executeScript(scriptFile, startDate, factor);
 		}
 	}
 	
-	public ICommandService getCommand(String commandName) {
+	public SimulatorCommand getCommand(String commandName) {
 		return commands.get(commandName);
 	}
 	
@@ -100,8 +90,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		}
 	}
 	
-
-
 	private void executeScript(List<ActionDescription> actions, final long startDate, final int factor) {
       if (commandExecutor!=null) {
          commandExecutor.setStartDate(startDate);
@@ -111,7 +99,8 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
       }
 	}
 
-	public void stopExecution() {
+	@Override
+	public void stop() {
 		if (commandExecutor!=null)
 			commandExecutor.stop();
 	}
@@ -119,14 +108,17 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	
 
 	@Override
-   public void pauseExecution() {
-		
+   public void pause() {
+		if (commandExecutor!=null)
+			commandExecutor.pause();
 	}
 
 
 
 	@Override
-   public void resumeExecution() {
+   public void resume() {
+		if (commandExecutor!=null)
+			commandExecutor.resume();		
    }
 
 
@@ -147,10 +139,13 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
       return null;
 	}
 	
-	public void bindCommand(ICommandService commandService, ServiceReference reference) {
+	
+	// -- Component bind methods -- //
+	
+	public void bindCommand(SimulatorCommand commandService, ServiceReference reference) {
 		String name = (String) reference.getProperty("name");
 		if (commands == null)
-			commands = new HashMap<String, ICommandService>();
+			commands = new HashMap<String, SimulatorCommand>();
 		commands.put(name, commandService);
 	}
 	
@@ -160,10 +155,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 	
 	
-	public ConfigurationAdmin getConfigAdmin() {
-		return configAdmin;
-	}
-
 	public boolean canHandle(File artifact) {
 		if (artifact.getName().endsWith(".bhv")) {
 			return true;
@@ -172,7 +163,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	public void install(File artifact) throws Exception {
-		System.out.println("--------------------  New Script File added : " + artifact.getName());
+		logger.info("--------------------  New Script File added : " + artifact.getName());
 		scriptMap.put(artifact.getName(), artifact);
 	}
 
@@ -182,15 +173,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	public void uninstall(File artifact) throws Exception {
 		scriptMap.remove(artifact);
-
 	}
 
 	public List<String> getScriptList() {
 		List<String> list = new ArrayList<String>(scriptMap.keySet());
 		return list;
 	}
-
-
-
 
 }

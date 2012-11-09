@@ -144,6 +144,14 @@ public class ClockPane extends ContentPane {
 		final Button stopScript = new Button("Stop Script");
 		stopScript.setActionCommand("StopScript");
 		stopScript.addActionListener(actionListener);
+		
+		final Button pauseScript = new Button("Pause Script");
+		pauseScript.setActionCommand("PauseScript");
+		pauseScript.addActionListener(actionListener);
+		
+		final Button resumeScript = new Button("Resume Script");
+		resumeScript.setActionCommand("ResumeScript");
+		resumeScript.addActionListener(actionListener);
 
 		m_scenarioList = new SelectField(new DefaultListModel(m_parent.getApplicationInstance().getScenarioList().toArray()));
 			
@@ -180,12 +188,15 @@ public class ClockPane extends ContentPane {
 		clockGrid.add(m_decreaseTimeFactor);
 		
 		
-		final Grid scriptGrid = new Grid(5);
+		final Grid scriptGrid = new Grid(4);
 		scriptGrid.setInsets(new Insets(3));
 		scriptGrid.add(new Label("Simulation Scripts : "));
 		scriptGrid.add(m_scriptList);
 		scriptGrid.add(refreshScript);
+		scriptGrid.add(new Label(" "));
 		scriptGrid.add(startScript);
+		scriptGrid.add(pauseScript);
+		scriptGrid.add(resumeScript);		
 		scriptGrid.add(stopScript);
 
 		
@@ -379,6 +390,10 @@ public class ClockPane extends ContentPane {
 					m_parent.getApplicationInstance().executeScript(scriptName);
 			} else if (command.equals("StopScript")) {
 				m_parent.getApplicationInstance().stopScript();
+			} else if (command.equals("PauseScript")) {
+				m_parent.getApplicationInstance().pauseScript();
+			} else if (command.equals("ResumeScript")) {
+				m_parent.getApplicationInstance().resumeScript();				
 			} else if (command.equals("RefreshScriptList")) {
 				updateScriptList();
 			} else if (command.equals("RefreshScenarioList")) {

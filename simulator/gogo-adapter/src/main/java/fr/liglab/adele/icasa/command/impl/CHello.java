@@ -27,16 +27,16 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 
 @Component
 @Provides(properties = {
-        @StaticServiceProperty(type = "java.lang.String", name = ICommandService.PROP_NAMESPACE, value= ICommandService.DEFAULT_NAMESPACE),
-        @StaticServiceProperty(type = "java.lang.String", name = ICommandService.PROP_NAME, value= "hello"),
-        @StaticServiceProperty(type = "java.lang.String", name = ICommandService.PROP_DESCRIPTION, value="Hello say hello $1")
+        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_NAMESPACE, value= SimulatorCommand.DEFAULT_NAMESPACE),
+        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_NAME, value= "hello"),
+        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_DESCRIPTION, value="Hello say hello $1")
 })
 @Instantiate
-public class CHello implements ICommandService {
+public class CHello implements SimulatorCommand {
 
 	public Object execute(InputStream in, OutputStream out,
 			JSONObject param) throws JSONException {

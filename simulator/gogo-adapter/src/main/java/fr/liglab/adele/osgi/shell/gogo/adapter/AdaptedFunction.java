@@ -23,13 +23,13 @@ import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Function;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.ICommandService;
+import fr.liglab.adele.icasa.command.SimulatorCommand;
 
 class AdaptedFunction implements Function {
 
-	final ICommandService m_command;
+	final SimulatorCommand m_command;
 
-	AdaptedFunction(ICommandService command) {
+	AdaptedFunction(SimulatorCommand command) {
 		m_command = command;
 	}
 
