@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.SimulatorCommand;
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 public class RunnableCommandAdapter implements Runnable {
 

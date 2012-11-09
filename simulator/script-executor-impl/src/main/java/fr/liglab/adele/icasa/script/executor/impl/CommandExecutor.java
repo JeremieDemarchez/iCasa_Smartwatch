@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.command.SimulatorCommand;
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 public class CommandExecutor {
 

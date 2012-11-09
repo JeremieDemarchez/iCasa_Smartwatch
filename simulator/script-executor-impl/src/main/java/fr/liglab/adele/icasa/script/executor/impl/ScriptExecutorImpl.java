@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.command.SimulatorCommand;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 /**
  * @author Gabriel Pedraza Ferreira

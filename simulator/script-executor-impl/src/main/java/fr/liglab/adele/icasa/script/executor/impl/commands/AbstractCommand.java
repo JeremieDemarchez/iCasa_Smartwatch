@@ -20,7 +20,7 @@ import java.io.OutputStream;
 
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.SimulatorCommand;
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 public abstract class AbstractCommand implements SimulatorCommand {
 

@@ -27,7 +27,7 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.SimulatorCommand;
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 @Component
 @Provides(properties = {

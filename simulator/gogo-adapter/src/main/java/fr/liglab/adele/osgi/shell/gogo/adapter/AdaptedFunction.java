@@ -23,7 +23,7 @@ import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Function;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.command.SimulatorCommand;
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 class AdaptedFunction implements Function {
 

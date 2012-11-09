@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.command;
+package fr.liglab.adele.icasa.script.executor;
 
 import java.io.InputStream;
 import java.io.OutputStream;
