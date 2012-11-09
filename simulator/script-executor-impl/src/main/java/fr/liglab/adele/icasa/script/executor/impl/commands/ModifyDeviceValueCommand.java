@@ -23,8 +23,6 @@ import java.util.Hashtable;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
-
 /**
  * 
  * Sets the fault state of device to "Yes"

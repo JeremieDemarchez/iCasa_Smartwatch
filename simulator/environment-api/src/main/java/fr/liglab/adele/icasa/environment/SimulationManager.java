@@ -29,6 +29,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 public interface SimulationManager {
 
 
+	void createEnvironment(String id, String description, int leftX, int topY, int rightX, int bottomY);
+	
     /**
      * Return the identifiers of all the simulated environments.
      * 
@@ -199,7 +201,7 @@ public interface SimulationManager {
     
     //List<String> getDeviceFactories();
     
-    void createDevice(String factoryName, String deviceId);
+    void createDevice(String factoryName, String deviceId, String description);
     
     void removeDevice(String deviceId);
     

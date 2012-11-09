@@ -33,10 +33,12 @@ public class AddDeviceCommand extends DeviceCommand {
 	private SimulationManager simulationManager;
 
 	private String deviceType;
+	
+	private String description;
 
 	@Override
    public Object execute() throws Exception {
-		simulationManager.createDevice(deviceType, deviceId);
+		simulationManager.createDevice(deviceType, deviceId, description);
 		return null;
    }
 	
@@ -44,6 +46,10 @@ public class AddDeviceCommand extends DeviceCommand {
 	public void configure(JSONObject param) throws Exception {
 	   super.configure(param);
 	   deviceType = param.getString("type");
+	   if (param.has("description"))
+	   	description = param.getString("description");
+	   else 
+	   	description = null;
 	}
 	
 

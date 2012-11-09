@@ -37,6 +37,7 @@ public class MoveDeviceCommand extends DeviceCommand {
 
 	@Override
    public Object execute() throws Exception {
+		System.out.println("Moving device: " + deviceId + " Location: " + location);
 		simulationManager.setDeviceLocation(deviceId, location);
 		return null;
    }

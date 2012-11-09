@@ -26,30 +26,33 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  * @author Gabriel
  * 
  */
-public class ModifyEnvironmentCommand extends AbstractCommand {
+public class CreateEnvironmentCommand extends AbstractCommand {
 
 	/**
 	 * Environment ID used to place a person
 	 */
-	private String location;
-
-	private String variable;
+	private String envId;
+	private int leftX;
+	private int topY;
+	private int rightX;
+	private int bottomY;
 	
-	private String value;
-
+	
 	private SimulationManager simulationManager;
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setEnvironmentVariable(location, variable, Double.valueOf(value));
+		simulationManager.createEnvironment(envId, null, leftX, topY, rightX, bottomY);
 		return null;
 	}
 
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.variable = param.getString("variable");
-		this.value = param.getString("value");
-		this.location = param.getString("location");
+		this.envId = param.getString("envId");
+		this.leftX = param.getInt("leftX");
+		this.topY = param.getInt("topY");
+		this.rightX = param.getInt("rightX");
+		this.bottomY = param.getInt("bottomY");
 	}
 
 }

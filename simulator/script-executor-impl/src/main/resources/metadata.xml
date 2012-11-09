@@ -73,6 +73,15 @@
     <requires field="simulationManager" optional="false" />
   </component>
 
+  <component name="CreateEnvironmentCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.CreateEnvironmentCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="create-environment" type="java.lang.String" />
+      <property name="description" value="create-environment" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
   <component name="ModifyDeviceValueCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ModifyDeviceValueCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -100,6 +109,16 @@
     <requires field="simulationManager" optional="false" />
   </component>
 
+  <component name="MoveDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.MoveDeviceCommand">
+    <provides>
+      <property name="namespace" value="simulator" type="java.lang.String" />
+      <property name="name" value="move-device" type="java.lang.String" />
+      <property name="description" value="move-device" type="java.lang.String" />
+    </provides>
+    <requires field="simulationManager" optional="false" />
+  </component>
+
+  <instance name="create-environment-command" component="CreateEnvironmentCommand" />
   <instance name="modify-environment-command" component="ModifyEnvironmentCommand" />
   <instance name="modify-device-value-command" component="ModifyDeviceValueCommand" />
   <instance name="activate-device-command" component="ActivateDeviceCommand" />
@@ -109,5 +128,6 @@
   <instance name="repair-device-command" component="RepairDeviceCommand" />
   <instance name="add-device-command" component="AddDeviceCommand" />
   <instance name="remove-device-command" component="RemoveDeviceCommand" />
+  <instance name="move-device-command" component="MoveDeviceCommand" />
 
 </ipojo>

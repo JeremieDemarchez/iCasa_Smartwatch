@@ -118,7 +118,7 @@ public class CommandExecutor {
 
 	   		index += toExecute.size();
 
-	   		if (index >= actionDescriptions.size() - 1)
+	   		if (index >= actionDescriptions.size())
 	   			execute = false;
 	   		
 	   		executeActions(toExecute);

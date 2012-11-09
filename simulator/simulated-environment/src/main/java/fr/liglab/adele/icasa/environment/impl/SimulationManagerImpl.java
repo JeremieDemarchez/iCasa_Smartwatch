@@ -38,7 +38,9 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
+import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.context.Context;
 import fr.liglab.adele.icasa.context.ContextEvent;
@@ -67,12 +69,16 @@ public class SimulationManagerImpl implements SimulationManager {
 	private final Map<String, EnvironmentEntry> m_environments = new HashMap<String, EnvironmentEntry>();
 
 	private final Map<String, SimulatedDevice> m_devices = new HashMap<String, SimulatedDevice>();
-	
+
 	private final Map<String, Factory> m_factories = new Hashtable<String, Factory>();
 
 	private final List<DevicePositionListener> m_devicePositionListeners = new LinkedList<DevicePositionListener>();
 
 	private final List<UserPositionListener> m_userPositionListeners = new LinkedList<UserPositionListener>();
+
+	@Requires(filter = "(&(factory.name=fr.liglab.adele.icasa.environment.impl.SimulatedEnvironmentImpl)(factory.state="
+	      + Factory.VALID + "))")
+	private Factory m_envFactory;
 
 	@Bind(id = "contextService")
 	public synchronized void bindContextService(final ContextService contextService) {
@@ -127,7 +133,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 	}
 
-	@Bind(id = "factories", aggregate = true, optional = true, filter ="(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
+	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public synchronized void bindFactory(Factory factory) {
 		m_factories.put(factory.getName(), factory);
 	}
@@ -136,7 +142,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public synchronized void unbindFactory(Factory factory) {
 		m_factories.remove(factory.getName());
 	}
-	
+
 	@Override
 	public synchronized Set<String> getEnvironments() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_environments.keySet()));
@@ -234,13 +240,13 @@ public class SimulationManagerImpl implements SimulationManager {
 			throw new NullPointerException("userName");
 		}
 		final Context userContext = getUserContext(userName);
-		if (userContext!=null) {
+		if (userContext != null) {
 			final Object x = userContext.getProperty("positionX");
 			final Object y = userContext.getProperty("positionY");
 			if (x == null || y == null || !(x instanceof Integer) || !(y instanceof Integer)) {
 				return null;
 			}
-			return new Position((Integer) x, (Integer) y);			
+			return new Position((Integer) x, (Integer) y);
 		}
 		return null;
 	}
@@ -264,60 +270,45 @@ public class SimulationManagerImpl implements SimulationManager {
 		final String newLocation = getEnvironmentFromPosition(position);
 		calculatePrensenceVariable(previousLocation, newLocation);
 		/*
-		if ((prevLoc == null && newLoc == null) || (prevLoc != null && prevLoc.equals(newLoc))) {
-			// Same location => nothing to do!
-			return;
-		}
-		
-		if (prevLoc != null) {
-			final SimulatedEnvironment env = m_environments.get(prevLoc).service;
-			env.lock();
-			try {
-				double presence = env.getProperty(PRESENCE);
-				env.setProperty(PRESENCE, presence - 1.0d);
-			} finally {
-				env.unlock();
-			}
-		}
-		if (newLoc != null) {
-			final SimulatedEnvironment env = m_environments.get(newLoc).service;
-			env.lock();
-			try {
-				double presence = env.getProperty(PRESENCE);
-				env.setProperty(PRESENCE, presence + 1.0d);
-			} finally {
-				env.unlock();
-			}
-		}
-		*/
+		 * if ((prevLoc == null && newLoc == null) || (prevLoc != null &&
+		 * prevLoc.equals(newLoc))) { // Same location => nothing to do! return; }
+		 * 
+		 * if (prevLoc != null) { final SimulatedEnvironment env =
+		 * m_environments.get(prevLoc).service; env.lock(); try { double presence
+		 * = env.getProperty(PRESENCE); env.setProperty(PRESENCE, presence -
+		 * 1.0d); } finally { env.unlock(); } } if (newLoc != null) { final
+		 * SimulatedEnvironment env = m_environments.get(newLoc).service;
+		 * env.lock(); try { double presence = env.getProperty(PRESENCE);
+		 * env.setProperty(PRESENCE, presence + 1.0d); } finally { env.unlock(); }
+		 * }
+		 */
 	}
-	
-	
-	@Override
-   public void setDeviceFault(String deviceId, boolean value) {
-	   SimulatedDevice device = m_devices.get(deviceId);
-	   if (device!=null) {
-	   	if (value)
-	   		device.setFault(SimulatedDevice.FAULT_YES);
-	   	else
-	   		device.setFault(SimulatedDevice.FAULT_NO);
-	   }	   
-   }
 
 	@Override
-   public void setDeviceState(String deviceId, boolean value) {
-	   SimulatedDevice device = m_devices.get(deviceId);
-	   if (device!=null) {
-	   	if (value)
-	   		device.setState(SimulatedDevice.STATE_ACTIVATED);
-	   	else
-	   		device.setState(SimulatedDevice.STATE_DEACTIVATED);
-	   }	   
-   }
-	
-	
+	public void setDeviceFault(String deviceId, boolean value) {
+		SimulatedDevice device = m_devices.get(deviceId);
+		if (device != null) {
+			if (value)
+				device.setFault(SimulatedDevice.FAULT_YES);
+			else
+				device.setFault(SimulatedDevice.FAULT_NO);
+		}
+	}
+
+	@Override
+	public void setDeviceState(String deviceId, boolean value) {
+		SimulatedDevice device = m_devices.get(deviceId);
+		if (device != null) {
+			if (value)
+				device.setState(SimulatedDevice.STATE_ACTIVATED);
+			else
+				device.setState(SimulatedDevice.STATE_DEACTIVATED);
+		}
+	}
+
 	private void calculatePrensenceVariable(String previousLocation, String newLocation) {
-		if ((previousLocation == null && newLocation == null) || (previousLocation != null && previousLocation.equals(newLocation))) {
+		if ((previousLocation == null && newLocation == null)
+		      || (previousLocation != null && previousLocation.equals(newLocation))) {
 			// Same location => nothing to do!
 			return;
 		}
@@ -387,7 +378,7 @@ public class SimulationManagerImpl implements SimulationManager {
 			final String previousLocation = getEnvironmentFromPosition(getUserPosition(userName));
 			calculatePrensenceVariable(previousLocation, null);
 			usersContext.removeChild(userName);
-		}			
+		}
 	}
 
 	@Override
@@ -432,24 +423,24 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-   public Double getVariableValue(String environmentId, String variable) {
+	public Double getVariableValue(String environmentId, String variable) {
 		if (environmentId == null) {
 			// Nothing to bind to => nothing to do!
 			return 0.0;
 		}
-		final SimulatedEnvironment env = m_environments.get(environmentId).service;		
-		return env.getProperty(variable);	   
+		final SimulatedEnvironment env = m_environments.get(environmentId).service;
+		return env.getProperty(variable);
 	}
 
 	@Override
-   public Set<String> getEnvironmentVariables(String environmentId) {
+	public Set<String> getEnvironmentVariables(String environmentId) {
 		if (environmentId == null) {
 			return new HashSet<String>();
 		}
-		final SimulatedEnvironment env = m_environments.get(environmentId).service;		
-		return  Collections.unmodifiableSet(env.getPropertyNames());	  
-   }
-	
+		final SimulatedEnvironment env = m_environments.get(environmentId).service;
+		return Collections.unmodifiableSet(env.getPropertyNames());
+	}
+
 	@Override
 	public void setEnvironmentVariable(String environmentId, String variable, Double value) {
 		if (environmentId == null) {
@@ -462,10 +453,9 @@ public class SimulationManagerImpl implements SimulationManager {
 		env.unlock();
 
 	}
-	
-	
+
 	@Override
-   public void createDevice(String factoryName, String deviceId) {
+	public void createDevice(String factoryName, String deviceId, String description) {
 		Factory factory = m_factories.get(factoryName);
 		if (factory != null) {
 			// Create the device
@@ -473,31 +463,30 @@ public class SimulationManagerImpl implements SimulationManager {
 			properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
 			properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
 			properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
-			//properties.put(Constants.SERVICE_DESCRIPTION, description);
-			properties.put("instance.name", factoryName + "-"+ deviceId);
+			if (description!=null)
+				properties.put(Constants.SERVICE_DESCRIPTION, description);
+			properties.put("instance.name", factoryName + "-" + deviceId);
 			try {
-	         factory.createComponentInstance(properties);
-         } catch (UnacceptableConfiguration e) {
-	         e.printStackTrace();
-         } catch (MissingHandlerException e) {
-	         e.printStackTrace();
-         } catch (ConfigurationException e) {
-	         e.printStackTrace();
-         }
+				factory.createComponentInstance(properties);
+			} catch (UnacceptableConfiguration e) {
+				e.printStackTrace();
+			} catch (MissingHandlerException e) {
+				e.printStackTrace();
+			} catch (ConfigurationException e) {
+				e.printStackTrace();
+			}
 		}
-   }
+	}
 
-	
 	@Override
 	public void removeDevice(String deviceId) {
 		SimulatedDevice device = m_devices.get(deviceId);
 		if ((device != null) && (device instanceof Pojo)) {
 			Pojo pojo = (Pojo) device;
 			pojo.getComponentInstance().dispose();
-		}	 
+		}
 	}
-	
-	
+
 	@Override
 	public synchronized Set<String> getDeviceFactories() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
@@ -526,12 +515,12 @@ public class SimulationManagerImpl implements SimulationManager {
 		final Context root = m_contextService.getRootContext();
 		Context allUsers = root.getChild("user");
 		if (allUsers != null)
-			return allUsers.getChild(userName);	
+			return allUsers.getChild(userName);
 		return null;
 	}
 
 	private int random(int min, int max) {
-		final double range = (max-15) - (min+15);
+		final double range = (max - 15) - (min + 15);
 		if (range <= 0.0) {
 			throw new IllegalArgumentException("min >= max");
 		}
@@ -672,11 +661,34 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	}
 
-
-
-
-
-
-
+	@Override
+   public void createEnvironment(String id, String description, int leftX, int topY, int rightX, int bottomY) {
+		System.out.println("Simulated environment :" + id);
+		// Create the simulated environment
+		Dictionary<String, Object> config = new Hashtable<String, Object>();
+		config.put(SimulatedEnvironment.ENVIRONMENT_ID, id);
+		// Force instance name.
+		config.put("instance.name",
+		      "fr.liglab.adele.icasa.environment.impl.SimulatedEnvironmentImpl" + "-" + id);
+		if (description != null) {
+			config.put(Constants.SERVICE_DESCRIPTION, description);
+		} else {
+			config.put(Constants.SERVICE_DESCRIPTION, id);
+		}
+		// Add environment coordinates.
+		config.put("leftX", leftX);
+		config.put("topY", topY);
+		config.put("rightX", rightX);
+		config.put("bottomY", bottomY);
+		try {
+	      m_envFactory.createComponentInstance(config);
+      } catch (UnacceptableConfiguration e) {
+	      e.printStackTrace();
+      } catch (MissingHandlerException e) {
+	      e.printStackTrace();
+      } catch (ConfigurationException e) {
+	      e.printStackTrace();
+      }
+   }
 
 }
