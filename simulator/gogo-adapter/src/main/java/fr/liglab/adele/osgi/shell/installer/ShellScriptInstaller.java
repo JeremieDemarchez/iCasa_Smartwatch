@@ -13,14 +13,36 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.impl;
+package fr.liglab.adele.osgi.shell.installer;
+
+import java.net.URI;
 
 /**
- * TODO
- *
- * @author Thomas Leveque
+ * The Interface ShellScriptInstaller.
  */
-public class PersonREST {
+public interface ShellScriptInstaller {
 
+	/**
+	 * Install a new script as a command
+	 * 
+	 * @param scope
+	 *            : the command scope
+	 * @param name
+	 *            : the name of the script
+	 * @param scriptPath
+	 *            : the script URI
+	 */
+	public void install(String scope, String name, URI scriptPath);
+
+	/**
+	 * Remove a script
+	 * 
+	 * @param scope
+	 *            : the scope of the command
+	 * @param name
+	 *            : the name of the command
+	 */
+	public void remove(String scope, String name)
+			throws IllegalArgumentException;
 
 }

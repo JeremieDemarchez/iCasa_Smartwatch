@@ -36,6 +36,20 @@
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>script.executor.api</artifactId>
     </dependency>
+
+      <!-- OW2 Chameleon handies & annotations -->
+      <dependency>
+          <groupId>org.ow2.chameleon.handies</groupId>
+          <artifactId>annotations</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.ow2.chameleon.handies</groupId>
+          <artifactId>ipojo-log-handler</artifactId>
+      </dependency>
+      <dependency>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>org.apache.felix.fileinstall</artifactId>
+      </dependency>
   </dependencies>
 
 
@@ -46,11 +60,11 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <extensions>true</extensions>
         <configuration>
-          <instructions>
-            <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Private-Package>fr.liglab.adele.icasa.command.impl,fr.liglab.adele.osgi.shell.gogo.adapter</Private-Package>
-            <Export-Package>fr.liglab.adele.icasa.command</Export-Package>
-          </instructions>
+            <instructions>
+                <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                <Private-Package>org.json.*,fr.liglab.adele.icasa.command.impl,fr.liglab.adele.osgi.shell.*</Private-Package>
+                <Export-Package>fr.liglab.adele.icasa.command, fr.liglab.adele.osgi.shell.installer</Export-Package>
+            </instructions>
         </configuration>
       </plugin>
 

@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.script.executor;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 import java.util.Map;
 
 import org.json.JSONObject;
@@ -71,6 +72,6 @@ public interface SimulatorCommand {
 	 * @throws Exception
 	 *             if anything goes wrong
 	 */
-	Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception;
+	Object execute(InputStream in, PrintStream out, JSONObject param) throws Exception;
 
 }

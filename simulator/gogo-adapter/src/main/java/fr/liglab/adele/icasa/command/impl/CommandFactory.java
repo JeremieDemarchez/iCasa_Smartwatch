@@ -16,37 +16,38 @@
 package fr.liglab.adele.icasa.command.impl;
 
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.HashMap;
-import java.util.Map;
+import java.io.PrintStream;
 
+import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.json.JSONException;
 import org.json.JSONObject;
-
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 @Component
 @Provides(properties = {
         @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_NAMESPACE, value= SimulatorCommand.DEFAULT_NAMESPACE),
-        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_NAME, value= "hello"),
-        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_DESCRIPTION, value="Hello say hello $1")
+        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_NAME, value= "getFactory"),
+		@StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_DESCRIPTION, value = "Expose an ipojo factory")
 })
 @Instantiate
-public class CHello implements SimulatorCommand {
+public class CommandFactory implements SimulatorCommand {
 
-	public Object execute(InputStream in, OutputStream out,
-			JSONObject param) throws JSONException {
-		System.out.println("Params = "+ param.toString());
-		return "Hello "+ param.getString("name");
-	}
-	
-	public static void main(String[] args) throws JSONException {
-		Map param = new HashMap();
-		param.put("name", "test");
-		System.out.println(new CHello().execute(System.in, System.out, new JSONObject(param)));
+	@Requires
+	Factory[] m_factories;
+
+	public Object execute(InputStream in, PrintStream out, JSONObject param)
+			throws Exception {
+		String factoryName = param.getString("name");
+		for (Factory f : m_factories) {
+			if(f.getName().equals(factoryName)){
+				return f;
+			}
+		}
+		System.out.println("Factory not found "+ factoryName);
+		return null;
 	}
 }

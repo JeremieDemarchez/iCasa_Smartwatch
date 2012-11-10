@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintStream;
 
 import org.json.JSONObject;
 
@@ -25,7 +26,7 @@ import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 public abstract class AbstractCommand implements SimulatorCommand {
 
 	@Override
-	public Object execute(InputStream in, OutputStream out, JSONObject param) throws Exception {
+	public Object execute(InputStream in, PrintStream out, JSONObject param) throws Exception {
 		configure(param);
 		return execute();
 	}

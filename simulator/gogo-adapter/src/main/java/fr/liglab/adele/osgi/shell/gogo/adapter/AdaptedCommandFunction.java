@@ -15,24 +15,42 @@
  */
 package fr.liglab.adele.osgi.shell.gogo.adapter;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Function;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
-class AdaptedFunction implements Function {
+/**
+ * AdaptedCommandFunction are used to expose ICommandService as gogo shell
+ * commands. It helps to store a reference to the ICommand to be executed.
+ */
+public class AdaptedCommandFunction implements Function {
 
+	/** The ICommandService command to be executed. */
 	final SimulatorCommand m_command;
 
-	AdaptedFunction(SimulatorCommand command) {
+	/**
+	 * Instantiates a new adapted command function.
+	 * 
+	 * @param command
+	 *            the command
+	 */
+	AdaptedCommandFunction(SimulatorCommand command) {
 		m_command = command;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * org.apache.felix.service.command.Function#execute(org.apache.felix.service
+	 * .command.CommandSession, java.util.List)
+	 */
 	public Object execute(CommandSession session, List<Object> arguments)
 			throws Exception {
 		if (arguments.size() > 1) {
@@ -44,7 +62,7 @@ class AdaptedFunction implements Function {
 		if (arguments.size() > 0) {
 			Object firstArg = arguments.get(0);
 			if (firstArg instanceof Map) {
-				params = new JSONObject((Map) firstArg);
+				params = new JSONObject((Map<?, ?>) firstArg);
 			} else if (firstArg instanceof String) {
 				params = new JSONObject((String) firstArg);
 			} else {

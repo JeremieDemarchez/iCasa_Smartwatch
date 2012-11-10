@@ -28,19 +28,24 @@ import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.Function;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.ow2.chameleon.handies.ipojo.log.LogConfig;
+import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 /**
  * <p>
- * This component exposes all ICommandService services as gogo shell commands.
+ * This component exposes all SimulatorCommand services as gogo shell commands.
  * </p>
  * 
  * <p>
  * Exposed command can be used twofold :
  * <ul>
- * <li><b>Using a JSON string as parameter :</b> <code> ns:name "{\"key\":\"value\", ... }"</code>. Pay attention to the quotes and escaped characters.</li>
- * <li><b>Using a map as parameter :</b> <code> ns:name "[key:value]"</code>. Pay attention to the quotes and escaped characters.</li>
+ * <li><b>Using a JSON string as parameter :</b>
+ * <code> ns:name "{\"key\":\"value\", ... }"</code>. Pay attention to the
+ * quotes and escaped characters.</li>
+ * <li><b>Using a map as parameter :</b> <code> ns:name "[key:value]"</code>.
+ * Pay attention to the quotes and escaped characters.</li>
  * </ul>
  * 
  */
@@ -52,12 +57,20 @@ public class GogoAdapter {
 	 * Keep a track of the registered command so as to be able to unregister
 	 * them
 	 */
-	final Map<String, ServiceRegistration> m_functions = new HashMap<String, ServiceRegistration>();
+	private final Map<String, ServiceRegistration> m_functions = new HashMap<String, ServiceRegistration>();
+
+	/**
+	 * Lock for the functions map
+	 */
+	private final Object _functionsLock = new Object();
 
 	/**
 	 * The bundle context used to register services.
 	 */
-	final BundleContext m_context;
+	private final BundleContext m_context;
+
+	@LogConfig
+	private ComponentLogger m_logger;
 
 	/**
 	 * Get the context from iPOJO
@@ -69,47 +82,73 @@ public class GogoAdapter {
 		m_context = context;
 	}
 
-	@Bind
-	void bindCommand(SimulatorCommand command, Map iCommandProperties) {
-		// Create an adapter for the command
-		AdaptedFunction function = new AdaptedFunction(command);
+	@Bind(aggregate = true)
+	void bindCommand(SimulatorCommand command,
+			Map<Object, Object> iCommandProperties) {
 
-		// Read the adapted command properties
-		String commandName = (String) iCommandProperties
-				.get(SimulatorCommand.PROP_NAME);
-		String commandNamespace = (String) iCommandProperties
-				.get(SimulatorCommand.PROP_NAMESPACE);
+		try {
+			// Create an adapter for the command
+			AdaptedCommandFunction function = new AdaptedCommandFunction(
+					command);
 
+			// Read the adapted command properties
+			String commandName = (String) iCommandProperties
+					.get(SimulatorCommand.PROP_NAME);
+			String commandNamespace = (String) iCommandProperties
+					.get(SimulatorCommand.PROP_NAMESPACE);
 
-		// Register the command
-		Dictionary commandProperties = new Properties();
-		commandProperties.put(CommandProcessor.COMMAND_FUNCTION, new String[]{commandName});
-		commandProperties.put(CommandProcessor.COMMAND_SCOPE, commandNamespace);
-		ServiceRegistration commandRegistration = m_context.registerService(
-				new String[]{Function.class.getName()}, function, commandProperties);
+			m_logger.info("expose command " + commandName);
 
-		// keep a track of the registration
-		m_functions.put(commandNamespace + ":" + commandName,
-				commandRegistration);
+			// Register the command
+			Dictionary<Object, Object> commandProperties = new Properties();
+			commandProperties.put(CommandProcessor.COMMAND_FUNCTION,
+					new String[] { commandName });
+			commandProperties.put(CommandProcessor.COMMAND_SCOPE,
+					commandNamespace);
+			commandProperties.put(SimulatorCommand.PROP_DESCRIPTION,
+					iCommandProperties.get(SimulatorCommand.PROP_DESCRIPTION));
 
+			ServiceRegistration commandRegistration = m_context
+					.registerService(new String[] { Function.class.getName() },
+							function, commandProperties);
+
+			synchronized (_functionsLock) {
+				// keep a track of the registration
+				m_functions.put(commandNamespace + ":" + commandName,
+						commandRegistration);
+			}
+
+		} catch (Exception e) {
+			m_logger.info("Gogo Adapter exception : " + e.toString());
+		}
 	}
 
 	@Unbind
-	void unbindCommand(SimulatorCommand command, Map iCommandProperties) {
-		// Read the adapted command properties
-		String commandName = (String) iCommandProperties
-				.get(SimulatorCommand.PROP_NAME);
-		String commandNamespace = (String) iCommandProperties
-				.get(SimulatorCommand.PROP_NAMESPACE);
+	void unbindCommand(SimulatorCommand command,
+			Map<Object, Object> iCommandProperties) {
+		try {
+			// Read the adapted command properties
+			String commandName = (String) iCommandProperties
+					.get(SimulatorCommand.PROP_NAME);
+			String commandNamespace = (String) iCommandProperties
+					.get(SimulatorCommand.PROP_NAMESPACE);
 
-		// Unregister the adapted command
-		ServiceRegistration commandRegistration = m_functions
-				.get(commandNamespace + ":" + commandName);
-		if (commandRegistration != null) {
-			commandRegistration.unregister();
-			m_functions.remove(commandNamespace + ":" + commandName);
+			m_logger.info("unexpose command " + commandName);
+
+			// Unregister the adapted command
+			ServiceRegistration commandRegistration = m_functions
+					.get(commandNamespace + ":" + commandName);
+			if (commandRegistration != null) {
+				commandRegistration.unregister();
+
+				synchronized (_functionsLock) {
+					m_functions.remove(commandNamespace + ":" + commandName);
+				}
+			}
+		} catch (Exception e) {
+			m_logger.info("Gogo Adapter exception : " + e.toString());
 		}
-		
+
 	}
 
 }
