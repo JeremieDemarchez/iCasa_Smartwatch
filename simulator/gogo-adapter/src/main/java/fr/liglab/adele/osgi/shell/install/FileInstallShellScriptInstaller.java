@@ -48,8 +48,8 @@ public class FileInstallShellScriptInstaller implements ArtifactInstaller {
 	}
 
 	public void update(File artifact) throws Exception {
-		install(artifact);
 		uninstall(artifact);
+		install(artifact);
 	}
 
 	public void uninstall(File artifact) throws Exception {
