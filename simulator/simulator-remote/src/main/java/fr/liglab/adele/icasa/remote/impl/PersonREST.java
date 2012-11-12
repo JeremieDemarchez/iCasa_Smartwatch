@@ -36,7 +36,7 @@ import javax.ws.rs.core.Response;
 @Component(name="remote-rest-person")
 @Instantiate(name="remote-rest-person-0")
 @Provides(specifications={PersonREST.class})
-@Path(value="/")
+@Path(value="/persons/")
 public class PersonREST {
 
     @Requires
@@ -68,7 +68,7 @@ public class PersonREST {
      *
      * @return a JSON array containing all persons.
      */
-    public String getPersonIds() {
+    public String getPersons() {
         boolean atLeastOne = false;
         JSONArray currentPersons = new JSONArray();
         for (Person person : _simulationMgr.getPersons()) {
@@ -102,7 +102,7 @@ public class PersonREST {
     @Produces("application/json")
     @Path(value="/persons/")
     public Response persons() {
-        return makeCORS(Response.ok(getPersonIds()));
+        return makeCORS(Response.ok(getPersons()));
     }
 
     /**
@@ -118,7 +118,7 @@ public class PersonREST {
     @Path(value="/person/{personId}")
     public Response device(@PathParam("personId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return makeCORS(Response.ok(getPersonIds()));
+            return makeCORS(Response.ok(getPersons()));
         }
 
         Person foundPerson = findPerson(deviceId);
@@ -165,7 +165,7 @@ public class PersonREST {
         _simulationMgr.setUserPosition(name, new Position(positionX, positionY));
 
         if (newPerson == null)
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
         JSONObject newPersonJSON = getPersonJSON(newPerson);
 

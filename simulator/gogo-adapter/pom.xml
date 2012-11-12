@@ -62,7 +62,7 @@
         <configuration>
             <instructions>
                 <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-                <Private-Package>org.json.*,fr.liglab.adele.icasa.command.impl,fr.liglab.adele.osgi.shell.*</Private-Package>
+                <Private-Package>fr.liglab.adele.icasa.command.impl,fr.liglab.adele.osgi.shell.*</Private-Package>
                 <Export-Package>fr.liglab.adele.icasa.command, fr.liglab.adele.osgi.shell.installer</Export-Package>
             </instructions>
         </configuration>

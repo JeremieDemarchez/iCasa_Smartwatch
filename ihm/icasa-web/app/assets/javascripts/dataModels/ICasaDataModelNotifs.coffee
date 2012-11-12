@@ -5,7 +5,6 @@ define(['knockout',
         'dataModels/ICasaDataModel'],
         (ko, kb, atmosphere, DataModel) ->
             socket = atmosphere;
-            subSocket;
             transport = 'sse';
 
             # We are now ready to cut the request

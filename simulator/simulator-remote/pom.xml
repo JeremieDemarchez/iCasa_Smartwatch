@@ -83,8 +83,8 @@
           <artifactId>atmosgi-service</artifactId>
       </dependency>
       <dependency>
-          <groupId>org.atmosphere</groupId>
-          <artifactId>atmosphere-runtime</artifactId>
+          <groupId>org.barjo.atmosgi</groupId>
+          <artifactId>atmosgi-component</artifactId>
       </dependency>
       <dependency>
           <groupId>javax.servlet</groupId>

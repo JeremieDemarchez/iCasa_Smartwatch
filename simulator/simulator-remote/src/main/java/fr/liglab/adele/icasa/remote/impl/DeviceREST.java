@@ -41,7 +41,7 @@ import org.json.*;
 @Component(name="remote-rest-device")
 @Instantiate(name="remote-rest-device-0")
 @Provides(specifications={DeviceREST.class})
-@Path(value="/")
+@Path(value="/devices/")
 public class DeviceREST {
 
     @Requires(optional=true)

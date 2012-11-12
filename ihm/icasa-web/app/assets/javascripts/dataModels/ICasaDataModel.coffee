@@ -9,17 +9,17 @@ define(['backbone'],
          serverUrl = "http://localhost:8080/icasa";
 
          class DataModel.Models.Device extends Backbone.Model
-            urlRoot : "#server#/device".replace /#server#/, serverUrl
+            urlRoot : "#server#/devices/device".replace /#server#/, serverUrl
 
          class DataModel.Collections.Devices extends Backbone.Collection
-            url: "#server#/devices".replace /#server#/, serverUrl
+            url: "#server#/devices/devices".replace /#server#/, serverUrl
             model: DataModel.Models.Device
 
          class DataModel.Models.Person extends Backbone.Model
-            urlRoot : "#server#/person".replace /#server#/, serverUrl
+            urlRoot : "#server#/persons/person".replace /#server#/, serverUrl
 
          class DataModel.Collections.Persons extends Backbone.Collection
-            url: "#server#/persons".replace /#server#/, serverUrl
+            url: "#server#/persons/persons".replace /#server#/, serverUrl
             model: DataModel.Models.Person
 
          # initial import of data model
