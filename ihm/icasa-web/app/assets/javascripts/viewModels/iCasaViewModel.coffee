@@ -39,14 +39,19 @@ define(['knockout',
 
     class Device extends kb.ViewModel
         constructor: (model) ->
-          super(model, {internals: ['deviceId', 'name']})
-          @id = kb.defaultObservable(@_deviceId, 'Undefined');
+          super(model, {internals: ['id', 'name']})
+          @id = kb.defaultObservable(@_id, 'Undefined');
           @name = kb.defaultObservable(@_name, 'Undefined');
+          @positonX = kb.defaultObservable(@_positionX, 'Undefined');
+          @positionY = kb.defaultObservable(@_positionY, 'Undefined');
 
     class Person extends kb.ViewModel
-        constructor: (model) ->
-            @id = model.id;
-            @name = ko.observable(model.name);
+      constructor: (model) ->
+        super(model, {internals: ['id', 'name', 'positionX', 'positionY']})
+        @id = kb.defaultObservable(@_id, 'Undefined');
+        @name = kb.defaultObservable(@_name, 'Undefined');
+        @positonX = kb.defaultObservable(@_positionX, 'Undefined');
+        @positionY = kb.defaultObservable(@_positionY, 'Undefined');
 
     class Tab extends kb.ViewModel
         constructor: (model) ->
@@ -73,11 +78,7 @@ define(['knockout',
 
             @devices = kb.collectionObservable(DataModel.collections.devices);
 
-            @persons = ko.observableArray([
-                new Person {
-                    id: "paul",
-                    name: "Paul" }
-            ]);
+            @persons = kb.collectionObservable(DataModel.collections.persons);
 
             @tabs = ko.observableArray([
                 new Tab {
@@ -102,17 +103,22 @@ define(['knockout',
                     template: devTabHtml}
             ]);
 
-            @newDeviceType = ko.observable("");
+            @newDeviceType = ko.observable("iCasa.DimmerLight");
 
             @newDeviceName = ko.observable("");
 
             @createDevice = (iCasaViewModel) =>
-              newDevice = new DataModel.Models.Device({ deviceId: "newId", name: "MyDevice" });
+              newDevice = new DataModel.Models.Device({ id: "newId", name: "MyDevice", "type": "iCasa.DimmerLight" });
               newDevice.save();
               @devices.push(new Device(newDevice));
 
             @removeDevice = (device) =>
               @devices.remove(device);
+
+            @createDevice = (iCasaViewModel) =>
+              newPerson = new DataModel.Models.Person({ deviceId: "newId", name: "MyDevice" });
+              newPerson.save();
+              @devices.push(new Person(newPerson));
 
             @removePerson = (person) =>
               @persons.remove(person);

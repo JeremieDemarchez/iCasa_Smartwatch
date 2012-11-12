@@ -87,11 +87,15 @@ require([
     'jquery.ui',
     'knockout',
     'viewModels/iCasaViewModel',
+    'dataModels/ICasaDataModelNotifs',
     'bootstrap',
     'domReady'
     ],
-    ($, ui, ko, ICasaViewModel) ->
+    ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
         ko.applyBindings(new ICasaViewModel( { id: "PaulHouse" } ));
+
+
+
         $( "#accordion" ).accordion({
             heightStyle: "fill"
         });

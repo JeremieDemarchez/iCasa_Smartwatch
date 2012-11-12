@@ -159,7 +159,8 @@ public interface SimulationManager {
     void addUser(String userName);
     
     void removeUser(String userName);
-    
+
+    public List<Person> getPersons();
 
     Set<String> getEnvironmentVariables(String environmentId);
     
@@ -279,6 +280,10 @@ public interface SimulationManager {
 				return false;
 			return true;
 		}
+
+        public Position clone() {
+            return new Position(this.x, this.y);
+        }
 
    }
 

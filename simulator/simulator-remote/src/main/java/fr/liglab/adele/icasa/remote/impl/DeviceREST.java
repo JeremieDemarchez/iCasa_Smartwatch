@@ -76,7 +76,7 @@ public class DeviceREST {
      *
      * @return a JSON array containing all devices.
      */
-    public String getDeviceIds() {
+    public String getDevices() {
         boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
         for (GenericDevice device : _devices) {
@@ -134,14 +134,14 @@ public class DeviceREST {
     @Produces("application/json")
     @Path(value="/deviceTypes/")
     public Response deviceTypes() {
-        return Response.ok(getDeviceTypes()).build();
+        return makeCORS(Response.ok(getDeviceTypes()));
     }
 
     @GET
     @Produces("application/json")
     @Path(value="/devices/")
     public Response devices() {
-        return makeCORS(Response.ok(getDeviceIds()));
+        return makeCORS(Response.ok(getDevices()));
     }
 
     /**
@@ -157,16 +157,16 @@ public class DeviceREST {
     @Path(value="/device/{deviceId}")
     public Response device(@PathParam("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return Response.ok(getDeviceIds()).build();
+            return makeCORS(Response.ok(getDevices()));
         }
 
         GenericDevice foundDevice = findDevice(deviceId);
         if (foundDevice == null) {
-            return Response.status(404).build();
+            return makeCORS(Response.status(404));
         } else {
             JSONObject foundDeviceJSON = getDeviceJSON(foundDevice);
 
-            return Response.ok(foundDeviceJSON.toString()).build();
+            return makeCORS(Response.ok(foundDeviceJSON.toString()));
         }
     }
 
@@ -227,11 +227,11 @@ public class DeviceREST {
         }
 
         if (newDevice == null)
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
         JSONObject newDeviceJSON = getDeviceJSON(newDevice);
 
-        return Response.ok(newDevice.toString()).build(); //TODO check that newDevice must be included in the response body
+        return makeCORS(Response.ok(newDevice.toString())); //TODO check that newDevice must be included in the response body
     }
 
     private Factory getDeviceFactory(String deviceType) {
@@ -262,9 +262,9 @@ public class DeviceREST {
             Pojo pojo = (Pojo) foundDevice;
             pojo.getComponentInstance().dispose();
         } else
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
-        return Response.ok().build();
+        return makeCORS(Response.ok());
     }
 
 }

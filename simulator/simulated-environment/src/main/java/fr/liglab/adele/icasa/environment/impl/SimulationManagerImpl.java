@@ -15,41 +15,23 @@
  */
 package fr.liglab.adele.icasa.environment.impl;
 
-import static fr.liglab.adele.icasa.environment.SimulatedEnvironment.PRESENCE;
-
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Random;
-import java.util.Set;
-
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.Pojo;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
-import org.osgi.framework.Constants;
-
 import fr.liglab.adele.icasa.context.Context;
 import fr.liglab.adele.icasa.context.ContextEvent;
 import fr.liglab.adele.icasa.context.ContextListener;
 import fr.liglab.adele.icasa.context.ContextService;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.Constants;
+
+import java.util.*;
+import java.util.Map.Entry;
+
+import static fr.liglab.adele.icasa.environment.SimulatedEnvironment.PRESENCE;
 
 /**
  * Implementation of the simulated environment manager component, that manage
@@ -369,6 +351,27 @@ public class SimulationManagerImpl implements SimulationManager {
 			usersContext.createChild(userName);
 		}
 	}
+
+    @Override
+    public List<Person> getPersons() {
+        List<Person> persons = new ArrayList<Person>();
+
+        final Context root = m_contextService.getRootContext();
+        Context usersContext = root.getChild("user");
+        if (usersContext != null) {
+            for (Map.Entry<String, Context> userEntry : usersContext.getChildren().entrySet()) {
+                String name = userEntry.getKey();
+                Context userContext = userEntry.getValue();
+                Position position = getUserPosition(name);
+                if ((userContext != null) && (position != null)) {
+                    Person person = new PersonImpl(name, position);
+                    persons.add(person);
+                }
+            }
+        }
+
+        return persons;
+    }
 
 	@Override
 	public void removeUser(String userName) {
