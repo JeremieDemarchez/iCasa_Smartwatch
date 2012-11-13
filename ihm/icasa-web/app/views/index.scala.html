@@ -64,9 +64,16 @@
         <section>
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
             <div data-bind="foreach: devices">
-                <img class="deviceWidget"
-                     data-bind="attr: { id: id, alt: name }"
-                     src="@routes.Assets.at("images/NewDevice.png")""/>
+                <div class="deviceWidget" data-bind="attr: { id: id, alt: name }">
+                    <img
+                        src="@routes.Assets.at("images/NewDevice.png")""/>
+                </div>
+            </div>
+            <div data-bind="foreach: $root.persons()">
+                <div class="userWidget" data-bind="attr: { id: id, alt: name }">
+                    <img
+                        src="@routes.Assets.at("images/User.png")""/>
+                </div>
             </div>
         </section>
     </article>
@@ -81,7 +88,10 @@
 </section>
 <section>
     <article id="statusWindows">
+            <div data-bind="foreach: devices">
+                <div class="deviceWindow" data-bind="attr: { id: id, alt: name }">
 
+            </div>
     </article>
 </section>
 <footer>

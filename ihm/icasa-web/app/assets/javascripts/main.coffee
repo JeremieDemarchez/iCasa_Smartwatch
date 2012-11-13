@@ -119,5 +119,8 @@ require([
         $(".deviceWidget").draggable( {
             scroll: true
         });
+        $(".userWidget").draggable( {
+            scroll: true
+        });
 
 );

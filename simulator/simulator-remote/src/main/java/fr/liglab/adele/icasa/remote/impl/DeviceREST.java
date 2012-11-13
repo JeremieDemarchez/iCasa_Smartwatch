@@ -107,8 +107,20 @@ public class DeviceREST {
         return deviceJSON;
     }
 
-    private String getDeviceTypeJSON(Factory deviceFactory) {
-        return deviceFactory.getName();
+    private JSONObject getDeviceTypeJSON(Factory deviceFactory) {
+        String deviceTypeName = deviceFactory.getName();
+
+        JSONObject deviceTypeJSON = null;
+        try {
+            deviceTypeJSON = new JSONObject();
+            deviceTypeJSON.putOnce("id", deviceTypeName);
+            deviceTypeJSON.putOnce("name", deviceTypeName);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            deviceTypeJSON = null;
+        }
+
+        return deviceTypeJSON;
     }
 
     /**
@@ -120,7 +132,7 @@ public class DeviceREST {
         boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
         for (Factory deviceFactory : _deviceFactories) {
-            String deviceType = getDeviceTypeJSON(deviceFactory);
+            JSONObject deviceType = getDeviceTypeJSON(deviceFactory);
             if (deviceType == null)
                 continue;
 

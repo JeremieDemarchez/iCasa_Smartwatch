@@ -15,6 +15,13 @@ define(['backbone'],
             url: "#server#/devices/devices".replace /#server#/, serverUrl
             model: DataModel.Models.Device
 
+         class DataModel.Models.DeviceType extends Backbone.Model
+            urlRoot : "#server#/devices/deviceType".replace /#server#/, serverUrl
+
+         class DataModel.Collections.DeviceTypes extends Backbone.Collection
+            url: "#server#/devices/deviceTypes".replace /#server#/, serverUrl
+            model: DataModel.Models.DeviceType
+
          class DataModel.Models.Person extends Backbone.Model
             urlRoot : "#server#/persons/person".replace /#server#/, serverUrl
 
@@ -31,6 +38,12 @@ define(['backbone'],
 
          DataModel.collections.devices = new DataModel.Collections.Devices();
          DataModel.collections.devices.fetch({
+            success : (data) -> console.log(data);
+            error : (err) -> throw err;
+         });
+
+         DataModel.collections.deviceTypes = new DataModel.Collections.DeviceTypes();
+         DataModel.collections.deviceTypes.fetch({
             success : (data) -> console.log(data);
             error : (err) -> throw err;
          });

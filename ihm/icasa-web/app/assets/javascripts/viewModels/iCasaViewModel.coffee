@@ -37,9 +37,15 @@ define(['knockout',
           @name = ko.observable(model.name);
           @isRoom = ko.observable(model.isRoom);
 
+    class DeviceType extends kb.ViewModel
+      constructor: (model) ->
+        super(model, {internals: ['id', 'name']})
+        @id = kb.defaultObservable(@_id, 'Undefined');
+        @name = kb.defaultObservable(@_name, 'Undefined');
+
     class Device extends kb.ViewModel
         constructor: (model) ->
-          super(model, {internals: ['id', 'name']})
+          super(model, {internals: ['id', 'name', 'positionX', 'positionY']})
           @id = kb.defaultObservable(@_id, 'Undefined');
           @name = kb.defaultObservable(@_name, 'Undefined');
           @positonX = kb.defaultObservable(@_positionX, 'Undefined');
@@ -103,25 +109,36 @@ define(['knockout',
                     template: devTabHtml}
             ]);
 
+            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes);
+
+#            @mapSize = ko.computed({
+#              height: $("mapImg").height()
+#              width: $("mapImg").width()
+#            });
+
             @newDeviceType = ko.observable("iCasa.DimmerLight");
 
             @newDeviceName = ko.observable("");
 
             @createDevice = (iCasaViewModel) =>
-              newDevice = new DataModel.Models.Device({ id: "newId", name: "MyDevice", "type": "iCasa.DimmerLight" });
+              newDevice = new DataModel.Models.Device({ id: iCasaViewModel.newDeviceName(), name: iCasaViewModel.newDeviceName(), "type": iCasaViewModel.newDeviceType() });
               newDevice.save();
+              newDevice.fetch();
               @devices.push(new Device(newDevice));
 
             @removeDevice = (device) =>
               @devices.remove(device);
+              @devices.fetch();
 
-            @createDevice = (iCasaViewModel) =>
-              newPerson = new DataModel.Models.Person({ deviceId: "newId", name: "MyDevice" });
+            @createPerson = (iCasaViewModel) =>
+              newPerson = new DataModel.Models.Person({ id: iCasaViewModel.newPersonName(), name: iCasaViewModel.newPersonName() });
               newPerson.save();
+              newPerson.fetch();
               @devices.push(new Person(newPerson));
 
             @removePerson = (person) =>
               @persons.remove(person);
+              @persons.fetch();
 
     return ICasaViewModel;
 );

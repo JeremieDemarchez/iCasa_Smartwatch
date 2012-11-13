@@ -16,6 +16,9 @@
 
 -->
 <table class="table table-striped table-bordered">
+    <p>Person Name: <input data-bind="value: $root.newPersonName" /></p>
+    <button data-bind="click: $root.createPerson">Create A Person</button>
+
     <thead>
         <tr>
             <th>Name</th>
@@ -25,6 +28,7 @@
     <tbody data-bind="foreach: $root.persons()">
         <tr>
             <td><input type="text" data-bind="value: name"/></td>
+            <td><input type="option" data-bind="value: name"/></td>
             <td><a href="#" data-bind="click: $root.removePerson">Remove</a></td>
         </tr>
     </tbody>
