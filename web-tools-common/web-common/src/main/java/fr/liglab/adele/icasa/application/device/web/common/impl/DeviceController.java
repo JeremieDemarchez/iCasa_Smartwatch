@@ -22,13 +22,13 @@ import java.util.Set;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Label;
 
+import org.osgi.framework.Constants;
+
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.DeviceEntry;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.DevicePane;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.FloatingButton;
-import org.osgi.framework.Constants;
-
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
  * Controller class that is notified in changes of the devices environment.

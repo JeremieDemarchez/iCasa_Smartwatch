@@ -38,9 +38,9 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
 import fr.liglab.adele.icasa.script.Interpreter;
 import fr.liglab.adele.icasa.script.Script;

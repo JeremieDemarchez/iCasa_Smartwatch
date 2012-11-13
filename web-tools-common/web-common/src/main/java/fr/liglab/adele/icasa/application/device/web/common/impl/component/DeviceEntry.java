@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.application.device.web.common.impl.component;
 
 import nextapp.echo.app.Label;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
+import fr.liglab.adele.icasa.environment.Position;
 
 public class DeviceEntry {
 	public String serialNumber;

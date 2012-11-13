@@ -48,25 +48,25 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+
 import fr.liglab.adele.icasa.application.device.simulator.gui.impl.component.SimulatorActionPane;
 import fr.liglab.adele.icasa.application.device.web.common.impl.BaseHouseApplication;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.HousePane;
 import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactory;
 import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.osgi.util.tracker.ServiceTracker;
-
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
 import fr.liglab.adele.icasa.script.ScenarioInstaller;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 
 /**
  * TODO comments.

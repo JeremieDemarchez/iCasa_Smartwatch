@@ -39,6 +39,8 @@ import nextapp.echo.extras.app.menu.DefaultMenuModel;
 import nextapp.echo.extras.app.menu.DefaultMenuSelectionModel;
 import nextapp.echo.extras.app.menu.DefaultOptionModel;
 
+import org.osgi.framework.Bundle;
+
 import fr.liglab.adele.icasa.application.device.web.common.impl.BaseHouseApplication;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.FloatingButton;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.FloatingButtonDragSource;
@@ -46,10 +48,8 @@ import fr.liglab.adele.icasa.application.device.web.common.impl.component.HouseP
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.event.DropEvent;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.event.DropListener;
 import fr.liglab.adele.icasa.application.device.web.common.util.BundleResourceImageReference;
-import org.osgi.framework.Bundle;
-
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
  * The simulator user pane

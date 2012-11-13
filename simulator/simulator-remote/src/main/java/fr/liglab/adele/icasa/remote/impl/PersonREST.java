@@ -15,9 +15,15 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.FormParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -26,8 +32,9 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
+import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 
 /**
  * @author Thomas Leveque

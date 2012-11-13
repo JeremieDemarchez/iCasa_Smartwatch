@@ -16,15 +16,8 @@
 package fr.liglab.adele.icasa.environment;
 
 
-/**
- *
- * @author Thomas Leveque
- *         Date: 10/11/12
- */
-public interface Person extends LocatedObject {
+public interface LocatedObject {
 
-    public String getName();
-
-    public void setName(String name);
-
+   public Position getPosition();
+	
 }

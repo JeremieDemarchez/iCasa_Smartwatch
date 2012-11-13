@@ -16,8 +16,7 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
+import fr.liglab.adele.icasa.environment.Position;
 
 /**
  * TODO

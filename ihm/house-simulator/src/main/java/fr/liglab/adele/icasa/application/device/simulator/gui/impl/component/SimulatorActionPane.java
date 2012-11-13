@@ -20,15 +20,15 @@ import nextapp.echo.extras.app.event.TabSelectionListener;
 import nextapp.echo.extras.app.layout.AccordionPaneLayoutData;
 
 import org.apache.felix.ipojo.Factory;
+import org.osgi.framework.Bundle;
+
 import fr.liglab.adele.icasa.application.device.simulator.gui.impl.SimulatorApplicationImpl;
 import fr.liglab.adele.icasa.application.device.web.common.impl.BaseHouseApplication;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.ActionPane;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.DevicePane;
 import fr.liglab.adele.icasa.application.device.web.common.util.BundleResourceImageReference;
 import fr.liglab.adele.icasa.clock.api.Clock;
-import org.osgi.framework.Bundle;
-
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
+import fr.liglab.adele.icasa.environment.Position;
 
 public class SimulatorActionPane extends ActionPane {
 

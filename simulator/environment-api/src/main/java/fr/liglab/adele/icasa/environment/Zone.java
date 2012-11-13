@@ -15,16 +15,14 @@
  */
 package fr.liglab.adele.icasa.environment;
 
+public interface Zone {
 
-/**
- *
- * @author Thomas Leveque
- *         Date: 10/11/12
- */
-public interface Person extends LocatedObject {
-
-    public String getName();
-
-    public void setName(String name);
-
+	public Position getPosition();
+	
+	public int getWidht();
+	
+	public int getHeight();
+	
+	public boolean contains(LocatedObject object);
+	
 }

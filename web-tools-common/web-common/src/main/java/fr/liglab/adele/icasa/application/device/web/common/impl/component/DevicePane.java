@@ -40,16 +40,14 @@ import nextapp.echo.app.list.DefaultListModel;
 import nextapp.echo.app.list.ListSelectionModel;
 import nextapp.echo.app.table.DefaultTableModel;
 import nextapp.echo.app.table.TableCellRenderer;
-
 import fr.liglab.adele.icasa.application.device.web.common.impl.BaseHouseApplication;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.event.DropEvent;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.event.DropListener;
 import fr.liglab.adele.icasa.application.device.web.common.util.BundleResourceImageReference;
 import fr.liglab.adele.icasa.application.device.web.common.widget.impl.GenericDeviceStatusWindow;
-
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
  * TODO comments.

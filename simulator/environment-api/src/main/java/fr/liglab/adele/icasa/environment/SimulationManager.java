@@ -242,6 +242,7 @@ public interface SimulationManager {
 
     }
     
+    /*
     public final class Position {
        public final int x;
        public final int y;
@@ -286,6 +287,7 @@ public interface SimulationManager {
         }
 
    }
+   */
 
    public final class Zone {
        public final int leftX;

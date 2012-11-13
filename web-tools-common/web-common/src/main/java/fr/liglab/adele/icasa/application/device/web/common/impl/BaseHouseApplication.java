@@ -29,18 +29,18 @@ import nextapp.echo.app.WindowPane;
 import nextapp.echo.app.serial.SerialException;
 import nextapp.echo.app.serial.StyleSheetLoader;
 
-import fr.liglab.adele.icasa.application.device.web.common.impl.component.ActionPane;
-import fr.liglab.adele.icasa.application.device.web.common.impl.component.HousePane;
-import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactory;
-import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 
+import fr.liglab.adele.icasa.application.device.web.common.impl.component.ActionPane;
+import fr.liglab.adele.icasa.application.device.web.common.impl.component.HousePane;
+import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactory;
+import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
-import fr.liglab.adele.icasa.environment.SimulationManager.Position;
 
 /**
  * Base class to applications in echo3 showing device information
