@@ -34,14 +34,14 @@ define(['knockout',
 
     class ZoneViewModel extends kb.ViewModel
         constructor: (model) ->
-          super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX']})
-          @id = kb.defaultObservable(@_id, 'Undefined');
-          @name = kb.observable(model.name);
-          @isRoom = kb.observable(model.isRoom);
-          @leftX = kb.defaultObservable(@_leftX, 'Undefined');
-          @rightX = kb.defaultObservable(@_rightX, 'Undefined');
-          @bottomY = kb.defaultObservable(@_bottomY, 'Undefined');
-          @topY = kb.defaultObservable(@_topY, 'Undefined');
+           super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX']})
+           @id = kb.defaultObservable(@_id, 'Undefined');
+           @name = kb.observable(model.name);
+           @isRoom = kb.observable(model.isRoom);
+           @leftX = kb.defaultObservable(@_leftX, 'Undefined');
+           @rightX = kb.defaultObservable(@_rightX, 'Undefined');
+           @bottomY = kb.defaultObservable(@_bottomY, 'Undefined');
+           @topY = kb.defaultObservable(@_topY, 'Undefined');
 
     class DeviceTypeViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -78,12 +78,14 @@ define(['knockout',
 
            @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
 
-           @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+           @zones = kb.collectionObservable(DataModel.collections.zones);
 
-           @rooms = ko.computed( =>
-                return ko.utils.arrayFilter(@zones, (zone) ->
-                    return zone.isRoom());
-           );
+           @rooms = kb.collectionObservable(DataModel.collections.zones);
+
+#             ko.computed( =>
+#                return ko.utils.arrayFilter(@zones, (zone) ->
+#                    return zone.isRoom());
+#           );
 
            @tabs = ko.observableArray([
                 new TabViewModel {
@@ -111,11 +113,11 @@ define(['knockout',
            @newDeviceType = ko.observable("");
 
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
-           @deviceTypes.subscribe(@.selectFirstDeviceType)
-           selectFirstDeviceType: (models)=>
-              if models.length > 0
-                firstModel = models[0]
-                this.newDeviceType(firstModel)
+#           @deviceTypes.subscribe(@.selectFirstDeviceType)
+#           selectFirstDeviceType: (models) =>
+#              if models.length > 0
+#                firstModel = models[0]
+#                this.newDeviceType(firstModel)
 
 #           @mapSize = ko.computed({
 #              height: $("mapImg").height()
