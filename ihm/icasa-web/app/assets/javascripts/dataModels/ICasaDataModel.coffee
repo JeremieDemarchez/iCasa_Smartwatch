@@ -29,7 +29,20 @@ define(['backbone'],
             url: "#server#/persons/persons".replace /#server#/, serverUrl
             model: DataModel.Models.Person
 
+         class DataModel.Models.Zone extends Backbone.Model
+           urlRoot : "#server#/zones/zone".replace /#server#/, serverUrl
+
+         class DataModel.Collections.Zones extends Backbone.Collection
+           url: "#server#/zones/zones".replace /#server#/, serverUrl
+           model: DataModel.Models.Zone
+
          # initial import of data model
+         DataModel.collections.zones = new DataModel.Collections.Zones();
+         DataModel.collections.zones.fetch({
+            success : (data) -> console.log(data);
+            error : (err) -> throw err;
+         });
+
          DataModel.collections.persons = new DataModel.Collections.Persons();
          DataModel.collections.persons.fetch({
             success : (data) -> console.log(data);

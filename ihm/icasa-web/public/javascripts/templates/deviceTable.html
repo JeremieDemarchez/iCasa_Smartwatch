@@ -17,7 +17,7 @@
 -->
 <table class="table table-striped table-bordered">
     <p>Device name: <input data-bind="value: $root.newDeviceName" /></p>
-    <p>Device Type: <select data-bind="options: $root.deviceTypes, value: newDeviceType, optionsText: 'name'"></select></p>
+    <p>Device Type: <select data-bind="options: $root.deviceTypes, value: $root.newDeviceType, optionsText: 'name'"></select></p>
     <button data-bind="click: $root.createDevice">Create A Device</button>
 
     <thead>

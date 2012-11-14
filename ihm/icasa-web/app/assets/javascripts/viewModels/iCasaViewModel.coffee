@@ -4,8 +4,9 @@ define(['knockout',
         'handlebars',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
-        'text!templates/personTable.html'],
-  (ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml) ->
+        'text!templates/personTable.html',
+        'text!templates/roomTable.html'],
+  (ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml) ->
 
     # HTML custom bindings
 
@@ -31,112 +32,115 @@ define(['knockout',
 
     # View models
 
-    class Zone extends kb.ViewModel
+    class ZoneViewModel extends kb.ViewModel
         constructor: (model) ->
-          @id = model.id;
-          @name = ko.observable(model.name);
-          @isRoom = ko.observable(model.isRoom);
-
-    class DeviceType extends kb.ViewModel
-      constructor: (model) ->
-        super(model, {internals: ['id', 'name']})
-        @id = kb.defaultObservable(@_id, 'Undefined');
-        @name = kb.defaultObservable(@_name, 'Undefined');
-
-    class Device extends kb.ViewModel
-        constructor: (model) ->
-          super(model, {internals: ['id', 'name', 'positionX', 'positionY']})
+          super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX']})
           @id = kb.defaultObservable(@_id, 'Undefined');
-          @name = kb.defaultObservable(@_name, 'Undefined');
-          @positonX = kb.defaultObservable(@_positionX, 'Undefined');
-          @positionY = kb.defaultObservable(@_positionY, 'Undefined');
+          @name = kb.observable(model.name);
+          @isRoom = kb.observable(model.isRoom);
+          @leftX = kb.defaultObservable(@_leftX, 'Undefined');
+          @rightX = kb.defaultObservable(@_rightX, 'Undefined');
+          @bottomY = kb.defaultObservable(@_bottomY, 'Undefined');
+          @topY = kb.defaultObservable(@_topY, 'Undefined');
 
-    class Person extends kb.ViewModel
-      constructor: (model) ->
-        super(model, {internals: ['id', 'name', 'positionX', 'positionY']})
-        @id = kb.defaultObservable(@_id, 'Undefined');
-        @name = kb.defaultObservable(@_name, 'Undefined');
-        @positonX = kb.defaultObservable(@_positionX, 'Undefined');
-        @positionY = kb.defaultObservable(@_positionY, 'Undefined');
-
-    class Tab extends kb.ViewModel
+    class DeviceTypeViewModel extends kb.ViewModel
         constructor: (model) ->
-            @id = model.id;
-            @name = ko.observable(model.name);
-            @tabTemplate = model.template;
+           super(model, {internals: ['id', 'name']})
+           @id = kb.defaultObservable(@_id, 'Undefined');
+           @name = kb.defaultObservable(@_name, 'Undefined');
+
+    class DeviceViewModel extends kb.ViewModel
+        constructor: (model) ->
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY']})
+           @id = kb.defaultObservable(@_id, 'Undefined');
+           @name = kb.defaultObservable(@_name, 'Undefined');
+           @positonX = kb.defaultObservable(@_positionX, 'Undefined');
+           @positionY = kb.defaultObservable(@_positionY, 'Undefined');
+
+    class PersonViewModel extends kb.ViewModel
+        constructor: (model) ->
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY']})
+           @id = kb.defaultObservable(@_id, 'Undefined');
+           @name = kb.defaultObservable(@_name, 'Undefined');
+           @positonX = kb.defaultObservable(@_positionX, 'Undefined');
+           @positionY = kb.defaultObservable(@_positionY, 'Undefined');
+
+    class TabViewModel extends kb.ViewModel
+        constructor: (model) ->
+           @id = model.id;
+           @name = ko.observable(model.name);
+           @tabTemplate = model.template;
 
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
-            @zones = ko.observableArray([
-                new Zone {
-                    id: "livingroom",
-                    name: "LivingRoom",
-                    isRoom: true },
-                new Zone {
-                     id: "bathroom",
-                     name: "Bathroom",
-                     isRoom: true },
-                new Zone {
-                     id: "garden",
-                     name: "Garden",
-                     isRoom: false }
-            ]);
 
-            @devices = kb.collectionObservable(DataModel.collections.devices);
+           @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
 
-            @persons = kb.collectionObservable(DataModel.collections.persons);
+           @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
 
-            @tabs = ko.observableArray([
-                new Tab {
+           @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+
+           @rooms = ko.computed( =>
+                return ko.utils.arrayFilter(@zones, (zone) ->
+                    return zone.isRoom());
+           );
+
+           @tabs = ko.observableArray([
+                new TabViewModel {
                     id: "devices",
                     name: "Devices",
                     template: devTabHtml},
-                new Tab {
+                new TabViewModel {
                     id: "rooms",
                     name: "Rooms",
-                    template: devTabHtml},
-                new Tab {
+                    template: roomTabHtml},
+                new TabViewModel {
                     id: "zones",
                     name: "Zones" ,
                     template: devTabHtml},
-                new Tab {
+                new TabViewModel {
                     id: "persons",
                     name: "Persons" ,
                     template: personTabHtml},
-                new Tab {
+                new TabViewModel {
                     id: "script-player",
                     name: "Script Player" ,
                     template: devTabHtml}
-            ]);
+           ]);
 
-            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes);
+           @newDeviceType = ko.observable("");
 
-#            @mapSize = ko.computed({
+           @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
+           @deviceTypes.subscribe(@.selectFirstDeviceType)
+           selectFirstDeviceType: (models)=>
+              if models.length > 0
+                firstModel = models[0]
+                this.newDeviceType(firstModel)
+
+#           @mapSize = ko.computed({
 #              height: $("mapImg").height()
 #              width: $("mapImg").width()
-#            });
+#           });
 
-            @newDeviceType = ko.observable("iCasa.DimmerLight");
+           @newDeviceName = ko.observable("");
 
-            @newDeviceName = ko.observable("");
-
-            @createDevice = (iCasaViewModel) =>
+           @createDevice = (iCasaViewModel) =>
               newDevice = new DataModel.Models.Device({ id: iCasaViewModel.newDeviceName(), name: iCasaViewModel.newDeviceName(), "type": iCasaViewModel.newDeviceType() });
               newDevice.save();
               newDevice.fetch();
-              @devices.push(new Device(newDevice));
+              @devices.push(new DeviceViewModel(newDevice));
 
-            @removeDevice = (device) =>
+           @removeDevice = (device) =>
               @devices.remove(device);
               @devices.fetch();
 
-            @createPerson = (iCasaViewModel) =>
+           @createPerson = (iCasaViewModel) =>
               newPerson = new DataModel.Models.Person({ id: iCasaViewModel.newPersonName(), name: iCasaViewModel.newPersonName() });
               newPerson.save();
               newPerson.fetch();
-              @devices.push(new Person(newPerson));
+              @devices.push(new PersonViewModel(newPerson));
 
-            @removePerson = (person) =>
+           @removePerson = (person) =>
               @persons.remove(person);
               @persons.fetch();
 
