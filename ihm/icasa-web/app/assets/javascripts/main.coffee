@@ -122,5 +122,6 @@ require([
         $(".userWidget").draggable( {
             scroll: true
         });
+        $(".slider" ).slider();
 
 );

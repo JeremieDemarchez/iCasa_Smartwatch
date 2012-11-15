@@ -36,7 +36,20 @@ define(['backbone'],
            url: "#server#/zones/zones".replace /#server#/, serverUrl
            model: DataModel.Models.Zone
 
+         class DataModel.Models.Script extends Backbone.Model
+           urlRoot : "#server#/scriptPlayer/script".replace /#server#/, serverUrl
+
+         class DataModel.Collections.Scripts extends Backbone.Collection
+           url: "#server#/scriptPlayer/scripts".replace /#server#/, serverUrl
+           model: DataModel.Models.Script
+
          # initial import of data model
+         DataModel.collections.scripts = new DataModel.Collections.Scripts();
+         DataModel.collections.scripts.fetch({
+            success : (data) -> console.log(data);
+            error : (err) -> throw err;
+         });
+
          DataModel.collections.zones = new DataModel.Collections.Zones();
          DataModel.collections.zones.fetch({
             success : (data) -> console.log(data);

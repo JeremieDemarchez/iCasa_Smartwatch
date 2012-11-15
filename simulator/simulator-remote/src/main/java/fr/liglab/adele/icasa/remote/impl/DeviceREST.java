@@ -19,6 +19,8 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.Position;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -44,11 +46,14 @@ import org.json.*;
 @Path(value="/devices/")
 public class DeviceREST {
 
-    @Requires(optional=true)
+    @Requires(optional=true, proxy = false)
     GenericDevice[] _devices;
 
     @Requires(optional=true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
     private Factory[] _deviceFactories;
+
+    @Requires
+    private SimulationManager _simulationMgr;
 
     /*
      * Methods to manage cross domain requests
@@ -91,6 +96,17 @@ public class DeviceREST {
     }
 
     private JSONObject getDeviceJSON(GenericDevice device) {
+        String deviceType = "undefined";
+        if (device instanceof Pojo) {
+            try {
+                deviceType = ((Pojo) device).getComponentInstance().getFactory().getFactoryName();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+        Position devicePosition = _simulationMgr.getDevicePosition(device.getSerialNumber());
+
         JSONObject deviceJSON = null;
         try {
             deviceJSON = new JSONObject();
@@ -99,6 +115,9 @@ public class DeviceREST {
             deviceJSON.put("fault", device.getFault());
             deviceJSON.put("location", device.getLocation());
             deviceJSON.put("state", device.getState());
+            deviceJSON.put("type", deviceType);
+            deviceJSON.put("positionX", devicePosition.x);
+            deviceJSON.put("positionY", devicePosition.y);
         } catch (JSONException e) {
             e.printStackTrace();
             deviceJSON = null;

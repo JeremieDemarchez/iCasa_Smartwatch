@@ -44,7 +44,7 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>script.api</artifactId>
+      <artifactId>script.executor.api</artifactId>
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>

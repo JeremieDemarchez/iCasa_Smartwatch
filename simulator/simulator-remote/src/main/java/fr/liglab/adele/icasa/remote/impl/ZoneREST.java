@@ -40,7 +40,7 @@ import javax.ws.rs.core.Response;
 public class ZoneREST {
 
     @Requires
-    SimulationManager _simulationMgr;
+    private SimulationManager _simulationMgr;
 
     /*
      * Methods to manage cross domain requests

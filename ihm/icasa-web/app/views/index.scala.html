@@ -61,24 +61,22 @@
 </header>
 <section>
     <article id="map">
-        <section>
+        <section id="mapContainer">
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
-            <div data-bind="foreach: devices">
-                <div class="deviceWidget" data-bind="attr: { id: id, alt: name }">
-                    <img
-                        src="@routes.Assets.at("images/NewDevice.png")""/>
+            <div id="deviceWidgets" data-bind="foreach: $root.devices">
+                <div class="deviceWidget" data-bind="attr: { id: id, alt: name }, style: { left: styleLeft, top: styleTop }">
+                    <img data-bind="attr: { src: imgSrc }" />
                 </div>
             </div>
-            <div data-bind="foreach: $root.persons()">
-                <div class="userWidget" data-bind="attr: { id: id, alt: name }">
-                    <img
-                        src="@routes.Assets.at("images/User.png")""/>
+            <div id="userWidgets" data-bind="foreach: $root.persons()">
+                <div class="userWidget" data-bind="attr: { id: id, alt: name }, style: { left: styleLeft, top: styleTop }">
+                    <img data-bind="attr: { src: imgSrc }" />
                 </div>
             </div>
         </section>
     </article>
     <aside id="actionTabs">
-        <div id="accordion" data-bind="foreach: tabs">
+        <div id="accordion" data-bind="foreach: $root.tabs">
             <h3 data-bind="text: name"></h3>
             <div data-bind="handlebarTemplate : {}">
                 Loading...
