@@ -65,7 +65,6 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 @Instantiate
 public class SimulationManagerImpl implements SimulationManager {
 
-	private final Random m_random = new Random();
 
 	private ContextService m_contextService;
 
@@ -544,11 +543,11 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	private int random(int min, int max) {
-		final double range = (max - 15) - (min + 15);
+		final double range = (max - 10) - (min + 10);
 		if (range <= 0.0) {
 			throw new IllegalArgumentException("min >= max");
-		}
-		return min + (int) (range * m_random.nextDouble());
+		}		
+		return min + (int) (range * Math.random());
 	}
 
 	private void unbindDeviceFromEnvironment(final String deviceSerialNumber) {

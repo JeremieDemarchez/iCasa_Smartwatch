@@ -26,6 +26,13 @@ import java.util.List;
  */
 public interface ScriptExecutor {
 
+	final public int STOPPED = 0;
+	
+	final public int EXECUTING = 1;
+	
+	final public int PAUSED = 2;
+		
+	
 	public List<String> getScriptList();
 	
 	public void execute(String scriptName);
@@ -37,5 +44,7 @@ public interface ScriptExecutor {
 	public void pause();
 	
 	public void resume();
+	
+	public int getState();
 	
 }

@@ -122,6 +122,14 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
    }
 
 
+	@Override
+   public int getState() {
+		if (commandExecutor!=null)
+			commandExecutor.getState();
+		return ScriptExecutor.STOPPED;
+   }
+	
+	
 	private ScenarioSAXHandler parseFile(File file) {
 		SAXParserFactory factory = SAXParserFactory.newInstance();
 		try {
@@ -155,6 +163,8 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 	
 	
+	// -- File Install methods -- //
+	
 	public boolean canHandle(File artifact) {
 		if (artifact.getName().endsWith(".bhv")) {
 			return true;
@@ -179,5 +189,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		List<String> list = new ArrayList<String>(scriptMap.keySet());
 		return list;
 	}
+
+
 
 }

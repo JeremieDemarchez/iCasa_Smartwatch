@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 public class CommandExecutor {
@@ -33,6 +34,8 @@ public class CommandExecutor {
 	private Thread executorThread;
 
 	private long startDate;
+	
+	private boolean paused = false;
 
 	ScriptExecutorImpl scriptExecutorImpl;
 
@@ -71,16 +74,16 @@ public class CommandExecutor {
 	}
 	
 	public void pause() {
-		System.out.println("pausing script execution");
 		synchronized (clock) {
 			clock.pause();
+			paused = true;
       }
 	}
 	
 	public void resume() {
-		System.out.println("resuming script execution");
 		synchronized (clock) {
 			clock.resume();
+			paused = false;
       }
 	}
 
@@ -92,6 +95,15 @@ public class CommandExecutor {
 		this.actionDescriptions = actionDescriptions;
 	}
 	
+   public int getState() {
+   	if (executorThread != null)
+   		if (executorThread.isAlive())
+   			if (!paused)
+   				return ScriptExecutor.EXECUTING;
+   			else
+   				return ScriptExecutor.PAUSED;
+	   return ScriptExecutor.STOPPED;
+   }
 	
 	private final class CommandExecutorRunnable implements Runnable {
 	   @Override
