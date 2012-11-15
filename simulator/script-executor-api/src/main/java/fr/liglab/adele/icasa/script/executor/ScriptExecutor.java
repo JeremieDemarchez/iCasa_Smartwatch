@@ -26,12 +26,9 @@ import java.util.List;
  */
 public interface ScriptExecutor {
 
-	final public int STOPPED = 0;
-	
-	final public int EXECUTING = 1;
-	
-	final public int PAUSED = 2;
-		
+	public enum State {
+		STOPPED, EXECUTING, PAUSED
+	}
 	
 	public List<String> getScriptList();
 	
@@ -45,6 +42,6 @@ public interface ScriptExecutor {
 	
 	public void resume();
 	
-	public int getState();
+	public State getState();
 	
 }

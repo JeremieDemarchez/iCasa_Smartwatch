@@ -123,10 +123,10 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 
 	@Override
-   public int getState() {
+   public State getState() {
 		if (commandExecutor!=null)
 			commandExecutor.getState();
-		return ScriptExecutor.STOPPED;
+		return ScriptExecutor.State.STOPPED;
    }
 	
 	

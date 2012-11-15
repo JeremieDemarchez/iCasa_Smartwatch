@@ -22,6 +22,7 @@ import java.util.List;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
 public class CommandExecutor {
@@ -95,14 +96,14 @@ public class CommandExecutor {
 		this.actionDescriptions = actionDescriptions;
 	}
 	
-   public int getState() {
+   public State getState() {
    	if (executorThread != null)
    		if (executorThread.isAlive())
    			if (!paused)
-   				return ScriptExecutor.EXECUTING;
+   				return ScriptExecutor.State.EXECUTING;
    			else
-   				return ScriptExecutor.PAUSED;
-	   return ScriptExecutor.STOPPED;
+   				return ScriptExecutor.State.PAUSED;
+	   return ScriptExecutor.State.STOPPED;
    }
 	
 	private final class CommandExecutorRunnable implements Runnable {
