@@ -17,8 +17,11 @@ package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
 
 /**
  * 
@@ -29,6 +32,8 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  */
 public class MovePersonCommand extends AbstractCommand {
 
+	private static final Logger logger = LoggerFactory.getLogger(MovePersonCommand.class);
+	
 	/**
 	 * Environment ID used to place a person
 	 */
@@ -41,8 +46,7 @@ public class MovePersonCommand extends AbstractCommand {
 
 	@Override
 	public Object execute() throws Exception {
-		System.out.println("Move Person --> " + person + " Room --> " + location);
-		System.out.println("Thread " + Thread.currentThread().getId());
+		logger.info("Move Person --> " + person + " Room --> " + location);
 		simulationManager.addUser(person);
 		if (person!=null && (!person.isEmpty()))
 			simulationManager.setUserLocation(person, location);

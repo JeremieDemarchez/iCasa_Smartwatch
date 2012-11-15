@@ -32,6 +32,8 @@ public interface ScriptExecutor {
 	
 	public List<String> getScriptList();
 	
+	public String getCurrentScript();
+	
 	public void execute(String scriptName);
 	
 	public void execute(String scriptName, Date startDate, int factor);

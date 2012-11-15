@@ -26,17 +26,32 @@ import fr.liglab.adele.icasa.clock.api.Clock;
  */
 public class SimulatedClockImpl implements Clock {
 
+	/**
+	 * Initial date
+	 */
 	private long initDate;
 
+	/**
+	 * Time elapsed from initial date
+	 */
 	private volatile long elapsedTime;
 
+	/**
+	 * Factor of virtual time
+	 */
 	private int factor;
 
+	/**
+	 * Indicates if the clock has been paused
+	 */
 	private boolean pause = true;
 	
 	private static final int TIME_THREAD_STEEP = 20;
 
-	Thread timeThread;
+	/**
+	 * Thread used to increment the clock
+	 */
+	private Thread timeThread;
 
 	private static final Logger logger = LoggerFactory.getLogger(SimulatedClockImpl.class);
 
@@ -98,27 +113,8 @@ public class SimulatedClockImpl implements Clock {
 	   return elapsedTime;
 	}
 	
-	public void start() {
-		
-		timeThread = new Thread(new Runnable() {
-
-			@Override
-			public void run() {
-				boolean execute = true;
-				while (execute) {					
-					try {						
-						long enterTime = System.currentTimeMillis();						
-						Thread.sleep(TIME_THREAD_STEEP);						
-						if (!pause) {
-							long realElapsedTime = System.currentTimeMillis() - enterTime;
-							elapsedTime += realElapsedTime * factor;
-						}							
-					} catch (InterruptedException e) {
-						execute = false;
-					}
-				}
-			}
-		});
+	public void start() {		
+		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
 		timeThread.start();
 	}
 	
@@ -130,5 +126,30 @@ public class SimulatedClockImpl implements Clock {
 	      e.printStackTrace();
       }
 	}
-
+	
+	/**
+	 * Clock Time mover Thread (Runnable) class
+	 * 
+	 * @author Gabriel
+	 *
+	 */
+	private final class ClockTimeMover implements Runnable {
+		
+		@Override
+		public void run() {
+			boolean execute = true;
+			while (execute) {					
+				try {						
+					long enterTime = System.currentTimeMillis();						
+					Thread.sleep(TIME_THREAD_STEEP);						
+					if (!pause) {
+						long realElapsedTime = System.currentTimeMillis() - enterTime;
+						elapsedTime += realElapsedTime * factor;
+					}							
+				} catch (InterruptedException e) {
+					execute = false;
+				}
+			}
+		}
+	}
 }

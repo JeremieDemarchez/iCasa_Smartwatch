@@ -25,10 +25,9 @@
       <property field="factor" value="360"/>
     </properties>
     <callback transition="validate" method="start"/>
+    <callback transition="invalidate" method="stop"/>
   </component>
 
-  <instance name="simulated-clock" component="SimulatedClock" >
-  	<property name="factor" value="360"/>
-  </instance>
+  <instance name="simulated-clock" component="SimulatedClock" />
   
 </ipojo>
