@@ -384,7 +384,7 @@ public class SimulationManagerImpl implements SimulationManager {
                 Context userContext = userEntry.getValue();
                 Position position = getUserPosition(name);
                 if ((userContext != null) && (position != null)) {
-                    Person person = new PersonImpl(name, position);
+                    Person person = new PersonImpl(name, position, getEnvironmentFromPosition(position));
                     persons.add(person);
                 }
             }

@@ -27,4 +27,6 @@ public interface Person extends LocatedObject {
 
     public void setName(String name);
 
+    public String getLocation();
+
 }

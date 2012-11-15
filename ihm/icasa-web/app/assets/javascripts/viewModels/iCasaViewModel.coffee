@@ -1,5 +1,7 @@
 
-define(['knockout',
+define(['jquery',
+        'jquery.ui',
+        'knockout',
         'knockback',
         'handlebars',
         'dataModels/ICasaDataModel'
@@ -7,8 +9,9 @@ define(['knockout',
         'text!templates/personTable.html',
         'text!templates/roomTable.html',
         'text!templates/zoneTable.html',
-        'text!templates/scriptPlayer.html'],
-  (ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml) ->
+        'text!templates/scriptPlayer.html',
+        'text!templates/tabs.html'],
+  ($, ui, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -18,12 +21,36 @@ define(['knockout',
             # This will be called when the binding is first applied to an element
             idx = 0;
 
-            htmlString = Handlebars.compile(viewModel.tabTemplate);
-            $(element).html(htmlString);
+            template = HandleBars.compile(viewModel.tabTemplate, {});
+            $(element).html(template);
 #            $(element).find(".changeInputToLabelWhenNoClick").addClass("tabCellIsNotEdited").before(
 #                '<label class="changeInputToLabelWhenNoClick tabCellIsNotEdited" data-bind="text: name"></label>').click(() ->
 #              $("this").toggleClass("tabCellIsEdited");
 #            );
+
+            return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called once when the binding is first applied to an element,
+            # and again whenever the associated observable changes value.
+    };
+
+    ko.bindingHandlers.jqueryTabs = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            tabHeadersTemplate = HandleBars.compile(tabsTemplateHtml);
+            htmlString = tabHeadersTemplate();
+            addTabDiv = (tab) ->
+                tabContent = tab.tabTemplate;
+                tabTemplateParams = { tabId: tab.tabHtmlId(), content: tabContent };
+                htmlString = htmlString + '<div id="' + tab.tabHtmlId() + '">' + tabContent + '</div>';
+
+            addTabDiv(tab) for tab in viewModel.tabs();
+
+            $(element).html(htmlString);
+
 
             return { controlsDescendantBindings: false };
 
@@ -120,6 +147,12 @@ define(['knockout',
            @id = model.id;
            @name = ko.observable(model.name);
            @tabTemplate = model.template;
+           @tabHtmlId = ko.computed( () =>
+               return "tab-" + @id;
+           , @);
+           @tabHtmlIdRef = ko.computed( () =>
+               return "#" + @tabHtmlId();
+           , @);
 
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
@@ -195,8 +228,8 @@ define(['knockout',
               DataModel.Collections.fetch();
 
            @removeDevice = (device) =>
-              device.destroy();
-              DataModel.collections.devices.fetch();
+              device.destroy() unless device.isNew()
+              return false;
 
            @showDeviceWindow = (device) =>
               DataModel.collections.devices.fetch();
@@ -212,6 +245,9 @@ define(['knockout',
            @removePerson = (person) =>
               @persons.remove(person);
               @persons.fetch();
+
+           @showPersonWindow = (person) =>
+              DataModel.collections.persons.fetch();
 
            @newZoneName = ko.observable("");
 
@@ -233,7 +269,7 @@ define(['knockout',
               @zones.remove(zone);
               @zones.fetch();
 
-           @selectedScript = ko.observable("");
+           @selectedScript = ko.observable();
 
            @selectedScriptState = ko.computed( () =>
               if (@selectedScript())
@@ -251,15 +287,15 @@ define(['knockout',
 
            @startScript = () =>
               @selectedScript().state('started');
-              @selectedScript().save();
+              @selectedScript().model().save();
 
            @stopScript = () =>
               @selectedScript().state('stopped');
-              @selectedScript().save();
+              @selectedScript().model().save();
 
            @pauseScript = () =>
               @selectedScript().state('paused');
-              @selectedScript().save();
+              @selectedScript().model().save();
 
     return ICasaViewModel;
 );

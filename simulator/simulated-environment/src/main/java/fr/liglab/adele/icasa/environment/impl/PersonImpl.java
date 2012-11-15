@@ -28,15 +28,22 @@ public class PersonImpl implements Person {
 
     private String _name;
     private Position _position;
+    private String _location;
 
-    public PersonImpl(String name, Position position) {
+    public PersonImpl(String name, Position position, String location) {
         _name = name;
         _position = position.clone();
+        _location = location;
     }
 
     @Override
     public String getName() {
         return _name;
+    }
+
+    @Override
+    public String getLocation() {
+        return _location;
     }
 
     @Override

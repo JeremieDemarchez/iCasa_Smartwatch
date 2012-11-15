@@ -93,12 +93,6 @@ require([
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
         ko.applyBindings(new ICasaViewModel( { id: "PaulHouse" } ));
-
-
-
-        $( "#accordion" ).accordion({
-            heightStyle: "fill"
-        });
         $("#map").resizable({
             animate: true,
             aspectRatio : true,
@@ -123,5 +117,7 @@ require([
             scroll: true
         });
         $(".slider" ).slider();
-
+        $( "#tabs" ).tabs({
+           heightStyle: "fill"
+        });
 );

@@ -97,6 +97,7 @@ public class PersonREST {
             personJSON.putOnce("name", person.getName());
             personJSON.put("positionX", person.getPosition().x);
             personJSON.put("positionY", person.getPosition().y);
+            personJSON.putOnce("location", person.getLocation());
         } catch (JSONException e) {
             e.printStackTrace();
             personJSON = null;
@@ -123,7 +124,7 @@ public class PersonREST {
     @GET
     @Produces("application/json")
     @Path(value="/person/{personId}")
-    public Response device(@PathParam("personId") String deviceId) {
+    public Response person(@PathParam("personId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
             return makeCORS(Response.ok(getPersons()));
         }
@@ -162,7 +163,7 @@ public class PersonREST {
     @POST
     @Produces("application/json")
     @Path(value="/person/{personId}")
-    public Response createDevice(@PathParam("personId") String personId, @FormParam("name") String name,
+    public Response createPerson(@PathParam("personId") String personId, @FormParam("name") String name,
                                  @FormParam("positionX") Integer positionX, @FormParam("positionY") Integer positionY) {
 
         Person newPerson = null;
@@ -188,7 +189,7 @@ public class PersonREST {
     @DELETE
     @Produces("application/json")
     @Path(value="/person/{personId}")
-    public Response deleteDevice(@PathParam("personId") String personId) {
+    public Response deletePerson(@PathParam("personId") String personId) {
 
         Person foundPerson = findPerson(personId);
         if (foundPerson == null)

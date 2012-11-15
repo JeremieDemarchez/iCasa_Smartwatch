@@ -21,14 +21,19 @@
 
     <thead>
         <tr>
+            <th></th>
             <th>Name</th>
+            <th>Location</th>
+            <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody data-bind="foreach: $root.persons()">
         <tr>
+            <td><img class="personIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td><input type="text" data-bind="value: name"/></td>
-            <td><input type="option" data-bind="value: location"/></td>
+            <td data-bind="text: location"></td>
+            <td><button data-bind="click: $root.showPersonWindow">...</button></td>
             <td><a href="#" data-bind="click: $root.removePerson">Remove</a></td>
         </tr>
     </tbody>
