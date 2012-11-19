@@ -1,6 +1,7 @@
 
 define(['jquery',
         'jquery.ui',
+        'backbone',
         'knockout',
         'knockback',
         'handlebars',
@@ -11,7 +12,7 @@ define(['jquery',
         'text!templates/zoneTable.html',
         'text!templates/scriptPlayer.html',
         'text!templates/tabs.html'],
-  ($, ui, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -79,6 +80,38 @@ define(['jquery',
            @name = kb.defaultObservable(@_name, 'Undefined');
            @state = kb.defaultObservable(@_state, 'undefined');
 
+    class DecoratorViewModel extends kb.ViewModel
+        constructor: (model) ->
+           super(model, {internals: ['id', 'name', 'show', 'imgSrc', 'positionX', 'positionY', 'width', 'height', 'styleLeft', 'styleTop']})
+           @id = kb.defaultObservable(@_id, model.name);
+           @name = kb.defaultObservable(@_name, 'state');
+           @show = kb.defaultObservable(@_show, false);
+           @imgSrc = kb.defaultObservable(@_imgSrc, '/assets/images/devices/decorators/play.png');
+           @positionX = kb.defaultObservable(@_positionX, 16);
+           @positionY = kb.defaultObservable(@_positionY, 16);
+           @styleLeft = ko.computed({
+              read: () =>
+                  return @positionX() + "px";
+              write: (value) =>
+                  value = parseInt(value.replace(/px/, ""));
+                  if (!isNaN(value))
+                    @positionX(value);
+              owner: @
+           }
+           , @)
+           @styleTop = ko.computed({
+              read: () =>
+                  return @positionY() + "px";
+              write: (value) =>
+                  value = parseInt(value.replace(/px/, ""));
+                  if (!isNaN(value))
+                    @positionY(value);
+              owner: @
+           }
+           , @)
+           @width = kb.defaultObservable(@_width, '15px');
+           @height = kb.defaultObservable(@_height, '15px');
+
     class DeviceTypeViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name']})
@@ -87,17 +120,33 @@ define(['jquery',
 
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault']})
            @id = kb.defaultObservable(@_id, 'Undefined');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
-           @positionX = kb.defaultObservable(@_positionX, 'Undefined');
-           @positionY = kb.defaultObservable(@_positionY, 'Undefined');
-           @styleLeft = ko.computed( () =>
-              return @positionX() + "px";
+           @state = kb.defaultObservable(@_state, 'activated');
+           @fault = kb.defaultObservable(@_fault, 'no');
+           @positionX = kb.defaultObservable(@_positionX, 0);
+           @positionY = kb.defaultObservable(@_positionY, 0);
+           @styleLeft = ko.computed({
+              read: () =>
+                  return @positionX() + "px";
+              write: (value) =>
+                  value = parseInt(value.replace(/px/, ""));
+                  if (!isNaN(value))
+                    @positionX(value);
+              owner: @
+           }
            , @)
-           @styleTop = ko.computed( () =>
-              return @positionY() + "px";
+           @styleTop = ko.computed({
+              read: () =>
+                return @positionY() + "px";
+              write: (value) =>
+                value = parseInt(value.replace(/px/, ""));
+                if (!isNaN(value))
+                  @positionY(value);
+              owner: @
+           }
            , @)
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
@@ -125,6 +174,44 @@ define(['jquery',
 
               return "/assets/images/devices/" + imgName + ".png";
            , @);
+           @decorators = ko.observableArray([
+                new DecoratorViewModel new Backbone.Model {
+                    name: "event",
+                    imgSrc: '/assets/images/devices/decorators/event.png',
+                    show: false}
+                new DecoratorViewModel new Backbone.Model {
+                    name: "deactivated",
+                    imgSrc: '/assets/images/devices/decorators/stop.png',
+                    show: false},
+                new DecoratorViewModel new Backbone.Model {
+                    name: "fault",
+                    imgSrc: '/assets/images/devices/decorators/warning.png',
+                    show: false},
+                new DecoratorViewModel new Backbone.Model {
+                    name: "activated",
+                    imgSrc: '/assets/images/devices/decorators/play.png',
+                    show: true}
+           ]);
+           @updateWidget= (newValue) =>
+                activatedState = false;
+                if ("activated" == @state())
+                    activatedState = true;
+                faultState = false;
+                if ("yes" == @fault())
+                    faultState = true;
+
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    if (decorator.name() == "activated")
+                        decorator.show(activatedState && !faultState);
+                    if (decorator.name() == "fault")
+                        decorator.show(activatedState && faultState);
+                    if (decorator.name() == "deactivated")
+                        decorator.show(!activatedState);
+                );
+           # init
+           @state.subscribe(@updateWidget);
+           @fault.subscribe(@updateWidget);
+           @updateWidget();
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -134,13 +221,28 @@ define(['jquery',
            @location = kb.defaultObservable(@_location, 'Undefined');
            @positionX = kb.defaultObservable(@_positionX, 'Undefined');
            @positionY = kb.defaultObservable(@_positionY, 'Undefined');
-           @styleLeft = ko.computed( () =>
-               return @positionX() + "px";
+           @styleLeft = ko.computed({
+              read: () =>
+                return @positionX() + "px";
+              write: (value) =>
+                value = parseInt(value.replace(/px/, ""));
+                if (!isNaN(value))
+                  @positionX(value);
+              owner: @
+           }
            , @)
-           @styleTop = ko.computed( () =>
-               return @positionY() + "px";
+           @styleTop = ko.computed({
+              read: () =>
+                return @positionY() + "px";
+              write: (value) =>
+                value = parseInt(value.replace(/px/, ""));
+                if (!isNaN(value))
+                  @positionY(value);
+              owner: @
+           }
            , @)
            @imgSrc = "/assets/images/users/user2.png";
+           @decorators = ko.observableArray([  ]);
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -213,6 +315,12 @@ define(['jquery',
 #              height: $("mapImg").height()
 #              width: $("mapImg").width()
 #           });
+
+           @deviceActivationStates = ko.observableArray([
+              'activated',
+              'deactivated',
+              'unknown'
+           ]);
 
            @deviceFaults = ko.observableArray([
               'yes',

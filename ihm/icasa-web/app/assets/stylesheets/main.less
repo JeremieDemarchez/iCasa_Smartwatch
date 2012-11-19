@@ -84,7 +84,7 @@ header h1
 /* main part of ui */
 body section
 {
-    width: 95%;
+    width: 100%;
 
     article, aside {
         display: inline-block;
@@ -113,6 +113,29 @@ body section
                         width: 32px;
                         height: 32px;
                         position: absolute;
+
+                        .deviceWidgetContainer {
+                            position: relative;
+                            top:0px;
+                            left:0px;
+
+                            .deviceWidgetIcon {
+                                position: absolute;
+                                width: 100%;
+                            }
+
+                            .deviceWidgetDecorators {
+                                position: absolute;
+                                top:0px;
+                                left:0px;
+                                width: 32px;
+                                height: 32px;
+
+                                .deviceWidgetDecorator {
+                                    position: absolute;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -126,6 +149,28 @@ body section
                     .userWidget {
                         width: 50px;
                         position: absolute;
+
+                        .userWidgetContainer {
+                            position: relative;
+                            top:0px;
+                            left:0px;
+
+                            .userWidgetIcon {
+                                position: absolute;
+                                width: 100%;
+                            }
+
+                            .userWidgetDecorators {
+                                position: absolute;
+                                top:0px;
+                                left:0px;
+                                width: 50px;
+
+                                .userWidgetDecorator {
+                                    position: absolute;
+                                }
+                            }
+                        }
                     }
                 }
             }

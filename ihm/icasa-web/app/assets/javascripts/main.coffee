@@ -110,10 +110,10 @@ require([
             ghost: true,
             handles: "e, s, se, sw"
         });
-        $(".deviceWidget").draggable( {
+        $(".userWidget").draggable( {
             scroll: true
         });
-        $(".userWidget").draggable( {
+        $(".deviceWidget").draggable( {
             scroll: true
         });
         $(".slider" ).slider();
