@@ -16,7 +16,6 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintStream;
 
 import org.json.JSONObject;

@@ -21,7 +21,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.script.executor.impl.ScriptExecutorImpl;
 
 /**
  * 
