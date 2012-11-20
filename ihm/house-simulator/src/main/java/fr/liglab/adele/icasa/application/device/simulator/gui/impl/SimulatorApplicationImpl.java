@@ -550,6 +550,8 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	 */
 	public void executeScript(String scriptName) {
 		m_ScriptExecutor.execute(scriptName);
+		// Temporal code until new GUI
+		((SimulatorActionPane)m_actionPane).initializeEnvironments();
 	}
 
 	/**

@@ -55,4 +55,10 @@ public class PersonImpl implements Person {
     public Position getPosition() {
         return _position.clone();
     }
+
+	@Override
+   public void setPosition(Position position) {
+	   _position = position;	   
+   }
+	
 }

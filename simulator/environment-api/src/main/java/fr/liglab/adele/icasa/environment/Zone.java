@@ -15,14 +15,104 @@
  */
 package fr.liglab.adele.icasa.environment;
 
+import java.util.List;
+import java.util.Set;
+
 public interface Zone {
 
-	public Position getPosition();
+	/**
+	 * Gets the (x,y) point in the left-top corner of the zone. This point is
+	 * relative to its parent zone
+	 * 
+	 * @return
+	 */
+	public Position getLeftTopPosition();
 	
-	public int getWidht();
+	public void setLeftTopPosition(Position leftTopPosition);
+
+	/**
+	 * Gets the absolute (x,y) point in the left-top corner of the zone
+	 * 
+	 * @return
+	 */
+	public Position getAbsoluteLeftTopPosition();
+
+	/**
+	 * Gets the zone width
+	 * 
+	 * @return
+	 */
+	public int getWidth();
 	
+	public void setWidth(int width);
+
+	/**
+	 * Gets the zone height
+	 * @return
+	 */
 	public int getHeight();
 	
+	public void setHeight(int height);
+
+	/**
+	 * Determines if a object its geographically contained into the zone
+	 * @param object
+	 * @return
+	 */
 	public boolean contains(LocatedObject object);
+
+	/**
+	 * Adds a child zone to this zone. The child zone must fit this zone.
+	 * @param child
+	 * @return
+	 */
+	public boolean addZone(Zone child);
+
+	/**
+	 * Determines if a Zone fits (don't exceed limits) of this zone/
+	 * @param aZone
+	 * @return
+	 */
+	public boolean fits(Zone aZone);
+
+	/**
+	 * Determines the deepth of this zone
+	 * @return
+	 */
+	public int getLayer();
+
+	/**
+	 * Gets the list of children zones
+	 * @return
+	 */
+	public List<Zone> getChildren();
+
+	/**
+	 * Sets the parent Zone
+	 * @param parent
+	 */
+	public void setParent(Zone parent);
+
+	/**
+	 * Gets the parent Zone
+	 * @return
+	 */
+	public Zone getParent();
 	
+	public void addListener(ZoneListener listener);
+	
+	public void removeListener(ZoneListener listener);
+		
+	public void setUseParentVariables(boolean useParentVariables);
+	
+	public boolean getUseParentVariables();
+	
+	public double getVariableValue(String name);
+	
+	public void setVariableValue(String name, double newValue);
+	
+	public void addVariable(String name);
+	
+	public Set<String> getVariableList();
+
 }

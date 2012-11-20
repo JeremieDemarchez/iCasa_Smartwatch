@@ -16,116 +16,78 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import fr.liglab.adele.icasa.environment.LocatedObject;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.ZoneListener;
 
 public class ZoneImpl implements Zone {
 
-
 	private int height;
-	private int width;
-	
-	private ZoneImpl parent;
-	private Position position;
-
+	private int width;	
+	private Zone parent;
+	private Position leftTopposition;
 	private List<Zone> children = new ArrayList<Zone>();
+	private List<ZoneListener> listeners = new ArrayList<ZoneListener>();
+	private Map<String, Double> variables = new HashMap<String, Double>();
+	private boolean useParentVariable = false;
 
 	public ZoneImpl(int x, int y, int width, int height) {
 		this(new Position(x, y), width, height);
 	}
 	
-	public ZoneImpl(Position position, int width, int height) {
-		this.position = position;
+	public ZoneImpl(Position leftTopPosition, int width, int height) {
+		this.leftTopposition = leftTopPosition.clone();
 		this.height = height;
-		this.width = width;
-		this.parent = null;		
+		this.width = width;		
 	}
 
-	public boolean addZone(ZoneImpl childZone) {
-		if (fits(childZone)) {
-			children.add(childZone);
-			childZone.parent = this;
-			return true;
-		}
-		return false;
-	}
-
-	private boolean fits(ZoneImpl childZone) {
-		if (childZone.getPosition().x + childZone.width > width)
+	@Override
+	public boolean fits(Zone aZone) {
+		if (aZone.getLeftTopPosition().x + aZone.getWidth() > width)
 			return false;
-		if (childZone.getPosition().y + childZone.height > height)
+		if (aZone.getLeftTopPosition().y + aZone.getHeight() > height)
 			return false;
 		return true;
 	}
 
-	/**
-	 * @return the height
-	 */
-	public int getHeight() {
-		return height;
-	}
 
-
-	/**
-	 * @return the width
-	 */
-	public int getWidth() {
-		return width;
-	}
-
-
-	/**
-	 * @return the parent
-	 */
+	@Override
 	public Zone getParent() {
 		return parent;
 	}
 
-	/**
-    * @return the children
-    */
+	@Override
    public List<Zone> getChildren() {
    	return children;
    }
 	
-
-	
+	@Override
 	public int getLayer() {
 		if (parent==null)
 			return 0;
 		return parent.getLayer() + 1;
 	}
 
-	public Position getAbsolutePosition() {
-		if (parent==null) 
-			return position;
-		return new Position(getAbsoluteX(), getAbsoluteY());
-	}
-
-	private int getAbsoluteX() {
-		if (parent==null)
-			return position.x;
-		return parent.getAbsoluteX() + position.x;
-	}
-	
-	private int getAbsoluteY() {
-		if (parent==null)
-			return position.y;
-		return parent.getAbsoluteY() + position.y;
-	}
-	
 	@Override
-   public Position getPosition() {
-	   return position.clone();	   
+   public Position getLeftTopPosition() {
+	   return leftTopposition.clone();	   
    }
 
 	@Override
-   public int getWidht() {
+   public int getWidth() {
 	   return width;
    }
+	
+	@Override
+	public int getHeight() {
+		return height;
+	}
 
 	@Override
    public boolean contains(LocatedObject object) {
@@ -133,10 +95,140 @@ public class ZoneImpl implements Zone {
       if (objectPosition == null)
       return false;
       
-     Position absolutePosition = getAbsolutePosition();
+     Position absolutePosition = getAbsoluteLeftTopPosition();
           
      return objectPosition.x >= absolutePosition.x && objectPosition.x <= absolutePosition.x + width
-             && objectPosition.y >= absolutePosition.y && position.y <= absolutePosition.y + height;
+             && objectPosition.y >= absolutePosition.y && leftTopposition.y <= absolutePosition.y + height;
    }
 
+	@Override
+   public boolean addZone(Zone child) {
+		if (fits(child)) {
+			children.add(child);
+			child.setParent(this);
+			return true;
+		}
+		return false;
+   }
+
+	@Override
+	public Position getAbsoluteLeftTopPosition() {
+		Zone parentZone = getParent();
+		int absoluteX = leftTopposition.x;
+		int absoluteY = leftTopposition.y;
+		while (parentZone!=null) {
+			absoluteX += parentZone.getLeftTopPosition().x;
+			absoluteY += parentZone.getLeftTopPosition().y;
+			parentZone = parentZone.getParent();
+		}
+		return new Position(absoluteX, absoluteY);
+	}
+	
+	@Override
+   public void setParent(Zone parent) {
+	   this.parent = parent;
+	   
+	   // Listeners notification 
+	   for (ZoneListener listener : listeners) {
+	      listener.parentModified(this);
+      }
+   }
+
+	@Override
+   public void addListener(ZoneListener listener) {
+		listeners.add(listener);
+   }
+
+	@Override
+   public void removeListener(ZoneListener listener) {
+		listeners.remove(listener);	   
+   }
+
+	@Override
+   public double getVariableValue(String name) {
+		if (useParentVariable)
+			if (parent!=null)
+				return parent.getVariableValue(name);
+			else 
+				throw new NullPointerException("Variable " + name + " does not exist");
+			
+	   Double value = variables.get(name);
+	   if (value==null)
+	   	throw new NullPointerException("Variable " + name + " does not exist");
+	   return value;
+   }
+
+	@Override
+   public void setVariableValue(String name, double newValue) {
+		if (useParentVariable)
+			return;
+		
+	   if (!variables.containsKey(name))
+	   	throw new NullPointerException("Variable " + name + " does not exist");
+	   
+	   double oldValue = variables.get(name); 
+	   variables.put(name, newValue);
+	   
+	   // Listeners notification 
+	   for (ZoneListener listener : listeners) {
+	      listener.variableModified(this, name, oldValue, newValue);
+      }
+   }
+
+	@Override
+   public void addVariable(String name) {
+		if (useParentVariable)
+			return;
+	   if (variables.containsKey(name))
+	   	return;
+	   variables.put(name, 0.0);
+   }
+
+	@Override
+   public Set<String> getVariableList() {
+		if (useParentVariable)
+			if (parent!=null)
+				return parent.getVariableList();
+			else
+				return null;
+	   return variables.keySet();
+   }
+
+	@Override
+   public void setUseParentVariables(boolean useParentVariables) {
+		this.useParentVariable = useParentVariables;
+	}
+
+	@Override
+   public boolean getUseParentVariables() {
+	   return useParentVariable;
+   }
+
+	@Override
+   public void setLeftTopPosition(Position leftTopPosition) {
+		this.leftTopposition = leftTopPosition;
+		// Listeners notification 
+	   for (ZoneListener listener : listeners) {
+	      listener.moved(this);
+      }
+   }
+
+	@Override
+   public void setWidth(int width) {
+		this.width = width;
+	   // Listeners notification 
+	   for (ZoneListener listener : listeners) {
+	      listener.resized(this);
+      }
+   }
+
+	@Override
+   public void setHeight(int height) {
+		this.height = height;
+		// Listeners notification 
+	   for (ZoneListener listener : listeners) {
+	      listener.resized(this);
+      }
+   }
+		
 }
