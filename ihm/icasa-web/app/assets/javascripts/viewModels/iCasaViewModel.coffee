@@ -336,8 +336,7 @@ define(['jquery',
               DataModel.Collections.fetch();
 
            @removeDevice = (device) =>
-              device.destroy() unless device.isNew()
-              return false;
+              device.model().destroy();
 
            @showDeviceWindow = (device) =>
               DataModel.collections.devices.fetch();

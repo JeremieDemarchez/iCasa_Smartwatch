@@ -15,14 +15,13 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
 
   request.onOpen = (response) ->
     transport = response.transport
-    console.log "Connection opened"
+    console.log("Connection opened using " + transport)
 
   request.onReconnect = (request, response) ->
     socket.info "Reconnecting"
 
   request.onMessage = (response) ->
-    json = undefined
-    message = undefined
+    json = "undefined"
     message = response.responseBody
     try
       json = $.parseJSON(message)
@@ -38,4 +37,3 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     console.log "Connection error"
 
   subSocket = socket.subscribe(request)
-  subSocket

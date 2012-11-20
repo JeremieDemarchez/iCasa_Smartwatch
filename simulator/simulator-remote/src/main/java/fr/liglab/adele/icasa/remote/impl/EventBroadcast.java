@@ -15,13 +15,16 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
+import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
 import org.atmosphere.cpr.Broadcaster;
 import org.atmosphere.handler.OnMessage;
 import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
-import org.atmosphere.interceptor.BroadcastOnPostAtmosphereInterceptor;
 import org.barjo.atmosgi.AtmosphereService;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -33,6 +36,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.UUID;
 
 @Component(name = "iCasa-event-broadcast")
 @Instantiate(name = "iCasa-event-broadcast-1")
@@ -41,38 +45,42 @@ public class EventBroadcast extends OnMessage<String> {
     @Property(name = "mapping", value = "/event")
     private String mapping;
 
-    private final List<AtmosphereInterceptor> interceptors = new ArrayList<AtmosphereInterceptor>();
+    private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
 
     @Requires
-    private AtmosphereService atmoservice;
+    private AtmosphereService _atmoService;
 
     @Requires
-    private HttpService http;
+    private HttpService _httpService;
 
-    private Broadcaster broadcaster;
+    @Requires
+    private SimulationManager _simulMgr;
 
-    private MyEventListener listener;
+    private Broadcaster _eventBroadcaster;
 
-    private final BundleContext context;
+    private ICasaEventListener _iCasaListener;
 
-    public EventBroadcast(BundleContext pContext) {
-        context = pContext;
+    private final BundleContext _context;
+
+    public EventBroadcast(BundleContext context) {
+        _context = context;
     }
 
     @Validate
     private void start() {
-        listener = new MyEventListener();
-        context.addBundleListener(listener);
+        _iCasaListener = new ICasaEventListener();
+        _simulMgr.addUserPositionListener(_iCasaListener);
+        _simulMgr.addDevicePositionListener(_iCasaListener);
 
-        broadcaster = atmoservice.getBroadcasterFactory().get();
+        _eventBroadcaster = _atmoService.getBroadcasterFactory().get();
 
         //Register the server (itself)
-        interceptors.add(new AtmosphereResourceLifecycleInterceptor());
-        atmoservice.addAtmosphereHandler(mapping, this,broadcaster, interceptors);
+        _interceptors.add(new AtmosphereResourceLifecycleInterceptor());
+        _atmoService.addAtmosphereHandler(mapping, this, _eventBroadcaster, _interceptors);
 
         //Register the web client
         try {
-            http.registerResources("/event","/web",null);
+            _httpService.registerResources("/event", "/web", null);
         } catch (NamespaceException e) {
             e.printStackTrace();
         }
@@ -80,11 +88,16 @@ public class EventBroadcast extends OnMessage<String> {
 
     @Invalidate
     private void stop() {
-        context.removeBundleListener(listener);
-        atmoservice.removeAtmosphereHandler(mapping);
-        interceptors.clear();
+        if (_iCasaListener != null) {
+            _simulMgr.removeUserPositionListener(_iCasaListener);
+            _simulMgr.removeDevicePositionListener(_iCasaListener);
+            _iCasaListener = null;
+        }
 
-        http.unregister("/event");
+        _atmoService.removeAtmosphereHandler(mapping);
+        _interceptors.clear();
+
+        _httpService.unregister("/event");
     }
 
     @Override
@@ -92,19 +105,71 @@ public class EventBroadcast extends OnMessage<String> {
         atmosphereResponse.getWriter().write(s);
     }
 
-    private class MyEventListener implements BundleListener {
+    private class ICasaEventListener implements DevicePositionListener, UserPositionListener {
 
-        public void bundleChanged(BundleEvent bundleEvent) {
+        private UUID _lastEventId = UUID.randomUUID();
+
+        private String generateUUID() {
+            _lastEventId = UUID.randomUUID();
+            return _lastEventId.toString();
+        }
+
+        @Override
+        public void devicePositionChanged(String deviceSerialNumber, Position position) {
             JSONObject json = new JSONObject();
             try {
-                json.put("type",bundleEvent.getType());
-                json.put("id",bundleEvent.getBundle().getBundleId());
-                json.put("name",bundleEvent.getBundle().getSymbolicName());
+                json.put("event-type", "device-position-update");
+                json.put("id", generateUUID());
+                json.put("device-id", deviceSerialNumber);
                 json.put("time", new Date().getTime());
-                broadcaster.broadcast(json.toString());
+                _eventBroadcaster.broadcast(json.toString());
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void userPositionChanged(String userName, Position position) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("event-type", "user-position-update");
+                json.put("id", generateUUID());
+                json.put("user-id", userName);
+                json.put("time", new Date().getTime());
+                _eventBroadcaster.broadcast(json.toString());
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void userAdded(String userName) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("event-type", "user-added");
+                json.put("id", generateUUID());
+                json.put("user-id", userName);
+                json.put("time", new Date().getTime());
+                _eventBroadcaster.broadcast(json.toString());
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void userRemoved(String userName) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("event-type", "user-removed");
+                json.put("id", generateUUID());
+                json.put("user-id", userName);
+                json.put("time", new Date().getTime());
+                _eventBroadcaster.broadcast(json.toString());
             } catch (JSONException e){
                 e.printStackTrace();
             }
         }
     }
+
+
 }
