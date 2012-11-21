@@ -46,4 +46,6 @@ public interface ScriptExecutor {
 	
 	public State getState();
 	
+	public double getExecutedPercentage();
+	
 }

@@ -73,7 +73,8 @@
         <configuration>
           <instructions>
             <Private-Package>fr.liglab.adele.icasa.script.executor.impl,
-              fr.liglab.adele.icasa.script.executor.impl.actions,fr.liglab.adele.icasa.script.executor.impl.commands</Private-Package>
+              fr.liglab.adele.icasa.script.executor.impl.actions,fr.liglab.adele.icasa.script.executor.impl.commands,
+              fr.liglab.adele.icasa.script.executor.impl.commands.other</Private-Package>
           </instructions>
         </configuration>
       </plugin>

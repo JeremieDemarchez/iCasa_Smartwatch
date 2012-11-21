@@ -73,6 +73,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	 */
 	private boolean paused = false;
 
+	private double executedPercentage;
 	
 	private String currentScript;
 
@@ -243,6 +244,10 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 
+	@Override
+   public double getExecutedPercentage() {
+      return executedPercentage;
+   }
 
 	/**
 	 * Command executor Thread (Runnable) class
@@ -263,6 +268,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		public void run() {
 			int index = 0;
 			boolean execute = true;
+			executedPercentage = 0;
 			while (execute) {
 				long elapsedTime = clock.getElapsedTime();
 
@@ -271,9 +277,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 				if (index >= actionDescriptions.size())
 					execute = false;
-
+				
+				
 				executeActions(toExecute);
 
+				// Computes the execution percentage
+				executedPercentage = index / actionDescriptions.size();
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {
@@ -323,6 +332,10 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			return format.format(new Date(timeInMs));
 		}
 	}
+
+
+
+
 
 
 

@@ -17,6 +17,6 @@ package fr.liglab.adele.icasa.environment;
 
 public interface Device extends LocatedObject {
 
-	
+	public String getSerialNumber();
 	
 }

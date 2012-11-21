@@ -230,5 +230,10 @@ public class ZoneImpl implements Zone {
 	      listener.resized(this);
       }
    }
+	
+	@Override
+	public String toString() {
+	   return "X: " + leftTopposition.x + " Y: " + leftTopposition.y + " Width: " + width + " Height: " + height;
+	}
 		
 }
