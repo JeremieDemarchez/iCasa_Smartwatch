@@ -26,7 +26,7 @@ import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-
+import java.util.Date;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
@@ -44,12 +44,26 @@ public class ScriptPlayerREST {
 
         private String _stateStr;
 
-        ScriptState(String stateStr) {
+        private ScriptState(String stateStr) {
             _stateStr = stateStr;
         }
 
         public String toString() {
             return _stateStr;
+        }
+
+        public static ScriptState fromString(String stateStr) {
+            if (stateStr == null)
+                return null;
+
+            if (STARTED.toString().equals(stateStr))
+                return STARTED;
+            if (STOPPED.toString().equals(stateStr))
+                return STOPPED;
+            if (PAUSED.toString().equals(stateStr))
+                return PAUSED;
+
+            return null;
         }
     }
 
@@ -105,6 +119,7 @@ public class ScriptPlayerREST {
             scriptJSON.putOnce("id", scriptName);
             scriptJSON.putOnce("name", scriptName);
             scriptJSON.putOnce("state", scriptStateJSON.toString());
+            scriptJSON.putOnce("completePercent", _scriptExecutor.getExecutedPercentage());
         } catch (JSONException e) {
             e.printStackTrace();
             scriptJSON = null;
@@ -157,17 +172,21 @@ public class ScriptPlayerREST {
         }
     }
 
-    /**
-     * Retrieve a script.
-     *
-     * @param scriptId The ID of the script to retrieve
-     * @return The required device,
-     * return <code>null<code> if the script does not exist.
-     */
+    @OPTIONS
+    @Produces("application/json")
+    @Path(value="/script/{scriptId}")
+    public Response updatesScriptOptions(@PathParam("scriptId") String scriptId) {
+        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+    }
+
     @PUT
     @Produces("application/json")
     @Path(value="/script/{scriptId}")
-    public Response updatesScript(@PathParam("scriptId") String scriptId, @FormParam("state") String state) {
+    public Response updatesScriptPut(@PathParam("scriptId") String scriptId, @FormParam("state") String state) {
+        return updatesScript(scriptId, state, null, null);
+    }
+
+    public Response updatesScript(String scriptId, String state, Date startDate, Integer factor) {
         if (scriptId == null || scriptId.length()<1){
             return makeCORS(Response.status(404));
         }
@@ -186,17 +205,22 @@ public class ScriptPlayerREST {
 
             boolean isStarted = State.EXECUTING.equals(scriptState);
             boolean isStopped = State.STOPPED.equals(scriptState);
-            boolean isPaused = State.STOPPED.equals(scriptState);
+            boolean isPaused = State.PAUSED.equals(scriptState);
 
-            if (ScriptState.STARTED.equals(state)) {
-               if (isStopped)
-                   _scriptExecutor.execute(scriptId); //TODO manage factor and start timestamp
+            ScriptState newScriptState = ScriptState.fromString(state);
+            if (ScriptState.STARTED.equals(newScriptState)) {
+               if (isStopped) {
+                   if ((factor == null) && (startDate == null))
+                       _scriptExecutor.execute(scriptId);
+                   else
+                       _scriptExecutor.execute(scriptId, startDate, factor);
+               }
                else if (isPaused)
                    _scriptExecutor.resume();
-            } else if (ScriptState.PAUSED.equals(state)) {
+            } else if (ScriptState.PAUSED.equals(newScriptState)) {
                 if (isStarted)
                     _scriptExecutor.pause();
-            } else if (ScriptState.STOPPED.equals(state)) {
+            } else if (ScriptState.STOPPED.equals(newScriptState)) {
                 if (isStarted || isPaused)
                     _scriptExecutor.stop();
             }

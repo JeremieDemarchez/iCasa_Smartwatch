@@ -30,6 +30,8 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       console.log "This doesn't look like a valid JSON: ", message.data
       return
     console.log "Received message :", json
+    if ((json.eventType == "device-type-added") || (json.eventType == "device-type-removed"))
+      DataModel.collections.deviceTypes.fetch();
     if (json.eventType == "device-position-update")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))

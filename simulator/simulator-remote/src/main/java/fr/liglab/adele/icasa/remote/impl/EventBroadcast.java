@@ -19,6 +19,7 @@ import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
+import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
@@ -105,24 +106,32 @@ public class EventBroadcast extends OnMessage<String> {
         atmosphereResponse.getWriter().write(s);
     }
 
-    private class ICasaEventListener implements DevicePositionListener, UserPositionListener {
+    private UUID _lastEventId = UUID.randomUUID();
 
-        private UUID _lastEventId = UUID.randomUUID();
+    private String generateUUID() {
+        _lastEventId = UUID.randomUUID();
+        return _lastEventId.toString();
+    }
 
-        private String generateUUID() {
-            _lastEventId = UUID.randomUUID();
-            return _lastEventId.toString();
+    private void sendEvent(JSONObject event) {
+        try {
+            event.put("id", generateUUID());
+            event.put("time", new Date().getTime());
+            _eventBroadcaster.broadcast(event.toString());
+        } catch (JSONException e){
+            e.printStackTrace();
         }
+    }
+
+    private class ICasaEventListener implements DevicePositionListener, UserPositionListener {
 
         @Override
         public void devicePositionChanged(String deviceSerialNumber, Position position) {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "device-position-update");
-                json.put("id", generateUUID());
                 json.put("deviceId", deviceSerialNumber);
-                json.put("time", new Date().getTime());
-                _eventBroadcaster.broadcast(json.toString());
+                sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -133,10 +142,8 @@ public class EventBroadcast extends OnMessage<String> {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "user-position-update");
-                json.put("id", generateUUID());
                 json.put("userId", userName);
-                json.put("time", new Date().getTime());
-                _eventBroadcaster.broadcast(json.toString());
+                sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -147,10 +154,8 @@ public class EventBroadcast extends OnMessage<String> {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "user-added");
-                json.put("id", generateUUID());
                 json.put("userId", userName);
-                json.put("time", new Date().getTime());
-                _eventBroadcaster.broadcast(json.toString());
+                sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -161,15 +166,35 @@ public class EventBroadcast extends OnMessage<String> {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "user-removed");
-                json.put("id", generateUUID());
                 json.put("userId", userName);
-                json.put("time", new Date().getTime());
-                _eventBroadcaster.broadcast(json.toString());
+                sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();
             }
         }
     }
 
-
+//    @Bind(id="deviceTypeFactories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
+//    public void bindDeviceFactory(final Factory factory) {
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put("eventType", "device-type-added");
+//            json.put("deviceTypeId", factory.getName());
+//            sendEvent(json);
+//        } catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//    }
+//
+//    @Unbind(id="deviceTypeFactories")
+//    public void unbindDeviceFactory(final Factory factory) {
+//        JSONObject json = new JSONObject();
+//        try {
+//            json.put("eventType", "device-type-removed");
+//            json.put("deviceTypeId", factory.getName());
+//            sendEvent(json);
+//        } catch (JSONException e){
+//            e.printStackTrace();
+//        }
+//    }
 }
