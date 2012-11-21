@@ -1,5 +1,6 @@
-# Eclipse files
+# Eclipse and IntelliJ files
 
+.idea
 *.iml
 .project
 .settings
