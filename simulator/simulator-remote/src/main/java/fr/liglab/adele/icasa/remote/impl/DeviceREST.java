@@ -63,7 +63,8 @@ public class DeviceREST {
     private Response makeCORS(ResponseBuilder req, String returnMethod) {
         ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Pragma", "no-cache");
 
         if (!"".equals(returnMethod)) {
             rb.header("Access-Control-Allow-Headers", returnMethod);
@@ -289,11 +290,11 @@ public class DeviceREST {
         GenericDevice foundDevice = findDevice(deviceId);
         if (foundDevice == null)
             return Response.status(404).build();
-        if (foundDevice instanceof Pojo) {
-            Pojo pojo = (Pojo) foundDevice;
-            pojo.getComponentInstance().dispose();
-        } else
+        try {
+            _simulationMgr.removeDevice(deviceId);
+        } catch (Exception e) {
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+        }
 
         return makeCORS(Response.ok());
     }

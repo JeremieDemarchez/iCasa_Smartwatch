@@ -118,9 +118,9 @@ public class EventBroadcast extends OnMessage<String> {
         public void devicePositionChanged(String deviceSerialNumber, Position position) {
             JSONObject json = new JSONObject();
             try {
-                json.put("event-type", "device-position-update");
+                json.put("eventType", "device-position-update");
                 json.put("id", generateUUID());
-                json.put("device-id", deviceSerialNumber);
+                json.put("deviceId", deviceSerialNumber);
                 json.put("time", new Date().getTime());
                 _eventBroadcaster.broadcast(json.toString());
             } catch (JSONException e){
@@ -132,9 +132,9 @@ public class EventBroadcast extends OnMessage<String> {
         public void userPositionChanged(String userName, Position position) {
             JSONObject json = new JSONObject();
             try {
-                json.put("event-type", "user-position-update");
+                json.put("eventType", "user-position-update");
                 json.put("id", generateUUID());
-                json.put("user-id", userName);
+                json.put("userId", userName);
                 json.put("time", new Date().getTime());
                 _eventBroadcaster.broadcast(json.toString());
             } catch (JSONException e){
@@ -146,9 +146,9 @@ public class EventBroadcast extends OnMessage<String> {
         public void userAdded(String userName) {
             JSONObject json = new JSONObject();
             try {
-                json.put("event-type", "user-added");
+                json.put("eventType", "user-added");
                 json.put("id", generateUUID());
-                json.put("user-id", userName);
+                json.put("userId", userName);
                 json.put("time", new Date().getTime());
                 _eventBroadcaster.broadcast(json.toString());
             } catch (JSONException e){
@@ -160,9 +160,9 @@ public class EventBroadcast extends OnMessage<String> {
         public void userRemoved(String userName) {
             JSONObject json = new JSONObject();
             try {
-                json.put("event-type", "user-removed");
+                json.put("eventType", "user-removed");
                 json.put("id", generateUUID());
-                json.put("user-id", userName);
+                json.put("userId", userName);
                 json.put("time", new Date().getTime());
                 _eventBroadcaster.broadcast(json.toString());
             } catch (JSONException e){

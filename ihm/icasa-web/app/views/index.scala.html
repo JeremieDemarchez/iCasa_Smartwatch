@@ -66,7 +66,7 @@
         <section id="mapContainer">
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
             <div id="deviceWidgets" data-bind="foreach: $root.devices">
-                <div class="deviceWidget" data-bind="attr: { id: id }, style: { left: styleLeft, top: styleTop }">
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
                     <div class="deviceWidgetContainer">
                         <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">

@@ -11,6 +11,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     shared: true
     transport: transport
     trackMessageLength: true
+    enableXDR: true
     fallbackTransport: "long-polling"
 
   request.onOpen = (response) ->
@@ -29,6 +30,21 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       console.log "This doesn't look like a valid JSON: ", message.data
       return
     console.log "Received message :", json
+    if (json.eventType == "device-position-update")
+      device = DataModel.collections.devices.get(json.deviceId);
+      if ((device != null)  && (device != undefined))
+        device.fetch();
+      else
+        DataModel.collections.devices.fetch();
+
+    if ((json.eventType == "user-added") || (json.eventType == "user-removed"))
+      DataModel.collections.persons.fetch();
+    if (json.eventType == "user-position-update")
+      person = DataModel.collections.persons.get(json.userId);
+      if ((person != null) && (person != undefined))
+        person.fetch();
+      else
+        DataModel.collections.persons.fetch();
 
   request.onClose = (response) ->
     console.log "Connection closed"
