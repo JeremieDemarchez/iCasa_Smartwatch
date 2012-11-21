@@ -113,9 +113,6 @@ require([
         $(".userWidget").draggable( {
             scroll: true
         });
-        $(".deviceWidget").draggable( {
-            scroll: true
-        });
         $(".slider" ).slider();
         $( "#tabs" ).tabs({
            heightStyle: "fill"

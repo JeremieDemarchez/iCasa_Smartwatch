@@ -57,7 +57,8 @@ public class PersonREST {
     private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Pragma", "no-cache");
 
         if (!"".equals(returnMethod)) {
             rb.header("Access-Control-Allow-Headers", returnMethod);

@@ -36,6 +36,22 @@ define(['jquery',
             # and again whenever the associated observable changes value.
     };
 
+    ko.bindingHandlers.jqueryDraggable = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).draggable( {
+                scroll: true
+            });
+
+            return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called once when the binding is first applied to an element,
+            # and again whenever the associated observable changes value.
+    };
+
     ko.bindingHandlers.jqueryTabs = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
@@ -51,6 +67,7 @@ define(['jquery',
             addTabDiv(tab) for tab in viewModel.tabs();
 
             $(element).html(htmlString);
+
 
 
             return { controlsDescendantBindings: false };
@@ -344,10 +361,8 @@ define(['jquery',
            @newPersonName = ko.observable("");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ id: @newPersonName(), name: @newPersonName() });
+              newPerson = new DataModel.Models.Person({ id: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
               newPerson.save();
-              newPerson.fetch();
-              @devices.push(new PersonViewModel(newPerson));
 
            @removePerson = (person) =>
               @persons.remove(person);
