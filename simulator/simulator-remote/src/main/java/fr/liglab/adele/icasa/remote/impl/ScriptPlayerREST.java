@@ -96,7 +96,7 @@ public class ScriptPlayerREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/scripts/")
     public Response zones() {
         return makeCORS(Response.ok(getScripts()));

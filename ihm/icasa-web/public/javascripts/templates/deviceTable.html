@@ -37,7 +37,7 @@
             <!--td data-bind="text: id"></td-->
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td data-bind="text: name"/></td>
-            <td data-bind="text: location"></td>
+            <td><select data-bind="options: zones, value: locationZone, optionsText: 'name'"></select></td>
             <td data-bind="text: state"></td>
             <td data-bind="text: fault"></td>
             <td><button data-bind="click: $root.showDeviceWindow">...</button></td>

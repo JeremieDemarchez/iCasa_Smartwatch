@@ -69,8 +69,6 @@ define(['jquery',
 
             $(element).html(htmlString);
 
-
-
             return { controlsDescendantBindings: false };
 
         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
@@ -165,7 +163,20 @@ define(['jquery',
                   @positionY(value);
               owner: @
            }
-           , @)
+           , @);
+           @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+           @locationZone = ko.computed({
+              read: () =>
+                return @zones.viewModelByModel(@zones.collection().get(@location()));
+              write: (zone) =>
+                @location(zone.name());
+                return zone;
+              owner: @
+           }
+           );
+           @tooltipContent = ko.computed( () =>
+              return @name + " /n" + @id;
+           );
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";

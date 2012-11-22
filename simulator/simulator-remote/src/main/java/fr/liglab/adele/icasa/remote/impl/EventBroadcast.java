@@ -174,27 +174,5 @@ public class EventBroadcast extends OnMessage<String> {
         }
     }
 
-//    @Bind(id="deviceTypeFactories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
-//    public void bindDeviceFactory(final Factory factory) {
-//        JSONObject json = new JSONObject();
-//        try {
-//            json.put("eventType", "device-type-added");
-//            json.put("deviceTypeId", factory.getName());
-//            sendEvent(json);
-//        } catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Unbind(id="deviceTypeFactories")
-//    public void unbindDeviceFactory(final Factory factory) {
-//        JSONObject json = new JSONObject();
-//        try {
-//            json.put("eventType", "device-type-removed");
-//            json.put("deviceTypeId", factory.getName());
-//            sendEvent(json);
-//        } catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//    }
+
 }
