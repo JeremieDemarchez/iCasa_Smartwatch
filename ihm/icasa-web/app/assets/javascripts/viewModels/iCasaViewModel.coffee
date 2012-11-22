@@ -42,6 +42,7 @@ define(['jquery',
             # This will be called when the binding is first applied to an element
 
             $(element).draggable( {
+                containment: $("#mapContainer"),
                 scroll: true
             });
 

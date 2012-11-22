@@ -25,9 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -84,10 +83,17 @@ public class ZoneREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/zones/")
     public Response zones() {
         return makeCORS(Response.ok(getZones()));
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/{zoneId}")
+    public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
+        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
     }
 
     /**

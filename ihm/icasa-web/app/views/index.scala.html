@@ -76,7 +76,7 @@
                 </div>
             </div>
             <div id="userWidgets" data-bind="foreach: $root.persons()">
-                <div class="userWidget" data-bind="attr: { id: id }, style: { left: styleLeft, top: styleTop }">
+                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
                     <div class="userWidgetContainer">
                         <img data-bind="attr: { src: imgSrc, alt: name }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">

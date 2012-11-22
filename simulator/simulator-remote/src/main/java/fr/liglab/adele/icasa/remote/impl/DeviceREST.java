@@ -30,6 +30,7 @@ import org.ow2.chameleon.json.JSONService;
 
 import java.util.*;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import java.text.ParseException;
@@ -163,14 +164,21 @@ public class DeviceREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/deviceTypes/")
     public Response deviceTypes() {
         return makeCORS(Response.ok(getDeviceTypes()));
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/device/{deviceId}")
+    public Response updatesDeviceOptions(@PathParam("deviceId") String deviceId) {
+        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+    }
+
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/devices/")
     public Response devices() {
         return makeCORS(Response.ok(getDevices()));
@@ -185,7 +193,7 @@ public class DeviceREST {
      * @throws ParseException
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response device(@PathParam("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
@@ -224,7 +232,7 @@ public class DeviceREST {
      * @return
      */
     @POST
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response createDevice(@PathParam("deviceId") String deviceId, @FormParam("type") String type,
                              @FormParam("name") String deviceName, @FormParam("fault") String fault,
@@ -283,7 +291,7 @@ public class DeviceREST {
      * @return true if chain is successful deleted, false if it does not exist.
      */
     @DELETE
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response deleteDevice(@PathParam("deviceId") String deviceId) {
 

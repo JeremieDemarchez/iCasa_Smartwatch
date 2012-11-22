@@ -15,13 +15,8 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.felix.ipojo.annotations.Component;
@@ -114,6 +109,13 @@ public class PersonREST {
         return makeCORS(Response.ok(getPersons()));
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/person/{personId}")
+    public Response updatesPersonOptions(@PathParam("personId") String personId) {
+        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+    }
+
     /**
      * Retrieve a device.
      *
@@ -123,7 +125,7 @@ public class PersonREST {
      * @throws java.text.ParseException
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response person(@PathParam("personId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
@@ -188,7 +190,7 @@ public class PersonREST {
      * @return ok if person is successful deleted, 404 response if it does not exist.
      */
     @DELETE
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response deletePerson(@PathParam("personId") String personId) {
 

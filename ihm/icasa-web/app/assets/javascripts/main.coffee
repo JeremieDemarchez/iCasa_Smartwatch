@@ -110,9 +110,6 @@ require([
             ghost: true,
             handles: "e, s, se, sw"
         });
-        $(".userWidget").draggable( {
-            scroll: true
-        });
         $(".slider" ).slider();
         $( "#tabs" ).tabs({
            heightStyle: "fill"
