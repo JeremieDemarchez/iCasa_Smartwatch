@@ -65,22 +65,22 @@
     <article id="map">
         <section id="mapContainer">
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
-            <div id="deviceWidgets" data-bind="foreach: $root.devices">
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
-                    <div class="deviceWidgetContainer">
-                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name }" />
-                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
-                        </div>
-                    </div>
-                </div>
-            </div>
             <div id="userWidgets" data-bind="foreach: $root.persons()">
                 <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
                     <div class="userWidgetContainer">
                         <img data-bind="attr: { src: imgSrc, alt: name }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">
                             <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="deviceWidgets" data-bind="foreach: $root.devices()">
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
+                    <div class="deviceWidgetContainer">
+                        <img data-bind="jqueryTooltip: {}, attr: { src: imgSrc, alt: name, title: tooltipContent }" />
+                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
+                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
                         </div>
                     </div>
                 </div>

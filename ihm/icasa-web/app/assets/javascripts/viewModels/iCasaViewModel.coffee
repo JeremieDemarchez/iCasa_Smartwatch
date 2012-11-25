@@ -42,9 +42,23 @@ define(['jquery',
             # This will be called when the binding is first applied to an element
 
             $(element).draggable( {
-                containment: $("#mapContainer"),
+                compartment: "#mapContainer",
                 scroll: true
             });
+
+            return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called once when the binding is first applied to an element,
+            # and again whenever the associated observable changes value.
+    };
+
+    ko.bindingHandlers.jqueryTooltip = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).tooltip();
 
             return { controlsDescendantBindings: false };
 
@@ -146,11 +160,11 @@ define(['jquery',
            @positionY = kb.defaultObservable(@_positionY, 0);
            @styleLeft = ko.computed({
               read: () =>
-                  return @positionX() + "px";
+                return @positionX() + "px";
               write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionX(value);
+                value = parseInt(value.replace(/px/, ""));
+                if (!isNaN(value))
+                  @positionX(value);
               owner: @
            }
            , @)
@@ -163,7 +177,7 @@ define(['jquery',
                   @positionY(value);
               owner: @
            }
-           , @);
+           , @)
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
@@ -176,7 +190,7 @@ define(['jquery',
            );
            @tooltipContent = ko.computed( () =>
               return @name + " /n" + @id;
-           );
+           , @);
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
@@ -368,7 +382,11 @@ define(['jquery',
               device.model().destroy();
 
            @showDeviceWindow = (device) =>
-              DataModel.collections.devices.fetch();
+              $(".deviceWidget").draggable( {
+                containment: $("#mapContainer"),
+                scroll: true
+              });
+#              DataModel.collections.devices.fetch();
 
            @newPersonName = ko.observable("");
 
