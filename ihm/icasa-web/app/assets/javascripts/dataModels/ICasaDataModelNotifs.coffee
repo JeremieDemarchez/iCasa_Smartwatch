@@ -1,8 +1,13 @@
 # @author Thomas Leveque
-define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel"], ($, ko, kb, atmosphere, DataModel) ->
+define ["modernizr", "jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel"], (Modernizr, $, ko, kb, atmosphere, DataModel) ->
   socket = atmosphere
-  transport = "sse"
   serverUrl = "http://localhost:8080"
+  transport = "sse"
+  # workaround for SECURITY Exception on Chrome while using sse on localhost
+  isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+  if (isChrome && (serverUrl.indexOf("localhost") > -1))
+      transport = "long-polling";
+
   requestUrl = "#server#/atmosphere/event".replace(/#server#/, serverUrl)
   request =
     url: requestUrl

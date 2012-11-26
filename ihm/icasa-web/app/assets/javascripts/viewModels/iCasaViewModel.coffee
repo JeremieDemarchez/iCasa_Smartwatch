@@ -181,7 +181,10 @@ define(['jquery',
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
-                return @zones.viewModelByModel(@zones.collection().get(@location()));
+                zoneModel = @zones.collection().get(@location());
+                if (zoneModel == undefined)
+                  return null;
+                return @zones.viewModelByModel(zoneModel);
               write: (zone) =>
                 @location(zone.name());
                 return zone;

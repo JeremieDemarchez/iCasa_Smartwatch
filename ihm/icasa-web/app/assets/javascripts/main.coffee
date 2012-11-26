@@ -66,6 +66,10 @@ require.config({
             exports: "hub"
         },
 
+        'modernizr': {
+            exports: "window.Modernizr"
+        },
+
         'jquery.ui': {
             deps: ['jquery'],
 

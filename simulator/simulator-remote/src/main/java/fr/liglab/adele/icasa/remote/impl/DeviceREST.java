@@ -21,6 +21,7 @@ package fr.liglab.adele.icasa.remote.impl;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -219,6 +220,30 @@ public class DeviceREST {
             }
         }
         return foundDevice;
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/device/{deviceId}")
+    public Response updatesDevice(@PathParam("deviceId") String deviceId, String content) {
+        if (deviceId == null || deviceId.length()<1){
+            return makeCORS(Response.status(404));
+        }
+
+//        DeviceJSON updatedDevice = DeviceJSON.fromString(content);
+//        if (updatedDevice != null) {
+//            //TODO
+//
+//        }
+
+        GenericDevice device = findDevice(deviceId);
+        if (device == null){
+            return makeCORS(Response.status(404));
+        }
+        JSONObject deviceJSON = getDeviceJSON(device);
+
+        return makeCORS(Response.ok(deviceJSON.toString()));
     }
 
     /**
