@@ -16,10 +16,11 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.ZoneListener;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
+import fr.liglab.adele.icasa.environment.DeviceListener;
 import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
-import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
@@ -29,7 +30,7 @@ import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.barjo.atmosgi.AtmosphereService;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
@@ -70,8 +71,9 @@ public class EventBroadcast extends OnMessage<String> {
     @Validate
     private void start() {
         _iCasaListener = new ICasaEventListener();
+        _simulMgr.addZoneListener(_iCasaListener);
         _simulMgr.addUserPositionListener(_iCasaListener);
-        _simulMgr.addDevicePositionListener(_iCasaListener);
+        _simulMgr.addDeviceListener(_iCasaListener);
 
         _eventBroadcaster = _atmoService.getBroadcasterFactory().get();
 
@@ -123,7 +125,7 @@ public class EventBroadcast extends OnMessage<String> {
         }
     }
 
-    private class ICasaEventListener implements DevicePositionListener, UserPositionListener {
+    private class ICasaEventListener implements DeviceListener, UserPositionListener, ZoneListener {
 
         @Override
         public void devicePositionChanged(String deviceSerialNumber, Position position) {
@@ -131,6 +133,30 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "device-position-update");
                 json.put("deviceId", deviceSerialNumber);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void deviceAdded(String deviceId) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "device-added");
+                json.put("deviceId", deviceId);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void deviceRemoved(String deviceId) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "device-removed");
+                json.put("deviceId", deviceId);
                 sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();
@@ -167,6 +193,57 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "user-removed");
                 json.put("userId", userName);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void variableModified(Zone zone, String variableName, Double oldValue, Double newValue) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-variable-updated");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void moved(Zone zone) {
+            //TODO
+        }
+
+        @Override
+        public void resized(Zone zone) {
+            //TODO
+        }
+
+        @Override
+        public void parentModified(Zone zone) {
+            //TODO
+        }
+
+        @Override
+        public void addedZone(String zoneId) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-added");
+                json.put("zoneId", zoneId);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void removedZone(String zoneId) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-removed");
+                json.put("zoneId", zoneId);
                 sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();

@@ -40,7 +40,7 @@ import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFa
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
+import fr.liglab.adele.icasa.environment.DeviceListener;
 
 /**
  * Base class to applications in echo3 showing device information
@@ -48,7 +48,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListene
  * @author Gabriel Pedraza Ferreira
  *
  */
-public abstract class BaseHouseApplication extends ApplicationInstance implements DevicePositionListener,
+public abstract class BaseHouseApplication extends ApplicationInstance implements DeviceListener,
       PropertyChangeListener {
 
 	/**
@@ -172,7 +172,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	public void start() {
 		initContent();
 		m_housePane.addPropertyChangeListener(this);
-		m_manager.addDevicePositionListener(this);
+		m_manager.addDeviceListener(this);
 	}
 
 	/**
@@ -485,4 +485,13 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 * @param portletFactory the portletFactory
 	 */
 	protected abstract void allDevicePropertiesChanged(DeviceWidgetFactory portletFactory);
+
+    public void deviceAdded(String deviceId) {
+        //Do nothing
+    }
+
+    public void deviceRemoved(String deviceId)  {
+        //Do nothing
+    }
+
 }

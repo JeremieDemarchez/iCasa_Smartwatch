@@ -66,11 +66,10 @@ public class DeviceREST {
         ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -119,8 +118,10 @@ public class DeviceREST {
             deviceJSON.put("location", device.getLocation());
             deviceJSON.put("state", device.getState());
             deviceJSON.put("type", deviceType);
-            deviceJSON.put("positionX", devicePosition.x);
-            deviceJSON.put("positionY", devicePosition.y);
+            if (devicePosition != null) {
+                deviceJSON.put("positionX", devicePosition.x);
+                deviceJSON.put("positionY", devicePosition.y);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
             deviceJSON = null;
@@ -164,6 +165,13 @@ public class DeviceREST {
         return currentDevices.toString();
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/deviceTypes/")
+    public Response getDeviceTypesOptions() {
+        return makeCORS(Response.ok());
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/deviceTypes/")
@@ -175,7 +183,14 @@ public class DeviceREST {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response updatesDeviceOptions(@PathParam("deviceId") String deviceId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/devices/")
+    public Response getDevicesOptions() {
+        return makeCORS(Response.ok());
     }
 
     @GET
@@ -230,17 +245,32 @@ public class DeviceREST {
         if (deviceId == null || deviceId.length()<1){
             return makeCORS(Response.status(404));
         }
-
-//        DeviceJSON updatedDevice = DeviceJSON.fromString(content);
-//        if (updatedDevice != null) {
-//            //TODO
-//
-//        }
-
         GenericDevice device = findDevice(deviceId);
         if (device == null){
             return makeCORS(Response.status(404));
         }
+
+        DeviceJSON updatedDevice = DeviceJSON.fromString(content);
+        if (updatedDevice != null) {
+            updatedDevice.setId(deviceId);
+
+            if (updatedDevice.getState() != null)
+                device.setState(updatedDevice.getState());
+            if (updatedDevice.getFault() != null)
+                device.setFault(updatedDevice.getFault());
+            if ((updatedDevice.getPositionX() != null) || (updatedDevice.getPositionY() != null)) {
+                Position position = _simulationMgr.getDevicePosition(deviceId);
+                int newPosX = position.x;
+                int newPosY = position.y;
+                if (updatedDevice.getPositionX() != null)
+                    newPosX = updatedDevice.getPositionX();
+                if (updatedDevice.getPositionY() != null)
+                    newPosY = updatedDevice.getPositionY();
+                _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
+            } else if (updatedDevice.getLocation() != null)
+                _simulationMgr.setDeviceLocation(deviceId, updatedDevice.getLocation());
+        }
+
         JSONObject deviceJSON = getDeviceJSON(device);
 
         return makeCORS(Response.ok(deviceJSON.toString()));

@@ -53,11 +53,10 @@ public class PersonREST {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -91,8 +90,12 @@ public class PersonREST {
             personJSON = new JSONObject();
             personJSON.putOnce("id", person.getName());
             personJSON.putOnce("name", person.getName());
-            personJSON.put("positionX", person.getPosition().x);
-            personJSON.put("positionY", person.getPosition().y);
+
+            Position personPosition = person.getPosition();
+            if (personPosition != null) {
+                personJSON.put("positionX", personPosition.x);
+                personJSON.put("positionY", personPosition.y);
+            }
             personJSON.putOnce("location", person.getLocation());
         } catch (JSONException e) {
             e.printStackTrace();
@@ -111,9 +114,16 @@ public class PersonREST {
 
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/persons/")
+    public Response getPersonsOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response updatesPersonOptions(@PathParam("personId") String personId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
     }
 
     /**

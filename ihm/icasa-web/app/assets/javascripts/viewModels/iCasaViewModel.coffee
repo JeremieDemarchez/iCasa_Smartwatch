@@ -11,7 +11,8 @@ define(['jquery',
         'text!templates/roomTable.html',
         'text!templates/zoneTable.html',
         'text!templates/scriptPlayer.html',
-        'text!templates/tabs.html'],
+        'text!templates/tabs.html',
+        'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
 
     # HTML custom bindings
@@ -30,10 +31,6 @@ define(['jquery',
 #            );
 
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     ko.bindingHandlers.jqueryDraggable = {
@@ -43,14 +40,14 @@ define(['jquery',
 
             $(element).draggable( {
                 compartment: "#mapContainer",
-                scroll: true
+                scroll: true,
+                stop: (event, eventUI) ->
+                  viewModel.positionX(eventUI.position.left);
+                  viewModel.positionY(eventUI.position.top);
+                  viewModel.model().save();
             });
 
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     ko.bindingHandlers.jqueryTooltip = {
@@ -61,10 +58,6 @@ define(['jquery',
             $(element).tooltip();
 
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     ko.bindingHandlers.jqueryTabs = {
@@ -84,10 +77,6 @@ define(['jquery',
             $(element).html(htmlString);
 
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     # View models
@@ -122,20 +111,12 @@ define(['jquery',
            @styleLeft = ko.computed({
               read: () =>
                   return @positionX() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionX(value);
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
                   return @positionY() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionY(value);
               owner: @
            }
            , @)
@@ -161,20 +142,12 @@ define(['jquery',
            @styleLeft = ko.computed({
               read: () =>
                 return @positionX() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionX(value);
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
                 return @positionY() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionY(value);
               owner: @
            }
            , @)
@@ -186,13 +159,15 @@ define(['jquery',
                   return null;
                 return @zones.viewModelByModel(zoneModel);
               write: (zone) =>
-                @location(zone.name());
+                if (zone != undefined)
+                  zoneName = zone.name();
+                  @location(zoneName);
                 return zone;
               owner: @
            }
            );
            @tooltipContent = ko.computed( () =>
-              return @name + " /n" + @id;
+              return @name() + " /n" + @id();
            , @);
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
@@ -238,7 +213,7 @@ define(['jquery',
                     imgSrc: '/assets/images/devices/decorators/play.png',
                     show: true}
            ]);
-           @updateWidget= (newValue) =>
+           @updateWidgetImg= (newValue) =>
                 activatedState = false;
                 if ("activated" == @state())
                     activatedState = true;
@@ -254,10 +229,13 @@ define(['jquery',
                     if (decorator.name() == "deactivated")
                         decorator.show(!activatedState);
                 );
+           @saveModel= (newValue) =>
+                @.model().save();
            # init
-           @state.subscribe(@updateWidget);
-           @fault.subscribe(@updateWidget);
-           @updateWidget();
+           @state.subscribe(@updateWidgetImg);
+           @fault.subscribe(@updateWidgetImg);
+           @updateWidgetImg();
+
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -270,23 +248,18 @@ define(['jquery',
            @styleLeft = ko.computed({
               read: () =>
                 return @positionX() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionX(value);
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
                 return @positionY() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionY(value);
               owner: @
            }
            , @)
+           @tooltipContent = ko.computed( () =>
+              return @name();
+           , @);
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
 
@@ -328,10 +301,6 @@ define(['jquery',
                     id: "devices",
                     name: "Devices",
                     template: devTabHtml},
-                new TabViewModel {
-                    id: "rooms",
-                    name: "Rooms",
-                    template: roomTabHtml},
                 new TabViewModel {
                     id: "zones",
                     name: "Zones" ,

@@ -28,6 +28,10 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public interface SimulationManager {
 
+    public void addZoneListener(final ZoneListener listener);
+
+    public void removeZoneListener(final ZoneListener listener);
+
 
 	void createEnvironment(String id, String description, int leftX, int topY, int rightX, int bottomY);
 	
@@ -178,12 +182,12 @@ public interface SimulationManager {
     /**
      * @param listener
      */
-    void addDevicePositionListener(DevicePositionListener listener);
+    void addDeviceListener(DeviceListener listener);
 
     /**
      * @param listener
      */
-    void removeDevicePositionListener(DevicePositionListener listener);
+    void removeDevicePositionListener(DeviceListener listener);
 
     /**
      * @param listener
@@ -206,26 +210,7 @@ public interface SimulationManager {
     
     void removeDevice(String deviceId);
     
-    Set<String> getDeviceFactories();
-    
-    
-    // --- Device and User events listeners methods and classes --- //
-    
-    
-    /**
-     * 
-     * @author Gabriel Pedraza Ferreira
-     *
-     */
-    public static interface DevicePositionListener extends EventListener {
-
-        /**
-         * @param deviceSerialNumber
-         * @param position
-         */
-        void devicePositionChanged(String deviceSerialNumber, Position position);
-
-    }
+    public Set<String> getDeviceFactories();
 
     /**
      * 
