@@ -33,9 +33,12 @@ public class DeviceJSON {
     public static final String LOCATION_PROP = "location";
     public static final String FAULT_PROP = "fault";
     public static final String STATE_PROP = "state";
+    public static final String TYPE_PROP = "type";
     public static final String NAME_PROP = "name";
+    public static final String DEVICE_ID_PROP = "deviceId";
     public static final String ID_PROP = "id";
 
+    private String type;
     private String name;
     private String id;
     private String state;
@@ -54,7 +57,13 @@ public class DeviceJSON {
         try {
             json = new JSONObject(jsonStr);
             device = new DeviceJSON();
-            device.setId(json.getString(ID_PROP));
+            if (json.has(ID_PROP)) {
+                device.setId(json.getString(ID_PROP));
+            } else if (json.has(DEVICE_ID_PROP)) {
+                device.setId(json.getString(DEVICE_ID_PROP));
+            };
+            if (json.has(TYPE_PROP))
+                device.setType(json.getString(TYPE_PROP));
             if (json.has(NAME_PROP))
                 device.setName(json.getString(NAME_PROP));
             if (json.has(STATE_PROP))
@@ -72,6 +81,14 @@ public class DeviceJSON {
         }
 
         return device;
+    }
+
+    private void setType(String type) {
+        this.type = type;
+    }
+
+    public String getType() {
+        return type;
     }
 
     public String getName() {

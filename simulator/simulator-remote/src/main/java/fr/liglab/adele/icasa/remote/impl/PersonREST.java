@@ -88,15 +88,15 @@ public class PersonREST {
         JSONObject personJSON = null;
         try {
             personJSON = new JSONObject();
-            personJSON.putOnce("id", person.getName());
-            personJSON.putOnce("name", person.getName());
+            personJSON.putOnce(PersonJSON.ID_PROP, person.getName());
+            personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
 
             Position personPosition = person.getPosition();
             if (personPosition != null) {
-                personJSON.put("positionX", personPosition.x);
-                personJSON.put("positionY", personPosition.y);
+                personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
+                personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
             }
-            personJSON.putOnce("location", person.getLocation());
+            personJSON.putOnce(PersonJSON.LOCATION_PROP, person.getLocation());
         } catch (JSONException e) {
             e.printStackTrace();
             personJSON = null;
@@ -123,6 +123,13 @@ public class PersonREST {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response updatesPersonOptions(@PathParam("personId") String personId) {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/person/")
+    public Response createsPersonOptions() {
         return makeCORS(Response.ok());
     }
 
@@ -166,24 +173,63 @@ public class PersonREST {
     /**
      * Create a new person.
      *
-     * @param personId
-     * @param name
-     * @param positionX
-     * @param positionY
+     * @param content JSON representation of person to create
      *
      * @return
      */
     @POST
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/person/")
+    public Response createPerson(String content) {
+
+        PersonJSON personJSON = PersonJSON.fromString(content);
+
+        // Create the person
+        _simulationMgr.addUser(personJSON.getName());
+        _simulationMgr.setUserPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
+
+        Person newPerson = findPerson(personJSON.getName());
+        if (newPerson == null)
+            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+
+        JSONObject newPersonJSON = getPersonJSON(newPerson);
+
+        return makeCORS(Response.ok(newPersonJSON.toString())); //TODO check that newPerson must be included in the response body
+    }
+
+    /**
+     * Update an existing person.
+     *
+     * @param personId
+     * @param content JSON representation of person to create
+     *
+     * @return
+     */
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
-    public Response createPerson(@PathParam("personId") String personId, @FormParam("name") String name,
-                                 @FormParam("positionX") Integer positionX, @FormParam("positionY") Integer positionY) {
+    public Response updatesPerson(@PathParam("personId") String personId, String content) {
 
         Person newPerson = null;
 
-        // Create the person
-        _simulationMgr.addUser(name);
-        _simulationMgr.setUserPosition(name, new Position(positionX, positionY));
+        PersonJSON personJSON = PersonJSON.fromString(content);
+
+        Person foundPerson = findPerson(personId);
+        if (foundPerson == null)
+            return Response.status(404).build();
+
+        if ((personJSON.getPositionX() != null) || (personJSON.getPositionY() != null)) {
+            Position personPosition = foundPerson.getPosition();
+            if (personJSON.getPositionX() == null)
+                personJSON.setPositionX(personPosition.x);
+            if (personJSON.getPositionY() == null)
+                personJSON.setPositionY(personPosition.y);
+            _simulationMgr.setUserPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
+        } else if (personJSON.getLocation() != null) {
+            _simulationMgr.setUserLocation(personId, personJSON.getLocation());
+        }
 
         if (newPerson == null)
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));

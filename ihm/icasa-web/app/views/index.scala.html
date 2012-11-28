@@ -66,9 +66,9 @@
         <section id="mapContainer">
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
             <!-- ko foreach: $root.persons() -->
-                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
+                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
                     <div class="userWidgetContainer">
-                        <img data-bind="jqueryTooltip: {}, attr: { src: imgSrc, alt: name, title: tooltipContent }" />
+                        <img data-bind="attr: { src: imgSrc, alt: name, title: tooltipContent }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">
                             <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
                         </div>
@@ -76,9 +76,9 @@
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.devices() -->
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
                     <div class="deviceWidgetContainer">
-                        <img data-bind="jqueryTooltip: {}, attr: { src: imgSrc, alt: name, title: tooltipContent }" />
+                        <img data-bind="attr: { src: imgSrc, alt: name, title: tooltipContent }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
                             <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
                         </div>

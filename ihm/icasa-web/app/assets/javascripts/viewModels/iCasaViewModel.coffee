@@ -8,12 +8,11 @@ define(['jquery',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
-        'text!templates/roomTable.html',
         'text!templates/zoneTable.html',
         'text!templates/scriptPlayer.html',
         'text!templates/tabs.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -84,7 +83,7 @@ define(['jquery',
     class ZoneViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX', 'isRoom']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @isRoom = kb.defaultObservable(@_isRoom, 'Undefined');
            @leftX = kb.defaultObservable(@_leftX, 'Undefined');
@@ -95,7 +94,7 @@ define(['jquery',
     class ScriptViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'state']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @state = kb.defaultObservable(@_state, 'undefined');
 
@@ -132,7 +131,7 @@ define(['jquery',
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
            @state = kb.defaultObservable(@_state, 'activated');
@@ -240,7 +239,7 @@ define(['jquery',
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
            @positionX = kb.defaultObservable(@_positionX, 'Undefined');
@@ -346,24 +345,21 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ id: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              DataModel.collections.devices.push(newDevice);
               newDevice.save();
-              DataModel.Collections.fetch();
 
            @removeDevice = (device) =>
               device.model().destroy();
 
            @showDeviceWindow = (device) =>
-              $(".deviceWidget").draggable( {
-                containment: $("#mapContainer"),
-                scroll: true
-              });
-#              DataModel.collections.devices.fetch();
+              DataModel.collections.devices.fetch();
 
            @newPersonName = ko.observable("");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ id: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
+              DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
            @removePerson = (person) =>
@@ -376,15 +372,14 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ id: @newZoneName(), name: @newZoneName(), isRoom: false });
+              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false });
+              DataModel.collections.zones.push(newZone);
               newZone.save();
-              newZone.fetch();
-              @zones.push(new ZoneViewModel(newZone));
 
            @newRoomName = ko.observable("");
 
            @createRoom = () =>
-              newZone = new DataModel.Models.Zone({ id: @newRoomName(), name: @newRoomName(), isRoom: true });
+              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true });
               newZone.save();
               newZone.fetch();
               @zones.push(new ZoneViewModel(newZone));

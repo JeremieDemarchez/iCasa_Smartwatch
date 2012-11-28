@@ -181,6 +181,13 @@ public class DeviceREST {
 
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/device/")
+    public Response createsDeviceOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response updatesDeviceOptions(@PathParam("deviceId") String deviceId) {
         return makeCORS(Response.ok());
@@ -279,21 +286,17 @@ public class DeviceREST {
     /**
      * Create a new device.
      *
-     * @param deviceId
-     * @param deviceName
-     * @param fault
-     * @param location
-     * @param state
      * @return
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/device/{deviceId}")
-    public Response createDevice(@PathParam("deviceId") String deviceId, @FormParam("type") String type,
-                             @FormParam("name") String deviceName, @FormParam("fault") String fault,
-                             @FormParam("location") String location, @FormParam("state") String state) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/device/")
+    public Response createDevice(String content) {
 
-        Factory deviceFactory = getDeviceFactory(type);
+        DeviceJSON deviceJSON = DeviceJSON.fromString(content);
+
+        Factory deviceFactory = getDeviceFactory(deviceJSON.getType());
 
         GenericDevice newDevice = null;
         if (deviceFactory != null) {
@@ -302,7 +305,7 @@ public class DeviceREST {
             String serialNumber = Long.toString(m_random.nextLong(), 16);
             // Create the device
             Dictionary<String, String> properties = new Hashtable<String, String>();
-            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceJSON.getId());
             properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
             properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
             //properties.put(Constants.SERVICE_DESCRIPTION, description);

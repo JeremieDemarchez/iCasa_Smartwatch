@@ -188,6 +188,13 @@ public class ScriptPlayerREST {
         return makeCORS(Response.ok());
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/script/")
+    public Response createsScriptOptions() {
+        return makeCORS(Response.ok());
+    }
+
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)

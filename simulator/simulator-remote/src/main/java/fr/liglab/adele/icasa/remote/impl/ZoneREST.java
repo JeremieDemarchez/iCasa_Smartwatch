@@ -96,7 +96,14 @@ public class ZoneREST {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/zone/{zoneId}")
     public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/")
+    public Response createsZoneOptions() {
+        return makeCORS(Response.ok());
     }
 
     /**
