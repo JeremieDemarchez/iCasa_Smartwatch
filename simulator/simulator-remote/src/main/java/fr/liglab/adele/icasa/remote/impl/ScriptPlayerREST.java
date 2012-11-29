@@ -82,11 +82,10 @@ public class ScriptPlayerREST {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -177,9 +176,23 @@ public class ScriptPlayerREST {
 
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/scripts/")
+    public Response getScriptsOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/script/{scriptId}")
     public Response updatesScriptOptions(@PathParam("scriptId") String scriptId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/script/")
+    public Response createsScriptOptions() {
+        return makeCORS(Response.ok());
     }
 
     @PUT

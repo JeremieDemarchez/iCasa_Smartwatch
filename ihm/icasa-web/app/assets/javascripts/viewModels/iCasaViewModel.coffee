@@ -8,11 +8,11 @@ define(['jquery',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
-        'text!templates/roomTable.html',
         'text!templates/zoneTable.html',
         'text!templates/scriptPlayer.html',
-        'text!templates/tabs.html'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
+        'text!templates/tabs.html',
+        'domReady'],
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -30,10 +30,6 @@ define(['jquery',
 #            );
 
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     ko.bindingHandlers.jqueryDraggable = {
@@ -42,15 +38,25 @@ define(['jquery',
             # This will be called when the binding is first applied to an element
 
             $(element).draggable( {
-                containment: $("#mapContainer"),
-                scroll: true
+                compartment: "#mapContainer",
+                scroll: true,
+                stop: (event, eventUI) ->
+                  viewModel.positionX(eventUI.position.left);
+                  viewModel.positionY(eventUI.position.top);
+                  viewModel.model().save();
             });
 
             return { controlsDescendantBindings: false };
+    };
 
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
+    ko.bindingHandlers.jqueryTooltip = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).tooltip();
+
+            return { controlsDescendantBindings: false };
     };
 
     ko.bindingHandlers.jqueryTabs = {
@@ -70,10 +76,6 @@ define(['jquery',
             $(element).html(htmlString);
 
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     # View models
@@ -81,7 +83,7 @@ define(['jquery',
     class ZoneViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX', 'isRoom']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @isRoom = kb.defaultObservable(@_isRoom, 'Undefined');
            @leftX = kb.defaultObservable(@_leftX, 'Undefined');
@@ -92,7 +94,7 @@ define(['jquery',
     class ScriptViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'state']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @state = kb.defaultObservable(@_state, 'undefined');
 
@@ -108,20 +110,12 @@ define(['jquery',
            @styleLeft = ko.computed({
               read: () =>
                   return @positionX() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionX(value);
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
                   return @positionY() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionY(value);
               owner: @
            }
            , @)
@@ -137,7 +131,7 @@ define(['jquery',
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
            @state = kb.defaultObservable(@_state, 'activated');
@@ -146,37 +140,34 @@ define(['jquery',
            @positionY = kb.defaultObservable(@_positionY, 0);
            @styleLeft = ko.computed({
               read: () =>
-                  return @positionX() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionX(value);
+                return @positionX() + "px";
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
                 return @positionY() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionY(value);
               owner: @
            }
-           , @);
+           , @)
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
-                return @zones.viewModelByModel(@zones.collection().get(@location()));
+                zoneModel = @zones.collection().get(@location());
+                if (zoneModel == undefined)
+                  return null;
+                return @zones.viewModelByModel(zoneModel);
               write: (zone) =>
-                @location(zone.name());
+                if (zone != undefined)
+                  zoneName = zone.name();
+                  @location(zoneName);
                 return zone;
               owner: @
            }
            );
            @tooltipContent = ko.computed( () =>
-              return @name + " /n" + @id;
-           );
+              return @name() + " /n" + @id();
+           , @);
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
@@ -221,7 +212,7 @@ define(['jquery',
                     imgSrc: '/assets/images/devices/decorators/play.png',
                     show: true}
            ]);
-           @updateWidget= (newValue) =>
+           @updateWidgetImg= (newValue) =>
                 activatedState = false;
                 if ("activated" == @state())
                     activatedState = true;
@@ -237,15 +228,18 @@ define(['jquery',
                     if (decorator.name() == "deactivated")
                         decorator.show(!activatedState);
                 );
+           @saveModel= (newValue) =>
+                @.model().save();
            # init
-           @state.subscribe(@updateWidget);
-           @fault.subscribe(@updateWidget);
-           @updateWidget();
+           @state.subscribe(@updateWidgetImg);
+           @fault.subscribe(@updateWidgetImg);
+           @updateWidgetImg();
+
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
            @positionX = kb.defaultObservable(@_positionX, 'Undefined');
@@ -253,23 +247,18 @@ define(['jquery',
            @styleLeft = ko.computed({
               read: () =>
                 return @positionX() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionX(value);
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
                 return @positionY() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionY(value);
               owner: @
            }
            , @)
+           @tooltipContent = ko.computed( () =>
+              return @name();
+           , @);
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
 
@@ -311,10 +300,6 @@ define(['jquery',
                     id: "devices",
                     name: "Devices",
                     template: devTabHtml},
-                new TabViewModel {
-                    id: "rooms",
-                    name: "Rooms",
-                    template: roomTabHtml},
                 new TabViewModel {
                     id: "zones",
                     name: "Zones" ,
@@ -360,9 +345,9 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ id: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              DataModel.collections.devices.push(newDevice);
               newDevice.save();
-              DataModel.Collections.fetch();
 
            @removeDevice = (device) =>
               device.model().destroy();
@@ -373,7 +358,8 @@ define(['jquery',
            @newPersonName = ko.observable("");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ id: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
+              DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
            @removePerson = (person) =>
@@ -386,15 +372,14 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ id: @newZoneName(), name: @newZoneName(), isRoom: false });
+              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false });
+              DataModel.collections.zones.push(newZone);
               newZone.save();
-              newZone.fetch();
-              @zones.push(new ZoneViewModel(newZone));
 
            @newRoomName = ko.observable("");
 
            @createRoom = () =>
-              newZone = new DataModel.Models.Zone({ id: @newRoomName(), name: @newRoomName(), isRoom: true });
+              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true });
               newZone.save();
               newZone.fetch();
               @zones.push(new ZoneViewModel(newZone));

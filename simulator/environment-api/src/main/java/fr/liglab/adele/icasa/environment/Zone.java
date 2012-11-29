@@ -20,6 +20,13 @@ import java.util.Set;
 
 public interface Zone {
 
+    /**
+     * Returns id.
+     *
+     * @return id.
+     */
+    public String getId();
+
 	/**
 	 * Gets the (x,y) point in the left-top corner of the zone. This point is
 	 * relative to its parent zone

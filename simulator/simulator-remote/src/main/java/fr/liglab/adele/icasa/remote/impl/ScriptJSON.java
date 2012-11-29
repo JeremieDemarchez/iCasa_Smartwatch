@@ -18,7 +18,9 @@ package fr.liglab.adele.icasa.remote.impl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParseException;
 import java.util.Date;
+import java.text.SimpleDateFormat;
 
 public class ScriptJSON {
 
@@ -56,7 +58,7 @@ public class ScriptJSON {
             if (json.has(STATE_PROP))
                 script.setState(json.getString(STATE_PROP));
             if (json.has(START_DATE_PROP))
-                script.setState(json.getString(START_DATE_PROP));
+                script.setStartDate(json.getString(START_DATE_PROP));
         } catch (JSONException e) {
             e.printStackTrace();
         }
@@ -110,5 +112,14 @@ public class ScriptJSON {
 
     public void setStartDate(Date startDate) {
         this.startDate = startDate;
+    }
+
+    public void setStartDate(String startDateStr) {
+        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy:HH:mm:SS");
+        try {
+            this.startDate = formatter.parse(startDateStr);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

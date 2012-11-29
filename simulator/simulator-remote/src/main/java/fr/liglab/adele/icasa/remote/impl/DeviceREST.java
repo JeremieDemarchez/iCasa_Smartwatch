@@ -21,6 +21,7 @@ package fr.liglab.adele.icasa.remote.impl;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -65,11 +66,10 @@ public class DeviceREST {
         ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -118,8 +118,10 @@ public class DeviceREST {
             deviceJSON.put("location", device.getLocation());
             deviceJSON.put("state", device.getState());
             deviceJSON.put("type", deviceType);
-            deviceJSON.put("positionX", devicePosition.x);
-            deviceJSON.put("positionY", devicePosition.y);
+            if (devicePosition != null) {
+                deviceJSON.put("positionX", devicePosition.x);
+                deviceJSON.put("positionY", devicePosition.y);
+            }
         } catch (JSONException e) {
             e.printStackTrace();
             deviceJSON = null;
@@ -163,6 +165,13 @@ public class DeviceREST {
         return currentDevices.toString();
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/deviceTypes/")
+    public Response getDeviceTypesOptions() {
+        return makeCORS(Response.ok());
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/deviceTypes/")
@@ -172,9 +181,23 @@ public class DeviceREST {
 
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/device/")
+    public Response createsDeviceOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response updatesDeviceOptions(@PathParam("deviceId") String deviceId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/devices/")
+    public Response getDevicesOptions() {
+        return makeCORS(Response.ok());
     }
 
     @GET
@@ -221,24 +244,59 @@ public class DeviceREST {
         return foundDevice;
     }
 
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/device/{deviceId}")
+    public Response updatesDevice(@PathParam("deviceId") String deviceId, String content) {
+        if (deviceId == null || deviceId.length()<1){
+            return makeCORS(Response.status(404));
+        }
+        GenericDevice device = findDevice(deviceId);
+        if (device == null){
+            return makeCORS(Response.status(404));
+        }
+
+        DeviceJSON updatedDevice = DeviceJSON.fromString(content);
+        if (updatedDevice != null) {
+            updatedDevice.setId(deviceId);
+
+            if (updatedDevice.getState() != null)
+                device.setState(updatedDevice.getState());
+            if (updatedDevice.getFault() != null)
+                device.setFault(updatedDevice.getFault());
+            if ((updatedDevice.getPositionX() != null) || (updatedDevice.getPositionY() != null)) {
+                Position position = _simulationMgr.getDevicePosition(deviceId);
+                int newPosX = position.x;
+                int newPosY = position.y;
+                if (updatedDevice.getPositionX() != null)
+                    newPosX = updatedDevice.getPositionX();
+                if (updatedDevice.getPositionY() != null)
+                    newPosY = updatedDevice.getPositionY();
+                _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
+            } else if (updatedDevice.getLocation() != null)
+                _simulationMgr.setDeviceLocation(deviceId, updatedDevice.getLocation());
+        }
+
+        JSONObject deviceJSON = getDeviceJSON(device);
+
+        return makeCORS(Response.ok(deviceJSON.toString()));
+    }
+
     /**
      * Create a new device.
      *
-     * @param deviceId
-     * @param deviceName
-     * @param fault
-     * @param location
-     * @param state
      * @return
      */
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/device/{deviceId}")
-    public Response createDevice(@PathParam("deviceId") String deviceId, @FormParam("type") String type,
-                             @FormParam("name") String deviceName, @FormParam("fault") String fault,
-                             @FormParam("location") String location, @FormParam("state") String state) {
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/device/")
+    public Response createDevice(String content) {
 
-        Factory deviceFactory = getDeviceFactory(type);
+        DeviceJSON deviceJSON = DeviceJSON.fromString(content);
+
+        Factory deviceFactory = getDeviceFactory(deviceJSON.getType());
 
         GenericDevice newDevice = null;
         if (deviceFactory != null) {
@@ -247,7 +305,7 @@ public class DeviceREST {
             String serialNumber = Long.toString(m_random.nextLong(), 16);
             // Create the device
             Dictionary<String, String> properties = new Hashtable<String, String>();
-            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceJSON.getId());
             properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
             properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
             //properties.put(Constants.SERVICE_DESCRIPTION, description);

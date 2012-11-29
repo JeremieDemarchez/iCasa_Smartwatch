@@ -50,6 +50,9 @@ public class ZoneREST {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
 
         if (!"".equals(returnMethod)) {
@@ -93,7 +96,14 @@ public class ZoneREST {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/zone/{zoneId}")
     public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/")
+    public Response createsZoneOptions() {
+        return makeCORS(Response.ok());
     }
 
     /**

@@ -66,6 +66,10 @@ require.config({
             exports: "hub"
         },
 
+        'modernizr': {
+            exports: "window.Modernizr"
+        },
+
         'jquery.ui': {
             deps: ['jquery'],
 
@@ -102,7 +106,9 @@ require([
             animate: true,
             aspectRatio : false,
             ghost: true,
-            handles: "e, s, se, sw, w"
+            handles: "e, s, se, sw, w",
+            stop: (event, eventUI) ->
+              $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({
             animate: true,
@@ -111,7 +117,7 @@ require([
             handles: "e, s, se, sw"
         });
         $(".slider" ).slider();
-        $( "#tabs" ).tabs({
-           heightStyle: "fill"
+        $("#tabs").tabs({
+            heightStyle: "fill"
         });
 );

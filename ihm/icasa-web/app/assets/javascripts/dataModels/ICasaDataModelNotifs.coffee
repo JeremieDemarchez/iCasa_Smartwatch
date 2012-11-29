@@ -1,8 +1,13 @@
 # @author Thomas Leveque
 define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel"], ($, ko, kb, atmosphere, DataModel) ->
   socket = atmosphere
+  serverUrl = "http://" + window.location.hostname + ":8080"
   transport = "sse"
-  serverUrl = "http://localhost:8080"
+  # workaround for SECURITY Exception on Chrome while using sse on localhost
+  isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+  if (isChrome && (serverUrl.indexOf("localhost") > -1))
+      transport = "long-polling";
+
   requestUrl = "#server#/atmosphere/event".replace(/#server#/, serverUrl)
   request =
     url: requestUrl
@@ -13,6 +18,8 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     trackMessageLength: true
     enableXDR: true
     fallbackTransport: "long-polling"
+    dropAtmosphereHeaders: true
+    attachHeadersAsQueryString: true
 
   request.onOpen = (response) ->
     transport = response.transport
@@ -30,8 +37,12 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       console.log "This doesn't look like a valid JSON: ", message.data
       return
     console.log "Received message :", json
+    if ((json.eventType == "zone-added") || (json.eventType == "zone-removed"))
+      DataModel.collections.zones.fetch();
     if ((json.eventType == "device-type-added") || (json.eventType == "device-type-removed"))
       DataModel.collections.deviceTypes.fetch();
+    if ((json.eventType == "device-added") || (json.eventType == "device-removed"))
+      DataModel.collections.devices.fetch();
     if (json.eventType == "device-position-update")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))

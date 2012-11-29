@@ -52,6 +52,8 @@ import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.ZoneListener;
+import fr.liglab.adele.icasa.environment.DeviceListener;
 
 /**
  * Implementation of the simulated environment manager component, that manage
@@ -73,9 +75,11 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private final Map<String, Factory> m_factories = new Hashtable<String, Factory>();
 
-	private final List<DevicePositionListener> m_devicePositionListeners = new LinkedList<DevicePositionListener>();
+	private final List<DeviceListener> m_deviceListeners = new LinkedList<DeviceListener>();
 
 	private final List<UserPositionListener> m_userPositionListeners = new LinkedList<UserPositionListener>();
+
+    private final List<ZoneListener> m_zoneListeners = new LinkedList<ZoneListener>();
 
 	@Requires(filter = "(&(factory.name=fr.liglab.adele.icasa.environment.impl.SimulatedEnvironmentImpl)(factory.state="
 	      + Factory.VALID + "))")
@@ -106,6 +110,10 @@ public class SimulationManagerImpl implements SimulationManager {
 		entry.service = env;
 		entry.zone = zone;
 		m_environments.put(env.getEnvironmentId(), entry);
+        synchronized (m_zoneListeners) {
+            for (ZoneListener listener : m_zoneListeners)
+                listener.addedZone(env.getEnvironmentId());
+        }
 	}
 
 	@Unbind(id = "environments")
@@ -117,11 +125,19 @@ public class SimulationManagerImpl implements SimulationManager {
 				dev.unbindSimulatedEnvironment(env);
 			}
 		}
+        synchronized (m_zoneListeners) {
+            for (ZoneListener listener : m_zoneListeners)
+                listener.removedZone(env.getEnvironmentId());
+        }
 	}
 
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public void bindDevice(SimulatedDevice dev) {
 		m_devices.put(dev.getSerialNumber(), dev);
+        synchronized (m_deviceListeners) {
+            for (DeviceListener listener : m_deviceListeners)
+                listener.deviceAdded(dev.getSerialNumber());
+        }
 	}
 
 	@Unbind(id = "devices")
@@ -132,6 +148,11 @@ public class SimulationManagerImpl implements SimulationManager {
 			SimulatedEnvironment env = m_environments.get(dev.getEnvironmentId()).service;
 			dev.unbindSimulatedEnvironment(env);
 		}
+
+        synchronized (m_deviceListeners) {
+            for (DeviceListener listener : m_deviceListeners)
+                listener.deviceRemoved(dev.getSerialNumber());
+        }
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
@@ -403,20 +424,42 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 	}
 
+    public void addZoneListener(final ZoneListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        synchronized (m_zoneListeners) {
+            m_zoneListeners.add(listener);
+        }
+    }
+
+    public synchronized void removeZoneListener(final ZoneListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        synchronized (m_zoneListeners) {
+            m_zoneListeners.remove(listener);
+        }
+    }
+
 	@Override
-	public synchronized void addDevicePositionListener(final DevicePositionListener listener) {
+	public synchronized void addDeviceListener(final DeviceListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("listener");
 		}
-		m_devicePositionListeners.add(listener);
+        synchronized (m_deviceListeners) {
+            m_deviceListeners.add(listener);
+        }
 	}
 
 	@Override
-	public synchronized void removeDevicePositionListener(final DevicePositionListener listener) {
+	public synchronized void removeDevicePositionListener(final DeviceListener listener) {
 		if (listener == null) {
 			throw new NullPointerException("listener");
 		}
-		m_devicePositionListeners.remove(listener);
+        synchronized (m_deviceListeners) {
+		    m_deviceListeners.remove(listener);
+        }
 	}
 
 	@Override
@@ -611,9 +654,11 @@ public class SimulationManagerImpl implements SimulationManager {
 				}
 				// Notify listeners
 				final String deviceSerialNumber = context.getName();
-				for (DevicePositionListener listener : m_devicePositionListeners) {
-					listener.devicePositionChanged(deviceSerialNumber, position);
-				}
+                synchronized (m_deviceListeners) {
+                    for (DeviceListener listener : m_deviceListeners) {
+                        listener.devicePositionChanged(deviceSerialNumber, position);
+                    }
+                }
 			}
 		}
 
@@ -704,13 +749,13 @@ public class SimulationManagerImpl implements SimulationManager {
 		config.put("bottomY", bottomY);
 		try {
 	      m_envFactory.createComponentInstance(config);
-      } catch (UnacceptableConfiguration e) {
+        } catch (UnacceptableConfiguration e) {
 	      e.printStackTrace();
-      } catch (MissingHandlerException e) {
+        } catch (MissingHandlerException e) {
 	      e.printStackTrace();
-      } catch (ConfigurationException e) {
+        } catch (ConfigurationException e) {
 	      e.printStackTrace();
-      }
+        }
    }
 
 }

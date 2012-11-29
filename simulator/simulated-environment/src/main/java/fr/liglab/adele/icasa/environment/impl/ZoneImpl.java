@@ -28,7 +28,8 @@ import fr.liglab.adele.icasa.environment.ZoneListener;
 
 public class ZoneImpl implements Zone {
 
-	private int height;
+	private String id;
+    private int height;
 	private int width;	
 	private Zone parent;
 	private Position leftTopposition;
@@ -46,6 +47,10 @@ public class ZoneImpl implements Zone {
 		this.height = height;
 		this.width = width;		
 	}
+
+    public String getId() {
+        return id;
+    }
 
 	@Override
 	public boolean fits(Zone aZone) {

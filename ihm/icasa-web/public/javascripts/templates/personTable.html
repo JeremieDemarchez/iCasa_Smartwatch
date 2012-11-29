@@ -31,10 +31,10 @@
     <tbody data-bind="foreach: $root.persons()">
         <tr>
             <td><img class="personIcon" data-bind="attr: { src: imgSrc } "></img></td>
-            <td><input type="text" data-bind="value: name"/></td>
+            <td data-bind="value: name"/></td>
             <td data-bind="text: location"></td>
             <td><button data-bind="click: $root.showPersonWindow">...</button></td>
-            <td><a href="#" data-bind="click: $root.removePerson">Remove</a></td>
+            <td><button data-bind="click: $root.removePerson">Remove</button></td>
         </tr>
     </tbody>
 </table>
