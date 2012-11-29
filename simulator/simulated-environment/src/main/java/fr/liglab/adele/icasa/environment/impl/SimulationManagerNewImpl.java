@@ -36,18 +36,20 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.Device;
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulationEnvironmentListener;
 import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 import fr.liglab.adele.icasa.environment.Zone;
 
-@Component
+@Component(name="SimulationManagerNew")
 @Provides
-@Instantiate
+@Instantiate(name="SimulationManagerNew-0")
 public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
@@ -59,12 +61,78 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
+	
+	private List<SimulationEnvironmentListener> listeners = new ArrayList<SimulationEnvironmentListener>();
 
 	@Override
 	public void createZone(String id, String description, int leftX, int topY, int width, int height) {
 		Zone zone = new ZoneImpl(leftX, topY, width, height);
-		System.out.println("Zone created " + zone);
 		zones.put(id, zone);
+		
+		for (SimulationEnvironmentListener listener : listeners) {
+	      listener.zoneAdded(zone);
+      }		
+	}
+	
+	@Override
+	public void removeZone(String id) {
+		Zone zone = zones.remove(id);
+		if (zone!=null) {
+			for (SimulationEnvironmentListener listener : listeners) {
+		      listener.zoneRemoved(zone);
+	      }	
+		}
+	}
+	
+	@Override
+	public void moveZone(String id, int leftX, int topY) {
+		Zone zone = zones.get(id);
+		if (zone!=null) {
+			Position position = new Position(leftX, topY);
+			zone.setLeftTopPosition(position);
+			
+			for (SimulationEnvironmentListener listener : listeners) {
+		      listener.zoneMoved(zone);
+	      }	
+		}
+	}
+	
+	@Override
+	public void resizeZone(String id, int width, int height) {
+		Zone zone = zones.get(id);
+		if (zone!=null) {			
+			zone.setHeight(height);
+			zone.setWidth(width);			
+			for (SimulationEnvironmentListener listener : listeners) {
+		      listener.zoneResized(zone);
+	      }	
+		}
+	}
+	
+	@Override
+	public Set<String> getZoneVariables(String zoneId) {
+		Zone zone = zones.get(zoneId);
+		return zone.getVariableList();
+	}
+
+	@Override
+	public Double getZoneVariableValue(String zoneId, String variable) {
+		Zone zone = zones.get(zoneId);		
+		return zone.getVariableValue(variable);
+	}
+
+	@Override
+	public void setZoneVariable(String zoneId, String variable, Double value) {
+		Zone zone = zones.get(zoneId);
+		if (zone!=null) {
+			Double oldValue = zone.getVariableValue(variable);
+			zone.setVariableValue(variable, value);
+			
+			for (SimulationEnvironmentListener listener : listeners) {
+		      listener.zoneVariableModified(zone, variable, oldValue, value);
+	      }	
+		}
+
 	}
 
 	@Override
@@ -137,23 +205,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		return new ArrayList<Person>(persons.values());
 	}
 
-	@Override
-	public Set<String> getEnvironmentVariables(String zoneId) {
-		Zone zone = zones.get(zoneId);
-		return zone.getVariableList();
-	}
 
-	@Override
-	public Double getVariableValue(String zoneId, String variable) {
-		Zone zone = zones.get(zoneId);
-		return zone.getVariableValue(variable);
-	}
-
-	@Override
-	public void setEnvironmentVariable(String zoneId, String variable, Double value) {
-		Zone zone = zones.get(zoneId);
-		zone.setVariableValue(variable, value);
-	}
 
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
@@ -215,6 +267,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));		
 	}
 
+	/*
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public synchronized void bindDevice(SimulatedDevice dev) {
 		m_simulatedDevices.put(dev.getSerialNumber(), dev);
@@ -224,15 +277,50 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public synchronized void unbindDevice(SimulatedDevice dev) {
 		m_simulatedDevices.remove(dev.getSerialNumber());
 	}
+	
+	*/
+	
+	
+	@Bind(id = "sim-devices", aggregate = true, optional = true)
+	public void bindDevice(SimulatedDevice dev) {
+		/*
+		System.out.println("+--------");
+		String[] props = reference.getPropertyKeys();
+				for (String prop : props) {
+	      System.out.println("\t +------ Property " + prop);
+      }
+		*/
+
+		System.out.println("+--------  Device " + dev.getSerialNumber());
+		m_simulatedDevices.put(dev.getSerialNumber(), dev);
+	}
+	
+	@Unbind(id = "sim-devices")
+	public void unbindDevice(ServiceReference reference) {
+		
+	}
+	
+	
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
-	public synchronized void bindFactory(Factory factory) {
+	public void bindFactory(Factory factory) {
 		m_factories.put(factory.getName(), factory);
+		System.out.println("+--------");
 	}
 
 	@Unbind(id = "factories")
-	public synchronized void unbindFactory(Factory factory) {
+	public void unbindFactory(Factory factory) {
 		m_factories.remove(factory.getName());
 	}
 
+	@Override
+   public void addListener(SimulationEnvironmentListener listener) {
+		listeners.add(listener);
+   }
+
+	@Override
+   public void removeListener(SimulationEnvironmentListener listener) {
+		listeners.remove(listener);
+   }
+	
 }

@@ -151,9 +151,11 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		if (isDeviceManagerProxy(device))
 			return;
 		
+		/*
 		System.out.println("Device SN -------------> " + device.getSerialNumber());
 		System.out.println("Devices ---------------->" + devices);
-				
+		*/
+			
 		devices.put(device.getSerialNumber(), device);
 		enqueueTask(new Runnable() {
 			@Override
