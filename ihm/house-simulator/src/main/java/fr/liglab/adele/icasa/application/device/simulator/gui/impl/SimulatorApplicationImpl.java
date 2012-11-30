@@ -152,7 +152,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			return;
 		
 		/*
-		System.out.println("Device SN -------------> " + device.getSerialNumber());
+		System.out.println("LocatedDevice SN -------------> " + device.getSerialNumber());
 		System.out.println("Devices ---------------->" + devices);
 		*/
 			
@@ -483,7 +483,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
             }
 				
 				for (String device : devices) {
-					System.out.println("Device -----> " + device);
+					System.out.println("LocatedDevice -----> " + device);
 					Position position = simulationManager.getDevicePosition(device);
 					String deviceEnv = simulationManager.getEnvironmentFromPosition(position);
 					if (deviceEnv.equals(environment)) {

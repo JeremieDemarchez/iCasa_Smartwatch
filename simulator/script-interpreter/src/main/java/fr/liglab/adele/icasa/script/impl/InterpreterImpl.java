@@ -136,7 +136,7 @@ public class InterpreterImpl implements Interpreter {
 			for (DeviceModel device : model.getDeclaredDevices()) {
 				createDevice(instances, device);
 				setDeviceLocation(device, model.getId());
-				System.out.println("\t\tDevice is now bound to environment " + model.getId());
+				System.out.println("\t\tLocatedDevice is now bound to environment " + model.getId());
 			}
 		} else {
 			System.out.println("\tEnvironment Service unavailable !");
@@ -151,11 +151,11 @@ public class InterpreterImpl implements Interpreter {
 		for (DeviceModel device : model.getDeclaredDevices()) {
 			System.out.println("\tSimulated device :" + device.getId());
 			m_manager.setDeviceLocation(device.getId(), null);
-			System.out.println("\t\tDevice is now unbound from environment " + model.getId());
+			System.out.println("\t\tLocatedDevice is now unbound from environment " + model.getId());
 			ComponentInstance instance = instances.remove(device.getId());
 			if (instance!=null) {
 				instance.dispose();
-				System.out.println("\t\tDevice destroyed");				
+				System.out.println("\t\tLocatedDevice destroyed");
 			}
 		}
 		// TODO unbind external devices that are bound to the environment (need

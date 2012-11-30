@@ -600,7 +600,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 		final String environmentId = dev.getEnvironmentId();
 		if (environmentId == null) {
-			// Device was not bound => nothing to do!
+			// LocatedDevice was not bound => nothing to do!
 			return;
 		}
 		final SimulatedEnvironment env = m_environments.get(environmentId).service;

@@ -208,7 +208,7 @@ public class SimulatorDevicePane extends DevicePane {
 		 */
 		private static final long serialVersionUID = 4559599690425279667L;
 
-		private final String[] columns = { "Device", "Location", "State", "Fault", "Details", "Remove" };
+		private final String[] columns = { "LocatedDevice", "Location", "State", "Fault", "Details", "Remove" };
 
 		static final int DEVICE_DESC_COL_IDX = 0;
 		static final int DEVICE_LOCATION_COL_IDX = 1;

@@ -111,7 +111,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	private final BundleContext m_context;
 
 	/**
-	 * Device controller instance
+	 * LocatedDevice controller instance
 	 */
 	protected DeviceController m_DeviceController;
 
@@ -408,8 +408,8 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	}
 	
 	/**
-	 * Gets the list of WidgetFactory that match a Generic Device
-	 * @param device the Generic Device
+	 * Gets the list of WidgetFactory that match a Generic LocatedDevice
+	 * @param device the Generic LocatedDevice
 	 * @return A list with ids of WidgetFactory
 	 */
 	private List<String> getWidgetFactoryIDsList(GenericDevice device) {

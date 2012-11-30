@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.environment.*;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -39,13 +40,7 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.Device;
-import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulationEnvironmentListener;
-import fr.liglab.adele.icasa.environment.SimulationManagerNew;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.LocatedDevice;
 
 @Component(name="SimulationManagerNew")
 @Provides
@@ -54,7 +49,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
 
-	private Map<String, Device> devices = new HashMap<String, Device>();
+	private Map<String, LocatedDevice> devices = new HashMap<String, LocatedDevice>();
 
 	private Map<String, SimulatedDevice> m_simulatedDevices = new HashMap<String, SimulatedDevice>();
 
@@ -62,14 +57,14 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
 	
-	private List<SimulationEnvironmentListener> listeners = new ArrayList<SimulationEnvironmentListener>();
+	private List<SimulationListener> listeners = new ArrayList<SimulationListener>();
 
 	@Override
 	public void createZone(String id, String description, int leftX, int topY, int width, int height) {
 		Zone zone = new ZoneImpl(leftX, topY, width, height);
 		zones.put(id, zone);
 		
-		for (SimulationEnvironmentListener listener : listeners) {
+		for (SimulationListener listener : listeners) {
 	      listener.zoneAdded(zone);
       }		
 	}
@@ -78,7 +73,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public void removeZone(String id) {
 		Zone zone = zones.remove(id);
 		if (zone!=null) {
-			for (SimulationEnvironmentListener listener : listeners) {
+			for (SimulationListener listener : listeners) {
 		      listener.zoneRemoved(zone);
 	      }	
 		}
@@ -91,7 +86,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 			Position position = new Position(leftX, topY);
 			zone.setLeftTopPosition(position);
 			
-			for (SimulationEnvironmentListener listener : listeners) {
+			for (SimulationListener listener : listeners) {
 		      listener.zoneMoved(zone);
 	      }	
 		}
@@ -103,7 +98,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		if (zone!=null) {			
 			zone.setHeight(height);
 			zone.setWidth(width);			
-			for (SimulationEnvironmentListener listener : listeners) {
+			for (SimulationListener listener : listeners) {
 		      listener.zoneResized(zone);
 	      }	
 		}
@@ -128,7 +123,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 			Double oldValue = zone.getVariableValue(variable);
 			zone.setVariableValue(variable, value);
 			
-			for (SimulationEnvironmentListener listener : listeners) {
+			for (SimulationListener listener : listeners) {
 		      listener.zoneVariableModified(zone, variable, oldValue, value);
 	      }	
 		}
@@ -141,8 +136,8 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-	public List<Device> getDevices() {
-		return new ArrayList<Device>(devices.values());
+	public List<LocatedDevice> getDevices() {
+		return new ArrayList<LocatedDevice>(devices.values());
 	}
 
 	@Override
@@ -152,7 +147,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public Position getDevicePosition(String deviceSerialNumber) {
-		Device device = devices.get(deviceSerialNumber);
+		LocatedDevice device = devices.get(deviceSerialNumber);
 		if (device != null)
 			return device.getPosition().clone();
 		return null;
@@ -160,7 +155,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public void setDevicePosition(String deviceSerialNumber, Position position) {
-		Device device = devices.get(deviceSerialNumber);
+		LocatedDevice device = devices.get(deviceSerialNumber);
 		if (device != null)
 			device.setPosition(position);
 	}
@@ -291,7 +286,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
       }
 		*/
 
-		System.out.println("+--------  Device " + dev.getSerialNumber());
+		System.out.println("+--------  LocatedDevice " + dev.getSerialNumber());
 		m_simulatedDevices.put(dev.getSerialNumber(), dev);
 	}
 	
@@ -314,12 +309,12 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-   public void addListener(SimulationEnvironmentListener listener) {
+   public void addListener(SimulationListener listener) {
 		listeners.add(listener);
    }
 
 	@Override
-   public void removeListener(SimulationEnvironmentListener listener) {
+   public void removeListener(SimulationListener listener) {
 		listeners.remove(listener);
    }
 	

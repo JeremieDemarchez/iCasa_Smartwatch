@@ -62,11 +62,20 @@ public interface Zone {
 	public void setHeight(int height);
 
 	/**
-	 * Determines if a object its geographically contained into the zone
-	 * @param object
-	 * @return
+	 * Returns true if a object its geographically contained into the zone.
+     *
+	 * @param object a located object
+	 * @return true if a object its geographically contained into the zone
 	 */
 	public boolean contains(LocatedObject object);
+
+    /**
+     * Returns relative position of specified object from top left corner of this zone.
+     *
+     * @param object a located object
+     * @return relative position of specified object from top left corner of this zone.
+     */
+    public Position getRelativePosition(LocatedObject object);
 
 	/**
 	 * Adds a child zone to this zone. The child zone must fit this zone.
@@ -119,6 +128,8 @@ public interface Zone {
 	public void setVariableValue(String name, double newValue);
 	
 	public void addVariable(String name);
+
+    public void removeVariable(String name);
 	
 	public Set<String> getVariableList();
 

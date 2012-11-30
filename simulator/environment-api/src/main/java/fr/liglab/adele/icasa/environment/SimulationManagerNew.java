@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.environment;
 
+import java.util.Map;
 import java.util.List;
 import java.util.Set;
 
@@ -25,7 +26,7 @@ import java.util.Set;
  */
 public interface SimulationManagerNew {
 
-	void createZone(String id, String description, int leftX, int topY, int width, int height);
+	Zone createZone(String id, String description, int leftX, int topY, int width, int height);
 	
 	void removeZone(String id);
 	
@@ -35,13 +36,13 @@ public interface SimulationManagerNew {
 	
 	Set<String> getZoneVariables(String zoneId);
 
-	Double getZoneVariableValue(String zoneId, String variable);
+	Object getZoneVariableValue(String zoneId, String variable);
 
-	void setZoneVariable(String zoneId, String variable, Double value);
+	void setZoneVariable(String zoneId, String variable, Object value);
 	
 	List<Zone> getZones();
 	
-	List<Device> getDevices();
+	List<LocatedDevice> getDevices();
 	
 	Zone getZone(String zoneId);
 	
@@ -51,7 +52,13 @@ public interface SimulationManagerNew {
 
 	void setDevicePosition(String deviceSerialNumber, Position position);
 
-	void setDeviceZone(String deviceSerialNumber, String zoneId);
+    /**
+     *
+     *
+     * @param deviceSerialNumber
+     * @param zoneId
+     */
+	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId);
 
 	void setPersonPosition(String userName, Position position);
 
@@ -71,14 +78,19 @@ public interface SimulationManagerNew {
 
 	void setDeviceState(String deviceId, boolean value);
 
-	void createDevice(String factoryName, String deviceId, String description);
+	void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
 
 	void removeDevice(String deviceId);
 
-	Set<String> getDeviceFactories();
-	
-	void addListener(SimulationEnvironmentListener listener);
+	Set<String> getDeviceTypes();
 
-	void removeListener(SimulationEnvironmentListener listener);
+
+
+
+
+
+	void addListener(SimulationListener listener);
+
+	void removeListener(SimulationListener listener);
 	
 }

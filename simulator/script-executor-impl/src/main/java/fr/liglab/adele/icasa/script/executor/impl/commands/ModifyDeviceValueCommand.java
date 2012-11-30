@@ -44,7 +44,7 @@ public class ModifyDeviceValueCommand extends DeviceCommand {
 		Configuration config;
       try {
 	      
-      	System.out.println("Device ID ----------- " + deviceId);
+      	System.out.println("LocatedDevice ID ----------- " + deviceId);
       	config = configAdmin.getConfiguration(deviceId, null);
 
       	

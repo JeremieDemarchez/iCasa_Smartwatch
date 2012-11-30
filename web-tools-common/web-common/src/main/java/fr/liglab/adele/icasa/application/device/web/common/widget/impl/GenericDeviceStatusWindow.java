@@ -47,7 +47,7 @@ public class GenericDeviceStatusWindow extends DeviceStatusWindow {
 
 		String title = (String) reference.getProperty("service.description");
 		if (title == null)
-			title = "Device: " + m_deviceSerialNumber;
+			title = "LocatedDevice: " + m_deviceSerialNumber;
 
 		setTitle(title);
 		Grid layoutGrid = new Grid();

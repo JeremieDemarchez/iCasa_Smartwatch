@@ -13,31 +13,8 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment.impl;
+package fr.liglab.adele.icasa.environment;
 
-import java.util.Map;
+public interface SimulationListener extends ZoneListener, PersonListener, LocatedDeviceListener {
 
-import fr.liglab.adele.icasa.environment.Device;
-import fr.liglab.adele.icasa.environment.Position;
-
-public class DeviceImpl extends LocatedObjectImpl implements Device {
-
-	private String m_serialNumber;
-	
-	public DeviceImpl(String serialNumber, Position position) {
-	   super(position);
-	   m_serialNumber = serialNumber;
-   }
-
-	@Override
-   public String getSerialNumber() {
-	   return m_serialNumber;
-   }
-
-	@Override
-   public Map<String, Object> getProperties() {
-	   // TODO Auto-generated method stub
-	   return null;
-   }
-	
 }

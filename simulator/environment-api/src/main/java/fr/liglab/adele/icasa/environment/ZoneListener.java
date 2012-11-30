@@ -17,15 +17,19 @@ package fr.liglab.adele.icasa.environment;
 
 public interface ZoneListener {
 
-	public void variableModified(Zone zone, String variableName, Double oldValue, Double newValue);
-	
-	public void moved(Zone zone);
+    public void zoneAdded(Zone zone);
 
-	public void resized(Zone zone);
-	
-	public void parentModified(Zone zone);
+    public void zoneRemoved(Zone zone);
 
-    public void addedZone(String zoneId);
+    public void zoneMoved(Zone zone);
 
-    public void removedZone(String zoneId);
+    public void zoneVariableAdded(Zone zone, String variableName);
+
+    public void zoneVariableRemoved(Zone zone, String variableName);
+
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue);
+
+    public void zoneResized(Zone zone);
+
+    public void zoneParentModified(Zone zone, Zone oldParentZone);
 }

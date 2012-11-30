@@ -55,7 +55,7 @@ public class SimulatorActionPane extends ActionPane {
 		m_devicePane = new SimulatorDevicePane(this);
 		final AccordionPaneLayoutData devicePaneLayout = new AccordionPaneLayoutData();		
 		devicePaneLayout.setIcon(new BundleResourceImageReference(DevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE, ICON_SIZE, bundle));
-		devicePaneLayout.setTitle("Device List");
+		devicePaneLayout.setTitle("LocatedDevice List");
 		m_devicePane.setLayoutData(devicePaneLayout);
 		add(m_devicePane);
 
@@ -93,7 +93,7 @@ public class SimulatorActionPane extends ActionPane {
 			final AccordionPaneLayoutData statusPaneLayout = new AccordionPaneLayoutData();
 			statusPaneLayout.setIcon(new BundleResourceImageReference(DevicePane.DEVICE_IMAGE.getResource(), ICON_SIZE,
 			      ICON_SIZE, bundle));
-			statusPaneLayout.setTitle("Device Details");
+			statusPaneLayout.setTitle("LocatedDevice Details");
 			appInstance.getStatusPane().setLayoutData(statusPaneLayout);
 			add(appInstance.getStatusPane());
 		}

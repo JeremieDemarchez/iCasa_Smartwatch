@@ -152,7 +152,7 @@ public abstract class DevicePane extends ContentPane {
 	}
 
 	/**
-	 * Removes a device representation into the Device pane
+	 * Removes a device representation into the LocatedDevice pane
 	 * 
 	 * @param entry
 	 */
@@ -459,7 +459,7 @@ public abstract class DevicePane extends ContentPane {
 		return faultStateField;
 	}
 
-	// ----- Abstract methods delegated to concrete Device Panes ---- //
+	// ----- Abstract methods delegated to concrete LocatedDevice Panes ---- //
 
 	/**
 	 * Creates the instance of table model to be used in the device table

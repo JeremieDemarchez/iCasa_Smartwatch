@@ -18,8 +18,7 @@ package fr.liglab.adele.icasa.environment;
 
 public interface LocatedObject {
 
-   public Position getPosition();
+    public Position getAbsolutePosition();
    
-   public void setPosition(Position position);
-	
+    public void setPosition(Position position);
 }
