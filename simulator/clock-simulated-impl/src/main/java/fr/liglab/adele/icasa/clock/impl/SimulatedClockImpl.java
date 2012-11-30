@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
 
+import java.util.Date;
+
 /**
  * @author Gabriel Pedraza Ferreira
  * 
@@ -73,11 +75,16 @@ public class SimulatedClockImpl implements Clock {
 		return factor;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
-	 */
+    @Override
+    public Date getStartDate() {
+        return new Date(initDate);
+    }
+
+    /*
+      * (non-Javadoc)
+      *
+      * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
+      */
 	public void setFactor(int factor) {
 		this.factor = factor;
 	}

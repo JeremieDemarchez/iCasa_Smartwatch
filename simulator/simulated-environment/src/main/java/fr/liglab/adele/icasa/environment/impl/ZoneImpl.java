@@ -28,22 +28,23 @@ import fr.liglab.adele.icasa.environment.ZoneListener;
 
 public class ZoneImpl implements Zone {
 
-	private String id;
+    private String id;
     private int height;
 	private int width;	
 	private Zone parent;
-	private Position leftTopposition;
+	private Position leftTopPosition;
 	private List<Zone> children = new ArrayList<Zone>();
 	private List<ZoneListener> listeners = new ArrayList<ZoneListener>();
-	private Map<String, Double> variables = new HashMap<String, Double>();
+	private Map<String, Object> variables = new HashMap<String, Object>();
 	private boolean useParentVariable = false;
 
-	public ZoneImpl(int x, int y, int width, int height) {
-		this(new Position(x, y), width, height);
+	public ZoneImpl(String id, int x, int y, int width, int height) {
+		this(id, new Position(x, y), width, height);
 	}
 	
-	public ZoneImpl(Position leftTopPosition, int width, int height) {
-		this.leftTopposition = leftTopPosition.clone();
+	public ZoneImpl(String id, Position leftTopPosition, int width, int height) {
+		this.id = id;
+        this.leftTopPosition = leftTopPosition.clone();
 		this.height = height;
 		this.width = width;		
 	}
@@ -81,7 +82,7 @@ public class ZoneImpl implements Zone {
 
 	@Override
    public Position getLeftTopPosition() {
-	   return leftTopposition.clone();	   
+	   return leftTopPosition.clone();
    }
 
 	@Override
@@ -96,14 +97,14 @@ public class ZoneImpl implements Zone {
 
 	@Override
    public boolean contains(LocatedObject object) {
-		Position objectPosition = object.getPosition();
+		Position objectPosition = object.getAbsolutePosition();
       if (objectPosition == null)
       return false;
       
      Position absolutePosition = getAbsoluteLeftTopPosition();
           
      return objectPosition.x >= absolutePosition.x && objectPosition.x <= absolutePosition.x + width
-             && objectPosition.y >= absolutePosition.y && leftTopposition.y <= absolutePosition.y + height;
+             && objectPosition.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height;
    }
 
 	@Override
@@ -119,8 +120,8 @@ public class ZoneImpl implements Zone {
 	@Override
 	public Position getAbsoluteLeftTopPosition() {
 		Zone parentZone = getParent();
-		int absoluteX = leftTopposition.x;
-		int absoluteY = leftTopposition.y;
+		int absoluteX = leftTopPosition.x;
+		int absoluteY = leftTopPosition.y;
 		while (parentZone!=null) {
 			absoluteX += parentZone.getLeftTopPosition().x;
 			absoluteY += parentZone.getLeftTopPosition().y;
@@ -131,11 +132,12 @@ public class ZoneImpl implements Zone {
 	
 	@Override
    public void setParent(Zone parent) {
+       Zone oldParentZone = this.parent;
 	   this.parent = parent;
 	   
 	   // Listeners notification 
 	   for (ZoneListener listener : listeners) {
-	      listener.parentModified(this);
+	      listener.zoneParentModified(this, oldParentZone);
       }
    }
 
@@ -150,33 +152,34 @@ public class ZoneImpl implements Zone {
    }
 
 	@Override
-   public double getVariableValue(String name) {
+   public Object getVariableValue(String name) {
 		if (useParentVariable)
 			if (parent!=null)
 				return parent.getVariableValue(name);
 			else 
 				throw new NullPointerException("Variable " + name + " does not exist");
 			
-	   Double value = variables.get(name);
+	   Object value = variables.get(name);
 	   if (value==null)
 	   	throw new NullPointerException("Variable " + name + " does not exist");
+
 	   return value;
    }
 
 	@Override
-   public void setVariableValue(String name, double newValue) {
+   public void setVariableValue(String name, Object newValue) {
 		if (useParentVariable)
 			return;
 		
 	   if (!variables.containsKey(name))
 	   	throw new NullPointerException("Variable " + name + " does not exist");
 	   
-	   double oldValue = variables.get(name); 
+	   Object oldValue = variables.get(name);
 	   variables.put(name, newValue);
 	   
 	   // Listeners notification 
 	   for (ZoneListener listener : listeners) {
-	      listener.variableModified(this, name, oldValue, newValue);
+	      listener.zoneVariableModified(this, name, oldValue, newValue);
       }
    }
 
@@ -211,10 +214,10 @@ public class ZoneImpl implements Zone {
 
 	@Override
    public void setLeftTopPosition(Position leftTopPosition) {
-		this.leftTopposition = leftTopPosition;
+		this.leftTopPosition = leftTopPosition;
 		// Listeners notification 
 	   for (ZoneListener listener : listeners) {
-	      listener.moved(this);
+	      listener.zoneMoved(this);
       }
    }
 
@@ -223,7 +226,7 @@ public class ZoneImpl implements Zone {
 		this.width = width;
 	   // Listeners notification 
 	   for (ZoneListener listener : listeners) {
-	      listener.resized(this);
+	      listener.zoneResized(this);
       }
    }
 
@@ -232,13 +235,23 @@ public class ZoneImpl implements Zone {
 		this.height = height;
 		// Listeners notification 
 	   for (ZoneListener listener : listeners) {
-	      listener.resized(this);
+	      listener.zoneResized(this);
       }
    }
 	
 	@Override
 	public String toString() {
-	   return "X: " + leftTopposition.x + " Y: " + leftTopposition.y + " Width: " + width + " Height: " + height;
+	   return "X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " Width: " + width + " Height: " + height;
 	}
+
+    @Override
+    public Position getRelativePosition(LocatedObject object) {
+        throw new IllegalStateException("Not implemented");
+    }
+
+    @Override
+    public void removeVariable(String name) {
+        throw new IllegalStateException("Not implemented");
+    }
 		
 }

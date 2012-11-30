@@ -15,19 +15,21 @@
  */
 package fr.liglab.adele.icasa.clock.api;
 
+import java.util.Date;
+
 /**
  * @author Gabriel Pedraza Ferreira
  *
  */
 public interface Clock {
    
-   public long currentTimeMillis();
-   public void setStartDate(long startDate);
-   public void setFactor(int factor);
-   public long getElapsedTime();
-   public void pause();
-   public void resume();
-   public void reset();   
-   public int getFactor();
-   
+    public long currentTimeMillis();
+    public void setStartDate(long startDate);
+    public void setFactor(int factor);
+    public long getElapsedTime();
+    public void pause();
+    public void resume();
+    public void reset();
+    public int getFactor();
+    public Date getStartDate();
 }

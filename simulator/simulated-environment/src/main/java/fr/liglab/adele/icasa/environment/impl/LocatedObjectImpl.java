@@ -27,12 +27,12 @@ public class LocatedObjectImpl implements LocatedObject {
 	}
 	
 	@Override
-   public Position getPosition() {
+   public Position getAbsolutePosition() {
 	   return m_position;
    }
 
 	@Override
-   public void setPosition(Position position) {
+   public void setAbsolutePosition(Position position) {
 		m_position = position;
    }
 

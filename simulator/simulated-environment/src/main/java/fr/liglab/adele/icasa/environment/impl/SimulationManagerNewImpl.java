@@ -60,13 +60,15 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	private List<SimulationListener> listeners = new ArrayList<SimulationListener>();
 
 	@Override
-	public void createZone(String id, String description, int leftX, int topY, int width, int height) {
-		Zone zone = new ZoneImpl(leftX, topY, width, height);
+	public Zone createZone(String id, String description, int leftX, int topY, int width, int height) {
+		Zone zone = new ZoneImpl(id, leftX, topY, width, height);
 		zones.put(id, zone);
 		
 		for (SimulationListener listener : listeners) {
 	      listener.zoneAdded(zone);
-      }		
+        }
+
+        return zone;
 	}
 	
 	@Override
@@ -111,20 +113,20 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-	public Double getZoneVariableValue(String zoneId, String variable) {
+	public Object getZoneVariableValue(String zoneId, String variable) {
 		Zone zone = zones.get(zoneId);		
 		return zone.getVariableValue(variable);
 	}
 
 	@Override
-	public void setZoneVariable(String zoneId, String variable, Double value) {
+	public void setZoneVariable(String zoneId, String variableName, Object value) {
 		Zone zone = zones.get(zoneId);
 		if (zone!=null) {
-			Double oldValue = zone.getVariableValue(variable);
-			zone.setVariableValue(variable, value);
+			Object oldValue = zone.getVariableValue(variableName);
+			zone.setVariableValue(variableName, value);
 			
 			for (SimulationListener listener : listeners) {
-		      listener.zoneVariableModified(zone, variable, oldValue, value);
+		      listener.zoneVariableModified(zone, variableName, oldValue, value);
 	      }	
 		}
 
@@ -149,7 +151,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public Position getDevicePosition(String deviceSerialNumber) {
 		LocatedDevice device = devices.get(deviceSerialNumber);
 		if (device != null)
-			return device.getPosition().clone();
+			return device.getAbsolutePosition().clone();
 		return null;
 	}
 
@@ -157,11 +159,11 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public void setDevicePosition(String deviceSerialNumber, Position position) {
 		LocatedDevice device = devices.get(deviceSerialNumber);
 		if (device != null)
-			device.setPosition(position);
+			device.setAbsolutePosition(position);
 	}
 
 	@Override
-	public void setDeviceZone(String deviceSerialNumber, String zoneId) {
+	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId) {
 		// TODO Auto-generated method stub
 
 	}
@@ -170,7 +172,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public void setPersonPosition(String userName, Position position) {
 		Person person = persons.get(userName);
 		if (person != null)
-			person.setPosition(position);
+			person.setAbsolutePosition(position);
 	}
 
 	@Override
@@ -225,19 +227,19 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-	public void createDevice(String factoryName, String deviceId, String description) {
+	public void createDevice(String factoryName, String deviceId, Map<String, Object> properties) {
 		Factory factory = m_factories.get(factoryName);
 		if (factory != null) {
 			// Create the device
-			Dictionary<String, String> properties = new Hashtable<String, String>();
-			properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-			properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
-			properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
-			if (description != null)
-				properties.put(Constants.SERVICE_DESCRIPTION, description);
-			properties.put("instance.name", factoryName + "-" + deviceId);
+			Dictionary<String, String> configProperties = new Hashtable<String, String>();
+            configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+            configProperties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+            configProperties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
+			if (properties.get("description") != null)
+                configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
+            configProperties.put("instance.name", factoryName + "-" + deviceId);
 			try {
-				factory.createComponentInstance(properties);
+				factory.createComponentInstance(configProperties);
 			} catch (UnacceptableConfiguration e) {
 				e.printStackTrace();
 			} catch (MissingHandlerException e) {
@@ -258,7 +260,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-	public Set<String> getDeviceFactories() {
+	public Set<String> getDeviceTypes() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));		
 	}
 

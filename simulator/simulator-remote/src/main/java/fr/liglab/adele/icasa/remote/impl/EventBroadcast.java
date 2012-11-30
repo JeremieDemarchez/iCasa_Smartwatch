@@ -200,10 +200,64 @@ public class EventBroadcast extends OnMessage<String> {
         }
 
         @Override
-        public void variableModified(Zone zone, String variableName, Double oldValue, Double newValue) {
+        public void zoneVariableAdded(Zone zone, String variableName) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-variable-added");
+                json.put("zoneId", zone.getId());
+                json.put("variableName", variableName);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void zoneVariableRemoved(Zone zone, String variableName) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-variable-removed");
+                json.put("zoneId", zone.getId());
+                json.put("variableName", variableName);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "zone-variable-updated");
+                json.put("zoneId", zone.getId());
+                json.put("variableName", variableName);
+                sendEvent(json);
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void zoneMoved(Zone zone) {
+            //TODO
+        }
+
+        @Override
+        public void zoneResized(Zone zone) {
+            //TODO
+        }
+
+        @Override
+        public void zoneParentModified(Zone zone, Zone oldParent) {
+            //TODO
+        }
+
+        @Override
+        public void zoneAdded(Zone zone) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-added");
                 json.put("zoneId", zone.getId());
                 sendEvent(json);
             } catch (JSONException e){
@@ -212,38 +266,11 @@ public class EventBroadcast extends OnMessage<String> {
         }
 
         @Override
-        public void moved(Zone zone) {
-            //TODO
-        }
-
-        @Override
-        public void resized(Zone zone) {
-            //TODO
-        }
-
-        @Override
-        public void parentModified(Zone zone) {
-            //TODO
-        }
-
-        @Override
-        public void addedZone(String zoneId) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-added");
-                json.put("zoneId", zoneId);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-        public void removedZone(String zoneId) {
+        public void zoneRemoved(Zone zone) {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "zone-removed");
-                json.put("zoneId", zoneId);
+                json.put("zoneId", zone.getId());
                 sendEvent(json);
             } catch (JSONException e){
                 e.printStackTrace();

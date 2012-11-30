@@ -16,12 +16,13 @@
 package fr.liglab.adele.icasa.environment;
 
 import java.util.List;
+import java.util.Set;
 
 public interface LocatedDevice extends LocatedObject {
 
 	public String getSerialNumber();
 		
-	public List<String> getProperties();
+	public Set<String> getProperties();
 
     public Object getPropertyValue(String propertyName);
 

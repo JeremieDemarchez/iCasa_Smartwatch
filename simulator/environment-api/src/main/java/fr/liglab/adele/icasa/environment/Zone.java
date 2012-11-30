@@ -123,9 +123,9 @@ public interface Zone {
 	
 	public boolean getUseParentVariables();
 	
-	public double getVariableValue(String name);
+	public Object getVariableValue(String name);
 	
-	public void setVariableValue(String name, double newValue);
+	public void setVariableValue(String name, Object newValue);
 	
 	public void addVariable(String name);
 

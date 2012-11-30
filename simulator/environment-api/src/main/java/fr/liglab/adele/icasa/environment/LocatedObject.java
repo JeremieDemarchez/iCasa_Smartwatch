@@ -20,5 +20,5 @@ public interface LocatedObject {
 
     public Position getAbsolutePosition();
    
-    public void setPosition(Position position);
+    public void setAbsolutePosition(Position position);
 }

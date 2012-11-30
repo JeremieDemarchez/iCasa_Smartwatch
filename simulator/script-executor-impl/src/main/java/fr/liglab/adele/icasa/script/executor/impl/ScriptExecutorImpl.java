@@ -73,7 +73,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	 */
 	private boolean paused = false;
 
-	private double executedPercentage;
+	private float executedPercentage;
 	
 	private String currentScript;
 
@@ -245,11 +245,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 
 	@Override
-   public double getExecutedPercentage() {
+   public float getExecutedPercentage() {
       return executedPercentage;
    }
 
-	/**
+    /**
 	 * Command executor Thread (Runnable) class
 	 * 
 	 * @author Gabriel
@@ -334,7 +334,35 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 
+    @Override
+    public long currentTimeMillis() {
+        return clock.currentTimeMillis();
+    }
 
+    @Override
+    public void setStartDate(long startDate) {
+        clock.setStartDate(startDate);
+    }
+
+    @Override
+    public void setFactor(int factor) {
+        clock.setFactor(factor);
+    }
+
+    @Override
+    public long getElapsedTime() {
+        return clock.getElapsedTime();
+    }
+
+    @Override
+    public int getFactor() {
+        return clock.getFactor();
+    }
+
+    @Override
+    public Date getStartDate() {
+        return clock.getStartDate();
+    }
 
 
 

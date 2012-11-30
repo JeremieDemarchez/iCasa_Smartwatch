@@ -16,7 +16,11 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.PersonListener;
 import fr.liglab.adele.icasa.environment.Position;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * TODO
@@ -29,6 +33,8 @@ public class PersonImpl implements Person {
     private String _name;
     private Position _position;
     private String _location;
+
+    private List<PersonListener> listeners = new ArrayList<PersonListener>();
 
     public PersonImpl(String name, Position position, String location) {
         _name = name;
@@ -47,18 +53,28 @@ public class PersonImpl implements Person {
     }
 
     @Override
+    public void addListener(PersonListener listener) {
+
+    }
+
+    @Override
+    public void removeListener(PersonListener listener) {
+
+    }
+
+    @Override
     public void setName(String name) {
         _name = name;
     }
 
     @Override
-    public Position getPosition() {
+    public Position getAbsolutePosition() {
         return _position.clone();
     }
 
-	@Override
-   public void setPosition(Position position) {
-	   _position = position;	   
-   }
+    @Override
+    public void setAbsolutePosition(Position position) {
+        _position = position;
+    }
 	
 }

@@ -77,7 +77,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private final List<DeviceListener> m_deviceListeners = new LinkedList<DeviceListener>();
 
-	private final List<UserPositionListener> m_userPositionListeners = new LinkedList<UserPositionListener>();
+	private final List<UserPositionListener> m_userListeners = new LinkedList<UserPositionListener>();
 
     private final List<ZoneListener> m_zoneListeners = new LinkedList<ZoneListener>();
 
@@ -112,12 +112,18 @@ public class SimulationManagerImpl implements SimulationManager {
 		m_environments.put(env.getEnvironmentId(), entry);
         synchronized (m_zoneListeners) {
             for (ZoneListener listener : m_zoneListeners)
-                listener.addedZone(env.getEnvironmentId());
+                listener.zoneAdded(new ZoneImpl(env.getEnvironmentId(), leftX, topY, (rightX - leftX), (bottomY - topY)));
         }
 	}
 
 	@Unbind(id = "environments")
 	public synchronized void unbindEnvironment(SimulatedEnvironment env) {
+        EnvironmentEntry entry = m_environments.get(env.getEnvironmentId());
+        final int leftX = entry.zone.leftX;
+        final int rightX = entry.zone.rightX;
+        final int topY = entry.zone.topY;
+        final int bottomY = entry.zone.bottomY;
+
 		m_environments.remove(env.getEnvironmentId());
 		// Unbind devices that were bound to the leaving environment
 		for (SimulatedDevice dev : m_devices.values()) {
@@ -126,8 +132,9 @@ public class SimulationManagerImpl implements SimulationManager {
 			}
 		}
         synchronized (m_zoneListeners) {
-            for (ZoneListener listener : m_zoneListeners)
-                listener.removedZone(env.getEnvironmentId());
+            for (ZoneListener listener : m_zoneListeners) {
+                listener.zoneRemoved(new ZoneImpl(env.getEnvironmentId(), leftX, topY, (rightX - leftX), (bottomY - topY)));
+            }
         }
 	}
 
@@ -467,7 +474,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (listener == null) {
 			throw new NullPointerException("listener");
 		}
-		m_userPositionListeners.add(listener);
+		m_userListeners.add(listener);
 	}
 
 	@Override
@@ -475,7 +482,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (listener == null) {
 			throw new NullPointerException("listener");
 		}
-		m_userPositionListeners.remove(listener);
+		m_userListeners.remove(listener);
 	}
 
 	@Override
@@ -676,7 +683,7 @@ public class SimulationManagerImpl implements SimulationManager {
 					final Context context = event.getContext();
 					if (context.getParent() == allUsers) {
 						final String userName = context.getName();
-						for (UserPositionListener listener : m_userPositionListeners) {
+						for (UserPositionListener listener : m_userListeners) {
 							listener.userAdded(userName);
 						}
 					}
@@ -690,7 +697,7 @@ public class SimulationManagerImpl implements SimulationManager {
 					final Context context = event.getContext();
 					if (context.getParent() == allUsers) {
 						final String userName = context.getName();
-						for (UserPositionListener listener : m_userPositionListeners) {
+						for (UserPositionListener listener : m_userListeners) {
 							listener.userRemoved(userName);
 						}
 					}
@@ -718,7 +725,7 @@ public class SimulationManagerImpl implements SimulationManager {
 						}
 						// Notify listeners
 						final String userName = context.getName();
-						for (UserPositionListener listener : m_userPositionListeners) {
+						for (UserPositionListener listener : m_userListeners) {
 							listener.userPositionChanged(userName, position);
 						}
 					}
