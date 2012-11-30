@@ -95,10 +95,10 @@
 </section>
 <section>
     <article id="statusWindows">
-            <div data-bind="foreach: devices">
-                <div class="deviceWindow" data-bind="attr: { id: id, alt: name }">
-
+        <!-- ko foreach: $root.devices() -->
+            <div class="deviceWindow" data-bind="jqueryDialog: {}, attr: { id: id, alt: name, title: statusWindowTitle }">
             </div>
+        <!-- /ko -->
     </article>
 </section>
 <footer>

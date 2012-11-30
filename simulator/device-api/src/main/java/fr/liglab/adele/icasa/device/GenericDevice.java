@@ -69,18 +69,19 @@ public interface GenericDevice {
 	public static String STATE_PROPERTY_NAME = "state";
 	public static String STATE_ACTIVATED = "activated";
 	public static String STATE_DEACTIVATED = "deactivated";
+    public static String STATE_UNKNOWN = "unknown";
 	
 	public static String FAULT_PROPERTY_NAME = "fault";
 	public static String FAULT_YES = "yes";
 	public static String FAULT_NO = "no";
-	
+    public static String FAULT_UNKNOWN = "unknown";
 	
 	public String getState();
 	public void setState(String state);
 	
 	public String getFault();
 	public void setFault(String fault);
-	
-    String getLocation();
+
+    public String getLocation();
 
 }

@@ -49,6 +49,18 @@ define(['jquery',
             return { controlsDescendantBindings: false };
     };
 
+    ko.bindingHandlers.jqueryDialog = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).dialog({
+
+            });
+
+            return { controlsDescendantBindings: false };
+    };
+
     ko.bindingHandlers.jqueryTooltip = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->

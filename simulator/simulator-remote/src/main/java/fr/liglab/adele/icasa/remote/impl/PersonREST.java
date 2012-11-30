@@ -106,7 +106,7 @@ public class PersonREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/persons/")
     public Response persons() {
         return makeCORS(Response.ok(getPersons()));
