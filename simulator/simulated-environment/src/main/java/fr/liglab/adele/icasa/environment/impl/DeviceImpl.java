@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.environment.impl;
 
+import java.util.Map;
+
 import fr.liglab.adele.icasa.environment.Device;
 import fr.liglab.adele.icasa.environment.Position;
 
@@ -30,6 +32,12 @@ public class DeviceImpl extends LocatedObjectImpl implements Device {
 	@Override
    public String getSerialNumber() {
 	   return m_serialNumber;
+   }
+
+	@Override
+   public Map<String, Object> getProperties() {
+	   // TODO Auto-generated method stub
+	   return null;
    }
 	
 }

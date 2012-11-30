@@ -132,7 +132,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Bind(id = "devices", aggregate = true, optional = true)
-	public synchronized void bindDevice(SimulatedDevice dev) {
+	public void bindDevice(SimulatedDevice dev) {
 		m_devices.put(dev.getSerialNumber(), dev);
         synchronized (m_deviceListeners) {
             for (DeviceListener listener : m_deviceListeners)
@@ -141,7 +141,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Unbind(id = "devices")
-	public synchronized void unbindDevice(SimulatedDevice dev) {
+	public void unbindDevice(SimulatedDevice dev) {
 		m_devices.remove(dev.getSerialNumber());
 		// Unbind device if it were bound to an environment
 		if (dev.getEnvironmentId() != null) {
@@ -156,12 +156,12 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
-	public synchronized void bindFactory(Factory factory) {
+	public void bindFactory(Factory factory) {
 		m_factories.put(factory.getName(), factory);
 	}
 
 	@Unbind(id = "factories")
-	public synchronized void unbindFactory(Factory factory) {
+	public void unbindFactory(Factory factory) {
 		m_factories.remove(factory.getName());
 	}
 

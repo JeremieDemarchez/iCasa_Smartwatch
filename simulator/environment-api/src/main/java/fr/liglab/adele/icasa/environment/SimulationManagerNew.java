@@ -21,17 +21,31 @@ import java.util.Set;
 /**
  * TODO Comments.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 public interface SimulationManagerNew {
 
 	void createZone(String id, String description, int leftX, int topY, int width, int height);
+	
+	void removeZone(String id);
+	
+	void moveZone(String id, int leftX, int topY);
 
+	void resizeZone(String id, int width, int height);
+	
+	Set<String> getZoneVariables(String zoneId);
+
+	Double getZoneVariableValue(String zoneId, String variable);
+
+	void setZoneVariable(String zoneId, String variable, Double value);
+	
 	List<Zone> getZones();
 	
 	List<Device> getDevices();
 	
 	Zone getZone(String zoneId);
+	
+	
 	
 	Position getDevicePosition(String deviceSerialNumber);
 
@@ -51,11 +65,7 @@ public interface SimulationManagerNew {
 
 	public List<Person> getPersons();
 
-	Set<String> getEnvironmentVariables(String zoneId);
 
-	Double getVariableValue(String zoneId, String variable);
-
-	void setEnvironmentVariable(String zoneId, String variable, Double value);
 
 	void setDeviceFault(String deviceId, boolean value);
 
@@ -66,5 +76,9 @@ public interface SimulationManagerNew {
 	void removeDevice(String deviceId);
 
 	Set<String> getDeviceFactories();
+	
+	void addListener(SimulationEnvironmentListener listener);
 
+	void removeListener(SimulationEnvironmentListener listener);
+	
 }

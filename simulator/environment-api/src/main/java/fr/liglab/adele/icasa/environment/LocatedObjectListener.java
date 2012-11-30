@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.environment;
 
-public interface PersonListener {
+public interface LocatedObjectListener {
+	
+	public void moved(LocatedObject object);
 
 }
