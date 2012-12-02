@@ -108,6 +108,7 @@ require([
             ghost: true,
             handles: "e, s, se, sw, w",
             stop: (event, eventUI) ->
+              $("#tabs").css("min-height", eventUI.size.height + "px");
               $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({

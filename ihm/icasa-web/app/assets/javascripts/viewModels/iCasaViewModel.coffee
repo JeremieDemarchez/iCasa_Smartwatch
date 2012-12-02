@@ -11,25 +11,33 @@ define(['jquery',
         'text!templates/zoneTable.html',
         'text!templates/scriptPlayer.html',
         'text!templates/tabs.html',
+        'text!templates/deviceStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
     ko.bindingHandlers.handlebarTemplate = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called when the binding is first applied to an element
-            idx = 0;
+            value = valueAccessor();
 
-            template = HandleBars.compile(viewModel.tabTemplate, {});
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(value);
+
+            template = HandleBars.compile(valueUnwrapped, {});
             $(element).html(template);
-#            $(element).find(".changeInputToLabelWhenNoClick").addClass("tabCellIsNotEdited").before(
-#                '<label class="changeInputToLabelWhenNoClick tabCellIsNotEdited" data-bind="text: name"></label>').click(() ->
-#              $("this").toggleClass("tabCellIsEdited");
-#            );
 
             return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            value = valueAccessor();
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(value);
+
+            template = HandleBars.compile(valueUnwrapped, {});
+            $(element).html(template);
     };
 
     ko.bindingHandlers.jqueryDraggable = {
@@ -40,6 +48,7 @@ define(['jquery',
             $(element).draggable( {
                 compartment: "#mapContainer",
                 scroll: true,
+                opacity: 0.70,
                 stop: (event, eventUI) ->
                   viewModel.positionX(eventUI.position.left);
                   viewModel.positionY(eventUI.position.top);
@@ -54,9 +63,20 @@ define(['jquery',
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
 
-            $(element).dialog({
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
 
+            $(element).dialog({
+                autoOpen: false,
+                position: {my: "center", at: "center", of: "#statusWindows"},
+                title: titleUnwrapped
+            }).parent().resizable({
+                containment: "#statusWindows"
+            }).draggable({
+                containment: "#statusWindows",
+                opacity: 0.70
             });
+
+            $(element).dialog( "open" );
 
             return { controlsDescendantBindings: false };
     };
@@ -66,7 +86,23 @@ define(['jquery',
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
 
-            $(element).tooltip();
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+
+            $(element).tooltip(
+                content: titleUnwrapped,
+                items: "img[alt]"
+            );
+
+            return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+
+            $(element).tooltip(
+                content: titleUnwrapped
+            );
 
             return { controlsDescendantBindings: false };
     };
@@ -180,6 +216,10 @@ define(['jquery',
            @tooltipContent = ko.computed( () =>
               return @name() + " /n" + @id();
            , @);
+           @statusWindowTitle = ko.computed( () =>
+             return @name();
+           , @);
+           @statusWindowTemplate = deviceStatusWindowTemplateHtml;
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
