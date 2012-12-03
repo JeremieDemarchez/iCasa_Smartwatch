@@ -20,12 +20,12 @@ import java.util.Set;
 
 public interface Zone {
 
-    /**
-     * Returns id.
-     *
-     * @return id.
-     */
-    public String getId();
+	/**
+	 * Returns id.
+	 * 
+	 * @return id.
+	 */
+	public String getId();
 
 	/**
 	 * Gets the (x,y) point in the left-top corner of the zone. This point is
@@ -34,7 +34,7 @@ public interface Zone {
 	 * @return
 	 */
 	public Position getLeftTopPosition();
-	
+
 	public void setLeftTopPosition(Position leftTopPosition);
 
 	/**
@@ -50,35 +50,41 @@ public interface Zone {
 	 * @return
 	 */
 	public int getWidth();
-	
+
 	public void setWidth(int width);
 
 	/**
 	 * Gets the zone height
+	 * 
 	 * @return
 	 */
 	public int getHeight();
-	
+
 	public void setHeight(int height);
 
 	/**
 	 * Returns true if a object its geographically contained into the zone.
-     *
-	 * @param object a located object
+	 * 
+	 * @param object
+	 *           a located object
 	 * @return true if a object its geographically contained into the zone
 	 */
 	public boolean contains(LocatedObject object);
 
-    /**
-     * Returns relative position of specified object from top left corner of this zone.
-     *
-     * @param object a located object
-     * @return relative position of specified object from top left corner of this zone.
-     */
-    public Position getRelativePosition(LocatedObject object);
+	/**
+	 * Returns relative position of specified object from top left corner of this
+	 * zone.
+	 * 
+	 * @param object
+	 *           a located object
+	 * @return relative position of specified object from top left corner of this
+	 *         zone.
+	 */
+	public Position getRelativePosition(LocatedObject object);
 
 	/**
 	 * Adds a child zone to this zone. The child zone must fit this zone.
+	 * 
 	 * @param child
 	 * @return
 	 */
@@ -86,6 +92,7 @@ public interface Zone {
 
 	/**
 	 * Determines if a Zone fits (don't exceed limits) of this zone/
+	 * 
 	 * @param aZone
 	 * @return
 	 */
@@ -93,44 +100,50 @@ public interface Zone {
 
 	/**
 	 * Determines the deepth of this zone
+	 * 
 	 * @return
 	 */
 	public int getLayer();
 
 	/**
 	 * Gets the list of children zones
+	 * 
 	 * @return
 	 */
 	public List<Zone> getChildren();
 
 	/**
 	 * Sets the parent Zone
+	 * 
 	 * @param parent
 	 */
 	public void setParent(Zone parent);
 
 	/**
 	 * Gets the parent Zone
+	 * 
 	 * @return
 	 */
 	public Zone getParent();
-	
+
 	public void addListener(ZoneListener listener);
-	
+
 	public void removeListener(ZoneListener listener);
-		
+
 	public void setUseParentVariables(boolean useParentVariables);
-	
+
 	public boolean getUseParentVariables();
-	
+
 	public Object getVariableValue(String name);
-	
+
 	public void setVariableValue(String name, Object newValue);
-	
+
 	public void addVariable(String name);
 
-    public void removeVariable(String name);
-	
+	public void removeVariable(String name);
+
 	public Set<String> getVariableList();
+	
+	public void resize(int newHeight, int newWidth);
 
 }

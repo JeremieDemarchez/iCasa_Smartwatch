@@ -24,13 +24,11 @@ package fr.liglab.adele.icasa.environment;
  */
 public interface LocatedDeviceListener {
 
-    // ----  LocatedDevice events ---- //
-
     public void deviceAdded(LocatedDevice device);
 
     public void deviceRemoved(LocatedDevice device);
 
-    public void deviceMoved(LocatedDevice device);
+    public void deviceMoved(LocatedDevice device, Position oldPosition);
 
     public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue);
 

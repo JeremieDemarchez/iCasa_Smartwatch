@@ -23,8 +23,6 @@ package fr.liglab.adele.icasa.environment;
  */
 public interface Person extends LocatedObject {
 
-
-
     public String getName();
 
     public void setName(String name);

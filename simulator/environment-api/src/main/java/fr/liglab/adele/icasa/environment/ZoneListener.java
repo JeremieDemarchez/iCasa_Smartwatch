@@ -21,7 +21,7 @@ public interface ZoneListener {
 
     public void zoneRemoved(Zone zone);
 
-    public void zoneMoved(Zone zone);
+    public void zoneMoved(Zone zone, Position oldPosition);
 
     public void zoneVariableAdded(Zone zone, String variableName);
 

@@ -44,239 +44,240 @@ import java.util.UUID;
 @Instantiate(name = "iCasa-event-broadcast-1")
 public class EventBroadcast extends OnMessage<String> {
 
-    @Property(name = "mapping", value = "/event")
-    private String mapping;
+	@Property(name = "mapping", value = "/event")
+	private String mapping;
 
-    private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
+	private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
 
-    @Requires
-    private AtmosphereService _atmoService;
+	@Requires
+	private AtmosphereService _atmoService;
 
-    @Requires
-    private HttpService _httpService;
+	@Requires
+	private HttpService _httpService;
 
-    @Requires
-    private SimulationManager _simulMgr;
+	@Requires
+	private SimulationManager _simulMgr;
 
-    private Broadcaster _eventBroadcaster;
+	private Broadcaster _eventBroadcaster;
 
-    private ICasaEventListener _iCasaListener;
+	private ICasaEventListener _iCasaListener;
 
-    private final BundleContext _context;
+	private final BundleContext _context;
 
-    public EventBroadcast(BundleContext context) {
-        _context = context;
-    }
+	public EventBroadcast(BundleContext context) {
+		_context = context;
+	}
 
-    @Validate
-    private void start() {
-        _iCasaListener = new ICasaEventListener();
-        _simulMgr.addZoneListener(_iCasaListener);
-        _simulMgr.addUserPositionListener(_iCasaListener);
-        _simulMgr.addDeviceListener(_iCasaListener);
+	@Validate
+	private void start() {
+		_iCasaListener = new ICasaEventListener();
+		_simulMgr.addZoneListener(_iCasaListener);
+		_simulMgr.addUserPositionListener(_iCasaListener);
+		_simulMgr.addDeviceListener(_iCasaListener);
 
-        _eventBroadcaster = _atmoService.getBroadcasterFactory().get();
+		_eventBroadcaster = _atmoService.getBroadcasterFactory().get();
 
-        //Register the server (itself)
-        _interceptors.add(new AtmosphereResourceLifecycleInterceptor());
-        _atmoService.addAtmosphereHandler(mapping, this, _eventBroadcaster, _interceptors);
+		// Register the server (itself)
+		_interceptors.add(new AtmosphereResourceLifecycleInterceptor());
+		_atmoService.addAtmosphereHandler(mapping, this, _eventBroadcaster, _interceptors);
 
-        //Register the web client
-        try {
-            _httpService.registerResources("/event", "/web", null);
-        } catch (NamespaceException e) {
-            e.printStackTrace();
-        }
-    }
+		// Register the web client
+		try {
+			_httpService.registerResources("/event", "/web", null);
+		} catch (NamespaceException e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Invalidate
-    private void stop() {
-        if (_iCasaListener != null) {
-            _simulMgr.removeUserPositionListener(_iCasaListener);
-            _simulMgr.removeDevicePositionListener(_iCasaListener);
-            _iCasaListener = null;
-        }
+	@Invalidate
+	private void stop() {
+		if (_iCasaListener != null) {
+			_simulMgr.removeUserPositionListener(_iCasaListener);
+			_simulMgr.removeDevicePositionListener(_iCasaListener);
+			_iCasaListener = null;
+		}
 
-        _atmoService.removeAtmosphereHandler(mapping);
-        _interceptors.clear();
+		_atmoService.removeAtmosphereHandler(mapping);
+		_interceptors.clear();
 
-        _httpService.unregister("/event");
-    }
+		_httpService.unregister("/event");
+	}
 
-    @Override
-    public void onMessage(AtmosphereResponse atmosphereResponse, String s) throws IOException {
-        atmosphereResponse.getWriter().write(s);
-    }
+	@Override
+	public void onMessage(AtmosphereResponse atmosphereResponse, String s) throws IOException {
+		atmosphereResponse.getWriter().write(s);
+	}
 
-    private UUID _lastEventId = UUID.randomUUID();
+	private UUID _lastEventId = UUID.randomUUID();
 
-    private String generateUUID() {
-        _lastEventId = UUID.randomUUID();
-        return _lastEventId.toString();
-    }
+	private String generateUUID() {
+		_lastEventId = UUID.randomUUID();
+		return _lastEventId.toString();
+	}
 
-    private void sendEvent(JSONObject event) {
-        try {
-            event.put("id", generateUUID());
-            event.put("time", new Date().getTime());
-            _eventBroadcaster.broadcast(event.toString());
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-    }
+	private void sendEvent(JSONObject event) {
+		try {
+			event.put("id", generateUUID());
+			event.put("time", new Date().getTime());
+			_eventBroadcaster.broadcast(event.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 
-    private class ICasaEventListener implements DeviceListener, UserPositionListener, ZoneListener {
+	private class ICasaEventListener implements DeviceListener, UserPositionListener, ZoneListener {
 
-        @Override
-        public void devicePositionChanged(String deviceSerialNumber, Position position) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-position-update");
-                json.put("deviceId", deviceSerialNumber);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void devicePositionChanged(String deviceSerialNumber, Position position) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-position-update");
+				json.put("deviceId", deviceSerialNumber);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void deviceAdded(String deviceId) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-added");
-                json.put("deviceId", deviceId);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void deviceAdded(String deviceId) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-added");
+				json.put("deviceId", deviceId);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void deviceRemoved(String deviceId) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-removed");
-                json.put("deviceId", deviceId);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void deviceRemoved(String deviceId) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-removed");
+				json.put("deviceId", deviceId);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void userPositionChanged(String userName, Position position) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "user-position-update");
-                json.put("userId", userName);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void userPositionChanged(String userName, Position position) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "user-position-update");
+				json.put("userId", userName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void userAdded(String userName) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "user-added");
-                json.put("userId", userName);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void userAdded(String userName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "user-added");
+				json.put("userId", userName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void userRemoved(String userName) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "user-removed");
-                json.put("userId", userName);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void userRemoved(String userName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "user-removed");
+				json.put("userId", userName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void zoneVariableAdded(Zone zone, String variableName) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-variable-added");
-                json.put("zoneId", zone.getId());
-                json.put("variableName", variableName);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void zoneVariableAdded(Zone zone, String variableName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-variable-added");
+				json.put("zoneId", zone.getId());
+				json.put("variableName", variableName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void zoneVariableRemoved(Zone zone, String variableName) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-variable-removed");
-                json.put("zoneId", zone.getId());
-                json.put("variableName", variableName);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void zoneVariableRemoved(Zone zone, String variableName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-variable-removed");
+				json.put("zoneId", zone.getId());
+				json.put("variableName", variableName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-variable-updated");
-                json.put("zoneId", zone.getId());
-                json.put("variableName", variableName);
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-variable-updated");
+				json.put("zoneId", zone.getId());
+				json.put("variableName", variableName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void zoneMoved(Zone zone) {
-            //TODO
-        }
+		@Override
+		public void zoneMoved(Zone zone, Position oldPosition) {
+			// TODO Auto-generated method stub
 
-        @Override
-        public void zoneResized(Zone zone) {
-            //TODO
-        }
+		}
 
-        @Override
-        public void zoneParentModified(Zone zone, Zone oldParent) {
-            //TODO
-        }
+		@Override
+		public void zoneResized(Zone zone) {
+			// TODO
+		}
 
-        @Override
-        public void zoneAdded(Zone zone) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-added");
-                json.put("zoneId", zone.getId());
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void zoneParentModified(Zone zone, Zone oldParent) {
+			// TODO
+		}
 
-        @Override
-        public void zoneRemoved(Zone zone) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-removed");
-                json.put("zoneId", zone.getId());
-                sendEvent(json);
-            } catch (JSONException e){
-                e.printStackTrace();
-            }
-        }
-    }
+		@Override
+		public void zoneAdded(Zone zone) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-added");
+				json.put("zoneId", zone.getId());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
+		@Override
+		public void zoneRemoved(Zone zone) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-removed");
+				json.put("zoneId", zone.getId());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
 
 }

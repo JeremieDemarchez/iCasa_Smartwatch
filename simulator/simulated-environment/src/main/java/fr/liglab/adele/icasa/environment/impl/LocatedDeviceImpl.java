@@ -15,75 +15,98 @@
  */
 package fr.liglab.adele.icasa.environment.impl;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import fr.liglab.adele.icasa.environment.LocatedDeviceListener;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.LocatedDeviceListener;
 import fr.liglab.adele.icasa.environment.Position;
 
-public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevice {
+public class LocatedDeviceImpl implements LocatedDevice {
 
 	private String m_serialNumber;
 
-    private Map<String, Object> properties = new HashMap<String, Object>();
+	private Map<String, Object> properties = new HashMap<String, Object>();
 
-    private final List<LocatedDeviceListener> m_deviceListeners = new LinkedList<LocatedDeviceListener>();
+	private final List<LocatedDeviceListener> listeners = new ArrayList<LocatedDeviceListener>();
 	
+	private Position m_position;
+
 	public LocatedDeviceImpl(String serialNumber, Position position) {
-	   super(position);
-	   m_serialNumber = serialNumber;
-    }
+		m_serialNumber = serialNumber;
+		m_position = position.clone();
+	}
 
 	@Override
-    public String getSerialNumber() {
-	   return m_serialNumber;
-    }
+	public String getSerialNumber() {
+		return m_serialNumber;
+	}
 
 	@Override
-    public Set<String> getProperties() {
-        synchronized (properties) {
-	        return properties.keySet();
-        }
-    }
+	public Set<String> getProperties() {
+		synchronized (properties) {
+			return properties.keySet();
+		}
+	}
 
-    @Override
-    public Object getPropertyValue(String propertyName) {
-        if (propertyName == null) {
-            throw new NullPointerException("Null property name");
-        }
-        synchronized (properties) {
-            return properties.get(propertyName);
-        }
-    }
+	@Override
+	public Object getPropertyValue(String propertyName) {
+		if (propertyName == null) {
+			throw new NullPointerException("Null property name");
+		}
+		synchronized (properties) {
+			return properties.get(propertyName);
+		}
+	}
 
-    @Override
-    public void setPropertyValue(String propertyName, Object value) {
-        if (propertyName == null) {
-            throw new NullPointerException("Null property name");
-        }
-        synchronized (properties) {
-            properties.put(propertyName, value);
-        }
-    }
+	@Override
+	public void setPropertyValue(String propertyName, Object value) {
+		if (propertyName == null) {
+			throw new NullPointerException("Null property name");
+		}
+		synchronized (properties) {
+			properties.put(propertyName, value);
+		}
+	}
 
-    @Override
-    public synchronized void addListener(final LocatedDeviceListener listener) {
-        if (listener == null) {
-            throw new NullPointerException("listener");
-        }
-        synchronized (m_deviceListeners) {
-            m_deviceListeners.add(listener);
-        }
-    }
+	@Override
+	public synchronized void addListener(final LocatedDeviceListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("listener");
+		}
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
 
-    @Override
-    public synchronized void removeListener(final LocatedDeviceListener listener) {
-        if (listener == null) {
-            throw new NullPointerException("listener");
-        }
-        synchronized (m_deviceListeners) {
-            m_deviceListeners.remove(listener);
-        }
-    }
-	
+	@Override
+	public synchronized void removeListener(final LocatedDeviceListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("listener");
+		}
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	@Override
+   public Position getAbsolutePosition() {
+	   return m_position.clone();
+   }
+
+	@Override
+   public void setAbsolutePosition(Position position) {
+		Position oldPosition = m_position.clone();
+		m_position = position.clone();
+				
+		// Listeners notification
+		for (LocatedDeviceListener listener : listeners) {
+			listener.deviceMoved(this, oldPosition);
+		}
+	   
+   }
+
 }

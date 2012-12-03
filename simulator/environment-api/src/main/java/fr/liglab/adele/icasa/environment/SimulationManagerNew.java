@@ -26,6 +26,8 @@ import java.util.Set;
  */
 public interface SimulationManagerNew {
 
+	// -- Zone related methods --//
+	
 	Zone createZone(String id, String description, int leftX, int topY, int width, int height);
 	
 	void removeZone(String id);
@@ -41,25 +43,33 @@ public interface SimulationManagerNew {
 	void setZoneVariable(String zoneId, String variable, Object value);
 	
 	List<Zone> getZones();
-	
-	List<LocatedDevice> getDevices();
-	
+
 	Zone getZone(String zoneId);
 	
 	
+	// -- Device related method --//
+	
+	void setDeviceFault(String deviceId, boolean value);
+
+	void setDeviceState(String deviceId, boolean value);
+
+	void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
+	
+	List<LocatedDevice> getDevices();
 	
 	Position getDevicePosition(String deviceSerialNumber);
 
 	void setDevicePosition(String deviceSerialNumber, Position position);
 
-    /**
-     *
-     *
-     * @param deviceSerialNumber
-     * @param zoneId
-     */
 	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId);
 
+	void removeDevice(String deviceId);
+
+	Set<String> getDeviceTypes();
+	
+	
+	// -- Person related methods -- //
+	
 	void setPersonPosition(String userName, Position position);
 
 	void setPersonZone(String userName, String environmentId);
@@ -72,22 +82,8 @@ public interface SimulationManagerNew {
 
 	public List<Person> getPersons();
 
-
-
-	void setDeviceFault(String deviceId, boolean value);
-
-	void setDeviceState(String deviceId, boolean value);
-
-	void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
-
-	void removeDevice(String deviceId);
-
-	Set<String> getDeviceTypes();
-
-
-
-
-
+	
+	// -- Listener related methods -- //
 
 	void addListener(SimulationListener listener);
 

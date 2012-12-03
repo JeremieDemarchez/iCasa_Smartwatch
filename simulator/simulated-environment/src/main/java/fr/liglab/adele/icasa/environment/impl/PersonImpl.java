@@ -15,66 +15,71 @@
  */
 package fr.liglab.adele.icasa.environment.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.PersonListener;
 import fr.liglab.adele.icasa.environment.Position;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * TODO
- *
- * @author Thomas Leveque
- *         Date: 10/11/12
+ * 
+ * @author Thomas Leveque Date: 10/11/12
  */
 public class PersonImpl implements Person {
 
-    private String _name;
-    private Position _position;
-    private String _location;
+	private String _name;
+	private Position _position;
+	private String _location;
 
-    private List<PersonListener> listeners = new ArrayList<PersonListener>();
+	private List<PersonListener> listeners = new ArrayList<PersonListener>();
 
-    public PersonImpl(String name, Position position, String location) {
-        _name = name;
-        _position = position.clone();
-        _location = location;
-    }
+	public PersonImpl(String name, Position position, String location) {
+		_name = name;
+		_position = position.clone();
+		_location = location;
+	}
 
-    @Override
-    public String getName() {
-        return _name;
-    }
+	@Override
+	public String getName() {
+		return _name;
+	}
 
-    @Override
-    public String getLocation() {
-        return _location;
-    }
+	@Override
+	public String getLocation() {
+		return _location;
+	}
 
-    @Override
-    public void addListener(PersonListener listener) {
+	@Override
+	public void addListener(PersonListener listener) {
+		listeners.add(listener);
+	}
 
-    }
+	@Override
+	public void removeListener(PersonListener listener) {
+		listeners.remove(listener);
+	}
 
-    @Override
-    public void removeListener(PersonListener listener) {
+	@Override
+	public void setName(String name) {
+		_name = name;
+	}
 
-    }
+	@Override
+	public Position getAbsolutePosition() {
+		return _position.clone();
+	}
 
-    @Override
-    public void setName(String name) {
-        _name = name;
-    }
+	@Override
+	public void setAbsolutePosition(Position position) {
+		Position oldPosition = _position.clone();
+		_position = position.clone();
+				
+		// Listeners notification
+		for (PersonListener listener : listeners) {
+			listener.personMoved(this, oldPosition);
+		}
+	}
 
-    @Override
-    public Position getAbsolutePosition() {
-        return _position.clone();
-    }
-
-    @Override
-    public void setAbsolutePosition(Position position) {
-        _position = position;
-    }
-	
 }

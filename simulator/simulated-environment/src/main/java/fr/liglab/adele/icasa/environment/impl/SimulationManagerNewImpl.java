@@ -42,9 +42,9 @@ import org.osgi.framework.ServiceReference;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
 
-@Component(name="SimulationManagerNew")
-@Provides
-@Instantiate(name="SimulationManagerNew-0")
+@Component(name = "SimulationManagerNew")
+@Provides(specifications=SimulationManagerNew.class)
+@Instantiate(name = "SimulationManagerNew-0")
 public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
@@ -56,95 +56,89 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
-	
+
 	private List<SimulationListener> listeners = new ArrayList<SimulationListener>();
 
 	@Override
 	public Zone createZone(String id, String description, int leftX, int topY, int width, int height) {
 		Zone zone = new ZoneImpl(id, leftX, topY, width, height);
 		zones.put(id, zone);
-		
-		for (SimulationListener listener : listeners) {
-	      listener.zoneAdded(zone);
-        }
 
-        return zone;
+		// Listeners notification
+		for (SimulationListener listener : listeners)
+			listener.zoneAdded(zone);
+
+		return zone;
 	}
-	
+
 	@Override
 	public void removeZone(String id) {
 		Zone zone = zones.remove(id);
-		if (zone!=null) {
-			for (SimulationListener listener : listeners) {
-		      listener.zoneRemoved(zone);
-	      }	
-		}
+		if (zone == null)
+			return;
+
+		// Listeners notification
+		for (SimulationListener listener : listeners)
+			listener.zoneRemoved(zone);
 	}
-	
+
 	@Override
 	public void moveZone(String id, int leftX, int topY) {
 		Zone zone = zones.get(id);
-		if (zone!=null) {
-			Position position = new Position(leftX, topY);
-			zone.setLeftTopPosition(position);
-			
-			for (SimulationListener listener : listeners) {
-		      listener.zoneMoved(zone);
-	      }	
-		}
+		if (zone == null)
+			return;
+
+		Position newPosition = new Position(leftX, topY);
+		zone.setLeftTopPosition(newPosition);
 	}
-	
+
 	@Override
 	public void resizeZone(String id, int width, int height) {
 		Zone zone = zones.get(id);
-		if (zone!=null) {			
-			zone.setHeight(height);
-			zone.setWidth(width);			
-			for (SimulationListener listener : listeners) {
-		      listener.zoneResized(zone);
-	      }	
-		}
+		if (zone == null)
+			return;
+
+		zone.resize(height, width);
 	}
-	
+
 	@Override
 	public Set<String> getZoneVariables(String zoneId) {
 		Zone zone = zones.get(zoneId);
+		if (zone == null)
+			return null;
 		return zone.getVariableList();
 	}
 
 	@Override
 	public Object getZoneVariableValue(String zoneId, String variable) {
-		Zone zone = zones.get(zoneId);		
+		Zone zone = zones.get(zoneId);
+		if (zone == null)
+			return null;
 		return zone.getVariableValue(variable);
 	}
 
 	@Override
 	public void setZoneVariable(String zoneId, String variableName, Object value) {
 		Zone zone = zones.get(zoneId);
-		if (zone!=null) {
-			Object oldValue = zone.getVariableValue(variableName);
-			zone.setVariableValue(variableName, value);
-			
-			for (SimulationListener listener : listeners) {
-		      listener.zoneVariableModified(zone, variableName, oldValue, value);
-	      }	
-		}
-
+		if (zone == null)
+			return;
+		
+		zone.setVariableValue(variableName, value);
 	}
 
 	@Override
 	public List<Zone> getZones() {
 		return new ArrayList<Zone>(zones.values());
 	}
+	
+	@Override
+	public Zone getZone(String zoneId) {
+		return zones.get(zoneId);
+	}
 
 	@Override
 	public List<LocatedDevice> getDevices() {
 		return new ArrayList<LocatedDevice>(devices.values());
-	}
-
-	@Override
-	public Zone getZone(String zoneId) {
-		return zones.get(zoneId);
 	}
 
 	@Override
@@ -190,19 +184,28 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public void addPerson(String userName) {
 		Person person = new PersonImpl(userName, null, null);
 		persons.put(userName, person);
+		
+		// Listeners notification
+		for (SimulationListener listener : listeners)
+			listener.personAdded(person);
+		
+		
 	}
 
 	@Override
 	public void removePerson(String userName) {
-		persons.remove(userName);
+		Person person = persons.remove(userName);
+		if (person==null)
+			return;
+		// Listeners notification
+		for (SimulationListener listener : listeners)
+			listener.personRemoved(person);
 	}
 
 	@Override
 	public List<Person> getPersons() {
 		return new ArrayList<Person>(persons.values());
 	}
-
-
 
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
@@ -232,12 +235,12 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		if (factory != null) {
 			// Create the device
 			Dictionary<String, String> configProperties = new Hashtable<String, String>();
-            configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-            configProperties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
-            configProperties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
+			configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+			configProperties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+			configProperties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
 			if (properties.get("description") != null)
-                configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
-            configProperties.put("instance.name", factoryName + "-" + deviceId);
+				configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
+			configProperties.put("instance.name", factoryName + "-" + deviceId);
 			try {
 				factory.createComponentInstance(configProperties);
 			} catch (UnacceptableConfiguration e) {
@@ -261,43 +264,21 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public Set<String> getDeviceTypes() {
-		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));		
+		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
 
-	/*
-	@Bind(id = "devices", aggregate = true, optional = true)
-	public synchronized void bindDevice(SimulatedDevice dev) {
-		m_simulatedDevices.put(dev.getSerialNumber(), dev);
-	}
 
-	@Unbind(id = "devices")
-	public synchronized void unbindDevice(SimulatedDevice dev) {
-		m_simulatedDevices.remove(dev.getSerialNumber());
-	}
-	
-	*/
-	
-	
+
 	@Bind(id = "sim-devices", aggregate = true, optional = true)
 	public void bindDevice(SimulatedDevice dev) {
-		/*
-		System.out.println("+--------");
-		String[] props = reference.getPropertyKeys();
-				for (String prop : props) {
-	      System.out.println("\t +------ Property " + prop);
-      }
-		*/
-
 		System.out.println("+--------  LocatedDevice " + dev.getSerialNumber());
 		m_simulatedDevices.put(dev.getSerialNumber(), dev);
 	}
-	
+
 	@Unbind(id = "sim-devices")
 	public void unbindDevice(ServiceReference reference) {
-		
+
 	}
-	
-	
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public void bindFactory(Factory factory) {
@@ -311,13 +292,31 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-   public void addListener(SimulationListener listener) {
+	public void addListener(SimulationListener listener) {
 		listeners.add(listener);
-   }
+
+		for (Zone zone : zones.values())
+			zone.addListener(listener);
+
+		for (Person person : persons.values())
+			person.addListener(listener);
+
+		for (LocatedDevice device : devices.values())
+			device.addListener(listener);
+	}
 
 	@Override
-   public void removeListener(SimulationListener listener) {
+	public void removeListener(SimulationListener listener) {
 		listeners.remove(listener);
-   }
-	
+
+		for (Zone zone : zones.values())
+			zone.removeListener(listener);
+
+		for (Person person : persons.values())
+			person.removeListener(listener);
+
+		for (LocatedDevice device : devices.values())
+			device.removeListener(listener);
+	}
+
 }
