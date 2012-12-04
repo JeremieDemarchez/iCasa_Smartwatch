@@ -78,7 +78,7 @@
             <!-- ko foreach: $root.devices() -->
                 <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
                     <div class="deviceWidgetContainer">
-                        <img class="deviceWidgetIcon blurAndGrayscale" data-bind="jqueryTooltip: tooltipContent, attr: { src: imgSrc, alt: name }" />
+                        <img class="deviceWidgetIcon" data-bind="jqueryTooltip: tooltipContent, attr: { src: imgSrc, alt: name }, css: { blurAndGrayscale: isDesactivated }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
                             <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
                         </div>

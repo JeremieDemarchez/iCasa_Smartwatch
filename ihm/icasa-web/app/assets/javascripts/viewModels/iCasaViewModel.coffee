@@ -195,6 +195,12 @@ define(['jquery',
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
            @state = kb.defaultObservable(@_state, 'activated');
+           @isDesactivated = ko.computed({
+              read: () =>
+                return @state() == "deactivated";
+              owner: @
+           }
+           , @);
            @fault = kb.defaultObservable(@_fault, 'no');
            @positionX = kb.defaultObservable(@_positionX, 0);
            @positionY = kb.defaultObservable(@_positionY, 0);
@@ -203,13 +209,13 @@ define(['jquery',
                 return @positionX() + "px";
               owner: @
            }
-           , @)
+           , @);
            @styleTop = ko.computed({
               read: () =>
                 return @positionY() + "px";
               owner: @
            }
-           , @)
+           , @);
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
@@ -290,8 +296,8 @@ define(['jquery',
                         decorator.show(activatedState && !faultState);
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
-                    if (decorator.name() == "deactivated")
-                        decorator.show(!activatedState);
+#                    if (decorator.name() == "deactivated")
+#                        decorator.show(!activatedState);
                 );
            @saveModel= (newValue) =>
                 @.model().save();
