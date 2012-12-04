@@ -68,7 +68,7 @@
             <!-- ko foreach: $root.persons() -->
                 <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
                     <div class="userWidgetContainer">
-                        <img data-bind="jqueryTooltip: tooltipContent, attr: { src: imgSrc, alt: name }" />
+                        <img class="userWidgetIcon"data-bind="jqueryTooltip: tooltipContent, attr: { src: imgSrc, alt: name }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">
                             <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
                         </div>
@@ -78,7 +78,7 @@
             <!-- ko foreach: $root.devices() -->
                 <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
                     <div class="deviceWidgetContainer">
-                        <img data-bind="jqueryTooltip: tooltipContent, attr: { src: imgSrc, alt: name }" />
+                        <img class="deviceWidgetIcon blurAndGrayscale" data-bind="jqueryTooltip: tooltipContent, attr: { src: imgSrc, alt: name }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
                             <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
                         </div>
@@ -97,6 +97,10 @@
     <article id="statusWindows">
         <!-- ko foreach: $root.devices() -->
             <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name }, handlebarTemplate: name">
+            </div>
+        <!-- /ko -->
+        <!-- ko foreach: $root.persons() -->
+            <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name }, handlebarTemplate: name">
             </div>
         <!-- /ko -->
     </article>

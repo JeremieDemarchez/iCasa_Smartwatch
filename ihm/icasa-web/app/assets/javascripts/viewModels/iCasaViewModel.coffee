@@ -79,6 +79,18 @@ define(['jquery',
             $(element).dialog( "open" );
 
             return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            visibleUnwrapped = ko.utils.unwrapObservable(viewModel.statusWindowVisible);
+
+            if (visibleUnwrapped)
+              $(element).dialog( "open" );
+            else
+              $(element).dialog( "close" );
+
+            return { controlsDescendantBindings: false };
     };
 
     ko.bindingHandlers.jqueryTooltip = {
@@ -178,7 +190,7 @@ define(['jquery',
 
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
@@ -264,6 +276,7 @@ define(['jquery',
                     imgSrc: '/assets/images/devices/decorators/play.png',
                     show: true}
            ]);
+           @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
            @updateWidgetImg= (newValue) =>
                 activatedState = false;
                 if ("activated" == @state())
@@ -290,7 +303,7 @@ define(['jquery',
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
@@ -308,9 +321,29 @@ define(['jquery',
               owner: @
            }
            , @)
+           @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+           @locationZone = ko.computed({
+              read: () =>
+                zoneModel = @zones.collection().get(@location());
+                if (zoneModel == undefined)
+                  return null;
+                return @zones.viewModelByModel(zoneModel);
+              write: (zone) =>
+                if (zone != undefined)
+                  zoneName = zone.name();
+                  @location(zoneName);
+                return zone;
+              owner: @
+           }
+           );
            @tooltipContent = ko.computed( () =>
+              return @name() + " /n" + @id();
+           , @);
+           @statusWindowTitle = ko.computed( () =>
               return @name();
            , @);
+           @statusWindowTemplate = deviceStatusWindowTemplateHtml;
+           @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
 
@@ -405,12 +438,13 @@ define(['jquery',
               device.model().destroy();
 
            @showDeviceWindow = (device) =>
-              DataModel.collections.devices.fetch();
+              device.statusWindowVisible(false);
+              device.statusWindowVisible(true);
 
            @newPersonName = ko.observable("");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), positionX: 1, positionY: 1 });
               DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
@@ -419,22 +453,22 @@ define(['jquery',
               @persons.fetch();
 
            @showPersonWindow = (person) =>
-              DataModel.collections.persons.fetch();
+              person.statusWindowVisible(false);
+              person.statusWindowVisible(true);
 
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false });
+              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               DataModel.collections.zones.push(newZone);
               newZone.save();
 
            @newRoomName = ko.observable("");
 
            @createRoom = () =>
-              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true });
-              newZone.save();
-              newZone.fetch();
+              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               @zones.push(new ZoneViewModel(newZone));
+              newZone.save();
 
            @removeZone = (zone) =>
               @zones.remove(zone);
