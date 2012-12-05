@@ -52,6 +52,13 @@
 //    }
 //}
 
+.blurAndGrayscale {
+    filter: url(blurAndGrayscale.svg#blurAndGrayscale); /* Firefox 3.5+ */
+    filter: gray; /* IE6-9 */
+    -webkit-filter: grayscale(100%) blur(1px);
+    filter: grayscale(100%) blur(1px);
+}
+
 /* Global settings */
 
 body
