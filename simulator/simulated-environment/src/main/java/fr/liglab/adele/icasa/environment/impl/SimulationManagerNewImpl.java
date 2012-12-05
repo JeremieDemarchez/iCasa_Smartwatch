@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fr.liglab.adele.icasa.environment.*;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -37,14 +36,20 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulationListener;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.Zone;
 
-@Component(name = "SimulationManagerNew")
-@Provides(specifications=SimulationManagerNew.class)
-@Instantiate(name = "SimulationManagerNew-0")
+
+@Component
+@Provides
+@Instantiate(name = "SimulationManagerNew-1")
 public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
@@ -58,6 +63,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
 
 	private List<SimulationListener> listeners = new ArrayList<SimulationListener>();
+	
 
 	@Override
 	public Zone createZone(String id, String description, int leftX, int topY, int width, int height) {
@@ -276,19 +282,20 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Unbind(id = "sim-devices")
-	public void unbindDevice(ServiceReference reference) {
+	public void unbindDevice(SimulatedDevice dev) {
 
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public void bindFactory(Factory factory) {
+		System.out.println("+-------- Bind Factory ++++++++++++++++++ " + factory.getName());
 		m_factories.put(factory.getName(), factory);
-		System.out.println("+--------");
 	}
 
 	@Unbind(id = "factories")
 	public void unbindFactory(Factory factory) {
-		m_factories.remove(factory.getName());
+		System.out.println("+-------- UnBind Factory +++++++++++++++++++");
+		m_factories.put(factory.getName(), factory);
 	}
 
 	@Override
