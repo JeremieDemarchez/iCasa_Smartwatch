@@ -12,10 +12,33 @@ define(['jquery',
         'text!templates/scriptPlayer.html',
         'text!templates/tabs.html',
         'text!templates/deviceStatusWindow.html',
+        'text!templates/personStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
+
+    ko.bindingHandlers.staticTemplate = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            value = valueAccessor();
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(value);
+
+            $(element).html(valueUnwrapped);
+
+            return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            value = valueAccessor();
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(value);
+
+            $(element).html(valueUnwrapped);
+    };
+
 
     ko.bindingHandlers.handlebarTemplate = {
 
@@ -67,21 +90,27 @@ define(['jquery',
 
             $(element).dialog({
                 autoOpen: false,
-                position: {my: "center", at: "center", of: "#statusWindows"},
                 title: titleUnwrapped
-            }).parent().resizable({
-                containment: "#statusWindows"
-            }).draggable({
-                containment: "#statusWindows",
-                opacity: 0.70
             });
-
-            $(element).dialog( "open" );
+#            $(element).dialog({
+#                autoOpen: false,
+#                position: {my: "center", at: "center", of: "#statusWindows"},
+#                title: titleUnwrapped
+#            })
+#            .parent().resizable({
+#                containment: "#statusWindows"
+#            }).draggable({
+#                containment: "#statusWindows",
+#                opacity: 0.70
+#            });
 
             return { controlsDescendantBindings: false };
 
         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
+
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+            $(element).dialog("option", "title", titleUnwrapped);
 
             visibleUnwrapped = ko.utils.unwrapObservable(viewModel.statusWindowVisible);
 
@@ -112,9 +141,7 @@ define(['jquery',
 
             titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
 
-            $(element).tooltip(
-                content: titleUnwrapped
-            );
+            $(element).tooltip( "option", "content", titleUnwrapped);
 
             return { controlsDescendantBindings: false };
     };
@@ -190,7 +217,7 @@ define(['jquery',
 
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible', 'statusWindowTemplate']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
@@ -309,7 +336,7 @@ define(['jquery',
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible', 'statusWindowTemplate']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
@@ -348,7 +375,7 @@ define(['jquery',
            @statusWindowTitle = ko.computed( () =>
               return @name();
            , @);
-           @statusWindowTemplate = deviceStatusWindowTemplateHtml;
+           @statusWindowTemplate = personStatusWindowTemplateHtml;
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
