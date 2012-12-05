@@ -50,10 +50,10 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       else
         DataModel.collections.devices.fetch();
 
-    if ((json.eventType == "user-added") || (json.eventType == "user-removed"))
+    if ((json.eventType == "person-added") || (json.eventType == "person-removed"))
       DataModel.collections.persons.fetch();
-    if (json.eventType == "user-position-update")
-      person = DataModel.collections.persons.get(json.userId);
+    if (json.eventType == "person-position-update")
+      person = DataModel.collections.persons.get(json.personId);
       if ((person != null) && (person != undefined))
         person.fetch();
       else

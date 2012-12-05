@@ -17,6 +17,8 @@ package fr.liglab.adele.icasa.device;
 
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 
+import java.util.Set;
+
 /**
  * Generic interface that is intended to be used as a skeleton for device
  * service interface definitions.
@@ -75,13 +77,57 @@ public interface GenericDevice {
 	public static String FAULT_YES = "yes";
 	public static String FAULT_NO = "no";
     public static String FAULT_UNKNOWN = "unknown";
-	
+
+    /**
+     * Returns activation state of this device.
+     *
+     * @return activation state of this device.
+     */
 	public String getState();
+
+    /**
+     * Sets activation state of this device.
+     *
+     * @param state activation state to set
+     */
 	public void setState(String state);
-	
+
+    /**
+     * Returns fault state of this device.
+     *
+     * @return fault state of this device.
+     */
 	public String getFault();
+
+    /**
+     * Sets fault state of this device.
+     *
+     * @param fault
+     */
 	public void setFault(String fault);
 
-    public String getLocation();
+    /**
+     * Returns names of all properties which define the device state.
+     *
+     * @return names of all properties which define the device state.
+     */
+    public Set<String> getProperties();
+
+    /**
+     * Returns the specified property value.
+     * Returns null if there is no value or the property does not exist.
+     *
+     * @param propertyName
+     * @return the specified property value.
+     */
+    public Object getPropertyValue(String propertyName);
+
+    /**
+     * Sets specified property value.
+     *
+     * @param propertyName
+     * @param value
+     */
+    public void setPropertyValue(String propertyName, Object value);
 
 }

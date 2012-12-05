@@ -102,9 +102,20 @@ public class ZoneImpl implements Zone {
 
 		Position absolutePosition = getAbsoluteLeftTopPosition();
 
-		return objectPosition.x >= absolutePosition.x && objectPosition.x <= absolutePosition.x + width
-		      && objectPosition.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height;
+		return (objectPosition.x >= absolutePosition.x && objectPosition.x <= absolutePosition.x + width)
+		      && (objectPosition.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
 	}
+
+    @Override
+    public boolean contains(Position position) {
+        if (position == null)
+            return false;
+
+        Position absolutePosition = getAbsoluteLeftTopPosition();
+
+        return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
+                && (position.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
+    }
 
 	@Override
 	public boolean addZone(Zone child) {
@@ -178,7 +189,7 @@ public class ZoneImpl implements Zone {
 
 		// Listeners notification
 		for (ZoneListener listener : listeners) {
-			listener.zoneVariableModified(this, name, oldValue, newValue);
+			listener.zoneVariableModified(this, name, oldValue);
 		}
 	}
 
@@ -211,10 +222,10 @@ public class ZoneImpl implements Zone {
 	}
 
 	@Override
-	public Set<String> getVariableList() {
+	public Set<String> getVariableNames() {
 		if (useParentVariable)
 			if (parent != null)
-				return parent.getVariableList();
+				return parent.getVariableNames();
 			else
 				return null;
 		return variables.keySet();

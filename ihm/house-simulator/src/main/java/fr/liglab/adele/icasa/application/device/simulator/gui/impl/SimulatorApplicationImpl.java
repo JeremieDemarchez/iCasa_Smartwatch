@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.environment.*;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.Extent;
 import nextapp.echo.app.Pane;
@@ -60,11 +61,6 @@ import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFa
 import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
-import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
 import fr.liglab.adele.icasa.script.ScenarioInstaller;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 
@@ -75,7 +71,7 @@ import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
  */
 @Component(name = "WebHouseSimulator", immediate = true)
 @Provides
-public class SimulatorApplicationImpl extends BaseHouseApplication implements UserPositionListener {
+public class SimulatorApplicationImpl extends BaseHouseApplication implements PersonListener {
 
 	/**
 	 * @generated
@@ -219,13 +215,13 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 
 	@Override
 	@Bind(id = "simulationManager")
-	public void bindSimulationManager(final SimulationManager simulationManager) {
+	public void bindSimulationManager(final SimulationManagerNew simulationManager) {
 		super.bindSimulationManager(simulationManager);
 	}
 
 	@Override
 	@Unbind(id = "simulationManager")
-	public void unbindSimulationManager(final SimulationManager simulationManager) {
+	public void unbindSimulationManager(final SimulationManagerNew simulationManager) {
 		super.unbindSimulationManager(simulationManager);
 	}
 
@@ -252,34 +248,34 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		
 
 	@Override
-	public void userPositionChanged(final String userName, final Position position) {
+	public void personMoved(final Person person, final Position position) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
 				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
-				actionPane.moveUser(userName, position);
+				actionPane.moveUser(person.getName(), position);
 			}
 		});
 	}
 	
 	@Override
-   public void userAdded(final String userName) {
+   public void personAdded(final Person person) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
 				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
-				actionPane.addUser(userName);
+				actionPane.addUser(person.getName());
 			}
 		});	   
    }
 
 	@Override
-   public void userRemoved(final String userName) {
+   public void personRemoved(final Person person) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
 				SimulatorActionPane actionPane = (SimulatorActionPane) getActionPane();
-				actionPane.removeUser(userName);
+				actionPane.removeUser(person.getName());
 			}
 		});		   
    }
@@ -310,7 +306,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	@Validate
 	public void start() {
 		super.start();
-		getSimulationManager().addUserPositionListener(this);
+		getSimulationManager().addListener(this);
 		serviceTracker = new DeviceServiceTracker(getContext());
 		serviceTracker.open();
 	}
@@ -318,7 +314,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	@Invalidate
 	public void stop() {
 		super.stop();
-		getSimulationManager().removeUserPositionListener(this);
+		getSimulationManager().removeListener(this);
 		serviceTracker.close();
 	}
 
@@ -452,10 +448,13 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 	 * Saves the current simulation scenario
 	 */
 	public void saveSimulationEnvironment(String scenarioName) {
-		SimulationManager simulationManager = getSimulationManager();
-		Set<String> envs = simulationManager.getEnvironments();
+		SimulationManagerNew simulationManager = getSimulationManager();
+        Set<String> envs = new HashSet<String>();
+        for (Zone zone : simulationManager.getZones()) {
+            envs.add(zone.getId());
+        }
 
-		Set<String> devices = simulationManager.getDevices();
+		Set<String> devices = simulationManager.getDeviceIds();
 
 		FileWriter outFile;
 		PrintWriter out;
@@ -472,12 +471,12 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 			for (String environment : envs) {
 				out.println("environment " + "\"" + environment + "\" {");
 
-				Zone zone = simulationManager.getEnvironmentZone(environment);
-				out.println("\t position = " + zone.leftX + " " + zone.topY + " " + zone.rightX + " " + zone.bottomY);
+				Zone zone = simulationManager.getZone(environment);
+				out.println("\t position = " + zone.getLeftTopPosition().x + " " + zone.getLeftTopPosition().y + " " + (zone.getLeftTopPosition().x + zone.getWidth()) + " " + (zone.getLeftTopPosition().y + zone.getHeight()));
 
-				Set<String> envVariables = simulationManager.getEnvironmentVariables(environment);
+				Set<String> envVariables = zone.getVariableNames();
 				for (String envVariable : envVariables) {
-					Double value = simulationManager.getVariableValue(environment, envVariable);
+					Double value = (Double) zone.getVariableValue(envVariable);
 					if (value!=null)
 						out.println("\t\"" +  envVariable + "\" = " + value);
             }
@@ -485,7 +484,7 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 				for (String device : devices) {
 					System.out.println("LocatedDevice -----> " + device);
 					Position position = simulationManager.getDevicePosition(device);
-					String deviceEnv = simulationManager.getEnvironmentFromPosition(position);
+					String deviceEnv = simulationManager.getZoneFromPosition(position).getId();
 					if (deviceEnv.equals(environment)) {
 						String deviceLine = "\t device " + "\"" + device + "\" : \"";
 
@@ -623,7 +622,27 @@ public class SimulatorApplicationImpl extends BaseHouseApplication implements Us
 		}	   
    }
 
+    @Override
+    public void deviceAdded(LocatedDevice device) {
+        //do nothing
+    }
 
+   @Override
+    public void deviceRemoved(LocatedDevice device) {
+        //do nothing
+    }
 
+    @Override
+    public void devicePropertyAdded(LocatedDevice device, String propName) {
+        //do nothing
+    }
+
+    public void personDeviceAttached(Person person, LocatedDevice device) {
+        //do nothing
+    }
+
+    public void personDeviceDetached(Person person, LocatedDevice device) {
+        //do nothing
+    }
 
 }

@@ -28,7 +28,7 @@ import fr.liglab.adele.icasa.application.device.web.common.impl.component.Device
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.DevicePane;
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.FloatingButton;
 import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 
 /**
  * Controller class that is notified in changes of the devices environment.
@@ -55,13 +55,13 @@ public abstract class DeviceController {
 	/**
 	 * The iCasa Simulation Manager (used to determine device position)
 	 */
-	protected SimulationManager m_SimulationManager;
+	protected SimulationManagerNew m_SimulationManager;
 
 	/**
 	 * Default constructor
 	 * @param manager iCasa SimulationManager
 	 */
-	public DeviceController(SimulationManager manager) {
+	public DeviceController(SimulationManagerNew manager) {
 		m_SimulationManager = manager;
 	}
 
@@ -120,7 +120,7 @@ public abstract class DeviceController {
 			if (position == null) {
 				position = generateBorderPosition();
 			}
-			String logicPosition = m_SimulationManager.getEnvironmentFromPosition(position);
+			String logicPosition = m_SimulationManager.getZoneFromPosition(position).getId();
 			if (logicPosition == null)
 				logicPosition = "unassigned";
 
@@ -185,7 +185,7 @@ public abstract class DeviceController {
 			if (fault == null)
 				fault = "unknown";
 
-			String logicPosition = m_SimulationManager.getEnvironmentFromPosition(position);
+			String logicPosition = m_SimulationManager.getZoneFromPosition(position).getId();
 			if (logicPosition == null)
 				logicPosition = "unassigned";
 

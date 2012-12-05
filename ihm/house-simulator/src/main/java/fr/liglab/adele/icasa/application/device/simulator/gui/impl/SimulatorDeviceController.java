@@ -21,11 +21,11 @@ import fr.liglab.adele.icasa.application.device.web.common.impl.DeviceController
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.DeviceEntry;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 
 public class SimulatorDeviceController extends DeviceController {
 	
-	public SimulatorDeviceController(SimulationManager simulationManager) {
+	public SimulatorDeviceController(SimulationManagerNew simulationManager) {
 		super(simulationManager);
 	}
 	

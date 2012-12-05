@@ -19,6 +19,7 @@ import java.util.EventListener;
 import java.util.List;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**

@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.liglab.adele.icasa.environment.*;
 import nextapp.echo.app.ApplicationInstance;
 import nextapp.echo.app.ContentPane;
 import nextapp.echo.app.ResourceImageReference;
@@ -38,9 +39,6 @@ import fr.liglab.adele.icasa.application.device.web.common.impl.component.HouseP
 import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactory;
 import fr.liglab.adele.icasa.application.device.web.common.widget.DeviceWidgetFactorySelector;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.DeviceListener;
 
 /**
  * Base class to applications in echo3 showing device information
@@ -48,7 +46,7 @@ import fr.liglab.adele.icasa.environment.DeviceListener;
  * @author Gabriel Pedraza Ferreira
  *
  */
-public abstract class BaseHouseApplication extends ApplicationInstance implements DeviceListener,
+public abstract class BaseHouseApplication extends ApplicationInstance implements SimulationListener,
       PropertyChangeListener {
 
 	/**
@@ -61,7 +59,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	/**
 	 * The simulation manager service
 	 */
-	private SimulationManager m_manager;
+	private SimulationManagerNew m_manager;
 
 	/**
 	 * The widget factory selector (selects the right icon and window)
@@ -172,7 +170,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	public void start() {
 		initContent();
 		m_housePane.addPropertyChangeListener(this);
-		m_manager.addDeviceListener(this);
+		m_manager.addListener(this);
 	}
 
 	/**
@@ -180,7 +178,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 */
 	public void stop() {
 		m_housePane.removePropertyChangeListener(this);
-		m_manager.removeDevicePositionListener(this);
+		m_manager.removeListener(this);
 	}
 	
 	/**
@@ -276,11 +274,11 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	}
 
 	@Override
-	public void devicePositionChanged(final String deviceSerialNumber, final Position position) {
+	public void deviceMoved(final LocatedDevice device, final Position position) {
 		enqueueTask(new Runnable() {
 			@Override
 			public void run() {
-				m_DeviceController.moveDevice(deviceSerialNumber, position);
+				m_DeviceController.moveDevice(device.getSerialNumber(), position);
 			}
 		});
 	}
@@ -337,7 +335,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 * Binds a SimulationManager instance
 	 * @param simulationManager the SimulationManager instance
 	 */
-	protected void bindSimulationManager(SimulationManager simulationManager) {
+	protected void bindSimulationManager(SimulationManagerNew simulationManager) {
 		m_manager = simulationManager;
 	}
 
@@ -345,7 +343,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 * Removes a SimulationManager instance
 	 * @param simulationManager the SimulationManager instance
 	 */
-	protected void unbindSimulationManager(SimulationManager simulationManager) {
+	protected void unbindSimulationManager(SimulationManagerNew simulationManager) {
 		m_manager = null;
 	}
 
@@ -354,7 +352,7 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
 	 * 
 	 * @return the simulation manager
 	 */
-	public SimulationManager getSimulationManager() {
+	public SimulationManagerNew getSimulationManager() {
 		return m_manager;
 	}
 	
@@ -491,6 +489,58 @@ public abstract class BaseHouseApplication extends ApplicationInstance implement
     }
 
     public void deviceRemoved(String deviceId)  {
+        //Do nothing
+    }
+
+    public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue)  {
+        //Do nothing
+    }
+
+    public void devicePropertyAdded(LocatedDevice device, String propertyName)  {
+        //Do nothing
+    }
+
+    public void devicePropertyRemoved(LocatedDevice device, String propertyName)  {
+        //Do nothing
+    }
+
+    public void personDeviceAttached(Person person, LocatedDevice device)  {
+        //Do nothing
+    }
+
+    public void personDeviceDetached(Person person, LocatedDevice device)  {
+        //Do nothing
+    }
+
+    public void zoneAdded(Zone zone) {
+        //Do nothing
+    }
+
+    public void zoneRemoved(Zone zone) {
+        //Do nothing
+    }
+
+    public void zoneMoved(Zone zone, Position oldPosition) {
+        //Do nothing
+    }
+
+    public void zoneResized(Zone zone) {
+        //Do nothing
+    }
+
+    public void zoneParentModified(Zone zone, Zone oldParentZone) {
+        //Do nothing
+    }
+
+    public void zoneVariableAdded(Zone zone, String variableName) {
+        //Do nothing
+    }
+
+    public void zoneVariableRemoved(Zone zone, String variableName) {
+        //Do nothing
+    }
+
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
         //Do nothing
     }
 

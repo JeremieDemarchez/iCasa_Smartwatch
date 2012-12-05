@@ -13,17 +13,24 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.device;
 
-public interface ZoneListener extends ZonePropListener {
+/**
+ *
+ *
+ * @author Thomas Leveque
+ */
+public enum DeviceEventType {
 
-    public void zoneAdded(Zone zone);
+    ADDED("added"), REMOVED("removed"), PROP_ADDED("prop-added"), PROP_REMOVED("prop-removed"), PROP_MODIFIED("prop-modified");
 
-    public void zoneRemoved(Zone zone);
+    private String _eventTypeStr;
 
-    public void zoneMoved(Zone zone, Position oldPosition);
+    private DeviceEventType(String eventTypeStr) {
+        _eventTypeStr = eventTypeStr;
+    }
 
-    public void zoneResized(Zone zone);
-
-    public void zoneParentModified(Zone zone, Zone oldParentZone);
+    public String toString() {
+        return _eventTypeStr;
+    }
 }

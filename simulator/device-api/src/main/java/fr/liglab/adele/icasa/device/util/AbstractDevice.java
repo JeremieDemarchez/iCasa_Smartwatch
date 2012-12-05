@@ -15,13 +15,14 @@
  */
 package fr.liglab.adele.icasa.device.util;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
 
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 
 /**
  * Abstract implementation of the {@link GenericDevice} interface that manages
@@ -32,21 +33,46 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 public abstract class AbstractDevice implements GenericDevice {
 	
 	private String state;
-	
-	abstract public String getSerialNumber();
+
+    private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
+
+    private Map<String, Object> _properties = new HashMap<String, Object>();
+
+    @Override
+    public Set<String> getProperties() {
+        synchronized (_properties) {
+            return _properties.keySet();
+        }
+    }
+
+    @Override
+    public Object getPropertyValue(String propertyName) {
+        if (propertyName == null) {
+            throw new NullPointerException("Null property name");
+        }
+        synchronized (_properties) {
+            return _properties.get(propertyName);
+        }
+    }
+
+    @Override
+    public void setPropertyValue(String propertyName, Object value) {
+        if (propertyName == null) {
+            throw new NullPointerException("Null property name");
+        }
+        synchronized (_properties) {
+            _properties.put(propertyName, value);
+        }
+    }
+
 
 	public String getState() {
 	   return state;
-   }
+    }
 
 	public void setState(String state) {
 	   this.state = state;	   
-   }
-
-    /**
-     * The listeners of the device.
-     */
-    private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
+    }
 
     @Override
     public void addListener(DeviceListener listener) {
@@ -71,7 +97,7 @@ public abstract class AbstractDevice implements GenericDevice {
      * Notify all listeners. In case of exceptions, exceptions are dumped to the
      * standard error stream.
      */
-    protected void notifyListeners(/* TODO */) {
+    protected void notifyListeners(DeviceEvent event) {
         List<DeviceListener> listeners;
         // Make a snapshot of the listeners list
         synchronized (m_listeners) {
@@ -81,7 +107,22 @@ public abstract class AbstractDevice implements GenericDevice {
         // Call all listeners sequentially
         for (DeviceListener listener : listeners) {
             try {
-                listener.notifyDeviceEvent(getSerialNumber());
+               if (DeviceEventType.ADDED.equals(event.getType())) {
+                   listener.deviceAdded(event.getDevice());
+                   continue;
+               } else if (DeviceEventType.REMOVED.equals(event.getType())) {
+                   listener.deviceRemoved(event.getDevice());
+                   continue;
+               } else if (DeviceEventType.PROP_ADDED.equals(event.getType())) {
+                   listener.devicePropertyAdded(event.getDevice(), event.getPropertyName());
+                   continue;
+               } else if (DeviceEventType.PROP_REMOVED.equals(event.getType())) {
+                   listener.devicePropertyRemoved(event.getDevice(), event.getPropertyName());
+                   continue;
+               } else if (DeviceEventType.PROP_MODIFIED.equals(event.getType())) {
+                   listener.devicePropertyModified(event.getDevice(), event.getPropertyName(), event.getOldValue());
+                   continue;
+               }
             } catch (Exception e) {
 
                 Exception ee = new Exception("Exception in device listener '"

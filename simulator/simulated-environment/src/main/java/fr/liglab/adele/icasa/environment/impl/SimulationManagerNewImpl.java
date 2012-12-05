@@ -112,7 +112,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		Zone zone = zones.get(zoneId);
 		if (zone == null)
 			return null;
-		return zone.getVariableList();
+		return zone.getVariableNames();
 	}
 
 	@Override
@@ -136,10 +136,19 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public List<Zone> getZones() {
 		return new ArrayList<Zone>(zones.values());
 	}
+
+    @Override
+    public Set<String> getZoneIds() {
+        synchronized(zones) {
+            return Collections.unmodifiableSet(new HashSet<String>(zones.keySet()));
+        }
+    }
 	
 	@Override
 	public Zone getZone(String zoneId) {
-		return zones.get(zoneId);
+		synchronized(zones) {
+            return zones.get(zoneId);
+        }
 	}
 
 	@Override
@@ -213,6 +222,13 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		return new ArrayList<Person>(persons.values());
 	}
 
+    @Override
+    public Person getPerson(String personName) {
+        synchronized (persons) {
+            return persons.get(personName);
+        }
+    }
+
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
 		SimulatedDevice device = m_simulatedDevices.get(deviceId);
@@ -259,7 +275,14 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		}
 	}
 
-	@Override
+    @Override
+    public LocatedDevice getDevice(String deviceId) {
+        synchronized (devices) {
+            return devices.get(deviceId);
+        }
+    }
+
+    @Override
 	public void removeDevice(String deviceId) {
 		SimulatedDevice device = m_simulatedDevices.get(deviceId);
 		if ((device != null) && (device instanceof Pojo)) {
@@ -272,6 +295,11 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public Set<String> getDeviceTypes() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
+
+    @Override
+    public Set<String> getDeviceIds() {
+        return Collections.unmodifiableSet(new HashSet<String>(devices.keySet()));
+    }
 
 
 
@@ -325,5 +353,15 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		for (LocatedDevice device : devices.values())
 			device.removeListener(listener);
 	}
+
+    public Zone getZoneFromPosition(Position position) {
+
+        for (Zone zone : zones.values()) {
+            if (zone.contains(position))
+                return zone;
+        }
+
+        return null;
+    }
 
 }

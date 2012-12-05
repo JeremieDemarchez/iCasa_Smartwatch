@@ -21,6 +21,7 @@ package fr.liglab.adele.icasa.remote.impl;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Component;
@@ -115,7 +116,7 @@ public class DeviceREST {
             deviceJSON.putOnce("id", device.getSerialNumber());
             deviceJSON.putOnce("name", device.getSerialNumber());
             deviceJSON.put("fault", device.getFault());
-            deviceJSON.put("location", device.getLocation());
+            deviceJSON.put("location", device.getPropertyValue(SimulationManagerNew.LOCATION_PROP_NAME));
             deviceJSON.put("state", device.getState());
             deviceJSON.put("type", deviceType);
             if (devicePosition != null) {

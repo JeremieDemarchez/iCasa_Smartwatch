@@ -15,23 +15,14 @@
  */
 package fr.liglab.adele.icasa.environment;
 
-import java.util.EventListener;
-
 /**
- *
- * @author Gabriel Pedraza Ferreira
- *
+ * @author Thomas Leveque
  */
-public interface DeviceListener extends EventListener {
+public interface ZonePropListener {
 
-    /**
-     * @param deviceSerialNumber
-     * @param position
-     */
-    public void devicePositionChanged(String deviceSerialNumber, Position position);
+    public void zoneVariableAdded(Zone zone, String variableName);
 
+    public void zoneVariableRemoved(Zone zone, String variableName);
 
-    public void deviceAdded(String deviceId);
-
-    public void deviceRemoved(String deviceId);
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue);
 }

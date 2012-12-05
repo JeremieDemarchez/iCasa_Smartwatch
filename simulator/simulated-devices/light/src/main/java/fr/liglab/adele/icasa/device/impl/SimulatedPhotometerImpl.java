@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.environment.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -30,7 +33,7 @@ import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironmentListener;
+import fr.liglab.adele.icasa.environment.ZonePropListener;
 
 /**
  * Implementation of a simulated photometer device.
@@ -40,7 +43,7 @@ import fr.liglab.adele.icasa.environment.SimulatedEnvironmentListener;
 @Component(name="iCASA.Photometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPhotometerImpl extends AbstractDevice implements Photometer, SimulatedDevice,
-      SimulatedEnvironmentListener {
+      ZonePropListener {
 
 	@ServiceProperty(name = Photometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -74,28 +77,6 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 		return m_currentIlluminance;
 	}
 
-	@Override
-	public synchronized void bindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env = environment;
-		m_logger.debug("Bound to simulated environment " + environment.getEnvironmentId());
-	}
-
-	@Override
-	public synchronized String getEnvironmentId() {
-		return m_env != null ? m_env.getEnvironmentId() : null;
-	}
-
-	@Override
-	public synchronized void unbindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env = null;
-		m_logger.debug("Unbound from simulated environment " + environment.getEnvironmentId());
-	}
-
-
-	public String getLocation() {
-		return getEnvironmentId();
-	}
-
 	/**
 	 * sets the state
 	 */
@@ -125,12 +106,23 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 		this.fault = fault;
 	}
 
-	@Override
-	public void environmentPropertyChanged(String propertyName, Double oldValue, Double newValue) {
+    @Override
+    public void zoneVariableAdded(Zone zone, String variableName) {
+        // do nothing
+    }
+
+    @Override
+    public void zoneVariableRemoved(Zone zone, String variableName) {
+        // do nothing
+    }
+
+    @Override
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
 		if (!(fault.equalsIgnoreCase("yes"))) {
-			if (SimulatedEnvironment.ILLUMINANCE.equals(propertyName)) {
-				m_currentIlluminance = newValue.doubleValue();
-				notifyListeners();
+			if (SimulatedEnvironment.ILLUMINANCE.equals(variableName)) {
+                Object illuminanceBefore = m_currentIlluminance;
+				m_currentIlluminance = ((Double) zone.getVariableValue(variableName)).doubleValue();
+				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
 			}
 		}
 	}

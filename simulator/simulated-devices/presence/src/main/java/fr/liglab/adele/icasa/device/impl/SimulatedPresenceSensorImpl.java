@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.environment.*;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -26,9 +29,6 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironmentListener;
 
 /**
  * Implementation of a simulated presence sensor device.
@@ -38,7 +38,7 @@ import fr.liglab.adele.icasa.environment.SimulatedEnvironmentListener;
 @Component(name="iCASA.PresenceSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPresenceSensorImpl extends AbstractDevice implements PresenceSensor, SimulatedDevice,
-      SimulatedEnvironmentListener {
+        ZonePropListener {
 
 	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -72,31 +72,22 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 		return m_currentPresence;
 	}
 
-	@Override
-	public synchronized void bindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env = environment;
-		m_env.addListener(this);
-		m_logger.debug("Bound to simulated environment " + environment.getEnvironmentId());
-	}
+    @Override
+    public void zoneVariableAdded(Zone zone, String variableName) {
+        // do nothing
+    }
+
+    @Override
+    public void zoneVariableRemoved(Zone zone, String variableName) {
+        // do nothing
+    }
 
 	@Override
-	public synchronized String getEnvironmentId() {
-		return m_env != null ? m_env.getEnvironmentId() : null;
-	}
-
-	@Override
-	public synchronized void unbindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env.removeListener(this);
-		m_env = null;
-		m_logger.debug("Unbound from simulated environment " + environment.getEnvironmentId());
-	}
-
-	@Override
-	public void environmentPropertyChanged(final String propertyName, final Double oldValue, final Double newValue) {
+	public void zoneVariableModified(Zone zone, final String propertyName, final Object oldValue) {
 		if (!(fault.equalsIgnoreCase("yes"))) {
 			if (SimulatedEnvironment.PRESENCE.equals(propertyName)) {
 				final boolean oldPresence = m_currentPresence;
-				final double presence = newValue.doubleValue();
+				final double presence = ((Double) zone.getVariableValue(propertyName)).doubleValue();
 				if (presence >= m_threshold) {
 					m_currentPresence = true;
 				} else {
@@ -104,15 +95,10 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 				}
 				if (oldPresence != m_currentPresence) {
 					m_logger.debug("Sensed presence : " + m_currentPresence);
-					notifyListeners();
+					notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, oldPresence));
 				}
 			}			
 		}
-	}
-	
-	
-	public String getLocation() {
-		return getEnvironmentId();
 	}
 
 	/**

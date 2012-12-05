@@ -105,33 +105,6 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 	public double getCurrentPowerRating() {
 		return m_currentRating;
 	}
-	
-    @Override
-    public synchronized void bindSimulatedEnvironment(
-            SimulatedEnvironment environment) {
-        m_env = environment;
-        m_logger.debug("Bound to simulated environment "
-                + environment.getEnvironmentId());
-    }
-
-    @Override
-    public synchronized String getEnvironmentId() {
-        return m_env != null ? m_env.getEnvironmentId() : null;
-    }
-
-    @Override
-    public synchronized void unbindSimulatedEnvironment(
-            SimulatedEnvironment environment) {
-        m_env = null;
-        m_logger.debug("Unbound from simulated environment "
-                + environment.getEnvironmentId());
-    }
-
-    public String getLocation() {
-        return getEnvironmentId();
-     }
-
-
      
      /**
       * sets the state

@@ -15,21 +15,24 @@
  */
 package fr.liglab.adele.icasa.device;
 
+import java.util.EventListener;
+
 /**
- * Listener interface implemented by objects that are interested by device
- * events. In order to be notified, the listener must be registered by using the
- * {@link GenericDevice#addListener(DeviceListener)} method.
- * 
- * @author bourretp
+ * Events may be notified more than once per event.
+ * The only warantly is that at least one event will be sent to listeners.
+ *
+ * @author Gabriel Pedraza Ferreira
+ *
  */
 public interface DeviceListener {
 
-    /**
-     * Callback invoked when a device event occurred. Only the listeners that
-     * have registered to this device will be notified.
-     * 
-     * @see GenericDevice#addListener(DeviceListener)
-     */
-    public void notifyDeviceEvent(String deviceSerialNumber/* TODO */);
+    public void deviceAdded(GenericDevice device);
 
+    public void deviceRemoved(GenericDevice device);
+
+    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue);
+
+    public void devicePropertyAdded(GenericDevice device, String propertyName);
+
+    public void devicePropertyRemoved(GenericDevice device, String propertyName);
 }

@@ -71,6 +71,8 @@ public interface Zone {
 	 */
 	public boolean contains(LocatedObject object);
 
+    public boolean contains(Position position);
+
 	/**
 	 * Returns relative position of specified object from top left corner of this
 	 * zone.
@@ -142,7 +144,7 @@ public interface Zone {
 
 	public void removeVariable(String name);
 
-	public Set<String> getVariableList();
+	public Set<String> getVariableNames();
 	
 	public void resize(int newHeight, int newWidth);
 

@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.application.device.web.common.impl.component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.HashSet;
 
 import nextapp.echo.app.Border;
 import nextapp.echo.app.Button;
@@ -47,7 +48,8 @@ import fr.liglab.adele.icasa.application.device.web.common.util.BundleResourceIm
 import fr.liglab.adele.icasa.application.device.web.common.widget.impl.GenericDeviceStatusWindow;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.Zone;
 
 /**
  * TODO comments.
@@ -252,9 +254,7 @@ public abstract class DevicePane extends ContentPane {
 
 	/**
 	 * Changes device image when the properties of services have been changed
-	 * 
-	 * @param deviceSerialNumber
-	 * @param device
+	 *
 	 */
 	public void changeDevice(DeviceEntry entry) {
 		removeDeviceWidget(entry);
@@ -340,8 +340,11 @@ public abstract class DevicePane extends ContentPane {
 		final SelectField locationField = new SelectField();
 
 		DefaultListModel model = new DefaultListModel();
-		final SimulationManager manager = getAppInstance().getSimulationManager();
-		Set<String> environments = manager.getEnvironments();
+		final SimulationManagerNew manager = getAppInstance().getSimulationManager();
+		Set<String> environments = new HashSet<String>();
+        for (Zone zone : manager.getZones()) {
+            environments.add(zone.getId());
+        }
 		String[] locationStrs = environments.toArray(new String[environments.size()]);
 		int deviceLocationIdx = -1;
 		for (int idx = 0; idx < locationStrs.length; idx++) {
@@ -363,7 +366,7 @@ public abstract class DevicePane extends ContentPane {
 		StringListActionListener locationMenuActionListener = new StringListActionListener(deviceSerialNumber,
 		      locationField) {
 			protected void performSet(String newValueId) {
-				getAppInstance().getSimulationManager().setDeviceLocation(deviceSerialNumber, newValueId);
+				getAppInstance().getSimulationManager().getDevice(deviceSerialNumber).setPropertyValue(SimulationManagerNew.LOCATION_PROP_NAME, newValueId);
 			}
 		};
 

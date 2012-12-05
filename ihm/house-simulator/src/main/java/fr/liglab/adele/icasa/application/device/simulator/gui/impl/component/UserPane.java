@@ -49,7 +49,7 @@ import fr.liglab.adele.icasa.application.device.web.common.impl.component.event.
 import fr.liglab.adele.icasa.application.device.web.common.impl.component.event.DropListener;
 import fr.liglab.adele.icasa.application.device.web.common.util.BundleResourceImageReference;
 import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 
 /**
  * The simulator user pane
@@ -135,8 +135,8 @@ public class UserPane extends ContentPane {
 	}
 
 	public void initializedSimulatedRooms() {
-		SimulationManager simulationManager = m_parent.getApplicationInstance().getSimulationManager();
-		Set<String> envs = simulationManager.getEnvironments();
+		SimulationManagerNew simulationManager = m_parent.getApplicationInstance().getSimulationManager();
+		Set<String> envs = simulationManager.getZoneIds();
 		rooms.addAll(envs);
 	}
 	
@@ -150,7 +150,7 @@ public class UserPane extends ContentPane {
 			showErrorWindow("The user \"" + normalizedName + "\"already exists.");
 			return;
 		}
-		m_parent.getApplicationInstance().getSimulationManager().addUser(normalizedName);
+		m_parent.getApplicationInstance().getSimulationManager().addPerson(normalizedName);
 	}
 	
 	public void addUser(final String userName) {
@@ -176,8 +176,7 @@ public class UserPane extends ContentPane {
 
 			@Override
 			public void actionPerformed(final ActionEvent e) {
-				m_parent.getApplicationInstance().getSimulationManager()
-				      .setUserLocation(entry.name, e.getActionCommand().toLowerCase());
+				m_parent.getApplicationInstance().getSimulationManager().setPersonZone(userName, e.getActionCommand().toLowerCase());
 			}
 
 		});
@@ -188,7 +187,7 @@ public class UserPane extends ContentPane {
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				m_parent.getApplicationInstance().getSimulationManager().removeUser(userName);				
+				m_parent.getApplicationInstance().getSimulationManager().removePerson(userName);
 			}
 		});
 		
@@ -212,9 +211,9 @@ public class UserPane extends ContentPane {
    }
 	
 	public synchronized void moveUser(final String userName, final Position position) {
-		SimulationManager simulationManager = m_parent.getApplicationInstance().getSimulationManager();
+		SimulationManagerNew simulationManager = m_parent.getApplicationInstance().getSimulationManager();
 		final UserEntry entry = m_users.get(userName);
-		String envId = simulationManager.getEnvironmentFromPosition(position);
+		String envId = simulationManager.getZoneFromPosition(position).getId();
 		if (envId==null)
 			envId = OUT_SIDE;
 		moveUserWidget(entry, position, envId);		
@@ -242,7 +241,7 @@ public class UserPane extends ContentPane {
 				@Override
 				public void dropPerformed(DropEvent event) {
 					//RoomPosition newRoomPosition = getRoomPosition( new Position(event.getTargetX(), event.getTargetY()));
-					m_parent.getApplicationInstance().getSimulationManager().setUserPosition(entry.name, new Position(event.getTargetX(), event.getTargetY()));
+					m_parent.getApplicationInstance().getSimulationManager().setPersonPosition(entry.name, new Position(event.getTargetX(), event.getTargetY()));
 				}
 			});
 

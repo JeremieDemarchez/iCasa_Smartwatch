@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.environment.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -31,7 +34,7 @@ import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironmentListener;
+import fr.liglab.adele.icasa.environment.ZonePropListener;
 
 /**
  * Implementation of a simulated thermometer device.
@@ -40,7 +43,7 @@ import fr.liglab.adele.icasa.environment.SimulatedEnvironmentListener;
  */
 @Component(name="iCASA.Thermometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice, SimulatedEnvironmentListener {
+public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice, ZonePropListener {
 
 	@ServiceProperty(name = Thermometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -123,33 +126,26 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	}
   */
 
-	@Override
-	public synchronized void bindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env = environment;
-		m_env.addListener(this);
-		// Gets the actual value of the temperature in the environment
-		getTemperatureFromEnvironment();
-		m_logger.debug("Bound to simulated environment " + environment.getEnvironmentId());
-	}
+    @Override
+    public void zoneVariableAdded(Zone zone, String variableName) {
+        // do nothing
+    }
 
-	@Override
-	public synchronized String getEnvironmentId() {
-		return m_env != null ? m_env.getEnvironmentId() : null;
-	}
+    @Override
+    public void zoneVariableRemoved(Zone zone, String variableName) {
+        // do nothing
+    }
 
-	@Override
-	public synchronized void unbindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env = null;
-		m_logger.debug("Unbound from simulated environment " + environment.getEnvironmentId());
-	}
-
-	@Override
-   public void environmentPropertyChanged(String propertyName, Double oldValue, Double newValue) {
+    @Override
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
 		if (!(fault.equalsIgnoreCase("yes"))) {
-			if (SimulatedEnvironment.TEMPERATURE.equals(propertyName)) {
+			if (SimulatedEnvironment.TEMPERATURE.equals(variableName)) {
+                Object tempOldValue = null;
 				synchronized (this) {
-		         m_currentTemperature = newValue;
-	         }
+                    tempOldValue = m_currentTemperature;
+		            m_currentTemperature = (Double) zone.getVariableValue(variableName);
+	            }
+                notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempOldValue));
 			}			
 		}
    }
@@ -169,40 +165,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 			}
 		}
 	}
-	
-	/**
-	 * The updater thread that updates the current temperature and notify
-	 * listeners periodically.
-	 * 
-	 * @author bourretp
-	 */
-	private class UpdaterThread implements Runnable {
-
-		@Override
-		public void run() {
-			boolean isInterrupted = false;
-			while (!isInterrupted) {
-				try {
-					Thread.sleep(m_period);
-					synchronized (SimulatedThermometerImpl.this) {
-						if (m_env != null) {
-							m_currentTemperature = m_env.getProperty(SimulatedEnvironment.TEMPERATURE);
-						}
-					}
-					m_logger.debug("Sensed temperature : " + m_currentTemperature + " K");
-					notifyListeners();
-				} catch (InterruptedException e) {
-					isInterrupted = true;
-				}
-			}
-		}
-	}
-
-	public String getLocation() {
-	      return getEnvironmentId();
-	   }
-
-
 	   
 	   /**
 	    * sets the state

@@ -18,38 +18,11 @@ package fr.liglab.adele.icasa.environment;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
- * Service interface that is must be provided by simulated device
- * implementations, so they can be bound to a simulated environment service.
+ * Service interface which must be provided by simulated devices.
+ * It means that all devices implementing this interface can be created and destroyed using the simulator.
  * 
- * @author bourretp
+ * @author Thomas Leveque
  */
 public interface SimulatedDevice extends GenericDevice {
-
-    /**
-     * Return the identifier of the simulated environment currently bound to
-     * this device.
-     * 
-     * @return the identifier of the simulated environment currently bound to
-     *         this device, or {@code null} if no environment is currently
-     *         bound.
-     * @see SimulatedEnvironment#ENVIRONMENT_ID
-     */
-    String getEnvironmentId();
-
-    /**
-     * Bind this simulated device to the given simulated environment.
-     * 
-     * @param environment
-     *            the binding simulated environment
-     */
-    void bindSimulatedEnvironment(SimulatedEnvironment environment);
-
-    /**
-     * Unbind this simulated device from the given simulated environment.
-     * 
-     * @param environment
-     *            the unbinding simulated environment
-     */
-    void unbindSimulatedEnvironment(SimulatedEnvironment environment);
 
 }

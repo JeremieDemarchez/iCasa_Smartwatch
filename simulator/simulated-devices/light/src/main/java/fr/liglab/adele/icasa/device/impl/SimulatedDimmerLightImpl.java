@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -83,33 +85,10 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
         if (m_env != null) {
             notifyEnvironment(illuminanceAfter - illuminanceBefore);
         }
-        notifyListeners();
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, DimmerLight.LIGHT_POWER_LEVEL, illuminanceBefore));
         return save;
     }
-    
-    @Override
-    public synchronized String getEnvironmentId() {
-        return m_env != null ? m_env.getEnvironmentId() : null;
-    }
 
-    @Override
-    public synchronized void bindSimulatedEnvironment(
-            SimulatedEnvironment environment) {
-        m_env = environment;
-        m_logger.debug("Bound to simulated environment "
-                + environment.getEnvironmentId());
-        notifyEnvironment(illuminance());
-    }
-
-    @Override
-    public synchronized void unbindSimulatedEnvironment(
-            SimulatedEnvironment environment) {
-        notifyEnvironment(-illuminance());
-        m_env = null;
-        m_logger.debug("Unbound from simulated environment "
-                + environment.getEnvironmentId());
-    }
-    
     /**
      * Notify the bound simulated environment that the illuminance emitted by
      * this light has changed.
@@ -138,12 +117,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
     private double illuminance() {
         return m_powerLevel * m_maxIlluminance;
     }
-
-    public String getLocation() {
-        return getEnvironmentId();
-     }
-
-
      
      /**
       * sets the state

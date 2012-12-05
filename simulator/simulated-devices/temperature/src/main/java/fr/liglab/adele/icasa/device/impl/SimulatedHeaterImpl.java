@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -92,24 +95,6 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	}
 
 	@Override
-	public synchronized void bindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_lastUpdateTime = System.currentTimeMillis();
-		m_env = environment;
-		m_logger.debug("Bound to simulated environment " + environment.getEnvironmentId());
-	}
-
-	@Override
-	public synchronized String getEnvironmentId() {
-		return m_env != null ? m_env.getEnvironmentId() : null;
-	}
-
-	@Override
-	public synchronized void unbindSimulatedEnvironment(SimulatedEnvironment environment) {
-		m_env = null;
-		m_logger.debug("Unbound from simulated environment " + environment.getEnvironmentId());
-	}
-
-	@Override
 	public synchronized double setPowerLevel(double level) {
 		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
 			throw new IllegalArgumentException("Invalid power level : " + level);
@@ -120,14 +105,13 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 		double save = m_powerLevel;
 		m_powerLevel = level;
 		m_logger.debug("Power level set to " + level);
-		notifyListeners();
+		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Heater.HEATER_POWER_LEVEL, save));
 		return save;
 	}
 
 	/**
 	 * Notify the bound simulated environment that the temperature has changed.
-	 * 
-	 * @param temperatureDiff
+	 *
 	 *           the temperature difference
 	 */
 	private void notifyEnvironment() {
@@ -170,12 +154,6 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 			}
 		}
 	}
-	
-	public String getLocation() {
-	      return getEnvironmentId();
-	   }
-
-
 	   
 	   /**
 	    * sets the state

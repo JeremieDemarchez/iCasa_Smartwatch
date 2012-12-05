@@ -17,6 +17,8 @@ package fr.liglab.adele.icasa.device.impl;
 
 import java.io.IOException;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -87,7 +89,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
 
     @Validate
     public synchronized void start() {
-        m_updaterThread = new Thread(new UpdaterThread(), "SpeakerUpdaterThread-" + m_serialNumber);
+        m_updaterThread = new Thread(new UpdaterThread(this), "SpeakerUpdaterThread-" + m_serialNumber);
         m_updaterThread.start();
     }
 
@@ -115,32 +117,13 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
         if (m_env != null) {
             notifyEnvironment(m_noiseLevel - noiseBefore);
         }
-        notifyListeners();
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Speaker.SPEAKER_VOLUME, save));
         return save;
     }
     
     @Override
     public synchronized double getNoiseLevel() {
         return m_noiseLevel;
-    }
-
-    @Override
-    public synchronized String getEnvironmentId() {
-        return m_env != null ? m_env.getEnvironmentId() : null;
-    }
-
-    @Override
-    public synchronized void bindSimulatedEnvironment(SimulatedEnvironment environment) {
-        m_env = environment;
-        m_logger.debug("Bound to simulated environment " + environment.getEnvironmentId());
-        notifyEnvironment(noise());
-    }
-
-    @Override
-    public synchronized void unbindSimulatedEnvironment(SimulatedEnvironment environment) {
-        notifyEnvironment(-noise());
-        m_env = null;
-        m_logger.debug("Unbound from simulated environment " + environment.getEnvironmentId());
     }
 
     @Override
@@ -182,6 +165,12 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
      */
     private class UpdaterThread implements Runnable {
 
+        private SimulatedSpeakerImpl _device;
+
+        public UpdaterThread(SimulatedSpeakerImpl device) {
+            _device = device;
+        }
+
         @Override
         public void run() {
             boolean isInterrupted = false;
@@ -215,7 +204,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
                         if (m_env != null) {
                             notifyEnvironment(m_noiseLevel - noiseBefore);
                         }
-                        notifyListeners();
+                        notifyListeners(new DeviceEvent(_device, DeviceEventType.PROP_MODIFIED, Speaker.SPEAKER_NOISE_LEVEL, noiseBefore));
                     }
                 } catch (InterruptedException e) {
                     isInterrupted = true;
@@ -223,11 +212,6 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
             }
         }
     }
-    
-    public String getLocation() {
-        return getEnvironmentId();
-     }
-
 
      
      /**

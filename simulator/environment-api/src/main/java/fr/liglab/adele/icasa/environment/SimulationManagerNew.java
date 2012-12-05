@@ -26,67 +26,79 @@ import java.util.Set;
  */
 public interface SimulationManagerNew {
 
+    public String LOCATION_PROP_NAME = "location";
+
 	// -- Zone related methods --//
-	
-	Zone createZone(String id, String description, int leftX, int topY, int width, int height);
-	
-	void removeZone(String id);
-	
-	void moveZone(String id, int leftX, int topY);
 
-	void resizeZone(String id, int width, int height);
-	
-	Set<String> getZoneVariables(String zoneId);
+    public Zone createZone(String id, String description, int leftX, int topY, int width, int height);
 
-	Object getZoneVariableValue(String zoneId, String variable);
+    public void removeZone(String id);
 
-	void setZoneVariable(String zoneId, String variable, Object value);
-	
-	List<Zone> getZones();
+    public void moveZone(String id, int leftX, int topY);
 
-	Zone getZone(String zoneId);
+    public void resizeZone(String id, int width, int height);
+
+    public Set<String> getZoneVariables(String zoneId);
+
+    public Object getZoneVariableValue(String zoneId, String variable);
+
+    public void setZoneVariable(String zoneId, String variable, Object value);
+
+    public Set<String> getZoneIds();
+
+    public List<Zone> getZones();
+
+    public Zone getZone(String zoneId);
+
+    public Zone getZoneFromPosition(Position position);
 	
 	
 	// -- Device related method --//
-	
-	void setDeviceFault(String deviceId, boolean value);
 
-	void setDeviceState(String deviceId, boolean value);
+    public Set<String> getDeviceIds();
 
-	void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
-	
-	List<LocatedDevice> getDevices();
-	
-	Position getDevicePosition(String deviceSerialNumber);
+    public void setDeviceFault(String deviceId, boolean value);
 
-	void setDevicePosition(String deviceSerialNumber, Position position);
+    public void setDeviceState(String deviceId, boolean value);
+
+    public void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
+
+    public LocatedDevice getDevice(String deviceId);
+
+    public List<LocatedDevice> getDevices();
+
+    public Position getDevicePosition(String deviceSerialNumber);
+
+    public void setDevicePosition(String deviceSerialNumber, Position position);
 
 	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId);
 
-	void removeDevice(String deviceId);
+    public void removeDevice(String deviceId);
 
-	Set<String> getDeviceTypes();
+    public Set<String> getDeviceTypes();
 	
 	
 	// -- Person related methods -- //
-	
-	void setPersonPosition(String userName, Position position);
 
-	void setPersonZone(String userName, String environmentId);
+    public void setPersonPosition(String personName, Position position);
 
-	void removeAllPersons();
+    public void setPersonZone(String personName, String environmentId);
 
-	void addPerson(String userName);
+    public void removeAllPersons();
 
-	void removePerson(String userName);
+    public void addPerson(String personName);
+
+    public Person getPerson(String personName);
+
+    public void removePerson(String personName);
 
 	public List<Person> getPersons();
 
 	
 	// -- Listener related methods -- //
 
-	void addListener(SimulationListener listener);
+    public void addListener(SimulationListener listener);
 
-	void removeListener(SimulationListener listener);
+    public void removeListener(SimulationListener listener);
 	
 }

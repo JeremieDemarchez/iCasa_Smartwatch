@@ -20,6 +20,8 @@ import java.io.InputStream;
 import java.security.SecureRandom;
 import java.util.Random;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -69,38 +71,24 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     }
 
     @Override
-    public synchronized String getEnvironmentId() {
-        return m_env != null ? m_env.getEnvironmentId() : null;
-    }
-
-    @Override
-    public synchronized void bindSimulatedEnvironment(SimulatedEnvironment environment) {
-        m_env = environment;
-    }
-
-    @Override
-    public synchronized void unbindSimulatedEnvironment(SimulatedEnvironment environment) {
-        m_env = null;
-    }
-
-    @Override
     public InputStream getStream() {
         return m_stream;
     }
 
     @Override
     public synchronized void play() {
+        Object oldValue = m_isPlaying;
         m_isPlaying = true;
         m_logger.info("Audio source playback has started");
-        notifyListeners();
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue));
     }
 
     @Override
     public synchronized void pause() {
+        Object oldValue = m_isPlaying;
         m_isPlaying = false;
         m_logger.info("Audio source playback has paused");
-        m_isPlaying = false;
-        notifyListeners();
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue));
     }
     
     @Override
@@ -127,12 +115,6 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
         }
 
     }
-    
-    public String getLocation() {
-        return getEnvironmentId();
-     }
-
-
      
      /**
       * sets the state

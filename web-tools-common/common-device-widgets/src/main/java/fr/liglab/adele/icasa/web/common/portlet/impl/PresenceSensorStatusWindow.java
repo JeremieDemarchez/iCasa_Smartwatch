@@ -61,7 +61,7 @@ public class PresenceSensorStatusWindow extends DeviceStatusWindow {
 		if (device instanceof PresenceSensor) {
 			PresenceSensor presenceDevice = (PresenceSensor) device;
 			layoutGrid.add(new Label("Location"));
-			Label locationLabel = new Label(presenceDevice.getLocation());
+			Label locationLabel = new Label(presenceDevice.getPropertyValue("location").toString());
 
 			locationLabel.setForeground(Color.BLUE);
 			layoutGrid.add(locationLabel);
