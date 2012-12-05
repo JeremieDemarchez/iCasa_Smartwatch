@@ -22,58 +22,48 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManagerNew;
-import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
- * Command to Create a Zone
+ * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
  * 
  */
-@Component(name = "CreateZoneCommand")
+@Component(name = "MoveDeviceCommandNew")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createZone}"),
-      @StaticServiceProperty(name = "name", value = "create-zone", type = "String") })
-@Instantiate(name="create-zone-command")
-public class CreateZoneCommand extends AbstractCommand {
-
-	/**
-	 * Environment ID used to place a person
-	 */
-	private String zoneId;
-	private int leftX;
-	private int topY;
-	private int height;
-	private int width;
-
-	// private SimulationManager simulationManager;
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDevice}"),
+      @StaticServiceProperty(name = "name", value = "move-device-new", type = "String") })
+@Instantiate(name = "move-device-command-new")
+public class MoveDeviceCommand extends DeviceCommand {
 
 	@Requires
 	private SimulationManagerNew simulationManager;
 
+	private int newX;
+	private int newY;
+
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.createZone(zoneId, null, leftX, topY, width, height);
+		simulationManager.setDevicePosition(deviceId, new Position(newX, newY));
 		return null;
 	}
 
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.zoneId = param.getString("zoneId");
-		this.leftX = param.getInt("leftX");
-		this.topY = param.getInt("topY");
-		this.height = param.getInt("height");
-		this.width = param.getInt("width");
+		super.configure(param);
+		this.newX = param.getInt("newX");
+		this.newY = param.getInt("newY");
 	}
 
-	public void createZone(String id, String description, int leftX, int topY, int width, int height) throws Exception {
-		this.zoneId = id;
-		this.leftX = leftX;
-		this.topY = topY;
-		this.height = height;
-		this.width = width;
+	public void moveDevice(String deviceId, int newX, int newY) throws Exception {
+		this.deviceId = deviceId;
+		this.newX = newX;
+		this.newY = newY;
 		execute();
 	}
 

@@ -37,7 +37,8 @@ public class LocatedDeviceImpl implements LocatedDevice {
 
 	public LocatedDeviceImpl(String serialNumber, Position position) {
 		m_serialNumber = serialNumber;
-		m_position = position.clone();
+		if (position!=null)
+			m_position = position.clone();
 	}
 
 	@Override
@@ -105,8 +106,12 @@ public class LocatedDeviceImpl implements LocatedDevice {
 		// Listeners notification
 		for (LocatedDeviceListener listener : listeners) {
 			listener.deviceMoved(this, oldPosition);
-		}
-	   
+		}	   
    }
+	
+	@Override
+	public String toString() {
+		return "Id: " + getSerialNumber() + " - Position: " + m_position;
+	}
 
 }

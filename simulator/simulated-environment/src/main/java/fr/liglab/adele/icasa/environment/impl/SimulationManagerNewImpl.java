@@ -54,7 +54,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
 
-	private Map<String, LocatedDevice> devices = new HashMap<String, LocatedDevice>();
+	private Map<String, LocatedDevice> locatedDevices = new HashMap<String, LocatedDevice>();
 
 	private Map<String, SimulatedDevice> m_simulatedDevices = new HashMap<String, SimulatedDevice>();
 
@@ -153,12 +153,12 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public List<LocatedDevice> getDevices() {
-		return new ArrayList<LocatedDevice>(devices.values());
+		return new ArrayList<LocatedDevice>(locatedDevices.values());
 	}
 
 	@Override
 	public Position getDevicePosition(String deviceSerialNumber) {
-		LocatedDevice device = devices.get(deviceSerialNumber);
+		LocatedDevice device = locatedDevices.get(deviceSerialNumber);
 		if (device != null)
 			return device.getAbsolutePosition().clone();
 		return null;
@@ -166,7 +166,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public void setDevicePosition(String deviceSerialNumber, Position position) {
-		LocatedDevice device = devices.get(deviceSerialNumber);
+		LocatedDevice device = locatedDevices.get(deviceSerialNumber);
 		if (device != null)
 			device.setAbsolutePosition(position);
 	}
@@ -197,7 +197,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public void addPerson(String userName) {
-		Person person = new PersonImpl(userName, null, null);
+		Person person = new PersonImpl(userName, new Position(-1,-1), null);
 		persons.put(userName, person);
 		
 		// Listeners notification
@@ -277,8 +277,8 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
     @Override
     public LocatedDevice getDevice(String deviceId) {
-        synchronized (devices) {
-            return devices.get(deviceId);
+        synchronized (locatedDevices) {
+            return locatedDevices.get(deviceId);
         }
     }
 
@@ -298,31 +298,35 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
     @Override
     public Set<String> getDeviceIds() {
-        return Collections.unmodifiableSet(new HashSet<String>(devices.keySet()));
+        return Collections.unmodifiableSet(new HashSet<String>(locatedDevices.keySet()));
     }
 
 
 
 	@Bind(id = "sim-devices", aggregate = true, optional = true)
 	public void bindDevice(SimulatedDevice dev) {
-		System.out.println("+--------  LocatedDevice " + dev.getSerialNumber());
-		m_simulatedDevices.put(dev.getSerialNumber(), dev);
+		String sn = dev.getSerialNumber();
+		m_simulatedDevices.put(sn, dev);
+		if (!locatedDevices.containsKey(sn)) {
+			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1));
+			locatedDevices.put(sn, device);
+		}
 	}
 
 	@Unbind(id = "sim-devices")
 	public void unbindDevice(SimulatedDevice dev) {
-
+		String sn = dev.getSerialNumber();
+		m_simulatedDevices.remove(sn);
+		m_simulatedDevices.remove(sn);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public void bindFactory(Factory factory) {
-		System.out.println("+-------- Bind Factory ++++++++++++++++++ " + factory.getName());
 		m_factories.put(factory.getName(), factory);
 	}
 
 	@Unbind(id = "factories")
 	public void unbindFactory(Factory factory) {
-		System.out.println("+-------- UnBind Factory +++++++++++++++++++");
 		m_factories.put(factory.getName(), factory);
 	}
 
@@ -336,7 +340,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		for (Person person : persons.values())
 			person.addListener(listener);
 
-		for (LocatedDevice device : devices.values())
+		for (LocatedDevice device : locatedDevices.values())
 			device.addListener(listener);
 	}
 
@@ -350,7 +354,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		for (Person person : persons.values())
 			person.removeListener(listener);
 
-		for (LocatedDevice device : devices.values())
+		for (LocatedDevice device : locatedDevices.values())
 			device.removeListener(listener);
 	}
 
