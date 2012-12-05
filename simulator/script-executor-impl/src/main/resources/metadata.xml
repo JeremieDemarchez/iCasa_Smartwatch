@@ -130,15 +130,5 @@
   <instance name="remove-device-command" component="RemoveDeviceCommand" />
   <instance name="move-device-command" component="MoveDeviceCommand" />
 
-
-  <component name="CreateZoneCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.other.CreateZoneCommand">
-    <provides>
-      <property name="namespace" value="simulator" type="java.lang.String" />
-      <property name="name" value="create-zone" type="java.lang.String" />
-      <property name="description" value="move-device" type="java.lang.String" />
-    </provides>
-    <requires field="simulationManager" optional="false" />
-  </component>
-  <instance name="create-zone-command" component="CreateZoneCommand" />
   
 </ipojo>

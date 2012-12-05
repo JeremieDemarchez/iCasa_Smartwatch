@@ -36,7 +36,7 @@ public class PersonImpl implements Person {
 	private List<PersonListener> listeners = new ArrayList<PersonListener>();
 
 	public PersonImpl(String name, Position position, String location) {
-		_name = name;
+		_name = name;		
 		_position = position.clone();
 		_location = location;
 	}
@@ -80,6 +80,11 @@ public class PersonImpl implements Person {
 		for (PersonListener listener : listeners) {
 			listener.personMoved(this, oldPosition);
 		}
+	}
+	
+	@Override
+	public String toString() {	   
+	   return "Person " + _name + " - Position " + _position;
 	}
 
 }
