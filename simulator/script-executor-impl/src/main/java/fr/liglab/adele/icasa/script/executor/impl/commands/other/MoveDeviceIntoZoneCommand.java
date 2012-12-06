@@ -37,7 +37,7 @@ import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 @Component(name = "MoveDeviceIntoZoneCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDeviceIntoZone}"),
-      @StaticServiceProperty(name = "name", value = "move-deviceintozone", type = "String") })
+      @StaticServiceProperty(name = "name", value = "move-device-zone", type = "String") })
 @Instantiate(name = "move-deviceintozone-command")
 public class MoveDeviceIntoZoneCommand extends DeviceCommand {
 

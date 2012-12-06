@@ -98,7 +98,7 @@ public interface SimulationManagerNew {
 	
 	public void detachDeviceFromPerson(String personName, String deviceId);
 
-	// -- Listener related methods -- //
+	// -- Listener related methods --  //
 
 	public void addListener(SimulationListener listener);
 
