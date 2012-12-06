@@ -16,8 +16,11 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.PersonListener;
 import fr.liglab.adele.icasa.environment.Position;
@@ -33,10 +36,12 @@ public class PersonImpl implements Person {
 	private Position _position;
 	private String _location;
 
+	private Map<String, LocatedDevice> m_devices = new HashMap<String, LocatedDevice>();
+
 	private List<PersonListener> listeners = new ArrayList<PersonListener>();
 
 	public PersonImpl(String name, Position position, String location) {
-		_name = name;		
+		_name = name;
 		_position = position.clone();
 		_location = location;
 	}
@@ -75,16 +80,38 @@ public class PersonImpl implements Person {
 	public void setAbsolutePosition(Position position) {
 		Position oldPosition = _position.clone();
 		_position = position.clone();
-				
+
 		// Listeners notification
 		for (PersonListener listener : listeners) {
 			listener.personMoved(this, oldPosition);
 		}
 	}
-	
+
 	@Override
-	public String toString() {	   
-	   return "Person " + _name + " - Position " + _position;
+	public String toString() {
+		return "Person " + _name + " - Position " + _position;
+	}
+
+	@Override
+	public void attachDevice(LocatedDevice device) {
+		if (m_devices.containsKey(device.getSerialNumber()))
+			return;
+		
+		m_devices.put(device.getSerialNumber(), device);
+
+		// Listeners notification
+		for (PersonListener listener : listeners)
+			listener.personDeviceAttached(this, device);
+
+	}
+
+	@Override
+	public void detachDevice(LocatedDevice device) {
+		LocatedDevice deviceToDetach = m_devices.remove(device.getSerialNumber());
+		// Listeners notification
+		if (deviceToDetach != null)
+			for (PersonListener listener : listeners)
+				listener.personDeviceDetached(this, device);
 	}
 
 }

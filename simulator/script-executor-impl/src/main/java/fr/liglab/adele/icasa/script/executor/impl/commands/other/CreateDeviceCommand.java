@@ -16,6 +16,8 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands.other;
 
 
+import java.util.HashMap;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -23,7 +25,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
@@ -41,7 +43,7 @@ import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 public class CreateDeviceCommand extends DeviceCommand {
 
 	@Requires	
-	private SimulationManager simulationManager;
+	private SimulationManagerNew simulationManager;
 
 	private String deviceType;
 	
@@ -49,7 +51,7 @@ public class CreateDeviceCommand extends DeviceCommand {
 
 	@Override
    public Object execute() throws Exception {
-		simulationManager.createDevice(deviceType, deviceId, description);
+		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
 		return null;
    }
 	

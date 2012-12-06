@@ -35,7 +35,7 @@ public interface Zone {
 	 */
 	public Position getLeftTopPosition();
 
-	public void setLeftTopPosition(Position leftTopPosition);
+	public void setLeftTopPosition(Position leftTopPosition) throws Exception;
 
 	/**
 	 * Gets the absolute (x,y) point in the left-top corner of the zone
@@ -51,7 +51,7 @@ public interface Zone {
 	 */
 	public int getWidth();
 
-	public void setWidth(int width);
+	public void setWidth(int width) throws Exception;
 
 	/**
 	 * Gets the zone height
@@ -60,7 +60,7 @@ public interface Zone {
 	 */
 	public int getHeight();
 
-	public void setHeight(int height);
+	public void setHeight(int height) throws Exception;
 
 	/**
 	 * Returns true if a object its geographically contained into the zone.
@@ -146,6 +146,6 @@ public interface Zone {
 
 	public Set<String> getVariableNames();
 	
-	public void resize(int newHeight, int newWidth);
+	public void resize(int newWidth, int newHeight) throws Exception;
 
 }

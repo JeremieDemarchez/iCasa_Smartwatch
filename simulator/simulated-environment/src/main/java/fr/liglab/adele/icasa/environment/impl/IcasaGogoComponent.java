@@ -29,8 +29,9 @@ import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 import fr.liglab.adele.icasa.environment.Zone;
 
 @Component
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{listZones, listDevices, listPersons}") })
+@Provides(properties = {
+      @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{listZones, listDevices, listPersons, getPersonZones}") })
 @Instantiate
 public class IcasaGogoComponent {
 
@@ -50,17 +51,30 @@ public class IcasaGogoComponent {
 		List<LocatedDevice> devices = manager.getDevices();
 		for (LocatedDevice locatedDevice : devices) {
 			System.out.println("Device " + locatedDevice);
-      }
+		}
 	}
-			
-	
+
 	public void listPersons() {
 		System.out.println("Persons: ");
 		List<Person> persons = manager.getPersons();
 		for (Person person : persons) {
 			System.out.println("Person " + person);
-      }
+		}
 	}
-	
+
+	public void getPersonZones(String personName) {
+		Person person = manager.getPerson(personName);
+
+		if (person != null) {
+			List<Zone> zones = manager.getZones();
+
+			System.out.println("Zones: ");
+			for (Zone zone : zones) {
+				if (zone.contains(person)) {
+					System.out.println("Zone : " + zone);
+				}
+			}
+		}
+	}
 
 }

@@ -26,79 +26,82 @@ import java.util.Set;
  */
 public interface SimulationManagerNew {
 
-    public String LOCATION_PROP_NAME = "location";
+	public String LOCATION_PROP_NAME = "location";
 
 	// -- Zone related methods --//
 
-    public Zone createZone(String id, String description, int leftX, int topY, int width, int height);
+	public Zone createZone(String id, String description, int leftX, int topY, int width, int height);
 
-    public void removeZone(String id);
+	public void removeZone(String id);
 
-    public void moveZone(String id, int leftX, int topY);
+	public void moveZone(String id, int leftX, int topY) throws Exception;
 
-    public void resizeZone(String id, int width, int height);
+	public void resizeZone(String id, int width, int height) throws Exception; 
 
-    public Set<String> getZoneVariables(String zoneId);
+	public Set<String> getZoneVariables(String zoneId);
 
-    public Object getZoneVariableValue(String zoneId, String variable);
+	public Object getZoneVariableValue(String zoneId, String variable);
 
-    public void setZoneVariable(String zoneId, String variable, Object value);
+	public void setZoneVariable(String zoneId, String variable, Object value);
 
-    public Set<String> getZoneIds();
+	public Set<String> getZoneIds();
 
-    public List<Zone> getZones();
+	public List<Zone> getZones();
 
-    public Zone getZone(String zoneId);
+	public Zone getZone(String zoneId);
 
-    public Zone getZoneFromPosition(Position position);
+	public Zone getZoneFromPosition(Position position);
 	
-	
+	public void setParentZone(String zoneId, String parentId) throws Exception; 
+
 	// -- Device related method --//
 
-    public Set<String> getDeviceIds();
+	public Set<String> getDeviceIds();
 
-    public void setDeviceFault(String deviceId, boolean value);
+	public void setDeviceFault(String deviceId, boolean value);
 
-    public void setDeviceState(String deviceId, boolean value);
+	public void setDeviceState(String deviceId, boolean value);
 
-    public void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
+	public void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
 
-    public LocatedDevice getDevice(String deviceId);
+	public LocatedDevice getDevice(String deviceId);
 
-    public List<LocatedDevice> getDevices();
+	public List<LocatedDevice> getDevices();
 
-    public Position getDevicePosition(String deviceSerialNumber);
+	public Position getDevicePosition(String deviceSerialNumber);
 
-    public void setDevicePosition(String deviceSerialNumber, Position position);
+	public void setDevicePosition(String deviceSerialNumber, Position position);
 
 	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId);
 
-    public void removeDevice(String deviceId);
+	public void removeDevice(String deviceId);
 
-    public Set<String> getDeviceTypes();
-	
-	
+	public Set<String> getDeviceTypes();
+
 	// -- Person related methods -- //
 
-    public void setPersonPosition(String personName, Position position);
+	public void setPersonPosition(String personName, Position position);
 
-    public void setPersonZone(String personName, String environmentId);
+	public void setPersonZone(String personName, String zoneId);
 
-    public void removeAllPersons();
+	public void removeAllPersons();
 
-    public void addPerson(String personName);
+	public void addPerson(String personName);
 
-    public Person getPerson(String personName);
+	public Person getPerson(String personName);
 
-    public void removePerson(String personName);
+	public void removePerson(String personName);
 
 	public List<Person> getPersons();
-
 	
+	public void attachDeviceToPerson(String personName, String deviceId);
+	
+	public void detachDeviceFromPerson(String personName, String deviceId);
+
 	// -- Listener related methods -- //
 
-    public void addListener(SimulationListener listener);
+	public void addListener(SimulationListener listener);
 
-    public void removeListener(SimulationListener listener);
-	
+	public void removeListener(SimulationListener listener);
+
 }

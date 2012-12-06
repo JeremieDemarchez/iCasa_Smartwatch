@@ -106,16 +106,16 @@ public class ZoneImpl implements Zone {
 		      && (objectPosition.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
 	}
 
-    @Override
-    public boolean contains(Position position) {
-        if (position == null)
-            return false;
+	@Override
+	public boolean contains(Position position) {
+		if (position == null)
+			return false;
 
-        Position absolutePosition = getAbsoluteLeftTopPosition();
+		Position absolutePosition = getAbsoluteLeftTopPosition();
 
-        return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
-                && (position.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
-    }
+		return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
+		      && (position.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
+	}
 
 	@Override
 	public boolean addZone(Zone child) {
@@ -242,10 +242,17 @@ public class ZoneImpl implements Zone {
 	}
 
 	@Override
-	public void setLeftTopPosition(Position leftTopPosition) {
-		Position oldPosition = this.leftTopPosition.clone();
+	public void setLeftTopPosition(Position leftTopPosition) throws Exception {
+		Position oldPosition = this.leftTopPosition;
 		this.leftTopPosition = leftTopPosition.clone();
 
+		if (parent != null) {
+			if (!parent.fits(this)) {
+				this.leftTopPosition = oldPosition;
+				throw new Exception("New size does not fit the parent zone");
+			}
+		}
+		
 		// Listeners notification
 		for (ZoneListener listener : listeners)
 			listener.zoneMoved(this, oldPosition);
@@ -253,33 +260,34 @@ public class ZoneImpl implements Zone {
 	}
 
 	@Override
-	public void setWidth(int width) {
-		this.width = width;
+	public void setWidth(int width) throws Exception {
+		resize(this.height, width);
+	}
 
-		// Listeners notification
-		for (ZoneListener listener : listeners)
-			listener.zoneResized(this);
+	@Override
+	public void setHeight(int height) throws Exception {
+		resize(height, this.width);
 
 	}
 	
 	@Override
-   public void resize(int newHeight, int newWidth) {
+	public void resize(int newWidth, int newHeight) throws Exception {
+		int oldWidth = this.width;
+		int oldHeight = this.height;
 		this.width = newWidth;
 		this.height = newHeight;
-		
-		// Listeners notification
-		for (ZoneListener listener : listeners)
-			listener.zoneResized(this);		
-   }
 
-	@Override
-	public void setHeight(int height) {
-		this.height = height;
+		if (parent != null) {
+			if (!parent.fits(this)) {
+				this.width = oldWidth;
+				this.height = oldHeight;
+				throw new Exception("New size does not fit the parent zone");
+			}
+		}
 
 		// Listeners notification
 		for (ZoneListener listener : listeners)
 			listener.zoneResized(this);
-
 	}
 
 	@Override
@@ -295,7 +303,5 @@ public class ZoneImpl implements Zone {
 		int relY = object.getAbsolutePosition().y - getAbsoluteLeftTopPosition().y;
 		return new Position(relX, relY);
 	}
-
-
 
 }

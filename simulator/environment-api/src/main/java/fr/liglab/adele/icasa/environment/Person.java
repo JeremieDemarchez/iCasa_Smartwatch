@@ -32,5 +32,9 @@ public interface Person extends LocatedObject {
     public void addListener(final PersonListener listener);
 
     public void removeListener(final PersonListener listener);
+    
+    public void attachDevice(LocatedDevice device);
+    
+    public void detachDevice(LocatedDevice device);
 
 }
