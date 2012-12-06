@@ -304,4 +304,11 @@ public class ZoneImpl implements Zone {
 		return new Position(relX, relY);
 	}
 
+	@Override
+   public Position getRightBottomPosition() {
+		int newX = leftTopPosition.x + width;
+		int newY = leftTopPosition.y + height;
+	   return new Position(newX, newY);
+   }
+
 }

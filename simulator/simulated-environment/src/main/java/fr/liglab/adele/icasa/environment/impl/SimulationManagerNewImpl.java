@@ -39,6 +39,7 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.LocatedObject;
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
@@ -161,23 +162,21 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-   public void setParentZone(String zoneId, String parentId) throws Exception {
+	public void setParentZone(String zoneId, String parentId) throws Exception {
 		Zone zone = getZone(zoneId);
 		Zone parent = getZone(parentId);
-		if (zone==null || parent==null)
+		if (zone == null || parent == null)
 			return;
-		boolean ok = parent.addZone(zone);	  
-		if (!ok) 
+		boolean ok = parent.addZone(zone);
+		if (!ok)
 			throw new Exception("Zone does not fit in its parent");
-   }
-	
-	
-	
+	}
+
 	@Override
 	public Set<String> getDeviceIds() {
 		return Collections.unmodifiableSet(new HashSet<String>(locatedDevices.keySet()));
 	}
-	
+
 	@Override
 	public List<LocatedDevice> getDevices() {
 		return new ArrayList<LocatedDevice>(locatedDevices.values());
@@ -200,9 +199,9 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId) {
-		// TODO Auto-generated method stub
-
+		moveLocatedObjectIntoZone(zoneId, getDevice(deviceSerialNumber));
 	}
+
 
 	@Override
 	public void setPersonPosition(String userName, Position position) {
@@ -212,16 +211,15 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	}
 
 	@Override
-	public void setPersonZone(String userName, String environmentId) {
-		// TODO Auto-generated method stub
-
+	public void setPersonZone(String userName, String zoneId) {
+		moveLocatedObjectIntoZone(zoneId, getPerson(userName));
 	}
 
 	@Override
 	public void removeAllPersons() {
 		synchronized (persons) {
 			persons.clear();
-      }		
+		}
 	}
 
 	@Override
@@ -249,7 +247,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public List<Person> getPersons() {
 		synchronized (persons) {
 			return Collections.unmodifiableList(new ArrayList<Person>(persons.values()));
-      }
+		}
 	}
 
 	@Override
@@ -325,8 +323,6 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public Set<String> getDeviceTypes() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
-
-
 
 	@Bind(id = "sim-devices", aggregate = true, optional = true)
 	public void bindDevice(SimulatedDevice dev) {
@@ -405,6 +401,22 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		person.detachDevice(device);
 	}
 
+	private int random(int min, int max) {
+		final double range = (max - 10) - (min + 10);
+		if (range <= 0.0) {
+			throw new IllegalArgumentException("min >= max");
+		}
+		return min + (int) (range * Math.random());
+	}
 
-
+	private void moveLocatedObjectIntoZone(String zoneId, LocatedObject object) {
+		Zone zone = getZone(zoneId);
+		if (zone == null || object == null)
+			return;
+		int minX = zone.getAbsoluteLeftTopPosition().x;
+		int minY = zone.getAbsoluteLeftTopPosition().y;
+		int newX = random(minX, minX + zone.getWidth());
+		int newY = random(minY, minY + zone.getHeight());
+		object.setAbsolutePosition(new Position(newX, newY));
+	}
 }

@@ -147,5 +147,7 @@ public interface Zone {
 	public Set<String> getVariableNames();
 	
 	public void resize(int newWidth, int newHeight) throws Exception;
+	
+	public Position getRightBottomPosition();
 
 }
