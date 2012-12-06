@@ -19,7 +19,6 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
@@ -56,7 +55,7 @@ public class DeviceREST {
     private Factory[] _deviceFactories;
 
     @Requires
-    private SimulationManager _simulationMgr;
+    private SimulationManagerNew _simulationMgr;
 
     /*
      * Methods to manage cross domain requests
@@ -276,7 +275,7 @@ public class DeviceREST {
                     newPosY = updatedDevice.getPositionY();
                 _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
             } else if (updatedDevice.getLocation() != null)
-                _simulationMgr.setDeviceLocation(deviceId, updatedDevice.getLocation());
+                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulationManagerNew.LOCATION_PROP_NAME, updatedDevice.getLocation());
         }
 
         JSONObject deviceJSON = getDeviceJSON(device);

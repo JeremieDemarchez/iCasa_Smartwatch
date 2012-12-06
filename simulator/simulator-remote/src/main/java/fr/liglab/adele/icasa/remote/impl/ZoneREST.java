@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
 public class ZoneREST {
 
     @Requires
-    private SimulationManager _simulationMgr;
+    private SimulationManagerNew _simulationMgr;
 
     /*
      * Methods to manage cross domain requests
@@ -72,10 +72,10 @@ public class ZoneREST {
             zoneJSON = new JSONObject();
             zoneJSON.putOnce("id", zoneId);
             zoneJSON.putOnce("name", zoneId);
-            zoneJSON.put("leftX", zone.leftX);
-            zoneJSON.put("topY", zone.topY);
-            zoneJSON.put("rightX", zone.rightX);
-            zoneJSON.put("bottomY", zone.bottomY);
+            zoneJSON.put("leftX", zone.getLeftTopPosition().x);
+            zoneJSON.put("topY", zone.getLeftTopPosition().y);
+            zoneJSON.put("rightX", zone.getRightBottomPosition().x);
+            zoneJSON.put("bottomY", zone.getRightBottomPosition().y);
             zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
         } catch (JSONException e) {
             e.printStackTrace();
@@ -114,8 +114,8 @@ public class ZoneREST {
     public String getZones() {
         boolean atLeastOne = false;
         JSONArray currentZones = new JSONArray();
-        for (String envId : _simulationMgr.getEnvironments()) {
-            Zone zone = _simulationMgr.getEnvironmentZone(envId);
+        for (String envId : _simulationMgr.getZoneIds()) {
+            Zone zone = _simulationMgr.getZone(envId);
             if (zone == null)
                 continue;
 

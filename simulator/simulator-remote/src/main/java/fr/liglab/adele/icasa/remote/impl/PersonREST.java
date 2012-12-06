@@ -29,7 +29,7 @@ import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 
 /**
  * @author Thomas Leveque
@@ -42,7 +42,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 public class PersonREST {
 
     @Requires
-    SimulationManager _simulationMgr;
+    private SimulationManagerNew _simulationMgr;
 
     /*
      * Methods to manage cross domain requests
@@ -186,8 +186,8 @@ public class PersonREST {
         PersonJSON personJSON = PersonJSON.fromString(content);
 
         // Create the person
-        _simulationMgr.addUser(personJSON.getName());
-        _simulationMgr.setUserPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
+        _simulationMgr.addPerson(personJSON.getName());
+        _simulationMgr.setPersonPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
 
         Person newPerson = findPerson(personJSON.getName());
         if (newPerson == null)
@@ -226,9 +226,9 @@ public class PersonREST {
                 personJSON.setPositionX(personPosition.x);
             if (personJSON.getPositionY() == null)
                 personJSON.setPositionY(personPosition.y);
-            _simulationMgr.setUserPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
+            _simulationMgr.setPersonPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
         } else if (personJSON.getLocation() != null) {
-            _simulationMgr.setUserLocation(personId, personJSON.getLocation());
+            _simulationMgr.setPersonZone(personId, personJSON.getLocation());
         }
 
         if (newPerson == null)
@@ -255,7 +255,7 @@ public class PersonREST {
             return Response.status(404).build();
 
         try {
-            _simulationMgr.removeUser(foundPerson.getName());
+            _simulationMgr.removePerson(foundPerson.getName());
         } catch (Exception e) {
             e.printStackTrace();
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
