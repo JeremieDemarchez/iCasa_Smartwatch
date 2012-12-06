@@ -19,6 +19,7 @@
 
   <instance name="script-executor" component="ScriptExecutor" />
 
+  <!-- 
   <component name="MovePersonCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.MovePersonCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -37,6 +38,8 @@
     <requires field="simulationManager" optional="false" />
   </component>
 
+
+
   <component name="RepairDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.RepairDeviceCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -54,6 +57,8 @@
     </provides>
     <requires field="simulationManager" optional="false" />
   </component>
+  
+   
 
   <component name="DeactivateDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.DeactivateDeviceCommand">
     <provides>
@@ -63,6 +68,8 @@
     </provides>
     <requires field="simulationManager" optional="false" />
   </component>
+
+ -->
 
   <component name="ModifyEnvironmentCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.ModifyEnvironmentCommand">
     <provides>
@@ -91,6 +98,8 @@
     <requires field="configAdmin" optional="false" />
   </component>
 
+  <!-- 
+
   <component name="AddDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.AddDeviceCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -99,7 +108,7 @@
     </provides>
     <requires field="simulationManager" optional="false" />
   </component>
-
+  
   <component name="RemoveDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.RemoveDeviceCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -109,6 +118,7 @@
     <requires field="simulationManager" optional="false" />
   </component>
 
+
   <component name="MoveDeviceCommand" classname="fr.liglab.adele.icasa.script.executor.impl.commands.MoveDeviceCommand">
     <provides>
       <property name="namespace" value="simulator" type="java.lang.String" />
@@ -117,7 +127,11 @@
     </provides>
     <requires field="simulationManager" optional="false" />
   </component>
+  
+   -->
 
+  <!--
+  
   <instance name="create-environment-command" component="CreateEnvironmentCommand" />
   <instance name="modify-environment-command" component="ModifyEnvironmentCommand" />
   <instance name="modify-device-value-command" component="ModifyDeviceValueCommand" />
@@ -130,5 +144,6 @@
   <instance name="remove-device-command" component="RemoveDeviceCommand" />
   <instance name="move-device-command" component="MoveDeviceCommand" />
 
+  -->
   
 </ipojo>

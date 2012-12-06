@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands.other;
 
+
+import java.util.HashMap;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -22,49 +25,40 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.SimulationManagerNew;
 import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
- * Sets the fault state of device to "Yes"
+ * Create a new device instance
  * 
  * @author Gabriel
- * 
+ *
  */
-@Component(name = "MoveDeviceCommandNew")
+@Component(name = "RemoveDeviceCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDevice}"),
-      @StaticServiceProperty(name = "name", value = "move-device", type = "String") })
-@Instantiate(name = "move-device-command-new")
-public class MoveDeviceCommand extends DeviceCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{removeDevice}"),
+      @StaticServiceProperty(name = "name", value = "remove-device", type = "String") })
+@Instantiate(name="remove-device-command")
+public class RemoveDeviceCommand extends DeviceCommand {
 
-	@Requires
+	@Requires	
 	private SimulationManagerNew simulationManager;
 
-	private int newX;
-	private int newY;
 
 	@Override
-	public Object execute() throws Exception {
-		simulationManager.setDevicePosition(deviceId, new Position(newX, newY));
+   public Object execute() throws Exception {
+		simulationManager.removeDevice(deviceId);
 		return null;
-	}
-
-	@Override
-	public void configure(JSONObject param) throws Exception {
-		super.configure(param);
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");
-	}
-
-	public void moveDevice(String deviceId, int newX, int newY) throws Exception {
+   }
+	
+	
+	public void removeDevice(String deviceId) throws Exception {
 		this.deviceId = deviceId;
-		this.newX = newX;
-		this.newY = newY;
 		execute();
 	}
+	
+	
+	
 
 }

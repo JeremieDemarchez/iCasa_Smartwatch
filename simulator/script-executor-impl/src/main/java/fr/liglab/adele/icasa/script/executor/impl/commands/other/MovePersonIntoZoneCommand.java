@@ -34,11 +34,11 @@ import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
  * @author Gabriel
  *
  */
-@Component(name = "MovePersonCommandNew")
+@Component(name = "MovePersonIntoZoneCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
-@Instantiate(name = "move-persone-command-new")
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePersonIntoZone}"),
+      @StaticServiceProperty(name = "name", value = "move-personeintozone-new", type = "String") })
+@Instantiate(name = "move-personeintozone-command-new")
 public class MovePersonIntoZoneCommand extends AbstractCommand {
 
 		
@@ -47,13 +47,12 @@ public class MovePersonIntoZoneCommand extends AbstractCommand {
 	@Requires
 	private SimulationManagerNew simulationManager;
 
-	private int newX;
-	private int newY;
+	private String zoneId;
 	
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(person, new Position(newX, newY));
+		simulationManager.setPersonZone(person, zoneId);
 		return null;
 	}
 	
@@ -61,15 +60,13 @@ public class MovePersonIntoZoneCommand extends AbstractCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		this.person = param.getString("person");
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");  
+		this.zoneId = param.getString("zone");	 
 	}
 	
 	
-	public void movePerson(String person, int newX, int newY) throws Exception {		
+	public void movePersonIntoZone(String person, String zoneId) throws Exception {		
 	   this.person = person;
-	   this.newX = newX;
-	   this.newY = newY;
+	   this.zoneId = zoneId;
 	   execute();
    }
 	

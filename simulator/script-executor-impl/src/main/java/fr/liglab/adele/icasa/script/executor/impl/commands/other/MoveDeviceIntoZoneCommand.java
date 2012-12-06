@@ -34,36 +34,33 @@ import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
  * @author Gabriel
  * 
  */
-@Component(name = "MoveDeviceCommandNew")
+@Component(name = "MoveDeviceIntoZoneCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDevice}"),
-      @StaticServiceProperty(name = "name", value = "move-device", type = "String") })
-@Instantiate(name = "move-device-command-new")
-public class MoveDeviceCommand extends DeviceCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDeviceIntoZone}"),
+      @StaticServiceProperty(name = "name", value = "move-deviceintozone", type = "String") })
+@Instantiate(name = "move-deviceintozone-command")
+public class MoveDeviceIntoZoneCommand extends DeviceCommand {
 
 	@Requires
 	private SimulationManagerNew simulationManager;
 
-	private int newX;
-	private int newY;
+	private String zoneId;
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setDevicePosition(deviceId, new Position(newX, newY));
+		simulationManager.moveDeviceIntoZone(deviceId, zoneId);
 		return null;
 	}
 
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		super.configure(param);
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");
+		this.zoneId = param.getString("zone");	
 	}
 
-	public void moveDevice(String deviceId, int newX, int newY) throws Exception {
+	public void moveDeviceIntoZone(String deviceId, String zoneId) throws Exception {
 		this.deviceId = deviceId;
-		this.newX = newX;
-		this.newY = newY;
+		this.zoneId = zoneId;
 		execute();
 	}
 

@@ -306,8 +306,8 @@ public class ZoneImpl implements Zone {
 
 	@Override
    public Position getRightBottomPosition() {
-		int newX = leftTopPosition.x + width;
-		int newY = leftTopPosition.y + height;
+		int newX = getAbsoluteLeftTopPosition().x + width;
+		int newY = getAbsoluteLeftTopPosition().y + height;
 	   return new Position(newX, newY);
    }
 

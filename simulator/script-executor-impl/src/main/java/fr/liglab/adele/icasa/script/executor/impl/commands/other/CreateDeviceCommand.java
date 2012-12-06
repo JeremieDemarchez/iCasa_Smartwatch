@@ -38,7 +38,7 @@ import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 @Component(name = "CreateDeviceCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createDevice}"),
-      @StaticServiceProperty(name = "name", value = "create-device", type = "String") })
+      @StaticServiceProperty(name = "name", value = "add-device", type = "String") })
 @Instantiate(name="create-device-command")
 public class CreateDeviceCommand extends DeviceCommand {
 
