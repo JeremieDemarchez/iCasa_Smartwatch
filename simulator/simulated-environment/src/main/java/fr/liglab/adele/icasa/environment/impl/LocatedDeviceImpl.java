@@ -39,12 +39,15 @@ public class LocatedDeviceImpl implements LocatedDevice {
 	
 	private SimulationManagerNew manager;
 
-	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, SimulationManagerNew manager) {
+    private String _type;
+
+	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManagerNew manager) {
 		m_serialNumber = serialNumber;
 		if (position!=null)
 			m_position = position.clone();
 		this.deviceComponent = deviceComponent;
 		this.manager = manager;
+        this._type = type;
 	}
 
 	@Override
@@ -52,7 +55,12 @@ public class LocatedDeviceImpl implements LocatedDevice {
 		return m_serialNumber;
 	}
 
-	@Override
+    @Override
+    public String getType() {
+        return _type;
+    }
+
+    @Override
 	public Set<String> getProperties() {
 		/*
 		synchronized (properties) {

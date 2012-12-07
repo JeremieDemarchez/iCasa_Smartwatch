@@ -20,6 +20,8 @@ import java.util.Set;
 public interface LocatedDevice extends LocatedObject {
 
 	public String getSerialNumber();
+
+    public String getType();
 		
 	public Set<String> getProperties();
 

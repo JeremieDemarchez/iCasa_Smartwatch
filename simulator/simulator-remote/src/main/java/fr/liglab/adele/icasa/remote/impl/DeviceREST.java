@@ -91,14 +91,9 @@ public class DeviceREST {
     }
 
     private JSONObject getDeviceJSON(LocatedDevice device) {
-        String deviceType = "undefined";
-        if (device instanceof Pojo) {
-            try {
-                deviceType = ((Pojo) device).getComponentInstance().getFactory().getFactoryName();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+        String deviceType = device.getType();
+        if (deviceType == null)
+            deviceType = "undefined";
 
         Position devicePosition = _simulationMgr.getDevicePosition(device.getSerialNumber());
 

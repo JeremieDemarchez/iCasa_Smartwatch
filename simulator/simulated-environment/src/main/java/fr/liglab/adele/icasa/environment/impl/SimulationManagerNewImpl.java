@@ -329,7 +329,16 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		String sn = dev.getSerialNumber();
 		m_simulatedDevices.put(sn, dev);
 		if (!locatedDevices.containsKey(sn)) {
-			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, this);
+            String deviceType = null;
+            if (dev instanceof Pojo) {
+                try {
+                    deviceType = ((Pojo) dev).getComponentInstance().getFactory().getFactoryName();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+
+			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, deviceType, this);
 			locatedDevices.put(sn, device);
 		}
 	}

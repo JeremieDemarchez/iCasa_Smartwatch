@@ -482,8 +482,7 @@ define(['jquery',
               newPerson.save();
 
            @removePerson = (person) =>
-              @persons.remove(person);
-              @persons.fetch();
+              person.model().destroy();
 
            @showPersonWindow = (person) =>
               person.statusWindowVisible(false);
@@ -504,8 +503,7 @@ define(['jquery',
               newZone.save();
 
            @removeZone = (zone) =>
-              @zones.remove(zone);
-              @zones.fetch();
+              zone.model().destroy();
 
            @selectedScript = ko.observable();
 
