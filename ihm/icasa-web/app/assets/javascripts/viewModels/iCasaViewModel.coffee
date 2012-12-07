@@ -27,11 +27,7 @@ define(['jquery',
             if valueUnwrapped.template == undefined
               return {controlsDescendantBindings: true};
 
-
-            console.log valueUnwrapped.template
-            console.log valueUnwrapped.data
             $(element).html(valueUnwrapped.template);
-
 
             innerBindingContext = bindingContext.extend(valueUnwrapped.data);
             ko.applyBindingsToDescendants(innerBindingContext, element);
@@ -255,6 +251,7 @@ define(['jquery',
                 if (zone != undefined)
                   zoneName = zone.name();
                   @location(zoneName);
+                  @.model().save();
                 return zone;
               owner: @
            }
@@ -327,6 +324,7 @@ define(['jquery',
 #                    if (decorator.name() == "deactivated")
 #                        decorator.show(!activatedState);
                 );
+           @isHighlighted = ko.observable(false);
            @saveModel= (newValue) =>
                 @.model().save();
            # init
@@ -366,6 +364,7 @@ define(['jquery',
                 if (zone != undefined)
                   zoneName = zone.name();
                   @location(zoneName);
+                  @.model().save();
                 return zone;
               owner: @
            }
@@ -380,6 +379,8 @@ define(['jquery',
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
+           @isHighlighted = ko.observable(false);
+           #@highlights = @isHighlighted(true);
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->
