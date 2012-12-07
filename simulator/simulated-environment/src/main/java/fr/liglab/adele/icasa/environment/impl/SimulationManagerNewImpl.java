@@ -329,7 +329,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 		String sn = dev.getSerialNumber();
 		m_simulatedDevices.put(sn, dev);
 		if (!locatedDevices.containsKey(sn)) {
-			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1));
+			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, this);
 			locatedDevices.put(sn, device);
 		}
 	}
@@ -338,7 +338,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 	public void unbindDevice(SimulatedDevice dev) {
 		String sn = dev.getSerialNumber();
 		m_simulatedDevices.remove(sn);
-		m_simulatedDevices.remove(sn);
+		locatedDevices.remove(sn);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")

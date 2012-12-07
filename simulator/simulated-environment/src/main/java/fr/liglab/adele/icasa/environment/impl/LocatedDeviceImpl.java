@@ -16,29 +16,35 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.LocatedDeviceListener;
 import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.Zone;
 
 public class LocatedDeviceImpl implements LocatedDevice {
 
 	private String m_serialNumber;
 
-	private Map<String, Object> properties = new HashMap<String, Object>();
-
 	private final List<LocatedDeviceListener> listeners = new ArrayList<LocatedDeviceListener>();
 	
 	private Position m_position;
+	
+	private SimulatedDevice deviceComponent;
+	
+	private SimulationManagerNew manager;
 
-	public LocatedDeviceImpl(String serialNumber, Position position) {
+	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, SimulationManagerNew manager) {
 		m_serialNumber = serialNumber;
 		if (position!=null)
 			m_position = position.clone();
+		this.deviceComponent = deviceComponent;
+		this.manager = manager;
 	}
 
 	@Override
@@ -48,29 +54,56 @@ public class LocatedDeviceImpl implements LocatedDevice {
 
 	@Override
 	public Set<String> getProperties() {
+		/*
 		synchronized (properties) {
 			return properties.keySet();
 		}
+		*/
+		return deviceComponent.getProperties();
 	}
 
 	@Override
 	public Object getPropertyValue(String propertyName) {
+		/*
 		if (propertyName == null) {
 			throw new NullPointerException("Null property name");
 		}
 		synchronized (properties) {
 			return properties.get(propertyName);
 		}
+		*/
+		if (propertyName.equals(SimulationManagerNew.LOCATION_PROP_NAME)) {
+			Zone zone = manager.getZoneFromPosition(m_position);
+			if (zone!=null)			
+				return manager.getZoneFromPosition(m_position).getId();
+			return "outside";
+		}
+			
+		
+		if (propertyName.equals(GenericDevice.FAULT_PROPERTY_NAME))
+			return deviceComponent.getFault();
+
+		if (propertyName.equals(GenericDevice.STATE_PROPERTY_NAME))
+			return deviceComponent.getState();
+
+		
+		if (deviceComponent!=null)
+			return deviceComponent.getPropertyValue(propertyName);
+		return null;
 	}
 
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
+		/*
 		if (propertyName == null) {
 			throw new NullPointerException("Null property name");
 		}
 		synchronized (properties) {
 			properties.put(propertyName, value);
 		}
+		*/
+		if (deviceComponent!=null)
+			deviceComponent.setPropertyValue(propertyName, value);
 	}
 
 	@Override
