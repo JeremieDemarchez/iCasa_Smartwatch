@@ -114,7 +114,7 @@ public class ZoneImpl implements Zone {
 		Position absolutePosition = getAbsoluteLeftTopPosition();
 
 		return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
-		      && (position.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
+		      && (position.y >= absolutePosition.y && position.y <= absolutePosition.y + height);
 	}
 
 	@Override
@@ -292,7 +292,7 @@ public class ZoneImpl implements Zone {
 
 	@Override
 	public String toString() {
-		return "X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " Width: " + width + " Height: " + height;
+		return "Zone: " + id + " X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " -- Width: " + width + " Height: " + height;
 	}
 
 	@Override
