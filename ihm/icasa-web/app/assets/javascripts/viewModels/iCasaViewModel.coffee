@@ -21,22 +21,23 @@ define(['jquery',
     ko.bindingHandlers.staticTemplate = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            value = valueAccessor();
 
             # Next, whether or not the supplied model property is observable, get its current value
-            valueUnwrapped = ko.utils.unwrapObservable(value);
+            valueUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+            if valueUnwrapped.template == undefined
+              return {controlsDescendantBindings: true};
 
-            $(element).html(valueUnwrapped);
 
-            return { controlsDescendantBindings: false };
+            console.log valueUnwrapped.template
+            console.log valueUnwrapped.data
+            $(element).html(valueUnwrapped.template);
 
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            value = valueAccessor();
 
-            # Next, whether or not the supplied model property is observable, get its current value
-            valueUnwrapped = ko.utils.unwrapObservable(value);
+            innerBindingContext = bindingContext.extend(valueUnwrapped.data);
+            ko.applyBindingsToDescendants(innerBindingContext, element);
 
-            $(element).html(valueUnwrapped);
+            return { controlsDescendantBindings: true };
+
     };
 
 
