@@ -96,12 +96,13 @@
 <section>
     <article id="statusWindows">
         <!-- ko foreach: $root.devices() -->
-            <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: $data.statusWindowTemplate">
+            <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name, title:name}, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
             </div>
         <!-- /ko -->
         <!-- ko foreach: $root.persons() -->
-            <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: $data.statusWindowTemplate">
+           <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
             </div>
+
         <!-- /ko -->
     </article>
 </section>
