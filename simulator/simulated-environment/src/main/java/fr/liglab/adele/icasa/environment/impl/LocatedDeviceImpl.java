@@ -83,8 +83,8 @@ public class LocatedDeviceImpl implements LocatedDevice {
 		if (propertyName.equals(SimulationManagerNew.LOCATION_PROP_NAME)) {
 			Zone zone = manager.getZoneFromPosition(m_position);
 			if (zone!=null)			
-				return manager.getZoneFromPosition(m_position).getId();
-			return "outside";
+				return zone.getId();
+			return "unknown";
 		}
 			
 		
