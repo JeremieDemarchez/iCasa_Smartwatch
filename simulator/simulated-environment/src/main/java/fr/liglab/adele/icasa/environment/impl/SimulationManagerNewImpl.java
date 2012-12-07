@@ -224,7 +224,7 @@ public class SimulationManagerNewImpl implements SimulationManagerNew {
 
 	@Override
 	public void addPerson(String userName) {
-		Person person = new PersonImpl(userName, new Position(-1, -1), null);
+		Person person = new PersonImpl(userName, new Position(-1, -1), this);
 		persons.put(userName, person);
 
 		// Listeners notification

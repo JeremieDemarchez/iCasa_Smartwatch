@@ -24,6 +24,8 @@ import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.PersonListener;
 import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.Zone;
 
 /**
  * TODO
@@ -32,28 +34,32 @@ import fr.liglab.adele.icasa.environment.Position;
  */
 public class PersonImpl implements Person {
 
-	private String _name;
-	private Position _position;
-	private String _location;
+	private String m_name;
+	private Position m_position;
 
 	private Map<String, LocatedDevice> m_devices = new HashMap<String, LocatedDevice>();
 
 	private List<PersonListener> listeners = new ArrayList<PersonListener>();
+	
+	private SimulationManagerNew manager;
 
-	public PersonImpl(String name, Position position, String location) {
-		_name = name;
-		_position = position.clone();
-		_location = location;
+	public PersonImpl(String name, Position position, SimulationManagerNew manager) {
+		m_name = name;
+		m_position = position.clone();
+		this.manager = manager;
 	}
 
 	@Override
 	public String getName() {
-		return _name;
+		return m_name;
 	}
 
 	@Override
 	public String getLocation() {
-		return _location;
+		Zone zone = manager.getZoneFromPosition(m_position);
+		if (zone!=null)			
+			return zone.getId();
+		return "unknown";
 	}
 
 	@Override
@@ -68,18 +74,18 @@ public class PersonImpl implements Person {
 
 	@Override
 	public void setName(String name) {
-		_name = name;
+		m_name = name;
 	}
 
 	@Override
 	public Position getAbsolutePosition() {
-		return _position.clone();
+		return m_position.clone();
 	}
 
 	@Override
 	public void setAbsolutePosition(Position position) {
-		Position oldPosition = _position.clone();
-		_position = position.clone();
+		Position oldPosition = m_position.clone();
+		m_position = position.clone();
 
 		// Listeners notification
 		for (PersonListener listener : listeners) {
@@ -89,7 +95,7 @@ public class PersonImpl implements Person {
 
 	@Override
 	public String toString() {
-		return "Person " + _name + " - Position " + _position;
+		return "Person " + m_name + " - Position " + m_position;
 	}
 
 	@Override
