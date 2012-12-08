@@ -29,7 +29,6 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>house-simulator</module>
 		<!--module>play2-osgi</module>
 		<module>icasa-web</module-->
 	</modules>

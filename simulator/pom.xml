@@ -42,7 +42,6 @@
 		<module>script-deployer</module>
 		<module>script-executor-api</module>		
 	    <module>script-executor-impl</module>		
-		<module>simulated-sensor-importer</module>
 		<module>simulated-devices</module>
         <module>simulator-remote</module>
 		<module>gogo-adapter</module>
