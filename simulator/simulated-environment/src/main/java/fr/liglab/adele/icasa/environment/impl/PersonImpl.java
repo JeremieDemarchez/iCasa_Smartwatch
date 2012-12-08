@@ -20,12 +20,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.liglab.adele.icasa.environment.LocatedDevice;
-import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.PersonListener;
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManagerNew;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 
 /**
  * TODO
@@ -41,9 +37,9 @@ public class PersonImpl implements Person {
 
 	private List<PersonListener> listeners = new ArrayList<PersonListener>();
 	
-	private SimulationManagerNew manager;
+	private SimulationManager manager;
 
-	public PersonImpl(String name, Position position, SimulationManagerNew manager) {
+	public PersonImpl(String name, Position position, SimulationManager manager) {
 		m_name = name;
 		m_position = position.clone();
 		this.manager = manager;

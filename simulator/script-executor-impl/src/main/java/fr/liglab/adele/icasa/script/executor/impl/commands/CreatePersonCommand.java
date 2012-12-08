@@ -23,7 +23,6 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
 
@@ -34,12 +33,12 @@ import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
  * @author Gabriel
  *
  */
-@Component(name = "MovePersonCommandNew")
+@Component(name = "CreatePersonCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
-@Instantiate(name = "move-persone-command-new")
-public class MovePersonCommand extends AbstractCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createPerson}"),
+      @StaticServiceProperty(name = "name", value = "create-persone-new", type = "String") })
+@Instantiate(name = "create-persone-command-new")
+public class CreatePersonCommand extends AbstractCommand {
 
 		
 	private String person;
@@ -47,13 +46,11 @@ public class MovePersonCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
-	private int newX;
-	private int newY;
-	
+
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(person, new Position(newX, newY));
+		simulationManager.addPerson(person);
 		return null;
 	}
 	
@@ -61,15 +58,11 @@ public class MovePersonCommand extends AbstractCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		this.person = param.getString("person");
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");  
 	}
 	
 	
-	public void movePerson(String person, int newX, int newY) throws Exception {		
+	public void createPerson(String person) throws Exception {
 	   this.person = person;
-	   this.newX = newX;
-	   this.newY = newY;
 	   execute();
    }
 	

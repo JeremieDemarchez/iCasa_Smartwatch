@@ -16,7 +16,14 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
@@ -25,17 +32,26 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  * @author Gabriel
  *
  */
+@Component(name = "RepairDeviceCommand")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{repairDevice}"),
+      @StaticServiceProperty(name = "name", value = "repair-device", type = "String") })
+@Instantiate(name="repair-device-command")
 public class RepairDeviceCommand extends DeviceCommand {
 
-	
+	@Requires
 	private SimulationManager simulationManager;
 
 
 	@Override
    public Object execute() throws Exception {
-		System.out.println("Repair device " + deviceId);
-		simulationManager.setDeviceFault(deviceId, false);
+		simulationManager.setDeviceFault(deviceId, true);
 		return null;
+   }
+	
+	public void repairDevice(String deviceId) throws Exception {
+	   this.deviceId = deviceId;
+	   execute();
    }
 
 }

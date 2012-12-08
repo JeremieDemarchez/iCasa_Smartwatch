@@ -20,12 +20,8 @@ import java.util.List;
 import java.util.Set;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.LocatedDevice;
-import fr.liglab.adele.icasa.environment.LocatedDeviceListener;
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulationManagerNew;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 
 public class LocatedDeviceImpl implements LocatedDevice {
 
@@ -37,11 +33,11 @@ public class LocatedDeviceImpl implements LocatedDevice {
 	
 	private SimulatedDevice deviceComponent;
 	
-	private SimulationManagerNew manager;
+	private SimulationManager manager;
 
     private String _type;
 
-	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManagerNew manager) {
+	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManager manager) {
 		m_serialNumber = serialNumber;
 		if (position!=null)
 			m_position = position.clone();
@@ -80,7 +76,7 @@ public class LocatedDeviceImpl implements LocatedDevice {
 			return properties.get(propertyName);
 		}
 		*/
-		if (propertyName.equals(SimulationManagerNew.LOCATION_PROP_NAME)) {
+		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
 			Zone zone = manager.getZoneFromPosition(m_position);
 			if (zone!=null)			
 				return zone.getId();

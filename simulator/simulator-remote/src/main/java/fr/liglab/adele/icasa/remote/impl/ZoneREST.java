@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -39,7 +39,7 @@ import javax.ws.rs.core.Response;
 public class ZoneREST {
 
     @Requires
-    private SimulationManagerNew _simulationMgr;
+    private SimulationManager _simulationMgr;
 
     /*
      * Methods to manage cross domain requests

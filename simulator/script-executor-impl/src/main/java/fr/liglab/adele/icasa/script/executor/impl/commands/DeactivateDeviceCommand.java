@@ -17,6 +17,13 @@ package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
@@ -25,9 +32,14 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  * @author Gabriel
  *
  */
+@Component(name = "DeactivateDeviceCommand")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{deactivateDevice}"),
+      @StaticServiceProperty(name = "name", value = "deactivate-device", type = "String") })
+@Instantiate(name="deactivate-device-command")
 public class DeactivateDeviceCommand extends DeviceCommand {
 
-	
+	@Requires
 	private SimulationManager simulationManager;
 
 
@@ -35,6 +47,11 @@ public class DeactivateDeviceCommand extends DeviceCommand {
    public Object execute() throws Exception {
 		simulationManager.setDeviceState(deviceId, false);
 		return null;
+   }
+	
+	public void deactivateDevice(String deviceId) throws Exception {
+	   this.deviceId = deviceId;
+	   execute();
    }
 
 }

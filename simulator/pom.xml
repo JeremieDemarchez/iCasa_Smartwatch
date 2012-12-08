@@ -32,14 +32,10 @@
 		<module>clock-api</module>
 		<module>clock-simulated-impl</module>
 		<module>clock-system-impl</module>
-		<module>context-api</module>
-		<module>context-impl</module>
 		<module>device-api</module>
 		<module>environment-api</module>
 		<module>simulated-environment</module>
 		<module>script-api</module>
-		<module>script-interpreter</module>
-		<module>script-deployer</module>
 		<module>script-executor-api</module>		
 	    <module>script-executor-impl</module>		
 		<module>simulated-devices</module>

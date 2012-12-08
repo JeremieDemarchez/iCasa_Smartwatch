@@ -21,8 +21,7 @@ package fr.liglab.adele.icasa.remote.impl;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManagerNew;
-import org.apache.felix.ipojo.*;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -48,7 +47,7 @@ import org.json.*;
 public class DeviceREST {
 
     @Requires
-    private SimulationManagerNew _simulationMgr;
+    private SimulationManager _simulationMgr;
 
     /*
      * Methods to manage cross domain requests
@@ -103,7 +102,7 @@ public class DeviceREST {
             deviceJSON.putOnce("id", device.getSerialNumber());
             deviceJSON.putOnce("name", device.getSerialNumber());
             deviceJSON.put("fault", device.getPropertyValue(GenericDevice.FAULT_PROPERTY_NAME));
-            deviceJSON.put("location", device.getPropertyValue(SimulationManagerNew.LOCATION_PROP_NAME));
+            deviceJSON.put("location", device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME));
             deviceJSON.put("state", device.getPropertyValue(GenericDevice.STATE_PROPERTY_NAME));
             deviceJSON.put("type", deviceType);
             if (devicePosition != null) {
@@ -254,7 +253,7 @@ public class DeviceREST {
                     newPosY = updatedDevice.getPositionY();
                 _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
             } else if (updatedDevice.getLocation() != null)
-                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulationManagerNew.LOCATION_PROP_NAME, updatedDevice.getLocation());
+                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulationManager.LOCATION_PROP_NAME, updatedDevice.getLocation());
         }
 
         JSONObject deviceJSON = getDeviceJSON(device);

@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
-
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -23,55 +22,44 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
- * Moves a person between the simulated environments 
+ * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
- *
+ * 
  */
-@Component(name = "MovePersonCommandNew")
+@Component(name = "MoveDeviceIntoZoneCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
-@Instantiate(name = "move-persone-command-new")
-public class MovePersonCommand extends AbstractCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDeviceIntoZone}"),
+      @StaticServiceProperty(name = "name", value = "move-device-zone", type = "String") })
+@Instantiate(name = "move-deviceintozone-command")
+public class MoveDeviceIntoZoneCommand extends DeviceCommand {
 
-		
-	private String person;
-	
 	@Requires
 	private SimulationManager simulationManager;
 
-	private int newX;
-	private int newY;
-	
+	private String zoneId;
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(person, new Position(newX, newY));
+		simulationManager.moveDeviceIntoZone(deviceId, zoneId);
 		return null;
 	}
-	
-	
+
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");  
+		super.configure(param);
+		this.zoneId = param.getString("zone");	
 	}
-	
-	
-	public void movePerson(String person, int newX, int newY) throws Exception {		
-	   this.person = person;
-	   this.newX = newX;
-	   this.newY = newY;
-	   execute();
-   }
-	
+
+	public void moveDeviceIntoZone(String deviceId, String zoneId) throws Exception {
+		this.deviceId = deviceId;
+		this.zoneId = zoneId;
+		execute();
+	}
 
 }

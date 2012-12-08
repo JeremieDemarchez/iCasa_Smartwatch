@@ -15,38 +15,55 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
-
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
  * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
- *
+ * 
  */
+@Component(name = "MoveDeviceCommandNew")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{moveDevice}"),
+      @StaticServiceProperty(name = "name", value = "move-device", type = "String") })
+@Instantiate(name = "move-device-command-new")
 public class MoveDeviceCommand extends DeviceCommand {
 
-	
-	private String location;
-	
+	@Requires
 	private SimulationManager simulationManager;
 
+	private int newX;
+	private int newY;
 
 	@Override
-   public Object execute() throws Exception {
-		System.out.println("Moving device: " + deviceId + " Location: " + location);
-		simulationManager.setDeviceLocation(deviceId, location);
+	public Object execute() throws Exception {
+		simulationManager.setDevicePosition(deviceId, new Position(newX, newY));
 		return null;
-   }
-	
+	}
+
 	@Override
 	public void configure(JSONObject param) throws Exception {
-	   super.configure(param);
-	   location = param.getString("location");
+		super.configure(param);
+		this.newX = param.getInt("newX");
+		this.newY = param.getInt("newY");
 	}
-	
+
+	public void moveDevice(String deviceId, int newX, int newY) throws Exception {
+		this.deviceId = deviceId;
+		this.newX = newX;
+		this.newY = newY;
+		execute();
+	}
 
 }

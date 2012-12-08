@@ -17,6 +17,13 @@ package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
@@ -25,17 +32,26 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  * @author Gabriel
  *
  */
+@Component(name = "FaultDeviceCommand")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{faultDevice}"),
+      @StaticServiceProperty(name = "name", value = "fault-device", type = "String") })
+@Instantiate(name="fault-device-command")
 public class FaultDeviceCommand extends DeviceCommand {
 
-	
+	@Requires
 	private SimulationManager simulationManager;
 
 
 	@Override
    public Object execute() throws Exception {
-		System.out.println("Fault device " + deviceId);
 		simulationManager.setDeviceFault(deviceId, true);
 		return null;
+   }
+	
+	public void faultDevice(String deviceId) throws Exception {
+	   this.deviceId = deviceId;
+	   execute();
    }
 
 }

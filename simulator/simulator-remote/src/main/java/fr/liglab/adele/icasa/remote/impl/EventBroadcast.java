@@ -16,8 +16,6 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import fr.liglab.adele.icasa.environment.*;
-import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
@@ -53,7 +51,7 @@ public class EventBroadcast extends OnMessage<String> {
 	private HttpService _httpService;
 
 	@Requires
-	private SimulationManagerNew _simulMgr;
+	private SimulationManager _simulMgr;
 
 	private Broadcaster _eventBroadcaster;
 

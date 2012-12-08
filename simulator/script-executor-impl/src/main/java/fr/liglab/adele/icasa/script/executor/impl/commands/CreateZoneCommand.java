@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
-
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -23,55 +23,56 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
 
 /**
  * 
- * Moves a person between the simulated environments 
+ * Command to Create a Zone
  * 
  * @author Gabriel
- *
+ * 
  */
-@Component(name = "MovePersonCommandNew")
+@Component(name = "CreateZoneCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
-@Instantiate(name = "move-persone-command-new")
-public class MovePersonCommand extends AbstractCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createZone}"),
+      @StaticServiceProperty(name = "name", value = "create-zone", type = "String") })
+@Instantiate(name="create-zone-command")
+public class CreateZoneCommand extends AbstractCommand {
 
-		
-	private String person;
-	
+	/**
+	 * Environment ID used to place a person
+	 */
+	private String zoneId;
+	private int leftX;
+	private int topY;
+	private int height;
+	private int width;
+
 	@Requires
 	private SimulationManager simulationManager;
 
-	private int newX;
-	private int newY;
-	
-
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(person, new Position(newX, newY));
+		simulationManager.createZone(zoneId, null, leftX, topY, width, height);
 		return null;
 	}
-	
-	
+
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");  
+		this.zoneId = param.getString("zoneId");
+		this.leftX = param.getInt("leftX");
+		this.topY = param.getInt("topY");
+		this.height = param.getInt("height");
+		this.width = param.getInt("width");
 	}
-	
-	
-	public void movePerson(String person, int newX, int newY) throws Exception {		
-	   this.person = person;
-	   this.newX = newX;
-	   this.newY = newY;
-	   execute();
-   }
-	
+
+	public void createZone(String id, String description, int leftX, int topY, int width, int height) throws Exception {
+		this.zoneId = id;
+		this.leftX = leftX;
+		this.topY = topY;
+		this.height = height;
+		this.width = width;
+		execute();
+	}
 
 }

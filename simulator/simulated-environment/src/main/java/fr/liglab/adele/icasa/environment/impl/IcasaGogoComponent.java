@@ -25,7 +25,7 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 
 import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.SimulationManagerNew;
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
 
 @Component
@@ -36,7 +36,7 @@ import fr.liglab.adele.icasa.environment.Zone;
 public class IcasaGogoComponent {
 
 	@Requires
-	private SimulationManagerNew manager;
+	private SimulationManager manager;
 
 	public void listZones() {
 		System.out.println("Zones: ");

@@ -16,6 +16,8 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
+import java.util.HashMap;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -23,55 +25,54 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
+import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
 
 /**
  * 
- * Moves a person between the simulated environments 
+ * Create a new device instance
  * 
  * @author Gabriel
  *
  */
-@Component(name = "MovePersonCommandNew")
+@Component(name = "CreateDeviceCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
-@Instantiate(name = "move-persone-command-new")
-public class MovePersonCommand extends AbstractCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createDevice}"),
+      @StaticServiceProperty(name = "name", value = "add-device", type = "String") })
+@Instantiate(name="create-device-command")
+public class CreateDeviceCommand extends DeviceCommand {
 
-		
-	private String person;
-	
-	@Requires
+	@Requires	
 	private SimulationManager simulationManager;
 
-	private int newX;
-	private int newY;
+	private String deviceType;
 	
+	private String description;
 
 	@Override
-	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(person, new Position(newX, newY));
+   public Object execute() throws Exception {
+		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
 		return null;
-	}
-	
+   }
 	
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");  
+	   super.configure(param);
+	   deviceType = param.getString("type");
+	   if (param.has("description"))
+	   	description = param.getString("description");
+	   else 
+	   	description = null;
+	}
+	
+	public void createDevice(String deviceType, String deviceId, String description) throws Exception {
+		this.deviceType = deviceType;
+		this.deviceId = deviceId;
+		this.description = description;
+		execute();
 	}
 	
 	
-	public void movePerson(String person, int newX, int newY) throws Exception {		
-	   this.person = person;
-	   this.newX = newX;
-	   this.newY = newY;
-	   execute();
-   }
 	
 
 }
