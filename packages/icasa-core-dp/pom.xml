@@ -48,14 +48,6 @@
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.presence</artifactId>
-		</dependency>		
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>context.impl</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>script.interpreter</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
