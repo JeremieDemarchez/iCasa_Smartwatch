@@ -1,0 +1,21 @@
+{
+	"machine" : {
+		"id" : "server1",
+		"host" : "localhost",
+
+		"connection" : [
+				{
+				"out" : {
+					"service_filter" : "(|(objectClass=fr.liglab.adele.icasa.remote.impl.ScriptPlayerREST)(objectClass=fr.liglab.adele.icasa.remote.impl.ZoneREST)(objectClass=fr.liglab.adele.icasa.remote.impl.PersonREST)(objectClass=fr.liglab.adele.icasa.remote.impl.DeviceREST))"
+					}
+				}
+		],
+
+		"component" : [
+			{ 
+			  "factory" : "RoSe_exporter.jersey",
+			  "properties" : { "jersey.servlet.name" : "/icasa" }
+			}
+		]
+	}
+}

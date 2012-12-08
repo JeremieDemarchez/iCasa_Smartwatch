@@ -1,0 +1,17 @@
+{
+	"machine" : {
+		"id" : "simulated-devices-machine",
+		"host" : "localhost",
+		
+		"connection" : [
+				{ "in" : {"endpoint_filter" : "(service.imported.configs=simulated-zigbee)", "importer_filter" : "(rose.protos.configs=simulated-zigbee)"} }
+		],
+
+		"component" : [
+			{ 
+				"factory" : "SimulatedSensorImporter",
+				"properties" : { "instance.name" : "RoSe_simporter_simulatedSensor-1" }
+			}
+		]
+	}
+}
