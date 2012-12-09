@@ -88,6 +88,7 @@ define(['jquery',
             $(element).dialog({
                 autoOpen: false,
                 title: titleUnwrapped
+                minWidth: 220
             });
 #            $(element).dialog({
 #                autoOpen: false,

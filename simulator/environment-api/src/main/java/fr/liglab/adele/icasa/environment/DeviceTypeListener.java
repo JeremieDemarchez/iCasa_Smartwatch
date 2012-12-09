@@ -15,6 +15,12 @@
  */
 package fr.liglab.adele.icasa.environment;
 
-public interface SimulationListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener {
+/**
+ * @author Thomas Leveque
+ */
+public interface DeviceTypeListener {
 
+    public void deviceTypeAdded(String deviceType);
+
+    public void deviceTypeRemoved(String deviceType);
 }

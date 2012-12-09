@@ -66,6 +66,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		for (SimulationListener listener : listeners) {
             try {
                 listener.zoneAdded(zone);
+                zone.addListener(listener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -83,6 +84,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
         // Listeners notification
         for (SimulationListener listener : listeners) {
             try {
+                zone.removeListener(listener);
                 listener.zoneRemoved(zone);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -260,6 +262,18 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 	@Override
 	public void removeAllPersons() {
 		synchronized (persons) {
+            for (Person person : persons.values()) {
+                // Listeners notification
+                for (SimulationListener listener : listeners) {
+                    try {
+                        person.removeListener(listener);
+                        listener.personRemoved(person);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
 			persons.clear();
 		}
 	}
@@ -273,6 +287,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
         for (SimulationListener listener : listeners) {
             try {
                 listener.personAdded(person);
+                person.addListener(listener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -289,6 +304,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
         for (SimulationListener listener : listeners) {
             try {
                 listener.personRemoved(person);
+                person.removeListener(listener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -397,6 +413,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
             for (SimulationListener listener : listeners) {
                 try {
                     listener.deviceAdded(device);
+                    device.addListener(listener);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -414,6 +431,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
         for (SimulationListener listener : listeners) {
             try {
                 listener.deviceRemoved(device);
+                device.removeListener(listener);
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -422,40 +440,64 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
 	public void bindFactory(Factory factory) {
-		m_factories.put(factory.getName(), factory);
+        String deviceType = factory.getName();
+        m_factories.put(deviceType, factory);
+
+        // Listeners notification
+        for (SimulationListener listener : listeners) {
+            try {
+                listener.deviceTypeAdded(deviceType);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Unbind(id = "factories")
 	public void unbindFactory(Factory factory) {
-		m_factories.put(factory.getName(), factory);
+        String deviceType = factory.getName();
+        m_factories.remove(deviceType);
+
+        // Listeners notification
+        for (SimulationListener listener : listeners) {
+            try {
+                listener.deviceTypeRemoved(deviceType);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
 	public void addListener(SimulationListener listener) {
-		listeners.add(listener);
+        synchronized(listeners) {
+            listeners.add(listener);
 
-		for (Zone zone : zones.values())
-			zone.addListener(listener);
+            for (Zone zone : zones.values())
+                zone.addListener(listener);
 
-		for (Person person : persons.values())
-			person.addListener(listener);
+            for (Person person : persons.values())
+                person.addListener(listener);
 
-		for (LocatedDevice device : locatedDevices.values())
-			device.addListener(listener);
+            for (LocatedDevice device : locatedDevices.values())
+                device.addListener(listener);
+        }
 	}
 
 	@Override
 	public void removeListener(SimulationListener listener) {
-		listeners.remove(listener);
+        synchronized(listeners) {
+            listeners.remove(listener);
 
-		for (Zone zone : zones.values())
-			zone.removeListener(listener);
+            for (Zone zone : zones.values())
+                zone.removeListener(listener);
 
-		for (Person person : persons.values())
-			person.removeListener(listener);
+            for (Person person : persons.values())
+                person.removeListener(listener);
 
-		for (LocatedDevice device : locatedDevices.values())
-			device.removeListener(listener);
+            for (LocatedDevice device : locatedDevices.values())
+                device.removeListener(listener);
+        }
 	}
 
 	@Override
@@ -498,7 +540,6 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		int newY = random(minY, minY + zone.getHeight());
 		object.setAbsolutePosition(new Position(newX, newY));
 	}
-
 
     /*
      * Simulation Manager listener methods

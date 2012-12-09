@@ -119,7 +119,31 @@ public class EventBroadcast extends OnMessage<String> {
 
 	private class ICasaEventListener implements SimulationListener {
 
-		@Override
+        @Override
+        public void deviceTypeRemoved(String deviceType) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "device-type-removed");
+                json.put("deviceTypeId", deviceType);
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void deviceTypeAdded(String deviceType) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "device-type-added");
+                json.put("deviceTypeId", deviceType);
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
 		public void deviceMoved(LocatedDevice device, Position position) {
 			JSONObject json = new JSONObject();
 			try {
@@ -295,18 +319,38 @@ public class EventBroadcast extends OnMessage<String> {
 
 		@Override
 		public void zoneMoved(Zone zone, Position oldPosition) {
-			// TODO Auto-generated method stub
-
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-moved");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 		}
 
 		@Override
 		public void zoneResized(Zone zone) {
-			// TODO
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-resized");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 		}
 
 		@Override
 		public void zoneParentModified(Zone zone, Zone oldParent) {
-			// TODO
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-parent-updated");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
 		}
 
 		@Override
