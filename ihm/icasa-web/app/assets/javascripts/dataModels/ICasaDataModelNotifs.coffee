@@ -41,8 +41,16 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       DataModel.collections.zones.fetch();
     if ((json.eventType == "device-type-added") || (json.eventType == "device-type-removed"))
       DataModel.collections.deviceTypes.fetch();
-    if ((json.eventType == "device-added") || (json.eventType == "device-removed"))
-      DataModel.collections.devices.fetch();
+    if (json.eventType == "device-added")
+      device = DataModel.collections.devices.get(json.deviceId);
+      if ((device == null)  || (device == undefined))
+        device = new DataModel.Models.Device({ id: json.deviceId });
+        device.fetch();
+        DataModel.collections.devices.push(device);
+    if (json.eventType == "device-removed")
+      device = DataModel.collections.devices.get(json.deviceId);
+      if ((device != null)  && (device != undefined))
+        DataModel.collections.devices.remove(device);
     if (json.eventType == "device-position-update")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))

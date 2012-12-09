@@ -251,7 +251,6 @@ define(['jquery',
                 if (zone != undefined)
                   zoneName = zone.name();
                   @location(zoneName);
-                  @.model().save();
                 return zone;
               owner: @
            }
@@ -364,7 +363,6 @@ define(['jquery',
                 if (zone != undefined)
                   zoneName = zone.name();
                   @location(zoneName);
-                  @.model().save();
                 return zone;
               owner: @
            }
