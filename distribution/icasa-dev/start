@@ -1,0 +1,3 @@
+#!/usr/bin/env sh
+cd /home/etienne/icasa/repositories/iCasa/distribution/icasa-dev/target/distrib-temp
+exec java -jar bin/felix.jar
