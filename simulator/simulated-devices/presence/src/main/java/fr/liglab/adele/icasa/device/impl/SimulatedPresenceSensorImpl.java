@@ -15,9 +15,12 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import java.util.List;
+
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.environment.*;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -129,5 +132,17 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	public void setFault(String fault) {
 		this.fault = fault;
 	}
+
+	@Override
+   public void enterInZones(List<Zone> zones) {
+	   // TODO Auto-generated method stub
+	   
+   }
+
+	@Override
+   public void leavingZones(List<Zone> zones) {
+	   // TODO Auto-generated method stub
+	   
+   }
 
 }

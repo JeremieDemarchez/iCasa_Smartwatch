@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.environment;
 
+import java.util.List;
+
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
@@ -25,4 +27,9 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public interface SimulatedDevice extends GenericDevice {
 
+	public void enterInZones(List<Zone> zones);
+	
+	public void leavingZones(List<Zone> zones);
+	
+	
 }

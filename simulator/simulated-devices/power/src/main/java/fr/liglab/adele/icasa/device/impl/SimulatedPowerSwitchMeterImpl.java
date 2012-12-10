@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import java.util.List;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -30,6 +32,7 @@ import fr.liglab.adele.icasa.device.power.Powermeter;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
+import fr.liglab.adele.icasa.environment.Zone;
 
 /**
  * Implementation of a simulated Power Switch + Meter
@@ -135,5 +138,17 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
       */
      public void setFault(String fault) {
      	this.fault = fault;
-     } 
+     }
+
+	@Override
+   public void enterInZones(List<Zone> zones) {
+	   // TODO Auto-generated method stub
+	   
+   }
+
+	@Override
+   public void leavingZones(List<Zone> zones) {
+	   // TODO Auto-generated method stub
+	   
+   } 
 }

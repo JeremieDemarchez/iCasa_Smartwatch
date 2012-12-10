@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import java.util.List;
+
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.environment.Zone;
@@ -195,6 +197,18 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	    */
 	   public void setFault(String fault) {
 	   	this.fault = fault;
-	   } 
+	   }
+
+		@Override
+      public void enterInZones(List<Zone> zones) {
+	      // TODO Auto-generated method stub
+	      
+      }
+
+		@Override
+      public void leavingZones(List<Zone> zones) {
+	      // TODO Auto-generated method stub
+	      
+      } 
 
 }

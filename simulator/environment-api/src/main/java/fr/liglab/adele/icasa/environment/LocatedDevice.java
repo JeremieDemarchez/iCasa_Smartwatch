@@ -15,22 +15,27 @@
  */
 package fr.liglab.adele.icasa.environment;
 
+import java.util.List;
 import java.util.Set;
 
 public interface LocatedDevice extends LocatedObject {
 
 	public String getSerialNumber();
 
-    public String getType();
-		
+	public String getType();
+
 	public Set<String> getProperties();
 
-    public Object getPropertyValue(String propertyName);
+	public Object getPropertyValue(String propertyName);
 
-    public void setPropertyValue(String propertyName, Object value);
+	public void setPropertyValue(String propertyName, Object value);
 
-    public void addListener(final LocatedDeviceListener listener);
+	public void addListener(final LocatedDeviceListener listener);
 
-    public void removeListener(final LocatedDeviceListener listener);
-	
+	public void removeListener(final LocatedDeviceListener listener);
+
+	public void enterInZones(List<Zone> zones);
+
+	public void leavingZones(List<Zone> zones);
+
 }

@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import java.util.List;
+
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
@@ -32,6 +34,7 @@ import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
+import fr.liglab.adele.icasa.environment.Zone;
 
 /**
  * Implementation of a simulated cooler device.
@@ -193,6 +196,18 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler,
       */
      public void setFault(String fault) {
      	this.fault = fault;
-     } 
+     }
+
+	@Override
+   public void enterInZones(List<Zone> zones) {
+	   // TODO Auto-generated method stub
+	   
+   }
+
+	@Override
+   public void leavingZones(List<Zone> zones) {
+	   // TODO Auto-generated method stub
+	   
+   } 
 
 }

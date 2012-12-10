@@ -1,5 +1,7 @@
 <behavior startdate="2011.10.27.00.00.00" factor="1440">
 	
+	<create-zone zoneId="zivingroom-3"  leftX="20" topY="20" width="205" height="310" />
+	
 	<create-zone zoneId="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
 	<add-zone-variable zoneId="kitchen" variable="Temperature" />
 	<add-device deviceID="SekuSensor-AAA-20119215-S" type="iCASA.PresenceSensor" />
@@ -12,6 +14,7 @@
 	<move-device-zone deviceID="IKAE-79C-WXFHH-532349-K4" zone="kitchen" />
 	<modify-environment zone="kitchen" variable="temperature" value="296.15"/>
 	
+
 	<create-zone zoneId="livingroom"  leftX="410" topY="28" width="245" height="350" />
 	<add-device deviceID="TermoSensor-AAA-20119915-F" type="iCASA.Thermometer" />
 	<add-device deviceID="Elektro-Halogen4000-453147-08234-88" type="iCASA.DimmerLight" />	
@@ -40,5 +43,6 @@
 	<move-device-zone deviceID="IKAE-Chb-45X-DDPQS-254-33" zone="bathroom" />	
 	<modify-environment zone="bathroom" variable="temperature" value="293.15"/>
 	
+	<set-zone-parent zone="zivingroom-3" parentZone="livingroom" useParentVariables="false"/>
 	
 </behavior>

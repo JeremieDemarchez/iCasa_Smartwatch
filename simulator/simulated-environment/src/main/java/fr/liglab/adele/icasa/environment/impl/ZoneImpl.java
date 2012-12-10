@@ -289,10 +289,6 @@ public class ZoneImpl implements Zone {
 			listener.zoneResized(this);
 	}
 
-	@Override
-	public String toString() {
-		return "Zone: " + id + " X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " -- Width: " + width + " Height: " + height;
-	}
 
 	@Override
 	public Position getRelativePosition(LocatedObject object) {
@@ -309,5 +305,13 @@ public class ZoneImpl implements Zone {
 		int newY = getAbsoluteLeftTopPosition().y + height;
 	   return new Position(newX, newY);
    }
+	
+	@Override
+	public String toString() {
+		String parentId = "Unset";
+		if (parent!=null)
+			parentId = parent.getId();
+		return "Zone: " + id + " X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " -- Width: " + width + " Height: " + height + " - Parent: " + parentId;
+	}
 
 }

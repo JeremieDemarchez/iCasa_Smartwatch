@@ -21,7 +21,6 @@ import java.util.Set;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.*;
-import fr.liglab.adele.icasa.environment.SimulationManager;
 
 public class LocatedDeviceImpl implements LocatedDevice {
 
@@ -150,5 +149,18 @@ public class LocatedDeviceImpl implements LocatedDevice {
 	public String toString() {
 		return "Id: " + getSerialNumber() + " - Position: " + m_position;
 	}
+
+	@Override
+   public void enterInZones(List<Zone> zones) {
+		if (deviceComponent!=null)
+			deviceComponent.enterInZones(zones);
+   }
+
+	@Override
+   public void leavingZones(List<Zone> zones) {
+		if (deviceComponent!=null)
+			deviceComponent.leavingZones(zones);
+	   
+   }
 
 }

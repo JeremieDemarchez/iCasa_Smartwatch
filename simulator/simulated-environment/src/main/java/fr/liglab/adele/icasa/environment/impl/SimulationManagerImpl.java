@@ -25,7 +25,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fr.liglab.adele.icasa.environment.*;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -39,6 +38,17 @@ import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.LocatedDeviceListener;
+import fr.liglab.adele.icasa.environment.LocatedObject;
+import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.PersonListener;
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulationListener;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.ZonePropListener;
 
 @Component
 @Provides
@@ -132,13 +142,13 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 	}
 
 	@Override
-   public void addZoneVariable(String zoneId, String variable) {
+	public void addZoneVariable(String zoneId, String variable) {
 		Zone zone = zones.get(zoneId);
 		if (zone == null)
 			return;
 		zone.addVariable(variable);
-   }
-	
+	}
+
 	@Override
 	public Set<String> getZoneVariables(String zoneId) {
 		Zone zone = zones.get(zoneId);
@@ -252,7 +262,31 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 
 	@Override
 	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId) {
-		moveLocatedObjectIntoZone(zoneId, getDevice(deviceSerialNumber));
+		LocatedDevice device = getDevice(deviceSerialNumber);
+		if (device == null)
+			return;
+		List<Zone> oldZones = getObjectZones(device);
+		Position newPosition = getRandomPositionIntoZone(zoneId);
+
+		if (newPosition != null) {
+			device.setAbsolutePosition(newPosition);
+			List<Zone> newZones = getObjectZones(device);
+			device.leavingZones(oldZones);
+			device.enterInZones(newZones);
+		}
+	}
+
+	// TODO: Maybe a public method in the interface
+	private List<Zone> getObjectZones(LocatedObject object) {
+		if (object == null)
+			return null;
+		List<Zone> allZones = getZones();
+		List<Zone> zones = new ArrayList<Zone>();
+		for (Zone zone : allZones) {
+			if (zone.contains(object))
+				zones.add(zone);
+		}
+		return zones;
 	}
 
 	@Override
@@ -264,7 +298,12 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 
 	@Override
 	public void setPersonZone(String userName, String zoneId) {
-		moveLocatedObjectIntoZone(zoneId, getPerson(userName));
+		Person person = getPerson(userName);
+		if (person != null) {
+			Position newPosition = getRandomPositionIntoZone(zoneId);
+			if (newPosition != null)
+				person.setAbsolutePosition(newPosition);
+		}
 	}
 
 	@Override
@@ -538,16 +577,25 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		return min + (int) (range * Math.random());
 	}
 
-	private void moveLocatedObjectIntoZone(String zoneId, LocatedObject object) {
+	private Position getRandomPositionIntoZone(String zoneId) {
 		Zone zone = getZone(zoneId);
-		if (zone == null || object == null)
-			return;
+		if (zone == null)
+			return null;
 		int minX = zone.getAbsoluteLeftTopPosition().x;
 		int minY = zone.getAbsoluteLeftTopPosition().y;
 		int newX = random(minX, minX + zone.getWidth());
 		int newY = random(minY, minY + zone.getHeight());
-		object.setAbsolutePosition(new Position(newX, newY));
+		return new Position(newX, newY);
 	}
+
+	/*
+	 * private boolean moveLocatedObjectIntoZone(String zoneId, LocatedObject
+	 * object) { Zone zone = getZone(zoneId); if (zone == null || object == null)
+	 * return false; int minX = zone.getAbsoluteLeftTopPosition().x; int minY =
+	 * zone.getAbsoluteLeftTopPosition().y; int newX = random(minX, minX +
+	 * zone.getWidth()); int newY = random(minY, minY + zone.getHeight());
+	 * object.setAbsolutePosition(new Position(newX, newY)); return true; }
+	 */
 
 	/*
 	 * Simulation Manager listener methods
@@ -678,6 +726,5 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 			}
 		}
 	}
-
 
 }
