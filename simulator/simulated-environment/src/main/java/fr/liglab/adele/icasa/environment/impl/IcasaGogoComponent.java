@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import java.util.List;
+import java.util.Set;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -31,7 +32,7 @@ import fr.liglab.adele.icasa.environment.Zone;
 @Component
 @Provides(properties = {
       @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{listZones, listDevices, listPersons, getPersonZones}") })
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{listZones, listDevices, listPersons, getPersonZones, listZoneVariables}") })
 @Instantiate
 public class IcasaGogoComponent {
 
@@ -74,6 +75,15 @@ public class IcasaGogoComponent {
 					System.out.println("Zone : " + zone);
 				}
 			}
+		}
+	}
+
+	public void listZoneVariables(String zoneId) {
+
+		System.out.println("Variables: ");
+		Set<String> variables = manager.getZoneVariables(zoneId);
+		for (String variable : variables) {
+			System.out.println("Variable: " + variable + " - Value: " + manager.getZoneVariableValue(zoneId, variable));
 		}
 	}
 

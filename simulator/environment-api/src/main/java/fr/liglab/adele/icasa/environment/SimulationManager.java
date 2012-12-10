@@ -37,11 +37,14 @@ public interface SimulationManager {
 	public void moveZone(String id, int leftX, int topY) throws Exception;
 
 	public void resizeZone(String id, int width, int height) throws Exception; 
-
+	
+	
 	public Set<String> getZoneVariables(String zoneId);
 
 	public Object getZoneVariableValue(String zoneId, String variable);
 
+	public void addZoneVariable(String zoneId, String variable);
+	
 	public void setZoneVariable(String zoneId, String variable, Object value);
 
 	public Set<String> getZoneIds();

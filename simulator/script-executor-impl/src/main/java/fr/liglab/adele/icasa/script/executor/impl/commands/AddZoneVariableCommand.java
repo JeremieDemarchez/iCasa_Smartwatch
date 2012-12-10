@@ -24,23 +24,22 @@ import org.json.JSONObject;
 /**
  * @author Thomas Leveque
  */
-@Component(name = "ModifyZoneVariableCommand")
+@Component(name = "AddZoneVariableCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-        @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{modifyZoneVariableValue}"),
-        @StaticServiceProperty(name = "name", value = "modify-zone-variable", type = "String") })
-@Instantiate(name="modify-zone-variable-command")
-public class ModifyZoneVariableCommand extends AbstractCommand {
+        @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{addZoneVariable}"),
+        @StaticServiceProperty(name = "name", value = "add-zone-variable", type = "String") })
+@Instantiate(name="add-zone-variable-command")
+public class AddZoneVariableCommand extends AbstractCommand {
 
     @Requires
     private SimulationManager simulationManager;
 
     private String zoneId;
     private String variableName;
-    private String newValue;
 
     @Override
     public Object execute() throws Exception {
-        simulationManager.setZoneVariable(zoneId, variableName, newValue);
+        simulationManager.addZoneVariable(zoneId, variableName);
         return null;
     }
 
@@ -48,14 +47,11 @@ public class ModifyZoneVariableCommand extends AbstractCommand {
     public void configure(JSONObject param) throws Exception {
         this.zoneId = param.getString("zoneId");
         this.variableName = param.getString("variable");
-        //TODO manage other value types than String
-        this.newValue = param.getString("value");
     }
 
-    public void modifyZoneVariableValue(String zoneId, String variableName, String newValue) throws Exception {
+    public void addZoneVariable(String zoneId, String variableName) throws Exception {
         this.zoneId = zoneId;
         this.variableName = variableName;
-        this.newValue = newValue;
         execute();
     }
 

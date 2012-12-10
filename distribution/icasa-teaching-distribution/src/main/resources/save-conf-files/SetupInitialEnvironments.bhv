@@ -1,6 +1,7 @@
 <behavior startdate="2011.10.27.00.00.00" factor="1440">
 	
 	<create-zone zoneId="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
+	<add-zone-variable zoneId="kitchen" variable="Temperature" />
 	<add-device deviceID="SekuSensor-AAA-20119215-S" type="iCASA.PresenceSensor" />
 	<add-device deviceID="TermoSensor-AAA-20119215-S" type="iCASA.Thermometer" description="Kitchen Thermometer Sensor 1" />
 	<add-device deviceID="PhotoSensor-AAA-20119215-S" type="iCASA.Photometer" />

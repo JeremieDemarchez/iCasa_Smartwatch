@@ -169,11 +169,10 @@ public class ZoneImpl implements Zone {
 			else
 				throw new NullPointerException("Variable " + name + " does not exist");
 
-		Object value = variables.get(name);
-		if (value == null)
+		if (!variables.containsKey(name))
 			throw new NullPointerException("Variable " + name + " does not exist");
-
-		return value;
+		
+		return variables.get(name);
 	}
 
 	@Override
