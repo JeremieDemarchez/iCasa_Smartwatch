@@ -28,10 +28,37 @@
   </parent>
 
   <!-- Project coordinates -->
+  <groupId>fr.liglab.adele.icasa</groupId>
   <artifactId>icasa.teaching.distribution</artifactId>
   <packaging>pom</packaging>
   <name>${productName} :: ${projectName}</name>
   <version>${iCasaVersion}</version>
+
+    <!-- Project repositories -->
+    <repositories>
+        <repository>
+            <id>icasa-snapshot-repository</id>
+            <name>iCASA Snapshot repository</name>
+            <url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
+            <releases>
+                <enabled>false</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
+        </repository>
+        <repository>
+            <id>icasa-release-repository</id>
+            <name>iCASA Release repository</name>
+            <url>https://repository-icasa.forge.cloudbees.com/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+        </repository>
+    </repositories>
 
   <properties>
       <productName>iCasa</productName>
