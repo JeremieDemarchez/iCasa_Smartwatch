@@ -50,9 +50,12 @@ public abstract class AbstractDevice implements GenericDevice {
         if (propertyName == null) {
             throw new NullPointerException("Null property name");
         }
+        Object value = null;
         synchronized (_properties) {
-            return _properties.get(propertyName);
+            value = _properties.get(propertyName);
         }
+
+        return value;
     }
 
     @Override
@@ -60,9 +63,12 @@ public abstract class AbstractDevice implements GenericDevice {
         if (propertyName == null) {
             throw new NullPointerException("Null property name");
         }
+        Object oldValue = null;
         synchronized (_properties) {
+            oldValue = _properties.get(propertyName);
             _properties.put(propertyName, value);
         }
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue));
     }
 
 
