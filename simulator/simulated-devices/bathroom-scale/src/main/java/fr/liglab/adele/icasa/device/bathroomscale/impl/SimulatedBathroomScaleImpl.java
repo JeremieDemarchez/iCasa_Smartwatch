@@ -33,16 +33,16 @@ import fr.liglab.adele.icasa.device.bathroomscale.BathroomScale;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.PersonListener;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulationListener;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.listener.MultiEventListener;
+import fr.liglab.adele.icasa.environment.listener.PersonListener;
 
 @Component(name = "iCASA.BathroomScale")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBathroomScaleImpl extends AbstractDevice implements BathroomScale, SimulatedDevice, PersonListener, SimulationListener {
+public class SimulatedBathroomScaleImpl extends AbstractDevice implements BathroomScale, SimulatedDevice, PersonListener, MultiEventListener {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;

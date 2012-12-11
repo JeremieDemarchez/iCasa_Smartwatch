@@ -13,5 +13,5 @@
 @REM   See the License for the specific language governing permissions and
 @REM   limitations under the License.
 @REM
-cd /home/etienne/icasa/repositories/iCasa/distribution/icasa-dev/target/distrib-temp
+cd D:\Collaborateur\Medical\Code\iCasa\distribution\icasa-dev\target\distrib-temp
 java -jar bin\felix.jar

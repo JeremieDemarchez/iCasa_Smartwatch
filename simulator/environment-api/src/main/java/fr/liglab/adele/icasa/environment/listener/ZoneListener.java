@@ -13,16 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
 
-/**
- * @author Thomas Leveque
- */
-public interface ZonePropListener {
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.Zone;
 
-    public void zoneVariableAdded(Zone zone, String variableName);
+public interface ZoneListener extends ZonePropListener {
 
-    public void zoneVariableRemoved(Zone zone, String variableName);
+    public void zoneAdded(Zone zone);
 
-    public void zoneVariableModified(Zone zone, String variableName, Object oldValue);
+    public void zoneRemoved(Zone zone);
+
+    public void zoneMoved(Zone zone, Position oldPosition);
+
+    public void zoneResized(Zone zone);
+
+    public void zoneParentModified(Zone zone, Zone oldParentZone);
 }

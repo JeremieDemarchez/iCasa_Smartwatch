@@ -20,6 +20,7 @@ import java.util.List;
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
