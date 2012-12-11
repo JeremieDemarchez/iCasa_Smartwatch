@@ -13,5 +13,5 @@
 @REM   See the License for the specific language governing permissions and
 @REM   limitations under the License.
 @REM
-cd /home/etienne/icasa/repositories/iCasa/distribution/icasa-dev/target/distrib-temp
+cd D:\Collaborateur\Medical\Code\iCasa\distribution\icasa-dev\target\distrib-temp
 java -Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=y -jar bin\felix.jar
