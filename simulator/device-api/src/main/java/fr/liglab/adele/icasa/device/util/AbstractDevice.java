@@ -73,11 +73,19 @@ public abstract class AbstractDevice implements GenericDevice {
 
 
 	public String getState() {
-	   return state;
+	   return (String) getPropertyValue(STATE_PROPERTY_NAME);
     }
 
 	public void setState(String state) {
-	   this.state = state;	   
+	   setPropertyValue(STATE_PROPERTY_NAME, state);
+    }
+
+    public String getFault() {
+        return (String) getPropertyValue(FAULT_PROPERTY_NAME);
+    }
+
+    public void setFault(String fault) {
+        setPropertyValue(FAULT_PROPERTY_NAME, state);
     }
 
     @Override
