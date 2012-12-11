@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.impl;
 
+import java.util.List;
+import java.util.Random;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -55,13 +58,9 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	private SimulationManager manager;
 
 	
-	// TODO ADD PROPRIETES
-	// TODO is there someone on the bathroom scale ?
-	// TODO compute weight
-	
 	public SimulatedBathroomScaleImpl() {
-		setPropertyValue("poids", 0.0);
-		setPropertyValue("ya_qqun?", 0.0);
+		setPropertyValue(WEIGHT_PROPERTY, 0.0);
+		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
 	}
 	
 	@Validate
@@ -120,16 +119,21 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 				long distance2 = deltaX2 + deltaY2;
 
 				if (distance2 < distanceMin2) {
-					System.out.println("Présence de " + person.getName() + " détectée sur le device (" + distance2 + ")");
+					setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);
+					setPropertyValue(WEIGHT_PROPERTY, 0.0);
 					return;
 				}
 			}
 		} else {
-			System.out.println("Device non fonctionnel\n");
+			// Device not activated or in error...
+			setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
+			setPropertyValue(WEIGHT_PROPERTY, 0.0);
 			return;
 		}
 
-		System.out.println("Device fonctionnel, mais personne à proximité");
+		// Device activated, but nobody next to it
+		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
+		setPropertyValue(WEIGHT_PROPERTY, 0.0);
 	}
 
 	public void deviceAdded(LocatedDevice device) {
@@ -179,49 +183,60 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	public float getCurrentWeight() {
-		// TODO regarder s'il y a quelqu'un sur la balance
-		// TODO calculer le poids
+		Boolean presence = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
+		if (presence.equals(Boolean.TRUE)) {			
+			return (float) 55 + ((float) new Random().nextInt(100)) / 10; 
+		}
 		
-		return 0;
+		return 0.0f;
 	}
 
 	public void zoneAdded(Zone zone) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneRemoved(Zone zone) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneMoved(Zone zone, Position oldPosition) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneResized(Zone zone) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneParentModified(Zone zone, Zone oldParentZone) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneVariableAdded(Zone zone, String variableName) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneVariableRemoved(Zone zone, String variableName) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void deviceTypeAdded(String deviceType) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
 	}
 
 	public void deviceTypeRemoved(String deviceType) {
-		// TODO to be revoved as soos as api will be updated
+		// TODO to be removed as soon as api will be updated
+	}
+
+	public void enterInZones(List<Zone> zones) {
+		// TODO to be removed as soon as api will be updated
+		
+	}
+
+	public void leavingZones(List<Zone> zones) {
+		// TODO to be removed as soon as api will be updated
 	}
 }
