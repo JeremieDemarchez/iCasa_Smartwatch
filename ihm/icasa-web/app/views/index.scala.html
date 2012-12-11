@@ -76,7 +76,7 @@
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.devices() -->
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }, event: { mouseover: isHighlighted(true), mouseout: isHighlighted(false) }">
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
                     <div class="deviceWidgetContainer">
                         <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">

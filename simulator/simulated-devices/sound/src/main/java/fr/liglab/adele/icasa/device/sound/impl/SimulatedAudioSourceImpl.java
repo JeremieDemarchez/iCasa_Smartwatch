@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device.impl;
+package fr.liglab.adele.icasa.device.sound.impl;
 
 import java.io.IOException;
 import java.io.InputStream;

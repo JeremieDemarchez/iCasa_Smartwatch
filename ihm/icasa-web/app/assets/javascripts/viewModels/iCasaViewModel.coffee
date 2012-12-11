@@ -327,6 +327,10 @@ define(['jquery',
 #                        decorator.show(!activatedState);
                 );
            @isHighlighted = ko.observable(false);
+           @addHighlight= () =>
+                @isHighlighted(true);
+           @removeHighlight= () =>
+                @isHighlighted(false);
            @saveModel= (newValue) =>
                 @.model().save();
            # init

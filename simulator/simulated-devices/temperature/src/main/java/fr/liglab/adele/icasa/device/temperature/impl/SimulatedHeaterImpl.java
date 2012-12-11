@@ -13,13 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device.impl;
+package fr.liglab.adele.icasa.device.temperature.impl;
 
 import java.util.List;
 
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
-import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;

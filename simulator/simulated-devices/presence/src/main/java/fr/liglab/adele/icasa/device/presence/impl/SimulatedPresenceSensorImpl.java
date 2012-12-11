@@ -13,46 +13,45 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device.impl;
+package fr.liglab.adele.icasa.device.presence.impl;
 
 import java.util.List;
 
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.*;
+
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.light.Photometer;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
-import fr.liglab.adele.icasa.environment.ZonePropListener;
 
 /**
- * Implementation of a simulated photometer device.
+ * Implementation of a simulated presence sensor device.
  * 
  * @author bourretp
  */
-@Component(name="iCASA.Photometer")
+@Component(name="iCASA.PresenceSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedPhotometerImpl extends AbstractDevice implements Photometer, SimulatedDevice,
-      ZonePropListener {
+public class SimulatedPresenceSensorImpl extends AbstractDevice implements PresenceSensor, SimulatedDevice,
+        ZonePropListener {
 
-	@ServiceProperty(name = Photometer.DEVICE_SERIAL_NUMBER, mandatory = true)
+	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, value = "NaN")
-	@Property(name = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, value = "NaN")
-	private double m_currentIlluminance;
+	@Property(name = "presence.threshold", value = "1.0d")
+	private double m_threshold;
+
+	@ServiceProperty(name = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, value = "false")
+	@Property(name = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, value = "false")
+	private boolean m_currentPresence;
 
 	@ServiceProperty(name = "state", value = "deactivated")
 	private String state;
@@ -61,13 +60,10 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	@Property(name = "fault", value = "no")
 	private String fault;
 
-
 	@LogConfig
 	private ComponentLogger m_logger;
 
 	private volatile SimulatedEnvironment m_env;
-
-	//private Thread m_updaterThread;
 
 	@Override
 	public String getSerialNumber() {
@@ -75,8 +71,37 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	}
 
 	@Override
-	public synchronized double getIlluminance() {
-		return m_currentIlluminance;
+	public synchronized boolean getSensedPresence() {
+		return m_currentPresence;
+	}
+
+    @Override
+    public void zoneVariableAdded(Zone zone, String variableName) {
+        // do nothing
+    }
+
+    @Override
+    public void zoneVariableRemoved(Zone zone, String variableName) {
+        // do nothing
+    }
+
+	@Override
+	public void zoneVariableModified(Zone zone, final String propertyName, final Object oldValue) {
+		if (!(fault.equalsIgnoreCase("yes"))) {
+			if (SimulatedEnvironment.PRESENCE.equals(propertyName)) {
+				final boolean oldPresence = m_currentPresence;
+				final double presence = ((Double) zone.getVariableValue(propertyName)).doubleValue();
+				if (presence >= m_threshold) {
+					m_currentPresence = true;
+				} else {
+					m_currentPresence = false;
+				}
+				if (oldPresence != m_currentPresence) {
+					m_logger.debug("Sensed presence : " + m_currentPresence);
+					notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, oldPresence));
+				}
+			}			
+		}
 	}
 
 	/**
@@ -106,27 +131,6 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	 */
 	public void setFault(String fault) {
 		this.fault = fault;
-	}
-
-    @Override
-    public void zoneVariableAdded(Zone zone, String variableName) {
-        // do nothing
-    }
-
-    @Override
-    public void zoneVariableRemoved(Zone zone, String variableName) {
-        // do nothing
-    }
-
-    @Override
-    public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-		if (!(fault.equalsIgnoreCase("yes"))) {
-			if (SimulatedEnvironment.ILLUMINANCE.equals(variableName)) {
-                Object illuminanceBefore = m_currentIlluminance;
-				m_currentIlluminance = ((Double) zone.getVariableValue(variableName)).doubleValue();
-				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
-			}
-		}
 	}
 
 	@Override

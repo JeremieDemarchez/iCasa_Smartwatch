@@ -15,23 +15,30 @@
       limitations under the License.
 
 -->
-<!--form class="form-horizontal">
+<form class="form-horizontal">
     <div class="control-group">
-        <label class="control-label" for="inputSerialNumber">Serial Number</label>
+        <label class="control-label" for="inputName">Name</label>
         <div class="controls">
-            <input type="text" id="inputSerialNumber" disabled="disabled" data-bind="value: $data.id" />
-        </div>
-    </div>
-    <div class="control-group">
-        <label class="control-label" for="inputName">Password</label>
-        <div class="controls">
-            <input type="text" id="inputName" data-bind="value: $data.name" />
+            <input type="text" id="inputName" data-bind="value: name, attr: { alt: name}" />
         </div>
     </div>
     <div class="control-group">
         <label class="control-label" for="inputLocation">Location</label>
         <div class="controls">
-            <input type="text" id="inputLocation" data-bind="value: $data.location" />
+            <input type="text" id="inputLocation" data-bind="value: location" />
         </div>
     </div>
-</form-->
+    <!--div class="control-group">
+        <label class="control-label" for="inputFault">Fault</label>
+        <div class="controls">
+            <input type="text" id="inputFault" data-bind="value: fault" />
+        </div>
+    </div-->
+    <!--div class="control-group">
+        <div class="controls">
+            <label class="checkbox">
+                <input type="checkbox" data_bind="value: !$data.isDesactivated()" /> Activated
+            </label>
+        </div>
+    </div-->
+</form>
