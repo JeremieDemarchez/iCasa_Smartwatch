@@ -109,6 +109,7 @@ public class DeviceREST {
                 deviceJSON.put("positionX", devicePosition.x);
                 deviceJSON.put("positionY", devicePosition.y);
             }
+            //TODO manage other properties
         } catch (JSONException e) {
             e.printStackTrace();
             deviceJSON = null;

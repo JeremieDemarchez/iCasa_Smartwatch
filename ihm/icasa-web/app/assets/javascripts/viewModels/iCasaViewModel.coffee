@@ -385,7 +385,10 @@ define(['jquery',
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
            @isHighlighted = ko.observable(false);
-           #@highlights = @isHighlighted(true);
+           @addHighlight= () =>
+               @isHighlighted(true);
+           @removeHighlight= () =>
+               @isHighlighted(false);
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->
