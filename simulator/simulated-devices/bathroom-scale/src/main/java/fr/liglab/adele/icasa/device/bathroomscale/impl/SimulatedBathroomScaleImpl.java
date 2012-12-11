@@ -37,12 +37,12 @@ import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
-import fr.liglab.adele.icasa.environment.listener.MultiEventListener;
+import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
 import fr.liglab.adele.icasa.environment.listener.PersonListener;
 
 @Component(name = "iCASA.BathroomScale")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBathroomScaleImpl extends AbstractDevice implements BathroomScale, SimulatedDevice, PersonListener, MultiEventListener {
+public class SimulatedBathroomScaleImpl extends AbstractDevice implements BathroomScale, SimulatedDevice, PersonListener, LocatedDeviceListener {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -193,46 +193,6 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 		}
 		
 		return 0.0f;
-	}
-
-	public void zoneAdded(Zone zone) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneRemoved(Zone zone) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneMoved(Zone zone, Position oldPosition) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneResized(Zone zone) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneParentModified(Zone zone, Zone oldParentZone) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneVariableAdded(Zone zone, String variableName) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneVariableRemoved(Zone zone, String variableName) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void deviceTypeAdded(String deviceType) {
-		// TODO to be removed as soon as api will be updated
-	}
-
-	public void deviceTypeRemoved(String deviceType) {
-		// TODO to be removed as soon as api will be updated
 	}
 
 	public void enterInZones(List<Zone> zones) {

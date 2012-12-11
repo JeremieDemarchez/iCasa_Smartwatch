@@ -13,8 +13,9 @@ define(['jquery',
         'text!templates/tabs.html',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
+        'text!templates/bathroomScaleStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -343,11 +344,14 @@ define(['jquery',
                 @.model().save();
 
            # init
-           # TODO
-           #@initBahtroomScale= () =>
-           #     @isHighlighted(false);
-           #@initBahtroomScale();
-           
+           @initBahtroomScale= () =>
+                if (@type() == "iCASA.BathroomScale")
+                     ko.utils.arrayForEach(@decorators(), (decorator) ->
+                         if (decorator.name() == "on-top")
+                             decorator.show(true);
+                     );
+                     @statusWindowTemplate = bathroomScaleStatusWindowTemplateHtml;
+           @initBahtroomScale();
            
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
