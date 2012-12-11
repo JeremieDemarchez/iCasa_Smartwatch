@@ -267,25 +267,27 @@ define(['jquery',
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
               if (@type() == "iCASA.Cooler")
-                 imgName = "Cooler";
+                 imgName = "airConditionne";
               if (@type() == "iCASA.AudioSource")
-                 imgName = "Player";
+                 imgName = "sourceSonore";
               if (@type() == "iCASA.DimmerLight")
-                 imgName = "DimmerLamp";
+                 imgName = "lampeVariable";
               if (@type() == "iCASA.Thermometer")
-                 imgName = "Thermometer";
+                 imgName = "thermometre";
               if (@type() == "iCASA.Heater")
-                 imgName = "Heater";
+                 imgName = "radiateur";
               if (@type() == "iCASA.Photometer")
                  imgName = "Photometer";
               if (@type() == "iCASA.BinaryLight")
-                 imgName = "Lamp";
+                 imgName = "lampe";
               if (@type() == "iCASA.PresenceSensor")
-                 imgName = "Presence";
+                 imgName = "detecteurMouvements";
               if (@type() == "iCASA.Speaker")
-                 imgName = "Speaker";
+                 imgName = "hautParleur";
               if (@type() == "iCASA.Power")
                  imgName = "Power";
+              if (@type() == "iCASA.BathroomScale")
+                 imgName = "pesePersonne";
 
               return "/assets/images/devices/" + imgName + ".png";
            , @);
@@ -325,6 +327,10 @@ define(['jquery',
 #                        decorator.show(!activatedState);
                 );
            @isHighlighted = ko.observable(false);
+           @addHighlight= () =>
+                @isHighlighted(true);
+           @removeHighlight= () =>
+                @isHighlighted(false);
            @saveModel= (newValue) =>
                 @.model().save();
            # init
@@ -379,7 +385,10 @@ define(['jquery',
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
            @isHighlighted = ko.observable(false);
-           #@highlights = @isHighlighted(true);
+           @addHighlight= () =>
+               @isHighlighted(true);
+           @removeHighlight= () =>
+               @isHighlighted(false);
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->

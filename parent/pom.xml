@@ -198,6 +198,13 @@
                 <version>2.2.1</version>
             </dependency>
 
+			<!--  iCasa devices -->
+            <dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>device.bathroom.scale</artifactId>
+                <version>${iCasaVersion}</version>
+            </dependency>
+
             <!-- Gogo command dependencies -->
 			<dependency>
 				<groupId>org.apache.felix</groupId>

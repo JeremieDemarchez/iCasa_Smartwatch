@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="UTF-8"?>
+<?xml version="1.0" encoding="UTF-8"?>
 <!--
   Copyright 2010-2011 Université Joseph Fourier
   
@@ -28,7 +28,7 @@
   </parent>
   
   <!-- Project coordinates -->
-  <artifactId>device.light</artifactId>
+  <artifactId>device.bathroom.scale</artifactId>
   <packaging>bundle</packaging>
   <name>${productName} :: ${projectName}</name>
   
@@ -63,7 +63,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.device.light.impl</Private-Package>
+            <Private-Package>fr.liglab.adele.icasa.device.bathroomscale.impl</Private-Package>
           </instructions>
         </configuration>
       </plugin>

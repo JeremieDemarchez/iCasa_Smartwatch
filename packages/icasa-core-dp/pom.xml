@@ -51,6 +51,10 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>device.bathroom.scale</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>clock.api</artifactId>
 		</dependency>
 		<dependency>

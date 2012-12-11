@@ -66,7 +66,7 @@
         <section id="mapContainer">
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
             <!-- ko foreach: $root.persons() -->
-                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
+                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
                     <div class="userWidgetContainer">
                         <img class="userWidgetIcon"data-bind="attr: { src: imgSrc, alt: name, title: name }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">
@@ -76,7 +76,7 @@
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.devices() -->
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }">
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
                     <div class="deviceWidgetContainer">
                         <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
