@@ -307,7 +307,15 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "activated",
                     imgSrc: '/assets/images/devices/decorators/play.png',
-                    show: true}
+                    show: true},
+                new DecoratorViewModel new Backbone.Model {
+                    name: "on-top",
+                    imgSrc: '/assets/images/devices/pesePersonnePieds.png',
+                    width: '40px',
+                    height: '40px',
+                    positionX: '0',
+                    positionY: '-7',
+                    show: false}
            ]);
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
            @updateWidgetImg= (newValue) =>
@@ -333,7 +341,14 @@ define(['jquery',
                 @isHighlighted(false);
            @saveModel= (newValue) =>
                 @.model().save();
+
            # init
+           # TODO
+           #@initBahtroomScale= () =>
+           #     @isHighlighted(false);
+           #@initBahtroomScale();
+           
+           
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
            @updateWidgetImg();

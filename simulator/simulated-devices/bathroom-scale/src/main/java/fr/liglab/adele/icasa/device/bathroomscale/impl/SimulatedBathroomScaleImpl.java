@@ -61,6 +61,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	public SimulatedBathroomScaleImpl() {
 		setPropertyValue(WEIGHT_PROPERTY, 0.0);
 		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
+		System.out.println("--> BathroomScale created !!!!!");
 	}
 	
 	@Validate
@@ -109,6 +110,8 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	private void updateState() {
 		long distanceMin2 = 1100; 
 	
+		System.out.println("UPDATE STATE : state=" + getState() + " falt=" + getFault());
+		
 		if (getState().equals(AbstractDevice.STATE_ACTIVATED) && getFault().equals(AbstractDevice.FAULT_NO)) {
 			Position deviceLoc = manager.getDevicePosition(getSerialNumber());	
 			
@@ -120,7 +123,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 
 				if (distance2 < distanceMin2) {
 					setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);
-					setPropertyValue(WEIGHT_PROPERTY, 0.0);
+					setPropertyValue(WEIGHT_PROPERTY, getCurrentWeight());
 					return;
 				}
 			}
@@ -150,6 +153,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
+		System.out.println("Device property modified : " + propertyName + " modified to " + device.getPropertyValue(propertyName));
 		if (device.getSerialNumber().equals(getSerialNumber()))
 			System.out.println("DEBUG : property " + propertyName + " modified to " + device.getPropertyValue(propertyName));
 	}
