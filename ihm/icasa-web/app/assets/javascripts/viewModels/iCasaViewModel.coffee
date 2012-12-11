@@ -218,7 +218,7 @@ define(['jquery',
            super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible', 'statusWindowTemplate']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
-           @location = kb.defaultObservable(@_location, 'Undefined');
+           @location = kb.defaultObservable(kb.observable(model, 'location'), 'Undefined');
            @state = kb.defaultObservable(@_state, 'activated');
            @isDesactivated = ko.computed({
               read: () =>
@@ -248,11 +248,6 @@ define(['jquery',
                 if (zoneModel == undefined)
                   return null;
                 return @zones.viewModelByModel(zoneModel);
-              write: (zone) =>
-                if (zone != undefined)
-                  zoneName = zone.name();
-                  @location(zoneName);
-                return zone;
               owner: @
            }
            );
@@ -295,10 +290,6 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "event",
                     imgSrc: '/assets/images/devices/decorators/event.png',
-                    show: false}
-                new DecoratorViewModel new Backbone.Model {
-                    name: "deactivated",
-                    imgSrc: '/assets/images/devices/decorators/stop.png',
                     show: false},
                 new DecoratorViewModel new Backbone.Model {
                     name: "fault",
@@ -323,16 +314,18 @@ define(['jquery',
                         decorator.show(activatedState && !faultState);
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
-#                    if (decorator.name() == "deactivated")
-#                        decorator.show(!activatedState);
                 );
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
                 @isHighlighted(true);
            @removeHighlight= () =>
                 @isHighlighted(false);
-           @saveModel= (newValue) =>
-                @.model().save();
+           @saveLocation= ko.observable(false);
+           @saveLocationChanges= (data, event) =>
+                @location('bedroom');
+                @saveChanges()
+           @saveChanges= () =>
+                @.model().saveChanges();
            # init
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
@@ -389,6 +382,8 @@ define(['jquery',
                @isHighlighted(true);
            @removeHighlight= () =>
                @isHighlighted(false);
+           @saveChanges= () =>
+               @.model().saveChanges();
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->

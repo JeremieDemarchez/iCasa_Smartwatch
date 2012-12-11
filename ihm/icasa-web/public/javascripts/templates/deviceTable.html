@@ -43,7 +43,7 @@
             <!--td data-bind="text: id"></td-->
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td data-bind="text: name"/></td>
-            <td><select data-bind="options: zones, value: locationZone, optionsText: 'name'"></select></td>
+            <td><select data-bind="event: { change: saveLocationChanges }, options: zones, value: locationZone, optionsText: 'name'"></select></td>
             <td><select data-bind="options: $root.deviceActivationStates, value: state"></select></td>
             <td><select data-bind="options: $root.deviceFaults, value: fault"></select></td>
             <td><button data-bind="click: $root.showDeviceWindow">...</button></td>
