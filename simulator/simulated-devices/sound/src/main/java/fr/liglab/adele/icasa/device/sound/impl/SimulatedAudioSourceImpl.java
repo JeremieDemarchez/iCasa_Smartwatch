@@ -21,8 +21,6 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -31,10 +29,11 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.Zone;
 
 /**
@@ -60,7 +59,7 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     private String fault;
 
     // Unused
-    private volatile SimulatedEnvironment m_env;
+    //private volatile SimulatedEnvironment m_env;
 
     @LogConfig
     private ComponentLogger m_logger;

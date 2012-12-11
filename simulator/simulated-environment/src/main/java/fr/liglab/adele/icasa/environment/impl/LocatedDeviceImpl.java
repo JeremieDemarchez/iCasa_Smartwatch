@@ -21,7 +21,11 @@ import java.util.Set;
 
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
 
 public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {

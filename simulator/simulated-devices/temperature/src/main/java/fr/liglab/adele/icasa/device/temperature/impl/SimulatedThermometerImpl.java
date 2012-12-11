@@ -17,9 +17,6 @@ package fr.liglab.adele.icasa.device.temperature.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
-import fr.liglab.adele.icasa.environment.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -32,10 +29,12 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
+import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 /**
@@ -67,7 +66,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
    @ServiceProperty(name = "fault", value = "no")
 	private volatile String fault;
 
-   private volatile SimulatedEnvironment m_env;
+   //private volatile SimulatedEnvironment m_env;
 
 	@Override
 	public String getSerialNumber() {
@@ -140,6 +139,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
     @Override
     public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+   	 /*
 		if (!(fault.equalsIgnoreCase("yes"))) {
 			if (SimulatedEnvironment.TEMPERATURE.equals(variableName)) {
                 Object tempOldValue = null;
@@ -150,6 +150,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
                 notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempOldValue));
 			}			
 		}
+		*/
    }
 	
 	
@@ -161,11 +162,13 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	}
 	
 	private void getTemperatureFromEnvironment() {
+		/*
 		synchronized (this) {
 			if (m_env != null) {
 				m_currentTemperature = m_env.getProperty(SimulatedEnvironment.TEMPERATURE);
 			}
 		}
+		*/
 	}
 	   
 	   /**

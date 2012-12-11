@@ -18,8 +18,6 @@ package fr.liglab.adele.icasa.device.sound.impl;
 import java.io.IOException;
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -31,11 +29,12 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 import fr.liglab.adele.icasa.device.sound.Speaker;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.Zone;
 
 /**
@@ -80,7 +79,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
     @LogConfig
     private ComponentLogger m_logger;
 
-    private volatile SimulatedEnvironment m_env;
+    // private volatile SimulatedEnvironment m_env;
 
     private Thread m_updaterThread;
 
@@ -108,6 +107,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
 
     @Override
     public synchronized double setVolume(double volume) {
+   	 /*
         if (volume < 0.0d || volume > 1.0d || Double.isNaN(volume)) {
             throw new IllegalArgumentException("Invalid volume : " + volume);
         }
@@ -121,6 +121,8 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
         }
         notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Speaker.SPEAKER_VOLUME, save));
         return save;
+        */
+   	 return 0.0;
     }
     
     @Override
@@ -141,6 +143,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
      *            the noise difference
      */
     private void notifyEnvironment(double noiseDiff) {
+   	 /*
         m_env.lock();
         try {
             double current = m_env.getProperty(SimulatedEnvironment.NOISE);
@@ -148,6 +151,8 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
         } finally {
             m_env.unlock();
         }
+        
+        */
     }
 
     /**
@@ -175,6 +180,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
 
         @Override
         public void run() {
+      	  /*
             boolean isInterrupted = false;
             while (!isInterrupted) {
                 try {
@@ -212,6 +218,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
                     isInterrupted = true;
                 }
             }
+            */
         }
     }
 

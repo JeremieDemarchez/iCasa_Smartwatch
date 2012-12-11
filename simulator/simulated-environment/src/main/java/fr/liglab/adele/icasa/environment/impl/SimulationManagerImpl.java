@@ -48,16 +48,13 @@ import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.DeviceTypeListener;
 import fr.liglab.adele.icasa.environment.listener.IcasaListener;
 import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
-import fr.liglab.adele.icasa.environment.listener.MultiEventListener;
 import fr.liglab.adele.icasa.environment.listener.PersonListener;
 import fr.liglab.adele.icasa.environment.listener.ZoneListener;
-import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 @Component
 @Provides
 @Instantiate(name = "SimulationManager-1")
-public class SimulationManagerImpl implements SimulationManager, ZonePropListener, PersonListener,
-      LocatedDeviceListener {
+public class SimulationManagerImpl implements SimulationManager {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
 
@@ -117,20 +114,8 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		Zone zone = zones.get(id);
 		if (zone == null)
 			return;
-
-		Position oldPosition = zone.getLeftTopPosition();
 		Position newPosition = new Position(leftX, topY);
 		zone.setLeftTopPosition(newPosition);
-
-		/*
-		for (ZoneListener listener : zoneListeners) {
-			try {
-				listener.zoneMoved(zone, oldPosition);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
 
 	@Override
@@ -138,18 +123,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		Zone zone = zones.get(id);
 		if (zone == null)
 			return;
-
 		zone.resize(width, height);
-
-		/*
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.zoneResized(zone);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
 
 	@Override
@@ -181,19 +155,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		Zone zone = zones.get(zoneId);
 		if (zone == null)
 			return;
-
-		Object oldValue = zone.getVariableValue(variableName);
 		zone.setVariableValue(variableName, value);
-
-		/*
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.zoneVariableModified(zone, variableName, oldValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
 
 	@Override
@@ -236,16 +198,6 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		boolean ok = parent.addZone(zone);
 		if (!ok)
 			throw new Exception("Zone does not fit in its parent");
-
-		/*
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.zoneParentModified(zone, parent);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		*/
 	}
 
 	@Override
@@ -652,233 +604,5 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		return new Position(newX, newY);
 	}
 
-	@Override
-   public void deviceAdded(LocatedDevice device) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void deviceRemoved(LocatedDevice device) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void deviceMoved(LocatedDevice device, Position oldPosition) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void devicePropertyAdded(LocatedDevice device, String propertyName) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void personAdded(Person person) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void personRemoved(Person person) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void personMoved(Person person, Position oldPosition) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void personDeviceAttached(Person person, LocatedDevice device) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void personDeviceDetached(Person person, LocatedDevice device) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void zoneVariableAdded(Zone zone, String variableName) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void zoneVariableRemoved(Zone zone, String variableName) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	@Override
-   public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-	   // TODO Auto-generated method stub
-	   
-   }
-
-	/*
-	 * private boolean moveLocatedObjectIntoZone(String zoneId, LocatedObject
-	 * object) { Zone zone = getZone(zoneId); if (zone == null || object == null)
-	 * return false; int minX = zone.getAbsoluteLeftTopPosition().x; int minY =
-	 * zone.getAbsoluteLeftTopPosition().y; int newX = random(minX, minX +
-	 * zone.getWidth()); int newY = random(minY, minY + zone.getHeight());
-	 * object.setAbsolutePosition(new Position(newX, newY)); return true; }
-	 */
-
-	/*
-	 * Simulation Manager listener methods
-	 */
-
-	
-	/*
-	public void zoneVariableAdded(Zone zone, String variableName) {
-		
-		
-		
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.zoneVariableAdded(zone, variableName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
-	}
-
-	public void zoneVariableRemoved(Zone zone, String variableName) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.zoneVariableRemoved(zone, variableName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.zoneVariableModified(zone, variableName, oldValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void personAdded(Person person) {
-		// notification already sent, do nothing
-	}
-
-	public void personRemoved(Person person) {
-		// notification already sent, do nothing
-	}
-
-	public void personMoved(Person person, Position oldPosition) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.personMoved(person, oldPosition);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void personDeviceAttached(Person person, LocatedDevice device) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.personDeviceAttached(person, device);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void personDeviceDetached(Person person, LocatedDevice device) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.personDeviceDetached(person, device);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void deviceAdded(LocatedDevice device) {
-		// notification already sent, do nothing
-	}
-
-	public void deviceRemoved(LocatedDevice device) {
-		// notification already sent, do nothing
-	}
-
-	public void deviceMoved(LocatedDevice device, Position oldPosition) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.deviceMoved(device, oldPosition);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.devicePropertyModified(device, propertyName, oldValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void devicePropertyAdded(LocatedDevice device, String propertyName) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.devicePropertyAdded(device, propertyName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
-		// Listeners notification
-		for (MultiEventListener listener : listeners) {
-			try {
-				listener.devicePropertyRemoved(device, propertyName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	*/
 
 }

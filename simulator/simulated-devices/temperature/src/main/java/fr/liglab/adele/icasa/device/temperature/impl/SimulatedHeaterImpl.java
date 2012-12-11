@@ -17,8 +17,6 @@ package fr.liglab.adele.icasa.device.temperature.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -30,10 +28,11 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.Zone;
 
 /**
@@ -67,7 +66,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	@LogConfig
 	private ComponentLogger m_logger;
 
-	private volatile SimulatedEnvironment m_env;
+	// private volatile SimulatedEnvironment m_env;
 
 	private Thread m_updaterThread;
 
@@ -98,6 +97,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 
 	@Override
 	public synchronized double setPowerLevel(double level) {
+		/*
 		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
 			throw new IllegalArgumentException("Invalid power level : " + level);
 		}
@@ -109,6 +109,8 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 		m_logger.debug("Power level set to " + level);
 		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Heater.HEATER_POWER_LEVEL, save));
 		return save;
+		*/
+		return 0.0;
 	}
 
 	/**
@@ -117,6 +119,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	 *           the temperature difference
 	 */
 	private void notifyEnvironment() {
+		/*
 		m_env.lock();
 		try {
 			long time = System.currentTimeMillis();
@@ -129,6 +132,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 		} finally {
 			m_env.unlock();
 		}
+		*/
 	}
 
 	/**
@@ -141,6 +145,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 
 		@Override
 		public void run() {
+			/*
 			boolean isInterrupted = false;
 			while (!isInterrupted) {
 				try {
@@ -154,6 +159,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 					isInterrupted = true;
 				}
 			}
+			*/
 		}
 	}
 	   

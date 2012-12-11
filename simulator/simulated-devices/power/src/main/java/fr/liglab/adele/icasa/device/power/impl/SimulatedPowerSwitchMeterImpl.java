@@ -31,7 +31,6 @@ import fr.liglab.adele.icasa.device.power.PowerSwitchmeter;
 import fr.liglab.adele.icasa.device.power.Powermeter;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.Zone;
 
 /**
@@ -70,7 +69,7 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 	@LogConfig
     private ComponentLogger m_logger;
 	
-	private volatile SimulatedEnvironment m_env;
+	//private volatile SimulatedEnvironment m_env;
 	
 	@Override
 	public String getSerialNumber() {
