@@ -20,8 +20,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.listener.PersonListener;
 
 /**
  * TODO

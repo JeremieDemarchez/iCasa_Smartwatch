@@ -17,8 +17,6 @@ package fr.liglab.adele.icasa.device.light.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -30,7 +28,6 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.Zone;
 
 /**
@@ -63,7 +60,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
     @LogConfig
     private ComponentLogger m_logger;
     
-    private volatile SimulatedEnvironment m_env;
+    //private volatile SimulatedEnvironment m_env;
 
     @Override
     public String getSerialNumber() {
@@ -77,6 +74,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
 
     @Override
     public synchronized double setPowerLevel(double level) {
+   	 /*
         if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
             throw new IllegalArgumentException("Invalid power level : " + level);
         }
@@ -90,6 +88,8 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
         }
         notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, DimmerLight.LIGHT_POWER_LEVEL, illuminanceBefore));
         return save;
+        */
+   	 return 0.0;
     }
 
     /**
@@ -100,6 +100,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
      *            the illuminance difference
      */
     private void notifyEnvironment(double illuminanceDiff) {
+   	 /*
         m_env.lock();
         try {
             double current = m_env
@@ -109,6 +110,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
         } finally {
             m_env.unlock();
         }
+        */
     }
     
     /**

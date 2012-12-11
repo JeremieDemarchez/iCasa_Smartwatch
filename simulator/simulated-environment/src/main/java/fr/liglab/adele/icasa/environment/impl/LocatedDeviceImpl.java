@@ -19,10 +19,16 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulatedDevice;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
 
-public class LocatedDeviceImpl implements LocatedDevice {
+public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {
 
 	private String m_serialNumber;
 
@@ -161,6 +167,44 @@ public class LocatedDeviceImpl implements LocatedDevice {
 		if (deviceComponent!=null)
 			deviceComponent.leavingZones(zones);
 	   
+   }
+
+	// --- Listeners methods -- //
+	
+	@Override
+   public void deviceAdded(GenericDevice device) {
+	   // TODO Auto-generated method stub
+	   
+   }
+
+	@Override
+   public void deviceRemoved(GenericDevice device) {
+	   // TODO Auto-generated method stub
+	   
+   }
+
+	@Override
+   public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue) {
+		// Listeners notification
+		for (LocatedDeviceListener listener : listeners) {
+			listener.devicePropertyModified(this, propertyName, oldValue);
+		}		   
+   }
+
+	@Override
+   public void devicePropertyAdded(GenericDevice device, String propertyName) {
+		// Listeners notification
+		for (LocatedDeviceListener listener : listeners) {
+			listener.devicePropertyAdded(this, propertyName);
+		}		   	   
+   }
+
+	@Override
+   public void devicePropertyRemoved(GenericDevice device, String propertyName) {
+	   // TODO Auto-generated method stub
+		for (LocatedDeviceListener listener : listeners) {
+			listener.devicePropertyRemoved(this, propertyName);
+		}		
    }
 
 }

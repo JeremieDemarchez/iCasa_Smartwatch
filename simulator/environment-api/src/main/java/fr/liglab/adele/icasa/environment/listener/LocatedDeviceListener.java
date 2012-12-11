@@ -13,22 +13,32 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
+
+import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.Position;
 
 /**
  * Created with IntelliJ IDEA.
  * User: thomas
  * Date: 30/11/12
- * Time: 15:20
+ * Time: 15:25
  * To change this template use File | Settings | File Templates.
  */
-public interface PersonListener {
+public interface LocatedDeviceListener extends IcasaListener {
 
-    public void personAdded(Person person);
+    public void deviceAdded(LocatedDevice device);
 
-    public void personRemoved(Person person);
+    public void deviceRemoved(LocatedDevice device);
 
-    public void personMoved(Person person, Position oldPosition);
+    public void deviceMoved(LocatedDevice device, Position oldPosition);
+
+    public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue);
+
+    public void devicePropertyAdded(LocatedDevice device, String propertyName);
+
+    public void devicePropertyRemoved(LocatedDevice device, String propertyName);
 
     public void personDeviceAttached(Person person, LocatedDevice device);
 

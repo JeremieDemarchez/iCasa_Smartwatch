@@ -39,22 +39,22 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.environment.LocatedDevice;
-import fr.liglab.adele.icasa.environment.LocatedDeviceListener;
 import fr.liglab.adele.icasa.environment.LocatedObject;
 import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.PersonListener;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulationListener;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
-import fr.liglab.adele.icasa.environment.ZonePropListener;
+import fr.liglab.adele.icasa.environment.listener.DeviceTypeListener;
+import fr.liglab.adele.icasa.environment.listener.IcasaListener;
+import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
+import fr.liglab.adele.icasa.environment.listener.PersonListener;
+import fr.liglab.adele.icasa.environment.listener.ZoneListener;
 
 @Component
 @Provides
 @Instantiate(name = "SimulationManager-1")
-public class SimulationManagerImpl implements SimulationManager, ZonePropListener, PersonListener,
-      LocatedDeviceListener {
+public class SimulationManagerImpl implements SimulationManager {
 
 	private Map<String, Zone> zones = new HashMap<String, Zone>();
 
@@ -66,7 +66,13 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
 
-	private List<SimulationListener> listeners = new ArrayList<SimulationListener>();
+	private List<DeviceTypeListener> deviceTypeListeners = new ArrayList<DeviceTypeListener>();
+	
+	private List<LocatedDeviceListener> deviceListeners = new ArrayList<LocatedDeviceListener>();
+	
+	private List<PersonListener> personListeners = new ArrayList<PersonListener>();
+	
+	private List<ZoneListener> zoneListeners = new ArrayList<ZoneListener>();
 
 	@Override
 	public Zone createZone(String id, String description, int leftX, int topY, int width, int height) {
@@ -74,7 +80,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		zones.put(id, zone);
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (ZoneListener listener : zoneListeners) {
 			try {
 				listener.zoneAdded(zone);
 				zone.addListener(listener);
@@ -93,7 +99,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 			return;
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (ZoneListener listener : zoneListeners) {
 			try {
 				zone.removeListener(listener);
 				listener.zoneRemoved(zone);
@@ -108,19 +114,8 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		Zone zone = zones.get(id);
 		if (zone == null)
 			return;
-
-		Position oldPosition = zone.getLeftTopPosition();
 		Position newPosition = new Position(leftX, topY);
 		zone.setLeftTopPosition(newPosition);
-
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneMoved(zone, oldPosition);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
@@ -128,17 +123,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		Zone zone = zones.get(id);
 		if (zone == null)
 			return;
-
 		zone.resize(width, height);
-
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneResized(zone);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
@@ -170,18 +155,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		Zone zone = zones.get(zoneId);
 		if (zone == null)
 			return;
-
-		Object oldValue = zone.getVariableValue(variableName);
 		zone.setVariableValue(variableName, value);
-
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneVariableModified(zone, variableName, oldValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
@@ -224,15 +198,6 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		boolean ok = parent.addZone(zone);
 		if (!ok)
 			throw new Exception("Zone does not fit in its parent");
-
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneParentModified(zone, parent);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
 	}
 
 	@Override
@@ -246,33 +211,35 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 	}
 
 	@Override
-	public Position getDevicePosition(String deviceSerialNumber) {
-		LocatedDevice device = locatedDevices.get(deviceSerialNumber);
+	public Position getDevicePosition(String deviceId) {
+		LocatedDevice device = locatedDevices.get(deviceId);
 		if (device != null)
 			return device.getAbsolutePosition().clone();
 		return null;
 	}
 
 	@Override
-	public void setDevicePosition(String deviceSerialNumber, Position position) {
-		LocatedDevice device = locatedDevices.get(deviceSerialNumber);
-		if (device != null)
+	public void setDevicePosition(String deviceId, Position position) {
+
+		LocatedDevice device = locatedDevices.get(deviceId);
+		if (device != null) {
+			List<Zone> oldZones = getObjectZones(device);
 			device.setAbsolutePosition(position);
+			List<Zone> newZones = getObjectZones(device);
+			
+			// When the zones are different, the device is notified
+			if (!oldZones.equals(newZones)) {
+				device.leavingZones(oldZones);
+				device.enterInZones(newZones);
+			}
+		}
 	}
 
 	@Override
-	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId) {
-		LocatedDevice device = getDevice(deviceSerialNumber);
-		if (device == null)
-			return;
-		List<Zone> oldZones = getObjectZones(device);
+	public void moveDeviceIntoZone(String deviceId, String zoneId) {
 		Position newPosition = getRandomPositionIntoZone(zoneId);
-
 		if (newPosition != null) {
-			device.setAbsolutePosition(newPosition);
-			List<Zone> newZones = getObjectZones(device);
-			device.leavingZones(oldZones);
-			device.enterInZones(newZones);
+			setDevicePosition(deviceId, newPosition);
 		}
 	}
 
@@ -311,7 +278,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		synchronized (persons) {
 			for (Person person : persons.values()) {
 				// Listeners notification
-				for (SimulationListener listener : listeners) {
+				for (PersonListener listener : personListeners) {
 					try {
 						person.removeListener(listener);
 						listener.personRemoved(person);
@@ -331,7 +298,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		persons.put(userName, person);
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (PersonListener listener : personListeners) {
 			try {
 				listener.personAdded(person);
 				person.addListener(listener);
@@ -348,7 +315,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 			return;
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (PersonListener listener : personListeners) {
 			try {
 				listener.personRemoved(person);
 				person.removeListener(listener);
@@ -457,7 +424,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 			locatedDevices.put(sn, device);
 
 			// Listeners notification
-			for (SimulationListener listener : listeners) {
+			for (LocatedDeviceListener listener : deviceListeners) {
 				try {
 					listener.deviceAdded(device);
 					device.addListener(listener);
@@ -475,7 +442,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		LocatedDevice device = locatedDevices.remove(sn);
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (LocatedDeviceListener listener : deviceListeners) {
 			try {
 				listener.deviceRemoved(device);
 				device.removeListener(listener);
@@ -491,7 +458,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		m_factories.put(deviceType, factory);
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (DeviceTypeListener listener : deviceTypeListeners) {
 			try {
 				listener.deviceTypeAdded(deviceType);
 			} catch (Exception e) {
@@ -506,7 +473,7 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		m_factories.remove(deviceType);
 
 		// Listeners notification
-		for (SimulationListener listener : listeners) {
+		for (DeviceTypeListener listener : deviceTypeListeners) {
 			try {
 				listener.deviceTypeRemoved(deviceType);
 			} catch (Exception e) {
@@ -516,35 +483,84 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 	}
 
 	@Override
-	public void addListener(SimulationListener listener) {
-		synchronized (listeners) {
-			listeners.add(listener);
-
-			for (Zone zone : zones.values())
-				zone.addListener(listener);
-
-			for (Person person : persons.values())
-				person.addListener(listener);
-
-			for (LocatedDevice device : locatedDevices.values())
-				device.addListener(listener);
-		}
+	public void addListener(IcasaListener listener) {
+		
+		if (listener instanceof ZoneListener) {
+	      ZoneListener zoneListener = (ZoneListener) listener;
+	      synchronized (zoneListeners) {
+	      	zoneListeners.add(zoneListener);
+				for (Zone zone : zones.values())
+					zone.addListener(zoneListener);
+         }
+      }
+		
+		if (listener instanceof LocatedDeviceListener) {
+	      LocatedDeviceListener deviceListener = (LocatedDeviceListener) listener;
+	      synchronized (deviceListeners) {
+	      	deviceListeners.add(deviceListener);
+				for (LocatedDevice device : locatedDevices.values())
+					device.addListener(deviceListener);
+         }
+      }
+		
+		if (listener instanceof PersonListener) {
+	      PersonListener personListener = (PersonListener) listener;
+	      synchronized (personListeners) {
+	         personListeners.add(personListener);
+				for (Person person : persons.values())
+					person.addListener(personListener);
+         }	      
+      }
+		
+		
+		
+		if (listener instanceof DeviceTypeListener) {
+	      DeviceTypeListener deviceTypeListener = (DeviceTypeListener) listener;
+	      synchronized (deviceTypeListeners) {
+	      	deviceTypeListeners.add(deviceTypeListener);
+         }
+      }
+		
+		
 	}
 
 	@Override
-	public void removeListener(SimulationListener listener) {
-		synchronized (listeners) {
-			listeners.remove(listener);
-
-			for (Zone zone : zones.values())
-				zone.removeListener(listener);
-
-			for (Person person : persons.values())
-				person.removeListener(listener);
-
-			for (LocatedDevice device : locatedDevices.values())
-				device.removeListener(listener);
-		}
+	public void removeListener(IcasaListener listener) {
+		if (listener instanceof ZoneListener) {
+	      ZoneListener zoneListener = (ZoneListener) listener;
+	      synchronized (zoneListeners) {
+	      	zoneListeners.remove(zoneListener);
+				for (Zone zone : zones.values())
+					zone.removeListener(zoneListener);
+         }
+      }
+		
+		if (listener instanceof LocatedDeviceListener) {
+	      LocatedDeviceListener deviceListener = (LocatedDeviceListener) listener;
+	      synchronized (deviceListeners) {
+	      	deviceListeners.remove(deviceListener);
+				for (LocatedDevice device : locatedDevices.values())
+					device.removeListener(deviceListener);
+         }
+      }
+		
+		if (listener instanceof PersonListener) {
+	      PersonListener personListener = (PersonListener) listener;
+	      synchronized (personListeners) {
+	         personListeners.remove(personListener);
+				for (Person person : persons.values())
+					person.removeListener(personListener);
+         }	      
+      }
+		
+		
+		
+		if (listener instanceof DeviceTypeListener) {
+	      DeviceTypeListener deviceTypeListener = (DeviceTypeListener) listener;
+	      synchronized (deviceTypeListeners) {
+	      	deviceTypeListeners.remove(deviceTypeListener);
+         }
+      }
 	}
 
 	@Override
@@ -588,143 +604,5 @@ public class SimulationManagerImpl implements SimulationManager, ZonePropListene
 		return new Position(newX, newY);
 	}
 
-	/*
-	 * private boolean moveLocatedObjectIntoZone(String zoneId, LocatedObject
-	 * object) { Zone zone = getZone(zoneId); if (zone == null || object == null)
-	 * return false; int minX = zone.getAbsoluteLeftTopPosition().x; int minY =
-	 * zone.getAbsoluteLeftTopPosition().y; int newX = random(minX, minX +
-	 * zone.getWidth()); int newY = random(minY, minY + zone.getHeight());
-	 * object.setAbsolutePosition(new Position(newX, newY)); return true; }
-	 */
-
-	/*
-	 * Simulation Manager listener methods
-	 */
-
-	public void zoneVariableAdded(Zone zone, String variableName) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneVariableAdded(zone, variableName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void zoneVariableRemoved(Zone zone, String variableName) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneVariableRemoved(zone, variableName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.zoneVariableModified(zone, variableName, oldValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void personAdded(Person person) {
-		// notification already sent, do nothing
-	}
-
-	public void personRemoved(Person person) {
-		// notification already sent, do nothing
-	}
-
-	public void personMoved(Person person, Position oldPosition) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.personMoved(person, oldPosition);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void personDeviceAttached(Person person, LocatedDevice device) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.personDeviceAttached(person, device);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void personDeviceDetached(Person person, LocatedDevice device) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.personDeviceDetached(person, device);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void deviceAdded(LocatedDevice device) {
-		// notification already sent, do nothing
-	}
-
-	public void deviceRemoved(LocatedDevice device) {
-		// notification already sent, do nothing
-	}
-
-	public void deviceMoved(LocatedDevice device, Position oldPosition) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.deviceMoved(device, oldPosition);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.devicePropertyModified(device, propertyName, oldValue);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void devicePropertyAdded(LocatedDevice device, String propertyName) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.devicePropertyAdded(device, propertyName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
-
-	public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
-		// Listeners notification
-		for (SimulationListener listener : listeners) {
-			try {
-				listener.devicePropertyRemoved(device, propertyName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
 
 }

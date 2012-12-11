@@ -13,16 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
 
-/**
- * @author Thomas Leveque
- */
-public interface ZonePropListener {
 
-    public void zoneVariableAdded(Zone zone, String variableName);
+public interface MultiEventListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener {
 
-    public void zoneVariableRemoved(Zone zone, String variableName);
-
-    public void zoneVariableModified(Zone zone, String variableName, Object oldValue);
 }

@@ -13,14 +13,8 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
 
-/**
- * @author Thomas Leveque
- */
-public interface DeviceTypeListener {
+public interface IcasaListener {
 
-    public void deviceTypeAdded(String deviceType);
-
-    public void deviceTypeRemoved(String deviceType);
 }

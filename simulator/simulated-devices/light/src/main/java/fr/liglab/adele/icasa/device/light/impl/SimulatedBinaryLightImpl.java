@@ -17,8 +17,6 @@ package fr.liglab.adele.icasa.device.light.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -30,7 +28,6 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
 import fr.liglab.adele.icasa.environment.Zone;
 
 /**
@@ -63,7 +60,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements
     @LogConfig
     private ComponentLogger m_logger;
 
-    private volatile SimulatedEnvironment m_env;
+    //private volatile SimulatedEnvironment m_env;
 
     @Override
     public String getSerialNumber() {
@@ -77,6 +74,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements
 
     @Override
     public synchronized boolean setPowerStatus(boolean status) {
+   	 /*
         boolean save = m_powerStatus;
         double illuminanceBefore = illuminance();
         m_powerStatus = status;
@@ -87,6 +85,8 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements
         }
         notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, BinaryLight.LIGHT_POWER_STATUS, illuminanceBefore));
         return save;
+        */
+   	 return false;
     }
 
     /**
@@ -97,6 +97,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements
      *            the illuminance difference
      */
     private void notifyEnvironment(double illuminanceDiff) {
+   	 /*
         m_env.lock();
         try {
             double current = m_env
@@ -106,6 +107,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements
         } finally {
             m_env.unlock();
         }
+        */
     }
 
     /**

@@ -16,6 +16,8 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.listener.MultiEventListener;
+
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
@@ -117,7 +119,7 @@ public class EventBroadcast extends OnMessage<String> {
 		}
 	}
 
-	private class ICasaEventListener implements SimulationListener {
+	private class ICasaEventListener implements MultiEventListener {
 
         @Override
         public void deviceTypeRemoved(String deviceType) {

@@ -13,8 +13,18 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
 
-public interface SimulationListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener {
+import fr.liglab.adele.icasa.environment.Zone;
 
+/**
+ * @author Thomas Leveque
+ */
+public interface ZonePropListener extends IcasaListener {
+
+    public void zoneVariableAdded(Zone zone, String variableName);
+
+    public void zoneVariableRemoved(Zone zone, String variableName);
+
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue);
 }

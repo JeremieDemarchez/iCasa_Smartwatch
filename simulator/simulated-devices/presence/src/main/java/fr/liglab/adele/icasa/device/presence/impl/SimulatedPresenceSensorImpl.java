@@ -20,6 +20,7 @@ import java.util.List;
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
@@ -63,7 +64,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	@LogConfig
 	private ComponentLogger m_logger;
 
-	private volatile SimulatedEnvironment m_env;
+	//private volatile SimulatedEnvironment m_env;
 
 	@Override
 	public String getSerialNumber() {
@@ -87,6 +88,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	@Override
 	public void zoneVariableModified(Zone zone, final String propertyName, final Object oldValue) {
+		/*
 		if (!(fault.equalsIgnoreCase("yes"))) {
 			if (SimulatedEnvironment.PRESENCE.equals(propertyName)) {
 				final boolean oldPresence = m_currentPresence;
@@ -102,6 +104,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 				}
 			}			
 		}
+		*/
 	}
 
 	/**
