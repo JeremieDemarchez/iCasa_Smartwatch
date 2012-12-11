@@ -24,7 +24,7 @@ import java.util.Set;
 import fr.liglab.adele.icasa.environment.LocatedObject;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.Zone;
-import fr.liglab.adele.icasa.environment.ZoneListener;
+import fr.liglab.adele.icasa.environment.listener.ZoneListener;
 
 public class ZoneImpl implements Zone {
 
@@ -99,11 +99,14 @@ public class ZoneImpl implements Zone {
 		Position objectPosition = object.getAbsolutePosition();
 		if (objectPosition == null)
 			return false;
+		return contains(objectPosition);
+		/*
 
 		Position absolutePosition = getAbsoluteLeftTopPosition();
 
 		return (objectPosition.x >= absolutePosition.x && objectPosition.x <= absolutePosition.x + width)
 		      && (objectPosition.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
+		*/
 	}
 
 	@Override

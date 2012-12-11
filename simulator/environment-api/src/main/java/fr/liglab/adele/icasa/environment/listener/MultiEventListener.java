@@ -13,8 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
 
-public interface SimulationListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener {
+
+public interface MultiEventListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener {
 
 }

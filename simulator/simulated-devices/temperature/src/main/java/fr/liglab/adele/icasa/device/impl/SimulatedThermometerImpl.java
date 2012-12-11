@@ -36,7 +36,7 @@ import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
-import fr.liglab.adele.icasa.environment.ZonePropListener;
+import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 /**
  * Implementation of a simulated thermometer device.
@@ -200,15 +200,17 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	   }
 
 		@Override
-      public void enterInZones(List<Zone> zones) {
-	      // TODO Auto-generated method stub
-	      
+      public void enterInZones(List<Zone> zones) {	      
+	      if (!zones.isEmpty()) {
+	      	System.out.println("Thermometer" +  m_serialNumber + " ENTER in zone " + zones.get(0).getId());	      	
+	      }
       }
 
 		@Override
       public void leavingZones(List<Zone> zones) {
-	      // TODO Auto-generated method stub
-	      
+	      if (!zones.isEmpty()) {
+	      	System.out.println("Thermometer" +  m_serialNumber + " LEAVING zone " + zones.get(0).getId());	      	
+	      }	      
       } 
 
 }

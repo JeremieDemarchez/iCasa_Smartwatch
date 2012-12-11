@@ -18,6 +18,8 @@ package fr.liglab.adele.icasa.environment;
 import java.util.List;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.environment.listener.ZoneListener;
+
 public interface Zone {
 
 	/**

@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.environment;
 
+import fr.liglab.adele.icasa.environment.listener.PersonListener;
+
 
 /**
  *

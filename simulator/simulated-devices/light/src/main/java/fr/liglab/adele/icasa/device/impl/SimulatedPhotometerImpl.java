@@ -35,7 +35,7 @@ import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
-import fr.liglab.adele.icasa.environment.ZonePropListener;
+import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 /**
  * Implementation of a simulated photometer device.

@@ -21,7 +21,7 @@ import java.util.List;
 import java.util.Map;
 
 import fr.liglab.adele.icasa.environment.*;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.listener.PersonListener;
 
 /**
  * TODO

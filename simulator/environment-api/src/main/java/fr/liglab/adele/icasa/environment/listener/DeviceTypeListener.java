@@ -13,17 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.environment;
+package fr.liglab.adele.icasa.environment.listener;
 
-public interface ZoneListener extends ZonePropListener {
 
-    public void zoneAdded(Zone zone);
+/**
+ * @author Thomas Leveque
+ */
+public interface DeviceTypeListener extends IcasaListener {
 
-    public void zoneRemoved(Zone zone);
+    public void deviceTypeAdded(String deviceType);
 
-    public void zoneMoved(Zone zone, Position oldPosition);
-
-    public void zoneResized(Zone zone);
-
-    public void zoneParentModified(Zone zone, Zone oldParentZone);
+    public void deviceTypeRemoved(String deviceType);
 }

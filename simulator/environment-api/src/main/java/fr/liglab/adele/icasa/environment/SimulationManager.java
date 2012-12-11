@@ -19,6 +19,8 @@ import java.util.Map;
 import java.util.List;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.environment.listener.IcasaListener;
+
 /**
  * TODO Comments.
  * 
@@ -71,11 +73,11 @@ public interface SimulationManager {
 
 	public List<LocatedDevice> getDevices();
 
-	public Position getDevicePosition(String deviceSerialNumber);
+	public Position getDevicePosition(String deviceId);
 
-	public void setDevicePosition(String deviceSerialNumber, Position position);
+	public void setDevicePosition(String deviceId, Position position);
 
-	public void moveDeviceIntoZone(String deviceSerialNumber, String zoneId);
+	public void moveDeviceIntoZone(String deviceId, String zoneId);
 
 	public void removeDevice(String deviceId);
 
@@ -103,8 +105,8 @@ public interface SimulationManager {
 
 	// -- Listener related methods --  //
 
-	public void addListener(SimulationListener listener);
+	public void addListener(IcasaListener listener);
 
-	public void removeListener(SimulationListener listener);
+	public void removeListener(IcasaListener listener);
 
 }
