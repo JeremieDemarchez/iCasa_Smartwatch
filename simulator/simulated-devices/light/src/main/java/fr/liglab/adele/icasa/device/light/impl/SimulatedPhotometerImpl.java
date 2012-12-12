@@ -17,16 +17,11 @@ package fr.liglab.adele.icasa.device.light.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
-import fr.liglab.adele.icasa.environment.Zone;
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
@@ -34,7 +29,7 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.SimulatedEnvironment;
+import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
 
 /**
@@ -65,7 +60,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	@LogConfig
 	private ComponentLogger m_logger;
 
-	private volatile SimulatedEnvironment m_env;
+	//private volatile SimulatedEnvironment m_env;
 
 	//private Thread m_updaterThread;
 
@@ -120,6 +115,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 
     @Override
     public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+   	 /*
 		if (!(fault.equalsIgnoreCase("yes"))) {
 			if (SimulatedEnvironment.ILLUMINANCE.equals(variableName)) {
                 Object illuminanceBefore = m_currentIlluminance;
@@ -127,6 +123,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
 			}
 		}
+		*/
 	}
 
 	@Override

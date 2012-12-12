@@ -1,6 +1,6 @@
 /**
  *
- *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
+  *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
@@ -21,4 +21,8 @@ public interface LocatedObject {
     public Position getAbsolutePosition();
    
     public void setAbsolutePosition(Position position);
+    
+    public void addAttachObject(LocatedObject object);
+    
+    public void removeAttachObject(LocatedObject object);
 }

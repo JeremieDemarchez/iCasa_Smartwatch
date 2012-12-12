@@ -20,7 +20,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import fr.liglab.adele.icasa.environment.*;
+import fr.liglab.adele.icasa.environment.LocatedDevice;
+import fr.liglab.adele.icasa.environment.Person;
+import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.PersonListener;
 
 /**
@@ -28,10 +32,9 @@ import fr.liglab.adele.icasa.environment.listener.PersonListener;
  * 
  * @author Thomas Leveque Date: 10/11/12
  */
-public class PersonImpl implements Person {
+public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	private String m_name;
-	private Position m_position;
 
 	private Map<String, LocatedDevice> m_devices = new HashMap<String, LocatedDevice>();
 
@@ -40,8 +43,8 @@ public class PersonImpl implements Person {
 	private SimulationManager manager;
 
 	public PersonImpl(String name, Position position, SimulationManager manager) {
+		super(position);
 		m_name = name;
-		m_position = position.clone();
 		this.manager = manager;
 	}
 
@@ -52,7 +55,7 @@ public class PersonImpl implements Person {
 
 	@Override
 	public String getLocation() {
-		Zone zone = manager.getZoneFromPosition(m_position);
+		Zone zone = manager.getZoneFromPosition(getAbsolutePosition());
 		if (zone!=null)			
 			return zone.getId();
 		return "unknown";
@@ -73,15 +76,11 @@ public class PersonImpl implements Person {
 		m_name = name;
 	}
 
-	@Override
-	public Position getAbsolutePosition() {
-		return m_position.clone();
-	}
 
 	@Override
 	public void setAbsolutePosition(Position position) {
-		Position oldPosition = m_position.clone();
-		m_position = position.clone();
+		Position oldPosition = getAbsolutePosition();
+		super.setAbsolutePosition(position);
 
 		// Listeners notification
 		for (PersonListener listener : listeners) {
@@ -91,7 +90,7 @@ public class PersonImpl implements Person {
 
 	@Override
 	public String toString() {
-		return "Person " + m_name + " - Position " + m_position;
+		return "Person " + m_name + " - Position " + getAbsolutePosition();
 	}
 
 	@Override

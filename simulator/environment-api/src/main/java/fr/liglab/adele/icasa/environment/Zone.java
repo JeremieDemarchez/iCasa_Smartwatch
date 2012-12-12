@@ -20,7 +20,7 @@ import java.util.Set;
 
 import fr.liglab.adele.icasa.environment.listener.ZoneListener;
 
-public interface Zone {
+public interface Zone extends LocatedObject {
 
 	/**
 	 * Returns id.
@@ -39,12 +39,6 @@ public interface Zone {
 
 	public void setLeftTopPosition(Position leftTopPosition) throws Exception;
 
-	/**
-	 * Gets the absolute (x,y) point in the left-top corner of the zone
-	 * 
-	 * @return
-	 */
-	public Position getAbsoluteLeftTopPosition();
 
 	/**
 	 * Gets the zone width
