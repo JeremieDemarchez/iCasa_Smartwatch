@@ -82,6 +82,14 @@ public interface SimulationManager {
 	public void removeDevice(String deviceId);
 
 	public Set<String> getDeviceTypes();
+	
+	public void attachDeviceToZone(String zoneId, String deviceId);
+	
+	public void detachDeviceFromZone(String zoneId, String deviceId);
+	
+	public void attachPersonToZone(String zoneId, String personId);
+	
+	public void detachPersonFromZone(String zoneId, String personId);
 
 	// -- Person related methods -- //
 
@@ -99,9 +107,9 @@ public interface SimulationManager {
 
 	public List<Person> getPersons();
 	
-	public void attachDeviceToPerson(String personName, String deviceId);
+	public void attachDeviceToPerson(String personId, String deviceId);
 	
-	public void detachDeviceFromPerson(String personName, String deviceId);
+	public void detachDeviceFromPerson(String personId, String deviceId);
 
 	// -- Listener related methods --  //
 

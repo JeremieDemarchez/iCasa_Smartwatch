@@ -282,7 +282,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			}
 		}
 		
-		moveAttachedObjects(oldPosition.x-leftTopPosition.x, oldPosition.y-leftTopPosition.y);
+		moveAttachedObjects(leftTopPosition.x-oldPosition.x, leftTopPosition.y-oldPosition.y);
 		
 		// Listeners notification
 		for (ZoneListener listener : listeners)

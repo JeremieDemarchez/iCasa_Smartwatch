@@ -38,8 +38,8 @@ public class LocatedObjectImpl implements LocatedObject {
 
 	@Override
    public void setAbsolutePosition(Position position) {		
-		int deltaX = getAbsolutePosition().x - position.x;
-		int deltaY = getAbsolutePosition().y - position.y;		
+		int deltaX = position.x - getAbsolutePosition().x ;
+		int deltaY = position.y - getAbsolutePosition().y;		
 		m_position = position.clone();		
 		moveAttachedObjects(deltaX, deltaY);
    }
@@ -54,7 +54,7 @@ public class LocatedObjectImpl implements LocatedObject {
 	}
 
 	@Override
-   public void addAttachObject(LocatedObject object) {
+   public void attachObject(LocatedObject object) {
 		if (object==this)
 			return;
 		
@@ -62,7 +62,7 @@ public class LocatedObjectImpl implements LocatedObject {
    }
 
 	@Override
-   public void removeAttachObject(LocatedObject object) {
+   public void detachObject(LocatedObject object) {
 		if (object==this)
 			return;
 		

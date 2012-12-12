@@ -33,9 +33,12 @@ import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.listener.ZoneListener;
 import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
+import fr.liglab.adele.icasa.environment.listener.impl.BaseZoneListener;
 
 /**
  * Implementation of a simulated thermometer device.
@@ -44,7 +47,7 @@ import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
  */
 @Component(name="iCASA.Thermometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice, ZonePropListener {
+public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice {
 
 	@ServiceProperty(name = Thermometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -65,6 +68,11 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
    @Property(name = "fault", value = "no")
    @ServiceProperty(name = "fault", value = "no")
 	private volatile String fault;
+   
+   
+   private volatile Zone m_zone;
+
+	private ZoneListener listener = new MyZoneListener();
 
    //private volatile SimulatedEnvironment m_env;
 
@@ -127,6 +135,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	}
   */
 
+	/*
     @Override
     public void zoneVariableAdded(Zone zone, String variableName) {
         // do nothing
@@ -136,10 +145,12 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
     public void zoneVariableRemoved(Zone zone, String variableName) {
         // do nothing
     }
-
+		*/
+	
+	/*
     @Override
     public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-   	 /*
+
 		if (!(fault.equalsIgnoreCase("yes"))) {
 			if (SimulatedEnvironment.TEMPERATURE.equals(variableName)) {
                 Object tempOldValue = null;
@@ -150,9 +161,9 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
                 notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempOldValue));
 			}			
 		}
-		*/
+
    }
-	
+	*/
 	
 	@Updated
 	public void updated() {
@@ -205,15 +216,33 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 		@Override
       public void enterInZones(List<Zone> zones) {	      
 	      if (!zones.isEmpty()) {
-	      	System.out.println("Thermometer" +  m_serialNumber + " ENTER in zone " + zones.get(0).getId());	      	
+	      	m_zone = zones.get(0);
+	      	m_currentTemperature = (Double) m_zone.getVariableValue("Temperature");
+	      	m_zone.addListener(listener);
+	      	System.out.println("Temperature: " + m_serialNumber + " - " + m_currentTemperature);	      		      	
 	      }
       }
 
 		@Override
       public void leavingZones(List<Zone> zones) {
 	      if (!zones.isEmpty()) {
-	      	System.out.println("Thermometer" +  m_serialNumber + " LEAVING zone " + zones.get(0).getId());	      	
+	      	m_zone.removeListener(listener);
+	      	// System.out.println("Thermometer" +  m_serialNumber + " LEAVING zone " + zones.get(0).getId());	      	
 	      }	      
       } 
 
+		
+		class MyZoneListener extends BaseZoneListener {
+
+			@Override
+			public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+			   if (m_zone==zone) {
+			   	if (variableName.equals("Temperature")) {
+			   		m_currentTemperature = (Double) zone.getVariableValue("Temperature");
+			   		System.out.println("Temperature: " + m_serialNumber + " - " + m_currentTemperature);
+			   	}			   	
+			   }
+			}			
+		}
+		
 }

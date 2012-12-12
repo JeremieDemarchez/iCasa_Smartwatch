@@ -40,7 +40,7 @@ public class ModifyZoneVariableCommand extends AbstractCommand {
 
     @Override
     public Object execute() throws Exception {
-        simulationManager.setZoneVariable(zoneId, variableName, newValue);
+        simulationManager.setZoneVariable(zoneId, variableName, new Double(newValue));
         return null;
     }
 

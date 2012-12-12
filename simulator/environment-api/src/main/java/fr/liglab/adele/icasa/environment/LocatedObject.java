@@ -22,7 +22,7 @@ public interface LocatedObject {
    
     public void setAbsolutePosition(Position position);
     
-    public void addAttachObject(LocatedObject object);
+    public void attachObject(LocatedObject object);
     
-    public void removeAttachObject(LocatedObject object);
+    public void detachObject(LocatedObject object);
 }

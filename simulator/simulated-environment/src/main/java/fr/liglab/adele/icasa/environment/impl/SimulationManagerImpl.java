@@ -200,6 +200,50 @@ public class SimulationManagerImpl implements SimulationManager {
 			throw new Exception("Zone does not fit in its parent");
 	}
 
+	
+	@Override
+   public void attachDeviceToZone(String zoneId, String deviceId) {
+	   Zone zone = zones.get(zoneId);
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   if (zone==null || device==null)
+	   	return;
+	   
+	   zone.attachObject(device);
+	   
+   }
+
+	@Override
+   public void detachDeviceFromZone(String zoneId, String deviceId) {
+	   Zone zone = zones.get(zoneId);
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   if (zone==null || device==null)
+	   	return;
+	   
+	   zone.detachObject(device);	   
+   }
+
+	@Override
+   public void attachPersonToZone(String zoneId, String personId) {
+	   Zone zone = zones.get(zoneId);
+	   Person person = persons.get(personId);
+	   if (zone==null || person==null)
+	   	return;
+	   
+	   zone.attachObject(person);	 
+	   
+   }
+
+	@Override
+   public void detachPersonFromZone(String zoneId, String personId) {
+	   Zone zone = zones.get(zoneId);
+	   Person person = persons.get(personId);
+	   if (zone==null || person==null)
+	   	return;
+	   
+	   zone.detachObject(person);	 	   
+   }
+	
+	
 	@Override
 	public Set<String> getDeviceIds() {
 		return Collections.unmodifiableSet(new HashSet<String>(locatedDevices.keySet()));
@@ -564,25 +608,25 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void attachDeviceToPerson(String personName, String deviceId) {
-		Person person = getPerson(personName);
-		if (person == null)
-			return;
-		LocatedDevice device = getDevice(deviceId);
-		if (device == null)
-			return;
-		person.attachDevice(device);
+	public void attachDeviceToPerson(String personId, String deviceId) {
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   Person person = persons.get(personId);
+	   
+	   if (device==null || person==null)
+	   	return;
+	   
+	   person.attachObject(device);	  
 	}
 
 	@Override
-	public void detachDeviceFromPerson(String personName, String deviceId) {
-		Person person = getPerson(personName);
-		if (person == null)
-			return;
-		LocatedDevice device = getDevice(deviceId);
-		if (device == null)
-			return;
-		person.detachDevice(device);
+	public void detachDeviceFromPerson(String personId, String deviceId) {
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   Person person = persons.get(personId);
+	   
+	   if (device==null || person==null)
+	   	return;
+	   
+	   person.detachObject(device);	 
 	}
 
 	private int random(int min, int max) {
@@ -603,6 +647,8 @@ public class SimulationManagerImpl implements SimulationManager {
 		int newY = random(minY, minY + zone.getHeight());
 		return new Position(newX, newY);
 	}
+
+
 
 
 }

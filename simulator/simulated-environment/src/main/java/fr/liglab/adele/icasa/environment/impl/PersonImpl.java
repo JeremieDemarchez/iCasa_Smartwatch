@@ -93,6 +93,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 		return "Person " + m_name + " - Position " + getAbsolutePosition();
 	}
 
+	/*
 	@Override
 	public void attachDevice(LocatedDevice device) {
 		if (m_devices.containsKey(device.getSerialNumber()))
@@ -114,5 +115,5 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 			for (PersonListener listener : listeners)
 				listener.personDeviceDetached(this, device);
 	}
-
+	*/
 }
