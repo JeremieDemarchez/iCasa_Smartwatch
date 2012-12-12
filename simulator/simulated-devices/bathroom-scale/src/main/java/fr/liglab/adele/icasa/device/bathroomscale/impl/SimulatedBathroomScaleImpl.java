@@ -188,7 +188,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 
 	public float getCurrentWeight() {
 		Boolean presence = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
-		if (presence.equals(Boolean.TRUE)) {			
+		if (presence.equals(true)) {			
 			return (float) 55 + ((float) new Random().nextInt(100)) / 10; 
 		}
 		

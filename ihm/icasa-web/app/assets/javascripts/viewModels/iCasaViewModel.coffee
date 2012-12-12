@@ -216,7 +216,7 @@ define(['jquery',
 
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible', 'statusWindowTemplate']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible', 'statusWindowTemplate', 'properties']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
@@ -342,7 +342,8 @@ define(['jquery',
                 @isHighlighted(false);
            @saveModel= (newValue) =>
                 @.model().save();
-
+           @properties=kb.observable(model, 'properties');
+           
            # init
            @initBahtroomScale= () =>
                 if (@type() == "iCASA.BathroomScale")

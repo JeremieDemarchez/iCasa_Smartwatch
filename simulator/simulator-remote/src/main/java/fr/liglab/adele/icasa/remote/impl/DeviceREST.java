@@ -109,7 +109,11 @@ public class DeviceREST {
                 deviceJSON.put("positionX", devicePosition.x);
                 deviceJSON.put("positionY", devicePosition.y);
             }
-            //TODO manage other properties
+            JSONObject propObject = new JSONObject();
+            for (String property : device.getProperties()) {
+            	propObject.put(property, device.getPropertyValue(property));
+            }
+            deviceJSON.put("properties", propObject);
         } catch (JSONException e) {
             e.printStackTrace();
             deviceJSON = null;
