@@ -597,8 +597,8 @@ public class SimulationManagerImpl implements SimulationManager {
 		Zone zone = getZone(zoneId);
 		if (zone == null)
 			return null;
-		int minX = zone.getAbsoluteLeftTopPosition().x;
-		int minY = zone.getAbsoluteLeftTopPosition().y;
+		int minX = zone.getAbsolutePosition().x;
+		int minY = zone.getAbsolutePosition().y;
 		int newX = random(minX, minX + zone.getWidth());
 		int newY = random(minY, minY + zone.getHeight());
 		return new Position(newX, newY);

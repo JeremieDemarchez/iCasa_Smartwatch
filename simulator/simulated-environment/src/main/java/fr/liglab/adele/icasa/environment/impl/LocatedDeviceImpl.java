@@ -28,13 +28,12 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
 
-public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {
+public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevice, DeviceListener {
 
 	private String m_serialNumber;
 
 	private final List<LocatedDeviceListener> listeners = new ArrayList<LocatedDeviceListener>();
 	
-	private Position m_position;
 	
 	private SimulatedDevice deviceComponent;
 	
@@ -43,9 +42,8 @@ public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {
     private String _type;
 
 	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManager manager) {
+		super(position);
 		m_serialNumber = serialNumber;
-		if (position!=null)
-			m_position = position.clone();
 		this.deviceComponent = deviceComponent;
 		this.manager = manager;
         this._type = type;
@@ -82,7 +80,7 @@ public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {
 		}
 		*/
 		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
-			Zone zone = manager.getZoneFromPosition(m_position);
+			Zone zone = manager.getZoneFromPosition(getAbsolutePosition());
 			if (zone!=null)			
 				return zone.getId();
 			return "unknown";
@@ -135,15 +133,12 @@ public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {
 		}
 	}
 
-	@Override
-   public Position getAbsolutePosition() {
-	   return m_position.clone();
-   }
+
 
 	@Override
    public void setAbsolutePosition(Position position) {
-		Position oldPosition = m_position.clone();
-		m_position = position.clone();
+		Position oldPosition = getAbsolutePosition();
+		super.setAbsolutePosition(position);
 				
 		// Listeners notification
 		for (LocatedDeviceListener listener : listeners) {
@@ -153,7 +148,7 @@ public class LocatedDeviceImpl implements LocatedDevice, DeviceListener {
 	
 	@Override
 	public String toString() {
-		return "Id: " + getSerialNumber() + " - Position: " + m_position;
+		return "Id: " + getSerialNumber() + " - Position: " + getAbsolutePosition();
 	}
 
 	@Override

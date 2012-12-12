@@ -26,7 +26,7 @@ import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.Zone;
 import fr.liglab.adele.icasa.environment.listener.ZoneListener;
 
-public class ZoneImpl implements Zone {
+public class ZoneImpl extends LocatedObjectImpl implements Zone {
 
 	private String id;
 	private int height;
@@ -43,6 +43,7 @@ public class ZoneImpl implements Zone {
 	}
 
 	public ZoneImpl(String id, Position leftTopPosition, int width, int height) {
+		super(leftTopPosition);
 		this.id = id;
 		this.leftTopPosition = leftTopPosition.clone();
 		this.height = height;
@@ -114,7 +115,7 @@ public class ZoneImpl implements Zone {
 		if (position == null)
 			return false;
 
-		Position absolutePosition = getAbsoluteLeftTopPosition();
+		Position absolutePosition = getAbsolutePosition();
 
 		return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
 		      && (position.y >= absolutePosition.y && position.y <= absolutePosition.y + height);
@@ -130,18 +131,44 @@ public class ZoneImpl implements Zone {
 		return false;
 	}
 
+	
 	@Override
-	public Position getAbsoluteLeftTopPosition() {
+   public Position getAbsolutePosition() {
 		Zone parentZone = getParent();
 		int absoluteX = leftTopPosition.x;
 		int absoluteY = leftTopPosition.y;
+		if (parentZone!=null) {
+			absoluteX += parentZone.getAbsolutePosition().x;
+			absoluteY += parentZone.getAbsolutePosition().y;
+		}
+		/*
 		while (parentZone != null) {
 			absoluteX += parentZone.getLeftTopPosition().x;
 			absoluteY += parentZone.getLeftTopPosition().y;
 			parentZone = parentZone.getParent();
 		}
+		*/
 		return new Position(absoluteX, absoluteY);
-	}
+   }
+
+	@Override
+   public void setAbsolutePosition(Position position) {
+		if (parent==null) {
+	      try {
+	         setLeftTopPosition(position);
+         } catch (Exception e) {
+	         e.printStackTrace();
+         }
+		} else {
+			int newX = position.x - parent.getAbsolutePosition().x;
+			int newY = position.y - parent.getAbsolutePosition().y;
+			try {
+	         setLeftTopPosition(new Position(newX, newY));
+         } catch (Exception e) {
+	         e.printStackTrace();
+         }
+		}		
+   }
 
 	@Override
 	public void setParent(Zone parent) {
@@ -255,6 +282,8 @@ public class ZoneImpl implements Zone {
 			}
 		}
 		
+		moveAttachedObjects(oldPosition.x-leftTopPosition.x, oldPosition.y-leftTopPosition.y);
+		
 		// Listeners notification
 		for (ZoneListener listener : listeners)
 			listener.zoneMoved(this, oldPosition);
@@ -297,15 +326,15 @@ public class ZoneImpl implements Zone {
 	public Position getRelativePosition(LocatedObject object) {
 		if (!(contains(object)))
 			return null;
-		int relX = object.getAbsolutePosition().x - getAbsoluteLeftTopPosition().x;
-		int relY = object.getAbsolutePosition().y - getAbsoluteLeftTopPosition().y;
+		int relX = object.getAbsolutePosition().x - getAbsolutePosition().x;
+		int relY = object.getAbsolutePosition().y - getAbsolutePosition().y;
 		return new Position(relX, relY);
 	}
 
 	@Override
    public Position getRightBottomPosition() {
-		int newX = getAbsoluteLeftTopPosition().x + width;
-		int newY = getAbsoluteLeftTopPosition().y + height;
+		int newX = getAbsolutePosition().x + width;
+		int newY = getAbsolutePosition().y + height;
 	   return new Position(newX, newY);
    }
 	
@@ -316,5 +345,7 @@ public class ZoneImpl implements Zone {
 			parentId = parent.getId();
 		return "Zone: " + id + " X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " -- Width: " + width + " Height: " + height + " - Parent: " + parentId;
 	}
+
+
 
 }
