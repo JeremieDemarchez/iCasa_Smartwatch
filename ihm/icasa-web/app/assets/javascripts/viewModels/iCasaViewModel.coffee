@@ -28,7 +28,23 @@ define(['jquery',
             if valueUnwrapped.template == undefined
               return {controlsDescendantBindings: true};
 
-            $(element).html(valueUnwrapped.template);
+            templateUnwrapped = ko.utils.unwrapObservable(valueUnwrapped.template);
+            $(element).html(templateUnwrapped);
+
+            innerBindingContext = bindingContext.extend(valueUnwrapped.data);
+            ko.applyBindingsToDescendants(innerBindingContext, element);
+
+            return { controlsDescendantBindings: true };
+            
+         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+            if valueUnwrapped.template == undefined
+              return {controlsDescendantBindings: true};
+
+            templateUnwrapped = ko.utils.unwrapObservable(valueUnwrapped.template);
+            $(element).html(templateUnwrapped);
 
             innerBindingContext = bindingContext.extend(valueUnwrapped.data);
             ko.applyBindingsToDescendants(innerBindingContext, element);
@@ -258,7 +274,7 @@ define(['jquery',
            @statusWindowTitle = ko.computed( () =>
              return @name();
            , @);
-           @statusWindowTemplate = deviceStatusWindowTemplateHtml;
+           @statusWindowTemplate = ko.observable(deviceStatusWindowTemplateHtml);
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
@@ -337,14 +353,28 @@ define(['jquery',
                 @.model().saveChanges();
            @properties=kb.observable(model, 'properties');
           
+          
+          
+          
            # init
+           @updateBathroomScaleDecorator= (newValue) =>
+                presence = @properties().presence_detected;
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "on-top")
+                          if (presence == true)
+                               decorator.show(true);
+                          else
+                               decorator.show(false);
+                );
+          
            @initBahtroomScale= () =>
                 if (@type() == "iCASA.BathroomScale")
                      ko.utils.arrayForEach(@decorators(), (decorator) ->
                          if (decorator.name() == "on-top")
                              decorator.show(true);
                      );
-                     @statusWindowTemplate = bathroomScaleStatusWindowTemplateHtml;
+                     @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
+                     @properties.subscribe(@updateBathroomScaleDecorator);
            @initBahtroomScale();
            
            @state.subscribe(@updateWidgetImg);
