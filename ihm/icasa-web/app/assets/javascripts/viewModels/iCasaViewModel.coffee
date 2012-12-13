@@ -276,6 +276,21 @@ define(['jquery',
               owner: @
            }
            , @);
+           @sizeFactor=ko.observable(1.0);
+           @widgetWidth = ko.computed({
+              read: () =>
+                effWidth = 32 * @sizeFactor();
+                return effWidth + "px";
+              owner: @
+           }
+           , @);
+           @widgetHeight = ko.computed({
+              read: () =>
+                effHeight = 32 * @sizeFactor();
+                return effHeight + "px";
+              owner: @
+           }
+           , @);
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
@@ -361,8 +376,10 @@ define(['jquery',
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
                 @isHighlighted(true);
+                @sizeFactor(1.5);
            @removeHighlight= () =>
                 @isHighlighted(false);
+                @sizeFactor(1.0);
            @saveLocation= ko.observable(false);
            @saveLocationChanges= (data, event) =>
                 @location('bedroom');
@@ -370,6 +387,7 @@ define(['jquery',
            @saveChanges= () =>
                 @.model().saveChanges();
            @properties=kb.observable(model, 'properties');
+
           
           
           
