@@ -32,7 +32,7 @@ import fr.liglab.adele.icasa.environment.Zone;
 @Component
 @Provides(properties = {
       @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{listZones, listDevices, listPersons, getPersonZones, listZoneVariables}") })
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{listZones, listDevices, listPersons, getPersonZones, listZoneVariables, listDeviceProperties}") })
 @Instantiate
 public class IcasaGogoComponent {
 
@@ -87,4 +87,17 @@ public class IcasaGogoComponent {
 		}
 	}
 
+	
+	public void listDeviceProperties(String deviceId) {
+
+		System.out.println("Properties: ");
+		LocatedDevice device = manager.getDevice(deviceId);
+		if (device==null)
+			return;
+		
+		Set<String> properties = device.getProperties();
+		for (String property : properties) {
+			System.out.println("Property: " + property + " - Value: " +device.getPropertyValue(property));
+		}
+	}
 }

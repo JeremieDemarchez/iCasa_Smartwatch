@@ -16,11 +16,8 @@
 package fr.liglab.adele.icasa.environment.impl;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import fr.liglab.adele.icasa.environment.LocatedDevice;
 import fr.liglab.adele.icasa.environment.Person;
 import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulationManager;
@@ -35,8 +32,6 @@ import fr.liglab.adele.icasa.environment.listener.PersonListener;
 public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	private String m_name;
-
-	private Map<String, LocatedDevice> m_devices = new HashMap<String, LocatedDevice>();
 
 	private List<PersonListener> listeners = new ArrayList<PersonListener>();
 	
@@ -93,27 +88,4 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 		return "Person " + m_name + " - Position " + getAbsolutePosition();
 	}
 
-	/*
-	@Override
-	public void attachDevice(LocatedDevice device) {
-		if (m_devices.containsKey(device.getSerialNumber()))
-			return;
-		
-		m_devices.put(device.getSerialNumber(), device);
-
-		// Listeners notification
-		for (PersonListener listener : listeners)
-			listener.personDeviceAttached(this, device);
-
-	}
-
-	@Override
-	public void detachDevice(LocatedDevice device) {
-		LocatedDevice deviceToDetach = m_devices.remove(device.getSerialNumber());
-		// Listeners notification
-		if (deviceToDetach != null)
-			for (PersonListener listener : listeners)
-				listener.personDeviceDetached(this, device);
-	}
-	*/
 }

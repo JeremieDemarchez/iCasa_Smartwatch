@@ -45,6 +45,7 @@ import fr.liglab.adele.icasa.environment.Position;
 import fr.liglab.adele.icasa.environment.SimulatedDevice;
 import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.environment.impl.util.ZoneComparable;
 import fr.liglab.adele.icasa.environment.listener.DeviceTypeListener;
 import fr.liglab.adele.icasa.environment.listener.IcasaListener;
 import fr.liglab.adele.icasa.environment.listener.LocatedDeviceListener;
@@ -75,7 +76,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	private List<ZoneListener> zoneListeners = new ArrayList<ZoneListener>();
 
 	@Override
-	public Zone createZone(String id, String description, int leftX, int topY, int width, int height) {
+	public Zone createZone(String id, int leftX, int topY, int width, int height) {
 		Zone zone = new ZoneImpl(id, leftX, topY, width, height);
 		zones.put(id, zone);
 
@@ -200,48 +201,7 @@ public class SimulationManagerImpl implements SimulationManager {
 			throw new Exception("Zone does not fit in its parent");
 	}
 
-	
-	@Override
-   public void attachDeviceToZone(String zoneId, String deviceId) {
-	   Zone zone = zones.get(zoneId);
-	   LocatedDevice device = locatedDevices.get(deviceId);
-	   if (zone==null || device==null)
-	   	return;
-	   
-	   zone.attachObject(device);
-	   
-   }
 
-	@Override
-   public void detachDeviceFromZone(String zoneId, String deviceId) {
-	   Zone zone = zones.get(zoneId);
-	   LocatedDevice device = locatedDevices.get(deviceId);
-	   if (zone==null || device==null)
-	   	return;
-	   
-	   zone.detachObject(device);	   
-   }
-
-	@Override
-   public void attachPersonToZone(String zoneId, String personId) {
-	   Zone zone = zones.get(zoneId);
-	   Person person = persons.get(personId);
-	   if (zone==null || person==null)
-	   	return;
-	   
-	   zone.attachObject(person);	 
-	   
-   }
-
-	@Override
-   public void detachPersonFromZone(String zoneId, String personId) {
-	   Zone zone = zones.get(zoneId);
-	   Person person = persons.get(personId);
-	   if (zone==null || person==null)
-	   	return;
-	   
-	   zone.detachObject(person);	 	   
-   }
 	
 	
 	@Override
@@ -273,7 +233,8 @@ public class SimulationManagerImpl implements SimulationManager {
 			
 			// When the zones are different, the device is notified
 			if (!oldZones.equals(newZones)) {
-				device.leavingZones(oldZones);
+				device.leavingZones(oldZones);										
+				Collections.sort(newZones, new ZoneComparable());
 				device.enterInZones(newZones);
 			}
 		}
@@ -606,9 +567,11 @@ public class SimulationManagerImpl implements SimulationManager {
          }
       }
 	}
+	
+	
 
 	@Override
-	public void attachDeviceToPerson(String personId, String deviceId) {
+	public void attachDeviceToPerson(String deviceId, String personId) {
 	   LocatedDevice device = locatedDevices.get(deviceId);
 	   Person person = persons.get(personId);
 	   
@@ -619,7 +582,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void detachDeviceFromPerson(String personId, String deviceId) {
+	public void detachDeviceFromPerson(String deviceId,  String personId) {
 	   LocatedDevice device = locatedDevices.get(deviceId);
 	   Person person = persons.get(personId);
 	   
@@ -629,6 +592,70 @@ public class SimulationManagerImpl implements SimulationManager {
 	   person.detachObject(device);	 
 	}
 
+	
+	@Override
+   public void attachZoneToDevice(String zoneId, String deviceId) {
+	   Zone zone = zones.get(zoneId);
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   if (zone==null || device==null)
+	   	return;
+	   device.attachObject(zone);
+   }
+
+	@Override
+   public void detachZoneFromDevice(String zoneId, String deviceId) {
+	   Zone zone = zones.get(zoneId);
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   if (zone==null || device==null)
+	   	return;
+	   device.detachObject(zone);
+   }
+	
+	
+	
+	@Override
+   public void attachDeviceToZone(String deviceId, String zoneId) {
+	   Zone zone = zones.get(zoneId);
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   if (zone==null || device==null)
+	   	return;
+	   
+	   zone.attachObject(device);
+	   
+   }
+
+	@Override
+   public void detachDeviceFromZone(String deviceId, String zoneId) {
+	   Zone zone = zones.get(zoneId);
+	   LocatedDevice device = locatedDevices.get(deviceId);
+	   if (zone==null || device==null)
+	   	return;
+	   
+	   zone.detachObject(device);	   
+   }
+
+	@Override
+   public void attachPersonToZone(String personId, String zoneId) {
+	   Zone zone = zones.get(zoneId);
+	   Person person = persons.get(personId);
+	   if (zone==null || person==null)
+	   	return;
+	   
+	   zone.attachObject(person);	 	   
+   }
+
+	@Override
+   public void detachPersonFromZone(String personId, String zoneId) {
+	   Zone zone = zones.get(zoneId);
+	   Person person = persons.get(personId);
+	   if (zone==null || person==null)
+	   	return;
+	   
+	   zone.detachObject(person);	 	   
+   }
+	
+	
+	
 	private int random(int min, int max) {
 		final double range = (max - 10) - (min + 10);
 		if (range <= 0.0) {
@@ -647,6 +674,10 @@ public class SimulationManagerImpl implements SimulationManager {
 		int newY = random(minY, minY + zone.getHeight());
 		return new Position(newX, newY);
 	}
+
+
+
+
 
 
 

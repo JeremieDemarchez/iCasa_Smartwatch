@@ -63,7 +63,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.environment.impl</Private-Package>
+            <Private-Package>fr.liglab.adele.icasa.environment.impl, fr.liglab.adele.icasa.environment.impl.util</Private-Package>
 	    <Export-Package></Export-Package>
           </instructions>
         </configuration>

@@ -54,9 +54,9 @@ public class AttachDeviceToPersonCommand extends AbstractCommand {
 	@Override
 	public Object execute() throws Exception {
 		if (attach)
-			simulationManager.attachDeviceToPerson(person, device);
+			simulationManager.attachDeviceToPerson(device, person);
 		else
-			simulationManager.detachDeviceFromPerson(person, device);
+			simulationManager.detachDeviceFromPerson(device, person);
 		return null;
 	}
 	
@@ -64,6 +64,8 @@ public class AttachDeviceToPersonCommand extends AbstractCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		this.person = param.getString("person");
+		this.device = param.getString("device");
+		this.attach = param.getBoolean("attach");
 	}
 	
 	

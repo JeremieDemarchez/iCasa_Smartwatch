@@ -64,6 +64,8 @@ public class AttachPersonToZoneCommand extends AbstractCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		this.person = param.getString("person");
+		this.zone = param.getString("zone");
+		this.attach = param.getBoolean("attach");
 	}
 	
 	

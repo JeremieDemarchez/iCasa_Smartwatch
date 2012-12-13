@@ -101,13 +101,6 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		if (objectPosition == null)
 			return false;
 		return contains(objectPosition);
-		/*
-
-		Position absolutePosition = getAbsoluteLeftTopPosition();
-
-		return (objectPosition.x >= absolutePosition.x && objectPosition.x <= absolutePosition.x + width)
-		      && (objectPosition.y >= absolutePosition.y && leftTopPosition.y <= absolutePosition.y + height);
-		*/
 	}
 
 	@Override
@@ -141,13 +134,6 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			absoluteX += parentZone.getAbsolutePosition().x;
 			absoluteY += parentZone.getAbsolutePosition().y;
 		}
-		/*
-		while (parentZone != null) {
-			absoluteX += parentZone.getLeftTopPosition().x;
-			absoluteY += parentZone.getLeftTopPosition().y;
-			parentZone = parentZone.getParent();
-		}
-		*/
 		return new Position(absoluteX, absoluteY);
    }
 

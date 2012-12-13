@@ -32,15 +32,14 @@ public interface SimulationManager {
 
 	// -- Zone related methods --//
 
-	public Zone createZone(String id, String description, int leftX, int topY, int width, int height);
+	public Zone createZone(String id, int leftX, int topY, int width, int height);
 
 	public void removeZone(String id);
 
 	public void moveZone(String id, int leftX, int topY) throws Exception;
 
 	public void resizeZone(String id, int width, int height) throws Exception; 
-	
-	
+		
 	public Set<String> getZoneVariables(String zoneId);
 
 	public Object getZoneVariableValue(String zoneId, String variable);
@@ -58,6 +57,9 @@ public interface SimulationManager {
 	public Zone getZoneFromPosition(Position position);
 	
 	public void setParentZone(String zoneId, String parentId) throws Exception; 
+	
+
+
 
 	// -- Device related method --//
 
@@ -83,13 +85,7 @@ public interface SimulationManager {
 
 	public Set<String> getDeviceTypes();
 	
-	public void attachDeviceToZone(String zoneId, String deviceId);
-	
-	public void detachDeviceFromZone(String zoneId, String deviceId);
-	
-	public void attachPersonToZone(String zoneId, String personId);
-	
-	public void detachPersonFromZone(String zoneId, String personId);
+
 
 	// -- Person related methods -- //
 
@@ -107,9 +103,26 @@ public interface SimulationManager {
 
 	public List<Person> getPersons();
 	
-	public void attachDeviceToPerson(String personId, String deviceId);
+
+
+	// -- Attachements methods -- //
 	
-	public void detachDeviceFromPerson(String personId, String deviceId);
+	public void attachZoneToDevice(String zoneId, String deviceId);
+	
+	public void detachZoneFromDevice(String zoneId, String deviceId);
+	
+	public void attachDeviceToPerson(String deviceId, String personId);
+	
+	public void detachDeviceFromPerson(String deviceId, String personId);
+	
+	public void attachPersonToZone(String personId, String zoneId);
+	
+	public void detachPersonFromZone(String personId, String zoneId);
+	
+	public void attachDeviceToZone(String deviceId, String zoneId);
+	
+	public void detachDeviceFromZone(String deviceId, String zoneId);
+	
 
 	// -- Listener related methods --  //
 

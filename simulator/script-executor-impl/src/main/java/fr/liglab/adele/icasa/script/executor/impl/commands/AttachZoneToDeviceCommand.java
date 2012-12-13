@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -23,56 +23,58 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.environment.SimulationManager;
 import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
 
 /**
  * 
- * Command to Create a Zone
+ * Moves a person between the simulated environments 
  * 
  * @author Gabriel
- * 
+ *
  */
-@Component(name = "CreateZoneCommand")
+@Component(name = "AttachZoneToDeviceCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createZone}"),
-      @StaticServiceProperty(name = "name", value = "create-zone", type = "String") })
-@Instantiate(name="create-zone-command")
-public class CreateZoneCommand extends AbstractCommand {
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{attachZoneToDevice}"),
+      @StaticServiceProperty(name = "name", value = "attach-zone-device", type = "String") })
+@Instantiate(name = "attach-zone-device-command")
+public class AttachZoneToDeviceCommand extends AbstractCommand {
 
-	/**
-	 * Environment ID used to place a person
-	 */
-	private String zoneId;
-	private int leftX;
-	private int topY;
-	private int height;
-	private int width;
+		
+	private String device;
+	
+	private String zone;
 
+	private boolean attach;
+	
 	@Requires
 	private SimulationManager simulationManager;
 
+
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.createZone(zoneId, leftX, topY, width, height);
+		if (attach)
+			simulationManager.attachZoneToDevice(zone, device);
+		else
+			simulationManager.detachZoneFromDevice(zone, device);
 		return null;
 	}
-
+	
+	
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.zoneId = param.getString("zoneId");
-		this.leftX = param.getInt("leftX");
-		this.topY = param.getInt("topY");
-		this.height = param.getInt("height");
-		this.width = param.getInt("width");
+		this.device = param.getString("device");
+		this.zone = param.getString("zone");
+		this.attach = param.getBoolean("attach");
 	}
-
-	public void createZone(String id, String description, int leftX, int topY, int width, int height) throws Exception {
-		this.zoneId = id;
-		this.leftX = leftX;
-		this.topY = topY;
-		this.height = height;
-		this.width = width;
-		execute();
-	}
+	
+	
+	public void attachZoneToDevice(String person, String zone, boolean attach) throws Exception {
+	   this.device = person;
+	   this.zone = zone;
+	   this.attach = attach;
+	   execute();
+   }
+	
 
 }

@@ -14,4 +14,4 @@
 @REM   limitations under the License.
 @REM
 cd D:\Collaborateur\Medical\Code\iCasa\distribution\icasa-teaching-distribution\target\distrib-temp
-java -jar bin\felix.jar
+icasa.teaching.distribution.bat
