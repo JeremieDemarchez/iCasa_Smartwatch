@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-cd D:\Collaborateur\Medical\Code\iCasa\distribution\icasa-teaching-distribution\target\distrib-temp
-sh icasa.teaching.distribution

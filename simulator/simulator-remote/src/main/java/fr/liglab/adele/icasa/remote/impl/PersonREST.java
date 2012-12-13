@@ -195,7 +195,7 @@ public class PersonREST {
 
         JSONObject newPersonJSON = getPersonJSON(newPerson);
 
-        return makeCORS(Response.ok(newPersonJSON.toString())); //TODO check that newPerson must be included in the response body
+        return makeCORS(Response.ok(newPersonJSON.toString()));
     }
 
     /**
@@ -211,8 +211,6 @@ public class PersonREST {
     @Consumes(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response updatesPerson(@PathParam("personId") String personId, String content) {
-
-        Person newPerson = null;
 
         PersonJSON personJSON = PersonJSON.fromString(content);
 
@@ -231,12 +229,12 @@ public class PersonREST {
             _simulationMgr.setPersonZone(personId, personJSON.getLocation());
         }
 
-        if (newPerson == null)
+        if (foundPerson == null)
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
-        JSONObject newPersonJSON = getPersonJSON(newPerson);
+        JSONObject newPersonJSON = getPersonJSON(foundPerson);
 
-        return makeCORS(Response.ok(newPersonJSON.toString())); //TODO check that newPerson must be included in the response body
+        return makeCORS(Response.ok(newPersonJSON.toString()));
     }
 
     /**

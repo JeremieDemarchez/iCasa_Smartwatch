@@ -1,3 +1,0 @@
-#!/usr/bin/env sh
-cd D:\Collaborateur\Medical\Code\iCasa\distribution\icasa-dev\target\distrib-temp
-sh icasa.dev

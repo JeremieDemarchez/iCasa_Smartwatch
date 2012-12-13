@@ -95,6 +95,24 @@ define(['jquery',
             return { controlsDescendantBindings: false };
     };
 
+    ko.bindingHandlers.jquerySelectable = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).selectable( {
+                selected: (event, eventUI) ->
+                  if (viewModel.isHighlighted())
+                    viewModel.removeHighlight();
+                  else
+                    viewModel.addHighlight();
+                unselected: (event, eventUI) ->
+                  viewModel.removeHighlight();
+            });
+
+            return { controlsDescendantBindings: false };
+    };
+
     ko.bindingHandlers.jqueryDialog = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->

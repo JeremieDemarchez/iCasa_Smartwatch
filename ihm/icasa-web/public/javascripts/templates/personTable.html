@@ -29,7 +29,7 @@
         </tr>
     </thead>
     <tbody data-bind="foreach: $root.persons()">
-        <tr data-bind="css : { warning: isHighlighted }">
+        <tr data-bind="css : { warning: isHighlighted }, jquerySelectable: {}">
             <td><img class="personIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td data-bind="text: name"/></td>
             <td><select data-bind="options: zones, value: locationZone, optionsText: 'name'"></select></td>
