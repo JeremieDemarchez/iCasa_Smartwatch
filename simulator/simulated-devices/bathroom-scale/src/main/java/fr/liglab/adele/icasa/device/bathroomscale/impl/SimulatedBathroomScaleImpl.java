@@ -135,7 +135,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements
 
 	public void deviceAdded(LocatedDevice device) {
 		if (device.getSerialNumber().equals(getSerialNumber())) {
-			Position center = device.getAbsoluteCenterPosition();
+			Position center = device.getCenterAbsolutePosition();
 			detectionZone = manager.createZone(getSerialNumber() + "#zone",
 					center, (Integer) getPropertyValue(DETECTION_SCOPE));
 			device.attachObject(detectionZone);

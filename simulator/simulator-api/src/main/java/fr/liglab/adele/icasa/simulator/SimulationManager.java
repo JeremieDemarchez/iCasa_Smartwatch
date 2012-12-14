@@ -105,6 +105,15 @@ public interface SimulationManager {
 
 	public List<Person> getPersons();
 	
+	public void addPersonType(String personType);
+
+	public String getPersonType(String personType);
+
+	public void removePersonType(String personType);
+
+	public List<String> getPersonTypes();
+	
+	
 
 
 	// -- Attachements methods -- //

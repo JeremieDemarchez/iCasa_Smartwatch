@@ -91,8 +91,8 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
         int absoluteX = leftTopPosition.x;
         int absoluteY = leftTopPosition.y;
         if (parentZone!=null) {
-            absoluteX += parentZone.getAbsoluteCenterPosition().x;
-            absoluteY += parentZone.getAbsoluteCenterPosition().y;
+            absoluteX += parentZone.getCenterAbsolutePosition().x;
+            absoluteY += parentZone.getCenterAbsolutePosition().y;
         }
         return new Position(absoluteX, absoluteY);
     }
@@ -109,7 +109,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 
 	@Override
 	public boolean contains(LocatedObject object) {
-		Position objectPosition = object.getAbsoluteCenterPosition();
+		Position objectPosition = object.getCenterAbsolutePosition();
 		if (objectPosition == null)
 			return false;
 		return contains(objectPosition);
@@ -120,7 +120,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		if (position == null)
 			return false;
 
-		Position absolutePosition = getAbsoluteCenterPosition();
+		Position absolutePosition = getCenterAbsolutePosition();
 
 		return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
 		      && (position.y >= absolutePosition.y && position.y <= absolutePosition.y + height);
@@ -138,30 +138,33 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 
 	
 	@Override
-   public Position getAbsoluteCenterPosition() {
-        //TODO
+   public Position getCenterAbsolutePosition() {
 		Zone parentZone = getParent();
 		int absoluteX = leftTopPosition.x;
 		int absoluteY = leftTopPosition.y;
 		if (parentZone!=null) {
-			absoluteX += parentZone.getAbsoluteCenterPosition().x;
-			absoluteY += parentZone.getAbsoluteCenterPosition().y;
+			absoluteX += parentZone.getCenterAbsolutePosition().x;
+			absoluteY += parentZone.getCenterAbsolutePosition().y;
 		}
+		absoluteX += width/2;
+		absoluteY += height/2;
 		return new Position(absoluteX, absoluteY);
    }
 
 	@Override
-   public void setAbsoluteCenterPosition(Position position) {
-        //TODO
+   public void setCenterAbsolutePosition(Position position) {
 		if (parent==null) {
 	      try {
-	         setLeftTopRelativePosition(position);
+	      	int newX = position.x - width/2;
+	      	int newY = position.y - height/2;
+	         setLeftTopRelativePosition(new Position(newX, newY));
          } catch (Exception e) {
 	         e.printStackTrace();
          }
 		} else {
-			int newX = position.x - parent.getAbsoluteCenterPosition().x;
-			int newY = position.y - parent.getAbsoluteCenterPosition().y;
+			
+			int newX = (position.x - (width/2)) - parent.getLeftTopAbsolutePosition().x;
+			int newY = (position.y -(height/2)) - parent.getLeftTopAbsolutePosition().y;
 			try {
 	         setLeftTopRelativePosition(new Position(newX, newY));
          } catch (Exception e) {
@@ -326,8 +329,8 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 	public Position getRelativePosition(LocatedObject object) {
 		if (!(contains(object)))
 			return null;
-		int relX = object.getAbsoluteCenterPosition().x - getAbsoluteCenterPosition().x;
-		int relY = object.getAbsoluteCenterPosition().y - getAbsoluteCenterPosition().y;
+		int relX = object.getCenterAbsolutePosition().x - getCenterAbsolutePosition().x;
+		int relY = object.getCenterAbsolutePosition().y - getCenterAbsolutePosition().y;
 		return new Position(relX, relY);
 	}
 

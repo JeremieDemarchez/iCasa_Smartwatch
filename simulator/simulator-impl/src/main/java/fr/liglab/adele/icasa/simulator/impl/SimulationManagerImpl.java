@@ -74,6 +74,8 @@ public class SimulationManagerImpl implements SimulationManager {
 	private List<PersonListener> personListeners = new ArrayList<PersonListener>();
 
 	private List<ZoneListener> zoneListeners = new ArrayList<ZoneListener>();
+	
+	private List<String> personTypes = new ArrayList<String>();
 
 	@Override
 	public Zone createZone(String id, int leftX, int topY, int width, int height) {
@@ -222,7 +224,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public Position getDevicePosition(String deviceId) {
 		LocatedDevice device = locatedDevices.get(deviceId);
 		if (device != null)
-			return device.getAbsoluteCenterPosition().clone();
+			return device.getCenterAbsolutePosition().clone();
 		return null;
 	}
 
@@ -232,7 +234,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		LocatedDevice device = locatedDevices.get(deviceId);
 		if (device != null) {
 			List<Zone> oldZones = getObjectZones(device);
-			device.setAbsoluteCenterPosition(position);
+			device.setCenterAbsolutePosition(position);
 			List<Zone> newZones = getObjectZones(device);
 
 			// When the zones are different, the device is notified
@@ -269,7 +271,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public void setPersonPosition(String userName, Position position) {
 		Person person = persons.get(userName);
 		if (person != null)
-			person.setAbsoluteCenterPosition(position);
+			person.setCenterAbsolutePosition(position);
 	}
 
 	@Override
@@ -278,7 +280,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (person != null) {
 			Position newPosition = getRandomPositionIntoZone(zoneId);
 			if (newPosition != null)
-				person.setAbsoluteCenterPosition(newPosition);
+				person.setCenterAbsolutePosition(newPosition);
 		}
 	}
 
@@ -668,11 +670,33 @@ public class SimulationManagerImpl implements SimulationManager {
 		Zone zone = getZone(zoneId);
 		if (zone == null)
 			return null;
-		int minX = zone.getAbsoluteCenterPosition().x;
-		int minY = zone.getAbsoluteCenterPosition().y;
+		int minX = zone.getCenterAbsolutePosition().x;
+		int minY = zone.getCenterAbsolutePosition().y;
 		int newX = random(minX, minX + zone.getWidth());
 		int newY = random(minY, minY + zone.getHeight());
 		return new Position(newX, newY);
 	}
+
+	@Override
+   public void addPersonType(String personType) {
+		personTypes.add(personType);	   
+   }
+
+	@Override
+   public String getPersonType(String personType) {
+	   if (personTypes.contains(personType))
+	   	return personType;
+	   return null;
+   }
+
+	@Override
+   public void removePersonType(String personType) {
+		personTypes.remove(personType);
+   }
+
+	@Override
+   public List<String> getPersonTypes() {
+		return Collections.unmodifiableList(personTypes);
+   }
 
 }
