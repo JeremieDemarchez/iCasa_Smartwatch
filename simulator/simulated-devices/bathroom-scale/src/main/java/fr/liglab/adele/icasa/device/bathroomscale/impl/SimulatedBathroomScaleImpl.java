@@ -42,7 +42,8 @@ import fr.liglab.adele.icasa.environment.listener.PersonListener;
 
 @Component(name = "iCASA.BathroomScale")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBathroomScaleImpl extends AbstractDevice implements BathroomScale, SimulatedDevice, PersonListener, LocatedDeviceListener {
+public class SimulatedBathroomScaleImpl extends AbstractDevice implements
+		BathroomScale, SimulatedDevice, PersonListener, LocatedDeviceListener {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -57,23 +58,25 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	@Requires
 	private SimulationManager manager;
 
-	
+	Zone detectionZone = null;
+
 	public SimulatedBathroomScaleImpl() {
 		setPropertyValue(WEIGHT_PROPERTY, 0.0);
 		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
+		setPropertyValue(DETECTION_SCOPE, 33);
 		System.out.println("--> BathroomScale created !!!!!");
 	}
-	
+
 	@Validate
 	private void start() {
 		manager.addListener(this);
 	}
-	
+
 	@Invalidate
 	private void stop() {
 		manager.removeListener(this);
 	}
-	
+
 	public String getSerialNumber() {
 		return m_serialNumber;
 	}
@@ -106,22 +109,13 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	public void setFault(String fault) {
 		this.fault = fault;
 	}
-	
-	private void updateState() {
-		long distanceMin2 = 1100; 
-	
-		System.out.println("UPDATE STATE : state=" + getState() + " falt=" + getFault());
-		
-		if (getState().equals(AbstractDevice.STATE_ACTIVATED) && getFault().equals(AbstractDevice.FAULT_NO)) {
-			Position deviceLoc = manager.getDevicePosition(getSerialNumber());	
-			
-			for (Person person : manager.getPersons()) {
-				Position personLoc = person.getAbsolutePosition();
-				long deltaX2 = (((long) personLoc.x) - ((long) deviceLoc.x)) * (((long) personLoc.x) - ((long) deviceLoc.x));
-				long deltaY2 = (((long) personLoc.y) - ((long) deviceLoc.y)) * (((long) personLoc.y) - ((long) deviceLoc.y));
-				long distance2 = deltaX2 + deltaY2;
 
-				if (distance2 < distanceMin2) {
+	private void updateState() {
+		System.out.println("UPDATE STATE : state=" + getState() + " falt=" + getFault());
+
+		if (getState().equals(AbstractDevice.STATE_ACTIVATED) && getFault().equals(AbstractDevice.FAULT_NO)) {
+			for (Person person : manager.getPersons()) {
+				if (detectionZone.contains(person)) {
 					setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);
 					setPropertyValue(WEIGHT_PROPERTY, getCurrentWeight());
 					return;
@@ -140,11 +134,18 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	public void deviceAdded(LocatedDevice device) {
-		// do nothing
+		if (device.getSerialNumber().equals(getSerialNumber())) {
+			Position position = device.getAbsolutePosition();
+			Position center = new Position(position.x + DEFAULT_WIDTH / 2,
+					position.y + DEFAULT_HEIGHT / 2);
+			detectionZone = manager.createZone(getSerialNumber() + "#zone",
+					center, (Integer) getPropertyValue(DETECTION_SCOPE));
+			device.attachObject(detectionZone);
+		}
 	}
 
 	public void deviceRemoved(LocatedDevice device) {
-		// do nothing		
+		// do nothing
 	}
 
 	public void deviceMoved(LocatedDevice device, Position oldPosition) {
@@ -152,14 +153,17 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 			updateState();
 	}
 
-	public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
-		System.out.println("Device property modified : " + propertyName + " modified to " + device.getPropertyValue(propertyName));
+	public void devicePropertyModified(LocatedDevice device,
+			String propertyName, Object oldValue) {
+		System.out.println("Device property modified : " + propertyName
+				+ " modified to " + device.getPropertyValue(propertyName));
 		if (device.getSerialNumber().equals(getSerialNumber()))
-			System.out.println("DEBUG : property " + propertyName + " modified to " + device.getPropertyValue(propertyName));
+			System.out.println("DEBUG : property " + propertyName
+					+ " modified to " + device.getPropertyValue(propertyName));
 	}
 
 	public void devicePropertyAdded(LocatedDevice device, String propertyName) {
-		// do nothing		
+		// do nothing
 	}
 
 	public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
@@ -175,7 +179,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	public void personMoved(Person person, Position oldPosition) {
-		updateState();		
+		updateState();
 	}
 
 	public void personDeviceAttached(Person person, LocatedDevice device) {
@@ -188,16 +192,16 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 
 	public float getCurrentWeight() {
 		Boolean presence = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
-		if (presence.equals(true)) {			
-			return (float) 55 + ((float) new Random().nextInt(100)) / 10; 
+		if (presence.equals(true)) {
+			return (float) 55 + ((float) new Random().nextInt(100)) / 10;
 		}
-		
+
 		return 0.0f;
 	}
 
 	public void enterInZones(List<Zone> zones) {
 		// TODO to be removed as soon as api will be updated
-		
+
 	}
 
 	public void leavingZones(List<Zone> zones) {
