@@ -80,7 +80,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 		}
 		*/
 		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
-			Zone zone = manager.getZoneFromPosition(getAbsolutePosition());
+			Zone zone = manager.getZoneFromPosition(getAbsoluteCenterPosition());
 			if (zone!=null)			
 				return zone.getId();
 			return "unknown";
@@ -136,9 +136,9 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 
 
 	@Override
-   public void setAbsolutePosition(Position position) {
-		Position oldPosition = getAbsolutePosition();
-		super.setAbsolutePosition(position);
+   public void setAbsoluteCenterPosition(Position position) {
+		Position oldPosition = getAbsoluteCenterPosition();
+		super.setAbsoluteCenterPosition(position);
 				
 		// Listeners notification
 		for (LocatedDeviceListener listener : listeners) {
@@ -148,7 +148,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	
 	@Override
 	public String toString() {
-		return "Id: " + getSerialNumber() + " - Position: " + getAbsolutePosition();
+		return "Id: " + getSerialNumber() + " - Position: " + getAbsoluteCenterPosition();
 	}
 
 	@Override

@@ -35,9 +35,11 @@ public interface Zone extends LocatedObject {
 	 * 
 	 * @return
 	 */
-	public Position getLeftTopPosition();
+	public Position getLeftTopRelativePosition();
 
-	public void setLeftTopPosition(Position leftTopPosition) throws Exception;
+    public Position getLeftTopAbsolutePosition();
+
+	public void setLeftTopRelativePosition(Position leftTopPosition) throws Exception;
 
 
 	/**
@@ -144,6 +146,8 @@ public interface Zone extends LocatedObject {
 	
 	public void resize(int newWidth, int newHeight) throws Exception;
 	
-	public Position getRightBottomPosition();
+	public Position getRightBottomRelativePosition();
+
+    public Position getRightBottomAbsolutePosition();
 
 }

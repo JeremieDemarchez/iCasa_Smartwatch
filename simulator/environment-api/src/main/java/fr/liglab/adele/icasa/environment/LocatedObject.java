@@ -18,9 +18,9 @@ package fr.liglab.adele.icasa.environment;
 
 public interface LocatedObject {
 
-    public Position getAbsolutePosition();
+    public Position getAbsoluteCenterPosition();
    
-    public void setAbsolutePosition(Position position);
+    public void setAbsoluteCenterPosition(Position position);
     
     public void attachObject(LocatedObject object);
     

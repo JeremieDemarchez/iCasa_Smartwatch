@@ -116,7 +116,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (zone == null)
 			return;
 		Position newPosition = new Position(leftX, topY);
-		zone.setLeftTopPosition(newPosition);
+		zone.setLeftTopRelativePosition(newPosition);
 	}
 
 	@Override
@@ -218,7 +218,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public Position getDevicePosition(String deviceId) {
 		LocatedDevice device = locatedDevices.get(deviceId);
 		if (device != null)
-			return device.getAbsolutePosition().clone();
+			return device.getAbsoluteCenterPosition().clone();
 		return null;
 	}
 
@@ -228,7 +228,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		LocatedDevice device = locatedDevices.get(deviceId);
 		if (device != null) {
 			List<Zone> oldZones = getObjectZones(device);
-			device.setAbsolutePosition(position);
+			device.setAbsoluteCenterPosition(position);
 			List<Zone> newZones = getObjectZones(device);
 			
 			// When the zones are different, the device is notified
@@ -265,7 +265,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public void setPersonPosition(String userName, Position position) {
 		Person person = persons.get(userName);
 		if (person != null)
-			person.setAbsolutePosition(position);
+			person.setAbsoluteCenterPosition(position);
 	}
 
 	@Override
@@ -274,7 +274,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (person != null) {
 			Position newPosition = getRandomPositionIntoZone(zoneId);
 			if (newPosition != null)
-				person.setAbsolutePosition(newPosition);
+				person.setAbsoluteCenterPosition(newPosition);
 		}
 	}
 
@@ -668,8 +668,8 @@ public class SimulationManagerImpl implements SimulationManager {
 		Zone zone = getZone(zoneId);
 		if (zone == null)
 			return null;
-		int minX = zone.getAbsolutePosition().x;
-		int minY = zone.getAbsolutePosition().y;
+		int minX = zone.getAbsoluteCenterPosition().x;
+		int minY = zone.getAbsoluteCenterPosition().y;
 		int newX = random(minX, minX + zone.getWidth());
 		int newY = random(minY, minY + zone.getHeight());
 		return new Position(newX, newY);

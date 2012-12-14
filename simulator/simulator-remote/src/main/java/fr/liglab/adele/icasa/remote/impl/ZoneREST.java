@@ -72,10 +72,10 @@ public class ZoneREST {
             zoneJSON = new JSONObject();
             zoneJSON.putOnce("id", zoneId);
             zoneJSON.putOnce("name", zoneId);
-            zoneJSON.put("leftX", zone.getLeftTopPosition().x);
-            zoneJSON.put("topY", zone.getLeftTopPosition().y);
-            zoneJSON.put("rightX", zone.getRightBottomPosition().x);
-            zoneJSON.put("bottomY", zone.getRightBottomPosition().y);
+            zoneJSON.put("leftX", zone.getLeftTopAbsolutePosition().x);
+            zoneJSON.put("topY", zone.getLeftTopAbsolutePosition().y);
+            zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
+            zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
             zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
         } catch (JSONException e) {
             e.printStackTrace();
