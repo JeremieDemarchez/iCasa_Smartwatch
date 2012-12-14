@@ -31,10 +31,10 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.Zone;
-import fr.liglab.adele.icasa.environment.listener.ZoneListener;
-import fr.liglab.adele.icasa.environment.listener.impl.BaseZoneListener;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.Zone;
+import fr.liglab.adele.icasa.simulator.listener.ZoneListener;
+import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
 
 /**
  * Implementation of a simulated thermometer device.

@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.Position;
+import fr.liglab.adele.icasa.simulator.Position;
 import org.json.JSONException;
 import org.json.JSONObject;
 

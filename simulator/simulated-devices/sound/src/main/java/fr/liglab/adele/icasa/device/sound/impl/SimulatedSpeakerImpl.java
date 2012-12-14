@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.device.sound.impl;
 
-import java.io.IOException;
 import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
@@ -29,13 +28,11 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 import fr.liglab.adele.icasa.device.sound.Speaker;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * Implementation of a simulated speaker device.
@@ -136,7 +133,7 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
     }
 
     /**
-     * Notify the bound simulated environment that the noise emitted by this
+     * Notify the bound simulated simulator that the noise emitted by this
      * speaker has changed.
      * 
      * @param noiseDiff

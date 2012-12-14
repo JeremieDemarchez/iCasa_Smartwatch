@@ -1435,7 +1435,7 @@ var requirejs, require, define;
             },
 
             /**
-             * Internal method used by environment adapters to complete a load event.
+             * Internal method used by simulator adapters to complete a load event.
              * A load event could be a script load or just a load pass from a synchronous
              * load call.
              * @param {String} moduleName the name of the module to potentially complete.
@@ -1954,7 +1954,7 @@ var requirejs, require, define;
 
     /**
      * Executes the text. Normally just uses eval, but can be modified
-     * to use a better, environment-specific call. Only used for transpiling
+     * to use a better, simulator-specific call. Only used for transpiling
      * loader plugins, not for plain JS modules.
      * @param {String} text the text to execute/evaluate.
      */

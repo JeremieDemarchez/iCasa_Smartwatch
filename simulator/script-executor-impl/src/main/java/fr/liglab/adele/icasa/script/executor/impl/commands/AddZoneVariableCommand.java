@@ -15,9 +15,7 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
-import fr.liglab.adele.icasa.script.executor.impl.commands.DeviceCommand;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONObject;
 

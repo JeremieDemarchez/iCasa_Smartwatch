@@ -1103,7 +1103,7 @@ $.widget( "mobile.widget", {
 // and the plugin will take care of registering the correct listeners
 // behind the scenes to invoke the listener at the fastest possible time
 // for that device, while still retaining the order of event firing in
-// the traditional mouse environment, should multiple handlers be registered
+// the traditional mouse simulator, should multiple handlers be registered
 // on the same element for different events.
 //
 // The current version exposes the following virtual events to jQuery bind methods:

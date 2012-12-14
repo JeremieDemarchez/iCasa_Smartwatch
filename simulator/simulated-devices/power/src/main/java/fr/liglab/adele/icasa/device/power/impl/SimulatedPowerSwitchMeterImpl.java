@@ -30,8 +30,8 @@ import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.power.PowerSwitchmeter;
 import fr.liglab.adele.icasa.device.power.Powermeter;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * Implementation of a simulated Power Switch + Meter

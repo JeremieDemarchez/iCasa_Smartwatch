@@ -33,9 +33,8 @@
 		<module>clock-simulated-impl</module>
 		<module>clock-system-impl</module>
 		<module>device-api</module>
-		<module>environment-api</module>
-		<module>simulated-environment</module>
-		<module>script-api</module>
+		<module>simulator-api</module>
+		<module>simulator-impl</module>
 		<module>script-executor-api</module>		
 	    <module>script-executor-impl</module>		
 		<module>simulated-devices</module>

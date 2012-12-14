@@ -28,9 +28,9 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.Zone;
-import fr.liglab.adele.icasa.environment.listener.ZonePropListener;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.Zone;
+import fr.liglab.adele.icasa.simulator.listener.ZonePropListener;
 
 /**
  * Implementation of a simulated photometer device.

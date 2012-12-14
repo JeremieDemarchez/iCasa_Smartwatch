@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.*;
-import fr.liglab.adele.icasa.environment.listener.MultiEventListener;
+import fr.liglab.adele.icasa.simulator.*;
+import fr.liglab.adele.icasa.simulator.listener.MultiEventListener;
 
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;

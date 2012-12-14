@@ -28,12 +28,10 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * Implementation of a simulated cooler device.
@@ -117,7 +115,7 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler,
     }
 
     /**
-     * Notify the bound simulated environment that the temperature has changed.
+     * Notify the bound simulated simulator that the temperature has changed.
      *
      *            the temperature difference
      */

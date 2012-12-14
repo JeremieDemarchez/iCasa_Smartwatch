@@ -602,7 +602,7 @@ Handlebars.print = function(ast) {
 Handlebars.logger = {
   DEBUG: 0, INFO: 1, WARN: 2, ERROR: 3, level: 3,
 
-  // override in the host environment
+  // override in the host simulator
   log: function(level, str) {}
 };
 

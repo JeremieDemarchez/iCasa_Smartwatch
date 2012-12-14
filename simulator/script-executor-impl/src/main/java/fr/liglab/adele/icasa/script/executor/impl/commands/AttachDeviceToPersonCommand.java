@@ -23,8 +23,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.script.executor.impl.commands.AbstractCommand;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * 

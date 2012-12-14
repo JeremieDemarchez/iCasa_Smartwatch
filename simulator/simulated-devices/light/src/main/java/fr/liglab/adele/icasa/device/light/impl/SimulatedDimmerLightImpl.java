@@ -27,8 +27,8 @@ import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.environment.SimulatedDevice;
-import fr.liglab.adele.icasa.environment.Zone;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * Implementation of a simulated dimmer light device.
@@ -93,7 +93,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements
     }
 
     /**
-     * Notify the bound simulated environment that the illuminance emitted by
+     * Notify the bound simulated simulator that the illuminance emitted by
      * this light has changed.
      * 
      * @param illuminanceDiff
