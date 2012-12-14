@@ -50,7 +50,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public String getLocation() {
-		Zone zone = manager.getZoneFromPosition(getAbsolutePosition());
+		Zone zone = manager.getZoneFromPosition(getAbsoluteCenterPosition());
 		if (zone!=null)			
 			return zone.getId();
 		return "unknown";
@@ -73,9 +73,9 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 
 	@Override
-	public void setAbsolutePosition(Position position) {
-		Position oldPosition = getAbsolutePosition();
-		super.setAbsolutePosition(position);
+	public void setAbsoluteCenterPosition(Position position) {
+		Position oldPosition = getAbsoluteCenterPosition();
+		super.setAbsoluteCenterPosition(position);
 
 		// Listeners notification
 		for (PersonListener listener : listeners) {
@@ -85,7 +85,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public String toString() {
-		return "Person " + m_name + " - Position " + getAbsolutePosition();
+		return "Person " + m_name + " - Position " + getAbsoluteCenterPosition();
 	}
 
 }

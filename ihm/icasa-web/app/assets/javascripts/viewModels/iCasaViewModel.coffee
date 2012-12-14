@@ -225,22 +225,40 @@ define(['jquery',
            @name = kb.defaultObservable(@_name, 'state');
            @show = kb.defaultObservable(@_show, false);
            @imgSrc = kb.defaultObservable(@_imgSrc, '/assets/images/devices/decorators/play.png');
+           @positionFactor=ko.observable(1.0);
            @positionX = kb.defaultObservable(@_positionX, 16);
            @positionY = kb.defaultObservable(@_positionY, 16);
            @styleLeft = ko.computed({
               read: () =>
+
                   return @positionX() + "px";
               owner: @
            }
            , @)
            @styleTop = ko.computed({
               read: () =>
+
                   return @positionY() + "px";
               owner: @
            }
            , @)
-           @width = kb.defaultObservable(@_width, '15px');
-           @height = kb.defaultObservable(@_height, '15px');
+           @width = kb.defaultObservable(@_width, 15);
+           @height = kb.defaultObservable(@_height, 15);
+           @sizeFactor=ko.observable(1.0);
+           @widgetWidth = ko.computed({
+              read: () =>
+                effWidth = @width() * @sizeFactor();
+                return effWidth + "px";
+              owner: @
+           }
+           , @);
+           @widgetHeight = ko.computed({
+              read: () =>
+                effHeight = @height() * @sizeFactor();
+                return effHeight + "px";
+              owner: @
+           }
+           , @);
 
     class DeviceTypeViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -352,10 +370,10 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "on-top",
                     imgSrc: '/assets/images/devices/pesePersonnePieds.png',
-                    width: '40px',
-                    height: '40px',
-                    positionX: '0',
-                    positionY: '-7',
+                    width: 40,
+                    height: 40,
+                    positionX: 1,
+                    positionY: -7,
                     show: false}
            ]);
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
@@ -376,21 +394,25 @@ define(['jquery',
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
                 @isHighlighted(true);
-                @sizeFactor(1.5);
+                newFactor = 1.5;
+                @sizeFactor(newFactor);
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    decorator.sizeFactor(newFactor);
+                );
            @removeHighlight= () =>
                 @isHighlighted(false);
-                @sizeFactor(1.0);
+                newFactor = 1.0;
+                @sizeFactor(newFactor);
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    decorator.sizeFactor(newFactor);
+                );
            @saveLocation= ko.observable(false);
            @saveLocationChanges= (data, event) =>
                 @location('bedroom');
-                @saveChanges()
+                @saveChanges();
            @saveChanges= () =>
                 @.model().saveChanges();
            @properties=kb.observable(model, 'properties');
-
-          
-          
-          
           
            # init
            @updateBathroomScaleDecorator= (newValue) =>

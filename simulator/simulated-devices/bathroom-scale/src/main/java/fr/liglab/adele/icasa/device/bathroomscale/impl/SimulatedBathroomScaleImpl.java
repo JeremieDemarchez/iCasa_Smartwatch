@@ -116,7 +116,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 			Position deviceLoc = manager.getDevicePosition(getSerialNumber());	
 			
 			for (Person person : manager.getPersons()) {
-				Position personLoc = person.getAbsolutePosition();
+				Position personLoc = person.getAbsoluteCenterPosition();
 				long deltaX2 = (((long) personLoc.x) - ((long) deviceLoc.x)) * (((long) personLoc.x) - ((long) deviceLoc.x));
 				long deltaY2 = (((long) personLoc.y) - ((long) deviceLoc.y)) * (((long) personLoc.y) - ((long) deviceLoc.y));
 				long distance2 = deltaX2 + deltaY2;

@@ -25,6 +25,10 @@ import fr.liglab.adele.icasa.environment.listener.PersonListener;
  */
 public interface Person extends LocatedObject {
 
+    public static final int DEFAULT_WIDTH = 50;
+
+    public static final int DEFAULT_HEIGHT = 50;
+
     public String getName();
 
     public void setName(String name);
