@@ -43,7 +43,7 @@
 	<move-device-zone deviceID="IKAE-Chb-45X-DDPQS-254-33" zone="bathroom" />	
 	<modify-environment zone="bathroom" variable="temperature" value="293.15"/>
 	
-	<set-zone-parent zone="zivingroom-3" parentZone="livingroom" useParentVariables="false"/>
+	<set-zone-parent zone="zivingroom-3" parentZone="livingroom" useParentVariables="true"/>
 	
 	
 	<add-device deviceID="BathroomScale-ABC-1231234-ZZ" type="iCASA.BathroomScale" />

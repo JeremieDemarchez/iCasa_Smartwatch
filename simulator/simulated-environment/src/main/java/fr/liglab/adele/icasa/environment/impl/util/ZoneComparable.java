@@ -23,7 +23,7 @@ public class ZoneComparable implements  Comparator<Zone> {
 
 	@Override
    public int compare(Zone zone0, Zone zone1) {		
-	   return zone0.getLayer() - zone1.getLayer();
+	   return zone1.getLayer() - zone0.getLayer();
    }
 
 	
