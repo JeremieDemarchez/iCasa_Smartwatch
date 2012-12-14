@@ -228,37 +228,51 @@ define(['jquery',
            @positionFactor=ko.observable(1.0);
            @positionX = kb.defaultObservable(@_positionX, 16);
            @positionY = kb.defaultObservable(@_positionY, 16);
-           @styleLeft = ko.computed({
-              read: () =>
-
-                  return @positionX() + "px";
-              owner: @
-           }
-           , @)
-           @styleTop = ko.computed({
-              read: () =>
-
-                  return @positionY() + "px";
-              owner: @
-           }
-           , @)
            @width = kb.defaultObservable(@_width, 15);
            @height = kb.defaultObservable(@_height, 15);
            @sizeFactor=ko.observable(1.0);
+           @containerSizeDelta=ko.observable(0);
            @widgetWidth = ko.computed({
               read: () =>
                 effWidth = @width() * @sizeFactor();
-                return effWidth + "px";
+                return effWidth;
               owner: @
-           }
+               }
            , @);
            @widgetHeight = ko.computed({
               read: () =>
                 effHeight = @height() * @sizeFactor();
-                return effHeight + "px";
+                return effHeight;
+              owner: @
+               }
+           , @);
+           @styleWidth = ko.computed({
+              read: () =>
+                return @widgetWidth() + "px";
+              owner: @
+               }
+           , @);
+           @styleHeight = ko.computed({
+              read: () =>
+                return @widgetHeight() + "px";
               owner: @
            }
            , @);
+           @styleLeft = ko.computed({
+              read: () =>
+                effPositionX = @positionX() - (@widgetWidth() / 2);
+                return effPositionX + "px";
+              owner: @
+           }
+           , @);
+           @styleTop = ko.computed({
+              read: () =>
+                 effPositionY = @positionY() - (@widgetHeight() / 2);
+                 return effPositionY + "px";
+              owner: @
+           }
+           , @);
+
 
     class DeviceTypeViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -282,30 +296,44 @@ define(['jquery',
            @fault = kb.defaultObservable(@_fault, 'no');
            @positionX = kb.defaultObservable(@_positionX, 0);
            @positionY = kb.defaultObservable(@_positionY, 0);
-           @styleLeft = ko.computed({
-              read: () =>
-                return @positionX() + "px";
-              owner: @
-           }
-           , @);
-           @styleTop = ko.computed({
-              read: () =>
-                return @positionY() + "px";
-              owner: @
-           }
-           , @);
            @sizeFactor=ko.observable(1.0);
            @widgetWidth = ko.computed({
               read: () =>
                 effWidth = 32 * @sizeFactor();
-                return effWidth + "px";
+                return effWidth;
               owner: @
            }
            , @);
            @widgetHeight = ko.computed({
               read: () =>
                 effHeight = 32 * @sizeFactor();
-                return effHeight + "px";
+                return effHeight;
+              owner: @
+           }
+           , @);
+           @styleWidth = ko.computed({
+              read: () =>
+                return @widgetWidth() + "px";
+              owner: @
+           }
+           , @);
+           @styleHeight = ko.computed({
+              read: () =>
+                return @widgetHeight() + "px";
+              owner: @
+           }
+           , @);
+           @styleLeft = ko.computed({
+              read: () =>
+                effPositionX = @positionX() - (@widgetWidth() / 2);
+                return effPositionX + "px";
+              owner: @
+           }
+           , @);
+           @styleTop = ko.computed({
+              read: () =>
+                effPositionY = @positionY() - (@widgetHeight() / 2);
+                return effPositionY + "px";
               owner: @
            }
            , @);
@@ -394,7 +422,7 @@ define(['jquery',
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
                 @isHighlighted(true);
-                newFactor = 1.5;
+                newFactor = 1.2;
                 @sizeFactor(newFactor);
                 ko.utils.arrayForEach(@decorators(), (decorator) ->
                     decorator.sizeFactor(newFactor);
@@ -446,20 +474,49 @@ define(['jquery',
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
-           @positionX = kb.defaultObservable(@_positionX, 'Undefined');
-           @positionY = kb.defaultObservable(@_positionY, 'Undefined');
+           @positionX = kb.defaultObservable(@_positionX, 0);
+           @positionY = kb.defaultObservable(@_positionY, 0);
+           @sizeFactor=ko.observable(1.0);
+           @widgetWidth = ko.computed({
+              read: () =>
+                effWidth = 50 * @sizeFactor();
+                return effWidth;
+              owner: @
+           }
+           , @);
+           @widgetHeight = ko.computed({
+              read: () =>
+                effHeight = 50 * @sizeFactor();
+                return effHeight;
+              owner: @
+           }
+           , @);
+           @styleWidth = ko.computed({
+              read: () =>
+                return @widgetWidth() + "px";
+              owner: @
+           }
+           , @);
+           @styleHeight = ko.computed({
+              read: () =>
+                return @widgetHeight() + "px";
+              owner: @
+           }
+           , @);
            @styleLeft = ko.computed({
               read: () =>
-                return @positionX() + "px";
+                effPositionX = @positionX() - (@widgetWidth() / 2);
+                return effPositionX + "px";
               owner: @
            }
-           , @)
+           , @);
            @styleTop = ko.computed({
               read: () =>
-                return @positionY() + "px";
+                effPositionY = @positionY() - (@widgetHeight() / 2);
+                return effPositionY + "px";
               owner: @
            }
-           , @)
+           , @);
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
@@ -487,9 +544,19 @@ define(['jquery',
            @decorators = ko.observableArray([  ]);
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
-               @isHighlighted(true);
+              @isHighlighted(true);
+              newFactor = 1.2;
+              @sizeFactor(newFactor);
+              ko.utils.arrayForEach(@decorators(), (decorator) ->
+                decorator.sizeFactor(newFactor);
+              );
            @removeHighlight= () =>
-               @isHighlighted(false);
+              @isHighlighted(false);
+              newFactor = 1.0;
+              @sizeFactor(newFactor);
+              ko.utils.arrayForEach(@decorators(), (decorator) ->
+                decorator.sizeFactor(newFactor);
+              );
            @saveChanges= () =>
                @.model().saveChanges();
 
