@@ -34,6 +34,8 @@ public interface SimulationManager {
 
 	public Zone createZone(String id, int leftX, int topY, int width, int height);
 
+	public Zone createZone(String id, Position center, int detectionScope);
+	
 	public void removeZone(String id);
 
 	public void moveZone(String id, int leftX, int topY) throws Exception;

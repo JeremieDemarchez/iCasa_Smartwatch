@@ -43,6 +43,16 @@ public interface GenericDevice {
     String DEVICE_SERIAL_NUMBER = "device.serialNumber";
 
     /**
+     * Default icon width, in px.
+     */
+    int DEFAULT_WIDTH = 32;
+    
+    /**
+     * Default icon height, in px.
+     */
+    int DEFAULT_HEIGHT = 32;
+    
+    /**
      * Return the serial number of the device.
      * 
      * @return the serial number of the device.

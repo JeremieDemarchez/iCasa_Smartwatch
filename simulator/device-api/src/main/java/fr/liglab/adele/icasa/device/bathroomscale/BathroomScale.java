@@ -23,6 +23,8 @@ public interface BathroomScale extends GenericDevice {
 	
 	public final String WEIGHT_PROPERTY = "current_weight";
 	
+	public final String DETECTION_SCOPE = "detection_scope"; 
+	
 	public float getCurrentWeight();  
 	
 }
