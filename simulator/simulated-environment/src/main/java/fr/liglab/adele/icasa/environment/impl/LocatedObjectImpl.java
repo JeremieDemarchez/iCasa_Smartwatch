@@ -32,24 +32,24 @@ public class LocatedObjectImpl implements LocatedObject {
 	}
 	
 	@Override
-   public Position getAbsolutePosition() {
+   public Position getAbsoluteCenterPosition() {
 	   return m_position.clone();
    }
 
 	@Override
-   public void setAbsolutePosition(Position position) {		
-		int deltaX = position.x - getAbsolutePosition().x ;
-		int deltaY = position.y - getAbsolutePosition().y;		
+   public void setAbsoluteCenterPosition(Position position) {
+		int deltaX = position.x - getAbsoluteCenterPosition().x ;
+		int deltaY = position.y - getAbsoluteCenterPosition().y;
 		m_position = position.clone();		
 		moveAttachedObjects(deltaX, deltaY);
    }
 		
 	protected void moveAttachedObjects(int deltaX, int deltaY) {
 		for (LocatedObject object : attachedObjects) {
-	      int newX = object.getAbsolutePosition().x + deltaX; 
-	      int newY = object.getAbsolutePosition().y + deltaY;
+	      int newX = object.getAbsoluteCenterPosition().x + deltaX;
+	      int newY = object.getAbsoluteCenterPosition().y + deltaY;
 	      Position objectPosition = new Position(newX, newY);
-	      object.setAbsolutePosition(objectPosition);
+	      object.setAbsoluteCenterPosition(objectPosition);
       }
 	}
 

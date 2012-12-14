@@ -91,7 +91,7 @@ public class PersonREST {
             personJSON.putOnce(PersonJSON.ID_PROP, person.getName());
             personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
 
-            Position personPosition = person.getAbsolutePosition();
+            Position personPosition = person.getAbsoluteCenterPosition();
             if (personPosition != null) {
                 personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
                 personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
@@ -219,7 +219,7 @@ public class PersonREST {
             return Response.status(404).build();
 
         if ((personJSON.getPositionX() != null) || (personJSON.getPositionY() != null)) {
-            Position personPosition = foundPerson.getAbsolutePosition();
+            Position personPosition = foundPerson.getAbsoluteCenterPosition();
             if (personJSON.getPositionX() == null)
                 personJSON.setPositionX(personPosition.x);
             if (personJSON.getPositionY() == null)
