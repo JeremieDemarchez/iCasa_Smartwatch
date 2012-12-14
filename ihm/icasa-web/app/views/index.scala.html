@@ -70,7 +70,7 @@
                     <div class="userWidgetContainer">
                         <img class="userWidgetIcon"data-bind="attr: { src: imgSrc, alt: name, title: name }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
+                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: widgetWidth, height: widgetHeight }, visible: show" />
                         </div>
                     </div>
                 </div>
@@ -80,7 +80,7 @@
                     <div class="deviceWidgetContainer">
                         <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
+                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: widgetWidth, height: widgetHeight }, visible: show" />
                         </div>
                         <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }">
                         </div>
