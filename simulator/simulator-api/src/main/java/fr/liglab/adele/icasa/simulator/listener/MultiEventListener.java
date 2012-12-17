@@ -16,6 +16,6 @@
 package fr.liglab.adele.icasa.simulator.listener;
 
 
-public interface MultiEventListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener {
+public interface MultiEventListener extends ZoneListener, PersonListener, LocatedDeviceListener, DeviceTypeListener, PersonTypeListener {
 
 }

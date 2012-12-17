@@ -97,7 +97,7 @@ public interface SimulationManager {
 
 	public void removeAllPersons();
 
-	public void addPerson(String personName);
+	public void addPerson(String personName, String personType);
 
 	public Person getPerson(String personName);
 

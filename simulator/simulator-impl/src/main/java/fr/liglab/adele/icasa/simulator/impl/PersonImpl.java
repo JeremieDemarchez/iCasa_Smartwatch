@@ -32,14 +32,17 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	private String m_name;
+	
+	private String personType;
 
 	private List<PersonListener> listeners = new ArrayList<PersonListener>();
 	
 	private SimulationManager manager;
 
-	public PersonImpl(String name, Position position, SimulationManager manager) {
+	public PersonImpl(String name, Position position, String personType, SimulationManager manager) {
 		super(position);
 		m_name = name;
+		this.personType = personType;
 		this.manager = manager;
 	}
 
@@ -87,5 +90,15 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 	public String toString() {
 		return "Person " + m_name + " - Position " + getCenterAbsolutePosition();
 	}
+
+	@Override
+   public String getPersonType() {
+	   return personType;
+   }
+
+	@Override
+   public void setPersonType(String personType) {
+		this.personType = personType;	   
+   }
 
 }

@@ -41,6 +41,7 @@ public class CreatePersonCommand extends AbstractCommand {
 
 		
 	private String person;
+	private String personType;
 	
 	@Requires
 	private SimulationManager simulationManager;
@@ -49,7 +50,7 @@ public class CreatePersonCommand extends AbstractCommand {
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.addPerson(person);
+		simulationManager.addPerson(person, personType);
 		return null;
 	}
 	
@@ -57,11 +58,13 @@ public class CreatePersonCommand extends AbstractCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		this.person = param.getString("person");
+		this.person = param.getString("personType");
 	}
 	
 	
-	public void createPerson(String person) throws Exception {
+	public void createPerson(String person, String personType) throws Exception {
 	   this.person = person;
+	   this.personType = personType;
 	   execute();
    }
 	

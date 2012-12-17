@@ -13,35 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator;
-
-import fr.liglab.adele.icasa.simulator.listener.PersonListener;
+package fr.liglab.adele.icasa.simulator.listener;
 
 
 /**
- *
  * @author Thomas Leveque
- *         Date: 10/11/12
  */
-public interface Person extends LocatedObject {
+public interface PersonTypeListener extends IcasaListener {
 
-    public static final int DEFAULT_WIDTH = 50;
+   public void personTypeAdded(String personType);
 
-    public static final int DEFAULT_HEIGHT = 50;
-
-    public String getName();
-
-    public void setName(String name);
-
-    public String getPersonType();
-
-    public void setPersonType(String personType);
-    
-    public String getLocation();
-
-    public void addListener(final PersonListener listener);
-
-    public void removeListener(final PersonListener listener);
-    
-   
+   public void personTypeRemoved(String personType);
 }

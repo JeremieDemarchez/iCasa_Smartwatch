@@ -379,6 +379,18 @@ public class EventBroadcast extends OnMessage<String> {
 			}
 		}
 
+		@Override
+      public void personTypeAdded(String personType) {
+	      // TODO Auto-generated method stub
+	      
+      }
+
+		@Override
+      public void personTypeRemoved(String personType) {
+	      // TODO Auto-generated method stub
+	      
+      }
+
 	}
 
 }

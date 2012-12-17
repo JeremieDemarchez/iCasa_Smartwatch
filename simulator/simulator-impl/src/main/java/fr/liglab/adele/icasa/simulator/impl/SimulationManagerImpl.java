@@ -50,6 +50,7 @@ import fr.liglab.adele.icasa.simulator.listener.DeviceTypeListener;
 import fr.liglab.adele.icasa.simulator.listener.IcasaListener;
 import fr.liglab.adele.icasa.simulator.listener.LocatedDeviceListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
+import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 import fr.liglab.adele.icasa.simulator.listener.ZoneListener;
 
 @Component
@@ -73,10 +74,22 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private List<PersonListener> personListeners = new ArrayList<PersonListener>();
 
+	private List<PersonTypeListener> personTypeListeners = new ArrayList<PersonTypeListener>();
+
 	private List<ZoneListener> zoneListeners = new ArrayList<ZoneListener>();
-	
+
 	private List<String> personTypes = new ArrayList<String>();
 
+	
+	public SimulationManagerImpl() {
+		addPersonType("Grandfather");
+		addPersonType("Grandmother");
+		addPersonType("Father");
+		addPersonType("Mother");
+		addPersonType("Boy");
+		addPersonType("Girl");
+	}
+	
 	@Override
 	public Zone createZone(String id, int leftX, int topY, int width, int height) {
 		Zone zone = new ZoneImpl(id, leftX, topY, width, height);
@@ -96,9 +109,10 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	public Zone createZone(String id, Position center, int detectionScope) {
-		return createZone(id, center.x - detectionScope, center.y - detectionScope, detectionScope * 2, detectionScope * 2);
+		return createZone(id, center.x - detectionScope, center.y - detectionScope, detectionScope * 2,
+		      detectionScope * 2);
 	}
-	
+
 	@Override
 	public void removeZone(String id) {
 		Zone zone = zones.remove(id);
@@ -168,16 +182,14 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public List<Zone> getZones() {
 		synchronized (zones) {
-			return Collections.unmodifiableList(new ArrayList<Zone>(zones
-					.values()));
+			return Collections.unmodifiableList(new ArrayList<Zone>(zones.values()));
 		}
 	}
 
 	@Override
 	public Set<String> getZoneIds() {
 		synchronized (zones) {
-			return Collections.unmodifiableSet(new HashSet<String>(zones
-					.keySet()));
+			return Collections.unmodifiableSet(new HashSet<String>(zones.keySet()));
 		}
 	}
 
@@ -211,8 +223,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Set<String> getDeviceIds() {
-		return Collections.unmodifiableSet(new HashSet<String>(locatedDevices
-				.keySet()));
+		return Collections.unmodifiableSet(new HashSet<String>(locatedDevices.keySet()));
 	}
 
 	@Override
@@ -304,8 +315,12 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void addPerson(String userName) {
-		Person person = new PersonImpl(userName, new Position(-1, -1), this);
+	public void addPerson(String userName, String personType) {
+		String aPersonType = getPersonType(personType);
+		if (aPersonType==null)
+			return;
+		
+		Person person = new PersonImpl(userName, new Position(-1, -1), aPersonType, this);
 		persons.put(userName, person);
 
 		// Listeners notification
@@ -339,8 +354,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public List<Person> getPersons() {
 		synchronized (persons) {
-			return Collections.unmodifiableList(new ArrayList<Person>(persons
-					.values()));
+			return Collections.unmodifiableList(new ArrayList<Person>(persons.values()));
 		}
 	}
 
@@ -374,20 +388,16 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void createDevice(String factoryName, String deviceId,
-			Map<String, Object> properties) {
+	public void createDevice(String factoryName, String deviceId, Map<String, Object> properties) {
 		Factory factory = m_factories.get(factoryName);
 		if (factory != null) {
 			// Create the device
 			Dictionary<String, String> configProperties = new Hashtable<String, String>();
 			configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-			configProperties.put(GenericDevice.STATE_PROPERTY_NAME,
-					GenericDevice.STATE_ACTIVATED);
-			configProperties.put(GenericDevice.FAULT_PROPERTY_NAME,
-					GenericDevice.FAULT_NO);
+			configProperties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+			configProperties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
 			if (properties.get("description") != null)
-				configProperties.put(Constants.SERVICE_DESCRIPTION, properties
-						.get("description").toString());
+				configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
 			configProperties.put("instance.name", factoryName + "-" + deviceId);
 			try {
 				factory.createComponentInstance(configProperties);
@@ -419,8 +429,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Set<String> getDeviceTypes() {
-		return Collections.unmodifiableSet(new HashSet<String>(m_factories
-				.keySet()));
+		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
 
 	@Bind(id = "sim-devices", aggregate = true, optional = true)
@@ -431,15 +440,13 @@ public class SimulationManagerImpl implements SimulationManager {
 			String deviceType = null;
 			if (dev instanceof Pojo) {
 				try {
-					deviceType = ((Pojo) dev).getComponentInstance()
-							.getFactory().getFactoryName();
+					deviceType = ((Pojo) dev).getComponentInstance().getFactory().getFactoryName();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1,
-					-1), dev, deviceType, this);
+			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, deviceType, this);
 			locatedDevices.put(sn, device);
 
 			// Listeners notification
@@ -535,6 +542,13 @@ public class SimulationManagerImpl implements SimulationManager {
 			DeviceTypeListener deviceTypeListener = (DeviceTypeListener) listener;
 			synchronized (deviceTypeListeners) {
 				deviceTypeListeners.add(deviceTypeListener);
+			}
+		}
+
+		if (listener instanceof PersonTypeListener) {
+			PersonTypeListener personTypeListener = (PersonTypeListener) listener;
+			synchronized (personTypeListeners) {
+				personTypeListeners.add(personTypeListener);
 			}
 		}
 
@@ -670,33 +684,41 @@ public class SimulationManagerImpl implements SimulationManager {
 		Zone zone = getZone(zoneId);
 		if (zone == null)
 			return null;
-		int minX = zone.getCenterAbsolutePosition().x;
-		int minY = zone.getCenterAbsolutePosition().y;
+		int minX = zone.getLeftTopAbsolutePosition().x;
+		int minY = zone.getLeftTopAbsolutePosition().y;
 		int newX = random(minX, minX + zone.getWidth());
 		int newY = random(minY, minY + zone.getHeight());
 		return new Position(newX, newY);
 	}
 
 	@Override
-   public void addPersonType(String personType) {
-		personTypes.add(personType);	   
-   }
+	public void addPersonType(String personType) {
+		if (!personTypes.contains(personType)) {
+			personTypes.add(personType);
+			for (PersonTypeListener listener : personTypeListeners)
+				listener.personTypeAdded(personType);
+		}
+	}
 
 	@Override
-   public String getPersonType(String personType) {
-	   if (personTypes.contains(personType))
-	   	return personType;
-	   return null;
-   }
+	public String getPersonType(String personType) {
+		if (personTypes.contains(personType))
+			return personType;
+		return null;
+	}
 
 	@Override
-   public void removePersonType(String personType) {
-		personTypes.remove(personType);
-   }
+	public void removePersonType(String personType) {
+		if (personType.contains(personType)) {
+			personTypes.remove(personType);
+			for (PersonTypeListener listener : personTypeListeners)
+				listener.personTypeRemoved(personType);			
+		}
+	}
 
 	@Override
-   public List<String> getPersonTypes() {
+	public List<String> getPersonTypes() {
 		return Collections.unmodifiableList(personTypes);
-   }
+	}
 
 }

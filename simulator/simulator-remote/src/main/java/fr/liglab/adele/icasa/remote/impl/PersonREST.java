@@ -185,8 +185,8 @@ public class PersonREST {
 
         PersonJSON personJSON = PersonJSON.fromString(content);
 
-        // Create the person
-        _simulationMgr.addPerson(personJSON.getName());
+        // Create the person //TODO: Put the right person type
+        _simulationMgr.addPerson(personJSON.getName(), "Grandfather");
         _simulationMgr.setPersonPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
 
         Person newPerson = findPerson(personJSON.getName());
