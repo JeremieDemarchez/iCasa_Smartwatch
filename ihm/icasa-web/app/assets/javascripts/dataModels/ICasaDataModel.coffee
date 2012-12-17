@@ -40,6 +40,13 @@ define(['backbone', 'underscore'],
             url: "#server#/devices/deviceTypes".replace /#server#/, serverUrl
             model: DataModel.Models.DeviceType
 
+         class DataModel.Models.PersonType extends Backbone.Model
+            urlRoot : "#server#/persons/personType".replace /#server#/, serverUrl
+
+         class DataModel.Collections.PersonTypes extends Backbone.Collection
+            url: "#server#/persons/personTypes".replace /#server#/, serverUrl
+            model: DataModel.Models.PersonType
+
          class DataModel.Models.Person extends Backbone.Model
             urlRoot : "#server#/persons/person".replace /#server#/, serverUrl
 
@@ -76,6 +83,12 @@ define(['backbone', 'underscore'],
 
          DataModel.collections.persons = new DataModel.Collections.Persons();
          DataModel.collections.persons.fetch({
+            success : (data) -> console.log(data);
+            error : (err) -> throw err;
+         });
+
+         DataModel.collections.personTypes = new DataModel.Collections.PersonTypes();
+         DataModel.collections.personTypes.fetch({
             success : (data) -> console.log(data);
             error : (err) -> throw err;
          });

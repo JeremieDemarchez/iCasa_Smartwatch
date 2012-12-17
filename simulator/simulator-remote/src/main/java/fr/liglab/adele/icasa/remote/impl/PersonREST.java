@@ -105,6 +105,53 @@ public class PersonREST {
         return personJSON;
     }
 
+    private JSONObject getPersonTypeJSON(String personTypeStr) {
+        JSONObject personTypeJSON = null;
+        try {
+            personTypeJSON = new JSONObject();
+            personTypeJSON.putOnce("id", personTypeStr);
+            personTypeJSON.putOnce("name", personTypeStr);
+        } catch (JSONException e) {
+            e.printStackTrace();
+            personTypeJSON = null;
+        }
+
+        return personTypeJSON;
+    }
+
+    /**
+     * Returns a JSON array containing all person types.
+     *
+     * @return a JSON array containing all person types.
+     */
+    public String getPersonTypes() {
+        boolean atLeastOne = false;
+        JSONArray currentPersonTypes = new JSONArray();
+        for (String personTypeStr : _simulationMgr.getPersonTypes()) {
+            JSONObject personType = getPersonTypeJSON(personTypeStr);
+            if (personType == null)
+                continue;
+
+            currentPersonTypes.put(personType);
+        }
+
+        return currentPersonTypes.toString();
+    }
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/personTypes/")
+    public Response personTypes() {
+        return makeCORS(Response.ok(getPersonTypes()));
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/personTypes/")
+    public Response getPersonTypesOptions() {
+        return makeCORS(Response.ok());
+    }
+
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/persons/")
