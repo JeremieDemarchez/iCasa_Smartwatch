@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.Zone;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -25,9 +25,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 /**
@@ -51,6 +50,9 @@ public class ZoneREST {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
 
         if (!"".equals(returnMethod)) {
@@ -70,10 +72,10 @@ public class ZoneREST {
             zoneJSON = new JSONObject();
             zoneJSON.putOnce("id", zoneId);
             zoneJSON.putOnce("name", zoneId);
-            zoneJSON.put("leftX", zone.leftX);
-            zoneJSON.put("topY", zone.topY);
-            zoneJSON.put("rightX", zone.rightX);
-            zoneJSON.put("bottomY", zone.bottomY);
+            zoneJSON.put("leftX", zone.getLeftTopAbsolutePosition().x);
+            zoneJSON.put("topY", zone.getLeftTopAbsolutePosition().y);
+            zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
+            zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
             zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
         } catch (JSONException e) {
             e.printStackTrace();
@@ -84,10 +86,24 @@ public class ZoneREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/zones/")
     public Response zones() {
         return makeCORS(Response.ok(getZones()));
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/{zoneId}")
+    public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/")
+    public Response createsZoneOptions() {
+        return makeCORS(Response.ok());
     }
 
     /**
@@ -98,8 +114,8 @@ public class ZoneREST {
     public String getZones() {
         boolean atLeastOne = false;
         JSONArray currentZones = new JSONArray();
-        for (String envId : _simulationMgr.getEnvironments()) {
-            Zone zone = _simulationMgr.getEnvironmentZone(envId);
+        for (String envId : _simulationMgr.getZoneIds()) {
+            Zone zone = _simulationMgr.getZone(envId);
             if (zone == null)
                 continue;
 

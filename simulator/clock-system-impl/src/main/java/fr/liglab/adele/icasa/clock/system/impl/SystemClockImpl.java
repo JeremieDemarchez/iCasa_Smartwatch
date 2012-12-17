@@ -20,6 +20,8 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
 
+import java.util.Date;
+
 /**
  * @author Gabriel Pedraza Ferreira
  *
@@ -81,5 +83,9 @@ public class SystemClockImpl implements Clock {
    public long getElapsedTime() {
 	   return currentTimeMillis() - initDate;
    }
+
+    public Date getStartDate() {
+        return new Date(initDate);
+    }
 
 }

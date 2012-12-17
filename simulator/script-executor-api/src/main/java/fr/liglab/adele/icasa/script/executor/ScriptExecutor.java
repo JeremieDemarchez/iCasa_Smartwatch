@@ -45,7 +45,24 @@ public interface ScriptExecutor {
 	public void resume();
 	
 	public State getState();
-	
-	public double getExecutedPercentage();
+
+    /**
+     * Returns percentage of completed instructions of current script.
+     *
+     * @return percentage of completed instructions of current script.
+     */
+	public float getExecutedPercentage();
+
+    public long currentTimeMillis();
+
+    public void setStartDate(long startDate);
+
+    public void setFactor(int factor);
+
+    public long getElapsedTime();
+
+    public int getFactor();
+
+    public Date getStartDate();
 	
 }

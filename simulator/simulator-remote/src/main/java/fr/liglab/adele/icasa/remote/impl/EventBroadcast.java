@@ -15,11 +15,9 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.SimulationManager.DevicePositionListener;
-import fr.liglab.adele.icasa.environment.SimulationManager.UserPositionListener;
-import org.apache.felix.ipojo.Factory;
+import fr.liglab.adele.icasa.simulator.*;
+import fr.liglab.adele.icasa.simulator.listener.MultiEventListener;
+
 import org.apache.felix.ipojo.annotations.*;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
@@ -29,7 +27,7 @@ import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
 import org.barjo.atmosgi.AtmosphereService;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
@@ -43,158 +41,356 @@ import java.util.UUID;
 @Instantiate(name = "iCasa-event-broadcast-1")
 public class EventBroadcast extends OnMessage<String> {
 
-    @Property(name = "mapping", value = "/event")
-    private String mapping;
+	@Property(name = "mapping", value = "/event")
+	private String mapping;
 
-    private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
+	private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
 
-    @Requires
-    private AtmosphereService _atmoService;
+	@Requires
+	private AtmosphereService _atmoService;
 
-    @Requires
-    private HttpService _httpService;
+	@Requires
+	private HttpService _httpService;
 
-    @Requires
-    private SimulationManager _simulMgr;
+	@Requires
+	private SimulationManager _simulMgr;
 
-    private Broadcaster _eventBroadcaster;
+	private Broadcaster _eventBroadcaster;
 
-    private ICasaEventListener _iCasaListener;
+	private ICasaEventListener _iCasaListener;
 
-    private final BundleContext _context;
+	private final BundleContext _context;
 
-    public EventBroadcast(BundleContext context) {
-        _context = context;
-    }
+	public EventBroadcast(BundleContext context) {
+		_context = context;
+	}
 
-    @Validate
-    private void start() {
-        _iCasaListener = new ICasaEventListener();
-        _simulMgr.addUserPositionListener(_iCasaListener);
-        _simulMgr.addDevicePositionListener(_iCasaListener);
+	@Validate
+	private void start() {
+		_iCasaListener = new ICasaEventListener();
+		_simulMgr.addListener(_iCasaListener);
 
-        _eventBroadcaster = _atmoService.getBroadcasterFactory().get();
+		_eventBroadcaster = _atmoService.getBroadcasterFactory().get();
 
-        //Register the server (itself)
-        _interceptors.add(new AtmosphereResourceLifecycleInterceptor());
-        _atmoService.addAtmosphereHandler(mapping, this, _eventBroadcaster, _interceptors);
+		// Register the server (itself)
+		_interceptors.add(new AtmosphereResourceLifecycleInterceptor());
+		_atmoService.addAtmosphereHandler(mapping, this, _eventBroadcaster, _interceptors);
 
-        //Register the web client
-        try {
-            _httpService.registerResources("/event", "/web", null);
-        } catch (NamespaceException e) {
-            e.printStackTrace();
-        }
-    }
+		// Register the web client
+		try {
+			_httpService.registerResources("/event", "/web", null);
+		} catch (NamespaceException e) {
+			e.printStackTrace();
+		}
+	}
 
-    @Invalidate
-    private void stop() {
-        if (_iCasaListener != null) {
-            _simulMgr.removeUserPositionListener(_iCasaListener);
-            _simulMgr.removeDevicePositionListener(_iCasaListener);
-            _iCasaListener = null;
-        }
+	@Invalidate
+	private void stop() {
+		if (_iCasaListener != null) {
+			_simulMgr.removeListener(_iCasaListener);
+			_iCasaListener = null;
+		}
 
-        _atmoService.removeAtmosphereHandler(mapping);
-        _interceptors.clear();
+		_atmoService.removeAtmosphereHandler(mapping);
+		_interceptors.clear();
 
-        _httpService.unregister("/event");
-    }
+		_httpService.unregister("/event");
+	}
 
-    @Override
-    public void onMessage(AtmosphereResponse atmosphereResponse, String s) throws IOException {
-        atmosphereResponse.getWriter().write(s);
-    }
+	@Override
+	public void onMessage(AtmosphereResponse atmosphereResponse, String s) throws IOException {
+		atmosphereResponse.getWriter().write(s);
+	}
 
-    private UUID _lastEventId = UUID.randomUUID();
+	private UUID _lastEventId = UUID.randomUUID();
 
-    private String generateUUID() {
-        _lastEventId = UUID.randomUUID();
-        return _lastEventId.toString();
-    }
+	private String generateUUID() {
+		_lastEventId = UUID.randomUUID();
+		return _lastEventId.toString();
+	}
 
-    private void sendEvent(JSONObject event) {
-        try {
-            event.put("id", generateUUID());
-            event.put("time", new Date().getTime());
-            _eventBroadcaster.broadcast(event.toString());
-        } catch (JSONException e){
-            e.printStackTrace();
-        }
-    }
+	private void sendEvent(JSONObject event) {
+		try {
+			event.put("id", generateUUID());
+			event.put("time", new Date().getTime());
+			_eventBroadcaster.broadcast(event.toString());
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+	}
 
-    private class ICasaEventListener implements DevicePositionListener, UserPositionListener {
+	private class ICasaEventListener implements MultiEventListener {
 
         @Override
-        public void devicePositionChanged(String deviceSerialNumber, Position position) {
+        public void deviceTypeRemoved(String deviceType) {
             JSONObject json = new JSONObject();
             try {
-                json.put("eventType", "device-position-update");
-                json.put("deviceId", deviceSerialNumber);
+                json.put("eventType", "device-type-removed");
+                json.put("deviceTypeId", deviceType);
                 sendEvent(json);
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public void userPositionChanged(String userName, Position position) {
+        public void deviceTypeAdded(String deviceType) {
             JSONObject json = new JSONObject();
             try {
-                json.put("eventType", "user-position-update");
-                json.put("userId", userName);
+                json.put("eventType", "device-type-added");
+                json.put("deviceTypeId", deviceType);
                 sendEvent(json);
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public void userAdded(String userName) {
+		public void deviceMoved(LocatedDevice device, Position position) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-position-update");
+				json.put("deviceId", device.getSerialNumber());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void deviceAdded(LocatedDevice device) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-added");
+				json.put("deviceId", device.getSerialNumber());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void deviceRemoved(LocatedDevice device) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-removed");
+				json.put("deviceId", device.getSerialNumber());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+        @Override
+        public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
             JSONObject json = new JSONObject();
             try {
-                json.put("eventType", "user-added");
-                json.put("userId", userName);
+                json.put("eventType", "device-property-modified");
+                json.put("deviceId", device.getSerialNumber());
+                json.put("propertyName", propertyName);
                 sendEvent(json);
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
 
         @Override
-        public void userRemoved(String userName) {
+        public void devicePropertyAdded(LocatedDevice device, String propertyName) {
             JSONObject json = new JSONObject();
             try {
-                json.put("eventType", "user-removed");
-                json.put("userId", userName);
+                json.put("eventType", "device-property-added");
+                json.put("deviceId", device.getSerialNumber());
+                json.put("propertyName", propertyName);
                 sendEvent(json);
-            } catch (JSONException e){
+            } catch (JSONException e) {
                 e.printStackTrace();
             }
         }
-    }
 
-//    @Bind(id="deviceTypeFactories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
-//    public void bindDeviceFactory(final Factory factory) {
-//        JSONObject json = new JSONObject();
-//        try {
-//            json.put("eventType", "device-type-added");
-//            json.put("deviceTypeId", factory.getName());
-//            sendEvent(json);
-//        } catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    @Unbind(id="deviceTypeFactories")
-//    public void unbindDeviceFactory(final Factory factory) {
-//        JSONObject json = new JSONObject();
-//        try {
-//            json.put("eventType", "device-type-removed");
-//            json.put("deviceTypeId", factory.getName());
-//            sendEvent(json);
-//        } catch (JSONException e){
-//            e.printStackTrace();
-//        }
-//    }
+        @Override
+        public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "device-property-removed");
+                json.put("deviceId", device.getSerialNumber());
+                json.put("propertyName", propertyName);
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+		@Override
+		public void personMoved(Person person, Position position) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-position-update");
+				json.put("personId", person.getName());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void personAdded(Person person) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-added");
+				json.put("personId", person.getName());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void personRemoved(Person person) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-removed");
+				json.put("personId", person.getName());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+        public void personDeviceAttached(Person person, LocatedDevice device) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "person-device-attached");
+                json.put("personId", person.getName());
+                json.put("deviceId", device.getSerialNumber());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        public void personDeviceDetached(Person person, LocatedDevice device) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "person-device-dettached");
+                json.put("personId", person.getName());
+                json.put("deviceId", device.getSerialNumber());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+		@Override
+		public void zoneVariableAdded(Zone zone, String variableName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-variable-added");
+				json.put("zoneId", zone.getId());
+				json.put("variableName", variableName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void zoneVariableRemoved(Zone zone, String variableName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-variable-removed");
+				json.put("zoneId", zone.getId());
+				json.put("variableName", variableName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-variable-updated");
+				json.put("zoneId", zone.getId());
+				json.put("variableName", variableName);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void zoneMoved(Zone zone, Position oldPosition) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-moved");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+		}
+
+		@Override
+		public void zoneResized(Zone zone) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-resized");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+		}
+
+		@Override
+		public void zoneParentModified(Zone zone, Zone oldParent) {
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "zone-parent-updated");
+                json.put("zoneId", zone.getId());
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+		}
+
+		@Override
+		public void zoneAdded(Zone zone) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-added");
+				json.put("zoneId", zone.getId());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+		public void zoneRemoved(Zone zone) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-removed");
+				json.put("zoneId", zone.getId());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+		@Override
+      public void personTypeAdded(String personType) {
+	      // TODO Auto-generated method stub
+	      
+      }
+
+		@Override
+      public void personTypeRemoved(String personType) {
+	      // TODO Auto-generated method stub
+	      
+      }
+
+	}
+
 }

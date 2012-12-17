@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.felix.ipojo.annotations.*;
+
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
@@ -43,6 +45,9 @@ import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
  * 
  * Implementation of the ScriptExecutor specification
  */
+@Component(name="script-executor")
+@Instantiate(name="script-executor-0")
+@Provides
 public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 
@@ -51,6 +56,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * The clock use for simulation
 	 */
+    @Requires
 	private Clock clock;
 
 	/**
@@ -73,7 +79,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	 */
 	private boolean paused = false;
 
-	private double executedPercentage;
+	private float executedPercentage;
 	
 	private String currentScript;
 
@@ -109,6 +115,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 	
 	@Override
+    @Invalidate
 	public void stop() {
 		currentScript = null;
 		stopExecutionThread();
@@ -204,7 +211,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	
 	// -- Component bind methods -- //
-
+    @Bind(id="commands", aggregate=true, optional=true)
 	public void bindCommand(SimulatorCommand commandService, ServiceReference reference) {
 		String name = (String) reference.getProperty("name");
 		if (commands == null)
@@ -212,6 +219,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		commands.put(name, commandService);
 	}
 
+    @Unbind(id="commands")
 	public void unbindCommand(ServiceReference reference) {
 		String name = (String) reference.getProperty("name");
 		commands.remove(name);
@@ -245,11 +253,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 
 	@Override
-   public double getExecutedPercentage() {
+   public float getExecutedPercentage() {
       return executedPercentage;
    }
 
-	/**
+    /**
 	 * Command executor Thread (Runnable) class
 	 * 
 	 * @author Gabriel
@@ -334,7 +342,35 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 
+    @Override
+    public long currentTimeMillis() {
+        return clock.currentTimeMillis();
+    }
 
+    @Override
+    public void setStartDate(long startDate) {
+        clock.setStartDate(startDate);
+    }
+
+    @Override
+    public void setFactor(int factor) {
+        clock.setFactor(factor);
+    }
+
+    @Override
+    public long getElapsedTime() {
+        return clock.getElapsedTime();
+    }
+
+    @Override
+    public int getFactor() {
+        return clock.getFactor();
+    }
+
+    @Override
+    public Date getStartDate() {
+        return clock.getStartDate();
+    }
 
 
 

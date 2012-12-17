@@ -8,32 +8,73 @@ define(['jquery',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
-        'text!templates/roomTable.html',
         'text!templates/zoneTable.html',
         'text!templates/scriptPlayer.html',
-        'text!templates/tabs.html'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, roomTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml) ->
+        'text!templates/tabs.html',
+        'text!templates/deviceStatusWindow.html',
+        'text!templates/personStatusWindow.html',
+        'text!templates/bathroomScaleStatusWindow.html',
+        'domReady'],
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
+
+    ko.bindingHandlers.staticTemplate = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+            if valueUnwrapped.template == undefined
+              return {controlsDescendantBindings: true};
+
+            templateUnwrapped = ko.utils.unwrapObservable(valueUnwrapped.template);
+            $(element).html(templateUnwrapped);
+
+            innerBindingContext = bindingContext.extend(valueUnwrapped.data);
+            ko.applyBindingsToDescendants(innerBindingContext, element);
+
+            return { controlsDescendantBindings: true };
+            
+         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+            if valueUnwrapped.template == undefined
+              return {controlsDescendantBindings: true};
+
+            templateUnwrapped = ko.utils.unwrapObservable(valueUnwrapped.template);
+            $(element).html(templateUnwrapped);
+
+            innerBindingContext = bindingContext.extend(valueUnwrapped.data);
+            ko.applyBindingsToDescendants(innerBindingContext, element);
+
+            return { controlsDescendantBindings: true };
+
+    };
+
 
     ko.bindingHandlers.handlebarTemplate = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called when the binding is first applied to an element
-            idx = 0;
+            value = valueAccessor();
 
-            template = HandleBars.compile(viewModel.tabTemplate, {});
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(value);
+
+            template = HandleBars.compile(valueUnwrapped, {});
             $(element).html(template);
-#            $(element).find(".changeInputToLabelWhenNoClick").addClass("tabCellIsNotEdited").before(
-#                '<label class="changeInputToLabelWhenNoClick tabCellIsNotEdited" data-bind="text: name"></label>').click(() ->
-#              $("this").toggleClass("tabCellIsEdited");
-#            );
 
             return { controlsDescendantBindings: false };
 
         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
+            value = valueAccessor();
+
+            # Next, whether or not the supplied model property is observable, get its current value
+            valueUnwrapped = ko.utils.unwrapObservable(value);
+
+            template = HandleBars.compile(valueUnwrapped, {});
+            $(element).html(template);
     };
 
     ko.bindingHandlers.jqueryDraggable = {
@@ -42,14 +83,100 @@ define(['jquery',
             # This will be called when the binding is first applied to an element
 
             $(element).draggable( {
-                scroll: true
+                compartment: "#mapContainer",
+                scroll: true,
+                opacity: 0.70,
+                stop: (event, eventUI) ->
+                  viewModel.positionX(eventUI.position.left);
+                  viewModel.positionY(eventUI.position.top);
+                  viewModel.model().save();
             });
+
+            return { controlsDescendantBindings: false };
+    };
+
+    ko.bindingHandlers.jquerySelectable = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).selectable( {
+                selected: (event, eventUI) ->
+                  if (viewModel.isHighlighted())
+                    viewModel.removeHighlight();
+                  else
+                    viewModel.addHighlight();
+                unselected: (event, eventUI) ->
+                  viewModel.removeHighlight();
+            });
+
+            return { controlsDescendantBindings: false };
+    };
+
+    ko.bindingHandlers.jqueryDialog = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+
+            $(element).dialog({
+                autoOpen: false,
+                title: titleUnwrapped
+                minWidth: 220
+            });
+#            $(element).dialog({
+#                autoOpen: false,
+#                position: {my: "center", at: "center", of: "#statusWindows"},
+#                title: titleUnwrapped
+#            })
+#            .parent().resizable({
+#                containment: "#statusWindows"
+#            }).draggable({
+#                containment: "#statusWindows",
+#                opacity: 0.70
+#            });
 
             return { controlsDescendantBindings: false };
 
         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
+            # This will be called when the binding is first applied to an element
+
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+            $(element).dialog("option", "title", titleUnwrapped);
+
+            visibleUnwrapped = ko.utils.unwrapObservable(viewModel.statusWindowVisible);
+
+            if (visibleUnwrapped)
+              $(element).dialog( "open" );
+            else
+              $(element).dialog( "close" );
+
+            return { controlsDescendantBindings: false };
+    };
+
+    ko.bindingHandlers.jqueryTooltip = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+
+            $(element).tooltip(
+                content: titleUnwrapped,
+                items: "img[alt]"
+            );
+
+            return { controlsDescendantBindings: false };
+
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
+
+            $(element).tooltip( "option", "content", titleUnwrapped);
+
+            return { controlsDescendantBindings: false };
     };
 
     ko.bindingHandlers.jqueryTabs = {
@@ -68,13 +195,7 @@ define(['jquery',
 
             $(element).html(htmlString);
 
-
-
             return { controlsDescendantBindings: false };
-
-        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called once when the binding is first applied to an element,
-            # and again whenever the associated observable changes value.
     };
 
     # View models
@@ -82,7 +203,7 @@ define(['jquery',
     class ZoneViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX', 'isRoom']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @isRoom = kb.defaultObservable(@_isRoom, 'Undefined');
            @leftX = kb.defaultObservable(@_leftX, 'Undefined');
@@ -93,7 +214,7 @@ define(['jquery',
     class ScriptViewModel extends kb.ViewModel
         constructor: (model) ->
            super(model, {internals: ['id', 'name', 'state']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @state = kb.defaultObservable(@_state, 'undefined');
 
@@ -104,30 +225,54 @@ define(['jquery',
            @name = kb.defaultObservable(@_name, 'state');
            @show = kb.defaultObservable(@_show, false);
            @imgSrc = kb.defaultObservable(@_imgSrc, '/assets/images/devices/decorators/play.png');
+           @positionFactor=ko.observable(1.0);
            @positionX = kb.defaultObservable(@_positionX, 16);
            @positionY = kb.defaultObservable(@_positionY, 16);
+           @width = kb.defaultObservable(@_width, 15);
+           @height = kb.defaultObservable(@_height, 15);
+           @sizeFactor=ko.observable(1.0);
+           @containerSizeDelta=ko.observable(0);
+           @widgetWidth = ko.computed({
+              read: () =>
+                effWidth = @width() * @sizeFactor();
+                return effWidth;
+              owner: @
+               }
+           , @);
+           @widgetHeight = ko.computed({
+              read: () =>
+                effHeight = @height() * @sizeFactor();
+                return effHeight;
+              owner: @
+               }
+           , @);
+           @styleWidth = ko.computed({
+              read: () =>
+                return @widgetWidth() + "px";
+              owner: @
+               }
+           , @);
+           @styleHeight = ko.computed({
+              read: () =>
+                return @widgetHeight() + "px";
+              owner: @
+           }
+           , @);
            @styleLeft = ko.computed({
               read: () =>
-                  return @positionX() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionX(value);
+                effPositionX = @positionX() - (@widgetWidth() / 2);
+                return effPositionX + "px";
               owner: @
            }
-           , @)
+           , @);
            @styleTop = ko.computed({
               read: () =>
-                  return @positionY() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionY(value);
+                 effPositionY = @positionY() - (@widgetHeight() / 2);
+                 return effPositionY + "px";
               owner: @
            }
-           , @)
-           @width = kb.defaultObservable(@_width, '15px');
-           @height = kb.defaultObservable(@_height, '15px');
+           , @);
+
 
     class DeviceTypeViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -137,57 +282,103 @@ define(['jquery',
 
     class DeviceViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible', 'statusWindowTemplate', 'properties']})
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
-           @location = kb.defaultObservable(@_location, 'Undefined');
+           @location = kb.defaultObservable(kb.observable(model, 'location'), 'Undefined');
            @state = kb.defaultObservable(@_state, 'activated');
+           @isDesactivated = ko.computed({
+              read: () =>
+                return @state() == "deactivated";
+              owner: @
+           }
+           , @);
            @fault = kb.defaultObservable(@_fault, 'no');
            @positionX = kb.defaultObservable(@_positionX, 0);
            @positionY = kb.defaultObservable(@_positionY, 0);
+           @sizeFactor=ko.observable(1.0);
+           @widgetWidth = ko.computed({
+              read: () =>
+                effWidth = 32 * @sizeFactor();
+                return effWidth;
+              owner: @
+           }
+           , @);
+           @widgetHeight = ko.computed({
+              read: () =>
+                effHeight = 32 * @sizeFactor();
+                return effHeight;
+              owner: @
+           }
+           , @);
+           @styleWidth = ko.computed({
+              read: () =>
+                return @widgetWidth() + "px";
+              owner: @
+           }
+           , @);
+           @styleHeight = ko.computed({
+              read: () =>
+                return @widgetHeight() + "px";
+              owner: @
+           }
+           , @);
            @styleLeft = ko.computed({
               read: () =>
-                  return @positionX() + "px";
-              write: (value) =>
-                  value = parseInt(value.replace(/px/, ""));
-                  if (!isNaN(value))
-                    @positionX(value);
+                effPositionX = @positionX() - (@widgetWidth() / 2);
+                return effPositionX + "px";
               owner: @
            }
-           , @)
+           , @);
            @styleTop = ko.computed({
               read: () =>
-                return @positionY() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionY(value);
+                effPositionY = @positionY() - (@widgetHeight() / 2);
+                return effPositionY + "px";
               owner: @
            }
-           , @)
+           , @);
+           @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+           @locationZone = ko.computed({
+              read: () =>
+                zoneModel = @zones.collection().get(@location());
+                if (zoneModel == undefined)
+                  return null;
+                return @zones.viewModelByModel(zoneModel);
+              owner: @
+           }
+           );
+           @tooltipContent = ko.computed( () =>
+              return @name() + " /n" + @id();
+           , @);
+           @statusWindowTitle = ko.computed( () =>
+             return @name();
+           , @);
+           @statusWindowTemplate = ko.observable(deviceStatusWindowTemplateHtml);
            @type = kb.defaultObservable(@_type, 'Undefined');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
               if (@type() == "iCASA.Cooler")
-                 imgName = "Cooler";
+                 imgName = "airConditionne";
               if (@type() == "iCASA.AudioSource")
-                 imgName = "Player";
+                 imgName = "sourceSonore";
               if (@type() == "iCASA.DimmerLight")
-                 imgName = "DimmerLamp";
+                 imgName = "lampeVariable";
               if (@type() == "iCASA.Thermometer")
-                 imgName = "Thermometer";
+                 imgName = "thermometre";
               if (@type() == "iCASA.Heater")
-                 imgName = "Heater";
+                 imgName = "radiateur";
               if (@type() == "iCASA.Photometer")
                  imgName = "Photometer";
               if (@type() == "iCASA.BinaryLight")
-                 imgName = "Lamp";
+                 imgName = "lampe";
               if (@type() == "iCASA.PresenceSensor")
-                 imgName = "Presence";
+                 imgName = "detecteurMouvements";
               if (@type() == "iCASA.Speaker")
-                 imgName = "Speaker";
+                 imgName = "hautParleur";
               if (@type() == "iCASA.Power")
                  imgName = "Power";
+              if (@type() == "iCASA.BathroomScale")
+                 imgName = "pesePersonne";
 
               return "/assets/images/devices/" + imgName + ".png";
            , @);
@@ -195,10 +386,6 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "event",
                     imgSrc: '/assets/images/devices/decorators/event.png',
-                    show: false}
-                new DecoratorViewModel new Backbone.Model {
-                    name: "deactivated",
-                    imgSrc: '/assets/images/devices/decorators/stop.png',
                     show: false},
                 new DecoratorViewModel new Backbone.Model {
                     name: "fault",
@@ -207,9 +394,18 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "activated",
                     imgSrc: '/assets/images/devices/decorators/play.png',
-                    show: true}
+                    show: true},
+                new DecoratorViewModel new Backbone.Model {
+                    name: "on-top",
+                    imgSrc: '/assets/images/devices/pesePersonnePieds.png',
+                    width: 40,
+                    height: 40,
+                    positionX: 1,
+                    positionY: -7,
+                    show: false}
            ]);
-           @updateWidget= (newValue) =>
+           @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
+           @updateWidgetImg= (newValue) =>
                 activatedState = false;
                 if ("activated" == @state())
                     activatedState = true;
@@ -222,44 +418,147 @@ define(['jquery',
                         decorator.show(activatedState && !faultState);
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
-                    if (decorator.name() == "deactivated")
-                        decorator.show(!activatedState);
                 );
+           @isHighlighted = ko.observable(false);
+           @addHighlight= () =>
+                @isHighlighted(true);
+                newFactor = 1.2;
+                @sizeFactor(newFactor);
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    decorator.sizeFactor(newFactor);
+                );
+           @removeHighlight= () =>
+                @isHighlighted(false);
+                newFactor = 1.0;
+                @sizeFactor(newFactor);
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    decorator.sizeFactor(newFactor);
+                );
+           @saveLocation= ko.observable(false);
+           @saveLocationChanges= (data, event) =>
+                @location('bedroom');
+                @saveChanges();
+           @saveChanges= () =>
+                @.model().saveChanges();
+           @properties=kb.observable(model, 'properties');
+          
            # init
-           @state.subscribe(@updateWidget);
-           @fault.subscribe(@updateWidget);
-           @updateWidget();
+           @updateBathroomScaleDecorator= (newValue) =>
+                presence = @properties().presence_detected;
+                ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "on-top")
+                          if (presence == true)
+                               decorator.show(true);
+                          else
+                               decorator.show(false);
+                );
+          
+           @initBahtroomScale= () =>
+                if (@type() == "iCASA.BathroomScale")
+                     ko.utils.arrayForEach(@decorators(), (decorator) ->
+                         if (decorator.name() == "on-top")
+                             decorator.show(true);
+                     );
+                     @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
+                     @properties.subscribe(@updateBathroomScaleDecorator);
+           @initBahtroomScale();
+           
+           @state.subscribe(@updateWidgetImg);
+           @fault.subscribe(@updateWidgetImg);
+           @updateWidgetImg();
+
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible', 'statusWindowTemplate']})
+           @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
-           @positionX = kb.defaultObservable(@_positionX, 'Undefined');
-           @positionY = kb.defaultObservable(@_positionY, 'Undefined');
+           @positionX = kb.defaultObservable(@_positionX, 0);
+           @positionY = kb.defaultObservable(@_positionY, 0);
+           @sizeFactor=ko.observable(1.0);
+           @widgetWidth = ko.computed({
+              read: () =>
+                effWidth = 50 * @sizeFactor();
+                return effWidth;
+              owner: @
+           }
+           , @);
+           @widgetHeight = ko.computed({
+              read: () =>
+                effHeight = 50 * @sizeFactor();
+                return effHeight;
+              owner: @
+           }
+           , @);
+           @styleWidth = ko.computed({
+              read: () =>
+                return @widgetWidth() + "px";
+              owner: @
+           }
+           , @);
+           @styleHeight = ko.computed({
+              read: () =>
+                return @widgetHeight() + "px";
+              owner: @
+           }
+           , @);
            @styleLeft = ko.computed({
               read: () =>
-                return @positionX() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionX(value);
+                effPositionX = @positionX() - (@widgetWidth() / 2);
+                return effPositionX + "px";
               owner: @
            }
-           , @)
+           , @);
            @styleTop = ko.computed({
               read: () =>
-                return @positionY() + "px";
-              write: (value) =>
-                value = parseInt(value.replace(/px/, ""));
-                if (!isNaN(value))
-                  @positionY(value);
+                effPositionY = @positionY() - (@widgetHeight() / 2);
+                return effPositionY + "px";
               owner: @
            }
-           , @)
+           , @);
+           @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+           @locationZone = ko.computed({
+              read: () =>
+                zoneModel = @zones.collection().get(@location());
+                if (zoneModel == undefined)
+                  return null;
+                return @zones.viewModelByModel(zoneModel);
+              write: (zone) =>
+                if (zone != undefined)
+                  zoneName = zone.name();
+                  @location(zoneName);
+                return zone;
+              owner: @
+           }
+           );
+           @tooltipContent = ko.computed( () =>
+              return @name() + " /n" + @id();
+           , @);
+           @statusWindowTitle = ko.computed( () =>
+              return @name();
+           , @);
+           @statusWindowTemplate = personStatusWindowTemplateHtml;
+           @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
            @imgSrc = "/assets/images/users/user2.png";
            @decorators = ko.observableArray([  ]);
+           @isHighlighted = ko.observable(false);
+           @addHighlight= () =>
+              @isHighlighted(true);
+              newFactor = 1.2;
+              @sizeFactor(newFactor);
+              ko.utils.arrayForEach(@decorators(), (decorator) ->
+                decorator.sizeFactor(newFactor);
+              );
+           @removeHighlight= () =>
+              @isHighlighted(false);
+              newFactor = 1.0;
+              @sizeFactor(newFactor);
+              ko.utils.arrayForEach(@decorators(), (decorator) ->
+                decorator.sizeFactor(newFactor);
+              );
+           @saveChanges= () =>
+               @.model().saveChanges();
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -299,10 +598,6 @@ define(['jquery',
                     id: "devices",
                     name: "Devices",
                     template: devTabHtml},
-                new TabViewModel {
-                    id: "rooms",
-                    name: "Rooms",
-                    template: roomTabHtml},
                 new TabViewModel {
                     id: "zones",
                     name: "Zones" ,
@@ -348,48 +643,47 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ id: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              DataModel.collections.devices.push(newDevice);
               newDevice.save();
-              DataModel.Collections.fetch();
 
            @removeDevice = (device) =>
               device.model().destroy();
 
            @showDeviceWindow = (device) =>
-              DataModel.collections.devices.fetch();
+              device.statusWindowVisible(false);
+              device.statusWindowVisible(true);
 
            @newPersonName = ko.observable("");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ id: @newPersonName(), name: @newPersonName(), positionX: 0, positionY: 0 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), positionX: 1, positionY: 1 });
+              DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
            @removePerson = (person) =>
-              @persons.remove(person);
-              @persons.fetch();
+              person.model().destroy();
 
            @showPersonWindow = (person) =>
-              DataModel.collections.persons.fetch();
+              person.statusWindowVisible(false);
+              person.statusWindowVisible(true);
 
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ id: @newZoneName(), name: @newZoneName(), isRoom: false });
+              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
+              DataModel.collections.zones.push(newZone);
               newZone.save();
-              newZone.fetch();
-              @zones.push(new ZoneViewModel(newZone));
 
            @newRoomName = ko.observable("");
 
            @createRoom = () =>
-              newZone = new DataModel.Models.Zone({ id: @newRoomName(), name: @newRoomName(), isRoom: true });
-              newZone.save();
-              newZone.fetch();
+              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               @zones.push(new ZoneViewModel(newZone));
+              newZone.save();
 
            @removeZone = (zone) =>
-              @zones.remove(zone);
-              @zones.fetch();
+              zone.model().destroy();
 
            @selectedScript = ko.observable();
 

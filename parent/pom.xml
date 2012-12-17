@@ -12,6 +12,13 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 
+    <parent>
+        <groupId>fr.liglab.adele.common</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath></relativePath>
+    </parent>
+
 	<!-- Project coordinates -->
 	<groupId>fr.liglab.adele.icasa</groupId>
 	<artifactId>parent</artifactId>
@@ -30,28 +37,10 @@
 		<projectName>${project.artifactId}</projectName>
 		
 		<iCasaVersion>${productVersion}</iCasaVersion>
-
-        <!-- dependencies -->
-        <iPojoVersion>1.8.4</iPojoVersion>
 		
 		<!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
-	<!-- Project organization -->
-	<organization>
-		<name>Adele Team</name>
-		<url>http://www-adele.imag.fr/</url>
-	</organization>
-
-	<!-- Project license -->
-	<licenses>
-		<license>
-			<name>Apache License - Version 2.0</name>
-			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
-			<distribution>repo</distribution>
-		</license>
-	</licenses>
 
     <developers>
         <developer>
@@ -128,241 +117,35 @@
         </contributor>
     </contributors>
 
-	<!-- Project repositories -->
-	<repositories>
-		<repository>
-			<id>icasa-snapshot-repository</id>
-			<name>iCASA Snapshot repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>icasa-release-repository</id>
-			<name>iCASA Release repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-	
-		<!-- OW2 projects repositories (mainly Chameleon) -->
-		<repository>
-			<id>ow2-release-repository</id>
-			<name>OW2 release repository</name>
-			<url>http://maven.ow2.org/maven2</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-		</repository>
-		<repository>
-			<id>ow2-snapshot-repository</id>
-			<name>OW2 Snapshot repository</name>
-			<url>http://maven.ow2.org/maven2-snapshot</url>
+    <!-- Project repositories -->
+    <repositories>
+        <repository>
+            <id>icasa-snapshot-repository</id>
+            <name>iCASA Snapshot repository</name>
+            <url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
             <releases>
                 <enabled>false</enabled>
             </releases>
             <snapshots>
                 <enabled>true</enabled>
             </snapshots>
-		</repository>
-
-        <!-- Java.net repo -->
-        <repository>
-            <id>maven2-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/2/</url>
-            <layout>default</layout>
         </repository>
         <repository>
-            <id>maven-glassfish-repository.dev.java.net</id>
-            <name>Java.net Repository for Maven</name>
-            <url>http://download.java.net/maven/glassfish/</url>
-            <layout>default</layout>
+            <id>icasa-release-repository</id>
+            <name>iCASA Release repository</name>
+            <url>https://repository-icasa.forge.cloudbees.com/release/</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
         </repository>
-		
-		<!-- ROSE repository -->
-		<repository>
-			<id>maven-barjo-repository-release</id>
-			<name>RoSe - Release</name>
-			<url>http://repository-barjo.forge.cloudbees.com/release/</url>
-			<layout>default</layout>
-		</repository>
-		<repository>
-			<id>maven-barjo-repository-snapshot</id>
-			<name>RoSe - Snapshot</name>
-			<url>http://repository-barjo.forge.cloudbees.com/snapshot/</url>
-			<layout>default</layout>
-		</repository>
-	</repositories>
-	
-	<pluginRepositories>
-		<!-- iCASA repositories -->
-		<pluginRepository>
-			<id>icasa-plugin-snapshot-repository</id>
-			<name>iCASA Plugin Snapshot repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</pluginRepository>
-		<pluginRepository>
-			<id>icasa-plugin-release-repository</id>
-			<name>iCASA Plugin Release repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</pluginRepository>
-
-               <!-- dependency tools repository -->
-               <pluginRepository>
-    		       <id>elca-services</id>
-                       <url>http://el4.elca-services.ch/el4j/maven2repository</url>
-                       <releases>
-                           <enabled>true</enabled>
-                      </releases>
-               </pluginRepository>
-	</pluginRepositories>
+    </repositories>
 
 	<!-- Dependencies version management -->
 	<dependencyManagement>
 		<dependencies>
-		
-			<!-- Loggers -->
-			<dependency>
-				<groupId>org.slf4j</groupId>
-				<artifactId>slf4j-api</artifactId>
-				<version>1.6.1</version>
-			</dependency>
-
-			<!-- The OSGi r4.2 API -->
-			<dependency>
-				<groupId>org.osgi</groupId>
-				<artifactId>org.osgi.core</artifactId>
-				<version>4.2.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.osgi</groupId>
-				<artifactId>org.osgi.compendium</artifactId>
-				<version>4.2.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.osgi</groupId>
-				<artifactId>org.osgi.enterprise</artifactId>
-				<version>4.2.0</version>
-			</dependency>
-
-            <!-- felix framework -->
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.main</artifactId>
-                <version>3.0.8</version>
-            </dependency>
-
-			<!-- Servlet 2.5 API -->
-			<dependency>
-				<groupId>javax.servlet</groupId>
-				<artifactId>servlet-api</artifactId>
-				<version>2.5</version>
-			</dependency>
-
-			<!-- The OSGi r4.2-draft3 (RFC 0112) Bundle Repository API -->
-			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.osgi.service.obr</artifactId>
-				<version>1.0.2</version>
-				<!-- Do not include unofficial OSGi bundles in dependencies. -->
-				<exclusions>
-					<exclusion>
-						<groupId>org.apache.felix</groupId>
-						<artifactId>org.osgi.core</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-
-			<!-- Apache Felix iPOJO 1.8.x framework and API -->
-			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.ipojo.metadata</artifactId>
-				<version>1.4.0</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.ipojo.annotations</artifactId>
-				<version>${iPojoVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.ipojo</artifactId>
-				<version>${iPojoVersion}</version>
-				<exclusions>
-					<!-- Do not include older OSGi API (4.0.0). -->
-					<exclusion>
-						<groupId>org.osgi</groupId>
-						<artifactId>org.osgi.core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.osgi</groupId>
-						<artifactId>org.osgi.compendium</artifactId>
-					</exclusion>
-					<!-- Do not include ASM. -->
-					<exclusion>
-						<groupId>asm</groupId>
-						<artifactId>asm-all</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.felix</groupId>
-				<artifactId>org.apache.felix.ipojo.api</artifactId>
-				<version>1.6.0</version>
-				<exclusions>
-					<!-- Do not include older iPOJO (1.6.0). -->
-					<exclusion>
-						<groupId>org.apache.felix</groupId>
-						<artifactId>org.apache.felix.ipojo</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.felix</groupId>
-						<artifactId>org.apache.felix.ipojo.composite</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.apache.felix</groupId>
-						<artifactId>org.apache.felix.ipojo.manipulator</artifactId>
-					</exclusion>
-					<!-- Do not include older OSGi API (4.0.0). -->
-					<exclusion>
-						<groupId>org.osgi</groupId>
-						<artifactId>org.osgi.core</artifactId>
-					</exclusion>
-					<exclusion>
-						<groupId>org.osgi</groupId>
-						<artifactId>org.osgi.compendium</artifactId>
-					</exclusion>
-				</exclusions>
-			</dependency>
-			<dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.fileinstall</artifactId>
-                <version>3.1.10</version>
-            </dependency>
 
 			<!-- OW2 JSON service -->
 			<dependency>
@@ -381,167 +164,6 @@
 				<groupId>org.ow2.chameleon.handies</groupId>
 				<artifactId>ipojo-log-handler</artifactId>
 				<version>0.0.1-SNAPSHOT</version>
-			</dependency>
-			
-			<!-- iCasa -->
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>clock.api</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>clock.simulated.impl</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>clock.system.impl</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>context.api</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>context.impl</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>device.api</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>device.light</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>device.power</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>device.presence</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>device.sound</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>device.temperature</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>environment.api</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>file.install.script.executor</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>script.api</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>script.executor.api</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>script.executor.impl</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>script.interpreter</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>simulated.devices</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>simulated.environment</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>simulated.sensor.importer</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>common.device.widgets</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>web.common</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-			<dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>house.simulator</artifactId>
-				<version>${iCasaVersion}</version>
-			</dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>simulator.remote</artifactId>
-                <version>${iCasaVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>gogo.adapter</artifactId>
-                <version>${iCasaVersion}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>play2.osgi</artifactId>
-                <version>${iCasaVersion}</version>
-                <type>play2</type>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>icasa.web</artifactId>
-                <version>${iCasaVersion}</version>
-                <type>play2</type>
-            </dependency>
-			
-			<!-- ROSE -->
-			<dependency>
-				<groupId>org.ow2.chameleon.rose</groupId>
-				<artifactId>rose-core</artifactId>
-				<version>1.0.1-SNAPSHOT</version>
-			</dependency>
-            <dependency>
-                <groupId>org.ow2.chameleon.rose</groupId>
-                <artifactId>json-configurator</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
-            </dependency>
-			<dependency>
-				<groupId>org.barjo.atmosgi</groupId>
-				<artifactId>atmosgi-component</artifactId>
-				<version>0.1.0-SNAPSHOT</version>
-			</dependency>
-			<dependency>
-				<groupId>org.barjo.atmosgi</groupId>
-				<artifactId>atmosgi-service</artifactId>
-				<version>0.1.0-SNAPSHOT</version>			
 			</dependency>
 
             <!-- Jersey ROSE exporter -->
@@ -563,7 +185,7 @@
             <dependency>
                 <groupId>org.ow2.chameleon.rose.rest</groupId>
                 <artifactId>jersey-exporter</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>${roseVersion}</version>
             </dependency>
             <dependency>
                 <groupId>javax.mail</groupId>
@@ -575,6 +197,9 @@
                 <artifactId>jaxb-api-osgi</artifactId>
                 <version>2.2.1</version>
             </dependency>
+
+			<!--  iCasa devices -->
+
 
             <!-- Gogo command dependencies -->
 			<dependency>
@@ -640,21 +265,6 @@
 					</configuration>
 				</plugin>
 
-				<!-- iPOJO plugin -->
-				<plugin>
-					<groupId>org.apache.felix</groupId>
-					<artifactId>maven-ipojo-plugin</artifactId>
-					<version>1.8.6</version>
-					<!-- Attach the iPOJO bundle manipulation to the project lifecycle. -->
-					<executions>
-						<execution>
-							<goals>
-								<goal>ipojo-bundle</goal>
-							</goals>
-						</execution>
-					</executions>
-				</plugin>
-
 				<!-- License plugin -->
 				<plugin>
 					<groupId>com.google.code.maven-license-plugin</groupId>
@@ -679,6 +289,7 @@
 							<exclude>**/*.md</exclude>
 							<exclude>**/*.jj</exclude>
 							<exclude>.git/**/*</exclude>
+                            <exclude>**/.idea/**</exclude>
 						</excludes>
 					</configuration>
 					<executions>
@@ -710,19 +321,6 @@
 					<version>1.0.1-SNAPSHOT</version>
 					
 				</plugin>
-				
-				<!-- Ant plugin -->
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-antrun-plugin</artifactId>
-					<version>1.7</version>
-				</plugin>
-				
-				<plugin>
-					<groupId>org.apache.maven.plugins</groupId>
-					<artifactId>maven-assembly-plugin</artifactId>
-					<version>2.3</version>
-				</plugin>
 
 				<!-- Play2 framework plugin -->
 				<plugin>
@@ -731,22 +329,7 @@
                 	<version>1.2.1</version>
             	</plugin>
 
-                <!-- Release plugins -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-release-plugin</artifactId>
-                    <version>2.3.2</version>
-                    <configuration>
-                        <allowTimestampedSnapshots>true</allowTimestampedSnapshots>
-                        <autoVersionSubmodules>true</autoVersionSubmodules>
-                        <releaseProfiles>release</releaseProfiles>
-                    </configuration>
-                </plugin>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.12</version>
-                </plugin>
+
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-javadoc-plugin</artifactId>
@@ -762,49 +345,12 @@
 		<!-- Build extensions -->
 		<extensions>
             <extension>
-                <groupId>org.apache.maven.wagon</groupId>
-                <artifactId>wagon-webdav-jackrabbit</artifactId>
-                <version>2.2</version>
-            </extension>
-            <extension>
                 <groupId>de.akquinet.innovation.play2</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
                 <version>1.2.1</version>
             </extension>
 		</extensions>
-		
-		<plugins>
-		  <plugin>
-            <groupId>org.codehaus.groovy.maven</groupId>
-            <artifactId>gmaven-plugin</artifactId>
-            <version>1.0</version>
-            <executions>
-                <execution>
-                    <phase>initialize</phase>
-                    <goals>
-                        <goal>execute</goal>
-                  </goals>
-                   <configuration>
-                      <source>
-                      import org.apache.commons.lang.StringUtils
-					  
-                      transformName = project.properties["projectName"].replaceAll("\\.", " ")
-					  def words = transformName.split(" ")
-                      def capitalizedStr = []
-                      for ( i in 0..(words.size() - 1) ) {
-                        def w = words[i]
-						def capW = w[0].toUpperCase()
-                        def leafW = w[1..-1]
-                        capitalizedStr += (capW + leafW)
-                      }
-					  
-                      project.properties["projectName"] = capitalizedStr.join(' ')
-                     </source>
-                 </configuration>
-             </execution>
-            </executions>
-          </plugin>
-		</plugins>
+
 	</build>
 
     <distributionManagement>

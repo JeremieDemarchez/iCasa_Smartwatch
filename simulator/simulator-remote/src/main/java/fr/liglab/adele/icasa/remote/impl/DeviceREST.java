@@ -19,17 +19,17 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.environment.SimulationManager;
-import fr.liglab.adele.icasa.environment.Position;
-import org.apache.felix.ipojo.*;
+import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.ow2.chameleon.json.JSONService;
 
 import java.util.*;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.ResponseBuilder;
 import java.text.ParseException;
@@ -46,12 +46,6 @@ import org.json.*;
 @Path(value="/devices/")
 public class DeviceREST {
 
-    @Requires(optional=true, proxy = false)
-    GenericDevice[] _devices;
-
-    @Requires(optional=true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.environment.SimulatedDevice)")
-    private Factory[] _deviceFactories;
-
     @Requires
     private SimulationManager _simulationMgr;
 
@@ -64,11 +58,10 @@ public class DeviceREST {
         ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -85,7 +78,7 @@ public class DeviceREST {
     public String getDevices() {
         boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
-        for (GenericDevice device : _devices) {
+        for (LocatedDevice device : _simulationMgr.getDevices()) {
             JSONObject deviceJSON = getDeviceJSON(device);
             if (deviceJSON == null)
                 continue;
@@ -96,15 +89,10 @@ public class DeviceREST {
         return currentDevices.toString();
     }
 
-    private JSONObject getDeviceJSON(GenericDevice device) {
-        String deviceType = "undefined";
-        if (device instanceof Pojo) {
-            try {
-                deviceType = ((Pojo) device).getComponentInstance().getFactory().getFactoryName();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+    private JSONObject getDeviceJSON(LocatedDevice device) {
+        String deviceType = device.getType();
+        if (deviceType == null)
+            deviceType = "undefined";
 
         Position devicePosition = _simulationMgr.getDevicePosition(device.getSerialNumber());
 
@@ -113,12 +101,19 @@ public class DeviceREST {
             deviceJSON = new JSONObject();
             deviceJSON.putOnce("id", device.getSerialNumber());
             deviceJSON.putOnce("name", device.getSerialNumber());
-            deviceJSON.put("fault", device.getFault());
-            deviceJSON.put("location", device.getLocation());
-            deviceJSON.put("state", device.getState());
+            deviceJSON.put("fault", device.getPropertyValue(GenericDevice.FAULT_PROPERTY_NAME));
+            deviceJSON.put("location", device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME));
+            deviceJSON.put("state", device.getPropertyValue(GenericDevice.STATE_PROPERTY_NAME));
             deviceJSON.put("type", deviceType);
-            deviceJSON.put("positionX", devicePosition.x);
-            deviceJSON.put("positionY", devicePosition.y);
+            if (devicePosition != null) {
+                deviceJSON.put("positionX", devicePosition.x);
+                deviceJSON.put("positionY", devicePosition.y);
+            }
+            JSONObject propObject = new JSONObject();
+            for (String property : device.getProperties()) {
+            	propObject.put(property, device.getPropertyValue(property));
+            }
+            deviceJSON.put("properties", propObject);
         } catch (JSONException e) {
             e.printStackTrace();
             deviceJSON = null;
@@ -127,14 +122,12 @@ public class DeviceREST {
         return deviceJSON;
     }
 
-    private JSONObject getDeviceTypeJSON(Factory deviceFactory) {
-        String deviceTypeName = deviceFactory.getName();
-
+    private JSONObject getDeviceTypeJSON(String deviceTypeStr) {
         JSONObject deviceTypeJSON = null;
         try {
             deviceTypeJSON = new JSONObject();
-            deviceTypeJSON.putOnce("id", deviceTypeName);
-            deviceTypeJSON.putOnce("name", deviceTypeName);
+            deviceTypeJSON.putOnce("id", deviceTypeStr);
+            deviceTypeJSON.putOnce("name", deviceTypeStr);
         } catch (JSONException e) {
             e.printStackTrace();
             deviceTypeJSON = null;
@@ -151,8 +144,8 @@ public class DeviceREST {
     public String getDeviceTypes() {
         boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
-        for (Factory deviceFactory : _deviceFactories) {
-            JSONObject deviceType = getDeviceTypeJSON(deviceFactory);
+        for (String deviceTypeStr : _simulationMgr.getDeviceTypes()) {
+            JSONObject deviceType = getDeviceTypeJSON(deviceTypeStr);
             if (deviceType == null)
                 continue;
 
@@ -162,15 +155,43 @@ public class DeviceREST {
         return currentDevices.toString();
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/deviceTypes/")
+    public Response getDeviceTypesOptions() {
+        return makeCORS(Response.ok());
+    }
+
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/deviceTypes/")
     public Response deviceTypes() {
         return makeCORS(Response.ok(getDeviceTypes()));
     }
 
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/device/")
+    public Response createsDeviceOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/device/{deviceId}")
+    public Response updatesDeviceOptions(@PathParam("deviceId") String deviceId) {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/devices/")
+    public Response getDevicesOptions() {
+        return makeCORS(Response.ok());
+    }
+
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/devices/")
     public Response devices() {
         return makeCORS(Response.ok(getDevices()));
@@ -185,14 +206,14 @@ public class DeviceREST {
      * @throws ParseException
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response device(@PathParam("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
             return makeCORS(Response.ok(getDevices()));
         }
 
-        GenericDevice foundDevice = findDevice(deviceId);
+        LocatedDevice foundDevice = findDevice(deviceId);
         if (foundDevice == null) {
             return makeCORS(Response.status(404));
         } else {
@@ -202,60 +223,83 @@ public class DeviceREST {
         }
     }
 
-    private GenericDevice findDevice(String deviceId) {
-        GenericDevice foundDevice = null;
-        for (GenericDevice device : _devices) {
-            if (device.getSerialNumber().equals(deviceId)) {
-                foundDevice = device;
-                break;
-            }
+    private LocatedDevice findDevice(String deviceId) {
+        return _simulationMgr.getDevice(deviceId);
+    }
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/device/{deviceId}")
+    public Response updatesDevice(@PathParam("deviceId") String deviceId, String content) {
+        if (deviceId == null || deviceId.length()<1){
+            return makeCORS(Response.status(404));
         }
-        return foundDevice;
+        LocatedDevice device = findDevice(deviceId);
+        if (device == null){
+            return makeCORS(Response.status(404));
+        }
+
+        DeviceJSON updatedDevice = DeviceJSON.fromString(content);
+        if (updatedDevice != null) {
+            updatedDevice.setId(deviceId);
+
+            if (updatedDevice.getState() != null)
+                device.setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, updatedDevice.getState());
+            if (updatedDevice.getFault() != null)
+                device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, updatedDevice.getFault());
+            if ((updatedDevice.getPositionX() != null) || (updatedDevice.getPositionY() != null)) {
+                Position position = _simulationMgr.getDevicePosition(deviceId);
+                int newPosX = position.x;
+                int newPosY = position.y;
+                if (updatedDevice.getPositionX() != null)
+                    newPosX = updatedDevice.getPositionX();
+                if (updatedDevice.getPositionY() != null)
+                    newPosY = updatedDevice.getPositionY();
+                _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
+            } else if (updatedDevice.getLocation() != null)
+                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulationManager.LOCATION_PROP_NAME, updatedDevice.getLocation());
+        }
+
+        JSONObject deviceJSON = getDeviceJSON(device);
+
+        return makeCORS(Response.ok(deviceJSON.toString()));
     }
 
     /**
      * Create a new device.
      *
-     * @param deviceId
-     * @param deviceName
-     * @param fault
-     * @param location
-     * @param state
      * @return
      */
     @POST
-    @Produces("application/json")
-    @Path(value="/device/{deviceId}")
-    public Response createDevice(@PathParam("deviceId") String deviceId, @FormParam("type") String type,
-                             @FormParam("name") String deviceName, @FormParam("fault") String fault,
-                             @FormParam("location") String location, @FormParam("state") String state) {
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/device/")
+    public Response createDevice(String content) {
 
-        Factory deviceFactory = getDeviceFactory(type);
+        DeviceJSON deviceJSON = DeviceJSON.fromString(content);
 
-        GenericDevice newDevice = null;
-        if (deviceFactory != null) {
+        String deviceType = deviceJSON.getType();
+
+        LocatedDevice newDevice = null;
+        if (deviceType != null) {
             // Generate a serial number
             Random m_random = new Random();
-            String serialNumber = Long.toString(m_random.nextLong(), 16);
-            // Create the device
-            Dictionary<String, String> properties = new Hashtable<String, String>();
-            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+            String deviceId = deviceType + "-" + Long.toString(m_random.nextLong(), 16);
+
+            Map<String, Object> properties = new HashMap<String, Object>();
+            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceJSON.getId());
             properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
             properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
-            //properties.put(Constants.SERVICE_DESCRIPTION, description);
-            properties.put("instance.name", deviceFactory.getName() + "-" + serialNumber);
+
             try {
-                newDevice = (GenericDevice) deviceFactory.createComponentInstance(properties);
-            } catch (UnacceptableConfiguration e) {
-                e.printStackTrace();
-                newDevice = null;
-            } catch (MissingHandlerException e) {
-                e.printStackTrace();
-                newDevice = null;
-            } catch (ConfigurationException e) {
+                _simulationMgr.createDevice(deviceType, deviceId, properties);
+            } catch (Exception e) {
                 e.printStackTrace();
                 newDevice = null;
             }
+
+            newDevice = _simulationMgr.getDevice(deviceId);
         }
 
         if (newDevice == null)
@@ -266,16 +310,6 @@ public class DeviceREST {
         return makeCORS(Response.ok(newDevice.toString())); //TODO check that newDevice must be included in the response body
     }
 
-    private Factory getDeviceFactory(String deviceType) {
-        Factory deviceFactory = null;
-        for (Factory factory : _deviceFactories) {
-            if (factory.getName().equals(deviceType))
-                deviceFactory = factory;
-        }
-
-        return deviceFactory;
-    }
-
     /**
      * Delete specified device.
      *
@@ -283,11 +317,11 @@ public class DeviceREST {
      * @return true if chain is successful deleted, false if it does not exist.
      */
     @DELETE
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/device/{deviceId}")
     public Response deleteDevice(@PathParam("deviceId") String deviceId) {
 
-        GenericDevice foundDevice = findDevice(deviceId);
+        LocatedDevice foundDevice = findDevice(deviceId);
         if (foundDevice == null)
             return Response.status(404).build();
         try {

@@ -2,6 +2,7 @@
 
 .idea
 *.iml
+.idea
 .project
 .settings
 .classpath
@@ -14,4 +15,7 @@ felix-cache
 
 # other folders
 bin
-/simulator/script-interpreter/src/main/javacc/.gitignore
+distribution/icasa-teaching-distribution/start*
+distribution/icasa-teaching-distribution/debug*
+distribution/icasa-dev/start*
+distribution/icasa-dev/debug*

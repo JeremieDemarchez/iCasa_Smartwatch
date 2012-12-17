@@ -16,11 +16,15 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * 
@@ -29,28 +33,26 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
  * @author Gabriel
  *
  */
+@Component(name = "MovePersonCommandNew")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
+      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
+@Instantiate(name = "move-persone-command-new")
 public class MovePersonCommand extends AbstractCommand {
 
-	private static final Logger logger = LoggerFactory.getLogger(MovePersonCommand.class);
-	
-	/**
-	 * Environment ID used to place a person
-	 */
-	private String location;
-	
+		
 	private String person;
 	
+	@Requires
 	private SimulationManager simulationManager;
+
+	private int newX;
+	private int newY;
 	
 
 	@Override
 	public Object execute() throws Exception {
-		logger.info("Move Person --> " + person + " Room --> " + location);
-		simulationManager.addUser(person);
-		if (person!=null && (!person.isEmpty()))
-			simulationManager.setUserLocation(person, location);
-		else
-			simulationManager.setUserLocation("uknown", location);
+		simulationManager.setPersonPosition(person, new Position(newX, newY));
 		return null;
 	}
 	
@@ -58,9 +60,17 @@ public class MovePersonCommand extends AbstractCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		this.person = param.getString("person");
-		this.location = param.getString("room");	   
+		this.newX = param.getInt("newX");
+		this.newY = param.getInt("newY");  
 	}
 	
+	
+	public void movePerson(String person, int newX, int newY) throws Exception {		
+	   this.person = person;
+	   this.newX = newX;
+	   this.newY = newY;
+	   execute();
+   }
 	
 
 }

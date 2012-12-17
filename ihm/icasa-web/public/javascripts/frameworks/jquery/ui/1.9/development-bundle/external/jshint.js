@@ -291,7 +291,7 @@ var JSHINT = (function () {
             newcap      : true, // if constructor names must be capitalized
             noarg       : true, // if arguments.caller and arguments.callee should be
                                 // disallowed
-            node        : true, // if the Node.js environment globals should be
+            node        : true, // if the Node.js simulator globals should be
                                 // predefined
             noempty     : true, // if empty blocks should be disallowed
             nonew       : true, // if using `new` for side-effects should be disallowed
@@ -309,7 +309,7 @@ var JSHINT = (function () {
             regexdash   : true, // if unescaped first/last dash (-) inside brackets
                                 // should be tolerated
             regexp      : true, // if the . should not be allowed in regexp literals
-            rhino       : true, // if the Rhino environment globals should be predefined
+            rhino       : true, // if the Rhino simulator globals should be predefined
             undef       : true, // if variables should be declared before used
             scripturl   : true, // if script-targeted URLs should be tolerated
             shadow      : true, // if variable shadowing should be tolerated
@@ -323,12 +323,12 @@ var JSHINT = (function () {
             validthis   : true, // if 'this' inside a non-constructor function is valid.
                                 // This is a function scoped option only.
             white       : true, // if strict whitespace rules apply
-            wsh         : true  // if the Windows Scripting Host environment globals
+            wsh         : true  // if the Windows Scripting Host simulator globals
                                 // should be predefined
         },
 
         // browser contains a set of global names which are commonly provided by a
-        // web browser environment.
+        // web browser simulator.
         browser = {
             ArrayBuffer              :  false,
             ArrayBufferView          :  false,

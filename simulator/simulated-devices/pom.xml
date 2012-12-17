@@ -34,6 +34,7 @@
 		<module>presence</module>
 		<module>sound</module>
 		<module>temperature</module>
+		<module>bathroom-scale</module>
 	</modules>
 
 </project>

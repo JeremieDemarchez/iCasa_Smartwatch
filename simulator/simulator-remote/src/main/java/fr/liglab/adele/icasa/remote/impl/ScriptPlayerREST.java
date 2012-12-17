@@ -28,7 +28,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import java.util.Date;
 import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Request;
+import javax.ws.rs.core.Context;
 
 /**
  * @author Thomas Leveque
@@ -79,11 +82,10 @@ public class ScriptPlayerREST {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -93,7 +95,7 @@ public class ScriptPlayerREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/scripts/")
     public Response zones() {
         return makeCORS(Response.ok(getScripts()));
@@ -116,10 +118,10 @@ public class ScriptPlayerREST {
         JSONObject scriptJSON = null;
         try {
             scriptJSON = new JSONObject();
-            scriptJSON.putOnce("id", scriptName);
-            scriptJSON.putOnce("name", scriptName);
-            scriptJSON.putOnce("state", scriptStateJSON.toString());
-            scriptJSON.putOnce("completePercent", _scriptExecutor.getExecutedPercentage());
+            scriptJSON.putOnce(ScriptJSON.ID_PROP, scriptName);
+            scriptJSON.putOnce(ScriptJSON.NAME_PROP, scriptName);
+            scriptJSON.putOnce(ScriptJSON.STATE_PROP, scriptStateJSON.toString());
+            scriptJSON.putOnce(ScriptJSON.COMPLETE_PERCENT_PROP, _scriptExecutor.getExecutedPercentage());
         } catch (JSONException e) {
             e.printStackTrace();
             scriptJSON = null;
@@ -155,7 +157,7 @@ public class ScriptPlayerREST {
      * return <code>null<code> if the script does not exist.
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/script/{scriptId}")
     public Response script(@PathParam("scriptId") String scriptId) {
         if (scriptId == null || scriptId.length()<1){
@@ -173,20 +175,31 @@ public class ScriptPlayerREST {
     }
 
     @OPTIONS
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/scripts/")
+    public Response getScriptsOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/script/{scriptId}")
     public Response updatesScriptOptions(@PathParam("scriptId") String scriptId) {
-        return makeCORS(Response.ok(), "origin, x-requested-with, content-type");
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/script/")
+    public Response createsScriptOptions() {
+        return makeCORS(Response.ok());
     }
 
     @PUT
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Path(value="/script/{scriptId}")
-    public Response updatesScriptPut(@PathParam("scriptId") String scriptId, @FormParam("state") String state) {
-        return updatesScript(scriptId, state, null, null);
-    }
-
-    public Response updatesScript(String scriptId, String state, Date startDate, Integer factor) {
+    public Response updatesScriptPut(@PathParam("scriptId") String scriptId, String content) {
         if (scriptId == null || scriptId.length()<1){
             return makeCORS(Response.status(404));
         }
@@ -194,26 +207,30 @@ public class ScriptPlayerREST {
         boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
         if (!scriptFound) {
             return makeCORS(Response.status(404));
-        } else {
-            String selectedScriptName = _scriptExecutor.getCurrentScript();
-            boolean isSelected = scriptId.equals(selectedScriptName);
-            State scriptState = _scriptExecutor.getState();
-            if (!isSelected && !State.STOPPED.equals(scriptState)) {
-                _scriptExecutor.stop();
-                scriptState = State.STOPPED;
-            }
+        }
 
-            boolean isStarted = State.EXECUTING.equals(scriptState);
-            boolean isStopped = State.STOPPED.equals(scriptState);
-            boolean isPaused = State.PAUSED.equals(scriptState);
+        String selectedScriptName = _scriptExecutor.getCurrentScript();
+        boolean isSelected = scriptId.equals(selectedScriptName);
+        State scriptState = _scriptExecutor.getState();
+        if (!isSelected && !State.STOPPED.equals(scriptState)) {
+            _scriptExecutor.stop();
+            scriptState = State.STOPPED;
+        }
 
-            ScriptState newScriptState = ScriptState.fromString(state);
+        boolean isStarted = State.EXECUTING.equals(scriptState);
+        boolean isStopped = State.STOPPED.equals(scriptState);
+        boolean isPaused = State.PAUSED.equals(scriptState);
+
+        ScriptJSON script = ScriptJSON.fromString(content);
+        if (script != null) {
+
+            ScriptState newScriptState = ScriptState.fromString(script.getState());
             if (ScriptState.STARTED.equals(newScriptState)) {
                if (isStopped) {
-                   if ((factor == null) && (startDate == null))
+                   if ((script.getFactor() == null) && (script.getStartDate() == null))
                        _scriptExecutor.execute(scriptId);
                    else
-                       _scriptExecutor.execute(scriptId, startDate, factor);
+                       _scriptExecutor.execute(scriptId, script.getStartDate(), script.getFactor());
                }
                else if (isPaused)
                    _scriptExecutor.resume();
@@ -224,10 +241,10 @@ public class ScriptPlayerREST {
                 if (isStarted || isPaused)
                     _scriptExecutor.stop();
             }
-
-            JSONObject scriptJSON = getScriptJSON(scriptId);
-
-            return makeCORS(Response.ok(scriptJSON.toString()));
         }
+
+        JSONObject scriptJSON = getScriptJSON(scriptId);
+
+        return makeCORS(Response.ok(scriptJSON.toString()));
     }
 }

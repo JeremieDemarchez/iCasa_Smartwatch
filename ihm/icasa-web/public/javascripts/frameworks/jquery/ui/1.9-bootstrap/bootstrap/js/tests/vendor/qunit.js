@@ -75,7 +75,7 @@ Test.prototype = {
 			name: this.testName
 		} );
 
-		// allow utility functions to access the current test environment
+		// allow utility functions to access the current test simulator
 		// TODO why??
 		QUnit.current_testEnvironment = this.testEnvironment;
 

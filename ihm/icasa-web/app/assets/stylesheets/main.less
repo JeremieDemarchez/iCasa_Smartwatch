@@ -52,6 +52,13 @@
 //    }
 //}
 
+.blurAndGrayscale {
+    filter: url(blurAndGrayscale.svg#blurAndGrayscale); /* Firefox 3.5+ */
+    filter: gray; /* IE6-9 */
+    -webkit-filter: grayscale(100%) blur(1px);
+    filter: grayscale(100%) blur(1px);
+}
+
 /* Global settings */
 
 body
@@ -102,73 +109,63 @@ body section
                 top:0px;
                 left:0px;
 
-                #deviceWidgets {
+
+                .deviceWidget {
+                    width: 32px;
+                    height: 32px;
                     position: absolute;
-                    top:0px;
-                    left:0px;
-                    width: 100%;
-                    height: 100%;
 
-                    .deviceWidget {
-                        width: 32px;
-                        height: 32px;
-                        position: absolute;
+                    .deviceWidgetContainer {
+                        position: relative;
+                        top:0px;
+                        left:0px;
 
-                        .deviceWidgetContainer {
-                            position: relative;
+                        .deviceWidgetIcon {
+                            position: absolute;
+                            width: 100%;
+                        }
+
+                        .deviceWidgetDecorators {
+                            position: absolute;
                             top:0px;
                             left:0px;
+                            width: 32px;
+                            height: 32px;
 
-                            .deviceWidgetIcon {
+                            .deviceWidgetDecorator {
                                 position: absolute;
-                                width: 100%;
                             }
+                        }
 
-                            .deviceWidgetDecorators {
-                                position: absolute;
-                                top:0px;
-                                left:0px;
-                                width: 32px;
-                                height: 32px;
+                        .deviceTitle {
 
-                                .deviceWidgetDecorator {
-                                    position: absolute;
-                                }
-                            }
                         }
                     }
                 }
 
-                #userWidgets {
+
+                .userWidget {
+                    width: 50px;
                     position: absolute;
-                    top:0px;
-                    left:0px;
-                    width: 100%;
-                    height: 100%;
 
-                    .userWidget {
-                        width: 50px;
-                        position: absolute;
+                    .userWidgetContainer {
+                        position: relative;
+                        top:0px;
+                        left:0px;
 
-                        .userWidgetContainer {
-                            position: relative;
+                        .userWidgetIcon {
+                            position: absolute;
+                            width: 100%;
+                        }
+
+                        .userWidgetDecorators {
+                            position: absolute;
                             top:0px;
                             left:0px;
+                            width: 50px;
 
-                            .userWidgetIcon {
+                            .userWidgetDecorator {
                                 position: absolute;
-                                width: 100%;
-                            }
-
-                            .userWidgetDecorators {
-                                position: absolute;
-                                top:0px;
-                                left:0px;
-                                width: 50px;
-
-                                .userWidgetDecorator {
-                                    position: absolute;
-                                }
                             }
                         }
                     }

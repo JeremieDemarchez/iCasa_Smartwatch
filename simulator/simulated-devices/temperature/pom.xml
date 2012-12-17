@@ -52,7 +52,7 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>environment.api</artifactId>
+      <artifactId>simulator.api</artifactId>
     </dependency>
   </dependencies>
 
@@ -63,7 +63,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.device.impl</Private-Package>
+            <Private-Package>fr.liglab.adele.icasa.device.temperature.impl</Private-Package>
           </instructions>
         </configuration>
       </plugin>

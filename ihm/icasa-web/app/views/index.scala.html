@@ -65,26 +65,28 @@
     <article id="map">
         <section id="mapContainer">
             <img id="mapImg" src="@routes.Assets.at("images/paulHouse.png")"" />
-            <div id="deviceWidgets" data-bind="foreach: $root.devices">
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: id }, style: { left: styleLeft, top: styleTop }">
-                    <div class="deviceWidgetContainer">
-                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name }" />
-                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <div id="userWidgets" data-bind="foreach: $root.persons()">
-                <div class="userWidget" data-bind="attr: { id: id }, style: { left: styleLeft, top: styleTop }">
+            <!-- ko foreach: $root.persons() -->
+                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
                     <div class="userWidgetContainer">
-                        <img data-bind="attr: { src: imgSrc, alt: name }" />
+                        <img class="userWidgetIcon"data-bind="attr: { src: imgSrc, alt: name, title: name }" />
                         <div class="userWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: width, height: height }, visible: show" />
+                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
                         </div>
                     </div>
                 </div>
-            </div>
+            <!-- /ko -->
+            <!-- ko foreach: $root.devices() -->
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
+                    <div class="deviceWidgetContainer">
+                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
+                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
+                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
+                        </div>
+                        <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }">
+                        </div>
+                    </div>
+                </div>
+            <!-- /ko -->
         </section>
     </article>
     <aside id="actionTabs">
@@ -95,10 +97,15 @@
 </section>
 <section>
     <article id="statusWindows">
-            <div data-bind="foreach: devices">
-                <div class="deviceWindow" data-bind="attr: { id: id, alt: name }">
-
+        <!-- ko foreach: $root.devices() -->
+            <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name, title:name}, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
             </div>
+        <!-- /ko -->
+        <!-- ko foreach: $root.persons() -->
+           <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+
+        <!-- /ko -->
     </article>
 </section>
 <footer>

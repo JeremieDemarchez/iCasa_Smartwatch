@@ -16,18 +16,28 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 
 /**
  * 
- * Sets the fault state of device to "Yes"
+ * Create a new device instance
  * 
  * @author Gabriel
  *
  */
+@Component(name = "RemoveDeviceCommand")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{removeDevice}"),
+      @StaticServiceProperty(name = "name", value = "remove-device", type = "String") })
+@Instantiate(name="remove-device-command")
 public class RemoveDeviceCommand extends DeviceCommand {
 
-	
+	@Requires	
 	private SimulationManager simulationManager;
 
 
@@ -36,5 +46,14 @@ public class RemoveDeviceCommand extends DeviceCommand {
 		simulationManager.removeDevice(deviceId);
 		return null;
    }
+	
+	
+	public void removeDevice(String deviceId) throws Exception {
+		this.deviceId = deviceId;
+		execute();
+	}
+	
+	
+	
 
 }

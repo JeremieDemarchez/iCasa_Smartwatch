@@ -15,15 +15,11 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import javax.ws.rs.DELETE;
-import javax.ws.rs.FormParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -32,9 +28,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.environment.Person;
-import fr.liglab.adele.icasa.environment.Position;
-import fr.liglab.adele.icasa.environment.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.Position;
 
 /**
  * @author Thomas Leveque
@@ -47,7 +42,7 @@ import fr.liglab.adele.icasa.environment.SimulationManager;
 public class PersonREST {
 
     @Requires
-    SimulationManager _simulationMgr;
+    private SimulationManager _simulationMgr;
 
     /*
      * Methods to manage cross domain requests
@@ -58,11 +53,10 @@ public class PersonREST {
         Response.ResponseBuilder rb = req
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+                .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
-
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
 
         return rb.build();
     }
@@ -94,11 +88,15 @@ public class PersonREST {
         JSONObject personJSON = null;
         try {
             personJSON = new JSONObject();
-            personJSON.putOnce("id", person.getName());
-            personJSON.putOnce("name", person.getName());
-            personJSON.put("positionX", person.getPosition().x);
-            personJSON.put("positionY", person.getPosition().y);
-            personJSON.putOnce("location", person.getLocation());
+            personJSON.putOnce(PersonJSON.ID_PROP, person.getName());
+            personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
+
+            Position personPosition = person.getCenterAbsolutePosition();
+            if (personPosition != null) {
+                personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
+                personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
+            }
+            personJSON.putOnce(PersonJSON.LOCATION_PROP, person.getLocation());
         } catch (JSONException e) {
             e.printStackTrace();
             personJSON = null;
@@ -108,10 +106,31 @@ public class PersonREST {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/persons/")
     public Response persons() {
         return makeCORS(Response.ok(getPersons()));
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/persons/")
+    public Response getPersonsOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/person/{personId}")
+    public Response updatesPersonOptions(@PathParam("personId") String personId) {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/person/")
+    public Response createsPersonOptions() {
+        return makeCORS(Response.ok());
     }
 
     /**
@@ -123,7 +142,7 @@ public class PersonREST {
      * @throws java.text.ParseException
      */
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response person(@PathParam("personId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
@@ -154,31 +173,68 @@ public class PersonREST {
     /**
      * Create a new person.
      *
-     * @param personId
-     * @param name
-     * @param positionX
-     * @param positionY
+     * @param content JSON representation of person to create
      *
      * @return
      */
     @POST
-    @Produces("application/json")
-    @Path(value="/person/{personId}")
-    public Response createPerson(@PathParam("personId") String personId, @FormParam("name") String name,
-                                 @FormParam("positionX") Integer positionX, @FormParam("positionY") Integer positionY) {
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/person/")
+    public Response createPerson(String content) {
 
-        Person newPerson = null;
+        PersonJSON personJSON = PersonJSON.fromString(content);
 
-        // Create the person
-        _simulationMgr.addUser(name);
-        _simulationMgr.setUserPosition(name, new Position(positionX, positionY));
+        // Create the person //TODO: Put the right person type
+        _simulationMgr.addPerson(personJSON.getName(), "Grandfather");
+        _simulationMgr.setPersonPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
 
+        Person newPerson = findPerson(personJSON.getName());
         if (newPerson == null)
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
         JSONObject newPersonJSON = getPersonJSON(newPerson);
 
-        return makeCORS(Response.ok(newPersonJSON.toString())); //TODO check that newPerson must be included in the response body
+        return makeCORS(Response.ok(newPersonJSON.toString()));
+    }
+
+    /**
+     * Update an existing person.
+     *
+     * @param personId
+     * @param content JSON representation of person to create
+     *
+     * @return
+     */
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/person/{personId}")
+    public Response updatesPerson(@PathParam("personId") String personId, String content) {
+
+        PersonJSON personJSON = PersonJSON.fromString(content);
+
+        Person foundPerson = findPerson(personId);
+        if (foundPerson == null)
+            return Response.status(404).build();
+
+        if ((personJSON.getPositionX() != null) || (personJSON.getPositionY() != null)) {
+            Position personPosition = foundPerson.getCenterAbsolutePosition();
+            if (personJSON.getPositionX() == null)
+                personJSON.setPositionX(personPosition.x);
+            if (personJSON.getPositionY() == null)
+                personJSON.setPositionY(personPosition.y);
+            _simulationMgr.setPersonPosition(personJSON.getName(), new Position(personJSON.getPositionX(), personJSON.getPositionY()));
+        } else if (personJSON.getLocation() != null) {
+            _simulationMgr.setPersonZone(personId, personJSON.getLocation());
+        }
+
+        if (foundPerson == null)
+            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+
+        JSONObject newPersonJSON = getPersonJSON(foundPerson);
+
+        return makeCORS(Response.ok(newPersonJSON.toString()));
     }
 
     /**
@@ -188,7 +244,7 @@ public class PersonREST {
      * @return ok if person is successful deleted, 404 response if it does not exist.
      */
     @DELETE
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/person/{personId}")
     public Response deletePerson(@PathParam("personId") String personId) {
 
@@ -197,7 +253,7 @@ public class PersonREST {
             return Response.status(404).build();
 
         try {
-            _simulationMgr.removeUser(foundPerson.getName());
+            _simulationMgr.removePerson(foundPerson.getName());
         } catch (Exception e) {
             e.printStackTrace();
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));

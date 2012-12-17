@@ -15,31 +15,37 @@
       limitations under the License.
 
 -->
+<style>
+    table { table-layout: auto; }
+    table th, table td { overflow: hidden; }
+</style>
+
 <table class="table table-striped table-bordered">
     <p>Device name: <input data-bind="value: $root.newDeviceName" /></p>
     <p>Device Type: <select data-bind="options: $root.deviceTypes(), value: $root.newDeviceType(), optionsText: 'name'"></select></p>
     <button data-bind="click: $root.createDevice">Create A Device</button>
 
+
     <thead>
         <tr>
             <!--th>Id</th-->
-            <th></th>
+            <th style="width: 40px"></th>
             <th>Name</th>
             <th>Location</th>
-            <th>State</th>
-            <th>Fault</th>
+            <th style="width: 60px">State</th>
+            <th style="width: 40px">Fault</th>
             <th></th>
             <th></th>
         </tr>
     </thead>
     <tbody data-bind="foreach: $root.devices()">
-        <tr>
+        <tr data-bind="css : { warning: isHighlighted }, jquerySelectable: {}">
             <!--td data-bind="text: id"></td-->
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td data-bind="text: name"/></td>
-            <td data-bind="text: location"></td>
-            <td data-bind="text: state"></td>
-            <td data-bind="text: fault"></td>
+            <td><select data-bind="event: { change: saveLocationChanges }, options: zones, value: locationZone, optionsText: 'name'"></select></td>
+            <td><select data-bind="options: $root.deviceActivationStates, value: state"></select></td>
+            <td><select data-bind="options: $root.deviceFaults, value: fault"></select></td>
             <td><button data-bind="click: $root.showDeviceWindow">...</button></td>
             <td><button data-bind="click: $root.removeDevice">Remove</button></td>
         </tr>
