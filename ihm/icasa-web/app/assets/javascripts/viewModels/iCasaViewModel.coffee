@@ -260,14 +260,14 @@ define(['jquery',
            , @);
            @styleLeft = ko.computed({
               read: () =>
-                effPositionX = @positionX() - (@widgetWidth() / 2);
+                effPositionX = @positionX() + (@containerSizeDelta() / 2) - ((@widgetWidth() - @width()) / 2);
                 return effPositionX + "px";
               owner: @
            }
            , @);
            @styleTop = ko.computed({
               read: () =>
-                 effPositionY = @positionY() - (@widgetHeight() / 2);
+                 effPositionY = @positionY() + (@containerSizeDelta() / 2)- ((@widgetHeight() - @height()) / 2);
                  return effPositionY + "px";
               owner: @
            }
@@ -426,7 +426,7 @@ define(['jquery',
                 @sizeFactor(newFactor);
                 ko.utils.arrayForEach(@decorators(), (decorator) ->
                     decorator.sizeFactor(newFactor);
-                    decorator.containerSizeDelta(32 * newFactor);
+                    decorator.containerSizeDelta(32 * (newFactor - 1.0));
                 );
            @removeHighlight= () =>
                 @isHighlighted(false);
@@ -581,6 +581,7 @@ define(['jquery',
               @sizeFactor(newFactor);
               ko.utils.arrayForEach(@decorators(), (decorator) ->
                 decorator.sizeFactor(newFactor);
+                decorator.containerSizeDelta(50 * (newFactor - 1.0));
               );
            @removeHighlight= () =>
               @isHighlighted(false);
@@ -588,6 +589,7 @@ define(['jquery',
               @sizeFactor(newFactor);
               ko.utils.arrayForEach(@decorators(), (decorator) ->
                 decorator.sizeFactor(newFactor);
+                decorator.containerSizeDelta(0);
               );
            @saveChanges= () =>
                @.model().saveChanges();
