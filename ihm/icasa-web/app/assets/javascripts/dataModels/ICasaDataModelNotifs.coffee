@@ -39,6 +39,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     console.log "Received message :", json
     if ((json.eventType == "zone-added") || (json.eventType == "zone-removed"))
       DataModel.collections.zones.fetch();
+
     if ((json.eventType == "device-type-added") || (json.eventType == "device-type-removed"))
       DataModel.collections.deviceTypes.fetch();
     if (json.eventType == "device-added")
@@ -57,6 +58,9 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
         device.fetch();
       else
         DataModel.collections.devices.fetch();
+
+    if ((json.eventType == "person-type-added") || (json.eventType == "person-type-removed"))
+      DataModel.collections.personTypes.fetch();
 
     if ((json.eventType == "person-added") || (json.eventType == "person-removed"))
       DataModel.collections.persons.fetch();
