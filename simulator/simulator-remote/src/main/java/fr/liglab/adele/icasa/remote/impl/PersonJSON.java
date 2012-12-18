@@ -31,10 +31,12 @@ public class PersonJSON {
     public static final String POSITION_X_PROP = "positionX";
     public static final String LOCATION_PROP = "location";
     public static final String NAME_PROP = "name";
+    public static final String TYPE_PROP = "type";
     public static final String PERSON_ID_PROP = "personId";
     public static final String ID_PROP = "id";
 
     private String name;
+    private String type;
     private String id;
     private String location;
     private Integer positionX;
@@ -57,6 +59,8 @@ public class PersonJSON {
             };
             if (json.has(NAME_PROP))
                 person.setName(json.getString(NAME_PROP));
+            if (json.has(TYPE_PROP))
+                person.setType(json.getString(TYPE_PROP));
             if (json.has(LOCATION_PROP))
                 person.setLocation(json.getString(LOCATION_PROP));
             if (json.has(POSITION_X_PROP))
@@ -76,6 +80,14 @@ public class PersonJSON {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
     }
 
     public String getId() {
