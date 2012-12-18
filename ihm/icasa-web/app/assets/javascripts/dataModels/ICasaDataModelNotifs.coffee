@@ -37,11 +37,38 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       console.log "This doesn't look like a valid JSON: ", message.data
       return
     console.log "Received message :", json
-    if ((json.eventType == "zone-added") || (json.eventType == "zone-removed"))
-      DataModel.collections.zones.fetch();
 
-    if ((json.eventType == "device-type-added") || (json.eventType == "device-type-removed"))
-      DataModel.collections.deviceTypes.fetch();
+    # manage zone events
+    if (json.eventType == "zone-added")
+      zone = DataModel.collections.zones.get(json.zoneId);
+      if ((zone == null)  || (zone == undefined))
+        zone = new DataModel.Models.Zone({ id: json.zoneId });
+        zone.fetch();
+        DataModel.collections.zones.push(zone);
+    if (json.eventType == "zone-removed")
+      zone = DataModel.collections.zones.get(json.zoneId);
+      if ((zone != null)  && (zone != undefined))
+        DataModel.collections.zones.remove(zone);
+    if ((json.eventType == "zone-resized") || (json.eventType == "zone-moved") || (json.eventType == "zone-variable-added") || (json.eventType == "zone-variable-removed") || (json.eventType == "zone-variable-updated"))
+      zone = DataModel.collections.zones.get(json.zoneId);
+      if ((zone != null)  && (zone != undefined))
+        zone.fetch();
+      else
+        DataModel.collections.zones.fetch();
+
+    # manage device type events
+    if (json.eventType == "device-type-added")
+      deviceType = DataModel.collections.deviceTypes.get(json.deviceTypeId);
+      if ((deviceType == null)  || (deviceType == undefined))
+        deviceType = new DataModel.Models.DeviceType({ id: json.deviceTypeId });
+        deviceType.fetch();
+        DataModel.collections.deviceTypes.push(deviceType);
+    if (json.eventType == "device-type-removed")
+      deviceType = DataModel.collections.deviceTypes.get(json.deviceTypeId);
+      if ((deviceType != null)  && (deviceType != undefined))
+        DataModel.collections.devices.remove(deviceType);
+
+    # manage device events
     if (json.eventType == "device-added")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device == null)  || (device == undefined))
@@ -52,18 +79,36 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))
         DataModel.collections.devices.remove(device);
-    if (json.eventType == "device-position-update")
+    if ((json.eventType == "device-position-update") || (json.eventType == "device-property-added") || (json.eventType == "device-property-removed") || (json.eventType == "device-property-updated"))
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))
         device.fetch();
       else
         DataModel.collections.devices.fetch();
 
-    if ((json.eventType == "person-type-added") || (json.eventType == "person-type-removed"))
-      DataModel.collections.personTypes.fetch();
+    # manage person type events
+    if (json.eventType == "person-type-added")
+      personType = DataModel.collections.personTypes.get(json.personTypeId);
+      if ((personType == null)  || (personType == undefined))
+        personType = new DataModel.Models.PersonType({ id: json.personTypeId });
+        personType.fetch();
+        DataModel.collections.personTypes.push(personType);
+    if (json.eventType == "person-type-removed")
+      personType = DataModel.collections.personTypes.get(json.personTypeId);
+      if ((personType != null)  && (personType != undefined))
+        DataModel.collections.personTypes.remove(personType);
 
-    if ((json.eventType == "person-added") || (json.eventType == "person-removed"))
-      DataModel.collections.persons.fetch();
+    # manage person events
+    if (json.eventType == "person-added")
+      person = DataModel.collections.persons.get(json.personId);
+      if ((person == null)  || (person == undefined))
+        person = new DataModel.Models.Person({ id: json.personId });
+        person.fetch();
+        DataModel.collections.personTypes.push(person);
+    if (json.eventType == "person-removed")
+      person = DataModel.collections.persons.get(json.personId);
+      if ((person != null)  && (person != undefined))
+        DataModel.collections.persons.remove(person);
     if (json.eventType == "person-position-update")
       person = DataModel.collections.persons.get(json.personId);
       if ((person != null) && (person != undefined))
