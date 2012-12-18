@@ -468,9 +468,15 @@ define(['jquery',
            @updateWidgetImg();
 
 
+    class PersonTypeViewModel extends kb.ViewModel
+        constructor: (model) ->
+           super(model, {internals: ['id', 'name']})
+           @id = kb.defaultObservable(@_id, 'Undefined');
+           @name = kb.defaultObservable(@_name, 'Undefined');
+
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible', 'statusWindowTemplate']})
+           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible', 'statusWindowTemplate', 'type']})
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(@_location, 'Undefined');
@@ -524,11 +530,17 @@ define(['jquery',
                 if (zoneModel == undefined)
                   return null;
                 return @zones.viewModelByModel(zoneModel);
-              write: (zone) =>
-                if (zone != undefined)
-                  zoneName = zone.name();
-                  @location(zoneName);
-                return zone;
+              owner: @
+           }
+           );
+           @type = kb.observable(model, 'type');
+           @personTypes = kb.collectionObservable(DataModel.collections.personTypes, {view_model: PersonTypeViewModel});
+           @typeObj = ko.computed({
+              read: () =>
+                typeModel = @personTypes.collection().get(@type());
+                if (typeModel == undefined)
+                  return null;
+                return @personTypes.viewModelByModel(typeModel);
               owner: @
            }
            );
@@ -575,9 +587,13 @@ define(['jquery',
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
 
+           @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
+
            @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
 
            @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
+
+           @personTypes = kb.collectionObservable(DataModel.collections.personTypes, {view_model: PersonTypeViewModel});
 
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
 
@@ -592,6 +608,8 @@ define(['jquery',
                     return zone.isRoom();
                 );
            , @);
+
+           @scripts = kb.collectionObservable(DataModel.collections.scripts, {view_model: ScriptViewModel});
 
            @tabs = ko.observableArray([
                 new TabViewModel {
@@ -612,11 +630,11 @@ define(['jquery',
                     template: scriptPlayerHtml}
            ]);
 
-           @scripts = kb.collectionObservable(DataModel.collections.scripts, {view_model: ScriptViewModel});
+
+           # device management
 
            @newDeviceType = ko.observable("");
 
-           @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 #           @deviceTypes.subscribe(@.selectFirstDeviceType)
 #           selectFirstDeviceType: (models) =>
 #              if models.length > 0
@@ -654,10 +672,15 @@ define(['jquery',
               device.statusWindowVisible(false);
               device.statusWindowVisible(true);
 
+
+           # person management
+
            @newPersonName = ko.observable("");
 
+           @newPersonType = ko.observable("Grandfather");
+
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), positionX: 1, positionY: 1 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), type: @newPersonType(), positionX: 1, positionY: 1 });
               DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
@@ -667,6 +690,9 @@ define(['jquery',
            @showPersonWindow = (person) =>
               person.statusWindowVisible(false);
               person.statusWindowVisible(true);
+
+
+           # zone management
 
            @newZoneName = ko.observable("");
 
@@ -684,6 +710,9 @@ define(['jquery',
 
            @removeZone = (zone) =>
               zone.model().destroy();
+
+
+           # script management
 
            @selectedScript = ko.observable();
 
