@@ -90,6 +90,7 @@ public class PersonREST {
             personJSON = new JSONObject();
             personJSON.putOnce(PersonJSON.ID_PROP, person.getName());
             personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
+            personJSON.putOnce(PersonJSON.TYPE_PROP, person.getPersonType());
 
             Position personPosition = person.getCenterAbsolutePosition();
             if (personPosition != null) {

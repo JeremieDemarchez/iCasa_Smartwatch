@@ -426,6 +426,7 @@ define(['jquery',
                 @sizeFactor(newFactor);
                 ko.utils.arrayForEach(@decorators(), (decorator) ->
                     decorator.sizeFactor(newFactor);
+                    decorator.containerSizeDelta(32 * newFactor);
                 );
            @removeHighlight= () =>
                 @isHighlighted(false);
@@ -433,6 +434,7 @@ define(['jquery',
                 @sizeFactor(newFactor);
                 ko.utils.arrayForEach(@decorators(), (decorator) ->
                     decorator.sizeFactor(newFactor);
+                    decorator.containerSizeDelta(0);
                 );
            @saveLocation= ko.observable(false);
            @saveLocationChanges= (data, event) =>
@@ -552,7 +554,25 @@ define(['jquery',
            , @);
            @statusWindowTemplate = personStatusWindowTemplateHtml;
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
-           @imgSrc = "/assets/images/users/user2.png";
+           @imgSrc = ko.computed(() =>
+              imgName = "user2";
+              if (@type() == "Grandmother")
+                imgName = "user1";
+              if (@type() == "Grandfather")
+                imgName = "user2";
+              if (@type() == "Father")
+                imgName = "user3";
+              if (@type() == "Mother")
+                imgName = "user4";
+              if (@type() == "Girl")
+                imgName = "user5";
+              if (@type() == "Boy")
+                imgName = "user6";
+              if (@type() == "Sherlock")
+                imgName = "user7";
+
+              return "/assets/images/users/" + imgName + ".png";
+           , @);
            @decorators = ko.observableArray([  ]);
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
@@ -661,7 +681,7 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType() });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType(), positionX: 1, positionY: 1 });
               DataModel.collections.devices.push(newDevice);
               newDevice.save();
 
@@ -677,10 +697,10 @@ define(['jquery',
 
            @newPersonName = ko.observable("");
 
-           @newPersonType = ko.observable("Grandfather");
+           @newPersonType = ko.observable("Father");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), type: @newPersonType(), positionX: 1, positionY: 1 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType(), positionX: 1, positionY: 1 });
               DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
