@@ -34,7 +34,7 @@
             <td><img class="personIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td data-bind="text: name"/></td>
             <td><select data-bind="options: zones, value: locationZone, optionsText: 'name'"></select></td>
-            <td><select data-bind="options: personTypes, value: typeObj, optionsText: 'name'"></select></td>
+            <td data-bind="text: type"></td>
             <td><button data-bind="click: $root.showPersonWindow">...</button></td>
             <td><button data-bind="click: $root.removePerson">Remove</button></td>
         </tr>

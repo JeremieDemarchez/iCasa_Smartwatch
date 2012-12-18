@@ -27,11 +27,11 @@
 
     <dependencies>
         <!-- modules -->
-        <dependency>
+        <!--dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>play2.osgi</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
+        </dependency-->
 
         <!-- Play Framework Dependencies -->
         <dependency>
