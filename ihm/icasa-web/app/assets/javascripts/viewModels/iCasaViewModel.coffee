@@ -398,10 +398,10 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "on-top",
                     imgSrc: '/assets/images/devices/pesePersonnePieds.png',
-                    width: 40,
-                    height: 40,
-                    positionX: 1,
-                    positionY: -7,
+                    width: 32,
+                    height: 32,
+                    positionX: 17,
+                    positionY: 12,
                     show: false}
            ]);
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);

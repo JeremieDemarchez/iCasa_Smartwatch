@@ -42,8 +42,7 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 @Component(name = "iCASA.BathroomScale")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBathroomScaleImpl extends AbstractDevice implements
-		BathroomScale, SimulatedDevice, PersonListener, LocatedDeviceListener {
+public class SimulatedBathroomScaleImpl extends AbstractDevice implements BathroomScale, SimulatedDevice, PersonListener, LocatedDeviceListener {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -64,7 +63,6 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements
 		setPropertyValue(WEIGHT_PROPERTY, 0.0);
 		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
 		setPropertyValue(DETECTION_SCOPE, 33);
-		System.out.println("--> BathroomScale created !!!!!");
 	}
 
 	@Validate
@@ -110,38 +108,55 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements
 		this.fault = fault;
 	}
 
+	public void deviceAdded(LocatedDevice device) {
+		if (device.getSerialNumber().equals(getSerialNumber())) {
+			String zoneId = getSerialNumber() + "#zone";
+			Position center = device.getCenterAbsolutePosition();
+			int detectionScope = (Integer) getPropertyValue(DETECTION_SCOPE);
+			detectionZone = manager.createZone(zoneId,	center, detectionScope);
+			device.attachObject(detectionZone);
+		}
+	}
+	
 	private void updateState() {
 		System.out.println("UPDATE STATE : state=" + getState() + " falt=" + getFault());
 
 		if (getState().equals(AbstractDevice.STATE_ACTIVATED) && getFault().equals(AbstractDevice.FAULT_NO)) {
 			for (Person person : manager.getPersons()) {
+				Position pos = person.getCenterAbsolutePosition();
+				System.out.println(" - person " + person.getName() + " " + pos.x + "x" + pos.y);
+				
 				if (detectionZone.contains(person)) {
 					setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);
 					setPropertyValue(WEIGHT_PROPERTY, getCurrentWeight());
 					return;
 				}
 			}
-		} else {
-			// Device not activated or in error...
-			setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
-			setPropertyValue(WEIGHT_PROPERTY, 0.0);
-			return;
 		}
 
-		// Device activated, but nobody next to it
+		// Default behavior when 
+		//  * Device is activated, but nobody next to it
+		//  * Device is not activated 
+		//  * Device is in error state
 		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
 		setPropertyValue(WEIGHT_PROPERTY, 0.0);
 	}
 
-	public void deviceAdded(LocatedDevice device) {
-		if (device.getSerialNumber().equals(getSerialNumber())) {
-			Position center = device.getCenterAbsolutePosition();
-			detectionZone = manager.createZone(getSerialNumber() + "#zone",
-					center, (Integer) getPropertyValue(DETECTION_SCOPE));
-			device.attachObject(detectionZone);
-		}
+	public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
+		System.out.println("Device property modified : " + propertyName + " modified to " + device.getPropertyValue(propertyName));
+		if (device.getSerialNumber().equals(getSerialNumber()))
+			System.out.println("DEBUG : property " + propertyName + " modified to " + device.getPropertyValue(propertyName));
 	}
 
+	public float getCurrentWeight() {
+		Boolean presence = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
+		if (presence.equals(true)) {
+			return (float) 55 + ((float) new Random().nextInt(100)) / 10;
+		}
+
+		return 0.0f;
+	}
+	
 	public void deviceRemoved(LocatedDevice device) {
 		// do nothing
 	}
@@ -150,16 +165,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements
 		if (device.getSerialNumber().equals(getSerialNumber()))
 			updateState();
 	}
-
-	public void devicePropertyModified(LocatedDevice device,
-			String propertyName, Object oldValue) {
-		System.out.println("Device property modified : " + propertyName
-				+ " modified to " + device.getPropertyValue(propertyName));
-		if (device.getSerialNumber().equals(getSerialNumber()))
-			System.out.println("DEBUG : property " + propertyName
-					+ " modified to " + device.getPropertyValue(propertyName));
-	}
-
+	
 	public void devicePropertyAdded(LocatedDevice device, String propertyName) {
 		// do nothing
 	}
@@ -188,18 +194,8 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements
 		updateState();
 	}
 
-	public float getCurrentWeight() {
-		Boolean presence = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
-		if (presence.equals(true)) {
-			return (float) 55 + ((float) new Random().nextInt(100)) / 10;
-		}
-
-		return 0.0f;
-	}
-
 	public void enterInZones(List<Zone> zones) {
 		// TODO to be removed as soon as api will be updated
-
 	}
 
 	public void leavingZones(List<Zone> zones) {
