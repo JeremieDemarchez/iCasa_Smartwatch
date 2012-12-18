@@ -123,7 +123,7 @@ define(['jquery',
             $(element).dialog({
                 autoOpen: false,
                 title: titleUnwrapped
-                minWidth: 220
+                minWidth: 300
             });
 #            $(element).dialog({
 #                autoOpen: false,
@@ -260,15 +260,21 @@ define(['jquery',
            , @);
            @styleLeft = ko.computed({
               read: () =>
-                effPositionX = @positionX() + (@containerSizeDelta() / 2) - ((@widgetWidth() - @width()) / 2);
+                if ((@sizeFactor() > 1.0) && ((@widgetWidth() - @width()) >= @containerSizeDelta()))
+                  effPostionX = @positionX();
+                else
+                  effPositionX = @positionX() + (@containerSizeDelta() / 2) - ((@widgetWidth() - @width()) / 2);
                 return effPositionX + "px";
               owner: @
            }
            , @);
            @styleTop = ko.computed({
               read: () =>
-                 effPositionY = @positionY() + (@containerSizeDelta() / 2)- ((@widgetHeight() - @height()) / 2);
-                 return effPositionY + "px";
+                if ((@sizeFactor() > 1.0) && ((@widgetHeight() - @height()) >= @containerSizeDelta()))
+                  effPositionY = @positionY();
+                else
+                  effPositionY = @positionY() + (@containerSizeDelta() / 2)- ((@widgetHeight() - @height()) / 2);
+                return effPositionY + "px";
               owner: @
            }
            , @);
@@ -400,8 +406,8 @@ define(['jquery',
                     imgSrc: '/assets/images/devices/pesePersonnePieds.png',
                     width: 32,
                     height: 32,
-                    positionX: 17,
-                    positionY: 12,
+                    positionX: 1,
+                    positionY: 1,
                     show: false}
            ]);
            @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
