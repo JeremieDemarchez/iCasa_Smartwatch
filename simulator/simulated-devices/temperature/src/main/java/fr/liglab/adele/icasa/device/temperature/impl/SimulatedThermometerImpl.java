@@ -190,11 +190,10 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
-
 			for (Zone zone : zones) {
 	         System.out.println("Sort - " + zone);
          }
-						
+					
 			m_zone = zones.get(0);
 			Object temp = m_zone.getVariableValue("Temperature");
 			if (temp != null)
