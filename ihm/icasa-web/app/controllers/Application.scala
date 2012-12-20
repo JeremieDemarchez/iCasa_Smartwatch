@@ -4,7 +4,6 @@ import play.api._
 import libs.EventSource
 import libs.json.Json._
 import play.api.mvc._
-import models.DeviceStreams._
 
 object Application extends Controller {
   
@@ -16,10 +15,6 @@ object Application extends Controller {
       "Access-Control-Allow-Headers" ->"Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport",
       "Access-Control-Max-Age"-> "-1"
     )
-  }
-
-  def streamDeviceEvents() = Action {
-    Ok.feed(deviceStream.through(asJson.compose(EventSource()))).as("text/event-stream")
   }
   
 }

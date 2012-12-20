@@ -88,7 +88,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public String toString() {
-		return "Person " + m_name + " - Position " + getCenterAbsolutePosition();
+		return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType(); 
 	}
 
 	@Override

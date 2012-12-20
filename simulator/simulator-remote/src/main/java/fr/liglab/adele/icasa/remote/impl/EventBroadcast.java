@@ -381,14 +381,26 @@ public class EventBroadcast extends OnMessage<String> {
 
 		@Override
       public void personTypeAdded(String personType) {
-	      // TODO Auto-generated method stub
-	      
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "person-type-removed");
+                json.put("personTypeId", personType);
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
       }
 
 		@Override
       public void personTypeRemoved(String personType) {
-	      // TODO Auto-generated method stub
-	      
+            JSONObject json = new JSONObject();
+            try {
+                json.put("eventType", "person-type-added");
+                json.put("personTypeId", personType);
+                sendEvent(json);
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
       }
 
 	}
