@@ -54,6 +54,11 @@
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
     </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>continua-rest-client</artifactId>
+      <version>${iCasaVersion}</version>
+    </dependency>
   </dependencies>
 
   <build>
