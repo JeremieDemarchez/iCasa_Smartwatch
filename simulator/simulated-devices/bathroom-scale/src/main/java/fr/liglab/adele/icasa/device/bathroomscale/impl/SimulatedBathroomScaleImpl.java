@@ -30,6 +30,7 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.bathroomscale.BathroomScale;
+import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
@@ -57,6 +58,9 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	@Requires
 	private SimulationManager manager;
 
+	@Requires(optional = true)
+	private BathroomScaleRestAPI restAPI;
+	
 	Zone detectionZone = null;
 
 	public SimulatedBathroomScaleImpl() {
@@ -128,7 +132,15 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 				
 				if (detectionZone.contains(person)) {
 					setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);
-					setPropertyValue(WEIGHT_PROPERTY, getCurrentWeight());
+					float weight = getCurrentWeight();
+					setPropertyValue(WEIGHT_PROPERTY, weight);
+					if (restAPI != null) {
+						try {
+							restAPI.sendMeasure(weight);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+					}
 					return;
 				}
 			}
@@ -195,10 +207,10 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	public void enterInZones(List<Zone> zones) {
-		// TODO to be removed as soon as api will be updated
+		// do nothing
 	}
 
 	public void leavingZones(List<Zone> zones) {
-		// TODO to be removed as soon as api will be updated
+		// do nothing
 	}
 }

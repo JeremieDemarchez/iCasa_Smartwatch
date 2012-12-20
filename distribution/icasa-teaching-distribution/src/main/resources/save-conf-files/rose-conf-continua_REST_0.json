@@ -1,0 +1,16 @@
+{
+	"machine" : {
+		"id" : "continua-client",
+		"host" : "localhost",
+
+		"connection" : [
+		],
+
+		"component" : [
+			{ 
+			  "factory" : "continua-rest-client",
+			  "properties" : { "url" : "http://localhost:8080/restAdapter/rest/continua", "hl7bathroomScaleFile" : "bathroomScale.hl7" }
+			}
+		]
+	}
+}
