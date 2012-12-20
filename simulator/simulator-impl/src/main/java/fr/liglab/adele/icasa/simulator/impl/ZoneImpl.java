@@ -91,8 +91,8 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
         int absoluteX = leftTopPosition.x;
         int absoluteY = leftTopPosition.y;
         if (parentZone!=null) {
-            absoluteX += parentZone.getCenterAbsolutePosition().x;
-            absoluteY += parentZone.getCenterAbsolutePosition().y;
+            absoluteX += parentZone.getLeftTopAbsolutePosition().x;
+            absoluteY += parentZone.getLeftTopAbsolutePosition().y;
         }
         return new Position(absoluteX, absoluteY);
     }
@@ -120,7 +120,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		if (position == null)
 			return false;
 
-		Position absolutePosition = getCenterAbsolutePosition();
+		Position absolutePosition = getLeftTopAbsolutePosition();
 
 		return (position.x >= absolutePosition.x && position.x <= absolutePosition.x + width)
 		      && (position.y >= absolutePosition.y && position.y <= absolutePosition.y + height);

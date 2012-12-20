@@ -202,9 +202,15 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Zone getZoneFromPosition(Position position) {
+		List<Zone> tempList = new ArrayList<Zone>();		
 		for (Zone zone : zones.values()) {
-			if (zone.contains(position))
-				return zone;
+			if (zone.contains(position)) {
+				tempList.add(zone);
+			}				
+		}
+		if (tempList.size()>0) {
+			Collections.sort(tempList, new ZoneComparable());
+			return tempList.get(0);
 		}
 		return null;
 	}
