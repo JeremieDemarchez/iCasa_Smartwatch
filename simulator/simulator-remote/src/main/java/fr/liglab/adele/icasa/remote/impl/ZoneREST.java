@@ -55,10 +55,6 @@ public class ZoneREST {
                 .header("Access-Control-Max-Age", "-1")
                 .header("Pragma", "no-cache");
 
-        if (!"".equals(returnMethod)) {
-            rb.header("Access-Control-Allow-Headers", returnMethod);
-        }
-
         return rb.build();
     }
 
@@ -104,6 +100,30 @@ public class ZoneREST {
     @Path(value="/zone/")
     public Response createsZoneOptions() {
         return makeCORS(Response.ok());
+    }
+
+    /**
+     * Retrieves a zone.
+     *
+     * @param zoneId The ID of the zone to retrieve
+     * @return The required zone
+     */
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/{zoneId}")
+    public Response getZone(@PathParam("zoneId") String zoneId) {
+        if (zoneId == null || zoneId.length()<1){
+            return makeCORS(Response.ok(getZones()));
+        }
+
+        Zone zoneFound = _simulationMgr.getZone(zoneId);
+        if (zoneFound == null) {
+            return makeCORS(Response.status(404));
+        } else {
+            JSONObject zoneJSON = getZoneJSON(zoneId, zoneFound);
+
+            return makeCORS(Response.ok(zoneJSON.toString()));
+        }
     }
 
     /**

@@ -32,8 +32,7 @@
     <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
     <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
 
-    <!-- Load the script "javascripts/main.coffee" as our entry point -->
-    <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
+
 
     </head>
 <body>
@@ -113,4 +112,7 @@
 </footer>
 
             </body>
+
+        <!-- Load the script "javascripts/main.coffee" as our entry point at the end of the dom to optimize loading -->
+        <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
     </html>

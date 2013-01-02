@@ -153,7 +153,7 @@ public class ScriptPlayerREST {
      * Retrieve a script.
      *
      * @param scriptId The ID of the script to retrieve
-     * @return The required device,
+     * @return The required script,
      * return <code>null<code> if the script does not exist.
      */
     @GET

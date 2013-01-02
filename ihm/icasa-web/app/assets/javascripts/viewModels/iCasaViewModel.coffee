@@ -86,10 +86,13 @@ define(['jquery',
                 compartment: "#mapContainer",
                 scroll: true,
                 opacity: 0.70,
+                start: (event, eventUI) ->
+                  #viewModel.disableSizeHighlight();
                 stop: (event, eventUI) ->
                   viewModel.positionX(eventUI.position.left);
                   viewModel.positionY(eventUI.position.top);
                   viewModel.model().save();
+                  #viewModel.enableSizeHighlight();
             });
 
             return { controlsDescendantBindings: false };
@@ -293,6 +296,7 @@ define(['jquery',
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(kb.observable(model, 'location'), 'Undefined');
            @state = kb.defaultObservable(@_state, 'activated');
+           @isDragging = ko.observable(false);
            @isDesactivated = ko.computed({
               read: () =>
                 return @state() == "deactivated";
@@ -491,6 +495,7 @@ define(['jquery',
            @positionX = kb.defaultObservable(@_positionX, 0);
            @positionY = kb.defaultObservable(@_positionY, 0);
            @sizeFactor=ko.observable(1.0);
+           @isDragging = ko.observable(false);
            @widgetWidth = ko.computed({
               read: () =>
                 effWidth = 50 * @sizeFactor();
