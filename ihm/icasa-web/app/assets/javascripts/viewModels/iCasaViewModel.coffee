@@ -89,8 +89,8 @@ define(['jquery',
                 start: (event, eventUI) ->
                   viewModel.isSizeHighlightEnabled(false);
                 stop: (event, eventUI) ->
-                  viewModel.positionX(eventUI.position.left);
-                  viewModel.positionY(eventUI.position.top);
+                  viewModel.positionX(eventUI.position.left + (viewModel.widgetWidth() / 2)); #TODO add positionX and positionY for zones
+                  viewModel.positionY(eventUI.position.top  + (viewModel.widgetHeight() / 2));
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
@@ -203,36 +203,38 @@ define(['jquery',
 
     # View models
 
-    class ZoneViewModel extends kb.ViewModel
+    class NamedViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'topY', 'bottomY', 'leftX', 'rightX', 'isRoom']})
+           super(model);
            @id = kb.observable(model, 'id');
-           @name = kb.defaultObservable(@_name, 'Undefined');
-           @isRoom = kb.defaultObservable(@_isRoom, 'Undefined');
-           @leftX = kb.defaultObservable(@_leftX, 'Undefined');
-           @rightX = kb.defaultObservable(@_rightX, 'Undefined');
-           @bottomY = kb.defaultObservable(@_bottomY, 'Undefined');
-           @topY = kb.defaultObservable(@_topY, 'Undefined');
+           @name = kb.observable(model, 'name');
 
-    class ScriptViewModel extends kb.ViewModel
+    class ZoneViewModel extends NamedViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'state']})
-           @id = kb.observable(model, 'id');
-           @name = kb.defaultObservable(@_name, 'Undefined');
-           @state = kb.defaultObservable(@_state, 'undefined');
+           super(model)
+           @isRoom = kb.observable(model, 'isRoom');
+           @leftX = kb.observable(model, 'leftX');
+           @rightX = kb.observable(model, 'rightX');
+           @bottomY = kb.observable(model, 'bottomY');
+           @topY = kb.observable(model, 'topY');
 
-    class DecoratorViewModel extends kb.ViewModel
+    class ScriptViewModel extends NamedViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'show', 'imgSrc', 'positionX', 'positionY', 'width', 'height', 'styleLeft', 'styleTop']})
-           @id = kb.defaultObservable(@_id, model.name);
-           @name = kb.defaultObservable(@_name, 'state');
-           @show = kb.defaultObservable(@_show, false);
-           @imgSrc = kb.defaultObservable(@_imgSrc, '/assets/images/devices/decorators/play.png');
-           @positionFactor=ko.observable(1.0);
-           @positionX = kb.defaultObservable(@_positionX, 16);
-           @positionY = kb.defaultObservable(@_positionY, 16);
-           @width = kb.defaultObservable(@_width, 15);
-           @height = kb.defaultObservable(@_height, 15);
+           super(model)
+           @state = kb.observable(model, 'state');
+
+    class DecoratorViewModel extends NamedViewModel
+        constructor: (model) ->
+           super(model);
+           @id(model.name);
+           @name = kb.defaultObservable(kb.observable(model, 'name'), 'state');
+
+           @show = kb.defaultObservable(kb.observable(model, 'show'), false);
+           @imgSrc = kb.defaultObservable(kb.observable(model, 'imgSrc'), '/assets/images/devices/decorators/play.png');
+           @positionX = kb.defaultObservable(kb.observable(model, 'positionX'), 16);
+           @positionY = kb.defaultObservable(kb.observable(model, 'positionY'), 16);
+           @width = kb.defaultObservable(kb.observable(model, 'width'), 15);
+           @height = kb.defaultObservable(kb.observable(model, 'height'), 15);
            @sizeFactor=ko.observable(1.0);
            @containerSizeDelta=ko.observable(0);
            @widgetWidth = ko.computed({
@@ -283,29 +285,26 @@ define(['jquery',
            , @);
 
 
-    class DeviceTypeViewModel extends kb.ViewModel
+    class DeviceTypeViewModel extends NamedViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
-           @name = kb.defaultObservable(@_name, 'Undefined');
+           super(model);
 
-    class DeviceViewModel extends kb.ViewModel
+    class DeviceViewModel extends NamedViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'type', 'location', 'state', 'fault', 'statusWindowVisible', 'statusWindowTemplate', 'properties']})
-           @id = kb.observable(model, 'id');
-           @name = kb.defaultObservable(@_name, 'Undefined');
-           @location = kb.defaultObservable(kb.observable(model, 'location'), 'Undefined');
+           super(model);
+
+           @location = kb.observable(model, 'location');
            @properties=kb.observable(model, 'properties');
-           @state = kb.defaultObservable(@_state, 'activated');
+           @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
            @isDesactivated = ko.computed({
               read: () =>
                 return @state() == "deactivated";
               owner: @
            }
            , @);
-           @fault = kb.defaultObservable(@_fault, 'no');
-           @positionX = kb.defaultObservable(@_positionX, 0);
-           @positionY = kb.defaultObservable(@_positionY, 0);
+           @fault = kb.defaultObservable(kb.observable(model, 'fault'), 'no');
+           @positionX = kb.defaultObservable(kb.observable(model, 'positionX'), 0);
+           @positionY = kb.defaultObservable(kb.observable(model, 'positionY'), 0);
            @sizeFactor=ko.observable(1.0);
            @widgetWidth = ko.computed({
               read: () =>
@@ -364,7 +363,7 @@ define(['jquery',
              return @name();
            , @);
            @statusWindowTemplate = ko.observable(deviceStatusWindowTemplateHtml);
-           @type = kb.defaultObservable(@_type, 'Undefined');
+           @type = kb.observable(model, 'type');
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
               if (@type() == "iCASA.Cooler")
@@ -414,7 +413,7 @@ define(['jquery',
                     positionY: 1,
                     show: false}
            ]);
-           @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
+           @statusWindowVisible = ko.observable(false);
            @updateWidgetImg= (newValue) =>
                 activatedState = false;
                 if ("activated" == @state())
@@ -460,7 +459,6 @@ define(['jquery',
            @saveChanges= () =>
                 @.model().saveChanges();
 
-
           
            # init
            @updateBathroomScaleDecorator= (newValue) =>
@@ -488,22 +486,19 @@ define(['jquery',
            @updateWidgetImg();
 
 
-    class PersonTypeViewModel extends kb.ViewModel
+    class PersonTypeViewModel extends NamedViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name']})
-           @id = kb.defaultObservable(@_id, 'Undefined');
-           @name = kb.defaultObservable(@_name, 'Undefined');
+           super(model);
+
 
     class PersonViewModel extends kb.ViewModel
         constructor: (model) ->
-           super(model, {internals: ['id', 'name', 'positionX', 'positionY', 'location', 'statusWindowVisible', 'statusWindowTemplate', 'type']})
-           @id = kb.observable(model, 'id');
-           @name = kb.defaultObservable(@_name, 'Undefined');
-           @location = kb.defaultObservable(@_location, 'Undefined');
-           @positionX = kb.defaultObservable(@_positionX, 0);
-           @positionY = kb.defaultObservable(@_positionY, 0);
+           super(model);
+
+           @location = kb.observable(model, 'location');
+           @positionX = kb.defaultObservable(kb.observable(model, 'positionX'), 0);
+           @positionY = kb.defaultObservable(kb.observable(model, 'positionY'), 0);
            @sizeFactor=ko.observable(1.0);
-           @isDragging = ko.observable(false);
            @widgetWidth = ko.computed({
               read: () =>
                 effWidth = 50 * @sizeFactor();
