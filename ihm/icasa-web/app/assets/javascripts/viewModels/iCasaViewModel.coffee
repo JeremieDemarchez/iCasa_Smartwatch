@@ -208,6 +208,8 @@ define(['jquery',
            super(model);
            @id = kb.observable(model, 'id');
            @name = kb.observable(model, 'name');
+           @saveChanges= () =>
+              @.model().saveChanges();
 
     class ZoneViewModel extends NamedViewModel
         constructor: (model) ->
@@ -217,45 +219,52 @@ define(['jquery',
            @rightX = kb.observable(model, 'rightX');
            @bottomY = kb.observable(model, 'bottomY');
            @topY = kb.observable(model, 'topY');
+           @positionX = ko.computed({
+              read: () =>
+                return (@leftX() + @rightX()) / 2;
+              owner: @
+           }
+           , @);
+           @positionY = ko.computed({
+              read: () =>
+                return (@bottomY() + @topY()) / 2;
+              owner: @
+           }
+           , @);
 
     class ScriptViewModel extends NamedViewModel
         constructor: (model) ->
            super(model)
            @state = kb.observable(model, 'state');
 
-    class DecoratorViewModel extends NamedViewModel
+    class PositionedImageViewModel extends NamedViewModel
         constructor: (model) ->
            super(model);
-           @id(model.name);
-           @name = kb.defaultObservable(kb.observable(model, 'name'), 'state');
-
-           @show = kb.defaultObservable(kb.observable(model, 'show'), false);
-           @imgSrc = kb.defaultObservable(kb.observable(model, 'imgSrc'), '/assets/images/devices/decorators/play.png');
-           @positionX = kb.defaultObservable(kb.observable(model, 'positionX'), 16);
-           @positionY = kb.defaultObservable(kb.observable(model, 'positionY'), 16);
-           @width = kb.defaultObservable(kb.observable(model, 'width'), 15);
-           @height = kb.defaultObservable(kb.observable(model, 'height'), 15);
+           @imgSrc = kb.observable(model, 'imgSrc');
+           @positionX = kb.observable(model, 'positionX');
+           @positionY = kb.observable(model, 'positionY');
+           @width = kb.defaultObservable(kb.observable(model, 'width'), 0);
+           @height = kb.defaultObservable(kb.observable(model, 'height'), 0);
            @sizeFactor=ko.observable(1.0);
-           @containerSizeDelta=ko.observable(0);
            @widgetWidth = ko.computed({
               read: () =>
                 effWidth = @width() * @sizeFactor();
                 return effWidth;
               owner: @
-               }
+           }
            , @);
            @widgetHeight = ko.computed({
               read: () =>
                 effHeight = @height() * @sizeFactor();
                 return effHeight;
               owner: @
-               }
+           }
            , @);
            @styleWidth = ko.computed({
               read: () =>
                 return @widgetWidth() + "px";
               owner: @
-               }
+           }
            , @);
            @styleHeight = ko.computed({
               read: () =>
@@ -263,6 +272,23 @@ define(['jquery',
               owner: @
            }
            , @);
+
+
+    class DecoratorViewModel extends PositionedImageViewModel
+        constructor: (model) ->
+           super(model);
+           @id(model.name);
+           @name = kb.defaultObservable(kb.observable(model, 'name'), 'state');
+
+           @show = kb.defaultObservable(kb.observable(model, 'show'), false);
+           @imgSrc = kb.defaultObservable(@imgSrc, '/assets/images/devices/decorators/play.png');
+           @positionX = kb.defaultObservable(@positionX, 16);
+           @positionY = kb.defaultObservable(@positionY, 16);
+           if (@width() <= 0)
+              @width(15);
+           if (@height() <= 0)
+              @height(15);
+           @containerSizeDelta=ko.observable(0);
            @styleLeft = ko.computed({
               read: () =>
                 if ((@sizeFactor() > 1.0) && ((@widgetWidth() - @width()) >= @containerSizeDelta()))
@@ -289,49 +315,11 @@ define(['jquery',
         constructor: (model) ->
            super(model);
 
-    class DeviceViewModel extends NamedViewModel
+
+    class DraggableStateWidgetViewModel extends PositionedImageViewModel
         constructor: (model) ->
            super(model);
 
-           @location = kb.observable(model, 'location');
-           @properties=kb.observable(model, 'properties');
-           @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
-           @isDesactivated = ko.computed({
-              read: () =>
-                return @state() == "deactivated";
-              owner: @
-           }
-           , @);
-           @fault = kb.defaultObservable(kb.observable(model, 'fault'), 'no');
-           @positionX = kb.defaultObservable(kb.observable(model, 'positionX'), 0);
-           @positionY = kb.defaultObservable(kb.observable(model, 'positionY'), 0);
-           @sizeFactor=ko.observable(1.0);
-           @widgetWidth = ko.computed({
-              read: () =>
-                effWidth = 32 * @sizeFactor();
-                return effWidth;
-              owner: @
-           }
-           , @);
-           @widgetHeight = ko.computed({
-              read: () =>
-                effHeight = 32 * @sizeFactor();
-                return effHeight;
-              owner: @
-           }
-           , @);
-           @styleWidth = ko.computed({
-              read: () =>
-                return @widgetWidth() + "px";
-              owner: @
-           }
-           , @);
-           @styleHeight = ko.computed({
-              read: () =>
-                return @widgetHeight() + "px";
-              owner: @
-           }
-           , @);
            @styleLeft = ko.computed({
               read: () =>
                 effPositionX = @positionX() - (@widgetWidth() / 2);
@@ -346,6 +334,59 @@ define(['jquery',
               owner: @
            }
            , @);
+           @tooltipContent = ko.computed( () =>
+              return @name() + " /n" + @id();
+           , @);
+           @statusWindowTitle = ko.computed( () =>
+              return @name();
+           , @);
+           @isSizeHighlightEnabled = ko.observable(true);
+           @isHighlighted = ko.observable(false);
+           @addHighlight= () =>
+              @isHighlighted(true);
+              @updateSize(@isSizeHighlightEnabled());
+           @removeHighlight= () =>
+              @isHighlighted(false);
+              @updateSize(@isSizeHighlightEnabled());
+           @updateSize= (isSizeHighlightEnabledVal) =>
+              if (isSizeHighlightEnabledVal && @isHighlighted())
+                newFactor = 1.2;
+              else
+                newFactor = 1.0;
+              @sizeFactor(newFactor);
+              if (@decorators != undefined)
+                ko.utils.arrayForEach(@decorators(), (decorator) =>
+                  decorator.sizeFactor(newFactor);
+                  containerSizeDelta = 0;
+                  if (newFactor != 1.0)
+                    containerSizeDelta = @width() * (newFactor - 1.0);
+                  decorator.containerSizeDelta(containerSizeDelta);
+                );
+           @isSizeHighlightEnabled.subscribe(@updateSize);
+
+           # status window management
+           @statusWindowTemplate = ko.observable("");
+           @statusWindowVisible = ko.observable(false);
+
+    class DeviceViewModel extends DraggableStateWidgetViewModel
+        constructor: (model) ->
+           super(model);
+
+           @type = kb.observable(model, 'type');
+           @location = kb.observable(model, 'location');
+           @properties=kb.observable(model, 'properties');
+           @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
+           @isDesactivated = ko.computed({
+              read: () =>
+                return @state() == "deactivated";
+              owner: @
+           }
+           , @);
+           @fault = kb.defaultObservable(kb.observable(model, 'fault'), 'no');
+           @positionX = kb.defaultObservable(@positionX, 0);
+           @positionY = kb.defaultObservable(@positionY, 0);
+           @width(32);
+           @height(32);
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
@@ -356,14 +397,7 @@ define(['jquery',
               owner: @
            }
            );
-           @tooltipContent = ko.computed( () =>
-              return @name() + " /n" + @id();
-           , @);
-           @statusWindowTitle = ko.computed( () =>
-             return @name();
-           , @);
-           @statusWindowTemplate = ko.observable(deviceStatusWindowTemplateHtml);
-           @type = kb.observable(model, 'type');
+           @statusWindowTemplate(deviceStatusWindowTemplateHtml);
            @imgSrc = ko.computed(() =>
               imgName = "NewDevice";
               if (@type() == "iCASA.Cooler")
@@ -413,7 +447,6 @@ define(['jquery',
                     positionY: 1,
                     show: false}
            ]);
-           @statusWindowVisible = ko.observable(false);
            @updateWidgetImg= (newValue) =>
                 activatedState = false;
                 if ("activated" == @state())
@@ -428,38 +461,13 @@ define(['jquery',
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
                 );
-           @isSizeHighlightEnabled = ko.observable(true);
-           @isHighlighted = ko.observable(false);
-           @addHighlight= () =>
-                @isHighlighted(true);
-                @updateSize(@isSizeHighlightEnabled());
-           @removeHighlight= () =>
-                @isHighlighted(false);
-                @updateSize(@isSizeHighlightEnabled());
-           @updateSize= (isSizeHighlightEnabledVal) =>
-                if (isSizeHighlightEnabledVal && @isHighlighted())
-                  newFactor = 1.2;
-                else
-                  newFactor = 1.0;
-                @sizeFactor(newFactor);
-                ko.utils.arrayForEach(@decorators(), (decorator) ->
-                  decorator.sizeFactor(newFactor);
-                  containerSizeDelta = 0;
-                  if (newFactor != 1.0)
-                    containerSizeDelta = 32 * (newFactor - 1.0);
-                  decorator.containerSizeDelta(containerSizeDelta);
-                );
-           @isSizeHighlightEnabled.subscribe(@updateSize);
 
            # location change saving
            @saveLocation= ko.observable(false);
            @saveLocationChanges= (data, event) =>
                 @location('bedroom');
                 @saveChanges();
-           @saveChanges= () =>
-                @.model().saveChanges();
 
-          
            # init
            @updateBathroomScaleDecorator= (newValue) =>
                 presence = @properties().presence_detected;
@@ -491,54 +499,15 @@ define(['jquery',
            super(model);
 
 
-    class PersonViewModel extends kb.ViewModel
+    class PersonViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
            super(model);
 
            @location = kb.observable(model, 'location');
-           @positionX = kb.defaultObservable(kb.observable(model, 'positionX'), 0);
-           @positionY = kb.defaultObservable(kb.observable(model, 'positionY'), 0);
-           @sizeFactor=ko.observable(1.0);
-           @widgetWidth = ko.computed({
-              read: () =>
-                effWidth = 50 * @sizeFactor();
-                return effWidth;
-              owner: @
-           }
-           , @);
-           @widgetHeight = ko.computed({
-              read: () =>
-                effHeight = 50 * @sizeFactor();
-                return effHeight;
-              owner: @
-           }
-           , @);
-           @styleWidth = ko.computed({
-              read: () =>
-                return @widgetWidth() + "px";
-              owner: @
-           }
-           , @);
-           @styleHeight = ko.computed({
-              read: () =>
-                return @widgetHeight() + "px";
-              owner: @
-           }
-           , @);
-           @styleLeft = ko.computed({
-              read: () =>
-                effPositionX = @positionX() - (@widgetWidth() / 2);
-                return effPositionX + "px";
-              owner: @
-           }
-           , @);
-           @styleTop = ko.computed({
-              read: () =>
-                effPositionY = @positionY() - (@widgetHeight() / 2);
-                return effPositionY + "px";
-              owner: @
-           }
-           , @);
+           @positionX = kb.defaultObservable(@positionX, 0);
+           @positionY = kb.defaultObservable(@positionY, 0);
+           @width(50);
+           @height(50);
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>
@@ -560,14 +529,7 @@ define(['jquery',
               owner: @
            }
            );
-           @tooltipContent = ko.computed( () =>
-              return @name() + " /n" + @id();
-           , @);
-           @statusWindowTitle = ko.computed( () =>
-              return @name();
-           , @);
-           @statusWindowTemplate = personStatusWindowTemplateHtml;
-           @statusWindowVisible = kb.defaultObservable(@_statusWindowVisible, false);
+           @statusWindowTemplate(personStatusWindowTemplateHtml);
            @imgSrc = ko.computed(() =>
               imgName = "user2";
               if (@type() == "Grandmother")
@@ -588,30 +550,6 @@ define(['jquery',
               return "/assets/images/users/" + imgName + ".png";
            , @);
            @decorators = ko.observableArray([  ]);
-           @isSizeHighlightEnabled = ko.observable(true);
-           @isHighlighted = ko.observable(false);
-           @addHighlight= () =>
-              @isHighlighted(true);
-              updateSize(@isSizeHighlightEnabled());
-           @removeHighlight= () =>
-              @isHighlighted(false);
-              updateSize(@isSizeHighlightEnabled());
-           @updateSize= (isSizeHighlightEnabledVal) =>
-              if (isSizeHighlightEnabledVal && @isHighlighted())
-                newFactor = 1.2;
-              else
-                newFactor = 1.0;
-              @sizeFactor(newFactor);
-              ko.utils.arrayForEach(@decorators(), (decorator) ->
-                decorator.sizeFactor(newFactor);
-                containerSizeDelta = 0;
-                if (newFactor != 1.0)
-                  containerSizeDelta = 50 * (newFactor - 1.0);
-                decorator.containerSizeDelta(containerSizeDelta);
-              );
-           @isSizeHighlightEnabled.subscribe(@updateSize);
-           @saveChanges= () =>
-               @.model().saveChanges();
 
     class TabViewModel extends kb.ViewModel
         constructor: (model) ->
