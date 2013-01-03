@@ -19,6 +19,7 @@ require.config({
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         # TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
+        'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
         'knockback' : 'frameworks/knockback/knockback', # AMD module
         'knockout' : 'frameworks/knockout/knockout-2.1.0.debug', # AMD module
@@ -78,6 +79,8 @@ require.config({
 
         'jquery.ui.touch': ['jquery.ui'],
 
+        'jquery.resize': ['jquery.ui'],
+
         'underscore': {
             exports: "_"
         }
@@ -93,10 +96,12 @@ require([
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
     'bootstrap',
-    'domReady'
+    'domReady',
+    'jquery.resize'
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
-        ko.applyBindings(new ICasaViewModel( { id: "PaulHouse" } ));
+        icasaViewModel = new ICasaViewModel( { id: "PaulHouse" } );
+        ko.applyBindings(icasaViewModel);
         $("#map").resizable({
             animate: true,
             aspectRatio : true,
@@ -120,4 +125,8 @@ require([
         $("#tabs").tabs({
             heightStyle: "fill"
         });
+        $("#map").resize( (event) ->
+            console.log("resize event : " + event);
+            icasaViewModel.updateMapSize();
+        );
 );

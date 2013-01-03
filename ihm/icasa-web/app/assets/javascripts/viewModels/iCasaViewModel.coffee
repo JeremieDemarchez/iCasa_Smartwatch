@@ -566,6 +566,12 @@ define(['jquery',
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
 
+           @mapSize = ko.observable(500);
+
+           @updateMapSize = () =>
+              height = $("mapImg").height();
+              width = $("mapImg").width();
+
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 
            @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
@@ -620,10 +626,7 @@ define(['jquery',
 #                firstModel = models[0]
 #                this.newDeviceType(firstModel)
 
-#           @mapSize = ko.computed({
-#              height: $("mapImg").height()
-#              width: $("mapImg").width()
-#           });
+
 
            @deviceActivationStates = ko.observableArray([
               'activated',
@@ -720,6 +723,8 @@ define(['jquery',
            @pauseScript = () =>
               @selectedScript().state('paused');
               @selectedScript().model().save();
+
+
 
     return ICasaViewModel;
 );
