@@ -87,12 +87,12 @@ define(['jquery',
                 scroll: true,
                 opacity: 0.70,
                 start: (event, eventUI) ->
-                  #viewModel.disableSizeHighlight();
+                  viewModel.isSizeHighlightEnabled(false);
                 stop: (event, eventUI) ->
                   viewModel.positionX(eventUI.position.left);
                   viewModel.positionY(eventUI.position.top);
                   viewModel.model().save();
-                  #viewModel.enableSizeHighlight();
+                  viewModel.isSizeHighlightEnabled(true);
             });
 
             return { controlsDescendantBindings: false };
@@ -295,8 +295,8 @@ define(['jquery',
            @id = kb.observable(model, 'id');
            @name = kb.defaultObservable(@_name, 'Undefined');
            @location = kb.defaultObservable(kb.observable(model, 'location'), 'Undefined');
+           @properties=kb.observable(model, 'properties');
            @state = kb.defaultObservable(@_state, 'activated');
-           @isDragging = ko.observable(false);
            @isDesactivated = ko.computed({
               read: () =>
                 return @state() == "deactivated";
@@ -429,30 +429,38 @@ define(['jquery',
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
                 );
+           @isSizeHighlightEnabled = ko.observable(true);
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
                 @isHighlighted(true);
-                newFactor = 1.2;
-                @sizeFactor(newFactor);
-                ko.utils.arrayForEach(@decorators(), (decorator) ->
-                    decorator.sizeFactor(newFactor);
-                    decorator.containerSizeDelta(32 * (newFactor - 1.0));
-                );
+                @updateSize(@isSizeHighlightEnabled());
            @removeHighlight= () =>
                 @isHighlighted(false);
-                newFactor = 1.0;
+                @updateSize(@isSizeHighlightEnabled());
+           @updateSize= (isSizeHighlightEnabledVal) =>
+                if (isSizeHighlightEnabledVal && @isHighlighted())
+                  newFactor = 1.2;
+                else
+                  newFactor = 1.0;
                 @sizeFactor(newFactor);
                 ko.utils.arrayForEach(@decorators(), (decorator) ->
-                    decorator.sizeFactor(newFactor);
-                    decorator.containerSizeDelta(0);
+                  decorator.sizeFactor(newFactor);
+                  containerSizeDelta = 0;
+                  if (newFactor != 1.0)
+                    containerSizeDelta = 32 * (newFactor - 1.0);
+                  decorator.containerSizeDelta(containerSizeDelta);
                 );
+           @isSizeHighlightEnabled.subscribe(@updateSize);
+
+           # location change saving
            @saveLocation= ko.observable(false);
            @saveLocationChanges= (data, event) =>
                 @location('bedroom');
                 @saveChanges();
            @saveChanges= () =>
                 @.model().saveChanges();
-           @properties=kb.observable(model, 'properties');
+
+
           
            # init
            @updateBathroomScaleDecorator= (newValue) =>
@@ -585,23 +593,28 @@ define(['jquery',
               return "/assets/images/users/" + imgName + ".png";
            , @);
            @decorators = ko.observableArray([  ]);
+           @isSizeHighlightEnabled = ko.observable(true);
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
               @isHighlighted(true);
-              newFactor = 1.2;
-              @sizeFactor(newFactor);
-              ko.utils.arrayForEach(@decorators(), (decorator) ->
-                decorator.sizeFactor(newFactor);
-                decorator.containerSizeDelta(50 * (newFactor - 1.0));
-              );
+              updateSize(@isSizeHighlightEnabled());
            @removeHighlight= () =>
               @isHighlighted(false);
-              newFactor = 1.0;
+              updateSize(@isSizeHighlightEnabled());
+           @updateSize= (isSizeHighlightEnabledVal) =>
+              if (isSizeHighlightEnabledVal && @isHighlighted())
+                newFactor = 1.2;
+              else
+                newFactor = 1.0;
               @sizeFactor(newFactor);
               ko.utils.arrayForEach(@decorators(), (decorator) ->
                 decorator.sizeFactor(newFactor);
-                decorator.containerSizeDelta(0);
+                containerSizeDelta = 0;
+                if (newFactor != 1.0)
+                  containerSizeDelta = 50 * (newFactor - 1.0);
+                decorator.containerSizeDelta(containerSizeDelta);
               );
+           @isSizeHighlightEnabled.subscribe(@updateSize);
            @saveChanges= () =>
                @.model().saveChanges();
 
