@@ -211,31 +211,12 @@ define(['jquery',
            @saveChanges= () =>
               @.model().saveChanges();
 
-    class ZoneViewModel extends NamedViewModel
-        constructor: (model) ->
-           super(model)
-           @isRoom = kb.observable(model, 'isRoom');
-           @leftX = kb.observable(model, 'leftX');
-           @rightX = kb.observable(model, 'rightX');
-           @bottomY = kb.observable(model, 'bottomY');
-           @topY = kb.observable(model, 'topY');
-           @positionX = ko.computed({
-              read: () =>
-                return (@leftX() + @rightX()) / 2;
-              owner: @
-           }
-           , @);
-           @positionY = ko.computed({
-              read: () =>
-                return (@bottomY() + @topY()) / 2;
-              owner: @
-           }
-           , @);
 
     class ScriptViewModel extends NamedViewModel
         constructor: (model) ->
            super(model)
            @state = kb.observable(model, 'state');
+
 
     class PositionedImageViewModel extends NamedViewModel
         constructor: (model) ->
@@ -272,6 +253,8 @@ define(['jquery',
               owner: @
            }
            , @);
+           @containerWidthRatio = ko.observable(1.0);
+           @containerHeightRatio = ko.observable(1.0);
 
 
     class DecoratorViewModel extends PositionedImageViewModel
@@ -322,14 +305,14 @@ define(['jquery',
 
            @styleLeft = ko.computed({
               read: () =>
-                effPositionX = @positionX() - (@widgetWidth() / 2);
+                effPositionX = (@positionX() * @containerWidthRatio()) - (@widgetWidth() / 2);
                 return effPositionX + "px";
               owner: @
            }
            , @);
            @styleTop = ko.computed({
               read: () =>
-                effPositionY = @positionY() - (@widgetHeight() / 2);
+                effPositionY = (@positionY() * @containerHeightRatio()) - (@widgetHeight() / 2);
                 return effPositionY + "px";
               owner: @
            }
@@ -367,6 +350,27 @@ define(['jquery',
            # status window management
            @statusWindowTemplate = ko.observable("");
            @statusWindowVisible = ko.observable(false);
+
+
+    class ZoneViewModel extends DraggableStateWidgetViewModel
+      constructor: (model) ->
+        super(model)
+        @isRoom = kb.observable(model, 'isRoom');
+        @leftX = kb.observable(model, 'leftX');
+        @rightX = kb.observable(model, 'rightX');
+        @bottomY = kb.observable(model, 'bottomY');
+        @topY = kb.observable(model, 'topY');
+        @positionX = ko.computed({
+          read: () =>
+            return (@leftX() + @rightX()) / 2;
+          owner: @
+        } , @);
+        @positionY = ko.computed({
+          read: () =>
+            return (@bottomY() + @topY()) / 2;
+          owner: @
+        } , @);
+
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
@@ -738,7 +742,23 @@ define(['jquery',
               @selectedScript().state('paused');
               @selectedScript().model().save();
 
-
+           # managing map size change (must update position of persons, zones and devices)
+           @updateWidgetPositions= (newValue) =>
+             #TODO should use a merged list of positioned objects
+             ko.utils.arrayForEach(@devices(), (device) =>
+               device.containerWidthRatio(@mapWidthRatio());
+               device.containerHeightRatio(@mapHeightRatio());
+             );
+             ko.utils.arrayForEach(@persons(), (person) =>
+               person.containerWidthRatio(@mapWidthRatio());
+               person.containerHeightRatio(@mapHeightRatio());
+             );
+             ko.utils.arrayForEach(@zones(), (zone) =>
+               zone.containerWidthRatio(@mapWidthRatio());
+               zone.containerHeightRatio(@mapHeightRatio());
+             );
+           @mapWidthRatio.subscribe(@updateWidgetPositions);
+           @mapHeightRatio.subscribe(@updateWidgetPositions);
 
     return ICasaViewModel;
 );
