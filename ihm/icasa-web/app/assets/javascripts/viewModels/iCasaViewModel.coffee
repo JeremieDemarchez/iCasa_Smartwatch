@@ -566,6 +566,8 @@ define(['jquery',
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
 
+           @imgSrc = ko.observable(model.imgSrc);
+
            @mapSize = ko.observable(500);
 
            @updateMapSize = () =>

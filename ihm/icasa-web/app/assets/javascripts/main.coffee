@@ -100,8 +100,12 @@ require([
     'jquery.resize'
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
-        icasaViewModel = new ICasaViewModel( { id: "PaulHouse" } );
+        icasaViewModel = new ICasaViewModel( {
+          id: "PaulHouse",
+          imgSrc: "assets/images/paulHouse.png"
+        });
         ko.applyBindings(icasaViewModel);
+
         $("#map").resizable({
             animate: true,
             aspectRatio : true,
@@ -125,8 +129,17 @@ require([
         $("#tabs").tabs({
             heightStyle: "fill"
         });
+
+        # manage map size changes
         $("#map").resize( (event) ->
             console.log("resize event : " + event);
             icasaViewModel.updateMapSize();
+        );
+
+        # manage resize of the browser window
+        viewportWidth = $(window).width();
+        viewportHeight = $(window).height();
+        $(window).resize( (event) ->
+            #TODO update map and tabs size
         );
 );
