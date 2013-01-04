@@ -107,10 +107,13 @@ define(['jquery',
                 selected: (event, eventUI) ->
                   if (viewModel.isHighlighted())
                     viewModel.removeHighlight();
+                    viewModel.isSelected(false);
                   else
                     viewModel.addHighlight();
+                    viewModel.isSelected(true);
                 unselected: (event, eventUI) ->
                   viewModel.removeHighlight();
+                  viewModel.isSelected(false);
             });
 
             return { controlsDescendantBindings: false };
@@ -323,6 +326,7 @@ define(['jquery',
            @statusWindowTitle = ko.computed( () =>
               return @name();
            , @);
+           @isSelected = ko.observable(false);
            @isSizeHighlightEnabled = ko.observable(true);
            @isHighlighted = ko.observable(false);
            @addHighlight= () =>
@@ -667,6 +671,12 @@ define(['jquery',
 
            @removeDevice = (device) =>
               device.model().destroy();
+
+           @removeSelectedDevices = () =>
+             ko.utils.arrayForEach(@devices(), (device) =>
+               if (device.isSelected())
+                  device.model().destroy();
+             );
 
            @showDeviceWindow = (device) =>
               device.statusWindowVisible(false);

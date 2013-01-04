@@ -88,6 +88,26 @@ require.config({
 
 });
 
+class SizeUtil
+  @getViewportSize = () ->
+    e = window;
+    a = 'inner';
+    if (!('innerWidth' in window))
+      a = 'client';
+      e = document.documentElement || document.body;
+    return { width : e[ a+'Width' ], height : e[ a+'Height' ] };
+  @computeAreaSizes = () ->
+    viewportSize = @.getViewportSize();
+    map = $("#map");
+    mapWidth = map.width();
+    mapHeight = map.height();
+    actionTabs = $("#actionTabs");
+    actionTabsWidth = actionTabs.width();
+    actionTabsHeight = actionTabs.height();
+    statusWindows = $("#statusWindows");
+    statusWindowsWidth = statusWindows.width();
+    statusWindowsHeight = statusWindows.height();
+
 # launch application
 require([
     'jquery',
@@ -100,18 +120,26 @@ require([
     'jquery.resize'
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
+
+        sizeUtil = new SizeUtil();
+
         iCasaViewModel = new ICasaViewModel( {
           id: "PaulHouse",
           imgSrc: "assets/images/paulHouse.png"
         });
         ko.applyBindings(iCasaViewModel);
 
+        $(".slider" ).slider();
+        $("#tabs").tabs({
+            heightStyle: "fill"
+        });
+
         $("#map").resizable({
             animate: true,
             aspectRatio : true,
             ghost: true
-#            stop: (event, eventUI) ->
-#              iCasaViewModel.updateMapSize();
+            stop: (event, eventUI) ->
+              SizeUtil.computeAreaSizes();
         });
         $("#actionTabs").resizable({
             animate: true,
@@ -119,6 +147,7 @@ require([
             ghost: true,
             handles: "e, s, se, sw, w",
             stop: (event, eventUI) ->
+              sizeUtil.computeAreaSizes();
               $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({
@@ -126,10 +155,8 @@ require([
             aspectRatio : false,
             ghost: true,
             handles: "e, s, se, sw"
-        });
-        $(".slider" ).slider();
-        $("#tabs").tabs({
-            heightStyle: "fill"
+            stop: (event, eventUI) ->
+              SizeUtil.computeAreaSizes();
         });
 
         # manage map size changes
@@ -138,9 +165,7 @@ require([
         );
 
         # manage resize of the browser window
-        viewportWidth = $(window).width();
-        viewportHeight = $(window).height();
         $(window).resize( (event) ->
-          #TODO update map and tabs size
+          SizeUtil.computeAreaSizes();
         );
 );
