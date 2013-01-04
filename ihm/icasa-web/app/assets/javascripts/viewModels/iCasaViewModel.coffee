@@ -567,12 +567,24 @@ define(['jquery',
         constructor : (model) ->
 
            @imgSrc = ko.observable(model.imgSrc);
-
-           @mapSize = ko.observable(500);
-
+           @mapWidth = ko.observable(1);
+           @mapHeight = ko.observable(1);
+           @computeMapImgSize = () =>
+             imgSrcNoCache = @imgSrc() + '?cache=' + Date.now();
+             iCasaViewModel = @;
+             $('<img/>').attr('src', imgSrcNoCache).load(() ->
+               iCasaViewModel.mapWidth(this.width);
+               iCasaViewModel.mapHeight(this.height);
+             );
+           @computeMapImgSize();
+           @mapWidthRatio = ko.observable(1.0);
+           @mapHeightRatio = ko.observable(1.0);
            @updateMapSize = () =>
-              height = $("mapImg").height();
-              width = $("mapImg").width();
+              mapElt = $("#mapImg")
+              mapEffWidth = mapElt.width();
+              mapEffHeight = mapElt.height();
+              @mapWidthRatio(mapEffWidth / @mapWidth());
+              @mapHeightRatio(mapEffHeight / @mapHeight());
 
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 

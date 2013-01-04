@@ -63,7 +63,7 @@
 <section>
     <article id="map">
         <section id="mapContainer">
-            <img id="mapImg" data-bind="attr: {src: imgSrc}"" />
+            <img id="mapImg" data-bind="attr: {src: imgSrc}" />
             <!-- ko foreach: $root.persons() -->
                 <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
                     <div class="userWidgetContainer">
