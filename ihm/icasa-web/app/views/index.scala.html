@@ -22,6 +22,14 @@
 <html>
 <head>
     <title>iCasa</title>
+
+    <!--[if lt IE 9]>
+       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+       <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css")">
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap.min.css")">
 
@@ -37,7 +45,6 @@
     </head>
 <body>
   <header>
-    <!--img src="@routes.Assets.at("images/favicon.png")" alt="iCasaLogo" /-->
     <div class="navbar navbar-inverse navbar-fixed-top">
         <div class="navbar-inner">
             <div class="container">
@@ -47,7 +54,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="#">iCasa Simulator</a>
+                <a class="brand" href="#"><img src="@routes.Assets.at("images/logos/logoICasa25x25.png")" alt="iCasaLogo" /> iCasa Simulator</a>
                 <nav class="nav-collapse collapse">
                     <ul class="nav">
                         <li class="active"><a href="#">Home</a></li>

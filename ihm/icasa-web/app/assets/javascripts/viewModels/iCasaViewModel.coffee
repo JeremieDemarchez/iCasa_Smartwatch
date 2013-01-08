@@ -674,6 +674,9 @@ define(['jquery',
 
            @removeSelectedDevices = () =>
              ko.utils.arrayForEach(@devices(), (device) =>
+               if (device == undefined)
+                 return;
+
                if (device.isSelected())
                   device.model().destroy();
              );

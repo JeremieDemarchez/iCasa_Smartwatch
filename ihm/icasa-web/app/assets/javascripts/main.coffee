@@ -96,7 +96,7 @@ class SizeUtil
       a = 'client';
       e = document.documentElement || document.body;
     return { width : e[ a+'Width' ], height : e[ a+'Height' ] };
-  @computeAreaSizes = () ->
+  @computeAreaSizes = (resizedAreaId) ->
     viewportSize = @.getViewportSize();
     map = $("#map");
     mapWidth = map.width();
@@ -121,8 +121,6 @@ require([
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
 
-        sizeUtil = new SizeUtil();
-
         iCasaViewModel = new ICasaViewModel( {
           id: "PaulHouse",
           imgSrc: "assets/images/paulHouse.png"
@@ -139,16 +137,15 @@ require([
             aspectRatio : true,
             ghost: true
             stop: (event, eventUI) ->
-              SizeUtil.computeAreaSizes();
+              SizeUtil.computeAreaSizes("map");
         });
-
         $("#actionTabs").resizable({
             animate: true,
             aspectRatio : false,
             ghost: true,
             handles: "e, s, se, sw, w",
             stop: (event, eventUI) ->
-              SizeUtil.computeAreaSizes();
+              sizeUtil.computeAreaSizes("actionTabs");
               $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({
@@ -157,7 +154,7 @@ require([
             ghost: true,
             handles: "e, s, se, sw"
             stop: (event, eventUI) ->
-              SizeUtil.computeAreaSizes();
+              SizeUtil.computeAreaSizes("statusWindows");
         });
 
         # manage map size changes
@@ -167,6 +164,8 @@ require([
 
         # manage resize of the browser window
         $(window).resize( (event) ->
-          SizeUtil.computeAreaSizes();
+          SizeUtil.computeAreaSizes(null);
         );
+
+        SizeUtil.computeAreaSizes(null);
 );
