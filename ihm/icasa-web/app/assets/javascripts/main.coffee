@@ -98,14 +98,19 @@ class SizeUtil
     return { width : e[ a+'Width' ], height : e[ a+'Height' ] };
   @computeAreaSizes = (resizedAreaId) ->
     viewportSize = @.getViewportSize();
+
+    # hypothesys : areaBorderSize = padding + marging + border = 10 + 3 + 15 = 28px
+    areaBorderSize = 28;
     map = $("#map");
     mapWidth = map.width();
     mapHeight = map.height();
     actionTabs = $("#actionTabs");
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
+
     statusWindows = $("#statusWindows");
     statusWindowsWidth = statusWindows.width();
+    statusWindows.width(viewportSize.width - (2 * areaBorderSize));
     statusWindowsHeight = statusWindows.height();
 
 # launch application
@@ -145,7 +150,7 @@ require([
             ghost: true,
             handles: "e, s, se, sw, w",
             stop: (event, eventUI) ->
-              sizeUtil.computeAreaSizes("actionTabs");
+              SizeUtil.computeAreaSizes("actionTabs");
               $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({
