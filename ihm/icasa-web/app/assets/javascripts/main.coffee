@@ -141,13 +141,14 @@ require([
             stop: (event, eventUI) ->
               SizeUtil.computeAreaSizes();
         });
+
         $("#actionTabs").resizable({
             animate: true,
             aspectRatio : false,
             ghost: true,
             handles: "e, s, se, sw, w",
             stop: (event, eventUI) ->
-              sizeUtil.computeAreaSizes();
+              SizeUtil.computeAreaSizes();
               $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({
