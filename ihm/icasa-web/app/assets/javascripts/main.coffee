@@ -145,7 +145,7 @@ require([
             ghost: true,
             handles: "e, s, se, sw, w",
             stop: (event, eventUI) ->
-              sizeUtil.computeAreaSizes("actionTabs");
+              SizeUtil.computeAreaSizes("actionTabs");
               $("#tabs").tabs("refresh");
         });
         $("#statusWindows").resizable({
