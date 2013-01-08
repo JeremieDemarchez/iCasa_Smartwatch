@@ -200,10 +200,10 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			if (parent != null)
 				return parent.getVariableValue(name);
 			else
-				throw new NullPointerException("Variable " + name + " does not exist");
+				return null;
 
 		if (!variables.containsKey(name))
-			throw new NullPointerException("Variable " + name + " does not exist");
+			return null;
 		
 		return variables.get(name);
 	}
@@ -355,7 +355,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		String parentId = "Unset";
 		if (parent!=null)
 			parentId = parent.getId();
-		return "Zone: " + id + " X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " -- Width: " + width + " Height: " + height + " - Parent: " + parentId;
+		return "Zone: " + id + " X: " + leftTopPosition.x + " Y: " + leftTopPosition.y + " -- Width: " + width + " Height: " + height + " - Parent: " + parentId + " - Use parent: " + useParentVariable;
 	}
 
 

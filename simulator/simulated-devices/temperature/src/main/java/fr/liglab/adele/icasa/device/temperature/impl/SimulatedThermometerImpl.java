@@ -73,8 +73,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	private ZoneListener listener = new MyZoneListener();
 
-	// private volatile SimulatedEnvironment m_env;
-
 	public SimulatedThermometerImpl() {
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
 	}
@@ -190,25 +188,25 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
-			for (Zone zone : zones) {
-	         System.out.println("Sort - " + zone);
+			for (Zone zone : zones) {	   
+				System.out.println("Enter in ----> " + zone);
+				Object tempValue = zone.getVariableValue("Temperature");
+				if (tempValue != null) {
+					m_zone = zone;
+					setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempValue);
+					m_zone.addListener(listener);
+					break;
+				}
          }
-					
-			m_zone = zones.get(0);
-			Object temp = m_zone.getVariableValue("Temperature");
-			if (temp != null)
-				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, temp);
-			m_zone.addListener(listener);
-
 		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
+		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
 		if (!zones.isEmpty()) {
-			m_zone.removeListener(listener);
-			// System.out.println("Thermometer" + m_serialNumber + " LEAVING zone "
-			// + zones.get(0).getId());
+			if (m_zone!=null)
+				m_zone.removeListener(listener);
 		}
 	}
 

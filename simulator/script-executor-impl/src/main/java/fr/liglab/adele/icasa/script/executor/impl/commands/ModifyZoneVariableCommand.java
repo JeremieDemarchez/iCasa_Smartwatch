@@ -24,37 +24,38 @@ import org.json.JSONObject;
  */
 @Component(name = "ModifyZoneVariableCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-        @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{modifyZoneVariableValue}"),
-        @StaticServiceProperty(name = "name", value = "modify-zone-variable", type = "String") })
-@Instantiate(name="modify-zone-variable-command")
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{modifyZoneVariableValue}"),
+      @StaticServiceProperty(name = "name", value = "modify-zone-variable", type = "String") })
+@Instantiate(name = "modify-zone-variable-command")
 public class ModifyZoneVariableCommand extends AbstractCommand {
 
-    @Requires
-    private SimulationManager simulationManager;
+	@Requires
+	private SimulationManager simulationManager;
 
-    private String zoneId;
-    private String variableName;
-    private String newValue;
+	private String zoneId;
+	private String variableName;
+	private String newValue;
 
-    @Override
-    public Object execute() throws Exception {
-        simulationManager.setZoneVariable(zoneId, variableName, new Double(newValue));
-        return null;
-    }
+	@Override
+	public Object execute() throws Exception {
+		System.out.println("Modifying variable: " + variableName + " value: " + newValue + " - in Zone: " + zoneId);
+		simulationManager.setZoneVariable(zoneId, variableName, new Double(newValue));
+		return null;
+	}
 
-    @Override
-    public void configure(JSONObject param) throws Exception {
-        this.zoneId = param.getString("zoneId");
-        this.variableName = param.getString("variable");
-        //TODO manage other value types than String
-        this.newValue = param.getString("value");
-    }
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		this.zoneId = param.getString("zoneId");
+		this.variableName = param.getString("variable");
+		// TODO manage other value types than String
+		this.newValue = param.getString("value");
+	}
 
-    public void modifyZoneVariableValue(String zoneId, String variableName, String newValue) throws Exception {
-        this.zoneId = zoneId;
-        this.variableName = variableName;
-        this.newValue = newValue;
-        execute();
-    }
+	public void modifyZoneVariableValue(String zoneId, String variableName, String newValue) throws Exception {
+		this.zoneId = zoneId;
+		this.variableName = variableName;
+		this.newValue = newValue;
+		execute();
+	}
 
 }
