@@ -15,20 +15,12 @@
       limitations under the License.
 
 -->
-<table class="table table-striped table-bordered">
-    <p>Zone Name: <input data-bind="value: $root.newZoneName" /></p>
-    <button data-bind="click: $root.createZone">Create A Zone</button>
+<form class="form-horizontal">
+    <div class="control-group">
+        <label class="control-label" for="inputName">Name</label>
+        <div class="controls">
+            <input type="text" id="inputName" data-bind="value: name, attr: { alt: name}" />
+        </div>
+    </div>
 
-    <thead>
-    <tr>
-        <th>Name</th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody data-bind="foreach: $root.zones()">
-    <tr data-bind="css : { warning: isHighlighted }">
-        <td><a data-bind="text: name, click: $root.showZoneWindow"/></td>
-        <td><img class="removeIcon" src="assets/images/buttons/remove.png" data-bind="click: $root.removeZone "></img></td>
-    </tr>
-    </tbody>
-</table>
+</form>

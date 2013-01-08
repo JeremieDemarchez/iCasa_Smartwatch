@@ -13,9 +13,10 @@ define(['jquery',
         'text!templates/tabs.html',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
+        'text!templates/zoneStatusWindow.html',
         'text!templates/bathroomScaleStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -374,6 +375,7 @@ define(['jquery',
             return (@bottomY() + @topY()) / 2;
           owner: @
         } , @);
+        @statusWindowTemplate(zoneStatusWindowTemplateHtml);
 
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
@@ -697,6 +699,15 @@ define(['jquery',
               DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
+           @removeSelectedPersons = () =>
+              ko.utils.arrayForEach(@persons(), (person) =>
+                if (person == undefined)
+                  return;
+
+                if (person.isSelected())
+                  person.model().destroy();
+              );
+
            @removePerson = (person) =>
               person.model().destroy();
 
@@ -721,9 +732,21 @@ define(['jquery',
               @zones.push(new ZoneViewModel(newZone));
               newZone.save();
 
+           @removeSelectedZones = () =>
+              ko.utils.arrayForEach(@zones(), (zone) =>
+                if (zone == undefined)
+                  return;
+
+                if (zone.isSelected())
+                  zone.model().destroy();
+              );
+
            @removeZone = (zone) =>
               zone.model().destroy();
 
+           @showZoneWindow = (zone) =>
+              zone.statusWindowVisible(false);
+              zone.statusWindowVisible(true);
 
            # script management
 
