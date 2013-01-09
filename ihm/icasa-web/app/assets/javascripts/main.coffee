@@ -107,6 +107,12 @@ class SizeUtil
     actionTabs = $("#actionTabs");
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
+    availableWidth = viewportSize.width - (4 * areaBorderSize) - 5;
+    if ((resizedAreaId == undefined) || (resizedAreaId == null) || (resizedAreaId == "map"))
+      actionTabs.width(availableWidth - mapWidth);
+      actionTabs.height(mapHeight);
+    else
+      map.width(availableWidth - actionTabsWidth);
 
     statusWindows = $("#statusWindows");
     statusWindowsWidth = statusWindows.width();
