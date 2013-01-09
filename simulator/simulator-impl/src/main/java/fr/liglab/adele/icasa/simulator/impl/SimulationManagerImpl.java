@@ -80,7 +80,6 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private List<String> personTypes = new ArrayList<String>();
 
-	
 	public SimulationManagerImpl() {
 		addPersonType("Grandfather");
 		addPersonType("Grandmother");
@@ -89,7 +88,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		addPersonType("Boy");
 		addPersonType("Girl");
 	}
-	
+
 	@Override
 	public Zone createZone(String id, int leftX, int topY, int width, int height) {
 		Zone zone = new ZoneImpl(id, leftX, topY, width, height);
@@ -202,13 +201,13 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Zone getZoneFromPosition(Position position) {
-		List<Zone> tempList = new ArrayList<Zone>();		
+		List<Zone> tempList = new ArrayList<Zone>();
 		for (Zone zone : zones.values()) {
 			if (zone.contains(position)) {
 				tempList.add(zone);
-			}				
+			}
 		}
-		if (tempList.size()>0) {
+		if (tempList.size() > 0) {
 			Collections.sort(tempList, new ZoneComparable());
 			return tempList.get(0);
 		}
@@ -323,9 +322,9 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public void addPerson(String userName, String personType) {
 		String aPersonType = getPersonType(personType);
-		if (aPersonType==null)
+		if (aPersonType == null)
 			return;
-		
+
 		Person person = new PersonImpl(userName, new Position(-1, -1), aPersonType, this);
 		persons.put(userName, person);
 
@@ -718,7 +717,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (personType.contains(personType)) {
 			personTypes.remove(personType);
 			for (PersonTypeListener listener : personTypeListeners)
-				listener.personTypeRemoved(personType);			
+				listener.personTypeRemoved(personType);
 		}
 	}
 

@@ -26,8 +26,6 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Updated;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
@@ -48,19 +46,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@ServiceProperty(name = Thermometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	/*
-	 * @Property(name = Thermometer.THERMOMETER_CURRENT_TEMPERATURE, value =
-	 * "0.0")
-	 * 
-	 * @ServiceProperty(name = Thermometer.THERMOMETER_CURRENT_TEMPERATURE, value
-	 * = "0.0") private double m_currentTemperature;
-	 */
-
-	@Property(name = "updaterThread.period", value = "5000")
-	private long m_period;
-
-	@LogConfig
-	private ComponentLogger m_logger;
 
 	@ServiceProperty(name = "state", value = "activated")
 	private volatile String state;
@@ -72,8 +57,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	private volatile Zone m_zone;
 
 	private ZoneListener listener = new MyZoneListener();
-
-	// private volatile SimulatedEnvironment m_env;
 
 	public SimulatedThermometerImpl() {
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
@@ -99,50 +82,9 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	@Invalidate
 	public synchronized void stop() throws InterruptedException {
-		/*
-		 * m_updaterThread.interrupt(); m_updaterThread.join();
-		 */
+
 	}
 
-	/*
-	 * public void setFault(String fault) { this.fault = fault;
-	 * 
-	 * if (fault) { if (m_updaterThread != null) { try {
-	 * m_updaterThread.interrupt(); m_updaterThread.join(); } catch
-	 * (InterruptedException e) { e.printStackTrace(); } } } else { if
-	 * (m_updaterThread != null) { if (m_updaterThread.isAlive()) { try {
-	 * m_updaterThread.interrupt(); m_updaterThread.join(); } catch
-	 * (InterruptedException e) { e.printStackTrace(); } } m_updaterThread = new
-	 * Thread(new UpdaterThread(), "ThermometerUpdaterThread-" + m_serialNumber);
-	 * m_updaterThread.start(); } else { m_updaterThread = new Thread(new
-	 * UpdaterThread(), "ThermometerUpdaterThread-" + m_serialNumber);
-	 * m_updaterThread.start(); } }
-	 * 
-	 * }
-	 */
-
-	/*
-	 * @Override public void zoneVariableAdded(Zone zone, String variableName) {
-	 * // do nothing }
-	 * 
-	 * @Override public void zoneVariableRemoved(Zone zone, String variableName)
-	 * { // do nothing }
-	 */
-
-	/*
-	 * @Override public void zoneVariableModified(Zone zone, String variableName,
-	 * Object oldValue) {
-	 * 
-	 * if (!(fault.equalsIgnoreCase("yes"))) { if
-	 * (SimulatedEnvironment.TEMPERATURE.equals(variableName)) { Object
-	 * tempOldValue = null; synchronized (this) { tempOldValue =
-	 * m_currentTemperature; m_currentTemperature = (Double)
-	 * zone.getVariableValue(variableName); } notifyListeners(new
-	 * DeviceEvent(this, DeviceEventType.PROP_MODIFIED,
-	 * Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempOldValue)); } }
-	 * 
-	 * }
-	 */
 
 	@Updated
 	public void updated() {
@@ -190,25 +132,25 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
-			for (Zone zone : zones) {
-	         System.out.println("Sort - " + zone);
+			for (Zone zone : zones) {	   
+				System.out.println("Enter in ----> " + zone);
+				Object tempValue = zone.getVariableValue("Temperature");
+				if (tempValue != null) {
+					m_zone = zone;
+					setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempValue);
+					m_zone.addListener(listener);
+					break;
+				}
          }
-					
-			m_zone = zones.get(0);
-			Object temp = m_zone.getVariableValue("Temperature");
-			if (temp != null)
-				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, temp);
-			m_zone.addListener(listener);
-
 		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
+		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
 		if (!zones.isEmpty()) {
-			m_zone.removeListener(listener);
-			// System.out.println("Thermometer" + m_serialNumber + " LEAVING zone "
-			// + zones.get(0).getId());
+			if (m_zone!=null)
+				m_zone.removeListener(listener);
 		}
 	}
 
