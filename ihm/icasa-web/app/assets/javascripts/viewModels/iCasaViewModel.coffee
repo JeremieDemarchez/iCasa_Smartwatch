@@ -90,8 +90,9 @@ define(['jquery',
                 start: (event, eventUI) ->
                   viewModel.isSizeHighlightEnabled(false);
                 stop: (event, eventUI) ->
-                  viewModel.positionX(eventUI.position.left + (viewModel.widgetWidth() / 2)); #TODO add positionX and positionY for zones
-                  viewModel.positionY(eventUI.position.top  + (viewModel.widgetHeight() / 2));
+                  #TODO add positionX and positionY for zones
+                  viewModel.positionX((eventUI.position.left / viewModel.containerWidthRatio()) + (viewModel.widgetWidth() / 2));
+                  viewModel.positionY((eventUI.position.top / viewModel.containerHeightRatio())  + (viewModel.widgetHeight() / 2));
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
