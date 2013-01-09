@@ -27,24 +27,18 @@
 
     <thead>
         <tr>
-            <!--th>Id</th-->
+            <th></th>
             <th style="width: 40px"></th>
             <th>Name</th>
             <th></th>
-            <th>Location</th>
-            <th style="width: 60px">State</th>
-            <th style="width: 40px">Fault</th>
         </tr>
     </thead>
     <tbody data-bind="foreach: $root.devices()">
         <tr data-bind="css : { warning: isHighlighted }">
-            <!--td data-bind="text: id"></td-->
+            <td><input type="checkbox" data-bind="check: isSelected" /></td>
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc }, click: $root.showDeviceWindow "></img></td>
             <td><a data-bind="text: name, click: $root.showDeviceWindow"/></td>
             <td><img class="removeIcon" src="assets/images/buttons/remove.png" data-bind="click: $root.removeDevice "></img></td>
-            <td><select data-bind="event: { change: saveLocationChanges }, options: zones, value: locationZone, optionsText: 'name'"></select></td>
-            <td><select data-bind="options: $root.deviceActivationStates, value: state"></select></td>
-            <td><select data-bind="options: $root.deviceFaults, value: fault"></select></td>
         </tr>
     </tbody>
 </table>

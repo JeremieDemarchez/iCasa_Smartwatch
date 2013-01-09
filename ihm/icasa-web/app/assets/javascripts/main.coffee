@@ -172,5 +172,6 @@ require([
           SizeUtil.computeAreaSizes(null);
         );
 
+        iCasaViewModel.updateMapSize();
         SizeUtil.computeAreaSizes(null);
 );
