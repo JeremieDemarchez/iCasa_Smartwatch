@@ -128,7 +128,7 @@ require([
 
         iCasaViewModel = new ICasaViewModel( {
           id: "PaulHouse",
-          imgSrc: "assets/images/paulHouse.png"
+          imgSrc: "assets/images/maps/paulHouse.png"
         });
         ko.applyBindings(iCasaViewModel);
 
