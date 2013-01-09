@@ -23,19 +23,17 @@
     <thead>
         <tr>
             <th></th>
+            <th></th>
             <th>Name</th>
             <th></th>
-            <th>Location</th>
-            <th>Type</th>
         </tr>
     </thead>
     <tbody data-bind="foreach: $root.persons()">
         <tr data-bind="css : { warning: isHighlighted }">
+            <td><input type="checkbox" data-bind="checked: isSelected" /></td>
             <td><img class="personIcon" data-bind="attr: { src: imgSrc } "></img></td>
             <td data-bind="text: name"/></td>
             <td><img class="removeIcon" src="assets/images/buttons/remove.png" data-bind="click: $root.removePerson "></img></td>
-            <td><select data-bind="options: zones, value: locationZone, optionsText: 'name'"></select></td>
-            <td data-bind="text: type"></td>
         </tr>
     </tbody>
 </table>

@@ -21,12 +21,14 @@
 
     <thead>
     <tr>
+        <th></th>
         <th>Name</th>
         <th></th>
     </tr>
     </thead>
     <tbody data-bind="foreach: $root.zones()">
     <tr data-bind="css : { warning: isHighlighted }">
+        <td><input type="checkbox" data-bind="checked: isSelected" /></td>
         <td><a data-bind="text: name, click: $root.showZoneWindow"/></td>
         <td><img class="removeIcon" src="assets/images/buttons/remove.png" data-bind="click: $root.removeZone "></img></td>
     </tr>
