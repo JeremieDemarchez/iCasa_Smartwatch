@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
@@ -50,15 +49,14 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@ServiceProperty(name = "state", value = "activated")
 	private volatile String state;
 
-	@Property(name = "fault", value = "no")
 	@ServiceProperty(name = "fault", value = "no")
 	private volatile String fault;
-
+		
 	private volatile Zone m_zone;
 
-	private ZoneListener listener = new MyZoneListener();
+	private ZoneListener listener = new ThermometerZoneListener();
 
-	public SimulatedThermometerImpl() {
+	public SimulatedThermometerImpl() {		
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
 	}
 
@@ -154,7 +152,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 		}
 	}
 
-	class MyZoneListener extends BaseZoneListener {
+	class ThermometerZoneListener extends BaseZoneListener {
 
 		@Override
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {

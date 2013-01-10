@@ -3,7 +3,8 @@
 	
 	
 	<create-zone zoneId="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
-
+	<add-device deviceID="Pres-A1255D-D" type="iCASA.PresenceSensor" />
+	<move-device-zone deviceID="Pres-A1255D-D" zone="kitchen" />
 
 	
 

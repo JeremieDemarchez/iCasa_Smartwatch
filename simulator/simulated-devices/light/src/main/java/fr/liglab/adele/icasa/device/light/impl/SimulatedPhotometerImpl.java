@@ -18,7 +18,6 @@ package fr.liglab.adele.icasa.device.light.impl;
 import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
@@ -26,43 +25,43 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.Zone;
 import fr.liglab.adele.icasa.simulator.listener.ZonePropListener;
+import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
 
 /**
  * Implementation of a simulated photometer device.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
-@Component(name="iCASA.Photometer")
+@Component(name = "iCASA.Photometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedPhotometerImpl extends AbstractDevice implements Photometer, SimulatedDevice,
-      ZonePropListener {
+public class SimulatedPhotometerImpl extends AbstractDevice implements Photometer, SimulatedDevice, ZonePropListener {
 
 	@ServiceProperty(name = Photometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
 	@ServiceProperty(name = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, value = "NaN")
-	@Property(name = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, value = "NaN")
 	private double m_currentIlluminance;
 
 	@ServiceProperty(name = "state", value = "deactivated")
 	private String state;
 
 	@ServiceProperty(name = "fault", value = "no")
-	@Property(name = "fault", value = "no")
 	private String fault;
-
 
 	@LogConfig
 	private ComponentLogger m_logger;
+	
+	private Zone m_zone;
+	
+	private PhotometerZoneListener listener = new PhotometerZoneListener();
 
-	//private volatile SimulatedEnvironment m_env;
-
-	//private Thread m_updaterThread;
 
 	@Override
 	public String getSerialNumber() {
@@ -103,39 +102,62 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 		this.fault = fault;
 	}
 
-    @Override
-    public void zoneVariableAdded(Zone zone, String variableName) {
-        // do nothing
-    }
-
-    @Override
-    public void zoneVariableRemoved(Zone zone, String variableName) {
-        // do nothing
-    }
-
-    @Override
-    public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-   	 /*
-		if (!(fault.equalsIgnoreCase("yes"))) {
-			if (SimulatedEnvironment.ILLUMINANCE.equals(variableName)) {
-                Object illuminanceBefore = m_currentIlluminance;
-				m_currentIlluminance = ((Double) zone.getVariableValue(variableName)).doubleValue();
-				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
-			}
-		}
-		*/
+	@Override
+	public void zoneVariableAdded(Zone zone, String variableName) {
+		// do nothing
 	}
 
 	@Override
-   public void enterInZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   }
+	public void zoneVariableRemoved(Zone zone, String variableName) {
+		// do nothing
+	}
 
 	@Override
-   public void leavingZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   }
+	public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+		if (!(fault.equalsIgnoreCase("yes"))) {
+			if (variableName.equals("Illuminance")) {
+				Object illuminanceBefore = m_currentIlluminance;
+				m_currentIlluminance = ((Double) zone.getVariableValue(variableName)).doubleValue();
+				setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, m_currentIlluminance);
+				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED,
+				      Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
+			}
+		}
+	}
+
+	@Override
+	public void enterInZones(List<Zone> zones) {
+		if (!zones.isEmpty()) {
+			m_zone = zones.get(0);
+			m_zone.addListener(listener);
+		}
+
+	}
+
+	@Override
+	public void leavingZones(List<Zone> zones) {
+		if (m_zone!=null) {
+			m_zone.removeListener(listener);
+			m_zone = null;
+		}
+	}
+	
+	
+	class PhotometerZoneListener extends BaseZoneListener {
+		
+		@Override
+		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+			if (!(fault.equalsIgnoreCase("yes"))) {
+				if (variableName.equals("Illuminance")) {
+					Object illuminanceBefore = m_currentIlluminance;
+					m_currentIlluminance = ((Double) zone.getVariableValue(variableName)).doubleValue();
+					setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, m_currentIlluminance);
+					notifyListeners(new DeviceEvent(SimulatedPhotometerImpl.this, DeviceEventType.PROP_MODIFIED,
+					      Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
+				}
+			}
+		}
+	}
+	
 
 }

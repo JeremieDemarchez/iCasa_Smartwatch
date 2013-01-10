@@ -117,7 +117,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 			String zoneId = getSerialNumber() + "#zone";
 			Position center = device.getCenterAbsolutePosition();
 			int detectionScope = (Integer) getPropertyValue(DETECTION_SCOPE);
-			detectionZone = manager.createZone(zoneId,	center, detectionScope);
+			detectionZone = manager.createZone(zoneId, center, detectionScope);
 			device.attachObject(detectionZone);
 		}
 	}

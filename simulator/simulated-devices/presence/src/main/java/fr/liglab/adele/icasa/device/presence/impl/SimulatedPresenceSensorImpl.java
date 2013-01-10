@@ -17,20 +17,24 @@ package fr.liglab.adele.icasa.device.presence.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.simulator.*;
-import fr.liglab.adele.icasa.simulator.listener.ZonePropListener;
-
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Zone;
+import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 /**
  * Implementation of a simulated presence sensor device.
@@ -40,30 +44,22 @@ import fr.liglab.adele.icasa.device.util.AbstractDevice;
 @Component(name="iCASA.PresenceSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPresenceSensorImpl extends AbstractDevice implements PresenceSensor, SimulatedDevice,
-        ZonePropListener {
+	PersonListener {
 
 	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
-
-	@Property(name = "presence.threshold", value = "1.0d")
-	private double m_threshold;
-
-	@ServiceProperty(name = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, value = "false")
-	@Property(name = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, value = "false")
-	private boolean m_currentPresence;
 
 	@ServiceProperty(name = "state", value = "deactivated")
 	private String state;
 
 	@ServiceProperty(name = "fault", value = "no")
-	@Property(name = "fault", value = "no")
 	private String fault;
 
-	@LogConfig
-	private ComponentLogger m_logger;
-
-	//private volatile SimulatedEnvironment m_env;
-
+	@Requires
+	private SimulationManager manager;
+	
+	private volatile Zone m_zone;
+	
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
@@ -71,39 +67,12 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	@Override
 	public synchronized boolean getSensedPresence() {
-		return m_currentPresence;
+		Boolean presence = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
+		if (presence!=null)
+			return presence;
+		return false;
 	}
 
-    @Override
-    public void zoneVariableAdded(Zone zone, String variableName) {
-        // do nothing
-    }
-
-    @Override
-    public void zoneVariableRemoved(Zone zone, String variableName) {
-        // do nothing
-    }
-
-	@Override
-	public void zoneVariableModified(Zone zone, final String propertyName, final Object oldValue) {
-		/*
-		if (!(fault.equalsIgnoreCase("yes"))) {
-			if (SimulatedEnvironment.PRESENCE.equals(propertyName)) {
-				final boolean oldPresence = m_currentPresence;
-				final double presence = ((Double) zone.getVariableValue(propertyName)).doubleValue();
-				if (presence >= m_threshold) {
-					m_currentPresence = true;
-				} else {
-					m_currentPresence = false;
-				}
-				if (oldPresence != m_currentPresence) {
-					m_logger.debug("Sensed presence : " + m_currentPresence);
-					notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, oldPresence));
-				}
-			}			
-		}
-		*/
-	}
 
 	/**
 	 * sets the state
@@ -136,14 +105,58 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	@Override
    public void enterInZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
+		if (!zones.isEmpty())
+			m_zone = zones.get(0);			
    }
 
 	@Override
    public void leavingZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
+	   m_zone = null;	   
    }
 
+	@Override
+   public void personAdded(Person person) {
+	   setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, peopleInZone());	   
+   }
+
+	@Override
+   public void personRemoved(Person person) {
+		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, peopleInZone());	   
+   }
+
+	@Override
+   public void personMoved(Person person, Position oldPosition) {
+		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, peopleInZone());	   
+   }
+
+	@Override
+   public void personDeviceAttached(Person person, LocatedDevice device) {
+		// Nothing to do	   
+   }
+
+	@Override
+   public void personDeviceDetached(Person person, LocatedDevice device) {
+	   // Nothing to do	   
+   }
+	
+	private boolean peopleInZone() {
+		if (m_zone!=null) {
+			List<Person> persons = manager.getPersons();
+			for (Person person : persons) {
+	         if (m_zone.contains(person))
+	         	return true;
+         }
+		}
+		return false;
+	}
+		
+	@Validate
+	protected void start() {
+		manager.addListener(this);
+	}
+
+	@Invalidate
+	protected void stop() {
+		manager.removeListener(this);
+	}
 }
