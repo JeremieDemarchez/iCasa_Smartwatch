@@ -39,6 +39,8 @@ public interface Heater extends GenericDevice {
      * @see #setPowerLevel(double)
      */
     String HEATER_POWER_LEVEL = "heater.powerLevel";
+    
+    String HEATER_UPDATE_PERIOD = "heater.updaterThread.period";
 
     /**
      * Return the current power level of this heater.

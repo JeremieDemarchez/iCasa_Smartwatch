@@ -59,6 +59,11 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 
 	@LogConfig
 	private ComponentLogger m_logger;
+	
+	/**
+	 * Influence zone corresponding to the zone with highest level where the device is located
+	 */
+	private Zone m_zone;
 
 	@Override
 	public String getSerialNumber() {
@@ -77,12 +82,24 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 			throw new IllegalArgumentException("Invalid power level : " + level);
 		}
 		double save = m_powerLevel;
-		double illuminanceBefore = illuminance();
+		double illuminanceBefore = computeIlluminance();
 		m_powerLevel = level;
-		double illuminanceAfter = illuminance();
+		double illuminanceAfter = computeIlluminance();
 		m_logger.debug("Power level set to " + level);
+				
 		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, DimmerLight.LIGHT_POWER_LEVEL,
 		      illuminanceBefore));
+		
+		// Trying to modify zone variable
+		if (m_zone!=null) {
+			try {
+				m_zone.setVariableValue("Illuminance", illuminanceAfter);
+         } catch (Exception e) {
+         	m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
+         }
+		}
+			
+		
 		return save;
 	}
 
@@ -93,7 +110,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	 * 
 	 * @return the illuminance currently emitted by this light
 	 */
-	private double illuminance() {
+	private double computeIlluminance() {
 		return m_powerLevel * m_maxIlluminance;
 	}
 
@@ -128,13 +145,13 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
-		// TODO Auto-generated method stub
-
+		if (!zones.isEmpty()) {
+			m_zone = zones.get(0);
+		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
-		// TODO Auto-generated method stub
-
+	   m_zone = null;	
 	}
 }

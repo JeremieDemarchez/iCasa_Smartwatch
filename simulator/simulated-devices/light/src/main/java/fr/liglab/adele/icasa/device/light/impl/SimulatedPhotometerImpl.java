@@ -131,7 +131,6 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 			m_zone = zones.get(0);
 			m_zone.addListener(listener);
 		}
-
 	}
 
 	@Override

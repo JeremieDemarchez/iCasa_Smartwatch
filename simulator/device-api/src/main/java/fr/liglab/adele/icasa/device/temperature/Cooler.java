@@ -39,6 +39,8 @@ public interface Cooler extends GenericDevice {
      * @see #setPowerLevel(double)
      */
     String COOLER_POWER_LEVEL = "cooler.powerLevel";
+    
+    String COOLER_UPDATE_PERIOD = "cooler.updaterThread.period";
 
     /**
      * Return the current power level of this cooler.

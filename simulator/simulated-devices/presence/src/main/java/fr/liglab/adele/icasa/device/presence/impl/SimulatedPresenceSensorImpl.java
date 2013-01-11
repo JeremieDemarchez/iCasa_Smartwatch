@@ -26,6 +26,8 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
@@ -39,7 +41,7 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 /**
  * Implementation of a simulated presence sensor device.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 @Component(name="iCASA.PresenceSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
@@ -58,6 +60,10 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	@Requires
 	private SimulationManager manager;
 	
+	
+	/**
+	 * Influence zone corresponding to the zone with highest level where the device is located
+	 */
 	private volatile Zone m_zone;
 	
 	@Override
@@ -65,6 +71,8 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 		return m_serialNumber;
 	}
 
+	
+	
 	@Override
 	public synchronized boolean getSensedPresence() {
 		Boolean presence = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
@@ -105,8 +113,10 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	@Override
    public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty())
-			m_zone = zones.get(0);			
+		if (!zones.isEmpty()) {
+			m_zone = zones.get(0);
+			peopleInZone();
+		}						
    }
 
 	@Override
@@ -116,17 +126,17 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	@Override
    public void personAdded(Person person) {
-	   setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, peopleInZone());	   
+	   peopleInZone();	   
    }
 
 	@Override
    public void personRemoved(Person person) {
-		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, peopleInZone());	   
+		peopleInZone();	   
    }
 
 	@Override
    public void personMoved(Person person, Position oldPosition) {
-		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, peopleInZone());	   
+		peopleInZone();	   
    }
 
 	@Override
@@ -139,15 +149,26 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	   // Nothing to do	   
    }
 	
-	private boolean peopleInZone() {
+	/**
+	 * Calculates if a person is found in the detection zone of this device. 
+	 * When there is a change of previous detection a event is sent to listeners 
+	 */
+	private void peopleInZone() {
 		if (m_zone!=null) {
+			boolean detected = false;
 			List<Person> persons = manager.getPersons();
 			for (Person person : persons) {
-	         if (m_zone.contains(person))
-	         	return true;
+	         if (m_zone.contains(person)) {
+	         	detected = true;
+	         	break;
+	         }
          }
+			
+			boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE); 
+			if (previousDetection!=detected)
+				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, PRESENCE_SENSOR_SENSED_PRESENCE,
+				      previousDetection));
 		}
-		return false;
 	}
 		
 	@Validate

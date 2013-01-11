@@ -22,7 +22,11 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
+import org.ow2.chameleon.handies.ipojo.log.LogConfig;
+import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -31,7 +35,7 @@ import fr.liglab.adele.icasa.simulator.Zone;
 /**
  * Implementation of a simulated binary light device.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 @Component(name = "iCASA.BinaryLight")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
@@ -53,6 +57,14 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	@ServiceProperty(name = "fault", value = "no")
 	private String fault;
 
+	@LogConfig
+	private ComponentLogger m_logger;
+
+	/**
+	 * Influence zone corresponding to the zone with highest level where the device is located
+	 */
+	private Zone m_zone;
+
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
@@ -65,16 +77,26 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 	@Override
 	public synchronized boolean setPowerStatus(boolean status) {
-		/*
-		 * boolean save = m_powerStatus; double illuminanceBefore = illuminance();
-		 * m_powerStatus = status; double illuminanceAfter = illuminance();
-		 * m_logger.debug("Power status set to " + status); if (m_env != null) {
-		 * notifyEnvironment(illuminanceAfter - illuminanceBefore); }
-		 * notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED,
-		 * BinaryLight.LIGHT_POWER_STATUS, illuminanceBefore)); return save;
-		 */
+
+		boolean save = m_powerStatus;
+		double illuminanceBefore = computeIlluminance();
 		m_powerStatus = status;
-		return m_powerStatus;
+		double illuminanceAfter = computeIlluminance();
+		m_logger.debug("Power status set to " + status);
+
+		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, BinaryLight.LIGHT_POWER_STATUS,
+		      illuminanceBefore));
+
+		// Trying to modify zone variable
+		if (m_zone != null) {
+			try {
+				m_zone.setVariableValue("Illuminance", illuminanceAfter);
+			} catch (Exception e) {
+				m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
+			}
+		}
+
+		return save;
 	}
 
 	/**
@@ -83,7 +105,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	 * 
 	 * @return the illuminance currently emitted by this light
 	 */
-	private double illuminance() {
+	private double computeIlluminance() {
 		return m_powerStatus ? m_maxIlluminance : 0.0d;
 	}
 
@@ -118,12 +140,14 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
-
+		if (!zones.isEmpty()) {
+			m_zone = zones.get(0);
+		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
-
+		m_zone = null;
 	}
 
 }

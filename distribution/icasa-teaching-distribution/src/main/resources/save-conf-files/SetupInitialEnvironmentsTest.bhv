@@ -15,6 +15,12 @@
 	<modify-zone-variable zoneId="livingroom" variable="Temperature" value="295.15"/>
 	
 	
+	<add-zone-variable zoneId="livingroom" variable="Volume" />
+	<modify-zone-variable zoneId="livingroom" variable="Volume" value="10.15"/>
+	<add-device deviceID="Heat-F2145T-M" type="iCASA.Cooler" />	
+	<move-device-zone deviceID="Heat-F2145T-M" zone="livingroom" />
+	
+	
 	<create-zone zoneId="bedroom"  leftX="55" topY="370" width="259" height="210" />		
 
 

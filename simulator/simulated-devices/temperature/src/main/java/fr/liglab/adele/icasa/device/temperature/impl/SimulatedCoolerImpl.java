@@ -28,7 +28,10 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
+import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.Zone;
@@ -38,180 +41,166 @@ import fr.liglab.adele.icasa.simulator.Zone;
  * 
  * @author bourretp
  */
-@Component(name="iCASA.Cooler")
-@Provides(properties = {
-        @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedCoolerImpl extends AbstractDevice implements Cooler,
-        SimulatedDevice {
+@Component(name = "iCASA.Cooler")
+@Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
+public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, SimulatedDevice {
 
-    @ServiceProperty(name = Cooler.DEVICE_SERIAL_NUMBER, mandatory = true)
-    private String m_serialNumber;
+	@ServiceProperty(name = Cooler.DEVICE_SERIAL_NUMBER, mandatory = true)
+	private String m_serialNumber;
 
-    @ServiceProperty(name = Cooler.COOLER_POWER_LEVEL, value = "0.0d")
-    private double m_powerLevel;
-    
-    @ServiceProperty(name = "state", value = "deactivated")
-    private String state;
-    
-    @ServiceProperty(name = "fault", value = "no")
-    private String fault;
+	// @ServiceProperty(name = Cooler.COOLER_POWER_LEVEL, value = "0.0d")
+	// private double m_powerLevel;
 
-    // Unit = K.s^-1.m^-3
-    @Property(name = "cooler.maxCapacity", value = "1.0d")
-    private double m_maxCapacity;
+	@ServiceProperty(name = "state", value = "deactivated")
+	private String state;
 
-    @Property(name = "updaterThread.period", value = "5000")
-    private long m_period;
+	@ServiceProperty(name = "fault", value = "no")
+	private String fault;
 
-    @LogConfig
-    private ComponentLogger m_logger;
+	// Unit = K.s^-1.m^-3
+	// @Property(name = "cooler.maxCapacity", value = "1.0d")
+	// private double m_maxCapacity;
 
-    // private volatile SimulatedEnvironment m_env;
+	// @Property(name = "updaterThread.period", value = "5000")
+	// private long m_period;
 
-    private Thread m_updaterThread;
+	@LogConfig
+	private ComponentLogger m_logger;
 
-    private volatile long m_lastUpdateTime;
+	// private volatile SimulatedEnvironment m_env;
 
-    @Override
-    public String getSerialNumber() {
-        return m_serialNumber;
-    }
+	private Thread m_updaterThread;
 
-    @Validate
-    public synchronized void start() {
-        m_updaterThread = new Thread(new UpdaterThread(),
-                "CoolerUpdaterThread-" + m_serialNumber);
-        m_updaterThread.start();
-        m_lastUpdateTime = System.currentTimeMillis();
-    }
+	private volatile long m_lastUpdateTime;
 
-    @Invalidate
-    public synchronized void stop() throws InterruptedException {
-        m_updaterThread.interrupt();
-        m_updaterThread.join();
-    }
+	private Zone m_zone;
 
-    @Override
-    public synchronized double getPowerLevel() {
-        return m_powerLevel;
-    }
-
-    @Override
-    public synchronized double setPowerLevel(double level) {
-   	 /*
-        if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
-            throw new IllegalArgumentException("Invalid power level : " + level);
-        }
-        if (m_env != null) {
-            notifyEnvironment();
-        }
-        double save = m_powerLevel;
-        m_powerLevel = level;
-        m_logger.debug("Power level set to " + level);
-        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Cooler.COOLER_POWER_LEVEL, save));
-        return save;
-        */
-   	 return 0.0;
-    }
-
-    /**
-     * Notify the bound simulated simulator that the temperature has changed.
-     *
-     *            the temperature difference
-     */
-    private void notifyEnvironment() {
-   	 /*
-        m_env.lock();
-        try {
-            long time = System.currentTimeMillis();
-            double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
-            m_lastUpdateTime = time;
-            double current = m_env
-                    .getProperty(SimulatedEnvironment.TEMPERATURE);
-            double volume = m_env.getProperty(SimulatedEnvironment.VOLUME);
-            double decrease = m_maxCapacity * m_powerLevel * timeDiff / volume;
-            if (current > decrease) {
-                m_env.setProperty(SimulatedEnvironment.TEMPERATURE, current
-                        - decrease);                
-            } else {
-                m_env.setProperty(SimulatedEnvironment.TEMPERATURE, 0.0d);           
-            }
-            
-        } finally {
-            m_env.unlock();
-        }
-        */
-    }
-
-    /**
-     * The updater thread that updates the current temperature and notify
-     * listeners periodically.
-     * 
-     * @author bourretp
-     */
-    private class UpdaterThread implements Runnable {
-
-        @Override
-        public void run() {
-      	  /*
-            boolean isInterrupted = false;
-            while (!isInterrupted) {
-                try {
-                    Thread.sleep(m_period);
-                    synchronized (SimulatedCoolerImpl.this) {
-                        if (m_env != null) {
-                            notifyEnvironment();
-                        }
-                    }
-                } catch (InterruptedException e) {
-                    isInterrupted = true;
-                }
-            }
-            */
-        }
-    }
-     
-     /**
-      * sets the state
-      */
-  	public void setState(String state) {
-  		this.state = state;
-     }
-
-
-  	/**
-      * @return the state
-      */
-     public String getState() {
-     	return state;
-     }
-
-
-  	/**
-      * @return the fault
-      */
-     public String getFault() {
-     	return fault;
-     }
-
-
-  	/**
-      * @param fault the fault to set
-      */
-     public void setFault(String fault) {
-     	this.fault = fault;
-     }
+	public SimulatedCoolerImpl() {
+		setPropertyValue(Cooler.COOLER_POWER_LEVEL, 0.2d);
+		setPropertyValue(Cooler.COOLER_UPDATE_PERIOD, 5000);
+	}
 
 	@Override
-   public void enterInZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   }
+	public String getSerialNumber() {
+		return m_serialNumber;
+	}
+
+	@Validate
+	public synchronized void start() {
+		m_updaterThread = new Thread(new UpdaterThread(), "CoolerUpdaterThread-" + m_serialNumber);
+		m_updaterThread.start();
+		m_lastUpdateTime = System.currentTimeMillis();
+	}
+
+	@Invalidate
+	public synchronized void stop() throws InterruptedException {
+		m_updaterThread.interrupt();
+		m_updaterThread.join();
+	}
 
 	@Override
-   public void leavingZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   } 
+	public synchronized double getPowerLevel() {
+		return (Double) getPropertyValue(Cooler.COOLER_POWER_LEVEL);
+	}
+
+	@Override
+	public synchronized double setPowerLevel(double level) {
+		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
+			throw new IllegalArgumentException("Invalid power level : " + level);
+		}
+		double save = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
+		setPropertyValue(Heater.HEATER_POWER_LEVEL, level);
+		m_logger.debug("Power level set to " + level);
+		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Cooler.COOLER_POWER_LEVEL, save));
+		return save;
+
+	}
+
+
+	private void calculateTemperature() {
+		long time = System.currentTimeMillis();
+		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
+		m_lastUpdateTime = time;
+		if (m_zone != null) {
+			double current = (Double) m_zone.getVariableValue("Temperature");
+			double volume = (Double) m_zone.getVariableValue("Volume");
+			double powerLevel = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
+			// double decrease = m_maxCapacity * m_powerLevel * timeDiff / volume;
+			double decrease = powerLevel * timeDiff / volume;
+			if (current > decrease) {
+				m_zone.setVariableValue("Temperature", current - decrease);
+			} else {
+				m_zone.setVariableValue("Temperature", 0.0d);
+			}
+		}
+	}
+
+	/**
+	 * The updater thread that updates the current temperature and notify
+	 * listeners periodically.
+	 * 
+	 * @author bourretp
+	 */
+	private class UpdaterThread implements Runnable {
+
+		@Override
+		public void run() {
+			boolean isInterrupted = false;
+			while (!isInterrupted) {
+				try {
+					int sleepTime = (Integer) getPropertyValue(Cooler.COOLER_UPDATE_PERIOD);
+					Thread.sleep(sleepTime);
+					synchronized (SimulatedCoolerImpl.this) {
+						if (m_zone != null) {
+							calculateTemperature();
+						}
+					}
+				} catch (InterruptedException e) {
+					isInterrupted = true;
+				}
+			}
+		}
+	}
+
+	/**
+	 * sets the state
+	 */
+	public void setState(String state) {
+		this.state = state;
+	}
+
+	/**
+	 * @return the state
+	 */
+	public String getState() {
+		return state;
+	}
+
+	/**
+	 * @return the fault
+	 */
+	public String getFault() {
+		return fault;
+	}
+
+	/**
+	 * @param fault
+	 *           the fault to set
+	 */
+	public void setFault(String fault) {
+		this.fault = fault;
+	}
+
+	@Override
+	public void enterInZones(List<Zone> zones) {
+		if (!zones.isEmpty()) {
+			m_zone = zones.get(0);
+		}
+	}
+
+	@Override
+	public void leavingZones(List<Zone> zones) {
+		m_zone = null;
+	}
 
 }
