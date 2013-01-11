@@ -96,6 +96,13 @@ class SizeUtil
       a = 'client';
       e = document.documentElement || document.body;
     return { width : e[ a+'Width' ], height : e[ a+'Height' ] };
+
+  @initAreaSizes = (mapWidth, mapHeight) ->
+    map = $("#map");
+    map.width(mapWidth);
+    map.height(mapHeight);
+    @computeAreaSizes("map");
+
   @computeAreaSizes = (resizedAreaId) ->
     viewportSize = @.getViewportSize();
 
@@ -113,6 +120,7 @@ class SizeUtil
       actionTabs.height(mapHeight);
     else
       map.width(availableWidth - actionTabsWidth);
+    $("#tabs").tabs("refresh");
 
     statusWindows = $("#statusWindows");
     statusWindowsWidth = statusWindows.width();
@@ -168,16 +176,19 @@ require([
               SizeUtil.computeAreaSizes("statusWindows");
         });
 
-        # manage map size changes
-        $("#map").resize( (event) ->
+        # height is set after width
+        iCasaViewModel.mapHeight.subscribe(() ->
+          SizeUtil.initAreaSizes(iCasaViewModel.mapWidth(), iCasaViewModel.mapHeight());
           iCasaViewModel.updateMapSize();
-        );
 
-        # manage resize of the browser window
-        $(window).resize( (event) ->
-          SizeUtil.computeAreaSizes(null);
-        );
+          # manage map size changes
+          $("#map").resize( (event) ->
+            iCasaViewModel.updateMapSize();
+          );
 
-        iCasaViewModel.updateMapSize();
-        SizeUtil.computeAreaSizes(null);
+          # manage resize of the browser window
+          $(window).resize( (event) ->
+            SizeUtil.computeAreaSizes(null);
+          );
+        );
 );
