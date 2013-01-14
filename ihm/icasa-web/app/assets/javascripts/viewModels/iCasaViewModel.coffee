@@ -578,8 +578,8 @@ define(['jquery',
         constructor : (model) ->
 
            @imgSrc = ko.observable(model.imgSrc);
-           @mapWidth = ko.observable(1);
-           @mapHeight = ko.observable(1);
+           @mapWidth = ko.observable(0);
+           @mapHeight = ko.observable(0);
            @computeMapImgSize = () =>
              imgSrcNoCache = @imgSrc() + '?cache=' + Date.now();
              iCasaViewModel = @;
@@ -594,8 +594,10 @@ define(['jquery',
               mapElt = $("#mapImg")
               mapEffWidth = mapElt.width();
               mapEffHeight = mapElt.height();
-              @mapWidthRatio(mapEffWidth / @mapWidth());
-              @mapHeightRatio(mapEffHeight / @mapHeight());
+              if (@mapWidth() > 0)
+                @mapWidthRatio(mapEffWidth / @mapWidth());
+              if (@mapHeight() > 0)
+                @mapHeightRatio(mapEffHeight / @mapHeight());
 
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 
@@ -792,6 +794,7 @@ define(['jquery',
              );
            @mapWidthRatio.subscribe(@updateWidgetPositions);
            @mapHeightRatio.subscribe(@updateWidgetPositions);
+           #TODO should listen to object addition to setup container attributes
 
     return ICasaViewModel;
 );

@@ -116,11 +116,16 @@ body section
                 top:0px;
                 left:0px;
 
+                #mapImg {
+                    z-index: 0;
+                    width: 100%;
+                }
 
                 .deviceWidget {
                     width: 32px;
                     height: 32px;
                     position: absolute;
+                    z-index: 1;
 
                     .deviceWidgetContainer {
                         position: relative;
@@ -154,6 +159,7 @@ body section
                 .userWidget {
                     width: 50px;
                     position: absolute;
+                    z-index: 2;
 
                     .userWidgetContainer {
                         position: relative;
