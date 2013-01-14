@@ -66,6 +66,10 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	 */
 	private volatile Zone m_zone;
 	
+	public SimulatedPresenceSensorImpl() {
+		
+	}
+	
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
@@ -164,7 +168,14 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	         }
          }
 			
-			boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE); 
+			
+			
+			Boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
+			setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, detected);
+			
+			if (previousDetection==null)
+				previousDetection = false;
+			
 			if (previousDetection!=detected)
 				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, PRESENCE_SENSOR_SENSED_PRESENCE,
 				      previousDetection));

@@ -22,10 +22,11 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.apache.felix.ipojo.annotations.Updated;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
+import fr.liglab.adele.icasa.device.DeviceEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -84,20 +85,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	}
 
 
-	@Updated
-	public void updated() {
-		if (!(fault.equalsIgnoreCase("yes"))) {
-			getTemperatureFromEnvironment();
-		}
-	}
-
-	private void getTemperatureFromEnvironment() {
-		/*
-		 * synchronized (this) { if (m_env != null) { m_currentTemperature =
-		 * m_env.getProperty(SimulatedEnvironment.TEMPERATURE); } }
-		 */
-	}
-
 	/**
 	 * sets the state
 	 */
@@ -131,11 +118,9 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			for (Zone zone : zones) {	   
-				System.out.println("Enter in ----> " + zone);
-				Object tempValue = zone.getVariableValue("Temperature");
-				if (tempValue != null) {
+				if (zone.getVariableValue("Temperature") != null) {
 					m_zone = zone;
-					setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, tempValue);
+					getTemperatureFromZone();
 					m_zone.addListener(listener);
 					break;
 				}
@@ -145,11 +130,25 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
-		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
+		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, null);
 		if (!zones.isEmpty()) {
 			if (m_zone!=null)
 				m_zone.removeListener(listener);
 		}
+	}
+	
+	
+	private void getTemperatureFromZone() {
+		if (m_zone!=null) {
+			Double temperatureBefore = (Double) getPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE);
+			Object currentTemperature = m_zone.getVariableValue("Temperature");
+			if (currentTemperature != null) {
+				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, currentTemperature);
+				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED,
+						Thermometer.THERMOMETER_CURRENT_TEMPERATURE, temperatureBefore));
+			}
+		}
+
 	}
 
 	class ThermometerZoneListener extends BaseZoneListener {
@@ -158,11 +157,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
 			if (m_zone == zone) {
 				if (variableName.equals("Temperature")) {
-					Object temp = m_zone.getVariableValue("Temperature");
-					if (temp != null)
-						setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, temp);
-					System.out.println("Temperature: " + m_serialNumber + " - "
-					      + getPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE));
+					getTemperatureFromZone();
 				}
 			}
 		}
