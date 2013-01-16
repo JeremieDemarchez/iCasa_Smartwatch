@@ -1,0 +1,5 @@
+<behavior startdate="2011.10.27.00.00.00" factor="1440">
+
+  <set-property deviceID="BiLi-A7496W-S" propertyId="light.powerStatus" value="true" />
+  
+</behavior>

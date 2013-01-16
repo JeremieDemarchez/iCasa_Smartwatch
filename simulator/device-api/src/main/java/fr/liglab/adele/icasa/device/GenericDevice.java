@@ -41,6 +41,16 @@ public interface GenericDevice {
 	 * @see #getSerialNumber()
 	 */
 	String DEVICE_SERIAL_NUMBER = "device.serialNumber";
+	
+	public static String STATE_PROPERTY_NAME = "state";
+	public static String STATE_ACTIVATED = "activated";
+	public static String STATE_DEACTIVATED = "deactivated";
+	public static String STATE_UNKNOWN = "unknown";
+
+	public static String FAULT_PROPERTY_NAME = "fault";
+	public static String FAULT_YES = "yes";
+	public static String FAULT_NO = "no";
+	public static String FAULT_UNKNOWN = "unknown";
 
 	/**
 	 * Default icon width, in px.
@@ -78,16 +88,6 @@ public interface GenericDevice {
 	 */
 	void removeListener(DeviceListener listener);
 
-	public static String STATE_PROPERTY_NAME = "state";
-	public static String STATE_ACTIVATED = "activated";
-	public static String STATE_DEACTIVATED = "deactivated";
-	public static String STATE_UNKNOWN = "unknown";
-
-	public static String FAULT_PROPERTY_NAME = "fault";
-	public static String FAULT_YES = "yes";
-	public static String FAULT_NO = "no";
-	public static String FAULT_UNKNOWN = "unknown";
-	
 
 	/**
 	 * Returns activation state of this device.

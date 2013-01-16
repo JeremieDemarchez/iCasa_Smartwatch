@@ -16,7 +16,6 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -24,36 +23,44 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-/**
- * 
- * Sets the fault state of device to "Yes"
- * 
- * @author Gabriel
- *
- */
-@Component(name = "FaultDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{faultDevice}"),
-      @StaticServiceProperty(name = "name", value = "fault-device", type = "String") })
-@Instantiate(name="fault-device-command")
-public class FaultDeviceCommand extends DeviceCommand {
+import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
+@Component(name = "SetDevicePropertyCommand")
+@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{setDeviceProperty}"),
+      @StaticServiceProperty(name = "name", value = "set-property", type = "String") })
+@Instantiate(name="property-device-command")
+public class SetDevicePropertyCommand extends DeviceCommand {
+
+	
 	@Requires
 	private SimulationManager simulationManager;
-
+	
+	private String propertyId;
+	
+	private Object value;
 
 	@Override
    public Object execute() throws Exception {
-		simulationManager.setDeviceFault(deviceId, true);
+		LocatedDevice device = simulationManager.getDevice(deviceId);
+		System.out.println("Trying to modifiy " + propertyId + " property " );
+		if (device!=null)
+			device.setPropertyValue(propertyId, value);		
 		return null;
    }
 	
-
+	@Override
+	public void configure(JSONObject param) throws Exception {
+		super.configure(param);
+		propertyId = param.getString("propertyId");
+		value = param.get("value");
+	}
 	
-	
-	public void faultDevice(String deviceId) throws Exception {
-	   this.deviceId = deviceId;
-	   execute();
-   }
+	public void setDeviceProperty(String deviceId, String propertyId, Object value) {
+		this.deviceId = deviceId;
+		this.propertyId = propertyId;
+		this.value = value;		
+	}
 
 }

@@ -39,6 +39,9 @@ public interface BinaryLight extends GenericDevice {
      * @see #setPowerStatus(boolean)
      */
     String LIGHT_POWER_STATUS = "light.powerStatus";
+    
+    
+    String LIGHT_MAX_ILLUMINANCE = "light.maxIlluminance";
 
     /**
      * Return the current power state of this binary light.
