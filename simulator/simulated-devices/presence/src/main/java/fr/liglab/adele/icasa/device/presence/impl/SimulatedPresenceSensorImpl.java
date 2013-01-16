@@ -67,7 +67,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	private volatile Zone m_zone;
 	
 	public SimulatedPresenceSensorImpl() {
-		
+		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
 	}
 	
 	@Override
@@ -159,6 +159,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	 */
 	private void peopleInZone() {
 		if (m_zone!=null) {
+			
 			boolean detected = false;
 			List<Person> persons = manager.getPersons();
 			for (Person person : persons) {
@@ -167,18 +168,15 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	         	break;
 	         }
          }
-			
-			
-			
-			Boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
-			setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, detected);
-			
+						
+			Boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);			
 			if (previousDetection==null)
 				previousDetection = false;
 			
-			if (previousDetection!=detected)
-				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, PRESENCE_SENSOR_SENSED_PRESENCE,
-				      previousDetection));
+			if (previousDetection!=detected) {
+				setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, detected);
+			}
+
 		}
 	}
 		

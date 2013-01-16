@@ -44,12 +44,16 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	@ServiceProperty(name = BinaryLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
+	/*
 	@ServiceProperty(name = BinaryLight.LIGHT_POWER_STATUS, value = "false")
 	private volatile boolean m_powerStatus;
+	*/
 
 	// The maximum illuminance emitted by this light
+	/*
 	@ServiceProperty(name = "light.maxIlluminance", value = "100.0d")
 	private double m_maxIlluminance;
+	*/
 
 	@ServiceProperty(name = "state", value = "deactivated")
 	private String state;
@@ -65,19 +69,26 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	 */
 	private Zone m_zone;
 
+	public SimulatedBinaryLightImpl() {
+		setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
+		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);		
+	}
+	
+	
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
 	}
 
 	@Override
-	public synchronized boolean getPowerStatus() {
-		return m_powerStatus;
+	public synchronized boolean getPowerStatus() {		
+		return (Boolean) getPropertyValue(BinaryLight.LIGHT_POWER_STATUS);
 	}
 
 	@Override
 	public synchronized boolean setPowerStatus(boolean status) {
 
+		/*
 		boolean save = m_powerStatus;
 		double illuminanceBefore = computeIlluminance();
 		m_powerStatus = status;
@@ -86,17 +97,22 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, BinaryLight.LIGHT_POWER_STATUS,
 		      illuminanceBefore));
+		*/
 
-		// Trying to modify zone variable
-		if (m_zone != null) {
-			try {
-				m_zone.setVariableValue("Illuminance", illuminanceAfter);
-			} catch (Exception e) {
-				m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
+		boolean prevoiusStatus = getPowerStatus();
+		
+		if (prevoiusStatus!=status) {
+			setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
+			// Trying to modify zone variable
+			if (m_zone != null) {
+				try {
+					m_zone.setVariableValue("Illuminance", computeIlluminance());
+				} catch (Exception e) {
+					m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
+				}
 			}
 		}
-
-		return save;
+		return status;
 	}
 
 	/**
@@ -106,7 +122,8 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	 * @return the illuminance currently emitted by this light
 	 */
 	private double computeIlluminance() {
-		return m_powerStatus ? m_maxIlluminance : 0.0d;
+		double maxIlluminance = (Double) getPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE);
+		return getPowerStatus() ? maxIlluminance : 0.0d;
 	}
 
 	/**

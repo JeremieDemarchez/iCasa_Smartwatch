@@ -7,11 +7,11 @@
 	<add-device deviceID="Pres-A1255D-D" type="iCASA.PresenceSensor" />
 	<add-device deviceID="Ther-A3654Q-S" type="iCASA.Thermometer" description="Kitchen Thermometer Sensor 1" />
 	<add-device deviceID="Phot-A4894S-S" type="iCASA.Photometer" />
-	<add-device deviceID="ByLi-A7496W-S" type="iCASA.BinaryLight" />	
+	<add-device deviceID="BiLi-A7496W-S" type="iCASA.BinaryLight" />	
 	<move-device-zone deviceID="Pres-A1255D-D" zone="kitchen" />
 	<move-device-zone deviceID="Ther-A3654Q-S" zone="kitchen" />
 	<move-device-zone deviceID="Phot-A4894S-S" zone="kitchen" />
-	<move-device-zone deviceID="ByLi-A7496W-S" zone="kitchen" />
+	<move-device-zone deviceID="BiLi-A7496W-S" zone="kitchen" />
 	<modify-zone-variable zoneId="kitchen" variable="Temperature" value="296.15"/>
 	
 
