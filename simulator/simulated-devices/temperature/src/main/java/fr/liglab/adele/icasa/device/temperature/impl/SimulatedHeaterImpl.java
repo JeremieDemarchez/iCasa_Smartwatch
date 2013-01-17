@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
@@ -28,8 +27,6 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -47,21 +44,11 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	@ServiceProperty(name = Heater.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	//@ServiceProperty(name = Heater.HEATER_POWER_LEVEL, value = "0.0d")
-	//private double m_powerLevel;
-
 	@ServiceProperty(name = "state", value = "activated")
 	private volatile String state;
 
 	@ServiceProperty(name = "fault", value = "no")
 	private volatile String fault;
-
-	// Unit = K.s^-1.m^-3
-	//@Property(name = "heater.maxCapacity", value = "1.0d")
-	//private double m_maxCapacity;
-
-	//@Property(name = "updaterThread.period", value = "5000")
-	//private long m_period;
 
 	@LogConfig
 	private ComponentLogger m_logger;
@@ -73,11 +60,10 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	private Zone m_zone;
 
 	public SimulatedHeaterImpl() {
-		setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.2d);
+		setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.0d);
 		setPropertyValue(Heater.HEATER_UPDATE_PERIOD, 5000);
 	}
-	
-	
+
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
@@ -98,7 +84,10 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 
 	@Override
 	public synchronized double getPowerLevel() {
-		return (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
+		Double powerLevel = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
+		if (powerLevel == null)
+			return 0.0d;
+		return powerLevel;
 	}
 
 	@Override
@@ -106,22 +95,33 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
 			throw new IllegalArgumentException("Invalid power level : " + level);
 		}
-		double save = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
 		setPropertyValue(Heater.HEATER_POWER_LEVEL, level);
-		m_logger.debug("Power level set to " + level);
-		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Heater.HEATER_POWER_LEVEL, save));
-		return save;
+		return level;
 	}
 
+	@Override
+	public void setPropertyValue(String propertyName, Object value) {
+		if (propertyName.equals(Heater.HEATER_POWER_LEVEL)) {
+			
+			double previousLevel = getPowerLevel();		
+			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
+			
+			if (previousLevel!=level) {
+				super.setPropertyValue(Heater.HEATER_POWER_LEVEL, level);
+				m_logger.debug("Power level set to " + level);				
+			}			
+		} else
+			super.setPropertyValue(propertyName, value);
+	}
 
 	private void calculateTemperature() {
 		long time = System.currentTimeMillis();
 		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
 		m_lastUpdateTime = time;
-		if (m_zone!=null) {
+		if (m_zone != null) {
 			double current = (Double) m_zone.getVariableValue("Temperature");
 			double volume = (Double) m_zone.getVariableValue("Volume");
-			double powerLevel = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
+			double powerLevel = getPowerLevel();
 			// double increase = m_maxCapacity * powerLevel * timeDiff / volume;
 			double increase = powerLevel * timeDiff / volume;
 			m_zone.setVariableValue("Temperature", current + increase);

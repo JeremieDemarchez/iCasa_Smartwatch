@@ -20,47 +20,56 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 /**
  * Service definition of a simple binary light device.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 public interface BinaryLight extends GenericDevice {
 
-    /**
-     * Service property indicating whether the binary light is is turned on or
-     * off.
-     * 
-     * <ul>
-     * <li>This property is <b>mandatory</b></li>
-     * <li>Type of values : <b><code>java.lang.Boolean</code></b></li>
-     * <li>Description : value is <code>true</code> when the light is turned on,
-     * <code>false</code> otherwise.</li>
-     * </ul>
-     * 
-     * @see #getPowerStatus()
-     * @see #setPowerStatus(boolean)
-     */
-    String LIGHT_POWER_STATUS = "light.powerStatus";
-    
-    
-    String LIGHT_MAX_ILLUMINANCE = "light.maxIlluminance";
+	/**
+	 * Service property indicating whether the binary light is is turned on or
+	 * off.
+	 * 
+	 * <ul>
+	 * <li>This property is <b>mandatory</b></li>
+	 * <li>Type of values : <b><code>java.lang.Boolean</code></b></li>
+	 * <li>Description : value is <code>true</code> when the light is turned on,
+	 * <code>false</code> otherwise.</li>
+	 * </ul>
+	 * 
+	 * @see #getPowerStatus()
+	 * @see #setPowerStatus(boolean)
+	 */
+	String LIGHT_POWER_STATUS = "light.powerStatus";
 
-    /**
-     * Return the current power state of this binary light.
-     * 
-     * @return the current power state of this binary light.
-     * @see #setPowerStatus(boolean)
-     * @see #LIGHT_POWER_STATUS
-     */
-    boolean getPowerStatus();
+	/**
+	 * Device property indicating the Lamp maximum Illuminance (in Lumen)
+	 * <ul>
+	 * <li>This property is <b>mandatory</b></li>
+	 * <li>Type of values : <b><code>java.lang.Double</code></b>, between
+	 * <code>100d</code> and <code>2500d</code></li>
+	 * <li>Description : value is <code>100d</code> for small lamps,
+	 * <code>2500d</code> for very big ones.</li>
+	 * </ul>
+	 */
+	String LIGHT_MAX_ILLUMINANCE = "light.maxIlluminance";
 
-    /**
-     * Change the power status of this binary light.
-     * 
-     * @param state
-     *            the new power state of this binary light.
-     * @return the previous power state of this binary light.
-     * @see #getPowerStatus()
-     * @see #LIGHT_POWER_STATUS
-     */
-    boolean setPowerStatus(boolean state);
+	/**
+	 * Return the current power state of this binary light.
+	 * 
+	 * @return the current power state of this binary light.
+	 * @see #setPowerStatus(boolean)
+	 * @see #LIGHT_POWER_STATUS
+	 */
+	boolean getPowerStatus();
+
+	/**
+	 * Change the power status of this binary light.
+	 * 
+	 * @param state
+	 *           the new power state of this binary light.
+	 * @return the previous power state of this binary light.
+	 * @see #getPowerStatus()
+	 * @see #LIGHT_POWER_STATUS
+	 */
+	boolean setPowerStatus(boolean state);
 
 }

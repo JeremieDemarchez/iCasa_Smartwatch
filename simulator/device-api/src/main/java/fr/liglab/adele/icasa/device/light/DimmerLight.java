@@ -24,40 +24,52 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public interface DimmerLight extends GenericDevice {
 
-    /**
-     * Service property indicating the current power level of the dimmer light.
-     * 
-     * <ul>
-     * <li>This property is <b>mandatory</b></li>
-     * <li>Type of values : <b><code>java.lang.Double</code></b>, between
-     * <code>0.0d</code> and <code>1.0d</code></li>
-     * <li>Description : value is <code>0.0d</code> when the light is completely
-     * turned off, <code>1.0d</code> when completely turned on.</li>
-     * </ul>
-     * 
-     * @see #getPowerLevel()
-     * @see #setPowerLevel(double)
-     */
-    String LIGHT_POWER_LEVEL = "light.powerLevel";
+	/**
+	 * Device property indicating the current power level of the dimmer light.
+	 * 
+	 * <ul>
+	 * <li>This property is <b>mandatory</b></li>
+	 * <li>Type of values : <b><code>java.lang.Double</code></b>, between
+	 * <code>0.0d</code> and <code>1.0d</code></li>
+	 * <li>Description : value is <code>0.0d</code> when the light is completely
+	 * turned off, <code>1.0d</code> when completely turned on.</li>
+	 * </ul>
+	 * 
+	 * @see #getPowerLevel()
+	 * @see #setPowerLevel(double)
+	 */
+	String LIGHT_POWER_LEVEL = "light.powerLevel";
 
-    /**
-     * Return the current power level of this dimmer light.
-     * 
-     * @return the current power level of this dimmer light.
-     * @see #setPowerLevel(double)
-     * @see #LIGHT_POWER_LEVEL
-     */
-    double getPowerLevel();
+	/**
+	 * Device property indicating the Lamp maximum Illuminance (in Lumen)
+	 * <ul>
+	 * <li>This property is <b>mandatory</b></li>
+	 * <li>Type of values : <b><code>java.lang.Double</code></b>, between
+	 * <code>100d</code> and <code>2500d</code></li>
+	 * <li>Description : value is <code>100d</code> for small lamps,
+	 * <code>2500d</code> for very big ones.</li>
+	 * </ul>
+	 */
+	String LIGHT_MAX_ILLUMINANCE = "light.maxIlluminance";
 
-    /**
-     * Change the power level of this dimmer light.
-     * 
-     * @param level
-     *            the new power level of this dimmer light.
-     * @return the previous power level of this dimmer light.
-     * @see #getPowerLevel()
-     * @see #LIGHT_POWER_LEVEL
-     */
-    double setPowerLevel(double level);
+	/**
+	 * Return the current power level of this dimmer light.
+	 * 
+	 * @return the current power level of this dimmer light.
+	 * @see #setPowerLevel(double)
+	 * @see #LIGHT_POWER_LEVEL
+	 */
+	double getPowerLevel();
+
+	/**
+	 * Change the power level of this dimmer light.
+	 * 
+	 * @param level
+	 *           the new power level of this dimmer light.
+	 * @return the previous power level of this dimmer light.
+	 * @see #getPowerLevel()
+	 * @see #LIGHT_POWER_LEVEL
+	 */
+	double setPowerLevel(double level);
 
 }

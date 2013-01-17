@@ -25,8 +25,6 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -104,36 +102,29 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
-			for (Zone zone : zones) {	   
+			for (Zone zone : zones) {
 				if (zone.getVariableValue("Illuminance") != null) {
 					m_zone = zone;
 					getIlluminanceFromZone();
 					m_zone.addListener(listener);
 					break;
 				}
-         }
+			}
 		}
-		if (m_zone==null) 
-			setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, null);
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, null);
-		if (!zones.isEmpty()) {
-			if (m_zone!=null)
-				m_zone.removeListener(listener);
-		}
+		if (m_zone != null)
+			m_zone.removeListener(listener);
 	}
 
 	private void getIlluminanceFromZone() {
 		if (m_zone != null) {
-			Double illuminanceBefore = (Double) getPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE);
 			Double currentIlluminance = ((Double) m_zone.getVariableValue("Illuminance"));
 			if (currentIlluminance != null) {
 				setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, currentIlluminance);
-				notifyListeners(new DeviceEvent(SimulatedPhotometerImpl.this, DeviceEventType.PROP_MODIFIED,
-				      Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, illuminanceBefore));
 			}
 		}
 	}
@@ -142,23 +133,10 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 
 		@Override
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-			if (!(fault.equalsIgnoreCase("yes"))) {
-				if (variableName.equals("Illuminance")) {
-					/*
-					 * Object illuminanceBefore = (Double)
-					 * getPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE);
-					 * double currentIlluminance = ((Double)
-					 * zone.getVariableValue(variableName)).doubleValue();
-					 * setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,
-					 * currentIlluminance); notifyListeners(new
-					 * DeviceEvent(SimulatedPhotometerImpl.this,
-					 * DeviceEventType.PROP_MODIFIED,
-					 * Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,
-					 * illuminanceBefore));
-					 */
-					getIlluminanceFromZone();
-				}
-			}
+			if (m_zone == zone)
+				if (!(fault.equalsIgnoreCase("yes")))
+					if (variableName.equals("Illuminance"))
+						getIlluminanceFromZone();
 		}
 	}
 

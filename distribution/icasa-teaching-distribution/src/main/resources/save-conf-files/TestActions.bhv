@@ -1,5 +1,6 @@
 <behavior startdate="2011.10.27.00.00.00" factor="1440">
 
   <set-property deviceID="BiLi-A7496W-S" propertyId="light.powerStatus" value="true" />
+  <set-property deviceID="Dimi-X3258Q-P" propertyId="light.powerLevel" value="0.3" />
   
 </behavior>

@@ -253,10 +253,14 @@ public class SimulationManagerImpl implements SimulationManager {
 			device.setCenterAbsolutePosition(position);
 			List<Zone> newZones = getObjectZones(device);
 
+
+			
 			// When the zones are different, the device is notified
 			if (!oldZones.equals(newZones)) {
-				device.leavingZones(oldZones);
+				// System.out.println("Old zones --> " + oldZones.size());
+				// System.out.println("New zones --> " + newZones.size());
 				Collections.sort(newZones, new ZoneComparable());
+				device.leavingZones(oldZones);				
 				device.enterInZones(newZones);
 			}
 		}

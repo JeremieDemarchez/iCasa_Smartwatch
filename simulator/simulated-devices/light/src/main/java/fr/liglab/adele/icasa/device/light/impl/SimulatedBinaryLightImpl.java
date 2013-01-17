@@ -25,8 +25,6 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -44,17 +42,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	@ServiceProperty(name = BinaryLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	/*
-	@ServiceProperty(name = BinaryLight.LIGHT_POWER_STATUS, value = "false")
-	private volatile boolean m_powerStatus;
-	*/
-
-	// The maximum illuminance emitted by this light
-	/*
-	@ServiceProperty(name = "light.maxIlluminance", value = "100.0d")
-	private double m_maxIlluminance;
-	*/
-
 	@ServiceProperty(name = "state", value = "deactivated")
 	private String state;
 
@@ -65,54 +52,55 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	private ComponentLogger m_logger;
 
 	/**
-	 * Influence zone corresponding to the zone with highest level where the device is located
+	 * Influence zone corresponding to the zone with highest level where the
+	 * device is located
 	 */
 	private Zone m_zone;
 
 	public SimulatedBinaryLightImpl() {
 		setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
-		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);		
+		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
 	}
-	
-	
+
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
 	}
 
 	@Override
-	public synchronized boolean getPowerStatus() {		
-		return (Boolean) getPropertyValue(BinaryLight.LIGHT_POWER_STATUS);
+	public synchronized boolean getPowerStatus() {
+		Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.LIGHT_POWER_STATUS);
+		if (powerStatus == null)
+			return false;
+		return powerStatus;
 	}
 
 	@Override
 	public synchronized boolean setPowerStatus(boolean status) {
+		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, (Boolean) status);
+		return status;
+	}
 
-		/*
-		boolean save = m_powerStatus;
-		double illuminanceBefore = computeIlluminance();
-		m_powerStatus = status;
-		double illuminanceAfter = computeIlluminance();
-		m_logger.debug("Power status set to " + status);
+	@Override
+	public void setPropertyValue(String propertyName, Object value) {
+		if (propertyName.equals(BinaryLight.LIGHT_POWER_STATUS)) {
+			boolean previousStatus = getPowerStatus();
 
-		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, BinaryLight.LIGHT_POWER_STATUS,
-		      illuminanceBefore));
-		*/
+			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
 
-		boolean prevoiusStatus = getPowerStatus();
-		
-		if (prevoiusStatus!=status) {
-			setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
-			// Trying to modify zone variable
-			if (m_zone != null) {
-				try {
-					m_zone.setVariableValue("Illuminance", computeIlluminance());
-				} catch (Exception e) {
-					m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
+			if (previousStatus != status) {
+				super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
+				// Trying to modify zone variable
+				if (m_zone != null) {
+					try {
+						m_zone.setVariableValue("Illuminance", computeIlluminance());
+					} catch (Exception e) {
+						m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
+					}
 				}
 			}
-		}
-		return status;
+		} else
+			super.setPropertyValue(propertyName, value);
 	}
 
 	/**
