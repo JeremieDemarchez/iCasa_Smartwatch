@@ -1,3 +1,4 @@
+@()
 <!--
 
 
@@ -15,58 +16,11 @@
       limitations under the License.
 
 -->
-@()
 
-<!DOCTYPE html>
+@import helper._
 
-<html>
-<head>
-    <title>iCasa</title>
+@main("iCasa Simulator") {
 
-    <!--[if lt IE 9]>
-       <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-       <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
-    <![endif]-->
-
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css")">
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap.min.css")">
-
-    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
-
-    <!-- Use to add browser prefix automatically -->
-    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
-    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
-
-
-
-    </head>
-<body>
-  <header>
-    <div class="navbar navbar-inverse navbar-static-top">
-        <div class="navbar-inner">
-            <div class="container">
-                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </a>
-                <a class="brand" href="http://simulator-icasa.rhcloud.com/"><img src="@routes.Assets.at("images/rectLogos/logoICasa_57.png")" alt="iCasaLogo" />Simulator</a>
-                <nav class="nav-collapse collapse">
-                    <ul class="nav">
-                        <li><a href="http://store-icasa.rhcloud.com/">AppStore</a></li>
-                        <li class="divider-vertical"></li>
-                        <li><a href="http://adeleresearchgroup.github.com/iCasa/">Wiki</a></li>
-                        <li class="divider-vertical"></li>
-                        <li><a href="http://adeleresearchgroup.github.com/iCasa/contacts">Contacts</a></li>
-                    </ul>
-                </nav><!--/.nav-collapse -->
-            </div>
-        </div>
-    </div>
-</header>
 <section>
     <article id="map">
         <section id="mapContainer">
@@ -123,8 +77,7 @@
     <p>Copyright LIG, ADELE team - All right reserved</p>
 </footer>
 
-            </body>
-
         <!-- Load the script "javascripts/main.coffee" as our entry point at the end of the dom to optimize loading -->
         <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
-    </html>
+
+}

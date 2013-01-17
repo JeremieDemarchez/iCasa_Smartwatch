@@ -17,7 +17,7 @@ object ApplicationBuild extends Build {
         //coffeescriptOptions := Seq("bare")
 
         // configuration of db mapping technology
-        ebeanEnabled := false
+        ebeanEnabled := true
     )
 
 }
