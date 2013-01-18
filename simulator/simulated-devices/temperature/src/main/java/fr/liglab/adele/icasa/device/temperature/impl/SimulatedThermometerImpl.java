@@ -46,18 +46,17 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@ServiceProperty(name = Thermometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-
 	@ServiceProperty(name = "state", value = "activated")
 	private volatile String state;
 
 	@ServiceProperty(name = "fault", value = "no")
 	private volatile String fault;
-		
+
 	private volatile Zone m_zone;
 
 	private ZoneListener listener = new ThermometerZoneListener();
 
-	public SimulatedThermometerImpl() {		
+	public SimulatedThermometerImpl() {
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
 	}
 
@@ -73,17 +72,13 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	@Validate
 	public synchronized void start() {
-		/*
-		 * m_updaterThread = new Thread(new UpdaterThread(),
-		 * "ThermometerUpdaterThread-" + m_serialNumber); m_updaterThread.start();
-		 */
+
 	}
 
 	@Invalidate
 	public synchronized void stop() throws InterruptedException {
 
 	}
-
 
 	/**
 	 * sets the state
@@ -117,48 +112,41 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
-			for (Zone zone : zones) {	   
+			for (Zone zone : zones) {
 				if (zone.getVariableValue("Temperature") != null) {
 					m_zone = zone;
 					getTemperatureFromZone();
 					m_zone.addListener(listener);
 					break;
 				}
-         }
+			}
 		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, null);
-		if (!zones.isEmpty()) {
-			if (m_zone!=null)
-				m_zone.removeListener(listener);
-		}
+		if (m_zone != null)
+			m_zone.removeListener(listener);
 	}
-	
-	
-	private void getTemperatureFromZone() {
-		if (m_zone!=null) {
-			Double temperatureBefore = (Double) getPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE);
-			Object currentTemperature = m_zone.getVariableValue("Temperature");
-			if (currentTemperature != null) {
-				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, currentTemperature);
-				notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED,
-						Thermometer.THERMOMETER_CURRENT_TEMPERATURE, temperatureBefore));
-			}
-		}
 
+	private void getTemperatureFromZone() {
+		if (m_zone != null) {
+			Object currentTemperature = m_zone.getVariableValue("Temperature");
+			if (currentTemperature != null)
+				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, currentTemperature);
+		}
 	}
 
 	class ThermometerZoneListener extends BaseZoneListener {
 
 		@Override
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+
 			if (m_zone == zone) {
-				if (variableName.equals("Temperature")) {
-					getTemperatureFromZone();
-				}
+				if (!(fault.equalsIgnoreCase("yes")))
+					if (variableName.equals("Temperature"))
+						getTemperatureFromZone();
 			}
 		}
 	}

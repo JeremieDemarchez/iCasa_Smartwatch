@@ -26,8 +26,6 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
@@ -168,10 +166,14 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	         	break;
 	         }
          }
-						
+			
+			/*
 			Boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);			
 			if (previousDetection==null)
 				previousDetection = false;
+			*/
+			
+			boolean previousDetection = getSensedPresence();
 			
 			if (previousDetection!=detected) {
 				setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, detected);

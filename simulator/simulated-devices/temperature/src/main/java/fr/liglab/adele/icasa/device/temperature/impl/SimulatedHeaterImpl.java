@@ -124,7 +124,8 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 			double powerLevel = getPowerLevel();
 			// double increase = m_maxCapacity * powerLevel * timeDiff / volume;
 			double increase = powerLevel * timeDiff / volume;
-			m_zone.setVariableValue("Temperature", current + increase);
+			if (increase!=0)
+				m_zone.setVariableValue("Temperature", current + increase);
 		}
 	}
 
