@@ -698,6 +698,7 @@ define(['jquery',
 
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType(), positionX: 1, positionY: 1 });
+              DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
            @removeSelectedPersons = () =>
@@ -723,12 +724,14 @@ define(['jquery',
 
            @createZone = () =>
               newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
+              DataModel.collections.zones.push(newZone);
               newZone.save();
 
            @newRoomName = ko.observable("");
 
            @createRoom = () =>
               newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
+              DataModel.collections.zones.push(newZone);
               newZone.save();
 
            @removeSelectedZones = () =>
