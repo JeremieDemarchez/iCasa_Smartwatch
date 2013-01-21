@@ -448,15 +448,7 @@ define(['jquery',
                 new DecoratorViewModel new Backbone.Model {
                     name: "activated",
                     imgSrc: '/assets/images/devices/decorators/play.png',
-                    show: true},
-                new DecoratorViewModel new Backbone.Model {
-                    name: "on-top",
-                    imgSrc: '/assets/images/devices/pesePersonnePieds.png',
-                    width: 32,
-                    height: 32,
-                    positionX: 1,
-                    positionY: 1,
-                    show: false}
+                    show: true}
            ]);
            @updateWidgetImg= (newValue) =>
                 activatedState = false;
@@ -483,7 +475,7 @@ define(['jquery',
            @updateBathroomScaleDecorator= (newValue) =>
                 presence = @properties().presence_detected;
                 ko.utils.arrayForEach(@decorators(), (decorator) ->
-                     if (decorator.name() == "on-top")
+                     if (decorator.name() == "foots")
                           if (presence == true)
                                decorator.show(true);
                           else
@@ -492,12 +484,18 @@ define(['jquery',
           
            @initBahtroomScale= () =>
                 if (@type() == "iCASA.BathroomScale")
-                     ko.utils.arrayForEach(@decorators(), (decorator) ->
-                         if (decorator.name() == "on-top")
-                             decorator.show(true);
-                     );
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "foots",
+                       imgSrc: '/assets/images/devices/decorators/pesePersonnePieds.png',
+                       width: 32,
+                       height: 32,
+                       positionX: 1,
+                       positionY: 1,
+                       show: false
+                     });
                      @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
                      @properties.subscribe(@updateBathroomScaleDecorator);
+                     @updateBathroomScaleDecorator();
            @initBahtroomScale();
            
            @state.subscribe(@updateWidgetImg);
