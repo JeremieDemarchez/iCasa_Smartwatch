@@ -166,13 +166,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	         	break;
 	         }
          }
-			
-			/*
-			Boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);			
-			if (previousDetection==null)
-				previousDetection = false;
-			*/
-			
+
 			boolean previousDetection = getSensedPresence();
 			
 			if (previousDetection!=detected) {

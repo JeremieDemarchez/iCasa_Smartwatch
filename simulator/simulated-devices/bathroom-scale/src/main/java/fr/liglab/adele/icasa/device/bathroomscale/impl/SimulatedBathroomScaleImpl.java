@@ -70,12 +70,12 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	@Validate
-	private void start() {
+	protected void start() {
 		manager.addListener(this);
 	}
 
 	@Invalidate
-	private void stop() {
+	protected void stop() {
 		manager.removeListener(this);
 	}
 
@@ -113,6 +113,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 	}
 
 	public void deviceAdded(LocatedDevice device) {
+		// Creates its own detection zone
 		if (device.getSerialNumber().equals(getSerialNumber())) {
 			String zoneId = getSerialNumber() + "#zone";
 			Position center = device.getCenterAbsolutePosition();
@@ -128,19 +129,25 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 		if (getState().equals(AbstractDevice.STATE_ACTIVATED) && getFault().equals(AbstractDevice.FAULT_NO)) {
 			for (Person person : manager.getPersons()) {
 				Position pos = person.getCenterAbsolutePosition();
-				System.out.println(" - person " + person.getName() + " " + pos.x + "x" + pos.y);
+				
 				
 				if (detectionZone.contains(person)) {
-					setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);
-					float weight = getCurrentWeight();
-					setPropertyValue(WEIGHT_PROPERTY, weight);
-					if (restAPI != null) {
-						try {
-							restAPI.sendMeasure(weight);
-						} catch (Exception e) {
-							e.printStackTrace();
+					boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
+					
+					if (!previousDetection) {
+						System.out.println(" - person " + person.getName() + " " + pos.x + "x" + pos.y);
+						setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);						
+						float weight = computeWeight();
+						setPropertyValue(WEIGHT_PROPERTY, weight);
+						if (restAPI != null) {
+							try {
+								restAPI.sendMeasure(weight);
+							} catch (Exception e) {
+								e.printStackTrace();
+							}
 						}
 					}
+					
 					return;
 				}
 			}
@@ -162,11 +169,14 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 
 	public float getCurrentWeight() {
 		Boolean presence = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
-		if (presence.equals(true)) {
-			return (float) 55 + ((float) new Random().nextInt(100)) / 10;
-		}
-
+		Float weight = (Float) getPropertyValue(WEIGHT_PROPERTY);
+		if (weight!=null)
+			return weight;
 		return 0.0f;
+	}
+	
+	private float computeWeight() {
+		return (float) 55 + ((float) new Random().nextInt(100)) / 10;
 	}
 	
 	public void deviceRemoved(LocatedDevice device) {

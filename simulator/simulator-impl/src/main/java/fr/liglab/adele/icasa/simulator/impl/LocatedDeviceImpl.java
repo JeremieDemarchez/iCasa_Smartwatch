@@ -33,8 +33,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	private String m_serialNumber;
 
 	private final List<LocatedDeviceListener> listeners = new ArrayList<LocatedDeviceListener>();
-	
-	
+		
 	private SimulatedDevice deviceComponent;
 	
 	private SimulationManager manager;
@@ -44,9 +43,9 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManager manager) {
 		super(position);
 		m_serialNumber = serialNumber;
-		this.deviceComponent = deviceComponent;
+		this.deviceComponent = deviceComponent;	
 		this.manager = manager;
-        this._type = type;
+      this._type = type;
 	}
 
 	@Override

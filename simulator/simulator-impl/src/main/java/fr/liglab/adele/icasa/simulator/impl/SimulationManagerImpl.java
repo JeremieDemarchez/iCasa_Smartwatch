@@ -456,6 +456,9 @@ public class SimulationManagerImpl implements SimulationManager {
 			}
 
 			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, deviceType, this);
+			
+			// SimulatedDevice listener added 
+			dev.addListener((LocatedDeviceImpl)device);
 			locatedDevices.put(sn, device);
 
 			// Listeners notification
@@ -475,7 +478,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		String sn = dev.getSerialNumber();
 		m_simulatedDevices.remove(sn);
 		LocatedDevice device = locatedDevices.remove(sn);
-
+		
 		// Listeners notification
 		for (LocatedDeviceListener listener : deviceListeners) {
 			try {
@@ -485,6 +488,9 @@ public class SimulationManagerImpl implements SimulationManager {
 				e.printStackTrace();
 			}
 		}
+		
+		// SimulatedDevice listener removed 
+		dev.removeListener((LocatedDeviceImpl)device);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.simulator.SimulatedDevice)")
