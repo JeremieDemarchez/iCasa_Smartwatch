@@ -2,6 +2,8 @@
 # Require.js allows us to configure shortcut alias
 require.config({
 
+    waitSeconds: 15,
+
     # By default load any module IDs from assets/javascripts
     baseUrl: '../../assets/javascripts',
 

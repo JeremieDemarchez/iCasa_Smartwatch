@@ -695,7 +695,7 @@ define(['jquery',
            @newPersonType = ko.observable("Father");
 
            @createPerson = () =>
-              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType(), positionX: 1, positionY: 1 });
+              newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
               DataModel.collections.persons.push(newPerson);
               newPerson.save();
 
