@@ -41,7 +41,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     # manage zone events
     if (json.eventType == "zone-added")
       zone = DataModel.collections.zones.get(json.zoneId);
-      if ((zone != null)  && (zone != undefined))
+      if ((zone == null)  || (zone == undefined))
         DataModel.collections.zones.create(json.zone);
     if (json.eventType == "zone-removed")
       zone = DataModel.collections.zones.get(json.zoneId);
@@ -55,7 +55,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     # manage device type events
     if (json.eventType == "device-type-added")
       deviceType = DataModel.collections.deviceTypes.get(json.deviceTypeId);
-      if ((deviceType != null)  && (deviceType != undefined))
+      if ((deviceType == null)  || (deviceType == undefined))
         DataModel.collections.deviceTypes.create(json.deviceType);
     if (json.eventType == "device-type-removed")
       deviceType = DataModel.collections.deviceTypes.get(json.deviceTypeId);
@@ -65,7 +65,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     # manage device events
     if (json.eventType == "device-added")
       device = DataModel.collections.devices.get(json.deviceId);
-      if ((device != null)  && (device != undefined))
+      if ((device == null)  || (device == undefined))
         DataModel.collections.deviceTypes.create(json.device);
     if (json.eventType == "device-removed")
       device = DataModel.collections.devices.get(json.deviceId);
@@ -79,7 +79,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     # manage person type events
     if (json.eventType == "person-type-added")
       personType = DataModel.collections.personTypes.get(json.personTypeId);
-      if ((personType != null)  && (personType != undefined))
+      if ((personType == null)  || (personType == undefined))
         DataModel.collections.personTypes.create(json.personType);
     if (json.eventType == "person-type-removed")
       personType = DataModel.collections.personTypes.get(json.personTypeId);
@@ -89,7 +89,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     # manage person events
     if (json.eventType == "person-added")
       person = DataModel.collections.persons.get(json.personId);
-      if ((person != null)  && (person != undefined))
+      if ((person == null)  || (person == undefined))
         DataModel.collections.persons.create(json.person);
     if (json.eventType == "person-removed")
       person = DataModel.collections.persons.get(json.personId);
