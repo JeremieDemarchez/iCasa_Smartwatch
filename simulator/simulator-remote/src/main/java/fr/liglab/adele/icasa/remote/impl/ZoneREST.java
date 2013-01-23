@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.Zone;
 import org.apache.felix.ipojo.annotations.Component;
@@ -150,4 +152,25 @@ public class ZoneREST {
         return currentZones.toString();
     }
 
+
+    @PUT
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/zone/{zoneId}")
+    public Response updatesZone(@PathParam("zoneId") String zoneId, String content) {
+       if (zoneId == null || zoneId.length()<1){
+          return makeCORS(Response.ok(getZones()));
+      }
+
+      Zone zoneFound = _simulationMgr.getZone(zoneId);
+      if (zoneFound == null) {
+          return makeCORS(Response.status(404));
+      } else {
+          JSONObject zoneJSON = getZoneJSON(zoneFound);
+          return makeCORS(Response.ok(zoneJSON.toString()));
+      }
+    }
+    
+ 
+    
 }

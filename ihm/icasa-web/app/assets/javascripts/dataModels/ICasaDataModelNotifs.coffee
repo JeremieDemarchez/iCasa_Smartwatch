@@ -23,7 +23,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
 
   request.onOpen = (response) ->
     transport = response.transport
-    # console.log("Connection opened using " + transport)
+    console.log("Connection opened using " + transport)
 
   request.onReconnect = (request, response) ->
     socket.info "Reconnecting"
@@ -34,9 +34,9 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     try
       json = $.parseJSON(message)
     catch error
-      # console.log "This doesn't look like a valid JSON: ", message.data
+      console.log "This doesn't look like a valid JSON: ", message.data
       return
-    # console.log "Received message :", json
+    console.log "Received message :", json
 
     # manage zone events
     if (json.eventType == "zone-added")
@@ -66,7 +66,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     if (json.eventType == "device-added")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device == null)  || (device == undefined))
-        DataModel.collections.deviceTypes.create(json.device);
+        DataModel.collections.devices.create(json.device);
     if (json.eventType == "device-removed")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))
@@ -101,9 +101,9 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
         person.set(json.person);
 
   request.onClose = (response) ->
-    return # console.log "Connection closed"
+    return console.log "Connection closed"
 
   request.onError = (response) ->
-    return # console.log "Connection error"
+    return console.log "Connection error"
 
   subSocket = socket.subscribe(request)
