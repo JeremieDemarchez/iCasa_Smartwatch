@@ -23,7 +23,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
 
   request.onOpen = (response) ->
     transport = response.transport
-    console.log("Connection opened using " + transport)
+    # console.log("Connection opened using " + transport)
 
   request.onReconnect = (request, response) ->
     socket.info "Reconnecting"
@@ -34,9 +34,9 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     try
       json = $.parseJSON(message)
     catch error
-      console.log "This doesn't look like a valid JSON: ", message.data
+      # console.log "This doesn't look like a valid JSON: ", message.data
       return
-    console.log "Received message :", json
+    # console.log "Received message :", json
 
     # manage zone events
     if (json.eventType == "zone-added")
@@ -97,9 +97,9 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
         DataModel.collections.persons.fetch();
 
   request.onClose = (response) ->
-    console.log "Connection closed"
+    return # console.log "Connection closed"
 
   request.onError = (response) ->
-    console.log "Connection error"
+    return # console.log "Connection error"
 
   subSocket = socket.subscribe(request)

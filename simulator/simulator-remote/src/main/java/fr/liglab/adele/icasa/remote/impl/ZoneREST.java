@@ -62,9 +62,10 @@ public class ZoneREST {
         return makeCORS(req, _corsHeaders);
     }
 
-    private JSONObject getZoneJSON(String zoneId, Zone zone) {
+    public JSONObject getZoneJSON(Zone zone) {
         JSONObject zoneJSON = null;
         try {
+      	   String zoneId = zone.getId(); 
             zoneJSON = new JSONObject();
             zoneJSON.putOnce("id", zoneId);
             zoneJSON.putOnce("name", zoneId);
@@ -120,7 +121,7 @@ public class ZoneREST {
         if (zoneFound == null) {
             return makeCORS(Response.status(404));
         } else {
-            JSONObject zoneJSON = getZoneJSON(zoneId, zoneFound);
+            JSONObject zoneJSON = getZoneJSON(zoneFound);
 
             return makeCORS(Response.ok(zoneJSON.toString()));
         }
@@ -139,7 +140,7 @@ public class ZoneREST {
             if (zone == null)
                 continue;
 
-            JSONObject zoneJSON = getZoneJSON(envId, zone);
+            JSONObject zoneJSON = getZoneJSON(zone);
             if (zoneJSON == null)
                 continue;
 

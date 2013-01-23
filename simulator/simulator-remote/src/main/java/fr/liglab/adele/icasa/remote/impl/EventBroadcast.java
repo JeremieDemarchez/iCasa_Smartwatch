@@ -55,11 +55,26 @@ public class EventBroadcast extends OnMessage<String> {
 	@Requires
 	private SimulationManager _simulMgr;
 
+	
+	// TODO: Is it really necessary?
+	@Requires
+	DeviceREST deviceREST;
+	
+	@Requires
+	PersonREST personREST;
+	
+	@Requires
+	ZoneREST zoneREST;
+	
+	
+	
 	private Broadcaster _eventBroadcaster;
 
 	private ICasaEventListener _iCasaListener;
 
 	private final BundleContext _context;
+	
+	
 
 	public EventBroadcast(BundleContext context) {
 		_context = context;
@@ -138,7 +153,7 @@ public class EventBroadcast extends OnMessage<String> {
             JSONObject json = new JSONObject();
             try {
                 json.put("eventType", "device-type-added");
-                json.put("deviceTypeId", deviceType);
+                json.put("deviceTypeId", deviceType);                
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -151,6 +166,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "device-position-update");
 				json.put("deviceId", device.getSerialNumber());
+				json.put("device", deviceREST.getDeviceJSON(device));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -163,6 +179,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "device-added");
 				json.put("deviceId", device.getSerialNumber());
+				json.put("device", deviceREST.getDeviceJSON(device));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -188,6 +205,8 @@ public class EventBroadcast extends OnMessage<String> {
                 json.put("eventType", "device-property-modified");
                 json.put("deviceId", device.getSerialNumber());
                 json.put("propertyName", propertyName);
+                json.put("oldValue", oldValue);
+                json.put("newValue", device.getPropertyValue(propertyName));
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -226,6 +245,8 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "person-position-update");
 				json.put("personId", person.getName());
+				// New position is maybe enough
+				json.put("person", personREST.getPersonJSON(person));				
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -238,6 +259,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "person-added");
 				json.put("personId", person.getName());
+				json.put("person", personREST.getPersonJSON(person));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -325,6 +347,7 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "zone-moved");
                 json.put("zoneId", zone.getId());
+    				json.put("zone", zoneREST.getZoneJSON(zone));
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -361,6 +384,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-added");
 				json.put("zoneId", zone.getId());
+				json.put("zone", zoneREST.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
