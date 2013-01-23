@@ -11,6 +11,7 @@ require.config({
     paths: {
         'atmosphere' : 'frameworks/atmosphere/jquery.atmosphere',
         'backbone' : 'frameworks/backbone/backbone-min',
+        'backbone.debug' : 'frameworks/backbone/backbone.debug',
         'bootstrap.dir' : 'frameworks/bootstrap',
         'bootstrap' : 'frameworks/bootstrap/js/bootstrap.min',
         'comp' : 'components',
@@ -54,6 +55,10 @@ require.config({
             # Once loaded, use the global 'Backbone' as the
             # module value.
             exports: 'Backbone'
+        },
+
+        'backbone.debug': {
+            deps: ['backbone']
         },
 
         'bootstrap': [
@@ -138,7 +143,8 @@ require([
     'dataModels/ICasaDataModelNotifs',
     'bootstrap',
     'domReady',
-    'jquery.resize'
+    'jquery.resize',
+    'backbone.debug'
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
 
