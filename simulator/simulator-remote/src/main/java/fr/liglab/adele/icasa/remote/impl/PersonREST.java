@@ -84,7 +84,7 @@ public class PersonREST {
         return currentPersons.toString();
     }
 
-    private JSONObject getPersonJSON(Person person) {
+    public JSONObject getPersonJSON(Person person) {
         JSONObject personJSON = null;
         try {
             personJSON = new JSONObject();

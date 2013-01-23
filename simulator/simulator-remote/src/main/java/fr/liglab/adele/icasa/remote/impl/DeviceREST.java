@@ -89,7 +89,7 @@ public class DeviceREST {
         return currentDevices.toString();
     }
 
-    private JSONObject getDeviceJSON(LocatedDevice device) {
+    public JSONObject getDeviceJSON(LocatedDevice device) {
         String deviceType = device.getType();
         if (deviceType == null)
             deviceType = "undefined";
