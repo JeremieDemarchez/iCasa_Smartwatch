@@ -90,7 +90,6 @@ define(['backbone', 'underscore'],
             error : (err) -> throw err;
          });
 
-#         DataModel.collections.devices.subscribe();
 
          return DataModel;
 );
