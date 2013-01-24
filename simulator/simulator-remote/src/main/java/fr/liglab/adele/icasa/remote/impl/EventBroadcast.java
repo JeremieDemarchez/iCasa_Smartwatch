@@ -217,7 +217,8 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "device-property-added");
                 json.put("deviceId", device.getSerialNumber());
-                json.put("propertyName", propertyName);
+                //json.put("propertyName", propertyName);
+                json.put("device", deviceREST.getDeviceJSON(device));
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -230,7 +231,8 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "device-property-removed");
                 json.put("deviceId", device.getSerialNumber());
-                json.put("propertyName", propertyName);
+                //json.put("propertyName", propertyName);
+                json.put("device", deviceREST.getDeviceJSON(device));
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();

@@ -19,7 +19,6 @@ import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
@@ -39,7 +38,7 @@ import fr.liglab.adele.icasa.simulator.Zone;
 /**
  * Implementation of a simulated cooler device.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 @Component(name = "iCASA.Cooler")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
@@ -48,21 +47,12 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	@ServiceProperty(name = Cooler.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	// @ServiceProperty(name = Cooler.COOLER_POWER_LEVEL, value = "0.0d")
-	// private double m_powerLevel;
-
 	@ServiceProperty(name = "state", value = "deactivated")
 	private String state;
 
 	@ServiceProperty(name = "fault", value = "no")
 	private String fault;
 
-	// Unit = K.s^-1.m^-3
-	// @Property(name = "cooler.maxCapacity", value = "1.0d")
-	// private double m_maxCapacity;
-
-	// @Property(name = "updaterThread.period", value = "5000")
-	// private long m_period;
 
 	@LogConfig
 	private ComponentLogger m_logger;
@@ -139,7 +129,7 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	 * The updater thread that updates the current temperature and notify
 	 * listeners periodically.
 	 * 
-	 * @author bourretp
+	 * @author Gabriel Pedraza Ferreira
 	 */
 	private class UpdaterThread implements Runnable {
 
