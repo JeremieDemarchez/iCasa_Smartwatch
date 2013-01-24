@@ -696,7 +696,7 @@ define(['jquery',
 
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
-              DataModel.collections.persons.push(newPerson);
+              DataModel.collections.persons.push(newPerson, {silent: true});
               newPerson.save();
 
            @removeSelectedPersons = () =>
