@@ -27,10 +27,7 @@ import org.osgi.framework.Constants;
 import org.ow2.chameleon.handies.ipojo.log.LogConfig;
 import org.ow2.chameleon.handies.log.ComponentLogger;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
-import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.Zone;
@@ -89,8 +86,11 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	}
 
 	@Override
-	public synchronized double getPowerLevel() {
-		return (Double) getPropertyValue(Cooler.COOLER_POWER_LEVEL);
+	public synchronized double getPowerLevel() {		
+		Double powerLevel = (Double) getPropertyValue(Cooler.COOLER_POWER_LEVEL);
+		if (powerLevel == null)
+			return 0.0d;
+		return powerLevel;
 	}
 
 	@Override
@@ -98,14 +98,25 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) {
 			throw new IllegalArgumentException("Invalid power level : " + level);
 		}
-		double save = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
-		setPropertyValue(Heater.HEATER_POWER_LEVEL, level);
-		m_logger.debug("Power level set to " + level);
-		notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, Cooler.COOLER_POWER_LEVEL, save));
-		return save;
-
+		setPropertyValue(Cooler.COOLER_POWER_LEVEL, level);
+		return level;
 	}
 
+	@Override
+	public void setPropertyValue(String propertyName, Object value) {
+		if (propertyName.equals(Cooler.COOLER_POWER_LEVEL)) {
+			
+			double previousLevel = getPowerLevel();		
+			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
+			
+			if (previousLevel!=level) {
+				super.setPropertyValue(Cooler.COOLER_POWER_LEVEL, level);
+				//m_logger.debug("Power level set to " + level);				
+			}			
+		} else
+			super.setPropertyValue(propertyName, value);
+	}
+	
 
 	private void calculateTemperature() {
 		long time = System.currentTimeMillis();
@@ -114,14 +125,10 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 		if (m_zone != null) {
 			double current = (Double) m_zone.getVariableValue("Temperature");
 			double volume = (Double) m_zone.getVariableValue("Volume");
-			double powerLevel = (Double) getPropertyValue(Heater.HEATER_POWER_LEVEL);
-			// double decrease = m_maxCapacity * m_powerLevel * timeDiff / volume;
+			double powerLevel = getPowerLevel();
 			double decrease = powerLevel * timeDiff / volume;
-			if (current > decrease) {
+			if (decrease>0)
 				m_zone.setVariableValue("Temperature", current - decrease);
-			} else {
-				m_zone.setVariableValue("Temperature", 0.0d);
-			}
 		}
 	}
 

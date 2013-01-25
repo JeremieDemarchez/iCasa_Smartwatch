@@ -41,7 +41,12 @@ public abstract class AbstractDevice implements GenericDevice {
     private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
 
     private Map<String, Object> _properties = new HashMap<String, Object>();
-
+    
+    public AbstractDevice() {
+   	 setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+   	 setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
+    }
+    
     @Override
     public Set<String> getProperties() {
         synchronized (_properties) {
@@ -58,7 +63,6 @@ public abstract class AbstractDevice implements GenericDevice {
         synchronized (_properties) {
             value = _properties.get(propertyName);
         }
-
         return value;
     }
 

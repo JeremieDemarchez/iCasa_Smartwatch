@@ -96,7 +96,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 			throw new IllegalArgumentException("Invalid power level : " + level);
 		}
 		setPropertyValue(Heater.HEATER_POWER_LEVEL, level);
-		return level;
+		return level;			
 	}
 
 	@Override
@@ -124,7 +124,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 			double powerLevel = getPowerLevel();
 			// double increase = m_maxCapacity * powerLevel * timeDiff / volume;
 			double increase = powerLevel * timeDiff / volume;
-			if (increase!=0)
+			if (increase>0)
 				m_zone.setVariableValue("Temperature", current + increase);
 		}
 	}

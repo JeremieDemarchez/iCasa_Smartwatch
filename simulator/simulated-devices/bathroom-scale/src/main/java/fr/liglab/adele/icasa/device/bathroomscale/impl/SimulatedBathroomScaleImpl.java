@@ -133,7 +133,7 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 				
 				if (detectionZone.contains(person)) {
 					boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_DETECTED_PROPERTY);
-					
+					// System.out.println("----------------------------->>>>> "  + previousDetection);
 					if (!previousDetection) {
 						System.out.println(" - person " + person.getName() + " " + pos.x + "x" + pos.y);
 						setPropertyValue(PRESENCE_DETECTED_PROPERTY, true);						
@@ -147,7 +147,6 @@ public class SimulatedBathroomScaleImpl extends AbstractDevice implements Bathro
 							}
 						}
 					}
-					
 					return;
 				}
 			}
