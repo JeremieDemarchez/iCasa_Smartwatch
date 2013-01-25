@@ -307,7 +307,7 @@ public class DeviceREST {
 
         JSONObject newDeviceJSON = getDeviceJSON(newDevice);
 
-        return makeCORS(Response.ok(newDevice.toString())); //TODO check that newDevice must be included in the response body
+        return makeCORS(Response.ok(newDeviceJSON.toString())); //TODO check that newDevice must be included in the response body
     }
 
     /**

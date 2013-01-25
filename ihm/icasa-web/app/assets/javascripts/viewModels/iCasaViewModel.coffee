@@ -668,8 +668,9 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType(), positionX: 1, positionY: 1 });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1 });
               newDevice.save();
+
 
            @removeDevice = (device) =>
               device.model().destroy();
@@ -696,8 +697,11 @@ define(['jquery',
 
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
-              DataModel.collections.persons.push(newPerson, {silent: true});
               newPerson.save();
+              newPerson.set({id: @newPersonName()})
+              DataModel.collections.persons.push(newPerson, {silent: true});
+
+              
 
            @removeSelectedPersons = () =>
               ko.utils.arrayForEach(@persons(), (person) =>
