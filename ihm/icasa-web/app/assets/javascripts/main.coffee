@@ -143,8 +143,8 @@ require([
     'dataModels/ICasaDataModelNotifs',
     'bootstrap',
     'domReady',
-    'jquery.resize',
-    'backbone.debug'
+    'jquery.resize'
+    # 'backbone.debug'
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
 

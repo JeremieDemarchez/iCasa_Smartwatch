@@ -47,4 +47,11 @@
             </label>
         </div>
     </div-->
-</form>
+    <!--ko foreach: properties_name -->
+    <div class="control-group">
+      <label class="control-label" for="inputLocation" data-bind="text: $data">Location</label>
+      <div class="controls">
+          <input type="text" id="inputLocation" disabled="disabled" data-bind="value: $parent.getPropertyValue($data)" />
+      </div>
+    </div>
+    <!-- /ko -->
