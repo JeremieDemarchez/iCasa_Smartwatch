@@ -66,7 +66,7 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
     if (json.eventType == "device-added")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device == null)  || (device == undefined))
-        DataModel.collections.devices.add(json.device, {silent: true});
+        DataModel.collections.devices.add(json.device);
     if (json.eventType == "device-removed")
       device = DataModel.collections.devices.get(json.deviceId);
       if ((device != null)  && (device != undefined))
