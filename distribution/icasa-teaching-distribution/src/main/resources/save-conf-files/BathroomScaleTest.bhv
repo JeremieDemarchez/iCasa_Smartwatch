@@ -1,11 +1,14 @@
 <behavior startdate="2011.10.27.00.00.00" factor="1440">
 	
-	<create-zone zoneId="zivingroom-3"  leftX="20" topY="20" width="205" height="310" />
+	
+	<add-device deviceID="BathroomScale-ABC-1231234-ZZ" type="iCASA.BathroomScale" />
 	
 	<create-zone zoneId="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
+	
+	<!--
 	<add-zone-variable zoneId="kitchen" variable="Temperature" />
 	<add-device deviceID="SekuSensor-AAA-20119215-S" type="iCASA.PresenceSensor" />
-	<add-device deviceID="TermoSensor-AAA-20119215-S" type="iCASA.Thermometer" description="Kitchen Thermometer Sensor 1" />
+	<add-device deviceID="TermoSensor-AAA-20119215-S" type="iCASA.Thermometer" />
 	<add-device deviceID="PhotoSensor-AAA-20119215-S" type="iCASA.Photometer" />
 	<add-device deviceID="IKAE-79C-WXFHH-532349-K4" type="iCASA.BinaryLight" />	
 	<move-device-zone deviceID="SekuSensor-AAA-20119215-S" zone="kitchen" />
@@ -13,9 +16,11 @@
 	<move-device-zone deviceID="PhotoSensor-AAA-20119215-S" zone="kitchen" />
 	<move-device-zone deviceID="IKAE-79C-WXFHH-532349-K4" zone="kitchen" />
 	<modify-environment zone="kitchen" variable="temperature" value="296.15"/>
-	
+	-->
 
 	<create-zone zoneId="livingroom"  leftX="410" topY="28" width="245" height="350" />
+	
+	<!--
 	<add-device deviceID="TermoSensor-AAA-20119915-F" type="iCASA.Thermometer" />
 	<add-device deviceID="Elektro-Halogen4000-453147-08234-88" type="iCASA.DimmerLight" />	
 	<add-device deviceID="AKAIKAI-SciHiFi-867626-54000245-445564" type="iCASA.AudioSource" />
@@ -28,24 +33,33 @@
 	<move-device-zone deviceID="Heather-AAA-20119215-S" zone="livingroom" />
 	<modify-environment zone="livingroom" variable="temperature" value="295.15"/>
 	
+	-->
+	
 	
 	<create-zone zoneId="bedroom"  leftX="55" topY="370" width="259" height="210" />	
+	
+	<!--
 	<add-device deviceID="TermoSensor-AAA-201168416-D" type="iCASA.Thermometer" />	
 	<add-device deviceID="Elektro-Halogen4000-985614-65891-78" type="iCASA.DimmerLight" />	
 	<move-device-zone deviceID="TermoSensor-AAA-201168416-D" zone="bedroom" />	
 	<move-device-zone deviceID="Elektro-Halogen4000-985614-65891-78" zone="bedroom" />	
 	<modify-environment zone="bedroom" variable="temperature" value="294.15"/>
+	
+	-->
 
+	
 	<create-zone zoneId="bathroom"  leftX="55" topY="20" width="260" height="350" />	
+	
+	<!--
 	<add-device deviceID="TermoSensor-ABC-1231234-ZZ" type="iCASA.Thermometer" />	
 	<add-device deviceID="IKAE-Chb-45X-DDPQS-254-33" type="iCASA.BinaryLight" />		
 	<move-device-zone deviceID="TermoSensor-ABC-1231234-ZZ" zone="bathroom" />	
 	<move-device-zone deviceID="IKAE-Chb-45X-DDPQS-254-33" zone="bathroom" />	
 	<modify-environment zone="bathroom" variable="temperature" value="293.15"/>
 	
-	<set-zone-parent zone="zivingroom-3" parentZone="livingroom" useParentVariables="true"/>
+	-->
 	
 	
-	<add-device deviceID="BathroomScale-ABC-1231234-ZZ" type="iCASA.BathroomScale" />
+
 	
 </behavior>

@@ -442,20 +442,20 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Bind(id = "sim-devices", aggregate = true, optional = true)
-	public void bindDevice(SimulatedDevice dev) {
-		String sn = dev.getSerialNumber();
-		m_simulatedDevices.put(sn, dev);
+	public void bindDevice(SimulatedDevice simDev) {
+		String sn = simDev.getSerialNumber();
+		m_simulatedDevices.put(sn, simDev);
 		if (!locatedDevices.containsKey(sn)) {
 			String deviceType = null;
-			if (dev instanceof Pojo) {
+			if (simDev instanceof Pojo) {
 				try {
-					deviceType = ((Pojo) dev).getComponentInstance().getFactory().getFactoryName();
+					deviceType = ((Pojo) simDev).getComponentInstance().getFactory().getFactoryName();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, deviceType, this);
+			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), simDev, deviceType, this);
 			
 			locatedDevices.put(sn, device);
 
@@ -470,13 +470,13 @@ public class SimulationManagerImpl implements SimulationManager {
 			}
 			
 			// SimulatedDevice listener added 
-			//dev.addListener((LocatedDeviceImpl)device);
+			simDev.addListener((LocatedDeviceImpl)device);
 		}
 	}
 
 	@Unbind(id = "sim-devices")
-	public void unbindDevice(SimulatedDevice dev) {
-		String sn = dev.getSerialNumber();
+	public void unbindDevice(SimulatedDevice simDev) {
+		String sn = simDev.getSerialNumber();
 		m_simulatedDevices.remove(sn);
 		LocatedDevice device = locatedDevices.remove(sn);
 		
@@ -491,7 +491,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 		
 		// SimulatedDevice listener removed 
-		//dev.removeListener((LocatedDeviceImpl)device);
+		simDev.removeListener((LocatedDeviceImpl)device);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.simulator.SimulatedDevice)")
