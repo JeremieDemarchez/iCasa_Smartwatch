@@ -25,8 +25,7 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -57,7 +56,9 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	private ZoneListener listener = new ThermometerZoneListener();
 
 	public SimulatedThermometerImpl() {
+		super();
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
+		// setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, GenericDevice)
 	}
 
 	@Override
