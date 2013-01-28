@@ -15,8 +15,13 @@
  */
 package models;
 
-import play.db.ebean.Model;
-import javax.persistence.Entity;
+import java.lang.String;
+import java.util.*;
+import javax.persistence.*;
+
+import play.db.ebean.*;
+import play.data.format.*;
+import play.data.validation.*;
 
 /**
  * @author Thomas Leveque
@@ -24,9 +29,22 @@ import javax.persistence.Entity;
 @Entity
 public class Map extends Model {
 
-    public String imageURL;
+    @Id
+    public String id;
 
     public String name;
 
+    public String description;
+
     public String gatewayURL;
+
+    public String imgURL;
+
+    public static Finder<String,Map> find = new Finder<String,Map>(
+            String.class, Map.class
+    );
+
+    public String getName() {
+        return this.name;
+    }
 }

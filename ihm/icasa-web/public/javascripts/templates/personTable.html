@@ -19,13 +19,13 @@
     <p>Name: <input data-bind="value: $root.newPersonName" /></p>
     <p>Type: <select data-bind="options: $root.personTypes, value: $root.newPersonType, optionsText: 'name'"></select></p>
     <p><button class="btn" data-bind="click: $root.createPerson">Create A Person</button></p>
+    <p><button class="btn" data-bind="click: $root.removeSelectedPersons">Remove Selected Persons</button></p>
 
     <thead>
         <tr>
             <th></th>
             <th></th>
             <th>Name</th>
-            <th></th>
         </tr>
     </thead>
     <tbody data-bind="foreach: $root.persons()">
@@ -33,7 +33,6 @@
             <td><input type="checkbox" data-bind="checked: isSelected" /></td>
             <td><img class="personIcon" data-bind="attr: { src: imgSrc } " /></td>
             <td data-bind="text: name"/></td>
-            <td><img class="removeIcon" src="assets/images/buttons/remove.png" data-bind="click: $root.removePerson " /></td>
         </tr>
     </tbody>
 </table>

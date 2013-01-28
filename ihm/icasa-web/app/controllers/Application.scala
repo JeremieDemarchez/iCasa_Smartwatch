@@ -6,11 +6,19 @@ import libs.json.Json._
 import play.api.mvc._
 import play.api.Play.current
 import java.io.File
+import play.api.data._
+import play.api.data.Forms._
+import models.Map
 
 object Application extends Controller {
+
+  def index() = Action {
+      Ok(views.html.index());
+  }
   
-  def index = Action {
-    Ok(views.html.index()).withHeaders(
+  def connectToMap(mapId: String) = Action {
+    //TODO get info from database
+    Ok(views.html.map(mapId, "assets/images/maps/paulHouse.png", "http://localhost:8080/icasa")).withHeaders(
       "Access-Control-Allow-Origin" -> "*",
       "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
       "Access-Control-Expose-Headers" -> "X-Cache-Date, X-Atmosphere-tracking-id",
@@ -21,8 +29,28 @@ object Application extends Controller {
 
   val MAP_DIRECTORY: String = "maps";
 
-  def uploadMap = Action(parse.multipartFormData) { request =>
-    request.body.file("picture").map { picture =>
+  val mapForm = Form(
+      tuple(
+        "mapId" -> text,
+        "mapName" -> text,
+        "mapDescription" -> text,
+        "gatewayURL" -> text,
+        "imgURL" -> text
+      )
+  )
+
+  def uploadMap = Action(parse.multipartFormData) { implicit request =>
+    val body = request.body;
+    val (mapId, mapName, mapDescription, gatewayURL, imgURL) = mapForm.bindFromRequest.get;
+    def map = new Map();
+    map.id = mapId;
+    map.name = mapName;
+    map.description = mapDescription;
+    map.gatewayURL = gatewayURL;
+    map.imgURL = imgURL;
+    map.save();
+
+    body.file("picture").map { picture =>
       import java.io.File
       val fileName = picture.filename
       val contentType = picture.contentType

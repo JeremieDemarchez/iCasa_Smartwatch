@@ -148,9 +148,12 @@ require([
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
 
+        mapId = $("#map").attr("mapId");
+        mapImgSrc = $("#map").attr("mapImgSrc");
+
         iCasaViewModel = new ICasaViewModel( {
-          id: "PaulHouse",
-          imgSrc: "assets/images/maps/paulHouse.png"
+          id: mapId,
+          imgSrc: mapImgSrc
         });
         ko.applyBindings(iCasaViewModel);
 

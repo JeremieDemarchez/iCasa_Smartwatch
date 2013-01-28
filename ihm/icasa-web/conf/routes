@@ -6,9 +6,10 @@
 GET     /                           controllers.Application.index
 
 # Map management
+GET     /map/*mapId                 controllers.Application.connectToMap(mapId)
 GET     /maps                       controllers.Application.getMaps
 GET     /maps/*file                 controllers.Application.getMap(file)
-POST    /upload                     controllers.Application.uploadMap
+POST    /mapUpload                  controllers.Application.uploadMap
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
