@@ -668,8 +668,9 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType(), positionX: 1, positionY: 1 });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1 });
               newDevice.save();
+
 
            @removeDevice = (device) =>
               device.model().destroy();
@@ -696,8 +697,10 @@ define(['jquery',
 
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
-              DataModel.collections.persons.push(newPerson, {silent: true});
               newPerson.save();
+              DataModel.collections.persons.push(newPerson);
+
+              
 
            @removeSelectedPersons = () =>
               ko.utils.arrayForEach(@persons(), (person) =>
@@ -722,16 +725,16 @@ define(['jquery',
 
            @createZone = () =>
               newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
-              DataModel.collections.zones.push(newZone);
               newZone.save();
-
+              DataModel.collections.zones.push(newZone);
+              
            @newRoomName = ko.observable("");
 
            @createRoom = () =>
               newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
-              DataModel.collections.zones.push(newZone);
               newZone.save();
-
+              DataModel.collections.zones.push(newZone);
+              
            @removeSelectedZones = () =>
               ko.utils.arrayForEach(@zones(), (zone) =>
                 if (zone == undefined)

@@ -1621,8 +1621,8 @@ kb.CollectionObservable = (function() {
         if ((view_model = this.viewModelByModel(arg))) {
           return;
         }
-        view_model = this._createViewModel(arg);
         this.in_edit++;
+        view_model = this._createViewModel(arg);
         if ((comparator = this._comparator())) {
           observable().push(view_model);
           observable.sort(comparator);
