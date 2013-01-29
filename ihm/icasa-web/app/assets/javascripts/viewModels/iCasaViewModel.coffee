@@ -352,6 +352,13 @@ define(['jquery',
                   decorator.containerSizeDelta(containerSizeDelta);
                 );
            @isSizeHighlightEnabled.subscribe(@updateSize);
+           
+           @updateSelected=()=>
+              if (@isSelected())
+                  @addHighlight();
+              else
+                  @removeHighlight();
+           @isSelected.subscribe(@updateSelected)
 
            # status window management
            @statusWindowTemplate = ko.observable("");
@@ -386,6 +393,7 @@ define(['jquery',
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @properties=kb.observable(model, 'properties');
+           @properties_name = Object.keys(@.properties());
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
            @isDesactivated = ko.computed({
               read: () =>
@@ -409,33 +417,7 @@ define(['jquery',
            }
            );
            @statusWindowTemplate(deviceStatusWindowTemplateHtml);
-           @imgSrc = ko.computed(() =>
-              imgName = "NewDevice";
-              if (@type() == "iCASA.Cooler")
-                 imgName = "airConditionne";
-              if (@type() == "iCASA.AudioSource")
-                 imgName = "sourceSonore";
-              if (@type() == "iCASA.DimmerLight")
-                 imgName = "lampeVariable";
-              if (@type() == "iCASA.Thermometer")
-                 imgName = "thermometre";
-              if (@type() == "iCASA.Heater")
-                 imgName = "radiateur";
-              if (@type() == "iCASA.Photometer")
-                 imgName = "Photometer";
-              if (@type() == "iCASA.BinaryLight")
-                 imgName = "lampe";
-              if (@type() == "iCASA.PresenceSensor")
-                 imgName = "detecteurMouvements";
-              if (@type() == "iCASA.Speaker")
-                 imgName = "hautParleur";
-              if (@type() == "iCASA.Power")
-                 imgName = "Power";
-              if (@type() == "iCASA.BathroomScale")
-                 imgName = "pesePersonne";
-
-              return "/assets/images/devices/" + imgName + ".png";
-           , @);
+           @imgSrc = ko.observable(@.getImage())
            @decorators = ko.observableArray([
                 new DecoratorViewModel new Backbone.Model {
                     name: "event",
@@ -472,17 +454,24 @@ define(['jquery',
                 @saveChanges();
 
            # init
-           @updateBathroomScaleDecorator= (newValue) =>
-                presence = @properties().presence_detected;
-                ko.utils.arrayForEach(@decorators(), (decorator) ->
+           @updateDecorators= (newValue) =>
+                if (@type() == "iCASA.BathroomScale" )
+                  presence = @properties()["presence_detected"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "foots")
                           if (presence == true)
                                decorator.show(true);
                           else
                                decorator.show(false);
-                );
+                  );
+                if (@type() == "iCASA.BinaryLight")
+                  powerLevel = @properties()["light.powerStatus"]
+                  if (powerLevel)
+                    @imgSrc(@getImage("Lamp"));
+                  else
+                    @imgSrc(@.getImage());
           
-           @initBahtroomScale= () =>
+           @initDeviceImages= () =>
                 if (@type() == "iCASA.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
@@ -494,14 +483,53 @@ define(['jquery',
                        show: false
                      });
                      @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
-                     @properties.subscribe(@updateBathroomScaleDecorator);
-                     @updateBathroomScaleDecorator();
-           @initBahtroomScale();
+                if (@type() == "iCASA.BinaryLight")
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "foots",
+                       imgSrc: '/assets/images/devices/decorators/pesePersonnePieds.png',
+                       width: 32,
+                       height: 32,
+                       positionX: 1,
+                       positionY: 1,
+                       show: false
+                     });
+                @properties.subscribe(@updateDecorators);
+                @updateDecorators();
+
+           @initDeviceImages();
            
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
            @updateWidgetImg();
-
+        
+        getPropertyValue:(property)->
+          return @.properties()[property]+""
+        getImage:(imgName)->
+          if not imgName?
+            imgName = "NewDevice";
+            if (@type() == "iCASA.Cooler")
+              imgName = "airConditionne";
+            if (@type() == "iCASA.AudioSource")
+              imgName = "sourceSonore";
+            if (@type() == "iCASA.DimmerLight")
+              imgName = "lampeVariable";
+            if (@type() == "iCASA.Thermometer")
+              imgName = "thermometre";
+            if (@type() == "iCASA.Heater")
+              imgName = "radiateur";
+            if (@type() == "iCASA.Photometer")
+              imgName = "Photometer";
+            if (@type() == "iCASA.BinaryLight")
+              imgName = "lampe";
+            if (@type() == "iCASA.PresenceSensor")
+              imgName = "detecteurMouvements";
+            if (@type() == "iCASA.Speaker")
+              imgName = "hautParleur";
+            if (@type() == "iCASA.Power")
+              imgName = "Power";
+            if (@type() == "iCASA.BathroomScale")
+              imgName = "pesePersonne";
+          return "/assets/images/devices/" + imgName + ".png"; 
 
     class PersonTypeViewModel extends NamedViewModel
         constructor: (model) ->

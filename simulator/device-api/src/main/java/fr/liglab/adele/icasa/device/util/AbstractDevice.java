@@ -42,10 +42,12 @@ public abstract class AbstractDevice implements GenericDevice {
 
     private Map<String, Object> _properties = new HashMap<String, Object>();
     
+    /*
     public AbstractDevice() {
    	 setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
    	 setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
     }
+    */
     
     @Override
     public Set<String> getProperties() {
@@ -80,6 +82,7 @@ public abstract class AbstractDevice implements GenericDevice {
     }
 
 
+    /*
 	public String getState() {
 	   return (String) getPropertyValue(STATE_PROPERTY_NAME);
     }
@@ -87,7 +90,9 @@ public abstract class AbstractDevice implements GenericDevice {
 	public void setState(String state) {
 	   setPropertyValue(STATE_PROPERTY_NAME, state);
     }
+   
 
+    
     public String getFault() {
         return (String) getPropertyValue(FAULT_PROPERTY_NAME);
     }
@@ -95,6 +100,7 @@ public abstract class AbstractDevice implements GenericDevice {
     public void setFault(String fault) {
         setPropertyValue(FAULT_PROPERTY_NAME, state);
     }
+    */
 
     @Override
     public void addListener(DeviceListener listener) {

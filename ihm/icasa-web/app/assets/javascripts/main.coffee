@@ -143,16 +143,14 @@ require([
     'dataModels/ICasaDataModelNotifs',
     'bootstrap',
     'domReady',
-    'jquery.resize'
+    'jquery.resize',
+    'backbone.debug'
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
 
-        mapId = $("#map").attr("mapId");
-        mapImgSrc = $("#map").attr("mapImgSrc");
-
         iCasaViewModel = new ICasaViewModel( {
-          id: mapId,
-          imgSrc: mapImgSrc
+          id: "PaulHouse",
+          imgSrc: "assets/images/maps/paulHouse.png"
         });
         ko.applyBindings(iCasaViewModel);
 

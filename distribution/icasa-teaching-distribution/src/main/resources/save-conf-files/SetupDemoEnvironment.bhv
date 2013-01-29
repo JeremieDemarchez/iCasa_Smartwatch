@@ -50,10 +50,8 @@
 	<modify-zone-variable zoneId="Sejour" variable="Illuminance" value="5"/>
 	<modify-zone-variable zoneId="Sejour" variable="Volume" value="10"/>	
 	
-	<add-device deviceID="Pres-A1255D-D" type="iCASA.PresenceSensor" />
-	<move-device-zone deviceID="Pres-A1255D-D" zone="Cuisine" />
 	
-	<!-- Devices de la Chambre1 -->	
+	<!--
 	<add-device deviceID="BiLi-A7496W-S" type="iCASA.BinaryLight" />
 	<move-device-zone deviceID="BiLi-A7496W-S" zone="Chambre1" />
 	<add-device deviceID="Heat-S5793G-E" type="iCASA.Heater" />	
@@ -62,23 +60,26 @@
 	<add-device deviceID="Ther-A3654Q-S" type="iCASA.Thermometer" />
 	<move-device-zone deviceID="Ther-A3654Q-S" zone="Bureau" />
 	
-	<!-- Devices de la Chambre2 -->
+	
 	<add-device deviceID="Dimi-X3258Q-P" type="iCASA.DimmerLight" />
 	<move-device-zone deviceID="Dimi-X3258Q-P" zone="Chambre2" />	
 	<add-device deviceID="Heat-V5489Q-A" type="iCASA.Heater" />	
 	<move-device-zone deviceID="Heat-V5489Q-A" zone="Chambre2" />
-
 	
-	<add-device deviceID="BScl-B2178-P" type="iCASA.BathroomScale" />		
-	<move-device-zone deviceID="BScl-B2178-P" zone="SDB" />
-	
-	<!-- Devices du Sejour -->
 	<add-device deviceID="Heat-F2145T-M" type="iCASA.Heater" />	
 	<move-device-zone deviceID="Heat-F2145T-M" zone="Sejour" />	
 	<add-device deviceID="Ther-I578P-M" type="iCASA.Thermometer" />
 	<move-device-zone deviceID="Ther-I578P-M" zone="Sejour" />	
 	<add-device deviceID="Cool-F2145T-M" type="iCASA.Cooler" />	
 	<move-device-zone deviceID="Cool-F2145T-M" zone="Sejour" />	
+	-->
 	
+	
+	<add-device deviceID="Pres-A1255D-D" type="iCASA.PresenceSensor" />
+	<move-device-zone deviceID="Pres-A1255D-D" zone="Cuisine" />
+	
+	
+	<add-device deviceID="BScl-B2178-P" type="iCASA.BathroomScale" />		
+	<move-device-zone deviceID="BScl-B2178-P" zone="SDB" />	
 	
 </behavior>

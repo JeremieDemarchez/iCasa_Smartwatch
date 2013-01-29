@@ -58,8 +58,8 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	private Zone m_zone;
 
 	public SimulatedBinaryLightImpl() {
-		setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
-		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
+		super.setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
+		super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
 	}
 
 	@Override
@@ -88,6 +88,15 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
 
+			/*
+			Boolean previousStatus2 = (Boolean) getPropertyValue(BinaryLight.LIGHT_POWER_STATUS);
+			
+			if (previousStatus2==null || previousStatus2 != status) {
+				
+			}
+			*/
+			
+			
 			if (previousStatus != status) {
 				super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
 				// Trying to modify zone variable

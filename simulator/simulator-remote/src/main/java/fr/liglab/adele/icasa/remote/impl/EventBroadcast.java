@@ -202,7 +202,7 @@ public class EventBroadcast extends OnMessage<String> {
         public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
             JSONObject json = new JSONObject();
             try {
-                json.put("eventType", "device-property-modified");
+                json.put("eventType", "device-property-updated");
                 json.put("deviceId", device.getSerialNumber());
     				json.put("device", deviceREST.getDeviceJSON(device));
                 sendEvent(json);
