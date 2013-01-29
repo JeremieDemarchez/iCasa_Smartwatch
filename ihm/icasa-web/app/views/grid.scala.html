@@ -36,6 +36,7 @@
     <!-- Use to add browser prefix automatically -->
     <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
     <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/bootstrap/bootstrap.min.js")"> </script>
 </head>
 
 <body>
@@ -62,74 +63,73 @@
         </div>
     </div>
 </header>
-
 <ul class="thumbnails grid">
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/paulHouse.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/paulHouse.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/apto.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/paulHouse.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/apto.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/paulHouse.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/paulHouse.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/apto.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
+    <li class="span2">
         <a href="#" class="thumbnail">
             <img src="@routes.Assets.at("images/maps/paulHouse.png")" class="img-rounded"/>
             <p>Paul's house</p>
         </a>
     </li>
-    <li class="span3">
-        <a href="#addForm" class="thumbnail" data-toggle="modal">
-            <div style="width:150px;height:150px;background:black"></div>
+    <li class="span2">
+        <a href="#" role="button" class="thumbnail" data-toggle="modal" data-target="#addForm">
+            <div style="width:120px;height:120px;background:white"></div>
             <p>Add</p>
         </a>
     </li>
 </ul>
 
-<div id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="addModal" aria-hidden="true">
     <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-        <h3 id="myModalLabel">Add new</h3>
+        <h3 id="addModal">Add new</h3>
     </div>
     <form action="/mapUpload" method="POST" enctype="multipart/form-data">
         <div class="modal-body">
