@@ -386,9 +386,7 @@ define(['jquery',
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @properties=kb.observable(model, 'properties');
-           @internalProperties =  model.get('properties');
-           @properties_name = Object.keys(@.internalProperties);
-
+           @properties_name = Object.keys(@.properties());
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
            @isDesactivated = ko.computed({
               read: () =>
@@ -506,7 +504,7 @@ define(['jquery',
            @updateWidgetImg();
         
         getPropertyValue:(property)->
-          return @.internalProperties[property]
+          return @.properties()[property]
 
     class PersonTypeViewModel extends NamedViewModel
         constructor: (model) ->
