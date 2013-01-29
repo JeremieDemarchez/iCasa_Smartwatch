@@ -57,10 +57,11 @@ public class SetDevicePropertyCommand extends DeviceCommand {
 		value = param.get("value");
 	}
 	
-	public void setDeviceProperty(String deviceId, String propertyId, Object value) {
+	public void setDeviceProperty(String deviceId, String propertyId, Object value) throws Exception {
 		this.deviceId = deviceId;
 		this.propertyId = propertyId;
 		this.value = value;		
+		execute();
 	}
 
 }
