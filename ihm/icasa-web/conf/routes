@@ -5,6 +5,8 @@
 # Home page
 GET     /                           controllers.Application.index
 
+GET     /grid                       controllers.Application.getGrid
+
 # Map management
 GET     /maps                       controllers.Application.getMaps
 GET     /maps/*file                 controllers.Application.getMap(file)

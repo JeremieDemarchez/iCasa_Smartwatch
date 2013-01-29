@@ -39,6 +39,10 @@ object Application extends Controller {
     Ok(views.html.maps());
   }
 
+  def getGrid() = Action {
+      Ok(views.html.grid());
+    }
+
   def getMap(file: String) = Action {
     val fileToServe = new File(Play.application.getFile(MAP_DIRECTORY), file);
     val defaultCache = Play.configuration.getString("assets.defaultCache").getOrElse("max-age=3600")
