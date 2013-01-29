@@ -338,7 +338,7 @@ define(['jquery',
               @isHighlighted(false);
               @updateSize(@isSizeHighlightEnabled());
            @updateSize= (isSizeHighlightEnabledVal) =>
-              if (isSizeHighlightEnabledVal && @isHighlighted())
+              if ((isSizeHighlightEnabledVal && @isHighlighted()) || @isSelected())
                 newFactor = 1.2;
               else
                 newFactor = 1.0;
@@ -454,11 +454,20 @@ define(['jquery',
                 @saveChanges();
 
            # init
-           @updateDecorators= (newValue) =>
+           @updateProperties= (newValue) =>
                 if (@type() == "iCASA.BathroomScale" )
                   presence = @properties()["presence_detected"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "foots")
+                          if (presence == true)
+                               decorator.show(true);
+                          else
+                               decorator.show(false);
+                  );
+                if (@type() == "iCASA.PresenceSensor" )
+                  presence = @properties()["presencesensor.sensedpresence"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "presence")
                           if (presence == true)
                                decorator.show(true);
                           else
@@ -483,18 +492,18 @@ define(['jquery',
                        show: false
                      });
                      @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
-                if (@type() == "iCASA.BinaryLight")
+                if (@type() == "iCASA.PresenceSensor")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
-                       name: "foots",
-                       imgSrc: '/assets/images/devices/decorators/pesePersonnePieds.png',
+                       name: "presence",
+                       imgSrc: '/assets/images/devices/decorators/detecteurMouvements_decorateur.png',
                        width: 32,
                        height: 32,
                        positionX: 1,
                        positionY: 1,
                        show: false
                      });
-                @properties.subscribe(@updateDecorators);
-                @updateDecorators();
+                @properties.subscribe(@updateProperties);
+                @updateProperties();
 
            @initDeviceImages();
            
