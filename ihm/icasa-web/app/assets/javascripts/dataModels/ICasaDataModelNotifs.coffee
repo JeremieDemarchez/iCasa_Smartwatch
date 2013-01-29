@@ -1,7 +1,9 @@
 # @author Thomas Leveque
-define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel"], ($, ko, kb, atmosphere, DataModel) ->
+define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, ko, kb, atmosphere, DataModel) ->
+  # serverUrl = "http://" + window.location.hostname + ":8080"
+  serverUrl = $("#map").attr("gatewayURL");
+
   socket = atmosphere
-  serverUrl = "http://" + window.location.hostname + ":8080"
   transport = "sse"
   # workaround for SECURITY Exception on Chrome while using sse on localhost
   isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;

@@ -1,5 +1,5 @@
 
-define(['backbone', 'underscore'],
+define(['backbone', 'underscore', 'domReady'],
      (Backbone, _) ->
 
          DataModel =
@@ -8,7 +8,7 @@ define(['backbone', 'underscore'],
             collections : {}
 
          #serverUrl = "http://" + window.location.hostname + ":8080/icasa";
-         serverUrl = $("map").attr("gatewayURL");
+         serverUrl = $("#map").attr("gatewayURL") + "/icasa";
 
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/devices/device".replace /#server#/, serverUrl

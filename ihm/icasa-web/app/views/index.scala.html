@@ -1,4 +1,4 @@
-@()
+@(maps: Seq[HouseMap])
 <!--
 
 
@@ -18,19 +18,19 @@
 -->
 
 @import helper._
+@import models._
 
 @main("iCasa Simulator") {
 
 <section>
     <article>
         @for(map <- maps) {
-            <li>@map.getName()</li>
+            @map.name ,
         }
     </article>
 </section>
 <footer>
     <p>Copyright LIG, ADELE team - All right reserved</p>
 </footer>
-
 
 }
