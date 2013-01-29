@@ -41,10 +41,10 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name="iCASA.PresenceSensor")
+@Component(name = "iCASA.PresenceSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPresenceSensorImpl extends AbstractDevice implements PresenceSensor, SimulatedDevice,
-	PersonListener {
+      PersonListener {
 
 	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -57,32 +57,30 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	@Requires
 	private SimulationManager manager;
-	
-	
+
 	/**
-	 * Influence zone corresponding to the zone with highest level where the device is located
+	 * Influence zone corresponding to the zone with highest level where the
+	 * device is located
 	 */
 	private volatile Zone m_zone;
-	
+
 	public SimulatedPresenceSensorImpl() {
+		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
 	}
-	
+
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
 	}
 
-	
-	
 	@Override
 	public synchronized boolean getSensedPresence() {
 		Boolean presence = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
-		if (presence!=null)
+		if (presence != null)
 			return presence;
 		return false;
 	}
-
 
 	/**
 	 * sets the state
@@ -114,68 +112,76 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	}
 
 	@Override
-   public void enterInZones(List<Zone> zones) {
+	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			m_zone = zones.get(0);
-			peopleInZone();
-		}						
-   }
-
-	@Override
-   public void leavingZones(List<Zone> zones) {
-	   m_zone = null;	   
-   }
-
-	@Override
-   public void personAdded(Person person) {
-	   peopleInZone();	   
-   }
-
-	@Override
-   public void personRemoved(Person person) {
-		peopleInZone();	   
-   }
-
-	@Override
-   public void personMoved(Person person, Position oldPosition) {
-		peopleInZone();	   
-   }
-
-	@Override
-   public void personDeviceAttached(Person person, LocatedDevice device) {
-		// Nothing to do	   
-   }
-
-	@Override
-   public void personDeviceDetached(Person person, LocatedDevice device) {
-	   // Nothing to do	   
-   }
-	
-	/**
-	 * Calculates if a person is found in the detection zone of this device. 
-	 * When there is a change of previous detection a event is sent to listeners 
-	 */
-	private void peopleInZone() {
-		if (m_zone!=null) {
-			
-			boolean detected = false;
-			List<Person> persons = manager.getPersons();
-			for (Person person : persons) {
-	         if (m_zone.contains(person)) {
-	         	detected = true;
-	         	break;
-	         }
-         }
-
-			boolean previousDetection = getSensedPresence();
-			
-			if (previousDetection!=detected) {
-				setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, detected);
-			}
-
+			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
+			updateState();
 		}
 	}
-		
+
+	@Override
+	public void leavingZones(List<Zone> zones) {
+		m_zone = null;
+		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+	}
+
+	@Override
+	public void personAdded(Person person) {
+		updateState();
+	}
+
+	@Override
+	public void personRemoved(Person person) {
+		updateState();
+	}
+
+	@Override
+	public void personMoved(Person person, Position oldPosition) {
+		updateState();
+	}
+
+	@Override
+	public void personDeviceAttached(Person person, LocatedDevice device) {
+		// Nothing to do
+	}
+
+	@Override
+	public void personDeviceDetached(Person person, LocatedDevice device) {
+		// Nothing to do
+	}
+
+	/**
+	 * Calculates if a person is found in the detection zone of this device. When
+	 * there is a change of previous detection a event is sent to listeners
+	 */
+	private void updateState() {
+		if (m_zone != null) {
+
+			boolean personFound = personInZone();
+			boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
+						
+			if (!previousDetection) { // New person in Zone
+				if (personFound) {					
+					setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, true);
+				}
+			} else {
+				if (!personFound) { // The person has leave the detection zone
+					setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
+				}
+			}
+		}
+	}
+
+	
+	private boolean personInZone() {
+		for (Person person : manager.getPersons()) {
+			if (m_zone.contains(person))
+				return true;
+		}
+		return false;
+	}
+	
 	@Validate
 	protected void start() {
 		manager.addListener(this);
