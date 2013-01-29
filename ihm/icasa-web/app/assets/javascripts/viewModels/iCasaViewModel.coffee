@@ -713,13 +713,16 @@ define(['jquery',
               device.model().destroy();
 
            @removeSelectedDevices = () =>
+             toRemoveModels = []
              ko.utils.arrayForEach(@devices(), (device) =>
                if (device == undefined)
                  return;
 
                if (device.isSelected())
-                  device.model().destroy();
+                  toRemoveModels.push device.model()
              );
+             for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy()
 
            @showDeviceWindow = (device) =>
               device.statusWindowVisible(false);
