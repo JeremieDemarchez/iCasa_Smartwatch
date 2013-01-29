@@ -58,6 +58,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	private Zone m_zone;
 
 	public SimulatedBinaryLightImpl() {
+		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);		
 		super.setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
 		super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
 	}
@@ -88,13 +89,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
 
-			/*
-			Boolean previousStatus2 = (Boolean) getPropertyValue(BinaryLight.LIGHT_POWER_STATUS);
-			
-			if (previousStatus2==null || previousStatus2 != status) {
-				
-			}
-			*/
 			
 			
 			if (previousStatus != status) {
@@ -156,12 +150,14 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			m_zone = zones.get(0);
+			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
 		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;
+		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 	}
 
 }

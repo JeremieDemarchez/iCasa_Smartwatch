@@ -27,6 +27,9 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  */
 public interface SimulatedDevice extends GenericDevice {
 
+	public static String LOCATION_PROPERTY_NAME = "Location";
+	public static String LOCATION_UNKNOWN = "unknown";	
+	
 	public void enterInZones(List<Zone> zones);
 	
 	public void leavingZones(List<Zone> zones);

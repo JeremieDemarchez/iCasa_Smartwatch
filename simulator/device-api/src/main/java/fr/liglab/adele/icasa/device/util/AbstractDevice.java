@@ -35,129 +35,138 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * @author bourretp
  */
 public abstract class AbstractDevice implements GenericDevice {
-	
-	private String state;
 
-    private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
+	// private String state;
 
-    private Map<String, Object> _properties = new HashMap<String, Object>();
-    
-    /*
-    public AbstractDevice() {
-   	 setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
-   	 setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
-    }
-    */
-    
-    @Override
-    public Set<String> getProperties() {
-        synchronized (_properties) {
-            return _properties.keySet();
-        }
-    }
+	private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
 
-    @Override
-    public Object getPropertyValue(String propertyName) {
-        if (propertyName == null) {
-            throw new NullPointerException("Null property name");
-        }
-        Object value = null;
-        synchronized (_properties) {
-            value = _properties.get(propertyName);
-        }
-        return value;
-    }
+	private Map<String, Object> _properties = new HashMap<String, Object>();
 
-    @Override
-    public void setPropertyValue(String propertyName, Object value) {
-        if (propertyName == null) {
-            throw new NullPointerException("Null property name");
-        }
-        Object oldValue = null;
-        synchronized (_properties) {
-            oldValue = _properties.get(propertyName);
-            _properties.put(propertyName, value);
-        }
-        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue));
-    }
+	/*
+	 * public AbstractDevice() {
+	 * setPropertyValue(GenericDevice.STATE_PROPERTY_NAME,
+	 * GenericDevice.STATE_ACTIVATED);
+	 * setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME,
+	 * GenericDevice.FAULT_YES); }
+	 */
 
+	@Override
+	public Set<String> getProperties() {
+		synchronized (_properties) {
+			return _properties.keySet();
+		}
+	}
 
-    /*
-	public String getState() {
-	   return (String) getPropertyValue(STATE_PROPERTY_NAME);
-    }
+	@Override
+	public Object getPropertyValue(String propertyName) {
+		if (propertyName == null) {
+			throw new NullPointerException("Null property name");
+		}
+		Object value = null;
+		synchronized (_properties) {
+			value = _properties.get(propertyName);
+		}
+		return value;
+	}
 
-	public void setState(String state) {
-	   setPropertyValue(STATE_PROPERTY_NAME, state);
-    }
-   
+	@Override
+	public void setPropertyValue(String propertyName, Object value) {
+		if (propertyName == null) {
+			throw new NullPointerException("Null property name");
+		}
+		boolean modified = false;
+		Object oldValue = null;
+		synchronized (_properties) {
+			oldValue = _properties.get(propertyName);
+			if (oldValue != null) {
+				// if the new value is equal to the previous one the property is not
+				// set
+				if (!oldValue.equals(value)) {
+					_properties.put(propertyName, value);
+					modified = true;
+				}
+			} else {
+				if (value != null) {
+					_properties.put(propertyName, value);
+					modified = true;
+				}
+			}
+		}
 
-    
-    public String getFault() {
-        return (String) getPropertyValue(FAULT_PROPERTY_NAME);
-    }
+		if (modified)
+			notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue));
+	}
 
-    public void setFault(String fault) {
-        setPropertyValue(FAULT_PROPERTY_NAME, state);
-    }
-    */
+	/*
+	 * public String getState() { return (String)
+	 * getPropertyValue(STATE_PROPERTY_NAME); }
+	 * 
+	 * public void setState(String state) { setPropertyValue(STATE_PROPERTY_NAME,
+	 * state); }
+	 * 
+	 * 
+	 * 
+	 * public String getFault() { return (String)
+	 * getPropertyValue(FAULT_PROPERTY_NAME); }
+	 * 
+	 * public void setFault(String fault) { setPropertyValue(FAULT_PROPERTY_NAME,
+	 * state); }
+	 */
 
-    @Override
-    public void addListener(DeviceListener listener) {
-        if (listener == null) {
-            return;
-        }
-        synchronized (m_listeners) {
-            if (!m_listeners.contains(listener)) {
-                m_listeners.add(listener);
-            }
-        }
-    }
+	@Override
+	public void addListener(DeviceListener listener) {
+		if (listener == null) {
+			return;
+		}
+		synchronized (m_listeners) {
+			if (!m_listeners.contains(listener)) {
+				m_listeners.add(listener);
+			}
+		}
+	}
 
-    @Override
-    public void removeListener(DeviceListener listener) {
-        synchronized (m_listeners) {
-            m_listeners.remove(listener);
-        }
-    }
+	@Override
+	public void removeListener(DeviceListener listener) {
+		synchronized (m_listeners) {
+			m_listeners.remove(listener);
+		}
+	}
 
-    /**
-     * Notify all listeners. In case of exceptions, exceptions are dumped to the
-     * standard error stream.
-     */
-    protected void notifyListeners(DeviceEvent event) {
-        List<DeviceListener> listeners;
-        // Make a snapshot of the listeners list
-        synchronized (m_listeners) {
-            listeners = Collections
-                    .unmodifiableList(new ArrayList<DeviceListener>(m_listeners));
-        }
-        // Call all listeners sequentially
-        for (DeviceListener listener : listeners) {
-            try {
-               if (DeviceEventType.ADDED.equals(event.getType())) {
-                   listener.deviceAdded(event.getDevice());
-                   continue;
-               } else if (DeviceEventType.REMOVED.equals(event.getType())) {
-                   listener.deviceRemoved(event.getDevice());
-                   continue;
-               } else if (DeviceEventType.PROP_ADDED.equals(event.getType())) {
-                   listener.devicePropertyAdded(event.getDevice(), event.getPropertyName());
-                   continue;
-               } else if (DeviceEventType.PROP_REMOVED.equals(event.getType())) {
-                   listener.devicePropertyRemoved(event.getDevice(), event.getPropertyName());
-                   continue;
-               } else if (DeviceEventType.PROP_MODIFIED.equals(event.getType())) {
-                   listener.devicePropertyModified(event.getDevice(), event.getPropertyName(), event.getOldValue());
-                   continue;
-               }
-            } catch (Exception e) {
+	/**
+	 * Notify all listeners. In case of exceptions, exceptions are dumped to the
+	 * standard error stream.
+	 */
+	protected void notifyListeners(DeviceEvent event) {
+		List<DeviceListener> listeners;
+		// Make a snapshot of the listeners list
+		synchronized (m_listeners) {
+			listeners = Collections.unmodifiableList(new ArrayList<DeviceListener>(m_listeners));
+		}
+		// Call all listeners sequentially
+		for (DeviceListener listener : listeners) {
+			try {
+				if (DeviceEventType.ADDED.equals(event.getType())) {
+					listener.deviceAdded(event.getDevice());
+					continue;
+				} else if (DeviceEventType.REMOVED.equals(event.getType())) {
+					listener.deviceRemoved(event.getDevice());
+					continue;
+				} else if (DeviceEventType.PROP_ADDED.equals(event.getType())) {
+					listener.devicePropertyAdded(event.getDevice(), event.getPropertyName());
+					continue;
+				} else if (DeviceEventType.PROP_REMOVED.equals(event.getType())) {
+					listener.devicePropertyRemoved(event.getDevice(), event.getPropertyName());
+					continue;
+				} else if (DeviceEventType.PROP_MODIFIED.equals(event.getType())) {
+					listener.devicePropertyModified(event.getDevice(), event.getPropertyName(), event.getOldValue());
+					continue;
+				}
+			} catch (Exception e) {
 
-                Exception ee = new Exception("Exception in device listener '"
-                        + listener + "'", e);
-                ee.printStackTrace();
-            }
-        }
-    }
+				Exception ee = new Exception("Exception in device listener '" + listener + "'", e);
+				ee.printStackTrace();
+			}
+		}
+	}
 
 }
