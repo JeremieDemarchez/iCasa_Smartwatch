@@ -352,6 +352,13 @@ define(['jquery',
                   decorator.containerSizeDelta(containerSizeDelta);
                 );
            @isSizeHighlightEnabled.subscribe(@updateSize);
+           
+           @updateSelected=()=>
+              if (@isSelected())
+                  @addHighlight();
+              else
+                  @removeHighlight();
+           @isSelected.subscribe(@updateSelected)
 
            # status window management
            @statusWindowTemplate = ko.observable("");
@@ -483,7 +490,7 @@ define(['jquery',
                                decorator.show(false);
                 );
           
-           @initBahtroomScale= () =>
+           @initDeviceImages= () =>
                 if (@type() == "iCASA.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
@@ -497,7 +504,7 @@ define(['jquery',
                      @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
                      @properties.subscribe(@updateBathroomScaleDecorator);
                      @updateBathroomScaleDecorator();
-           @initBahtroomScale();
+           @initDeviceImages();
            
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
