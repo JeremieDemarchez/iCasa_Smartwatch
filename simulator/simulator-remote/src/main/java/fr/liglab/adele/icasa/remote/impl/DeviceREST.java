@@ -285,12 +285,14 @@ public class DeviceREST {
         if (deviceType != null) {
             // Generate a serial number
             Random m_random = new Random();
-            String deviceId = deviceType + "-" + Long.toString(m_random.nextLong(), 16);
+            //String deviceId = deviceType + "-" + Long.toString(m_random.nextLong(), 16);
 
+            String deviceId = deviceJSON.getId();
+            
             Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceJSON.getId());
-            properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
-            properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
+            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+            //properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+            //properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
 
             try {
                 _simulationMgr.createDevice(deviceType, deviceId, properties);
