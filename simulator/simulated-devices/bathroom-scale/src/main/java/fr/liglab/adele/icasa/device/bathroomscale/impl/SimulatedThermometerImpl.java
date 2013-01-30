@@ -26,7 +26,6 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.bathroomscale.MedicalThermometer;
-import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
 import fr.liglab.adele.icasa.device.bathroomscale.rest.api.MedicalThermometerRestAPI;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 

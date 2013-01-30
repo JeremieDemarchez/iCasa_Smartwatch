@@ -57,6 +57,8 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 		WebResource r = c.resource(url);
 
 		String hl7message = createMessage(systolic, diastolic, pulsations);
+		
+		System.out.println(hl7message);
 
 		try {
 			String response = r.accept(MediaType.TEXT_PLAIN_TYPE).put(String.class, hl7message);
@@ -73,7 +75,7 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 	private String createMessage(int systolic, int diastolic, int pulsations) {
 		String data = fileInstaller.getFileContent(hl7bathroomScaleFile);
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");		
 		String timestamp = formatter.format(new Date()); 
 		
 		data = data.replace("$date", timestamp);
