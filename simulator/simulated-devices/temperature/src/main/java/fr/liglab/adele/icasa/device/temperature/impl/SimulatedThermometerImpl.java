@@ -25,7 +25,6 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
@@ -44,12 +43,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	@ServiceProperty(name = Thermometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
-
-	@ServiceProperty(name = "state", value = "activated")
-	private volatile String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	private volatile String fault;
 
 	private volatile Zone m_zone;
 
@@ -81,34 +74,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
@@ -145,7 +110,7 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
 
 			if (m_zone == zone) {
-				if (!(fault.equalsIgnoreCase("yes")))
+				if (!(getFault().equalsIgnoreCase("yes")))
 					if (variableName.equals("Temperature"))
 						getTemperatureFromZone();
 			}

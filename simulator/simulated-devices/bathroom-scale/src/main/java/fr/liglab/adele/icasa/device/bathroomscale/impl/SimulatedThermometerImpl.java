@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.device.bathroomscale.impl;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -27,6 +26,8 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.bathroomscale.MedicalThermometer;
+import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
+import fr.liglab.adele.icasa.device.bathroomscale.rest.api.MedicalThermometerRestAPI;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 @Component(name = "iCASA.MedicalThermometer")
@@ -36,16 +37,11 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	@Property(name = "fault", value = "no")
-	private String fault;
-
 	@Requires
 	private SimulationManager manager;
-
+	
+	@Requires(optional = true)
+	private MedicalThermometerRestAPI restAPI;
 
 	public SimulatedThermometerImpl() {
 		super();
@@ -66,37 +62,6 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 		return m_serialNumber;
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
-
-
-
 	@Override
    protected SimulationManager getManager() {
 	   return manager;
@@ -104,7 +69,15 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 
 	@Override
    protected void updateSpecificState() {
-	   setPropertyValue(TEMPERATURE_PROPERTY, getRandomFloatValue(30, 40));	   
+		float temperature = getRandomFloatValue(30, 40);
+	   setPropertyValue(TEMPERATURE_PROPERTY, temperature);	   
+		if (restAPI != null) {
+			try {
+				restAPI.sendMeasure(temperature);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
    }
 
 	@Override

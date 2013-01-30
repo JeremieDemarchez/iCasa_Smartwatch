@@ -44,12 +44,6 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	@ServiceProperty(name = Heater.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "activated")
-	private volatile String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	private volatile String fault;
-
 	@LogConfig
 	private ComponentLogger m_logger;
 
@@ -118,14 +112,22 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 		long time = System.currentTimeMillis();
 		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
 		m_lastUpdateTime = time;
+		
 		if (m_zone != null) {
-			double current = (Double) m_zone.getVariableValue("Temperature");
-			double volume = (Double) m_zone.getVariableValue("Volume");
-			double powerLevel = getPowerLevel();
-			// double increase = m_maxCapacity * powerLevel * timeDiff / volume;
-			double increase = powerLevel * timeDiff / volume;
-			if (increase>0)
-				m_zone.setVariableValue("Temperature", current + increase);
+			
+			try {
+				Double current = (Double) m_zone.getVariableValue("Temperature");
+				Double volume = (Double) m_zone.getVariableValue("Volume");				
+				double powerLevel = getPowerLevel();
+				
+				if (volume>0) {
+					double decrease = powerLevel * timeDiff / volume;
+					if (decrease>0)
+						m_zone.setVariableValue("Temperature", current + decrease);				
+				}								
+         } catch (Exception e) {
+	         e.printStackTrace();
+         }				
 		}
 	}
 
@@ -158,34 +160,6 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 		}
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
 
 	@Override
 	public void enterInZones(List<Zone> zones) {

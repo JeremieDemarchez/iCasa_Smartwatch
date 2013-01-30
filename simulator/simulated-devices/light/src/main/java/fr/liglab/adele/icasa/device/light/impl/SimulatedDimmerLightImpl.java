@@ -42,12 +42,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	@ServiceProperty(name = DimmerLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	private String fault;
-
 	@LogConfig
 	private ComponentLogger m_logger;
 	
@@ -116,34 +110,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 		return getPowerLevel() * maxIlluminance;
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
