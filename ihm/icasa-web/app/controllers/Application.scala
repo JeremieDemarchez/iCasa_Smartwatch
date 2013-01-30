@@ -25,6 +25,8 @@ object Application extends Controller {
 
   var maps = mutable.Map.empty[String, HouseMap];
 
+  val mapsLock = new Object;
+
   def getMaps(): Seq[HouseMap] = {
     var mapsSeq = mutable.Seq.empty[HouseMap]
     for ((mapId, map) <- maps) {
@@ -36,30 +38,37 @@ object Application extends Controller {
   }
 
   def loadMaps() = {
-     val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
-     if (mapsFile.exists()) {
-         val mapsRootNode = xml.XML.loadFile(mapsFile);
-         for (mapNode <- (mapsRootNode \\ "map")) {
-            val map = fromXML(mapNode);
-            maps(map.id) = map;
-         }
+     mapsLock.synchronized {
+       var newMaps = mutable.Map.empty[String, HouseMap];
+       val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
+       if (mapsFile.exists()) {
+           val mapsRootNode = xml.XML.loadFile(mapsFile);
+           for (mapNode <- (mapsRootNode \\ "map")) {
+              val map = fromXML(mapNode);
+             newMaps(map.id) = map;
+           }
+       }
+       maps = newMaps;
      }
   }
 
   def saveMaps() = {
     val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
-    if (mapsFile.exists())
-      mapsFile.createNewFile();
 
-    var xmlStr = "<?xml version='1.0' encoding='UTF-8'?><maps>";
-    for ((houseMapId, houseMap) <- maps) {
-       xmlStr += "<map id=\"" + houseMap.id + "\" name=\"" + houseMap.name +
-        "\" description=\"" + houseMap.description + "\" gatewayURL=\"" +
-        houseMap.gatewayURL + "\" imgFile=\"" + houseMap.imgFile + "\"/>";
+    mapsLock.synchronized {
+      if (mapsFile.exists())
+        mapsFile.createNewFile();
+
+      var xmlStr = "<?xml version='1.0' encoding='UTF-8'?>\n<maps>\n";
+      for ((houseMapId, houseMap) <- maps) {
+         xmlStr += "<map id=\"" + houseMap.id + "\" name=\"" + houseMap.name +
+          "\" description=\"" + houseMap.description + "\" gatewayURL=\"" +
+          houseMap.gatewayURL + "\" imgFile=\"" + houseMap.imgFile + "\"/>\n";
+      }
+      xmlStr += "</maps>";
+
+      mapsFile.text = xmlStr;
     }
-    xmlStr += "</maps>";
-
-    mapsFile.text = xmlStr;
   }
 
   def index() = Action {
@@ -110,9 +119,15 @@ object Application extends Controller {
           var gatewayURL = gatewayURLToSet;
           var imgFile = fileName;
       }
-      maps(map.id) = map;
-      saveMaps();
-      Ok("Map created")
+
+      mapsLock.synchronized {
+        if (maps.isEmpty)
+          loadMaps();
+
+        maps(map.id) = map;
+        saveMaps();
+      }
+      Redirect(routes.Application.index)
     }.getOrElse {
       Redirect(routes.Application.index).flashing(
         "error" -> "Missing file"
