@@ -24,67 +24,67 @@
 
 <section id="mapsContainer">
     <article>
-    <ul class="thumbnails">
-        @for(map <- maps) {
+        <ul class="thumbnails">
+            @for(map <- maps) {
             <li class="span3">
-                <a href="#" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Data">
+                <a href="/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Data">
                     <img src="/maps/@map.imgFile" class="img-rounded"/>
                     <p>@map.name</p>
                 </a>
             </li>
-        }
-        <li class="span3">
-            <a href="#addForm" class="thumbnail" data-toggle="modal">
-                <img src="http://www.clker.com/cliparts/A/P/L/b/V/G/blue-plus-sign-md.png" />
-                <p>Add</p>
-            </a>
-        </li>
-    </ul>
+            }
+            <li class="span3">
+                <a href="#addForm" class="thumbnail" data-toggle="modal">
+                    <img src="http://www.clker.com/cliparts/A/P/L/b/V/G/blue-plus-sign-md.png" />
+                    <p>Add</p>
+                </a>
+            </li>
+        </ul>
 
-    <div id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
-        <div class="modal-header">
-            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-            <h3 id="myModalLabel">Add new</h3>
+        <div id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Add new</h3>
+            </div>
+            <form action="/mapUpload" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="control-group">
+                        <label class="control-label" for="mapId">ID</label>
+                        <div class="controls">
+                            <input type="text" name="mapId" id="mapId" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapName">Name</label>
+                        <div class="controls">
+                            <input type="text" name="mapName" id="mapName" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapDescription">Description</label>
+                        <div class="controls">
+                            <input type="text" name="mapDescription" id="mapDescription" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="gatewayURL">GatewayURL</label>
+                        <div class="controls">
+                            <input type="text" name="gatewayURL" id="gatewayURL" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="picture">Picture</label>
+                        <div class="controls">
+                            <input type="file" name="picture" id="picture" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
+                    <input class="btn btn-primary" type="submit" name="submit" value="Save"/>
+                </div>
+            </form>
         </div>
-        <form action="/mapUpload" method="POST" enctype="multipart/form-data">
-            <div class="modal-body">
-                <div class="control-group">
-                    <label class="control-label" for="mapId">ID</label>
-                    <div class="controls">
-                        <input type="text" name="mapId" id="mapId" />
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="mapName">Name</label>
-                    <div class="controls">
-                        <input type="text" name="mapName" id="mapName" />
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="mapDescription">Description</label>
-                    <div class="controls">
-                        <input type="text" name="mapDescription" id="mapDescription" />
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="gatewayURL">GatewayURL</label>
-                    <div class="controls">
-                        <input type="text" name="gatewayURL" id="gatewayURL" />
-                    </div>
-                </div>
-                <div class="control-group">
-                    <label class="control-label" for="picture">Picture</label>
-                    <div class="controls">
-                        <input type="file" name="picture" id="picture" />
-                    </div>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn" data-dismiss="modal" aria-hidden="true">Close</button>
-                <input class="btn btn-primary" type="submit" name="submit" value="Save"/>
-            </div>
-        </form>
-    </div>
     </article>
 </section>
 
