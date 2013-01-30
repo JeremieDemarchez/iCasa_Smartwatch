@@ -76,6 +76,13 @@ public class ZoneREST {
             zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
             zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
             zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
+            
+            JSONObject propObject = new JSONObject();
+            for (String variable : zone.getVariableNames()) {
+            	propObject.put(variable, zone.getVariableValue(variable));
+            }
+            zoneJSON.put("variables", propObject);
+            
         } catch (JSONException e) {
             e.printStackTrace();
             zoneJSON = null;

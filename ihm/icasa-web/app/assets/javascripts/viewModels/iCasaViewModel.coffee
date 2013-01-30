@@ -373,6 +373,16 @@ define(['jquery',
         @rightX = kb.observable(model, 'rightX');
         @bottomY = kb.observable(model, 'bottomY');
         @topY = kb.observable(model, 'topY');
+        @variables=kb.observable(model, 'variables');
+        @variables_name = ko.computed({
+          read: () =>
+            if (@.variables() instanceof Object)
+              return Object.keys(@.variables());
+            else
+              return [];
+          owner: @
+        }
+        , @);
         @positionX = ko.computed({
           read: () =>
             return (@leftX() + @rightX()) / 2;
@@ -384,7 +394,8 @@ define(['jquery',
           owner: @
         } , @);
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
-
+      getVariableValue:(variable)->
+        return @.variables()[variable]+"";
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
@@ -393,7 +404,15 @@ define(['jquery',
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @properties=kb.observable(model, 'properties');
-           @properties_name = Object.keys(@.properties());
+           @properties_name = ko.computed({
+            read: () =>
+              if (@.properties() instanceof Object)
+                return Object.keys(@.properties());
+              else
+                return [];
+            owner: @
+           }
+           , @);
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
            @isDesactivated = ko.computed({
               read: () =>
@@ -675,6 +694,7 @@ define(['jquery',
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 
            @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
+           
 
            @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
 
@@ -743,7 +763,7 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1 });
+              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: {}});
               newDevice.save();
               newDevice.set(id: @newDeviceName())
               DataModel.collections.devices.push(newDevice);
@@ -804,17 +824,11 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
+              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               newZone.save();
               newZone.set(id: @newZoneName())
               DataModel.collections.zones.push(newZone);
               
-           @newRoomName = ko.observable("");
-
-           @createRoom = () =>
-              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
-              newZone.save();
-              DataModel.collections.zones.push(newZone);
               
            @removeSelectedZones = () =>
               ko.utils.arrayForEach(@zones(), (zone) =>
@@ -863,23 +877,29 @@ define(['jquery',
               @selectedScript().model().save();
 
            # managing map size change (must update position of persons, zones and devices)
+           @updateModelPosition=(model)=>
+             model.containerWidthRatio(@mapWidthRatio());
+             model.containerHeightRatio(@mapHeightRatio());
+
            @updateWidgetPositions= (newValue) =>
              #TODO should use a merged list of positioned objects
              ko.utils.arrayForEach(@devices(), (device) =>
-               device.containerWidthRatio(@mapWidthRatio());
-               device.containerHeightRatio(@mapHeightRatio());
+              @updateModelPosition(device);
              );
              ko.utils.arrayForEach(@persons(), (person) =>
-               person.containerWidthRatio(@mapWidthRatio());
-               person.containerHeightRatio(@mapHeightRatio());
+              @updateModelPosition(person);
              );
              ko.utils.arrayForEach(@zones(), (zone) =>
-               zone.containerWidthRatio(@mapWidthRatio());
-               zone.containerHeightRatio(@mapHeightRatio());
+               @updateModelPosition(zone);
              );
            @mapWidthRatio.subscribe(@updateWidgetPositions);
            @mapHeightRatio.subscribe(@updateWidgetPositions);
            #TODO should listen to object addition to setup container attributes
+           
+
+           @.persons.subscribe(@.updateWidgetPositions)
+           @.devices.subscribe(@.updateWidgetPositions)
+           @.zones.subscribe(@.updateWidgetPositions)
 
     return ICasaViewModel;
 );
