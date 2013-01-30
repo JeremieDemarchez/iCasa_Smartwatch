@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.device.bathroomscale.impl;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -27,6 +26,7 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.bathroomscale.Sphygmometer;
+import fr.liglab.adele.icasa.device.bathroomscale.rest.api.SphygmometerRestAPI;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 @Component(name = "iCASA.Sphygmometer")
@@ -36,15 +36,11 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	@Property(name = "fault", value = "no")
-	private String fault;
-
 	@Requires
 	private SimulationManager manager;
+	
+	@Requires(optional = true)
+	private SphygmometerRestAPI restAPI;
 
 
 	public SimulatedSphygmometerImpl() {
@@ -68,38 +64,6 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 		return m_serialNumber;
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
-
-
-
-
 	@Override
    protected SimulationManager getManager() {
 	   return manager;
@@ -107,9 +71,21 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 
 	@Override
    protected void updateSpecificState() {
-		setPropertyValue(SYSTOLIC_PROPERTY, getRandomIntValue(110, 150));
-		setPropertyValue(DIASTOLIC_PROPERTY, getRandomIntValue(60, 90));
-		setPropertyValue(PULSATIONS_PROPERTY, getRandomIntValue(60, 100));   
+		int systolic =  getRandomIntValue(110, 150);
+		int diastolic = getRandomIntValue(60, 90);
+		int pulsations = getRandomIntValue(60, 100);
+		
+		setPropertyValue(SYSTOLIC_PROPERTY, systolic);
+		setPropertyValue(DIASTOLIC_PROPERTY, diastolic);
+		setPropertyValue(PULSATIONS_PROPERTY, pulsations); 
+		
+		if (restAPI != null) {
+			try {
+				restAPI.sendMeasure(systolic, diastolic, pulsations);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
    }
 
 	@Override

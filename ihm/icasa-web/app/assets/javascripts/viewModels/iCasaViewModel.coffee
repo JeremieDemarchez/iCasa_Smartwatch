@@ -474,7 +474,7 @@ define(['jquery',
 
            # init
            @updateProperties= (newValue) =>
-                if (@type() == "iCASA.BathroomScale" )
+                if ((@type() == "iCASA.BathroomScale" ) || (@type() == "iCASA.Sphygmometer" ))
                   presence = @properties()["presence_detected"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "foots")
@@ -495,7 +495,7 @@ define(['jquery',
                 if (@type() == "iCASA.BinaryLight")
                   powerLevel = @properties()["light.powerStatus"]
                   if (powerLevel)
-                    @imgSrc(@getImage("Lamp"));
+                    @imgSrc(@getImage("lamp_on"));
                   else
                     @imgSrc(@.getImage());
           
@@ -503,7 +503,7 @@ define(['jquery',
                 if (@type() == "iCASA.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
-                       imgSrc: '/assets/images/devices/decorators/pesePersonnePieds.png',
+                       imgSrc: '/assets/images/devices/decorators/foots.png',
                        width: 32,
                        height: 32,
                        positionX: 1,
@@ -511,10 +511,20 @@ define(['jquery',
                        show: false
                      });
                      @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
+                if (@type() == "iCASA.Sphygmometer")
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "foots",
+                       imgSrc: '/assets/images/devices/decorators/sphygmometer_measure.png',
+                       width: 12,
+                       height: 9,
+                       positionX: 17,
+                       positionY: 4,
+                       show: false
+                     });
                 if (@type() == "iCASA.PresenceSensor")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "presence",
-                       imgSrc: '/assets/images/devices/decorators/detecteurMouvements_decorateur.png',
+                       imgSrc: '/assets/images/devices/decorators/movementDetector_detected.png',
                        width: 32,
                        height: 32,
                        positionX: 1,
@@ -534,29 +544,57 @@ define(['jquery',
           return @.properties()[property]+""
         getImage:(imgName)->
           if not imgName?
-            imgName = "NewDevice";
+            imgName = "genericDevice";
             if (@type() == "iCASA.Cooler")
-              imgName = "airConditionne";
+              imgName = "cooler";
             if (@type() == "iCASA.AudioSource")
-              imgName = "sourceSonore";
+              imgName = "musicPlayer";
             if (@type() == "iCASA.DimmerLight")
-              imgName = "lampeVariable";
+              imgName = "dimmerLight";
             if (@type() == "iCASA.Thermometer")
-              imgName = "thermometre";
+              imgName = "thermometer";
+            if (@type() == "iCASA.MedicalThermometer")
+              imgName = "medicalThermometer";
             if (@type() == "iCASA.Heater")
-              imgName = "radiateur";
+              imgName = "heater";
             if (@type() == "iCASA.Photometer")
-              imgName = "Photometer";
+              imgName = "photometer";
             if (@type() == "iCASA.BinaryLight")
-              imgName = "lampe";
+              imgName = "binaryLight_off";
             if (@type() == "iCASA.PresenceSensor")
-              imgName = "detecteurMouvements";
+              imgName = "movementDetector";
             if (@type() == "iCASA.Speaker")
-              imgName = "hautParleur";
+              imgName = "speaker";
             if (@type() == "iCASA.Power")
-              imgName = "Power";
+              imgName = "power";
             if (@type() == "iCASA.BathroomScale")
-              imgName = "pesePersonne";
+              imgName = "bathroomScale";
+            if (@type() == "iCASA.Tablet")
+              imgName = "tablet";
+            if (@type() == "iCASA.Desktop")
+              imgName = "desktop";
+            if (@type() == "iCASA.SettopBox")
+              imgName = "liveBox";
+            if (@type() == "iCASA.RollingShutter")
+              imgName = "rollingShutter";
+            if (@type() == "iCASA.LiquidDetector")
+              imgName = "liquidDetector";
+            if (@type() == "iCASA.SmartPhone")
+              imgName = "smartPhone";
+            if (@type() == "iCASA.FlatTV")
+              imgName = "flatTV";
+            if (@type() == "iCASA.RFIDReader")
+              imgName = "rfidReader";
+            if (@type() == "iCASA.Accelerometer")
+              imgName = "accelerometer";
+            if (@type() == "iCASA.ToggleSwitch")
+              imgName = "toggleSwitch";
+            if (@type() == "iCASA.DoorDetector")
+              imgName = "doorDetector";
+            if (@type() == "iCASA.SettopBox")
+              imgName = "liveBox";
+            if (@type() == "iCASA.Sphygmometer")
+              imgName = "sphygmometer";
           return "/assets/images/devices/" + imgName + ".png"; 
 
     class PersonTypeViewModel extends NamedViewModel

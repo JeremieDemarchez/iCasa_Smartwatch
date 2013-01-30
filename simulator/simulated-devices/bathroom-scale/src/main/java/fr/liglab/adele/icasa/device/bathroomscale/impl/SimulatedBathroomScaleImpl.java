@@ -38,13 +38,6 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	@Property(name = "fault", value = "no")
-	private String fault;
-
 	@Requires
 	private SimulationManager manager;
 
@@ -70,35 +63,6 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	public String getSerialNumber() {
 		return m_serialNumber;
-	}
-
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
 	}
 
 	@Override

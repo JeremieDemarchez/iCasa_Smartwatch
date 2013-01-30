@@ -60,6 +60,8 @@ public class MedicalThermometerRestClientImpl implements MedicalThermometerRestA
 		WebResource r = c.resource(url);
 
 		String hl7message = createMessage(temperature);
+		
+		System.out.println(hl7message);
 
 		try {
 			String response = r.accept(MediaType.TEXT_PLAIN_TYPE).put(String.class, hl7message);
@@ -75,7 +77,7 @@ public class MedicalThermometerRestClientImpl implements MedicalThermometerRestA
 	private String createMessage(float temperature) {
 		String data = fileInstaller.getFileContent(hl7templateFile);
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");		
 		String timestamp = formatter.format(new Date()); 
 		data = data.replace("$date", timestamp);
 

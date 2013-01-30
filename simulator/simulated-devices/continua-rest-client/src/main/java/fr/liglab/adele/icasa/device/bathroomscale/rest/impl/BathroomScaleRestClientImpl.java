@@ -56,6 +56,8 @@ public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 		WebResource r = c.resource(url);
 
 		String hl7message = createMessage(weight);
+		
+		System.out.println(hl7message);
 
 		try {
 			String response = r.accept(MediaType.TEXT_PLAIN_TYPE).put(String.class, hl7message);
@@ -71,7 +73,7 @@ public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 	private String createMessage(float weight) {
 		String data = fileInstaller.getFileContent(hl7templateFile);
 		
-		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");		
 		String timestamp = formatter.format(new Date()); 
 		data = data.replace("$date", timestamp);
 		data = data.replace("$weight", "" + ((Float)weight).intValue());

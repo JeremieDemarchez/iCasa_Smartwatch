@@ -24,8 +24,6 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
@@ -44,17 +42,9 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	@ServiceProperty(name = Cooler.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
 
-	@ServiceProperty(name = "fault", value = "no")
-	private String fault;
-
-
-	@LogConfig
-	private ComponentLogger m_logger;
-
-	// private volatile SimulatedEnvironment m_env;
+	//@LogConfig
+	//private ComponentLogger m_logger;
 
 	private Thread m_updaterThread;
 
@@ -123,12 +113,20 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
 		m_lastUpdateTime = time;
 		if (m_zone != null) {
-			double current = (Double) m_zone.getVariableValue("Temperature");
-			double volume = (Double) m_zone.getVariableValue("Volume");
-			double powerLevel = getPowerLevel();
-			double decrease = powerLevel * timeDiff / volume;
-			if (decrease>0)
-				m_zone.setVariableValue("Temperature", current - decrease);
+			
+			try {
+				Double current = (Double) m_zone.getVariableValue("Temperature");
+				Double volume = (Double) m_zone.getVariableValue("Volume");				
+				double powerLevel = getPowerLevel();
+				
+				if (volume>0) {
+					double decrease = powerLevel * timeDiff / volume;
+					if (decrease>0)
+						m_zone.setVariableValue("Temperature", current - decrease);				
+				}								
+         } catch (Exception e) {
+	         e.printStackTrace();
+         }				
 		}
 	}
 
@@ -159,34 +157,6 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 		}
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
 
 	@Override
 	public void enterInZones(List<Zone> zones) {

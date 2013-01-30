@@ -86,11 +86,14 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 		}
 			
 		
+		/*
 		if (propertyName.equals(GenericDevice.FAULT_PROPERTY_NAME))
 			return deviceComponent.getFault();
 
 		if (propertyName.equals(GenericDevice.STATE_PROPERTY_NAME))
 			return deviceComponent.getState();
+			
+		*/
 
 		
 		if (deviceComponent!=null)

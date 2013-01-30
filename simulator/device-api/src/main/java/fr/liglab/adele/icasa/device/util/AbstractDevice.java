@@ -32,23 +32,19 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * Abstract implementation of the {@link GenericDevice} interface that manages
  * the listeners addition, removal and notifications.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 public abstract class AbstractDevice implements GenericDevice {
 
-	// private String state;
-
+	
 	private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
 
 	private Map<String, Object> _properties = new HashMap<String, Object>();
 
-	/*
-	 * public AbstractDevice() {
-	 * setPropertyValue(GenericDevice.STATE_PROPERTY_NAME,
-	 * GenericDevice.STATE_ACTIVATED);
-	 * setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME,
-	 * GenericDevice.FAULT_YES); }
-	 */
+	public AbstractDevice() {
+		setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
+		setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
+	}
 
 	@Override
 	public Set<String> getProperties() {
@@ -79,8 +75,7 @@ public abstract class AbstractDevice implements GenericDevice {
 		synchronized (_properties) {
 			oldValue = _properties.get(propertyName);
 			if (oldValue != null) {
-				// if the new value is equal to the previous one the property is not
-				// set
+				// if the new value is equal to the previous one the property is not  set
 				if (!oldValue.equals(value)) {
 					_properties.put(propertyName, value);
 					modified = true;
@@ -97,21 +92,26 @@ public abstract class AbstractDevice implements GenericDevice {
 			notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue));
 	}
 
-	/*
-	 * public String getState() { return (String)
-	 * getPropertyValue(STATE_PROPERTY_NAME); }
-	 * 
-	 * public void setState(String state) { setPropertyValue(STATE_PROPERTY_NAME,
-	 * state); }
-	 * 
-	 * 
-	 * 
-	 * public String getFault() { return (String)
-	 * getPropertyValue(FAULT_PROPERTY_NAME); }
-	 * 
-	 * public void setFault(String fault) { setPropertyValue(FAULT_PROPERTY_NAME,
-	 * state); }
-	 */
+
+	@Override
+	public String getState() {
+		return (String) getPropertyValue(STATE_PROPERTY_NAME);
+	}
+
+	@Override
+	public void setState(String state) {
+		setPropertyValue(STATE_PROPERTY_NAME, state);
+	}
+
+	@Override
+	public String getFault() {
+		return (String) getPropertyValue(FAULT_PROPERTY_NAME);
+	}
+
+	@Override
+	public void setFault(String fault) {
+		setPropertyValue(FAULT_PROPERTY_NAME, fault);
+	}
 
 	@Override
 	public void addListener(DeviceListener listener) {
