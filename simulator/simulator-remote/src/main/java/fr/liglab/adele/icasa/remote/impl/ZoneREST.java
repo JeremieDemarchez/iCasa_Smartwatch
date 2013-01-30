@@ -78,10 +78,10 @@ public class ZoneREST {
             zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
             
             JSONObject propObject = new JSONObject();
-            for (String property : zone.getVariableNames()) {
-            	propObject.put(property, zone.getVariableValue(property));
+            for (String variable : zone.getVariableNames()) {
+            	propObject.put(variable, zone.getVariableValue(variable));
             }
-            zoneJSON.put("properties", propObject);
+            zoneJSON.put("variables", propObject);
             
         } catch (JSONException e) {
             e.printStackTrace();
