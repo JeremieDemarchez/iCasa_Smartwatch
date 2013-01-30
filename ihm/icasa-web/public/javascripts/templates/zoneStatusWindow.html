@@ -22,5 +22,12 @@
             <input type="text" id="inputName" data-bind="value: name, attr: { alt: name}" />
         </div>
     </div>
-
+    <!--ko foreach: variables_name -->
+    <div class="control-group">
+      <label class="control-label" data-bind="text: $data">variable</label>
+      <div class="controls">
+          <input type="text" disabled="disabled" data-bind="value: $parent.getVariableValue($data)" />
+      </div>
+    </div>
+    <!-- /ko -->
 </form>
