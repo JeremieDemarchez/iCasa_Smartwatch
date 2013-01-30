@@ -495,7 +495,7 @@ define(['jquery',
                 if (@type() == "iCASA.BinaryLight")
                   powerLevel = @properties()["light.powerStatus"]
                   if (powerLevel)
-                    @imgSrc(@getImage("lamp_on"));
+                    @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
           
@@ -894,8 +894,6 @@ define(['jquery',
              );
            @mapWidthRatio.subscribe(@updateWidgetPositions);
            @mapHeightRatio.subscribe(@updateWidgetPositions);
-           #TODO should listen to object addition to setup container attributes
-           
 
            @.persons.subscribe(@.updateWidgetPositions)
            @.devices.subscribe(@.updateWidgetPositions)
