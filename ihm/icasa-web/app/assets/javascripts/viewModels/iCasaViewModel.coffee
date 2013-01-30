@@ -707,7 +707,8 @@ define(['jquery',
            @createDevice = () =>
               newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1 });
               newDevice.save();
-
+              newDevice.set(id: @newDeviceName())
+              DataModel.collections.devices.push(newDevice);
 
            @removeDevice = (device) =>
               device.model().destroy();
@@ -738,6 +739,7 @@ define(['jquery',
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
               newPerson.save();
+              newPerson.set(id: @newPersonName())
               DataModel.collections.persons.push(newPerson);
 
               
@@ -766,6 +768,7 @@ define(['jquery',
            @createZone = () =>
               newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               newZone.save();
+              newZone.set(id: @newZoneName())
               DataModel.collections.zones.push(newZone);
               
            @newRoomName = ko.observable("");

@@ -22,6 +22,18 @@ object Application extends Controller {
             var imgFile = (node \ "@imgFile").text
         }
 
+  var maps = mutable.Map.empty[String, HouseMap];
+
+  def getMaps(): Seq[HouseMap] = {
+    var mapsSeq = mutable.Seq.empty[HouseMap]
+    for ((mapId, map) <- maps) {
+      //TODO use += instead (cannot use it for now due to a compilation error)
+      mapsSeq = mapsSeq :+ map
+    }
+
+    return mapsSeq;
+  }
+
   def loadMaps() = {
      val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
      if (mapsFile.exists()) {
@@ -33,16 +45,20 @@ object Application extends Controller {
      }
   }
 
-  var maps = mutable.Map.empty[String, HouseMap];
+  def saveMaps() = {
+    val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
+    if (mapsFile.exists())
+      mapsFile.createNewFile();
 
-  def getMaps(): Seq[HouseMap] = {
-      var mapsSeq = mutable.Seq.empty[HouseMap]
-      for ((mapId, map) <- maps) {
-        //TODO use += instead (cannot use it for now due to a compilation error)
-        mapsSeq = mapsSeq :+ map
-      }
+    val mapsRootNode =
+      <maps>
+        { maps.map { houseMap =>
+        <map id="{houseMap.id}" name="{houseMap.name}" description="{houseMap.description}" gatewayURL="{houseMap.gatewayURL}" imgFile="{houseMap.imgFile}"/>
+        }}
+      }}
+      </maps>
 
-      return mapsSeq;
+    //mapsFile.
   }
 
   def index() = Action {
@@ -51,14 +67,18 @@ object Application extends Controller {
   }
   
   def connectToMap(mapId: String) = Action {
-
-    Ok(views.html.map(mapId, "/maps/paulHouse.png", "http://localhost:8080")).withHeaders(
-      "Access-Control-Allow-Origin" -> "*",
-      "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Expose-Headers" -> "X-Cache-Date, X-Atmosphere-tracking-id",
-      "Access-Control-Allow-Headers" ->"Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport",
-      "Access-Control-Max-Age"-> "-1"
-    )
+    loadMaps();
+    val map = maps(mapId);
+    if (map == null)
+      NotFound("");
+    else
+      Ok(views.html.map(mapId, "/maps/" + map.imgFile, map.gatewayURL)).withHeaders(
+        "Access-Control-Allow-Origin" -> "*",
+        "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Expose-Headers" -> "X-Cache-Date, X-Atmosphere-tracking-id",
+        "Access-Control-Allow-Headers" ->"Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport",
+        "Access-Control-Max-Age"-> "-1"
+      )
   }
 
   val MAP_DIRECTORY: String = "maps";
@@ -90,6 +110,7 @@ object Application extends Controller {
           var imgFile = fileName;
       }
       maps(map.id) = map;
+      saveMaps();
       Ok("Map created")
     }.getOrElse {
       Redirect(routes.Application.index).flashing(
