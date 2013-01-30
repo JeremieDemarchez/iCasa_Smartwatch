@@ -8,9 +8,18 @@
 
 		"component" : [
 			{ 
-			  "factory" : "continua-rest-client",
-			  "properties" : { "url" : "http://localhost:8080/restAdapter/rest/continua", "hl7bathroomScaleFile" : "bathroomScale.hl7" }
-			}
+			  "factory" : "BathroomScaleRestClient",
+			  "properties" : { "url" : "http://localhost:8080/restAdapter/rest/continua", "hl7templateFile" : "bathroomScale.hl7" }
+			} ,
+			{ 
+			  "factory" : "SphygmometerRestClient",
+			  "properties" : { "url" : "http://localhost:8080/restAdapter/rest/continua", "hl7templateFile" : "Sphygmometer.hl7" }
+			} ,
+			{ 
+			  "factory" : "MedicalThermometerRestClient",
+			  "properties" : { "url" : "http://localhost:8080/restAdapter/rest/continua", "hl7templateFile" : "Thermometer.hl7" }
+			}			
 		]
+		
 	}
 }

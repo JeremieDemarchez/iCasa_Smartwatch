@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.bathroomscale.rest.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.ws.rs.core.MediaType;
 
 import org.apache.felix.ipojo.annotations.Component;
@@ -27,11 +30,11 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
-import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
+import fr.liglab.adele.icasa.device.bathroomscale.rest.api.SphygmometerRestAPI;
 
-@Component(name = "continua-rest-client")
+@Component(name = "SphygmometerRestClient")
 @Provides
-public class ContinuaRestClientImpl implements BathroomScaleRestAPI {
+public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 
 	// 10.194.3.114
 	@Property(name = "url", value = "http://localhost:8080/restAdapter/rest/continua")
@@ -45,14 +48,15 @@ public class ContinuaRestClientImpl implements BathroomScaleRestAPI {
 
 	private Client c = Client.create();
 
-	public boolean sendMeasure(float weight) {
+	@Override
+   public boolean sendMeasure(int systolic, int diastolic, int pulsations) {
 
 		if (hl7bathroomScaleFile == null)
 			return false;
 
 		WebResource r = c.resource(url);
 
-		String hl7message = createWeightMessage(weight);
+		String hl7message = createMessage(systolic, diastolic, pulsations);
 
 		try {
 			String response = r.accept(MediaType.TEXT_PLAIN_TYPE).put(String.class, hl7message);
@@ -63,9 +67,24 @@ public class ContinuaRestClientImpl implements BathroomScaleRestAPI {
 			// TODO parse response for computing return value
 			return false;
 		}
+   }
+
+
+	private String createMessage(int systolic, int diastolic, int pulsations) {
+		String data = fileInstaller.getFileContent(hl7bathroomScaleFile);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddhhmmss");		
+		String timestamp = formatter.format(new Date()); 
+		
+		data = data.replace("$date", timestamp);
+		data = data.replace("$systolic", ""+systolic);
+		data = data.replace("$diastolic", "" + diastolic);
+		data = data.replace("$average", "" + ((systolic + diastolic)/2));
+		data = data.replace("$pulsations", "" + pulsations);
+		
+		
+		return data;
 	}
 
-	private String createWeightMessage(float weight) {
-		return fileInstaller.getFileContent(hl7bathroomScaleFile);
-	}
+
 }
