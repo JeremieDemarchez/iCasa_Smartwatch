@@ -10,6 +10,7 @@ import play.api.data._
 import play.api.data.Forms._
 import scala.collection.mutable
 import models.HouseMap
+import utils.RichFile.enrichFile
 
 object Application extends Controller {
 
@@ -50,15 +51,15 @@ object Application extends Controller {
     if (mapsFile.exists())
       mapsFile.createNewFile();
 
-    val mapsRootNode =
-      <maps>
-        { maps.map { houseMap =>
-        <map id="{houseMap.id}" name="{houseMap.name}" description="{houseMap.description}" gatewayURL="{houseMap.gatewayURL}" imgFile="{houseMap.imgFile}"/>
-        }}
-      }}
-      </maps>
+    var xmlStr = "<?xml version='1.0' encoding='UTF-8'?><maps>";
+    for ((houseMapId, houseMap) <- maps) {
+       xmlStr += "<map id=\"" + houseMap.id + "\" name=\"" + houseMap.name +
+        "\" description=\"" + houseMap.description + "\" gatewayURL=\"" +
+        houseMap.gatewayURL + "\" imgFile=\"" + houseMap.imgFile + "\"/>";
+    }
+    xmlStr += "</maps>";
 
-    //mapsFile.
+    mapsFile.text = xmlStr;
   }
 
   def index() = Action {
