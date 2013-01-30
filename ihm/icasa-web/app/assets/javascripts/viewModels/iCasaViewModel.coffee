@@ -474,23 +474,24 @@ define(['jquery',
 
            # init
            @updateProperties= (newValue) =>
-                if ((@type() == "iCASA.BathroomScale" ) || (@type() == "iCASA.Sphygmometer" ))
+                if (@type() == "iCASA.BathroomScale" )
                   presence = @properties()["presence_detected"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "foots")
-                          if (presence == true)
-                               decorator.show(true);
-                          else
-                               decorator.show(false);
+                          decorator.show(presence == true);
+                  );
+                if (@type() == "iCASA.Sphygmometer" )
+                  presence = @properties()["presence_detected"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "sphygmometer_measure")
+                       if (presence == true)
+                         decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.PresenceSensor" )
                   presence = @properties()["presencesensor.sensedpresence"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "presence")
-                          if (presence == true)
-                               decorator.show(true);
-                          else
-                               decorator.show(false);
+                       decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.BinaryLight")
                   powerLevel = @properties()["light.powerStatus"]
@@ -513,7 +514,7 @@ define(['jquery',
                      @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
                 if (@type() == "iCASA.Sphygmometer")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
-                       name: "foots",
+                       name: "sphygmometer_measure",
                        imgSrc: '/assets/images/devices/decorators/sphygmometer_measure.png',
                        width: 12,
                        height: 9,
