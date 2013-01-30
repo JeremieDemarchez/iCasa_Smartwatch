@@ -15,12 +15,18 @@
  */
 package fr.liglab.adele.icasa.device.bathroomscale;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-
-public interface BathroomScale extends GenericDevice {
+public interface Sphygmometer {
+		
+	public final String SYSTOLIC_PROPERTY = "current_systolic";
 	
-	public final String WEIGHT_PROPERTY = "current_weight";
+	public final String DIASTOLIC_PROPERTY = "current_diastolic";
 	
-	public float getCurrentWeight();  
+	public final String PULSATIONS_PROPERTY = "current_pulsations";
+	
+	public int getSystolic();
+	
+	public int getDiastolic();
+	
+	public int getPulsations(); 
 	
 }

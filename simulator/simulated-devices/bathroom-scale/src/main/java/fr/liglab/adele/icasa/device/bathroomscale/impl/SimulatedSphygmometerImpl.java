@@ -26,14 +26,12 @@ import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.bathroomscale.BathroomScale;
-import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
+import fr.liglab.adele.icasa.device.bathroomscale.Sphygmometer;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 
-@Component(name = "iCASA.BathroomScale")
+@Component(name = "iCASA.Sphygmometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements BathroomScale {
+public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphygmometer {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -48,14 +46,12 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 	@Requires
 	private SimulationManager manager;
 
-	@Requires(optional = true)
-	private BathroomScaleRestAPI restAPI;
 
-	Zone detectionZone = null;
-
-	public SimulatedBathroomScaleImpl() {
+	public SimulatedSphygmometerImpl() {
 		super();
-		setPropertyValue(WEIGHT_PROPERTY, 0.0);
+		setPropertyValue(SYSTOLIC_PROPERTY, 0);
+		setPropertyValue(DIASTOLIC_PROPERTY, 0);
+		setPropertyValue(PULSATIONS_PROPERTY, 0);
 	}
 
 	@Validate
@@ -101,13 +97,8 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 		this.fault = fault;
 	}
 
-	@Override
-	public float getCurrentWeight() {
-		Float weight = (Float) getPropertyValue(WEIGHT_PROPERTY);
-		if (weight != null)
-			return weight;
-		return 0.0f;
-	}
+
+
 
 	@Override
    protected SimulationManager getManager() {
@@ -116,22 +107,39 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	@Override
    protected void updateSpecificState() {
-		float weight = getRandomFloatValue(55, 95);
-		setPropertyValue(WEIGHT_PROPERTY, weight);
-		if (restAPI != null) {
-			try {
-				restAPI.sendMeasure(weight);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}	   
+		setPropertyValue(SYSTOLIC_PROPERTY, getRandomIntValue(110, 150));
+		setPropertyValue(DIASTOLIC_PROPERTY, getRandomIntValue(60, 90));
+		setPropertyValue(PULSATIONS_PROPERTY, getRandomIntValue(60, 100));   
    }
 
 	@Override
    protected void resetSpecificState() {
-		setPropertyValue(WEIGHT_PROPERTY, 0.0f);	   
+		setPropertyValue(SYSTOLIC_PROPERTY, 0);
+		setPropertyValue(DIASTOLIC_PROPERTY, 0);
+		setPropertyValue(PULSATIONS_PROPERTY, 0);  
    }
-	
-	
 
+	@Override
+   public int getSystolic() {
+		Integer value = (Integer) getPropertyValue(SYSTOLIC_PROPERTY);
+		if (value != null)
+			return value;
+	   return 0;
+   }
+
+	@Override
+   public int getDiastolic() {
+		Integer value = (Integer) getPropertyValue(DIASTOLIC_PROPERTY);
+		if (value != null)
+			return value;
+	   return 0;
+   }
+
+	@Override
+   public int getPulsations() {
+		Integer value = (Integer) getPropertyValue(PULSATIONS_PROPERTY);
+		if (value != null)
+			return value;
+	   return 0;
+   }
 }

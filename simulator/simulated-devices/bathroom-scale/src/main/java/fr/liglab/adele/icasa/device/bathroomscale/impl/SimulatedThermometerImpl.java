@@ -26,14 +26,12 @@ import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.bathroomscale.BathroomScale;
-import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
+import fr.liglab.adele.icasa.device.bathroomscale.MedicalThermometer;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 
-@Component(name = "iCASA.BathroomScale")
+@Component(name = "iCASA.MedicalThermometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements BathroomScale {
+public class SimulatedThermometerImpl extends MedicalDeviceImpl implements MedicalThermometer {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
@@ -48,14 +46,10 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 	@Requires
 	private SimulationManager manager;
 
-	@Requires(optional = true)
-	private BathroomScaleRestAPI restAPI;
 
-	Zone detectionZone = null;
-
-	public SimulatedBathroomScaleImpl() {
+	public SimulatedThermometerImpl() {
 		super();
-		setPropertyValue(WEIGHT_PROPERTY, 0.0);
+		setPropertyValue(TEMPERATURE_PROPERTY, 0.0f);
 	}
 
 	@Validate
@@ -101,13 +95,7 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 		this.fault = fault;
 	}
 
-	@Override
-	public float getCurrentWeight() {
-		Float weight = (Float) getPropertyValue(WEIGHT_PROPERTY);
-		if (weight != null)
-			return weight;
-		return 0.0f;
-	}
+
 
 	@Override
    protected SimulationManager getManager() {
@@ -116,22 +104,19 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	@Override
    protected void updateSpecificState() {
-		float weight = getRandomFloatValue(55, 95);
-		setPropertyValue(WEIGHT_PROPERTY, weight);
-		if (restAPI != null) {
-			try {
-				restAPI.sendMeasure(weight);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}	   
+	   setPropertyValue(TEMPERATURE_PROPERTY, getRandomFloatValue(30, 40));	   
    }
 
 	@Override
    protected void resetSpecificState() {
-		setPropertyValue(WEIGHT_PROPERTY, 0.0f);	   
+		setPropertyValue(TEMPERATURE_PROPERTY, 0.0f);	   
    }
-	
-	
 
+	@Override
+   public float getCurrentTemperature() {
+		Float value = (Float) getPropertyValue(TEMPERATURE_PROPERTY);
+		if (value != null)
+			return value;
+		return 0.0f;
+   }
 }

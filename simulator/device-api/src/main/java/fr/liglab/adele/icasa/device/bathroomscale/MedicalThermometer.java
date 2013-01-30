@@ -15,12 +15,10 @@
  */
 package fr.liglab.adele.icasa.device.bathroomscale;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
+public interface MedicalThermometer {
 
-public interface BathroomScale extends GenericDevice {
+	public final String TEMPERATURE_PROPERTY = "current_temperature";
 	
-	public final String WEIGHT_PROPERTY = "current_weight";
-	
-	public float getCurrentWeight();  
+	public float getCurrentTemperature();  
 	
 }
