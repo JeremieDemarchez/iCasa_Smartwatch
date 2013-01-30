@@ -725,7 +725,8 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: {}});
+              generatedId = @.createRandomId(DataModel.collections.devices, @newDeviceType().name());
+              newDevice = new DataModel.Models.Device({ deviceId: generatedId, name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: {}});
               newDevice.save();
               newDevice.set(id: @newDeviceName())
               DataModel.collections.devices.push(newDevice);
@@ -862,6 +863,16 @@ define(['jquery',
            @.persons.subscribe(@.updateWidgetPositions)
            @.devices.subscribe(@.updateWidgetPositions)
            @.zones.subscribe(@.updateWidgetPositions)
+        
+        createRandomId:(collection, type)->
+           number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 
+           nid = type + "-" + number.toString(16);
+           testExistance = collection.get(nid);
+           if (testExistance != undefined && testExistance != null)
+              return createRandomId(collection, type);
+           return nid;
+
+
 
     return ICasaViewModel;
 );
