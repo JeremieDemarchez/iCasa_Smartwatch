@@ -14,7 +14,6 @@ define(['jquery',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
-        'text!templates/bathroomScaleStatusWindow.html',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
@@ -510,7 +509,6 @@ define(['jquery',
                        positionY: 1,
                        show: false
                      });
-                     @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
                 if (@type() == "iCASA.Sphygmometer")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
@@ -766,7 +764,7 @@ define(['jquery',
               generatedId = @.createRandomId(DataModel.collections.devices, @newDeviceType().name());
               newDevice = new DataModel.Models.Device({ deviceId: generatedId, name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: {}});
               newDevice.save();
-              newDevice.set(id: @newDeviceName())
+              newDevice.set(id: generatedId)
               DataModel.collections.devices.push(newDevice);
 
            @removeDevice = (device) =>
@@ -904,7 +902,8 @@ define(['jquery',
         
         createRandomId:(collection, type)->
            number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 
-           nid = type + "-" + number.toString(16);
+           hexaNumner = number.toString(16).substr(0,16);
+           nid = type + "-" + hexaNumner;
            testExistance = collection.get(nid);
            if (testExistance != undefined && testExistance != null)
               return createRandomId(collection, type);
