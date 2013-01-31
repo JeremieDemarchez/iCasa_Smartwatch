@@ -57,15 +57,15 @@ public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 
 		String hl7message = createMessage(weight);
 		
-		System.out.println(hl7message);
+		System.out.println("Send HL7 message to  " + url + ": " + hl7message);
 
 		try {
 			String response = r.accept(MediaType.TEXT_PLAIN_TYPE).put(String.class, hl7message);
-			// TODO parse response for computing return value
+			System.out.println("Response : " +response);
 			return true;
 		} catch (UniformInterfaceException ue) {
 			ClientResponse response = ue.getResponse();
-			// TODO parse response for computing return value
+			System.out.println("Response : " +response);
 			return false;
 		}
 	}
