@@ -407,7 +407,34 @@ define(['jquery',
               return "hidden";
           }
           , @);
-
+        @styleLeft = ko.computed({
+              read: () =>
+                effPositionX = (@positionX() * @containerWidthRatio()) - (@widgetWidth() * @containerWidthRatio() / 2);
+                return effPositionX + "px";
+              owner: @
+          }
+          , @);
+        @styleTop = ko.computed({
+              read: () =>
+                effPositionY = (@positionY() * @containerHeightRatio()) - (@widgetHeight() * @containerHeightRatio() / 2);
+                return effPositionY + "px";
+              owner: @
+          }
+          , @);
+        @styleWidth = ko.computed({
+              read: () =>
+                effWidth = @widgetWidth() * @containerWidthRatio();
+                return effWidth + "px";
+              owner: @
+          }
+          , @);
+        @styleHeight = ko.computed({
+              read: () =>
+                effHeight = @widgetHeight() * @containerHeightRatio();
+                return effHeight + "px";
+              owner: @
+          }
+          ,@);
         @background = @.generateBackgroundColor();
 
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
