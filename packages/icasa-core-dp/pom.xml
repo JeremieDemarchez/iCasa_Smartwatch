@@ -52,6 +52,7 @@
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.personal</artifactId>
+            <version>${iCasaVersion}</version>
         </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
