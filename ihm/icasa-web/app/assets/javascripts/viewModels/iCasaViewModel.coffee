@@ -129,8 +129,9 @@ define(['jquery',
 
             $(element).dialog({
                 autoOpen: false,
-                title: titleUnwrapped
-                minWidth: 300
+                title: titleUnwrapped,
+                minWidth: 300,
+                width: "auto"
             });
 #            $(element).dialog({
 #                autoOpen: false,
@@ -901,8 +902,8 @@ define(['jquery',
         
         createRandomId:(collection, type)->
            number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 
-           hexaNumner = number.toString(16).substr(0,16);
-           nid = type + "-" + hexaNumner;
+           hexaNumner = number.toString(16).substr(0,10);
+           nid = type.replace("iCASA.", "") + "-" + hexaNumner;
            testExistance = collection.get(nid);
            if (testExistance != undefined && testExistance != null)
               return createRandomId(collection, type);
