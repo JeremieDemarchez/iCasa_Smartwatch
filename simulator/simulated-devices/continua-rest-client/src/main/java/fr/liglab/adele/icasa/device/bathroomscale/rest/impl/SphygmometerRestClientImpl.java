@@ -40,8 +40,8 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 	@Property(name = "url", value = "http://localhost:8080/restAdapter/rest/continua")
 	private String url;
 
-	@Property(name = "hl7bathroomScaleFile")
-	private String hl7bathroomScaleFile;
+	@Property(name = "hl7templateFile")
+	private String hl7templateFile;
 
 	@Requires
 	private IHL7MessageFileInstaller fileInstaller;
@@ -51,7 +51,7 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 	@Override
    public boolean sendMeasure(int systolic, int diastolic, int pulsations) {
 
-		if (hl7bathroomScaleFile == null)
+		if (hl7templateFile == null)
 			return false;
 
 		WebResource r = c.resource(url);
@@ -73,7 +73,7 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 
 
 	private String createMessage(int systolic, int diastolic, int pulsations) {
-		String data = fileInstaller.getFileContent(hl7bathroomScaleFile);
+		String data = fileInstaller.getFileContent(hl7templateFile);
 		
 		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");		
 		String timestamp = formatter.format(new Date()); 
