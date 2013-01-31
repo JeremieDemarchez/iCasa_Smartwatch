@@ -47,11 +47,10 @@
                     </div>
                 </div>
             <!-- /ko -->
-            <!-- kso foreach: $root.zones() -->
-<!--                 <div class="zoneSection" data-bind="attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
-                    
-                </div> -->
-            <!-- /kso -->
+            <!-- ko foreach: $root.zones() -->
+                 <div class="zoneSection" data-bind="attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight, visibility: visibility , background: background}">
+                </div>
+            <!-- /ko -->
         </section>
     </article>
     <aside id="actionTabs">

@@ -351,6 +351,7 @@ define(['jquery',
                     containerSizeDelta = @width() * (newFactor - 1.0);
                   decorator.containerSizeDelta(containerSizeDelta);
                 );
+
            @isSizeHighlightEnabled.subscribe(@updateSize);
            
            @updateSelected=()=>
@@ -358,7 +359,7 @@ define(['jquery',
                   @addHighlight();
               else
                   @removeHighlight();
-           @isSelected.subscribe(@updateSelected)
+           @selectedSubscription = @isSelected.subscribe(@updateSelected)
 
            # status window management
            @statusWindowTemplate = ko.observable("");
@@ -373,7 +374,10 @@ define(['jquery',
         @rightX = kb.observable(model, 'rightX');
         @bottomY = kb.observable(model, 'bottomY');
         @topY = kb.observable(model, 'topY');
+        @width(@rightX() - @leftX());
+        @height(@bottomY() - @topY());
         @variables=kb.observable(model, 'variables');
+
         @variables_name = ko.computed({
           read: () =>
             if (@.variables() instanceof Object)
@@ -393,9 +397,26 @@ define(['jquery',
             return (@bottomY() + @topY()) / 2;
           owner: @
         } , @);
+        @visibility = ko.computed({
+          read:()=>
+            if (@isSelected())
+              # Thomas, help with this line to no update div size!!
+              @sizeFactor(1.0);
+              return "visible";
+            else
+              return "hidden";
+          }
+          , @);
+
+        @background = @.generateBackgroundColor();
+
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
       getVariableValue:(variable)->
         return @.variables()[variable]+"";
+      generateBackgroundColor:()->
+        return "#"+((1<<24)*Math.random()|0).toString(16);
+
+    
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
