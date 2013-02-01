@@ -35,8 +35,8 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 @Component(name = "CreatePersonCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createPerson}"),
-      @StaticServiceProperty(name = "name", value = "create-persone-new", type = "String") })
-@Instantiate(name = "create-persone-command-new")
+      @StaticServiceProperty(name = "name", value = "create-person", type = "String") })
+@Instantiate(name = "create-person-command-new")
 public class CreatePersonCommand extends AbstractCommand {
 
 		
