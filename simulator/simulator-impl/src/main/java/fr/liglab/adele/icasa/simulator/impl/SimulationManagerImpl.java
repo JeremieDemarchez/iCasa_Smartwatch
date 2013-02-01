@@ -328,9 +328,6 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public void addPerson(String userName, String personType) {
-
-		saveSimulationState(userName + ".bhv");
-
 		String aPersonType = getPersonType(personType);
 		if (aPersonType == null)
 			return;
@@ -753,39 +750,68 @@ public class SimulationManagerImpl implements SimulationManager {
 			out = new PrintWriter(outFile);
 
 			out.println("<behavior startdate=\"2011.10.27.00.00.00\" factor=\"1440\">");
-
+			out.println();
+			out.println("\t<!-- Zone Section -->");
+			out.println();
+			
 			for (Zone zone : getZones()) {
 				String id = zone.getId();
 				int leftX = zone.getLeftTopAbsolutePosition().x;
 				int topY = zone.getLeftTopAbsolutePosition().y;
 				int width = zone.getWidth();
 				int height = zone.getHeight();
-				out.println("<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\"" + width
+				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\"" + width
 				      + "\" height=\"" + height + "\" />");
 				out.println();
 
 				for (String variable : zone.getVariableNames()) {
 					Object value = zone.getVariableValue(variable);
 
-					out.println("<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
-					out.println("<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\"" + value
+					out.println("\t<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
+					out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\"" + value
 					      + "\" />");
 				}
 				out.println();
 			}
 
+			out.println("\t<!-- Device Section -->");
+			out.println();
+			
 			for (LocatedDevice device : getDevices()) {
 				String id = device.getSerialNumber();
 				String type = device.getType();
 
-				out.println("<create-device id=\"" + id + "\" type=\"" + type + "\" />");
+				out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
 
+				
 				String location = (String) device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME);
 				if (location != null)
-					out.println("<move-device-zone id=\"" + id + "\" zoneId=\"" + location + "\" />");
+					out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
+				
+				out.println();
 
 			}
 
+			out.println();
+			out.println("\t<!-- Person Section -->");
+			out.println();
+			
+			for (Person person : getPersons()) {
+				String id = person.getName();
+				String type = person.getPersonType();
+				
+				out.println("\t<create-person id=\"" + id + "\" type=\"" + type + "\" />");
+				
+				Zone zone = getZoneFromPosition(person.getCenterAbsolutePosition());
+				
+				if (zone!=null)				
+					out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
+				
+				out.println();
+				
+         }
+
+			
 			out.println("</behavior>");
 
 			out.close();
