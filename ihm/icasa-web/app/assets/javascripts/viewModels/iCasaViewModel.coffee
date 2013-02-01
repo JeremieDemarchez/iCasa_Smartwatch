@@ -949,7 +949,7 @@ define(['jquery',
            @newScriptName = ko.observable("");
 
            @saveScript = ()=>
-              newName = @newScriptName() + ".bhv":
+              newName = @newScriptName() + ".bhv";
               newScript = new DataModel.Models.Script({ scriptId: newName, name: newName, state: "stopped"});
               newScript.save();
               newScript.set(id: newName);
