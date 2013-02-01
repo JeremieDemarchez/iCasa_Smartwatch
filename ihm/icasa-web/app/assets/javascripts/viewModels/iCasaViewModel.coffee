@@ -869,13 +869,16 @@ define(['jquery',
               
 
            @removeSelectedPersons = () =>
+              toRemoveModels = []
               ko.utils.arrayForEach(@persons(), (person) =>
                 if (person == undefined)
                   return;
 
                 if (person.isSelected())
-                  person.model().destroy();
+                  toRemoveModels.push person.model()
               );
+              for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy()
 
            @removePerson = (person) =>
               person.model().destroy();
