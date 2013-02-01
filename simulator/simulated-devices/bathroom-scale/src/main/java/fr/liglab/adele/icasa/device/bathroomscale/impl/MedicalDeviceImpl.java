@@ -113,7 +113,10 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	
 	@Override
    public void deviceRemoved(LocatedDevice device) {
-	   // TODO Auto-generated method stub
+		if (device.getSerialNumber().equals(getSerialNumber())) {
+			device.detachObject(detectionZone);
+			getManager().removeZone(detectionZone.getId());
+		}
 	   
    }
 
