@@ -945,6 +945,14 @@ define(['jquery',
               @selectedScript().state('paused');
               @selectedScript().model().save();
 
+           @newScriptName = ko.observable("");
+           
+           @saveScript = ()=>
+              newScript = new DataModel.Models.Script({ scriptId: @newScriptName()});
+              newScript.save();
+              newScript.set(id: @newScriptName())
+              DataModel.collections.scripts.push(newScript);
+
            # managing map size change (must update position of persons, zones and devices)
            @updateModelPosition=(model)=>
              model.containerWidthRatio(@mapWidthRatio());
