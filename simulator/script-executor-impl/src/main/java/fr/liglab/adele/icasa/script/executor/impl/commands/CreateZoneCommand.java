@@ -40,7 +40,7 @@ public class CreateZoneCommand extends AbstractCommand {
 	/**
 	 * Environment ID used to place a person
 	 */
-	private String zoneId;
+	private String id;
 	private int leftX;
 	private int topY;
 	private int height;
@@ -51,13 +51,13 @@ public class CreateZoneCommand extends AbstractCommand {
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.createZone(zoneId, leftX, topY, width, height);
+		simulationManager.createZone(id, leftX, topY, width, height);
 		return null;
 	}
 
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.zoneId = param.getString("zoneId");
+		this.id = param.getString("id");
 		this.leftX = param.getInt("leftX");
 		this.topY = param.getInt("topY");
 		this.height = param.getInt("height");
@@ -65,7 +65,7 @@ public class CreateZoneCommand extends AbstractCommand {
 	}
 
 	public void createZone(String id, String description, int leftX, int topY, int width, int height) throws Exception {
-		this.zoneId = id;
+		this.id = id;
 		this.leftX = leftX;
 		this.topY = topY;
 		this.height = height;

@@ -35,36 +35,34 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 @Component(name = "CreatePersonCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createPerson}"),
-      @StaticServiceProperty(name = "name", value = "create-persone-new", type = "String") })
-@Instantiate(name = "create-persone-command-new")
+      @StaticServiceProperty(name = "name", value = "create-person", type = "String") })
+@Instantiate(name = "create-persone-command")
 public class CreatePersonCommand extends AbstractCommand {
-
-		
-	private String person;
-	private String personType;
+	
+	private String id;
+	
+	private String type;
 	
 	@Requires
 	private SimulationManager simulationManager;
 
-
-
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.addPerson(person, personType);
+		simulationManager.addPerson(id, type);
 		return null;
 	}
 	
 	
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.person = param.getString("personType");
+		this.id = param.getString("id");
+		this.type = param.getString("type");
 	}
 	
 	
 	public void createPerson(String person, String personType) throws Exception {
-	   this.person = person;
-	   this.personType = personType;
+	   this.id = person;
+	   this.type = personType;
 	   execute();
    }
 	
