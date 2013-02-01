@@ -374,10 +374,11 @@ define(['jquery',
         @rightX = kb.observable(model, 'rightX');
         @bottomY = kb.observable(model, 'bottomY');
         @topY = kb.observable(model, 'topY');
+        @variables = kb.observable(model, 'variables');
         @width(@rightX() - @leftX());
         @height(@bottomY() - @topY());
-        @variables=kb.observable(model, 'variables');
-
+        @positionX((@leftX() + @rightX()) / 2);
+        @positionY((@bottomY() + @topY()) / 2);
         @variables_name = ko.computed({
           read: () =>
             if (@.variables() instanceof Object)
@@ -387,29 +388,72 @@ define(['jquery',
           owner: @
         }
         , @);
-        @positionX = ko.computed({
+
+        # To override the resize event when selected zone.
+        @sizeFactor = ko.computed({
           read: () =>
-            return (@leftX() + @rightX()) / 2;
-          owner: @
-        } , @);
-        @positionY = ko.computed({
-          read: () =>
-            return (@bottomY() + @topY()) / 2;
-          owner: @
-        } , @);
+            return 1.0;
+          write: (newValue)=>
+            return ;
+          }, @);
+
+        @updateWidth = (newValue)=>
+          @width(@rightX() - @leftX());
+        @updateHeight = (newValue)=>
+          @height(@bottomY() - @topY());
+
+        @rightX.subscribe(@updateWidth);
+        @leftX.subscribe(@updateWidth);
+        @bottomY.subscribe(@updateHeight);
+        @topY.subscribe(@updateHeight);
+
+        @positionX.subscribe((value)=>
+            @leftX(value - @width()/2);
+            @rightX(value + @width()/2);
+          )
+
+        @positionY.subscribe((value)=>
+            @bottomY(value + @height()/2);
+            @topY(value - @height()/2);
+          )
+
         @visibility = ko.computed({
           read:()=>
             if (@isSelected())
-              # Thomas, help with this line to no update div size!!
-              @sizeFactor(1.0);
               return "visible";
             else
               return "hidden";
           }
           , @);
-
+        @styleLeft = ko.computed({
+              read: () =>
+                effPositionX = (@positionX() * @containerWidthRatio()) - (@width() * @containerWidthRatio() / 2);
+                return effPositionX + "px";
+              owner: @
+          }
+          , @);
+        @styleTop = ko.computed({
+              read: () =>
+                effPositionY = (@positionY() * @containerHeightRatio()) - (@height() * @containerHeightRatio() / 2);
+                return effPositionY + "px";
+              owner: @
+          }
+          , @);
+        @styleWidth = ko.computed({
+              read: () =>
+                effWidth = @width() * @containerWidthRatio();
+                return effWidth + "px";
+              owner: @
+          }
+          , @);
+        @styleHeight = ko.computed({
+              read: () =>
+                effHeight = @height() * @containerHeightRatio();
+                return effHeight + "px";
+              owner: @
+          }
+          ,@);
         @background = @.generateBackgroundColor();
-
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
       getVariableValue:(variable)->
         return @.variables()[variable]+"";
@@ -825,13 +869,16 @@ define(['jquery',
               
 
            @removeSelectedPersons = () =>
+              toRemoveModels = []
               ko.utils.arrayForEach(@persons(), (person) =>
                 if (person == undefined)
                   return;
 
                 if (person.isSelected())
-                  person.model().destroy();
+                  toRemoveModels.push person.model()
               );
+              for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy()
 
            @removePerson = (person) =>
               person.model().destroy();
@@ -897,6 +944,14 @@ define(['jquery',
            @pauseScript = () =>
               @selectedScript().state('paused');
               @selectedScript().model().save();
+
+           @newScriptName = ko.observable("");
+           
+           @saveScript = ()=>
+              newScript = new DataModel.Models.Script({ scriptId: @newScriptName()});
+              newScript.save();
+              newScript.set(id: @newScriptName())
+              DataModel.collections.scripts.push(newScript);
 
            # managing map size change (must update position of persons, zones and devices)
            @updateModelPosition=(model)=>
