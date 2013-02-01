@@ -37,17 +37,17 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 @Component(name = "CreateDeviceCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createDevice}"),
-      @StaticServiceProperty(name = "name", value = "add-device", type = "String") })
+      @StaticServiceProperty(name = "name", value = "create-device", type = "String") })
 @Instantiate(name="create-device-command")
-public class CreateDeviceCommand extends DeviceCommand {
+public class CreateDeviceCommand extends AbstractCommand {
 
 	@Requires	
 	private SimulationManager simulationManager;
 
 	private String deviceType;
 	
-	private String description;
-
+	protected String deviceId;
+	
 	@Override
    public Object execute() throws Exception {
 		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
@@ -55,19 +55,15 @@ public class CreateDeviceCommand extends DeviceCommand {
    }
 	
 	@Override
-	public void configure(JSONObject param) throws Exception {
-	   super.configure(param);
+	public void configure(JSONObject param) throws Exception {	   
+	   deviceId = param.getString("id");
 	   deviceType = param.getString("type");
-	   if (param.has("description"))
-	   	description = param.getString("description");
-	   else 
-	   	description = null;
+
 	}
 	
-	public void createDevice(String deviceType, String deviceId, String description) throws Exception {
+	public void createDevice(String deviceType, String id) throws Exception {
 		this.deviceType = deviceType;
-		this.deviceId = deviceId;
-		this.description = description;
+		this.deviceId = id;
 		execute();
 	}
 	
