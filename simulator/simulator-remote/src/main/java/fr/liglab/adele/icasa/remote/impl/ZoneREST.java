@@ -34,155 +34,202 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * @author Thomas Leveque
  */
-@Component(name="remote-rest-zone")
-@Instantiate(name="remote-rest-zone-0")
-@Provides(specifications={ZoneREST.class})
-@Path(value="/zones/")
+@Component(name = "remote-rest-zone")
+@Instantiate(name = "remote-rest-zone-0")
+@Provides(specifications = { ZoneREST.class })
+@Path(value = "/zones/")
 public class ZoneREST {
 
-    @Requires
-    private SimulationManager _simulationMgr;
+	@Requires
+	private SimulationManager _simulationMgr;
 
-    /*
-     * Methods to manage cross domain requests
-     */
-    private String _corsHeaders;
+	/*
+	 * Methods to manage cross domain requests
+	 */
+	private String _corsHeaders;
 
-    private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
-        Response.ResponseBuilder rb = req
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
-                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
-                .header("Access-Control-Max-Age", "-1")
-                .header("Pragma", "no-cache");
+	private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
+		Response.ResponseBuilder rb = req
+		      .header("Access-Control-Allow-Origin", "*")
+		      .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
+		      .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
+		      .header("Access-Control-Allow-Headers",
+		            "Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
+		      .header("Access-Control-Max-Age", "-1").header("Pragma", "no-cache");
 
-        return rb.build();
-    }
+		return rb.build();
+	}
 
-    private Response makeCORS(Response.ResponseBuilder req) {
-        return makeCORS(req, _corsHeaders);
-    }
+	private Response makeCORS(Response.ResponseBuilder req) {
+		return makeCORS(req, _corsHeaders);
+	}
 
-    public JSONObject getZoneJSON(Zone zone) {
-        JSONObject zoneJSON = null;
-        try {
-      	   String zoneId = zone.getId(); 
-            zoneJSON = new JSONObject();
-            zoneJSON.putOnce("id", zoneId);
-            zoneJSON.putOnce("name", zoneId);
-            zoneJSON.put("leftX", zone.getLeftTopAbsolutePosition().x);
-            zoneJSON.put("topY", zone.getLeftTopAbsolutePosition().y);
-            zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
-            zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
-            zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
-            
-            JSONObject propObject = new JSONObject();
-            for (String variable : zone.getVariableNames()) {
-            	propObject.put(variable, zone.getVariableValue(variable));
-            }
-            zoneJSON.put("variables", propObject);
-            
-        } catch (JSONException e) {
-            e.printStackTrace();
-            zoneJSON = null;
-        }
+	public JSONObject getZoneJSON(Zone zone) {
+		JSONObject zoneJSON = null;
+		try {
+			String zoneId = zone.getId();
+			zoneJSON = new JSONObject();
+			zoneJSON.putOnce("id", zoneId);
+			zoneJSON.putOnce("name", zoneId);
+			zoneJSON.put("leftX", zone.getLeftTopAbsolutePosition().x);
+			zoneJSON.put("topY", zone.getLeftTopAbsolutePosition().y);
+			zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
+			zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
+			zoneJSON.put("isRoom", true); // TODO change it when Zone API will be
+			                              // improved
 
-        return zoneJSON;
-    }
+			JSONObject propObject = new JSONObject();
+			for (String variable : zone.getVariableNames()) {
+				propObject.put(variable, zone.getVariableValue(variable));
+			}
+			zoneJSON.put("variables", propObject);
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/zones/")
-    public Response zones() {
-        return makeCORS(Response.ok(getZones()));
-    }
+		} catch (JSONException e) {
+			e.printStackTrace();
+			zoneJSON = null;
+		}
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/zone/{zoneId}")
-    public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
-        return makeCORS(Response.ok());
-    }
+		return zoneJSON;
+	}
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/zone/")
-    public Response createsZoneOptions() {
-        return makeCORS(Response.ok());
-    }
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/zones/")
+	public Response zones() {
+		return makeCORS(Response.ok(getZones()));
+	}
 
-    /**
-     * Retrieves a zone.
-     *
-     * @param zoneId The ID of the zone to retrieve
-     * @return The required zone
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/zone/{zoneId}")
-    public Response getZone(@PathParam("zoneId") String zoneId) {
-        if (zoneId == null || zoneId.length()<1){
-            return makeCORS(Response.ok(getZones()));
-        }
+	@OPTIONS
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/zone/{zoneId}")
+	public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
+		return makeCORS(Response.ok());
+	}
 
-        Zone zoneFound = _simulationMgr.getZone(zoneId);
-        if (zoneFound == null) {
-            return makeCORS(Response.status(404));
-        } else {
-            JSONObject zoneJSON = getZoneJSON(zoneFound);
+	@OPTIONS
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/zone/")
+	public Response createsZoneOptions() {
+		return makeCORS(Response.ok());
+	}
 
-            return makeCORS(Response.ok(zoneJSON.toString()));
-        }
-    }
+	/**
+	 * Retrieves a zone.
+	 * 
+	 * @param zoneId
+	 *           The ID of the zone to retrieve
+	 * @return The required zone
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/zone/{zoneId}")
+	public Response getZone(@PathParam("zoneId") String zoneId) {
+		if (zoneId == null || zoneId.length() < 1) {
+			return makeCORS(Response.ok(getZones()));
+		}
 
-    /**
-     * Returns a JSON array containing all devices.
-     *
-     * @return a JSON array containing all devices.
-     */
-    public String getZones() {
-        boolean atLeastOne = false;
-        JSONArray currentZones = new JSONArray();
-        for (String envId : _simulationMgr.getZoneIds()) {
-            Zone zone = _simulationMgr.getZone(envId);
-            if (zone == null)
-                continue;
+		Zone zoneFound = _simulationMgr.getZone(zoneId);
+		if (zoneFound == null) {
+			return makeCORS(Response.status(404));
+		} else {
+			JSONObject zoneJSON = getZoneJSON(zoneFound);
 
-            JSONObject zoneJSON = getZoneJSON(zone);
-            if (zoneJSON == null)
-                continue;
+			return makeCORS(Response.ok(zoneJSON.toString()));
+		}
+	}
 
-            currentZones.put(zoneJSON);
-        }
+	/**
+	 * Returns a JSON array containing all zones.
+	 * 
+	 * @return a JSON array containing all zones.
+	 */
+	public String getZones() {
+		// boolean atLeastOne = false;
+		JSONArray currentZones = new JSONArray();
+		for (String envId : _simulationMgr.getZoneIds()) {
+			Zone zone = _simulationMgr.getZone(envId);
+			if (zone == null)
+				continue;
 
-        return currentZones.toString();
-    }
+			JSONObject zoneJSON = getZoneJSON(zone);
+			if (zoneJSON == null)
+				continue;
 
+			currentZones.put(zoneJSON);
+		}
 
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/zone/{zoneId}")
-    public Response updatesZone(@PathParam("zoneId") String zoneId, String content) {
-       if (zoneId == null || zoneId.length()<1){
-          return makeCORS(Response.ok(getZones()));
-      }
+		return currentZones.toString();
+	}
 
-      Zone zoneFound = _simulationMgr.getZone(zoneId);
-      if (zoneFound == null) {
-          return makeCORS(Response.status(404));
-      } else {
-          JSONObject zoneJSON = getZoneJSON(zoneFound);
-          return makeCORS(Response.ok(zoneJSON.toString()));
-      }
-    }
-    
-    
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path(value = "/zone/{zoneId}")
+	public Response updatesZone(@PathParam("zoneId") String zoneId, String content) {
+		if (zoneId == null || zoneId.length() < 1) {
+			return makeCORS(Response.status(404));
+		}
+
+		Zone zoneFound = _simulationMgr.getZone(zoneId);
+		if (zoneFound == null)
+			return makeCORS(Response.status(404));
+
+		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
+
+		Position position = new Position(zoneJSON.getLeftX(), zoneJSON.getTopY());
+
+		//TODO: Review for children zones
+		if (!position.equals(zoneFound.getLeftTopAbsolutePosition()))
+	      try {
+	         zoneFound.setLeftTopRelativePosition(position);
+         } catch (Exception e1) {
+	         e1.printStackTrace();
+         }
+
+		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
+		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
+
+		if (zoneFound.getWidth() != width)
+			try {
+				zoneFound.setWidth(width);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			
+		if (zoneFound.getHeight() != height)
+			try {
+				zoneFound.setHeight(height);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		return makeCORS(Response.ok(getZoneJSON(zoneFound).toString()));
+
+	}
+
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path(value = "/zone/")
+	public Response createZone(String content) {
+
+		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
+
+		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
+		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
+
+		Zone newZone = _simulationMgr.createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), width, height);
+
+				
+		return makeCORS(Response.ok(getZoneJSON(newZone).toString()));
+
+	}
+
 }
