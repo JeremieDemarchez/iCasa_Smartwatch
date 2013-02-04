@@ -18,8 +18,6 @@ package fr.liglab.adele.icasa.remote.impl;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Date;
-
 /**
  * TODO
  *
