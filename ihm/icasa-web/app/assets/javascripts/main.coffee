@@ -122,11 +122,28 @@ class SizeUtil
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
     availableWidth = viewportSize.width - (4 * areaBorderSize) - 5;
+
+
+
+
     if ((resizedAreaId == undefined) || (resizedAreaId == null) || (resizedAreaId == "map"))
       actionTabs.width(availableWidth - mapWidth);
       actionTabs.height(mapHeight);
     else
       map.width(availableWidth - actionTabsWidth);
+      map.height(map.width() / mapWidth * mapHeight);
+
+    if(actionTabs.width() < 200)
+      map.width(availableWidth);
+      map.height(map.width() / mapWidth * mapHeight);
+      actionTabs.width(map.width());
+
+    if(actionTabs.width() > 900)
+      map.width(availableWidth/3);
+      map.height(map.width() / mapWidth * mapHeight);
+      actionTabs.width(availableWidth - map.width());
+
+
     $("#tabs").tabs("refresh");
 
     statusWindows = $("#statusWindows");

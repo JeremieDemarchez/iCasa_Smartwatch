@@ -15,7 +15,6 @@
       limitations under the License.
 
 -->
-
 <script>
     $( "#date" ).datepicker({
         dateFormat: "dd/mm/yy",
@@ -83,7 +82,7 @@
 
     $( "#scriptPlayerDialog" ).dialog({
         autoOpen: false,
-        width:470
+        width:505
     });
     $( "#scriptPlayerDialogBtn" ).click(function() {
         $( "#scriptPlayerDialog" ).dialog( "open" );
@@ -161,61 +160,73 @@
     <div id="scriptPlayerDialogTable" class="pull-left">
         <table class="table table-condensed table-hover">
             <tr class="success">
-                <td class="add"></td>
-                <td>Test</td>
+                <td><input type="checkbox" /></td>
+                <td>Zone</td>
+                <td>ID-long-text</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr  class="error">
-                <td class="delete"></td>
-                <td>Test2</td>
+                <td><input type="checkbox" /></td>
+                <td>Device</td>
+                <td>BiLi-A7496W-S</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr  class="error">
-                <td class="delete"></td>
-                <td>Test3</td>
+                <td><input type="checkbox" /></td>
+                <td>Person</td>
+                <td>ID-long-text</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr class="success">
-                <td class="add"></td>
-                <td>Test3</td>
+                <td><input type="checkbox" /></td>
+                <td>Type1</td>
+                <td>ID-long-text</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr class="info">
-                <td class="modify"></td>
-                <td>Test3</td>
+                <td><input type="checkbox" /></td>
+                <td>Type1</td>
+                <td>ID-long-text</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
             </tr>
             <tr>
+                <td></td>
                 <td>-</td>
                 <td>Test3</td>
                 <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
@@ -225,17 +236,69 @@
 
     <div id="scriptPlayerDialogForm" class="pull-right">
         <form>
-            <fieldset>
-                <legend>Zone variables</legend>
+<!--
+    Zone
+        <fieldset>
+            <legend>Zone Id</legend>
 
-                <label>Themperature</label>
-                <input type="text" class="span2"/>
-                <label>Illuminance</label>
-                <input type="text" class="span2"/>
-                <label>Volume</label>
-                <input type="text" class="span2"/>
-            </fieldset>
+            <label>Themperature</label>
+            <input type="text" class="span2"/>
+            <label>Illuminance</label>
+            <input type="text" class="span2"/>
+            <label>Volume</label>
+            <input type="text" class="span2"/>
+        </fieldset>
+-->
+<!--
+    New -->
+        <fieldset>
+            <legend>New element</legend>
 
+            <label>Element</label>
+            <select class="span2">
+                <option>Zone</option>
+                <option>Person</option>
+                <option>Device</option>
+            </select>
+            <label>Id</label>
+            <input type="text" class="span2"/>
+        </fieldset>
+
+<!--
+    Person
+        <fieldset>
+            <legend>Person Id</legend>
+
+            <label>Move to</label>
+            <select class="span2">
+                <option>Zone1</option>
+                <option>Zone2</option>
+                <option>...</option>
+            </select>
+            <label>Delay</label>
+            <input type="text" class="span2"/>
+        </fieldset>
+ -->
+<!--
+    Device
+        <fieldset>
+            <legend>Device Id</legend>
+
+            <label>Move to</label>
+            <select class="span2">
+                <option>Zone1</option>
+                <option>Zone2</option>
+                <option>...</option>
+            </select>
+            <label>Type</label>
+            <select class="span2">
+                <option>DimmerLight</option>
+                <option>Heater</option>
+                <option>Cooler</option>
+                <option>...</option>
+            </select>
+        </fieldset>
+-->
             <button class="btn btn-primary pull-right">Save</button>
         </form>
     </div>
