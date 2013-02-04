@@ -865,17 +865,21 @@ define(['jquery',
               newPerson.save();
               newPerson.set(id: @newPersonName())
               DataModel.collections.persons.push(newPerson);
+              @newPersonName("");
 
               
 
            @removeSelectedPersons = () =>
+              toRemoveModels = []
               ko.utils.arrayForEach(@persons(), (person) =>
                 if (person == undefined)
                   return;
 
                 if (person.isSelected())
-                  person.model().destroy();
+                  toRemoveModels.push person.model()
               );
+              for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy()
 
            @removePerson = (person) =>
               person.model().destroy();
@@ -892,7 +896,7 @@ define(['jquery',
            @createZone = () =>
               newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               newZone.save();
-              newZone.set(id: @newZoneName())
+              newZone.set(id: @newZoneName());
               DataModel.collections.zones.push(newZone);
               
               
@@ -941,6 +945,16 @@ define(['jquery',
            @pauseScript = () =>
               @selectedScript().state('paused');
               @selectedScript().model().save();
+
+           @newScriptName = ko.observable("");
+
+           @saveScript = ()=>
+              newName = @newScriptName() + ".bhv";
+              newScript = new DataModel.Models.Script({ scriptId: newName, name: newName, state: "stopped"});
+              newScript.save();
+              newScript.set(id: newName);
+              DataModel.collections.scripts.push(newScript);
+              @newScriptName("");
 
            # managing map size change (must update position of persons, zones and devices)
            @updateModelPosition=(model)=>

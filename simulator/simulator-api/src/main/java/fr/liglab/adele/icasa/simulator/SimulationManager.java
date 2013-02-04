@@ -140,5 +140,8 @@ public interface SimulationManager {
 	public void addListener(IcasaListener listener);
 
 	public void removeListener(IcasaListener listener);
+	
+	
+	public void saveSimulationState(String fileName);
 
 }

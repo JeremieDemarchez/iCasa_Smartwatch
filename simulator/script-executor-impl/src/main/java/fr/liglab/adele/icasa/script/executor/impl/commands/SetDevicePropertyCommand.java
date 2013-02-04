@@ -29,7 +29,7 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 @Component(name = "SetDevicePropertyCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{setDeviceProperty}"),
-      @StaticServiceProperty(name = "name", value = "set-property", type = "String") })
+      @StaticServiceProperty(name = "name", value = "set-device-property", type = "String") })
 @Instantiate(name="property-device-command")
 public class SetDevicePropertyCommand extends DeviceCommand {
 
@@ -53,7 +53,7 @@ public class SetDevicePropertyCommand extends DeviceCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		super.configure(param);
-		propertyId = param.getString("propertyId");
+		propertyId = param.getString("property");
 		value = param.get("value");
 	}
 	

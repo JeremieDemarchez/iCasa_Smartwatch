@@ -23,6 +23,8 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,6 +74,10 @@ public class ScriptPlayerREST {
 
     @Requires
     private ScriptExecutor _scriptExecutor;
+    
+    @Requires
+    private SimulationManager _simulationMgr;
+        
 
     /*
      * Methods to manage cross domain requests
@@ -247,4 +253,21 @@ public class ScriptPlayerREST {
 
         return makeCORS(Response.ok(scriptJSON.toString()));
     }
+    
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path(value="/script/")
+    public Response createScript(String content) {
+   	 
+   	 ScriptJSON scriptJSON = ScriptJSON.fromString(content);
+   	 
+   	 String fileName = scriptJSON.getId() + ".bhv";
+   	 
+   	 _simulationMgr.saveSimulationState(fileName);
+   	 
+   	
+       return makeCORS(Response.ok(scriptJSON.toString()));
+    }
+    
 }
