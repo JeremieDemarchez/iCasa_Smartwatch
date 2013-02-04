@@ -109,7 +109,6 @@ define(['jquery',
                   viewModel.isSizeHighlightEnabled(false);
                 stop: (event, eventUI) ->
                   #TODO add positionX and positionY for zones
-                  console.log "left(" + viewModel.leftX()+","+viewModel.topY()+")"
                   rightX = eventUI.size.width / viewModel.containerWidthRatio() + viewModel.leftX();
                   bottomY = eventUI.size.height / viewModel.containerHeightRatio() + viewModel.topY();
                   width = rightX - viewModel.leftX();
