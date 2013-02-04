@@ -43,7 +43,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManager manager) {
 		super(position);
 		m_serialNumber = serialNumber;
-		this.deviceComponent = deviceComponent;	
+		this.deviceComponent = deviceComponent;			
 		this.manager = manager;
       this._type = type;
 	}
@@ -86,11 +86,14 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 		}
 			
 		
+		/*
 		if (propertyName.equals(GenericDevice.FAULT_PROPERTY_NAME))
 			return deviceComponent.getFault();
 
 		if (propertyName.equals(GenericDevice.STATE_PROPERTY_NAME))
 			return deviceComponent.getState();
+			
+		*/
 
 		
 		if (deviceComponent!=null)

@@ -1,4 +1,4 @@
-@()
+@(maps: Seq[HouseMap])
 <!--
 
 
@@ -18,66 +18,86 @@
 -->
 
 @import helper._
+@import models._
 
 @main("iCasa Simulator") {
 
-<section>
-    <article id="map">
-        <section id="mapContainer">
-            <img id="mapImg" data-bind="attr: {src: imgSrc}" />
-            <!-- ko foreach: $root.persons() -->
-                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
-                    <div class="userWidgetContainer">
-                        <img class="userWidgetIcon"data-bind="attr: { src: imgSrc, alt: name, title: name }" />
-                        <div class="userWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
+<section id="mapsContainer">
+    <article>
+        <ul class="thumbnails">
+            @for(map <- maps) {
+            <li class="span3">
+                <a href="/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>Box URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Map">
+                    <img src="/maps/@map.imgFile" class="img-rounded"/>
+                    <p>@map.name</p>
+                </a>
+            </li>
+            }
+            <li class="span3">
+                <a href="#addForm" class="thumbnail" data-toggle="modal">
+                    <img src="@routes.Assets.at("images/buttons/blue-cross.png")" />
+                    <p>Add</p>
+                </a>
+            </li>
+        </ul>
+
+        <div id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Add a new map</h3>
+            </div>
+            <form action="/mapUpload" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="control-group">
+                        <label class="control-label" for="mapId">ID</label>
+                        <div class="controls">
+                            <input type="text" name="mapId" id="mapId" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapName">Name</label>
+                        <div class="controls">
+                            <input type="text" name="mapName" id="mapName" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapDescription">Description</label>
+                        <div class="controls">
+                            <input type="text" name="mapDescription" id="mapDescription" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="gatewayURL">Box URL</label>
+                        <div class="controls">
+                            <input type="text" name="gatewayURL" id="gatewayURL" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="picture">Picture</label>
+                        <div class="controls">
+                            <input type="file" name="picture" id="picture" />
                         </div>
                     </div>
                 </div>
-            <!-- /ko -->
-            <!-- ko foreach: $root.devices() -->
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
-                    <div class="deviceWidgetContainer">
-                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
-                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
-                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
-                        </div>
-                        <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }">
-                        </div>
-                    </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <input class="btn btn-primary" type="submit" name="submit" value="Create"/>
                 </div>
-            <!-- /ko -->
-        </section>
-    </article>
-    <aside id="actionTabs">
-        <div id="tabs" data-bind="jqueryTabs: {}">
-            Loading...
+            </form>
         </div>
-    </aside>
-</section>
-<section>
-    <article id="statusWindows">
-        <!-- ko foreach: $root.devices() -->
-            <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name, title:name}, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
-            </div>
-        <!-- /ko -->
-        <!-- ko foreach: $root.persons() -->
-           <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
-            </div>
-
-        <!-- /ko -->
-        <!-- ko foreach: $root.zones() -->
-            <div class="zoneWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
-            </div>
-
-        <!-- /ko -->
     </article>
 </section>
+
+<script src="@routes.Assets.at("javascripts/frameworks/jquery/core/jquery-1.8.2.min.js")"> </script>
+<script src="@routes.Assets.at("javascripts/frameworks/bootstrap/js/bootstrap.min.js")"> </script>
+<script>
+    $(function () {
+        $(".thumbnail").popover({trigger:'hover'});
+    });
+</script>
+
 <footer>
     <p>Copyright LIG, ADELE team - All right reserved</p>
 </footer>
-
-        <!-- Load the script "javascripts/main.coffee" as our entry point at the end of the dom to optimize loading -->
-        <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
 
 }

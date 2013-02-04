@@ -13,20 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package models;
+package fr.liglab.adele.icasa.device.bathroomscale;
 
-import play.db.ebean.Model;
-import javax.persistence.Entity;
-
-/**
- * @author Thomas Leveque
- */
-@Entity
-public class Map extends Model {
-
-    public String imageURL;
-
-    public String name;
-
-    public String gatewayURL;
+public interface Sphygmometer {
+		
+	public final String SYSTOLIC_PROPERTY = "current_systolic";
+	
+	public final String DIASTOLIC_PROPERTY = "current_diastolic";
+	
+	public final String PULSATIONS_PROPERTY = "current_pulsations";
+	
+	public int getSystolic();
+	
+	public int getDiastolic();
+	
+	public int getPulsations(); 
+	
 }

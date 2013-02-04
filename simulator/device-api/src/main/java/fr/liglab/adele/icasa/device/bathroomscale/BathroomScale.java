@@ -18,12 +18,8 @@ package fr.liglab.adele.icasa.device.bathroomscale;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 public interface BathroomScale extends GenericDevice {
-
-	public final String PRESENCE_DETECTED_PROPERTY = "presence_detected";
 	
 	public final String WEIGHT_PROPERTY = "current_weight";
-	
-	public final String DETECTION_SCOPE = "detection_scope"; 
 	
 	public float getCurrentWeight();  
 	

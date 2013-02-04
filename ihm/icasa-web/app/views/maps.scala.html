@@ -25,10 +25,14 @@
 <body>
 @helper.form(action = routes.Application.uploadMap, 'enctype -> "multipart/form-data") {
 
-<input type="file" name="picture" id="picture">
+id: <input type="text" name="mapId" id="mapId">
+Name: <input type="text" name="mapName" id="mapName">
+Description: <input type="text" name="mapDescription" id="mapDescription">
+gatewayURL: <input type="text" name="gatewayURL" id="gatewayURL">
+picture: <input type="file" name="picture" id="picture">
 
 <p>
-    <input type="submit" name="submit" value="Save">
+    <input type="submit" name="submit" value="Save"/>
 </p>
 
 }

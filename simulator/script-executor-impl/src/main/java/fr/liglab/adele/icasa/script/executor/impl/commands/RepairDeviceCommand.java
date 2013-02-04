@@ -44,10 +44,10 @@ public class RepairDeviceCommand extends DeviceCommand {
 
 	@Override
    public Object execute() throws Exception {
-		simulationManager.setDeviceFault(deviceId, true);
+		simulationManager.setDeviceFault(deviceId, false);
 		return null;
    }
-	
+		
 	public void repairDevice(String deviceId) throws Exception {
 	   this.deviceId = deviceId;
 	   execute();

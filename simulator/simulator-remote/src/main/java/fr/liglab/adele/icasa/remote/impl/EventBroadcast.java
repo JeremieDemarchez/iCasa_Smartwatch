@@ -202,7 +202,7 @@ public class EventBroadcast extends OnMessage<String> {
         public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
             JSONObject json = new JSONObject();
             try {
-                json.put("eventType", "device-property-modified");
+                json.put("eventType", "device-property-updated");
                 json.put("deviceId", device.getSerialNumber());
     				json.put("device", deviceREST.getDeviceJSON(device));
                 sendEvent(json);
@@ -308,7 +308,8 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-variable-added");
 				json.put("zoneId", zone.getId());
-				json.put("variableName", variableName);
+				//json.put("variableName", variableName);
+				json.put("zone", zoneREST.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -321,7 +322,8 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-variable-removed");
 				json.put("zoneId", zone.getId());
-				json.put("variableName", variableName);
+				//json.put("variableName", variableName);	
+				json.put("zone", zoneREST.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -334,7 +336,8 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-variable-updated");
 				json.put("zoneId", zone.getId());
-				json.put("variableName", variableName);
+				//json.put("variableName", variableName);
+				json.put("zone", zoneREST.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -360,6 +363,7 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "zone-resized");
                 json.put("zoneId", zone.getId());
+                json.put("zone", zoneREST.getZoneJSON(zone));
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -372,6 +376,7 @@ public class EventBroadcast extends OnMessage<String> {
             try {
                 json.put("eventType", "zone-parent-updated");
                 json.put("zoneId", zone.getId());
+                json.put("zone", zoneREST.getZoneJSON(zone));
                 sendEvent(json);
             } catch (JSONException e) {
                 e.printStackTrace();

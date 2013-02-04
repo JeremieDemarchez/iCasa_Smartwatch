@@ -8,7 +8,7 @@ object ApplicationBuild extends Build {
     val appVersion      = "1.0.0-SNAPSHOT"
 
     val appDependencies = Seq(
-      // Add your project dependencies here,
+
     )
 
     val main = PlayProject(appName, appVersion, appDependencies, mainLang = SCALA).settings(
@@ -16,8 +16,6 @@ object ApplicationBuild extends Build {
         // compilation of Cofeescript
         //coffeescriptOptions := Seq("bare")
 
-        // configuration of db mapping technology
-        ebeanEnabled := true
     )
 
 }

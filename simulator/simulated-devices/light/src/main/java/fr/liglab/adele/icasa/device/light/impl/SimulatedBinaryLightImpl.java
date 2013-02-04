@@ -42,12 +42,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	@ServiceProperty(name = BinaryLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	private String fault;
-
 	@LogConfig
 	private ComponentLogger m_logger;
 
@@ -58,8 +52,9 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	private Zone m_zone;
 
 	public SimulatedBinaryLightImpl() {
-		setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
-		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
+		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);		
+		super.setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
+		super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
 	}
 
 	@Override
@@ -88,6 +83,8 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
 
+			
+			
 			if (previousStatus != status) {
 				super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
 				// Trying to modify zone variable
@@ -114,45 +111,19 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 		return getPowerStatus() ? maxIlluminance : 0.0d;
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			m_zone = zones.get(0);
+			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
 		}
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;
+		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 	}
 
 }

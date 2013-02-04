@@ -52,12 +52,6 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
     
     @ServiceProperty(name = Speaker.SPEAKER_NOISE_LEVEL, value="0.0d")
     private double m_noiseLevel;
-    
-    @ServiceProperty(name = "state", value = "deactivated")
-    private String state;
-    
-    @ServiceProperty(name = "fault", value = "no")
-    private String fault;
 
     // The maximum noise emitted by this speaker
     @ServiceProperty(name = "speaker.maxNoise", value = "100.0d")
@@ -219,37 +213,6 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
         }
     }
 
-     
-     /**
-      * sets the state
-      */
-  	public void setState(String state) {
-  		this.state = state;
-     }
-
-
-  	/**
-      * @return the state
-      */
-     public String getState() {
-     	return state;
-     }
-
-
-  	/**
-      * @return the fault
-      */
-     public String getFault() {
-     	return fault;
-     }
-
-
-  	/**
-      * @param fault the fault to set
-      */
-     public void setFault(String fault) {
-     	this.fault = fault;
-     }
 
 	@Override
    public void enterInZones(List<Zone> zones) {

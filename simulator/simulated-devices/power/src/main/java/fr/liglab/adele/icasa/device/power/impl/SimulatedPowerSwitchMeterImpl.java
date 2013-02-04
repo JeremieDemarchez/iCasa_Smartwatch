@@ -36,7 +36,7 @@ import fr.liglab.adele.icasa.simulator.Zone;
 /**
  * Implementation of a simulated Power Switch + Meter
  * 
- * @author gunalp
+ * @author Gabriel Pedraza Ferreira
  * 
  */
 @Component(name="iCASA.PowerSwitchMeter")
@@ -54,11 +54,6 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 	@ServiceProperty(name = Powermeter.POWERMETER_CURRENT_RATING, value = "NaN")
 	private double m_currentRating;
 	
-	@ServiceProperty(name = "state", value = "deactivated")
-    private String state;
-    
-    @ServiceProperty(name = "fault", value = "no")
-    private String fault;
 	
 	@Property(name = "power.attachedDevice.name", mandatory = true)	
 	private String m_attachedDeviceName;
@@ -108,36 +103,6 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 		return m_currentRating;
 	}
      
-     /**
-      * sets the state
-      */
-  	public void setState(String state) {
-  		this.state = state;
-     }
-
-
-  	/**
-      * @return the state
-      */
-     public String getState() {
-     	return state;
-     }
-
-
-  	/**
-      * @return the fault
-      */
-     public String getFault() {
-     	return fault;
-     }
-
-
-  	/**
-      * @param fault the fault to set
-      */
-     public void setFault(String fault) {
-     	this.fault = fault;
-     }
 
 	@Override
    public void enterInZones(List<Zone> zones) {

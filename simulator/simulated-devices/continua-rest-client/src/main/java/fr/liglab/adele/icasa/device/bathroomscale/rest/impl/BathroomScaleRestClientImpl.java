@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.device.bathroomscale.rest.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import javax.ws.rs.core.MediaType;
 
 import org.apache.felix.ipojo.annotations.Component;
@@ -29,16 +32,16 @@ import com.sun.jersey.api.client.WebResource;
 
 import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
 
-@Component(name = "continua-rest-client")
+@Component(name = "BathroomScaleRestClient")
 @Provides
-public class ContinuaRestClientImpl implements BathroomScaleRestAPI {
+public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 
 	// 10.194.3.114
 	@Property(name = "url", value = "http://localhost:8080/restAdapter/rest/continua")
 	private String url;
 
-	@Property(name = "hl7bathroomScaleFile")
-	private String hl7bathroomScaleFile;
+	@Property(name = "hl7templateFile")
+	private String hl7templateFile;
 
 	@Requires
 	private IHL7MessageFileInstaller fileInstaller;
@@ -47,25 +50,33 @@ public class ContinuaRestClientImpl implements BathroomScaleRestAPI {
 
 	public boolean sendMeasure(float weight) {
 
-		if (hl7bathroomScaleFile == null)
+		if (hl7templateFile == null)
 			return false;
 
 		WebResource r = c.resource(url);
 
-		String hl7message = createWeightMessage(weight);
+		String hl7message = createMessage(weight);
+		
+		System.out.println("Send HL7 message to  " + url + ": " + hl7message);
 
 		try {
 			String response = r.accept(MediaType.TEXT_PLAIN_TYPE).put(String.class, hl7message);
-			// TODO parse response for computing return value
+			System.out.println("Response : " +response);
 			return true;
 		} catch (UniformInterfaceException ue) {
 			ClientResponse response = ue.getResponse();
-			// TODO parse response for computing return value
+			System.out.println("Response : " +response);
 			return false;
 		}
 	}
 
-	private String createWeightMessage(float weight) {
-		return fileInstaller.getFileContent(hl7bathroomScaleFile);
+	private String createMessage(float weight) {
+		String data = fileInstaller.getFileContent(hl7templateFile);
+		
+		SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");		
+		String timestamp = formatter.format(new Date()); 
+		data = data.replace("$date", timestamp);
+		data = data.replace("$weight", "" + ((Float)weight).intValue());
+		return data;
 	}
 }

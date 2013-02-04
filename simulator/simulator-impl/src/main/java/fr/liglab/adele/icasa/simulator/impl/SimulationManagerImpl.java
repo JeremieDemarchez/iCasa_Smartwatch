@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulator.impl;
 
+import java.io.FileWriter;
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
@@ -36,6 +39,8 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
@@ -253,14 +258,12 @@ public class SimulationManagerImpl implements SimulationManager {
 			device.setCenterAbsolutePosition(position);
 			List<Zone> newZones = getObjectZones(device);
 
-
-			
 			// When the zones are different, the device is notified
 			if (!oldZones.equals(newZones)) {
 				// System.out.println("Old zones --> " + oldZones.size());
 				// System.out.println("New zones --> " + newZones.size());
 				Collections.sort(newZones, new ZoneComparable());
-				device.leavingZones(oldZones);				
+				device.leavingZones(oldZones);
 				device.enterInZones(newZones);
 			}
 		}
@@ -403,8 +406,10 @@ public class SimulationManagerImpl implements SimulationManager {
 			// Create the device
 			Dictionary<String, String> configProperties = new Hashtable<String, String>();
 			configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-			configProperties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
-			configProperties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
+			// configProperties.put(GenericDevice.STATE_PROPERTY_NAME,
+			// GenericDevice.STATE_ACTIVATED);
+			// configProperties.put(GenericDevice.FAULT_PROPERTY_NAME,
+			// GenericDevice.FAULT_NO);
 			if (properties.get("description") != null)
 				configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
 			configProperties.put("instance.name", factoryName + "-" + deviceId);
@@ -442,21 +447,21 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Bind(id = "sim-devices", aggregate = true, optional = true)
-	public void bindDevice(SimulatedDevice dev) {
-		String sn = dev.getSerialNumber();
-		m_simulatedDevices.put(sn, dev);
+	public void bindDevice(SimulatedDevice simDev) {
+		String sn = simDev.getSerialNumber();
+		m_simulatedDevices.put(sn, simDev);
 		if (!locatedDevices.containsKey(sn)) {
 			String deviceType = null;
-			if (dev instanceof Pojo) {
+			if (simDev instanceof Pojo) {
 				try {
-					deviceType = ((Pojo) dev).getComponentInstance().getFactory().getFactoryName();
+					deviceType = ((Pojo) simDev).getComponentInstance().getFactory().getFactoryName();
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 
-			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), dev, deviceType, this);
-			
+			LocatedDevice device = new LocatedDeviceImpl(sn, new Position(-1, -1), simDev, deviceType, this);
+
 			locatedDevices.put(sn, device);
 
 			// Listeners notification
@@ -468,18 +473,18 @@ public class SimulationManagerImpl implements SimulationManager {
 					e.printStackTrace();
 				}
 			}
-			
-			// SimulatedDevice listener added 
-			//dev.addListener((LocatedDeviceImpl)device);
+
+			// SimulatedDevice listener added
+			simDev.addListener((LocatedDeviceImpl) device);
 		}
 	}
 
 	@Unbind(id = "sim-devices")
-	public void unbindDevice(SimulatedDevice dev) {
-		String sn = dev.getSerialNumber();
+	public void unbindDevice(SimulatedDevice simDev) {
+		String sn = simDev.getSerialNumber();
 		m_simulatedDevices.remove(sn);
 		LocatedDevice device = locatedDevices.remove(sn);
-		
+
 		// Listeners notification
 		for (LocatedDeviceListener listener : deviceListeners) {
 			try {
@@ -489,9 +494,9 @@ public class SimulationManagerImpl implements SimulationManager {
 				e.printStackTrace();
 			}
 		}
-		
-		// SimulatedDevice listener removed 
-		//dev.removeListener((LocatedDeviceImpl)device);
+
+		// SimulatedDevice listener removed
+		simDev.removeListener((LocatedDeviceImpl) device);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.simulator.SimulatedDevice)")
@@ -735,6 +740,84 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public List<String> getPersonTypes() {
 		return Collections.unmodifiableList(personTypes);
+	}
+
+	public void saveSimulationState(String fileName) {
+		FileWriter outFile;
+		PrintWriter out;
+		try {
+			outFile = new FileWriter("load" + System.getProperty("file.separator") + fileName);
+			out = new PrintWriter(outFile);
+
+			out.println("<behavior startdate=\"2011.10.27.00.00.00\" factor=\"1440\">");
+			out.println();
+			out.println("\t<!-- Zone Section -->");
+			out.println();
+			
+			for (Zone zone : getZones()) {
+				String id = zone.getId();
+				int leftX = zone.getLeftTopAbsolutePosition().x;
+				int topY = zone.getLeftTopAbsolutePosition().y;
+				int width = zone.getWidth();
+				int height = zone.getHeight();
+				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\"" + width
+				      + "\" height=\"" + height + "\" />");
+				out.println();
+
+				for (String variable : zone.getVariableNames()) {
+					Object value = zone.getVariableValue(variable);
+
+					out.println("\t<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
+					out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\"" + value
+					      + "\" />");
+				}
+				out.println();
+			}
+
+			out.println("\t<!-- Device Section -->");
+			out.println();
+			
+			for (LocatedDevice device : getDevices()) {
+				String id = device.getSerialNumber();
+				String type = device.getType();
+
+				out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
+
+				
+				String location = (String) device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME);
+				if (location != null)
+					out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
+				
+				out.println();
+
+			}
+
+			out.println();
+			out.println("\t<!-- Person Section -->");
+			out.println();
+			
+			for (Person person : getPersons()) {
+				String id = person.getName();
+				String type = person.getPersonType();
+				
+				out.println("\t<create-person id=\"" + id + "\" type=\"" + type + "\" />");
+				
+				Zone zone = getZoneFromPosition(person.getCenterAbsolutePosition());
+				
+				if (zone!=null)				
+					out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
+				
+				out.println();
+				
+         }
+
+			
+			out.println("</behavior>");
+
+			out.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
 	}
 
 }

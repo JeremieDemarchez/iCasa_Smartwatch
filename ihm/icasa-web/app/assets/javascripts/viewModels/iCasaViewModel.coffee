@@ -14,7 +14,6 @@ define(['jquery',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
-        'text!templates/bathroomScaleStatusWindow.html',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
@@ -130,8 +129,9 @@ define(['jquery',
 
             $(element).dialog({
                 autoOpen: false,
-                title: titleUnwrapped
-                minWidth: 300
+                title: titleUnwrapped,
+                minWidth: 300,
+                width: "auto"
             });
 #            $(element).dialog({
 #                autoOpen: false,
@@ -338,7 +338,7 @@ define(['jquery',
               @isHighlighted(false);
               @updateSize(@isSizeHighlightEnabled());
            @updateSize= (isSizeHighlightEnabledVal) =>
-              if (isSizeHighlightEnabledVal && @isHighlighted())
+              if ((isSizeHighlightEnabledVal && @isHighlighted()) || @isSelected())
                 newFactor = 1.2;
               else
                 newFactor = 1.0;
@@ -351,7 +351,15 @@ define(['jquery',
                     containerSizeDelta = @width() * (newFactor - 1.0);
                   decorator.containerSizeDelta(containerSizeDelta);
                 );
+
            @isSizeHighlightEnabled.subscribe(@updateSize);
+           
+           @updateSelected=()=>
+              if (@isSelected())
+                  @addHighlight();
+              else
+                  @removeHighlight();
+           @selectedSubscription = @isSelected.subscribe(@updateSelected)
 
            # status window management
            @statusWindowTemplate = ko.observable("");
@@ -366,18 +374,93 @@ define(['jquery',
         @rightX = kb.observable(model, 'rightX');
         @bottomY = kb.observable(model, 'bottomY');
         @topY = kb.observable(model, 'topY');
-        @positionX = ko.computed({
+        @variables = kb.observable(model, 'variables');
+        @width(@rightX() - @leftX());
+        @height(@bottomY() - @topY());
+        @positionX((@leftX() + @rightX()) / 2);
+        @positionY((@bottomY() + @topY()) / 2);
+        @variables_name = ko.computed({
           read: () =>
-            return (@leftX() + @rightX()) / 2;
+            if (@.variables() instanceof Object)
+              return Object.keys(@.variables());
+            else
+              return [];
           owner: @
-        } , @);
-        @positionY = ko.computed({
-          read: () =>
-            return (@bottomY() + @topY()) / 2;
-          owner: @
-        } , @);
-        @statusWindowTemplate(zoneStatusWindowTemplateHtml);
+        }
+        , @);
 
+        # To override the resize event when selected zone.
+        @sizeFactor = ko.computed({
+          read: () =>
+            return 1.0;
+          write: (newValue)=>
+            return ;
+          }, @);
+
+        @updateWidth = (newValue)=>
+          @width(@rightX() - @leftX());
+        @updateHeight = (newValue)=>
+          @height(@bottomY() - @topY());
+
+        @rightX.subscribe(@updateWidth);
+        @leftX.subscribe(@updateWidth);
+        @bottomY.subscribe(@updateHeight);
+        @topY.subscribe(@updateHeight);
+
+        @positionX.subscribe((value)=>
+            @leftX(value - @width()/2);
+            @rightX(value + @width()/2);
+          )
+
+        @positionY.subscribe((value)=>
+            @bottomY(value + @height()/2);
+            @topY(value - @height()/2);
+          )
+
+        @visibility = ko.computed({
+          read:()=>
+            if (@isSelected())
+              return "visible";
+            else
+              return "hidden";
+          }
+          , @);
+        @styleLeft = ko.computed({
+              read: () =>
+                effPositionX = (@positionX() * @containerWidthRatio()) - (@width() * @containerWidthRatio() / 2);
+                return effPositionX + "px";
+              owner: @
+          }
+          , @);
+        @styleTop = ko.computed({
+              read: () =>
+                effPositionY = (@positionY() * @containerHeightRatio()) - (@height() * @containerHeightRatio() / 2);
+                return effPositionY + "px";
+              owner: @
+          }
+          , @);
+        @styleWidth = ko.computed({
+              read: () =>
+                effWidth = @width() * @containerWidthRatio();
+                return effWidth + "px";
+              owner: @
+          }
+          , @);
+        @styleHeight = ko.computed({
+              read: () =>
+                effHeight = @height() * @containerHeightRatio();
+                return effHeight + "px";
+              owner: @
+          }
+          ,@);
+        @background = @.generateBackgroundColor();
+        @statusWindowTemplate(zoneStatusWindowTemplateHtml);
+      getVariableValue:(variable)->
+        return @.variables()[variable]+"";
+      generateBackgroundColor:()->
+        return "#"+((1<<24)*Math.random()|0).toString(16);
+
+    
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
@@ -386,6 +469,15 @@ define(['jquery',
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @properties=kb.observable(model, 'properties');
+           @properties_name = ko.computed({
+            read: () =>
+              if (@.properties() instanceof Object)
+                return Object.keys(@.properties());
+              else
+                return [];
+            owner: @
+           }
+           , @);
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
            @isDesactivated = ko.computed({
               read: () =>
@@ -409,33 +501,7 @@ define(['jquery',
            }
            );
            @statusWindowTemplate(deviceStatusWindowTemplateHtml);
-           @imgSrc = ko.computed(() =>
-              imgName = "NewDevice";
-              if (@type() == "iCASA.Cooler")
-                 imgName = "airConditionne";
-              if (@type() == "iCASA.AudioSource")
-                 imgName = "sourceSonore";
-              if (@type() == "iCASA.DimmerLight")
-                 imgName = "lampeVariable";
-              if (@type() == "iCASA.Thermometer")
-                 imgName = "thermometre";
-              if (@type() == "iCASA.Heater")
-                 imgName = "radiateur";
-              if (@type() == "iCASA.Photometer")
-                 imgName = "Photometer";
-              if (@type() == "iCASA.BinaryLight")
-                 imgName = "lampe";
-              if (@type() == "iCASA.PresenceSensor")
-                 imgName = "detecteurMouvements";
-              if (@type() == "iCASA.Speaker")
-                 imgName = "hautParleur";
-              if (@type() == "iCASA.Power")
-                 imgName = "Power";
-              if (@type() == "iCASA.BathroomScale")
-                 imgName = "pesePersonne";
-
-              return "/assets/images/devices/" + imgName + ".png";
-           , @);
+           @imgSrc = ko.observable(@.getImage())
            @decorators = ko.observableArray([
                 new DecoratorViewModel new Backbone.Model {
                     name: "event",
@@ -472,36 +538,129 @@ define(['jquery',
                 @saveChanges();
 
            # init
-           @updateBathroomScaleDecorator= (newValue) =>
-                presence = @properties().presence_detected;
-                ko.utils.arrayForEach(@decorators(), (decorator) ->
+           @updateProperties= (newValue) =>
+                if (@type() == "iCASA.BathroomScale" )
+                  presence = @properties()["presence_detected"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "foots")
-                          if (presence == true)
-                               decorator.show(true);
-                          else
-                               decorator.show(false);
-                );
+                          decorator.show(presence == true);
+                  );
+                if (@type() == "iCASA.Sphygmometer" )
+                  presence = @properties()["presence_detected"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "sphygmometer_measure")
+                       if (presence == true)
+                         decorator.show(presence == true);
+                  );
+                if (@type() == "iCASA.PresenceSensor" )
+                  presence = @properties()["presencesensor.sensedpresence"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "presence")
+                       decorator.show(presence == true);
+                  );
+                if (@type() == "iCASA.BinaryLight")
+                  powerLevel = @properties()["light.powerStatus"]
+                  if (powerLevel)
+                    @imgSrc(@getImage("binaryLight_on"));
+                  else
+                    @imgSrc(@.getImage());
           
-           @initBahtroomScale= () =>
+           @initDeviceImages= () =>
                 if (@type() == "iCASA.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
-                       imgSrc: '/assets/images/devices/decorators/pesePersonnePieds.png',
+                       imgSrc: '/assets/images/devices/decorators/foots.png',
                        width: 32,
                        height: 32,
                        positionX: 1,
                        positionY: 1,
                        show: false
                      });
-                     @statusWindowTemplate(bathroomScaleStatusWindowTemplateHtml);
-                     @properties.subscribe(@updateBathroomScaleDecorator);
-                     @updateBathroomScaleDecorator();
-           @initBahtroomScale();
+                if (@type() == "iCASA.Sphygmometer")
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "sphygmometer_measure",
+                       imgSrc: '/assets/images/devices/decorators/sphygmometer_measure.png',
+                       width: 12,
+                       height: 9,
+                       positionX: 17,
+                       positionY: 4,
+                       show: false
+                     });
+                if (@type() == "iCASA.PresenceSensor")
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "presence",
+                       imgSrc: '/assets/images/devices/decorators/movementDetector_detected.png',
+                       width: 32,
+                       height: 32,
+                       positionX: 1,
+                       positionY: 1,
+                       show: false
+                     });
+                @properties.subscribe(@updateProperties);
+                @updateProperties();
+
+           @initDeviceImages();
            
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
            @updateWidgetImg();
-
+        
+        getPropertyValue:(property)->
+          return @.properties()[property]+""
+        getImage:(imgName)->
+          if not imgName?
+            imgName = "genericDevice";
+            if (@type() == "iCASA.Cooler")
+              imgName = "cooler";
+            if (@type() == "iCASA.AudioSource")
+              imgName = "musicPlayer";
+            if (@type() == "iCASA.DimmerLight")
+              imgName = "dimmerLight";
+            if (@type() == "iCASA.Thermometer")
+              imgName = "thermometer";
+            if (@type() == "iCASA.MedicalThermometer")
+              imgName = "medicalThermometer";
+            if (@type() == "iCASA.Heater")
+              imgName = "heater";
+            if (@type() == "iCASA.Photometer")
+              imgName = "photometer";
+            if (@type() == "iCASA.BinaryLight")
+              imgName = "binaryLight_off";
+            if (@type() == "iCASA.PresenceSensor")
+              imgName = "movementDetector";
+            if (@type() == "iCASA.Speaker")
+              imgName = "speaker";
+            if (@type() == "iCASA.Power")
+              imgName = "power";
+            if (@type() == "iCASA.BathroomScale")
+              imgName = "bathroomScale";
+            if (@type() == "iCASA.Tablet")
+              imgName = "tablet";
+            if (@type() == "iCASA.Desktop")
+              imgName = "desktop";
+            if (@type() == "iCASA.SettopBox")
+              imgName = "liveBox";
+            if (@type() == "iCASA.RollingShutter")
+              imgName = "rollingShutter";
+            if (@type() == "iCASA.LiquidDetector")
+              imgName = "liquidDetector";
+            if (@type() == "iCASA.SmartPhone")
+              imgName = "smartPhone";
+            if (@type() == "iCASA.FlatTV")
+              imgName = "flatTV";
+            if (@type() == "iCASA.RFIDReader")
+              imgName = "rfidReader";
+            if (@type() == "iCASA.Accelerometer")
+              imgName = "accelerometer";
+            if (@type() == "iCASA.ToggleSwitch")
+              imgName = "toggleSwitch";
+            if (@type() == "iCASA.DoorDetector")
+              imgName = "doorDetector";
+            if (@type() == "iCASA.SettopBox")
+              imgName = "liveBox";
+            if (@type() == "iCASA.Sphygmometer")
+              imgName = "sphygmometer";
+          return "/assets/images/devices/" + imgName + ".png"; 
 
     class PersonTypeViewModel extends NamedViewModel
         constructor: (model) ->
@@ -600,6 +759,7 @@ define(['jquery',
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 
            @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
+           
 
            @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
 
@@ -668,21 +828,26 @@ define(['jquery',
            @newDeviceName = ko.observable("");
 
            @createDevice = () =>
-              newDevice = new DataModel.Models.Device({ deviceId: @newDeviceName(), name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1 });
+              generatedId = @.createRandomId(DataModel.collections.devices, @newDeviceType().name());
+              newDevice = new DataModel.Models.Device({ deviceId: generatedId, name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: {}});
               newDevice.save();
-
+              newDevice.set(id: generatedId)
+              DataModel.collections.devices.push(newDevice);
 
            @removeDevice = (device) =>
               device.model().destroy();
 
            @removeSelectedDevices = () =>
+             toRemoveModels = []
              ko.utils.arrayForEach(@devices(), (device) =>
                if (device == undefined)
                  return;
 
                if (device.isSelected())
-                  device.model().destroy();
+                  toRemoveModels.push device.model()
              );
+             for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy()
 
            @showDeviceWindow = (device) =>
               device.statusWindowVisible(false);
@@ -698,18 +863,23 @@ define(['jquery',
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
               newPerson.save();
+              newPerson.set(id: @newPersonName())
               DataModel.collections.persons.push(newPerson);
+              @newPersonName("");
 
               
 
            @removeSelectedPersons = () =>
+              toRemoveModels = []
               ko.utils.arrayForEach(@persons(), (person) =>
                 if (person == undefined)
                   return;
 
                 if (person.isSelected())
-                  person.model().destroy();
+                  toRemoveModels.push person.model()
               );
+              for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy()
 
            @removePerson = (person) =>
               person.model().destroy();
@@ -724,16 +894,11 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ deviceId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
+              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
               newZone.save();
+              newZone.set(id: @newZoneName());
               DataModel.collections.zones.push(newZone);
               
-           @newRoomName = ko.observable("");
-
-           @createRoom = () =>
-              newZone = new DataModel.Models.Zone({ zoneId: @newRoomName(), name: @newRoomName(), isRoom: true, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
-              newZone.save();
-              DataModel.collections.zones.push(newZone);
               
            @removeSelectedZones = () =>
               ko.utils.arrayForEach(@zones(), (zone) =>
@@ -781,24 +946,49 @@ define(['jquery',
               @selectedScript().state('paused');
               @selectedScript().model().save();
 
+           @newScriptName = ko.observable("");
+
+           @saveScript = ()=>
+              newName = @newScriptName() + ".bhv";
+              newScript = new DataModel.Models.Script({ scriptId: newName, name: newName, state: "stopped"});
+              newScript.save();
+              newScript.set(id: newName);
+              DataModel.collections.scripts.push(newScript);
+              @newScriptName("");
+
            # managing map size change (must update position of persons, zones and devices)
+           @updateModelPosition=(model)=>
+             model.containerWidthRatio(@mapWidthRatio());
+             model.containerHeightRatio(@mapHeightRatio());
+
            @updateWidgetPositions= (newValue) =>
              #TODO should use a merged list of positioned objects
              ko.utils.arrayForEach(@devices(), (device) =>
-               device.containerWidthRatio(@mapWidthRatio());
-               device.containerHeightRatio(@mapHeightRatio());
+              @updateModelPosition(device);
              );
              ko.utils.arrayForEach(@persons(), (person) =>
-               person.containerWidthRatio(@mapWidthRatio());
-               person.containerHeightRatio(@mapHeightRatio());
+              @updateModelPosition(person);
              );
              ko.utils.arrayForEach(@zones(), (zone) =>
-               zone.containerWidthRatio(@mapWidthRatio());
-               zone.containerHeightRatio(@mapHeightRatio());
+               @updateModelPosition(zone);
              );
            @mapWidthRatio.subscribe(@updateWidgetPositions);
            @mapHeightRatio.subscribe(@updateWidgetPositions);
-           #TODO should listen to object addition to setup container attributes
+
+           @.persons.subscribe(@.updateWidgetPositions)
+           @.devices.subscribe(@.updateWidgetPositions)
+           @.zones.subscribe(@.updateWidgetPositions)
+        
+        createRandomId:(collection, type)->
+           number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 
+           hexaNumner = number.toString(16).substr(0,10);
+           nid = type.replace("iCASA.", "") + "-" + hexaNumner;
+           testExistance = collection.get(nid);
+           if (testExistance != undefined && testExistance != null)
+              return createRandomId(collection, type);
+           return nid;
+
+
 
     return ICasaViewModel;
 );

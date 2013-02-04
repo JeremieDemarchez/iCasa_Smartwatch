@@ -22,8 +22,6 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
@@ -43,14 +41,8 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	@ServiceProperty(name = Photometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = "state", value = "deactivated")
-	private String state;
-
-	@ServiceProperty(name = "fault", value = "no")
-	private String fault;
-
-	@LogConfig
-	private ComponentLogger m_logger;
+	// @LogConfig
+	// private ComponentLogger m_logger;
 
 	private Zone m_zone;
 
@@ -70,34 +62,6 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 		return (Double) getPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE);
 	}
 
-	/**
-	 * sets the state
-	 */
-	public void setState(String state) {
-		this.state = state;
-	}
-
-	/**
-	 * @return the state
-	 */
-	public String getState() {
-		return state;
-	}
-
-	/**
-	 * @return the fault
-	 */
-	public String getFault() {
-		return fault;
-	}
-
-	/**
-	 * @param fault
-	 *           the fault to set
-	 */
-	public void setFault(String fault) {
-		this.fault = fault;
-	}
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
@@ -134,7 +98,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 		@Override
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
 			if (m_zone == zone)
-				if (!(fault.equalsIgnoreCase("yes")))
+				if (!(getFault().equalsIgnoreCase("yes")))
 					if (variableName.equals("Illuminance"))
 						getIlluminanceFromZone();
 		}

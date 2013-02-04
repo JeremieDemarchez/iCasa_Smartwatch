@@ -34,35 +34,37 @@ import org.json.JSONObject;
 @Component(name = "MovePersonIntoZoneCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePersonIntoZone}"),
-      @StaticServiceProperty(name = "name", value = "move-personeintozone-new", type = "String") })
-@Instantiate(name = "move-personeintozone-command-new")
+      @StaticServiceProperty(name = "name", value = "move-person-zone", type = "String") })
+@Instantiate(name = "move-person-zone-command")
 public class MovePersonIntoZoneCommand extends AbstractCommand {
 
 		
-	private String person;
+
 	
 	@Requires
 	private SimulationManager simulationManager;
 
+	private String personId;
+	
 	private String zoneId;
 	
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setPersonZone(person, zoneId);
+		simulationManager.setPersonZone(personId, zoneId);
 		return null;
 	}
 	
 	
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.zoneId = param.getString("zone");	 
+		this.personId = param.getString("personId");
+		this.zoneId = param.getString("zoneId");	 
 	}
 	
 	
 	public void movePersonIntoZone(String person, String zoneId) throws Exception {		
-	   this.person = person;
+	   this.personId = person;
 	   this.zoneId = zoneId;
 	   execute();
    }

@@ -16,13 +16,13 @@
 package fr.liglab.adele.icasa.script.executor.impl.commands;
 
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.json.JSONObject;
+
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * 
@@ -47,8 +47,6 @@ public class FaultDeviceCommand extends DeviceCommand {
 		simulationManager.setDeviceFault(deviceId, true);
 		return null;
    }
-	
-
 	
 	
 	public void faultDevice(String deviceId) throws Exception {

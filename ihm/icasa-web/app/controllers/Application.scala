@@ -6,28 +6,128 @@ import libs.json.Json._
 import play.api.mvc._
 import play.api.Play.current
 import java.io.File
+import play.api.data._
+import play.api.data.Forms._
+import scala.collection.mutable
+import models.HouseMap
+import utils.RichFile.enrichFile
 
 object Application extends Controller {
+
+  def fromXML(node: scala.xml.Node): HouseMap =
+        new HouseMap {
+            var id = (node \ "@id").text
+            var name = (node \ "@name").text
+            var description = (node \ "@description").text
+            var gatewayURL = (node \ "@gatewayURL").text
+            var imgFile = (node \ "@imgFile").text
+        }
+
+  var maps = mutable.Map.empty[String, HouseMap];
+
+  val mapsLock = new Object;
+
+  def getMaps(): Seq[HouseMap] = {
+    var mapsSeq = mutable.Seq.empty[HouseMap]
+    for ((mapId, map) <- maps) {
+      //TODO use += instead (cannot use it for now due to a compilation error)
+      mapsSeq = mapsSeq :+ map
+    }
+
+    return mapsSeq;
+  }
+
+  def loadMaps() = {
+     mapsLock.synchronized {
+       var newMaps = mutable.Map.empty[String, HouseMap];
+       val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
+       if (mapsFile.exists()) {
+           val mapsRootNode = xml.XML.loadFile(mapsFile);
+           for (mapNode <- (mapsRootNode \\ "map")) {
+              val map = fromXML(mapNode);
+             newMaps(map.id) = map;
+           }
+       }
+       maps = newMaps;
+     }
+  }
+
+  def saveMaps() = {
+    val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
+
+    mapsLock.synchronized {
+      if (mapsFile.exists())
+        mapsFile.createNewFile();
+
+      var xmlStr = "<?xml version='1.0' encoding='UTF-8'?>\n<maps>\n";
+      for ((houseMapId, houseMap) <- maps) {
+         xmlStr += "<map id=\"" + houseMap.id + "\" name=\"" + houseMap.name +
+          "\" description=\"" + houseMap.description + "\" gatewayURL=\"" +
+          houseMap.gatewayURL + "\" imgFile=\"" + houseMap.imgFile + "\"/>\n";
+      }
+      xmlStr += "</maps>";
+
+      mapsFile.text = xmlStr;
+    }
+  }
+
+  def index() = Action {
+      loadMaps();
+      Ok(views.html.index(getMaps()));
+  }
   
-  def index = Action {
-    Ok(views.html.index()).withHeaders(
-      "Access-Control-Allow-Origin" -> "*",
-      "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
-      "Access-Control-Expose-Headers" -> "X-Cache-Date, X-Atmosphere-tracking-id",
-      "Access-Control-Allow-Headers" ->"Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport",
-      "Access-Control-Max-Age"-> "-1"
-    )
+  def connectToMap(mapId: String) = Action {
+    loadMaps();
+    val map = maps(mapId);
+    if (map == null)
+      NotFound("");
+    else
+      Ok(views.html.map(mapId, "/maps/" + map.imgFile, map.gatewayURL)).withHeaders(
+        "Access-Control-Allow-Origin" -> "*",
+        "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
+        "Access-Control-Expose-Headers" -> "X-Cache-Date, X-Atmosphere-tracking-id",
+        "Access-Control-Allow-Headers" ->"Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport",
+        "Access-Control-Max-Age"-> "-1"
+      )
   }
 
   val MAP_DIRECTORY: String = "maps";
 
-  def uploadMap = Action(parse.multipartFormData) { request =>
-    request.body.file("picture").map { picture =>
+  val mapForm = Form(
+      tuple(
+        "mapId" -> text,
+        "mapName" -> text,
+        "mapDescription" -> text,
+        "gatewayURL" -> text
+      )
+  )
+
+  def uploadMap = Action(parse.multipartFormData) { implicit request =>
+    val body = request.body;
+    val (mapId, mapName, mapDescription, gatewayURLToSet) = mapForm.bindFromRequest.get;
+
+    body.file("picture").map { picture =>
       import java.io.File
       val fileName = picture.filename
       val contentType = picture.contentType
       picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + fileName))
-      Ok("File uploaded")
+
+      def map = new HouseMap {
+          var id = mapId;
+          var name = mapName;
+          var description = mapDescription;
+          var gatewayURL = gatewayURLToSet;
+          var imgFile = fileName;
+      }
+
+      mapsLock.synchronized {
+        if (maps.isEmpty)
+          loadMaps();
+
+        maps(map.id) = map;
+        saveMaps();
+      }
+      Redirect(routes.Application.index)
     }.getOrElse {
       Redirect(routes.Application.index).flashing(
         "error" -> "Missing file"
@@ -35,7 +135,7 @@ object Application extends Controller {
     }
   }
 
-  def getMaps() = Action {
+  def showMaps() = Action {
     Ok(views.html.maps());
   }
 

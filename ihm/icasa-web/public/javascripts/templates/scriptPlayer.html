@@ -15,12 +15,237 @@
       limitations under the License.
 
 -->
+
+<script>
+    $( "#date" ).datepicker({
+        dateFormat: "dd/mm/yy",
+        firstDay: 1,
+        gotoCurrent: true
+    });
+    $( "#scriptStart" ).datepicker({
+        dateFormat: "dd/mm/yy",
+        firstDay: 1,
+        gotoCurrent: true
+    });
+
+    var d = new Date();
+    $("#hour").val(d.getHours());
+    $("#minute").val((d.getMinutes()<10?'0':'') + d.getMinutes());
+    $("#date").datepicker("setDate", d);
+    $("#scriptStart").datepicker("setDate", d);
+
+    $( "#timeSpeedSlider" ).slider({
+        min: 0,
+        max: 30000,
+        value: 0,
+        slide: function( event, ui ) {
+            $( "#timeSpeed" ).val(ui.value);
+            $(ui.value).val($('#timeSpeed').val());
+        }
+    });
+
+    $( "#scriptSlider" ).slider({
+        min: d.valueOf(),
+        max: d.valueOf(),
+        value: d.valueOf()
+    });
+
+    $( "#timeSpeed" ).val( $("#timeSpeedSlider").slider("value") );
+    $( "#timeSpeed" ).change(function() {
+        if( $(this).val() > $("#maxSpeed").val()){$(this).val($("#maxSpeed").val())}
+        if( $(this).val() < 0){$(this).val(0)}
+        $("#timeSpeedSlider").slider("value", $(this).val());
+    });
+    $( "#hour" ).change(function() {
+        if( $(this).val() < 0){$(this).val(0)}
+        if( $(this).val() > 23){$(this).val(23)}
+    });
+    $( "#minute" ).change(function() {
+        if( $(this).val() < 0){$(this).val(0)}
+        if( $(this).val() > 59){$(this).val(59)}
+    });
+    $( "#maxSpeed" ).change(function() {
+        $( "#timeSpeedSlider" ).slider("option","max", $("#maxSpeed").val());
+    });
+    $( "#pause" ).click(function() {
+        $("#timeSpeed").val(0);
+    });
+    $( "#play" ).click(function() {
+        $("#timeSpeed").val($("#timeSpeedSlider").slider("value") );
+    });
+
+    $( "#scriptStart" ).change(function() {
+        $( "#scriptSlider" ).slider("option","min", $(this).datepicker("getDate").valueOf());
+    });
+    $( "#scriptEnd" ).change(function() {
+        $( "#scriptSlider" ).slider("option","max", $(this).datepicker("getDate").valueOf());
+    });
+
+    $( "#scriptPlayerDialog" ).dialog({
+        autoOpen: false,
+        width:470
+    });
+    $( "#scriptPlayerDialogBtn" ).click(function() {
+        $( "#scriptPlayerDialog" ).dialog( "open" );
+    });
+</script>
+
 <table class="table table-striped table-bordered">
-    <p>Script: <select data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name'"></select></p>
-    <p>Script State: <strong data-bind="text: $root.selectedScriptState"></strong></p>
-    <div class="slider"></div>
-    <p></p>
-    <button class="btn" data-bind="click: $root.startScript">Start</button>
-    <button class="btn" data-bind="click: $root.stopScript">Stop</button>
-    <button class="btn" data-bind="click: $root.pauseScript">Pause</button>
+    <h4>Time</h4>
+    <div class="controls controls-row">
+        <label class="span1" for="date">Day</label>
+        <div class="controls">
+            <input type="text" class="span2" id="date"/>
+        </div>
+    </div>
+    <div class="controls controls-row">
+        <label class="span1">Hour</label>
+        <div class="input-prepend input-append">
+            <input type="number" id="hour" class="input-mini" maxlength="2" min="0" max="23"/>
+            <span class="add-on">:</span>
+            <input type="number" id="minute" class="input-mini" maxlength="2" min="0" max="59"/>
+        </div>
+    </div>
+
+    <div class="controls controls-row">
+        <label class="span2">Speed</label>
+        <label class="span2">Maximum speed</label>
+    </div>
+
+    <div class="controls controls-row">
+        <div class="input-append span2">
+            <input type="text" id="timeSpeed" value="1" class="input-mini"/>
+            <a class="btn" id="play"><i class="icon-play"></i></a>
+            <a class="btn" id="pause"><i class="icon-pause"></i></a>
+        </div>
+        <input type="text" id="maxSpeed" class="span1" value="30000"/>
+    </div>
+
+    <div class="slider" id="timeSpeedSlider"></div>
+
+    <hr/>
+
+    <h4>Script</h4>
+    <div class="controls controls-row">
+        <label class="span2">Script</label>
+        <select class="span2" data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name'"></select>
+    </div>
+    <div class="controls controls-row">
+        <label class="span2">Script State :</label> <span class="span2"><strong data-bind="text: $root.selectedScriptState"></strong></span>
+    </div>
+    <div class="controls controls-row">
+        <div class="input-append span2">
+            <div class="btn-group">
+                <button class="btn" data-bind="click: $root.startScript"><i class="icon-play"></i>Start</button>
+                <button class="btn" data-bind="click: $root.stopScript"><i class="icon-stop"></i>Stop</button>
+                <button class="btn" data-bind="click: $root.pauseScript"><i class="icon-pause"></i>Pause</button>
+            </div>
+        </div>
+    </div>
+    <br/>
+    <div class="slider" id="scriptSlider"></div>
+
+    <input class="input-small pull-left" type="text" id="scriptStart" />
+    <input class="input-small pull-right" type="text" id="scriptEnd" readonly/>
+
+    <div class="clearfix"></div>
+
+    <button class="btn" id="scriptPlayerDialogBtn">Details</button>
+
+    <!--Save script state-->
+    <p>Script ID:<input data-bind="value: $root.newScriptName"/><button class="btn" data-bind="click: $root.saveScript">Save State into Script</button></p>
+
 </table>
+
+<div id="scriptPlayerDialog">
+    <div id="scriptPlayerDialogTable" class="pull-left">
+        <table class="table table-condensed table-hover">
+            <tr class="success">
+                <td class="add"></td>
+                <td>Test</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr  class="error">
+                <td class="delete"></td>
+                <td>Test2</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr  class="error">
+                <td class="delete"></td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr class="success">
+                <td class="add"></td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr class="info">
+                <td class="modify"></td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+            <tr>
+                <td>-</td>
+                <td>Test3</td>
+                <td><button class="btn btn-mini"><i class="icon-wrench"></i></button></td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="scriptPlayerDialogForm" class="pull-right">
+        <form>
+            <fieldset>
+                <legend>Zone variables</legend>
+
+                <label>Themperature</label>
+                <input type="text" class="span2"/>
+                <label>Illuminance</label>
+                <input type="text" class="span2"/>
+                <label>Volume</label>
+                <input type="text" class="span2"/>
+            </fieldset>
+
+            <button class="btn btn-primary pull-right">Save</button>
+        </form>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div id="scriptPlayerDialogBtns" class="pull-left">
+        <button class="btn btn-mini btn-success"><i class="icon-plus icon-white"></i></button>
+        <button class="btn btn-mini btn-danger"><i class="icon-minus icon-white"></i></button>
+    </div>
+</div>
+
+

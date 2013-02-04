@@ -33,40 +33,38 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  * @author Gabriel
  *
  */
-@Component(name = "MovePersonCommandNew")
+@Component(name = "MovePersonCommand")
 @Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-persone-new", type = "String") })
-@Instantiate(name = "move-persone-command-new")
+      @StaticServiceProperty(name = "name", value = "move-person", type = "String") })
+@Instantiate(name = "move-person-command")
 public class MovePersonCommand extends AbstractCommand {
 
-		
-	private String person;
-	
 	@Requires
 	private SimulationManager simulationManager;
 
+	private String personId;
 	private int newX;
 	private int newY;
 	
 
 	@Override
 	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(person, new Position(newX, newY));
+		simulationManager.setPersonPosition(personId, new Position(newX, newY));
 		return null;
 	}
 	
 	
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
+		this.personId = param.getString("personId");
 		this.newX = param.getInt("newX");
 		this.newY = param.getInt("newY");  
 	}
 	
 	
 	public void movePerson(String person, int newX, int newY) throws Exception {		
-	   this.person = person;
+	   this.personId = person;
 	   this.newX = newX;
 	   this.newY = newY;
 	   execute();

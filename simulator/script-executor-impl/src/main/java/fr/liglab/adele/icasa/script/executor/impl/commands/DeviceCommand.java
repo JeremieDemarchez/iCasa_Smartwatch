@@ -23,7 +23,7 @@ public abstract class DeviceCommand extends AbstractCommand {
 	
 	@Override
 	public void configure(JSONObject param) throws Exception {
-		deviceId = param.getString("deviceID");	   
+		deviceId = param.getString("deviceId");	   
 	}
 	
 }

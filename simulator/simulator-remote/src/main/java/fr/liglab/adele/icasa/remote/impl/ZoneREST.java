@@ -15,10 +15,17 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.Position;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -27,9 +34,8 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * @author Thomas Leveque
@@ -76,6 +82,13 @@ public class ZoneREST {
             zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
             zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
             zoneJSON.put("isRoom", true); //TODO change it when Zone API will be improved
+            
+            JSONObject propObject = new JSONObject();
+            for (String variable : zone.getVariableNames()) {
+            	propObject.put(variable, zone.getVariableValue(variable));
+            }
+            zoneJSON.put("variables", propObject);
+            
         } catch (JSONException e) {
             e.printStackTrace();
             zoneJSON = null;
@@ -171,6 +184,5 @@ public class ZoneREST {
       }
     }
     
- 
     
 }

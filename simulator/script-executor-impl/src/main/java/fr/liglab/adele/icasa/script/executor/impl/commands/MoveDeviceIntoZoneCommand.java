@@ -52,7 +52,7 @@ public class MoveDeviceIntoZoneCommand extends DeviceCommand {
 	@Override
 	public void configure(JSONObject param) throws Exception {
 		super.configure(param);
-		this.zoneId = param.getString("zone");	
+		this.zoneId = param.getString("zoneId");	
 	}
 
 	public void moveDeviceIntoZone(String deviceId, String zoneId) throws Exception {

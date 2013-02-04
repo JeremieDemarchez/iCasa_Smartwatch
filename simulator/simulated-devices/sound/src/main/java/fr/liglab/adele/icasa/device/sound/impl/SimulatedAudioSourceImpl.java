@@ -39,7 +39,7 @@ import fr.liglab.adele.icasa.simulator.Zone;
 /**
  * Implementation of a simulated audio source device.
  * 
- * @author bourretp
+ * @author Gabriel Pedraza Ferreira
  */
 @Component(name="iCASA.AudioSource")
 @Provides(properties = {
@@ -52,14 +52,6 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     @ServiceProperty(name = AudioSource.AUDIO_SOURCE_IS_PLAYING, value = "false")
     private boolean m_isPlaying;
     
-    @ServiceProperty(name = "state", value = "deactivated")
-    private String state;
-    
-    @ServiceProperty(name = "fault", value = "no")
-    private String fault;
-
-    // Unused
-    //private volatile SimulatedEnvironment m_env;
 
     @LogConfig
     private ComponentLogger m_logger;
@@ -116,37 +108,6 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
         }
 
     }
-     
-     /**
-      * sets the state
-      */
-  	public void setState(String state) {
-  		this.state = state;
-     }
-
-
-  	/**
-      * @return the state
-      */
-     public String getState() {
-     	return state;
-     }
-
-
-  	/**
-      * @return the fault
-      */
-     public String getFault() {
-     	return fault;
-     }
-
-
-  	/**
-      * @param fault the fault to set
-      */
-     public void setFault(String fault) {
-     	this.fault = fault;
-     }
 
 	@Override
    public void enterInZones(List<Zone> zones) {
