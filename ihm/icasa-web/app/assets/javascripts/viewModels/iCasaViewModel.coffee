@@ -926,13 +926,16 @@ define(['jquery',
               
               
            @removeSelectedZones = () =>
+              toRemoveModels = []
               ko.utils.arrayForEach(@zones(), (zone) =>
                 if (zone == undefined)
                   return;
 
                 if (zone.isSelected())
-                  zone.model().destroy();
+                  toRemoveModels.push zone.model();
               );
+              for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy();
 
            @removeZone = (zone) =>
               zone.model().destroy();
