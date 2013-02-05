@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.power;
 
+import fr.liglab.adele.icasa.device.GenericDevice;
+
 
 /**
  * Service definition for a simple powerswitch device
@@ -22,7 +24,7 @@ package fr.liglab.adele.icasa.device.power;
  * @author gunalp
  *
  */
-public interface PowerSwitch {
+public interface PowerSwitch extends GenericDevice {
 	
 	/**
 	 * Service Property indicating the current Status of the power switch

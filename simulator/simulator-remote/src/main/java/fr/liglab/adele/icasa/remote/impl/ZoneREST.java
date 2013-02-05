@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
 import javax.ws.rs.POST;
@@ -34,6 +35,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.Zone;
@@ -185,13 +187,13 @@ public class ZoneREST {
 
 		Position position = new Position(zoneJSON.getLeftX(), zoneJSON.getTopY());
 
-		//TODO: Review for children zones
+		// TODO: Review for children zones
 		if (!position.equals(zoneFound.getLeftTopAbsolutePosition()))
-	      try {
-	         zoneFound.setLeftTopRelativePosition(position);
-         } catch (Exception e1) {
-	         e1.printStackTrace();
-         }
+			try {
+				zoneFound.setLeftTopRelativePosition(position);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+			}
 
 		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
 		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
@@ -202,7 +204,7 @@ public class ZoneREST {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			
+
 		if (zoneFound.getHeight() != height)
 			try {
 				zoneFound.setHeight(height);
@@ -225,11 +227,29 @@ public class ZoneREST {
 		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
 		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
 
-		Zone newZone = _simulationMgr.createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), width, height);
+		Zone newZone = _simulationMgr
+		      .createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), width, height);
 
-				
 		return makeCORS(Response.ok(getZoneJSON(newZone).toString()));
 
+	}
+
+	@DELETE
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/zone/{zoneId}")
+	public Response deleteZone(@PathParam("zoneId") String zoneId) {
+
+		Zone zone = _simulationMgr.getZone(zoneId);
+
+		if (zone == null)
+			return makeCORS(Response.status(404));
+		try {
+			_simulationMgr.removeZone(zoneId);
+		} catch (Exception e) {
+			e.printStackTrace();
+			return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+		}
+		return makeCORS(Response.ok());
 	}
 
 }

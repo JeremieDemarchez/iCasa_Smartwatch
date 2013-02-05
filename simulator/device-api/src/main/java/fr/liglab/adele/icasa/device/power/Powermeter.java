@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.power;
 
+import fr.liglab.adele.icasa.device.GenericDevice;
+
 
 /**
  * Service definition for a simple powermeter device
@@ -22,7 +24,7 @@ package fr.liglab.adele.icasa.device.power;
  * @author gunalp
  *
  */
-public interface Powermeter {
+public interface Powermeter extends GenericDevice {
 
 	/**
 	 * Service property indicating the current Power Rating sensed by the Powermeter device, expressed in watt (W)
