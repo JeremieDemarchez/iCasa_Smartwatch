@@ -15,84 +15,78 @@
  */
 package fr.liglab.adele.icasa.device.power.impl;
 
-import java.util.List;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.osgi.framework.Constants;
-
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.Zone;
+import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.Constants;
+
+import java.util.List;
 
 /**
- * Implementation of a simulated Power Switch + Meter
- * 
- * @author Gabriel Pedraza Ferreira
- * 
+ * @author Thomas Leveque
  */
+@Component(name = "iCASA.ToggleSwitch")
+@Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
+public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwitch, SimulatedDevice {
 
-
-@Component(name="iCASA.PowerSwitch")
-@Provides(properties = {
-        @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedPowerSwitchImpl extends AbstractDevice implements
-		PowerSwitch, SimulatedDevice {
-
-	@ServiceProperty(name = AbstractDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
+	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	/*
-	@LogConfig
-    private ComponentLogger m_logger;
-	*/
-	
+	@Requires
+	private SimulationManager manager;
+
+	/**
+	 * Influence zone corresponding to the zone with highest level where the
+	 * device is located
+	 */
+	private volatile Zone m_zone;
+
 	public SimulatedPowerSwitchImpl() {
+		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 		setPropertyValue(POWERSWITCH_CURRENT_STATUS, false);
 	}
-	
-	
-	//private volatile SimulatedEnvironment m_env;
-	
-	@Override
-	public String getSerialNumber() {
-		return m_serialNumber;
-	}
-
 
 	@Override
-	public synchronized boolean switchOn() {
+    public boolean getStatus() {
+   	 Boolean status = (Boolean) getPropertyValue(POWERSWITCH_CURRENT_STATUS);
+   	 if (status==null)
+   		 return false;
+        return status;
+    }
+
+	@Override
+	public boolean switchOn() {
 		setPropertyValue(POWERSWITCH_CURRENT_STATUS, true);
 		return getStatus();
 	}
 
 	@Override
-	public synchronized boolean switchOff() {
+	public boolean switchOff() {
 		setPropertyValue(POWERSWITCH_CURRENT_STATUS, false);
 		return getStatus();
 	}
 
 	@Override
-   public boolean getStatus() {
-	   Boolean status = (Boolean) getPropertyValue(POWERSWITCH_CURRENT_STATUS);
-	   if (status==null)
-	   	return false;
-	   return status;
-   } 
-	
-	@Override
-   public void enterInZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   }
+	public void enterInZones(List<Zone> zones) {
+		if (!zones.isEmpty()) {
+			m_zone = zones.get(0);
+			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
+		}
+	}
 
 	@Override
-   public void leavingZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   }
+	public void leavingZones(List<Zone> zones) {
+		m_zone = null;
+		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+	}
+
+	@Override
+	public String getSerialNumber() {
+		return m_serialNumber;
+	}
 
 }
