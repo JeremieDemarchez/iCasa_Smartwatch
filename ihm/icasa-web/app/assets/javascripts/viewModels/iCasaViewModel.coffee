@@ -99,6 +99,31 @@ define(['jquery',
             return { controlsDescendantBindings: false };
     };
 
+    ko.bindingHandlers.jqueryResizable = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).resizable( {
+                start: (event, eventUI) ->
+                  viewModel.isSizeHighlightEnabled(false);
+                stop: (event, eventUI) ->
+                  #TODO add positionX and positionY for zones
+                  rightX = eventUI.size.width / viewModel.containerWidthRatio() + viewModel.leftX();
+                  bottomY = eventUI.size.height / viewModel.containerHeightRatio() + viewModel.topY();
+                  width = rightX - viewModel.leftX();
+                  height = bottomY - viewModel.topY();
+                  viewModel.width(width);
+                  viewModel.height(height);
+                  viewModel.positionX(viewModel.leftX() + width / 2);
+                  viewModel.positionY(viewModel.topY() + height / 2);
+                  viewModel.model().save();
+                  viewModel.isSizeHighlightEnabled(true);
+            });
+
+            return { controlsDescendantBindings: false };
+    };
+
     ko.bindingHandlers.jquerySelectable = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
@@ -397,24 +422,24 @@ define(['jquery',
             return ;
           }, @);
 
-        @updateWidth = (newValue)=>
-          @width(@rightX() - @leftX());
-        @updateHeight = (newValue)=>
-          @height(@bottomY() - @topY());
+        # @updateWidth = (newValue)=>
+        #   @width(@rightX() - @leftX());
+        # @updateHeight = (newValue)=>
+        #   @height(@bottomY() - @topY());
 
-        @rightX.subscribe(@updateWidth);
-        @leftX.subscribe(@updateWidth);
-        @bottomY.subscribe(@updateHeight);
-        @topY.subscribe(@updateHeight);
+        # @rightX.subscribe(@updateWidth);
+        # @leftX.subscribe(@updateWidth);
+        # @bottomY.subscribe(@updateHeight);
+        # @topY.subscribe(@updateHeight);
 
         @positionX.subscribe((value)=>
-            @leftX(value - @width()/2);
             @rightX(value + @width()/2);
+            @leftX(value - @width()/2);
           )
 
         @positionY.subscribe((value)=>
-            @bottomY(value + @height()/2);
             @topY(value - @height()/2);
+            @bottomY(value + @height()/2);
           )
 
         @visibility = ko.computed({
@@ -894,20 +919,23 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 21, bottomY: 21 });
+              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 50, bottomY: 50 });
               newZone.save();
               newZone.set(id: @newZoneName());
               DataModel.collections.zones.push(newZone);
               
               
            @removeSelectedZones = () =>
+              toRemoveModels = []
               ko.utils.arrayForEach(@zones(), (zone) =>
                 if (zone == undefined)
                   return;
 
                 if (zone.isSelected())
-                  zone.model().destroy();
+                  toRemoveModels.push zone.model();
               );
+              for toRemoveModel in toRemoveModels
+                toRemoveModel.destroy();
 
            @removeZone = (zone) =>
               zone.model().destroy();

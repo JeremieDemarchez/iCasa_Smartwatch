@@ -295,12 +295,12 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 
 	@Override
 	public void setWidth(int width) throws Exception {
-		resize(this.height, width);
+		resize(width, this.height);
 	}
 
 	@Override
 	public void setHeight(int height) throws Exception {
-		resize(height, this.width);
+		resize(this.width, height);
 
 	}
 	

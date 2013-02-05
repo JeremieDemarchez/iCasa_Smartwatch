@@ -39,9 +39,12 @@ import fr.liglab.adele.icasa.simulator.Zone;
  * @author Gabriel Pedraza Ferreira
  * 
  */
+
+/*
 @Component(name="iCASA.PowerSwitchMeter")
 @Provides(properties = {
         @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
+*/
 public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 		PowerSwitchmeter, SimulatedDevice {
 

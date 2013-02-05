@@ -15,25 +15,28 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-import org.apache.felix.ipojo.Factory;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
-
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
-import java.util.Date;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Request;
-import javax.ws.rs.core.Context;
+
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * @author Thomas Leveque
@@ -262,7 +265,7 @@ public class ScriptPlayerREST {
    	 
    	 ScriptJSON scriptJSON = ScriptJSON.fromString(content);
    	 
-   	 String fileName = scriptJSON.getId() + ".bhv";
+   	 String fileName = scriptJSON.getId();
    	 
    	 _simulationMgr.saveSimulationState(fileName);
    	 

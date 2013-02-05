@@ -49,6 +49,10 @@
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.presence</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>device.power</artifactId>
+		</dependency>		
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.personal</artifactId>
