@@ -268,10 +268,15 @@ body #scriptPlayerDialog
 
     }   }
   #scriptPlayerDialogTable {
-    width:270px;
+    width:230px;
     height:250px;
     overflow:auto;
     table {
+
+      .scriptLineCell {
+        cursor:pointer;
+      }
+
       tr {
         .add {
           font-weight: bold;
@@ -315,6 +320,18 @@ body #scriptPlayerDialog
     margin-top: 5px;
   }
 
+}
+
+body .scriptPlayerGrp
+{
+  border: 1px solid #CCCCCC;
+  padding:5px;
+  legend {
+    border: 0 none;
+    padding: 0 5px;
+    margin-bottom: 5px;
+    width:auto;
+  }
 }
 
 /* main part of ui */
