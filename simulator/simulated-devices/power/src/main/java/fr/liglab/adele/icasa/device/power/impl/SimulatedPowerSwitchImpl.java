@@ -33,7 +33,7 @@ import java.util.List;
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwitch, SimulatedDevice {
 
-	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
+	@ServiceProperty(name = PowerSwitch.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
 	@Requires
