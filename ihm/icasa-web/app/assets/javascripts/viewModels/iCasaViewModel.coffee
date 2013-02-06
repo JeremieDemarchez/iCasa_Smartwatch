@@ -578,13 +578,13 @@ define(['jquery',
                          decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.PresenceSensor" )
-                  presence = @properties()["presencesensor.sensedpresence"];
+                  presence = @properties()["sensed_presence"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "presence")
                        decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.BinaryLight")
-                  powerLevel = @properties()["light.powerStatus"]
+                  powerLevel = @properties()["power_status"]
                   if (powerLevel)
                     @imgSrc(@getImage("binaryLight_on"));
                   else

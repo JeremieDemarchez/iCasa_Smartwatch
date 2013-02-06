@@ -49,7 +49,6 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-
 	@Requires
 	private SimulationManager manager;
 
@@ -77,12 +76,12 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 		return false;
 	}
 
-
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			m_zone = zones.get(0);
-			//setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
+			// setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME,
+			// m_zone.getId());
 			updateState();
 		}
 	}
@@ -90,7 +89,8 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;
-		//setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		// setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME,
+		// SimulatedDevice.LOCATION_UNKNOWN);
 	}
 
 	@Override
@@ -127,9 +127,9 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 			boolean personFound = personInZone();
 			boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
-						
+
 			if (!previousDetection) { // New person in Zone
-				if (personFound) {					
+				if (personFound) {
 					setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, true);
 				}
 			} else {
@@ -140,7 +140,6 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 		}
 	}
 
-	
 	private boolean personInZone() {
 		for (Person person : manager.getPersons()) {
 			if (m_zone.contains(person))
@@ -148,7 +147,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 		}
 		return false;
 	}
-	
+
 	@Validate
 	protected void start() {
 		manager.addListener(this);
