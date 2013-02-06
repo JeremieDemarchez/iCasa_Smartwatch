@@ -82,7 +82,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			m_zone = zones.get(0);
-			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
+			//setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
 			updateState();
 		}
 	}
@@ -90,7 +90,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;
-		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		//setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 	}
 
 	@Override

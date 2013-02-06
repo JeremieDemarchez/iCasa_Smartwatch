@@ -38,7 +38,7 @@ public interface DimmerLight extends GenericDevice {
 	 * @see #getPowerLevel()
 	 * @see #setPowerLevel(double)
 	 */
-	String LIGHT_POWER_LEVEL = "light.powerLevel";
+	String LIGHT_POWER_LEVEL = "power_level";
 
 	/**
 	 * Device property indicating the Lamp maximum Illuminance (in Lumen)
@@ -50,7 +50,7 @@ public interface DimmerLight extends GenericDevice {
 	 * <code>2500d</code> for very big ones.</li>
 	 * </ul>
 	 */
-	String LIGHT_MAX_ILLUMINANCE = "light.maxIlluminance";
+	String LIGHT_MAX_ILLUMINANCE = "max_illuminance";
 
 	/**
 	 * Return the current power level of this dimmer light.

@@ -37,7 +37,7 @@ public interface Photometer extends GenericDevice {
      * 
      * @see #getIlluminance()
      */
-    String PHOTOMETER_CURRENT_ILLUMINANCE = "photometer.currentilluminance";
+    String PHOTOMETER_CURRENT_ILLUMINANCE = "current_illuminance";
 
     /**
      * Return the current illuminance sensed by this photometer, expressed in

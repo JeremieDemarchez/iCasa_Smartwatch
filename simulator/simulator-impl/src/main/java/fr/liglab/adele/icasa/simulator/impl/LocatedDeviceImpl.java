@@ -34,13 +34,13 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 
 	private final List<LocatedDeviceListener> listeners = new ArrayList<LocatedDeviceListener>();
 		
-	private SimulatedDevice deviceComponent;
+	private GenericDevice deviceComponent;
 	
 	private SimulationManager manager;
 
     private String _type;
 
-	public LocatedDeviceImpl(String serialNumber, Position position, SimulatedDevice deviceComponent, String type, SimulationManager manager) {
+	public LocatedDeviceImpl(String serialNumber, Position position, GenericDevice deviceComponent, String type, SimulationManager manager) {
 		super(position);
 		m_serialNumber = serialNumber;
 		this.deviceComponent = deviceComponent;			
@@ -78,12 +78,16 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			return properties.get(propertyName);
 		}
 		*/
+		
+		/*
 		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
 			Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
 			if (zone!=null)			
 				return zone.getId();
 			return "unknown";
 		}
+		
+		*/
 			
 		
 		/*
@@ -103,16 +107,16 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
-		/*
-		if (propertyName == null) {
-			throw new NullPointerException("Null property name");
-		}
-		synchronized (properties) {
-			properties.put(propertyName, value);
-		}
-		*/
-		if (deviceComponent!=null)
+		
+		if (deviceComponent==null)
+			return;
+		
+		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
 			deviceComponent.setPropertyValue(propertyName, value);
+		} else {
+			if (deviceComponent instanceof SimulatedDevice)
+				((SimulatedDevice)deviceComponent).setPropertyValue(propertyName, value);			
+		}
 	}
 
 	@Override
@@ -145,7 +149,17 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 		// Listeners notification
 		for (LocatedDeviceListener listener : listeners) {
 			listener.deviceMoved(this, oldPosition);
-		}	   
+		}
+		
+		// Computes the new location
+		if (deviceComponent!=null) {
+			Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
+			String location = SimulatedDevice.LOCATION_UNKNOWN;
+			if (zone!=null)			
+				location = zone.getId();			
+			deviceComponent.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, location);
+		}
+			
    }
 	
 	@Override
@@ -154,16 +168,15 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	}
 
 	@Override
-   public void enterInZones(List<Zone> zones) {
-		if (deviceComponent!=null)
-			deviceComponent.enterInZones(zones);
+   public void enterInZones(List<Zone> zones) {			
+		if (deviceComponent!=null && (deviceComponent instanceof SimulatedDevice))
+			((SimulatedDevice)deviceComponent).enterInZones(zones);
    }
 
 	@Override
    public void leavingZones(List<Zone> zones) {
-		if (deviceComponent!=null)
-			deviceComponent.leavingZones(zones);
-	   
+		if (deviceComponent!=null && (deviceComponent instanceof SimulatedDevice))
+			((SimulatedDevice)deviceComponent).leavingZones(zones);	   
    }
 
 	// --- Listeners methods -- //

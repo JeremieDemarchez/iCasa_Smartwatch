@@ -38,7 +38,7 @@ public interface BinaryLight extends GenericDevice {
 	 * @see #getPowerStatus()
 	 * @see #setPowerStatus(boolean)
 	 */
-	String LIGHT_POWER_STATUS = "light.powerStatus";
+	String LIGHT_POWER_STATUS = "power_status";
 
 	/**
 	 * Device property indicating the Lamp maximum Illuminance (in Lumen)
@@ -50,7 +50,7 @@ public interface BinaryLight extends GenericDevice {
 	 * <code>2500d</code> for very big ones.</li>
 	 * </ul>
 	 */
-	String LIGHT_MAX_ILLUMINANCE = "light.maxIlluminance";
+	String LIGHT_MAX_ILLUMINANCE = "max_illuminance";
 
 	/**
 	 * Return the current power state of this binary light.

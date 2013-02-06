@@ -36,7 +36,7 @@ public interface PresenceSensor extends GenericDevice {
      * 
      * @see #getSensedPresence()
      */
-    String PRESENCE_SENSOR_SENSED_PRESENCE = "presencesensor.sensedpresence";
+    String PRESENCE_SENSOR_SENSED_PRESENCE = "sensed_presence";
     
     /**
      * Return the current presence sensed by this presence sensor.

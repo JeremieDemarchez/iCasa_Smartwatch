@@ -67,7 +67,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private Map<String, LocatedDevice> locatedDevices = new HashMap<String, LocatedDevice>();
 
-	private Map<String, SimulatedDevice> m_simulatedDevices = new HashMap<String, SimulatedDevice>();
+	private Map<String, GenericDevice> m_devices = new HashMap<String, GenericDevice>();
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
@@ -379,24 +379,30 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
-		SimulatedDevice device = m_simulatedDevices.get(deviceId);
-		if (device != null) {
-			if (value)
-				device.setFault(SimulatedDevice.FAULT_YES);
-			else
-				device.setFault(SimulatedDevice.FAULT_NO);
-		}
+		GenericDevice device = m_devices.get(deviceId);
+
+		if (device == null && !(device instanceof SimulatedDevice))
+			return;
+
+		if (value)
+			device.setFault(SimulatedDevice.FAULT_YES);
+		else
+			device.setFault(SimulatedDevice.FAULT_NO);
+
 	}
 
 	@Override
 	public void setDeviceState(String deviceId, boolean value) {
-		SimulatedDevice device = m_simulatedDevices.get(deviceId);
-		if (device != null) {
-			if (value)
-				device.setState(SimulatedDevice.STATE_ACTIVATED);
-			else
-				device.setState(SimulatedDevice.STATE_DEACTIVATED);
-		}
+		
+		GenericDevice device = m_devices.get(deviceId);
+
+		if (device == null && !(device instanceof SimulatedDevice))
+			return;
+
+		if (value)
+			device.setState(SimulatedDevice.STATE_ACTIVATED);
+		else
+			device.setState(SimulatedDevice.STATE_DEACTIVATED);
 	}
 
 	@Override
@@ -434,8 +440,12 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public void removeDevice(String deviceId) {
-		SimulatedDevice device = m_simulatedDevices.get(deviceId);
-		if ((device != null) && (device instanceof Pojo)) {
+		GenericDevice device = m_devices.get(deviceId);
+		
+		if (device == null && !(device instanceof SimulatedDevice))
+			return;
+		
+		if (device instanceof Pojo) {
 			Pojo pojo = (Pojo) device;
 			pojo.getComponentInstance().dispose();
 		}
@@ -446,10 +456,10 @@ public class SimulationManagerImpl implements SimulationManager {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
 
-	@Bind(id = "sim-devices", aggregate = true, optional = true)
-	public void bindDevice(SimulatedDevice simDev) {
+	@Bind(id = "devices", aggregate = true, optional = true)
+	public void bindDevice(GenericDevice simDev) {
 		String sn = simDev.getSerialNumber();
-		m_simulatedDevices.put(sn, simDev);
+		m_devices.put(sn, simDev);
 		if (!locatedDevices.containsKey(sn)) {
 			String deviceType = null;
 			if (simDev instanceof Pojo) {
@@ -479,10 +489,10 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 	}
 
-	@Unbind(id = "sim-devices")
-	public void unbindDevice(SimulatedDevice simDev) {
+	@Unbind(id = "devices")
+	public void unbindDevice(GenericDevice simDev) {
 		String sn = simDev.getSerialNumber();
-		m_simulatedDevices.remove(sn);
+		m_devices.remove(sn);
 		LocatedDevice device = locatedDevices.remove(sn);
 
 		// Listeners notification
@@ -753,41 +763,40 @@ public class SimulationManagerImpl implements SimulationManager {
 			out.println();
 			out.println("\t<!-- Zone Section -->");
 			out.println();
-			
+
 			for (Zone zone : getZones()) {
 				String id = zone.getId();
 				int leftX = zone.getLeftTopAbsolutePosition().x;
 				int topY = zone.getLeftTopAbsolutePosition().y;
 				int width = zone.getWidth();
 				int height = zone.getHeight();
-				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\"" + width
-				      + "\" height=\"" + height + "\" />");
+				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\""
+				      + width + "\" height=\"" + height + "\" />");
 				out.println();
 
 				for (String variable : zone.getVariableNames()) {
 					Object value = zone.getVariableValue(variable);
 
 					out.println("\t<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
-					out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\"" + value
-					      + "\" />");
+					out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\""
+					      + value + "\" />");
 				}
 				out.println();
 			}
 
 			out.println("\t<!-- Device Section -->");
 			out.println();
-			
+
 			for (LocatedDevice device : getDevices()) {
 				String id = device.getSerialNumber();
 				String type = device.getType();
 
 				out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
 
-				
 				String location = (String) device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME);
 				if (location != null)
 					out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
-				
+
 				out.println();
 
 			}
@@ -795,23 +804,22 @@ public class SimulationManagerImpl implements SimulationManager {
 			out.println();
 			out.println("\t<!-- Person Section -->");
 			out.println();
-			
+
 			for (Person person : getPersons()) {
 				String id = person.getName();
 				String type = person.getPersonType();
-				
-				out.println("\t<create-person id=\"" + id + "\" type=\"" + type + "\" />");
-				
-				Zone zone = getZoneFromPosition(person.getCenterAbsolutePosition());
-				
-				if (zone!=null)				
-					out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
-				
-				out.println();
-				
-         }
 
-			
+				out.println("\t<create-person id=\"" + id + "\" type=\"" + type + "\" />");
+
+				Zone zone = getZoneFromPosition(person.getCenterAbsolutePosition());
+
+				if (zone != null)
+					out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
+
+				out.println();
+
+			}
+
 			out.println("</behavior>");
 
 			out.close();
