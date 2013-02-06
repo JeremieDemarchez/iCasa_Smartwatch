@@ -121,7 +121,7 @@ class SizeUtil
     actionTabs = $("#actionTabs");
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
-    availableWidth = viewportSize.width - (4 * areaBorderSize) - 5;
+    availableWidth = viewportSize.width - (4 * areaBorderSize) - 20;
 
 
 
@@ -130,17 +130,17 @@ class SizeUtil
       actionTabs.width(availableWidth - mapWidth);
       actionTabs.height(mapHeight);
     else
-      map.width(availableWidth - actionTabsWidth);
-      map.height(map.width() / mapWidth * mapHeight);
+      newMapWidth = availableWidth - actionTabsWidth;
+      map.width(newMapWidth);
+      widthRatio = newMapWidth / mapWidth;
+      map.height(widthRatio * mapHeight);
 
     if(actionTabs.width() < 200)
       map.width(availableWidth);
-      map.height(map.width() / mapWidth * mapHeight);
       actionTabs.width(map.width());
 
     if(actionTabs.width() > 900)
       map.width(availableWidth/3);
-      map.height(map.width() / mapWidth * mapHeight);
       actionTabs.width(availableWidth - map.width());
 
 
@@ -181,7 +181,7 @@ require([
         $("#map").resizable({
             animate: true,
             aspectRatio : true,
-            ghost: true
+            ghost: true,
             stop: (event, eventUI) ->
               SizeUtil.computeAreaSizes("map");
         });
@@ -198,7 +198,7 @@ require([
             animate: true,
             aspectRatio : false,
             ghost: true,
-            handles: "e, s, se, sw"
+            handles: "e, s, se, sw",
             stop: (event, eventUI) ->
               SizeUtil.computeAreaSizes("statusWindows");
         });
