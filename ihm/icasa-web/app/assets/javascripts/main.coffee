@@ -121,29 +121,12 @@ class SizeUtil
     actionTabs = $("#actionTabs");
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
-    availableWidth = viewportSize.width - (4 * areaBorderSize) - 20;
-
-
-
-
+    availableWidth = viewportSize.width - (4 * areaBorderSize) - 5;
     if ((resizedAreaId == undefined) || (resizedAreaId == null) || (resizedAreaId == "map"))
       actionTabs.width(availableWidth - mapWidth);
       actionTabs.height(mapHeight);
     else
-      newMapWidth = availableWidth - actionTabsWidth;
-      map.width(newMapWidth);
-      widthRatio = newMapWidth / mapWidth;
-      map.height(widthRatio * mapHeight);
-
-    if(actionTabs.width() < 200)
-      map.width(availableWidth);
-      actionTabs.width(map.width());
-
-    if(actionTabs.width() > 900)
-      map.width(availableWidth/3);
-      actionTabs.width(availableWidth - map.width());
-
-
+      map.width(availableWidth - actionTabsWidth);
     $("#tabs").tabs("refresh");
 
     statusWindows = $("#statusWindows");
@@ -164,6 +147,15 @@ require([
     ],
     ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
 
+        #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
+        $("#map").resizable({
+          animate: true,
+          aspectRatio : true,
+          ghost: true,
+          stop: (event, eventUI) ->
+            SizeUtil.computeAreaSizes("map");
+        });
+
         mapName = $("#map").attr("gatewayURL");
         mapImgUrl = $("#map").attr("mapImgSrc");
 
@@ -178,13 +170,6 @@ require([
             heightStyle: "fill"
         });
 
-        $("#map").resizable({
-            animate: true,
-            aspectRatio : true,
-            ghost: true,
-            stop: (event, eventUI) ->
-              SizeUtil.computeAreaSizes("map");
-        });
         $("#actionTabs").resizable({
             animate: true,
             aspectRatio : false,
