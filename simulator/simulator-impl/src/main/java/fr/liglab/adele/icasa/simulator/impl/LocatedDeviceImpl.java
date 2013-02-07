@@ -69,37 +69,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	}
 
 	@Override
-	public Object getPropertyValue(String propertyName) {
-		/*
-		if (propertyName == null) {
-			throw new NullPointerException("Null property name");
-		}
-		synchronized (properties) {
-			return properties.get(propertyName);
-		}
-		*/
-		
-		/*
-		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
-			Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
-			if (zone!=null)			
-				return zone.getId();
-			return "unknown";
-		}
-		
-		*/
-			
-		
-		/*
-		if (propertyName.equals(GenericDevice.FAULT_PROPERTY_NAME))
-			return deviceComponent.getFault();
-
-		if (propertyName.equals(GenericDevice.STATE_PROPERTY_NAME))
-			return deviceComponent.getState();
-			
-		*/
-
-		
+	public Object getPropertyValue(String propertyName) {		
 		if (deviceComponent!=null)
 			return deviceComponent.getPropertyValue(propertyName);
 		return null;
@@ -115,7 +85,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			deviceComponent.setPropertyValue(propertyName, value);
 		} else {
 			if (deviceComponent instanceof SimulatedDevice)
-				((SimulatedDevice)deviceComponent).setPropertyValue(propertyName, value);			
+				((SimulatedDevice)deviceComponent).setPropertyValue(propertyName, value);
 		}
 	}
 
@@ -169,8 +139,10 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 
 	@Override
    public void enterInZones(List<Zone> zones) {			
-		if (deviceComponent!=null && (deviceComponent instanceof SimulatedDevice))
-			((SimulatedDevice)deviceComponent).enterInZones(zones);
+		if (deviceComponent!=null && (deviceComponent instanceof SimulatedDevice)) {
+			((SimulatedDevice)deviceComponent).enterInZones(zones);			
+		}
+			
    }
 
 	@Override
