@@ -45,7 +45,8 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>script.executor.api</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
@@ -57,7 +58,8 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-core</artifactId>

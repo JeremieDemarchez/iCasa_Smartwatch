@@ -38,10 +38,18 @@
 
 	<build>
 		<plugins>
-			<plugin>
-				<groupId>com.google.code.maven-license-plugin</groupId>
-				<artifactId>maven-license-plugin</artifactId>
-			</plugin>
+         <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+               <skip>true</skip>
+            </configuration>
+         </plugin>
 		</plugins>
 	</build>
+   <scm>
+      <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
+      <url>http://github.com/AdeleResearchGroup/iCasa/</url>
+      <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
+      <tag>HEAD</tag>
+   </scm>
 </project>

@@ -32,4 +32,14 @@
         <module>icasa-dev</module>
         <module>icasa-teaching-distribution</module>
 	</modules>
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+               <skip>true</skip>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>

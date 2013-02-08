@@ -19,11 +19,13 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>web.common</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>device.api</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
   </dependencies>
 
 

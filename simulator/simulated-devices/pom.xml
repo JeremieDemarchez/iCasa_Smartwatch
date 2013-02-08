@@ -34,9 +34,18 @@
 		<module>presence</module>
 		<module>sound</module>
 		<module>temperature</module>
-        <module>personal</module>
+      <module>personal</module>
 		<module>continua-rest-client</module>
 		<module>bathroom-scale</module>
 	</modules>
-
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+               <skip>true</skip>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>

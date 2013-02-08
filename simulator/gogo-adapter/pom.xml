@@ -35,6 +35,7 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>script.executor.api</artifactId>
+      <version>${iCasaVersion}</version>
     </dependency>
 
       <!-- OW2 Chameleon handies & annotations -->

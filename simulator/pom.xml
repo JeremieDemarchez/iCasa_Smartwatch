@@ -38,8 +38,18 @@
 		<module>script-executor-api</module>		
 	    <module>script-executor-impl</module>		
 		<module>simulated-devices</module>
-        <module>simulator-remote</module>
+      <module>simulator-remote</module>
 		<module>gogo-adapter</module>
 	</modules>
+   <build>
+      <plugins>
+         <plugin>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+               <skip>true</skip>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
 </project>
 

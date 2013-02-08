@@ -14,45 +14,54 @@
 	<artifactId>icasa.core.dp</artifactId>
 	<packaging>deployment-package</packaging>
 	<name>${productName} :: ${projectName}</name>
-	<version>${iCasaVersion}</version>
+	<version>0.0.1-SNAPSHOT</version>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.api</artifactId>
+         <version>${iCasaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>simulator.api</artifactId>
+         <version>${iCasaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>script.api</artifactId>
+         <version>${iCasaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>simulator.impl</artifactId>
+         <version>${iCasaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.light</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.sound</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.temperature</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.presence</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.power</artifactId>
-		</dependency>		
+         <version>${iCasaVersion}</version>
+      </dependency>		
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.personal</artifactId>
@@ -61,7 +70,8 @@
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>device.bathroom.scale</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>continua-rest-client</artifactId>
@@ -70,28 +80,34 @@
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>clock.api</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>clock.simulated.impl</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>script.executor.api</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>script.executor.impl</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>gogo.adapter</artifactId>
-		</dependency>		
+         <version>${iCasaVersion}</version>
+      </dependency>		
 
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>simulator.remote</artifactId>
-		</dependency>
+         <version>${iCasaVersion}</version>
+      </dependency>
         <dependency>
             <groupId>org.barjo.atmosgi</groupId>
             <artifactId>atmosgi-service</artifactId>

@@ -41,7 +41,8 @@
     <dependency>
       <groupId>org.ow2.chameleon.handies</groupId>
       <artifactId>annotations</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
     <dependency>
       <groupId>org.ow2.chameleon.handies</groupId>
       <artifactId>ipojo-log-handler</artifactId>
@@ -49,11 +50,13 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>device.api</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
-    </dependency>
+      <version>${iCasaVersion}</version>
+   </dependency>
   </dependencies>
 
   <build>
