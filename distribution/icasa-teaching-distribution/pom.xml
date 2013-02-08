@@ -30,7 +30,7 @@
   <artifactId>icasa.teaching.distribution</artifactId>
   <packaging>pom</packaging>
   <name>${productName} :: ${projectName}</name>
-  <version>0.0.1</version>
+  <version>0.0.2-SNAPSHOT</version>
 
     <!-- Project repositories -->
     <repositories>
@@ -91,9 +91,4 @@
       </dependency>
 	
   </dependencies>
-  
-
-  <scm>
-    <tag>root-0.0.1</tag>
-  </scm>
 </project>
