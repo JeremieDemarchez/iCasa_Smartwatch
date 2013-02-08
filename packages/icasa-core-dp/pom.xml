@@ -29,11 +29,6 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>script.api</artifactId>
-         <version>${iCasaVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>simulator.impl</artifactId>
          <version>${iCasaVersion}</version>
 		</dependency>
