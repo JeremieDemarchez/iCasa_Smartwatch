@@ -28,8 +28,6 @@ import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.Function;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 
@@ -69,8 +67,6 @@ public class GogoAdapter {
 	 */
 	private final BundleContext m_context;
 
-	@LogConfig
-	private ComponentLogger m_logger;
 
 	/**
 	 * Get the context from iPOJO
@@ -97,7 +93,6 @@ public class GogoAdapter {
 			String commandNamespace = (String) iCommandProperties
 					.get(SimulatorCommand.PROP_NAMESPACE);
 
-			m_logger.info("expose command " + commandName);
 
 			// Register the command
 			Dictionary<Object, Object> commandProperties = new Properties();
@@ -119,7 +114,7 @@ public class GogoAdapter {
 			}
 
 		} catch (Exception e) {
-			m_logger.info("Gogo Adapter exception : " + e.toString());
+
 		}
 	}
 
@@ -133,7 +128,6 @@ public class GogoAdapter {
 			String commandNamespace = (String) iCommandProperties
 					.get(SimulatorCommand.PROP_NAMESPACE);
 
-			m_logger.info("unexpose command " + commandName);
 
 			// Unregister the adapted command
 			ServiceRegistration commandRegistration = m_functions
@@ -146,7 +140,7 @@ public class GogoAdapter {
 				}
 			}
 		} catch (Exception e) {
-			m_logger.info("Gogo Adapter exception : " + e.toString());
+
 		}
 
 	}

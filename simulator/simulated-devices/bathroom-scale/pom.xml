@@ -39,14 +39,6 @@
       <artifactId>org.apache.felix.ipojo.annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.ow2.chameleon.handies</groupId>
-      <artifactId>annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.chameleon.handies</groupId>
-      <artifactId>ipojo-log-handler</artifactId>
-    </dependency>
-    <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>device.api</artifactId>
       <version>${iCasaVersion}</version>

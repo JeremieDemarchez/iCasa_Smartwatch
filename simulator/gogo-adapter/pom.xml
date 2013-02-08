@@ -22,6 +22,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.gogo.shell</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.gogo.runtime</artifactId>
     </dependency>
     <dependency>
@@ -39,14 +43,6 @@
     </dependency>
 
       <!-- OW2 Chameleon handies & annotations -->
-      <dependency>
-          <groupId>org.ow2.chameleon.handies</groupId>
-          <artifactId>annotations</artifactId>
-      </dependency>
-      <dependency>
-          <groupId>org.ow2.chameleon.handies</groupId>
-          <artifactId>ipojo-log-handler</artifactId>
-      </dependency>
       <dependency>
           <groupId>org.apache.felix</groupId>
           <artifactId>org.apache.felix.fileinstall</artifactId>

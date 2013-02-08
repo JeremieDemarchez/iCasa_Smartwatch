@@ -29,8 +29,6 @@ import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.Function;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.osgi.shell.installer.ShellScriptInstaller;
 
@@ -61,8 +59,6 @@ public final class ShellScriptInstallerImpl implements ShellScriptInstaller {
 	 */
 	private final BundleContext m_context;
 
-	@LogConfig
-	private ComponentLogger m_logger;
 
 	ShellScriptInstallerImpl(BundleContext context) {
 		m_context = context;
@@ -76,7 +72,6 @@ public final class ShellScriptInstallerImpl implements ShellScriptInstaller {
 	 * .lang.String, java.lang.String, java.net.URI)
 	 */
 	public void install(String scope, String name, URI scriptPath) {
-		m_logger.info("expose script " + scope + ":" + name);
 
 		ScriptFunction function = new ScriptFunction(scriptPath, _processor);
 
@@ -109,7 +104,6 @@ public final class ShellScriptInstallerImpl implements ShellScriptInstaller {
 	public void remove(String scope, String name)
 			throws IllegalArgumentException {
 
-		m_logger.info("unexpose script " + scope + ":" + name);
 
 		// Unregister the adapted command
 		ServiceRegistration commandRegistration = m_functions.get(scope + ":"
