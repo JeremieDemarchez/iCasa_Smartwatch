@@ -32,7 +32,6 @@ import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.UniformInterfaceException;
 import com.sun.jersey.api.client.WebResource;
 
-import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
 import fr.liglab.adele.icasa.device.bathroomscale.rest.api.MedicalThermometerRestAPI;
 
 @Component(name = "MedicalThermometerRestClient")

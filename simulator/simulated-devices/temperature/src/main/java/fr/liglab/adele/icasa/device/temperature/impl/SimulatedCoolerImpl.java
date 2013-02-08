@@ -43,9 +43,6 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	private String m_serialNumber;
 
 
-	//@LogConfig
-	//private ComponentLogger m_logger;
-
 	private Thread m_updaterThread;
 
 	private volatile long m_lastUpdateTime;

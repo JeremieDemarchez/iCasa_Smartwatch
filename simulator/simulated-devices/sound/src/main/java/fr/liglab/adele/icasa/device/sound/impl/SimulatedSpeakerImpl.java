@@ -25,8 +25,6 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 import fr.liglab.adele.icasa.device.sound.Speaker;
@@ -67,8 +65,6 @@ public class SimulatedSpeakerImpl extends AbstractDevice implements Speaker, Sim
     // been set).
     private byte m_lastByte = Byte.MIN_VALUE;
 
-    @LogConfig
-    private ComponentLogger m_logger;
 
     // private volatile SimulatedEnvironment m_env;
 

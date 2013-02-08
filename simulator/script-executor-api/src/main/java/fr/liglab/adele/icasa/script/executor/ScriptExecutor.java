@@ -20,49 +20,116 @@ import java.util.List;
 
 /**
  * Executes behavior scripts
- *  
+ * 
  * @author Gabriel
- *
+ * 
  */
 public interface ScriptExecutor {
 
 	public enum State {
 		STOPPED, EXECUTING, PAUSED
 	}
-	
+
+	/**
+	 * Gets a lists of scripts in the platform
+	 * 
+	 * @return
+	 */
 	public List<String> getScriptList();
-	
+
+	/**
+	 * Gets the current script in execution
+	 * 
+	 * @return
+	 */
 	public String getCurrentScript();
-	
+
+	/**
+	 * Executes the script having this name
+	 * 
+	 * @param scriptName
+	 */
 	public void execute(String scriptName);
-	
+
+	/**
+	 * Executes the script having this name
+	 * 
+	 * @param scriptName
+	 * @param startDate
+	 * @param factor
+	 */
 	public void execute(String scriptName, Date startDate, int factor);
 
+	/**
+	 * Stops the script execution
+	 * 
+	 */
 	public void stop();
-	
+
+	/**
+	 * Pauses the execution of the current script (if there is one)
+	 */
 	public void pause();
-	
+
+	/**
+	 * Resumes the execution of the current script (if there is one)
+	 */
 	public void resume();
-	
+
+	/**
+	 * Gets the execution estate of the current script (if there is one)
+	 * 
+	 * @return
+	 */
 	public State getState();
 
-    /**
-     * Returns percentage of completed instructions of current script.
-     *
-     * @return percentage of completed instructions of current script.
-     */
+	/**
+	 * Returns percentage of completed instructions of current script.
+	 * 
+	 * @return percentage of completed instructions of current script.
+	 */
 	public float getExecutedPercentage();
 
-    public long currentTimeMillis();
+	/**
+	 * Wrapper for clock function
+	 * 
+	 * @return
+	 */
+	public long currentTimeMillis();
 
-    public void setStartDate(long startDate);
+	/**
+	 * Wrapper for clock function
+	 * 
+	 * @param startDate
+	 */
+	public void setStartDate(long startDate);
 
-    public void setFactor(int factor);
+	/**
+	 * Wrapper for clock function
+	 * 
+	 * @param factor
+	 */
+	public void setFactor(int factor);
 
-    public long getElapsedTime();
+	/**
+	 * Wrapper for clock function
+	 * 
+	 * @return
+	 */
+	public long getElapsedTime();
 
-    public int getFactor();
+	/**
+	 * Wrapper for clock function
+	 * 
+	 * @return
+	 */
+	public int getFactor();
 
-    public Date getStartDate();
-	
+	/**
+	 * Wrapper for clock function
+	 * 
+	 * @return
+	 */
+	public Date getStartDate();
+
 }

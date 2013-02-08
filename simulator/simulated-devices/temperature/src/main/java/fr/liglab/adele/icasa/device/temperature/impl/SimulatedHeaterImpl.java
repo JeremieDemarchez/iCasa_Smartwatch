@@ -44,9 +44,6 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	@ServiceProperty(name = Heater.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@LogConfig
-	private ComponentLogger m_logger;
-
 	private Thread m_updaterThread;
 
 	private volatile long m_lastUpdateTime;
@@ -101,8 +98,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
 			
 			if (previousLevel!=level) {
-				super.setPropertyValue(Heater.HEATER_POWER_LEVEL, level);
-				m_logger.debug("Power level set to " + level);				
+				super.setPropertyValue(Heater.HEATER_POWER_LEVEL, level);			
 			}			
 		} else
 			super.setPropertyValue(propertyName, value);

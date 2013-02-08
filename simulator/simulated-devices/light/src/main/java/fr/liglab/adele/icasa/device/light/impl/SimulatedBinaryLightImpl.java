@@ -22,8 +22,6 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
@@ -41,9 +39,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 	@ServiceProperty(name = BinaryLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
-
-	@LogConfig
-	private ComponentLogger m_logger;
 
 	/**
 	 * Influence zone corresponding to the zone with highest level where the
@@ -92,7 +87,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 					try {
 						m_zone.setVariableValue("Illuminance", computeIlluminance());
 					} catch (Exception e) {
-						m_logger.error("Variiable Illuminance does not exist in zone " + m_zone.getId());
 					}
 				}
 			}

@@ -26,8 +26,6 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
@@ -52,10 +50,6 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     @ServiceProperty(name = AudioSource.AUDIO_SOURCE_IS_PLAYING, value = "false")
     private boolean m_isPlaying;
     
-
-    @LogConfig
-    private ComponentLogger m_logger;
-
     private AudioSourceStreamImpl m_stream = new AudioSourceStreamImpl();
 
     @Override
@@ -72,7 +66,6 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     public synchronized void play() {
         Object oldValue = m_isPlaying;
         m_isPlaying = true;
-        m_logger.info("Audio source playback has started");
         notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue));
     }
 
@@ -80,7 +73,6 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     public synchronized void pause() {
         Object oldValue = m_isPlaying;
         m_isPlaying = false;
-        m_logger.info("Audio source playback has paused");
         notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue));
     }
     

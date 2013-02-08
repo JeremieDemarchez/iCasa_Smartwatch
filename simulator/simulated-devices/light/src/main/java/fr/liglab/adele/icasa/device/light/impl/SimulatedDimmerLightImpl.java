@@ -42,8 +42,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	@ServiceProperty(name = DimmerLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@LogConfig
-	private ComponentLogger m_logger;
 	
 	/**
 	 * Influence zone corresponding to the zone with highest level where the device is located
@@ -90,7 +88,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 					try {
 						m_zone.setVariableValue("Illuminance", computeIlluminance());
 		         } catch (Exception e) {
-		         	m_logger.error("Variable Illuminance does not exist in zone " + m_zone.getId());
 		         }
 				}
 			}

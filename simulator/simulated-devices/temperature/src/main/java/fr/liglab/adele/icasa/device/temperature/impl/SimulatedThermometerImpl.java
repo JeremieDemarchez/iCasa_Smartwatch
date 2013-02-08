@@ -51,7 +51,6 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	public SimulatedThermometerImpl() {
 		super();
 		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
-		// setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, GenericDevice)
 	}
 
 	@Override

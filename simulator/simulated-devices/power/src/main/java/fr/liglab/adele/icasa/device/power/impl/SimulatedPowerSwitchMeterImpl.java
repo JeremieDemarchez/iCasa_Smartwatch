@@ -17,14 +17,8 @@ package fr.liglab.adele.icasa.device.power.impl;
 
 import java.util.List;
 
-import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.osgi.framework.Constants;
-import org.ow2.chameleon.handies.ipojo.log.LogConfig;
-import org.ow2.chameleon.handies.log.ComponentLogger;
 
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.power.PowerSwitchmeter;
@@ -41,34 +35,32 @@ import fr.liglab.adele.icasa.simulator.Zone;
  */
 
 /*
-@Component(name="iCASA.PowerSwitchMeter")
-@Provides(properties = {
-        @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-*/
-public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
-		PowerSwitchmeter, SimulatedDevice {
+ * @Component(name="iCASA.PowerSwitchMeter")
+ * 
+ * @Provides(properties = {
+ * 
+ * @StaticServiceProperty(type = "java.lang.String", name =
+ * Constants.SERVICE_DESCRIPTION) })
+ */
+public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements PowerSwitchmeter, SimulatedDevice {
 
 	@ServiceProperty(name = AbstractDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
-	
+
 	@ServiceProperty(name = PowerSwitch.POWERSWITCH_CURRENT_STATUS, value = "false")
 	private boolean m_currentStatus;
-	
+
 	@ServiceProperty(name = Powermeter.POWERMETER_CURRENT_RATING, value = "NaN")
 	private double m_currentRating;
-	
-	
-	@Property(name = "power.attachedDevice.name", mandatory = true)	
+
+	@Property(name = "power.attachedDevice.name", mandatory = true)
 	private String m_attachedDeviceName;
-	
-	@Property(name = "power.attachedDevice.watt", mandatory = true)	
+
+	@Property(name = "power.attachedDevice.watt", mandatory = true)
 	private double m_attachedDeviceWatt;
-	
-	@LogConfig
-    private ComponentLogger m_logger;
-	
-	//private volatile SimulatedEnvironment m_env;
-	
+
+	// private volatile SimulatedEnvironment m_env;
+
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
@@ -81,22 +73,22 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 
 	@Override
 	public synchronized boolean switchOn() {
-		if(m_currentStatus){
+		if (m_currentStatus) {
 			return false;
-		}else{
+		} else {
 			m_currentRating = m_attachedDeviceWatt;
-			m_currentStatus=true;
+			m_currentStatus = true;
 			return true;
 		}
 	}
 
 	@Override
 	public synchronized boolean switchOff() {
-		if(!m_currentStatus){
+		if (!m_currentStatus) {
 			return false;
-		}else{
+		} else {
 			m_currentRating = 0.0d;
-			m_currentStatus=false;
+			m_currentStatus = false;
 			return true;
 		}
 	}
@@ -105,17 +97,16 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements
 	public double getCurrentPowerRating() {
 		return m_currentRating;
 	}
-     
 
 	@Override
-   public void enterInZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   }
+	public void enterInZones(List<Zone> zones) {
+		// TODO Auto-generated method stub
+
+	}
 
 	@Override
-   public void leavingZones(List<Zone> zones) {
-	   // TODO Auto-generated method stub
-	   
-   } 
+	public void leavingZones(List<Zone> zones) {
+		// TODO Auto-generated method stub
+
+	}
 }
