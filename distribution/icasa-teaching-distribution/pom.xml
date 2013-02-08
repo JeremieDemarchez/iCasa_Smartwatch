@@ -23,7 +23,7 @@
   <parent>
 	<groupId>fr.liglab.adele.common</groupId>
 	<artifactId>distribution.base</artifactId>
-	<version>1.0.2</version>
+	<version>1.0.3</version>
 	<relativePath></relativePath>
   </parent>
 
@@ -32,7 +32,7 @@
   <artifactId>icasa.teaching.distribution</artifactId>
   <packaging>pom</packaging>
   <name>${productName} :: ${projectName}</name>
-  <version>${iCasaVersion}</version>
+  <version>0.0.1-SNAPSHOT</version>
 
     <!-- Project repositories -->
     <repositories>
@@ -80,6 +80,7 @@
 	<dependency>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>icasa.core.dp</artifactId>
+      <version>${project.version}</version>
 		<type>deployment-package</type>
 	</dependency>
 
@@ -87,7 +88,7 @@
       <dependency>
           <groupId>fr.liglab.adele.icasa</groupId>
           <artifactId>icasa.web</artifactId>
-          <version>0.0.1-SNAPSHOT</version>
+          <version>${project.version}</version>
           <type>zip</type>
       </dependency>
 	
