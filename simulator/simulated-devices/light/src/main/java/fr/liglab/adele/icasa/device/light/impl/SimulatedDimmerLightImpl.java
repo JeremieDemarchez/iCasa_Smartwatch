@@ -40,9 +40,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	@ServiceProperty(name = DimmerLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@LogConfig
-	private ComponentLogger m_logger;
-
 	/**
 	 * Influence zone corresponding to the zone with highest level where the device is located
 	 */
@@ -90,7 +87,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 					try {
 						m_zone.setVariableValue("Illuminance", computeIlluminance());
 					} catch (Exception e) {
-						m_logger.error("Variable Illuminance does not exist in zone " + m_zone.getId());
+						e.printStackTrace();
 					}
 				}
 			}
@@ -106,33 +103,33 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	 * @return the illuminance currently emitted by this light
 	 */
 	private double computeIlluminance() {
-		
+
 		double maxIlluminance = (Double) getPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE);
 		return getPowerLevel() * maxIlluminance;
 
-//		/** Change by jeremy */
-//		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
-//		double returnedIlluminance;
-//		int height = m_zone.getHeight();
-//		int width = m_zone.getWidth();
-//		double surface = height*width;				
-//		double powerLevel = getPowerLevel();
-//		double scaleFactor = 0.014; //1px -> 0.014m
-//		
-//		surface = scaleFactor*scaleFactor*surface;
-//		
-//		System.out.println("[DEBUG] width : "+width+" height : "+height+" surface : "+surface);
-//		returnedIlluminance = (powerLevel*maxIlluminance*lumens)/surface;
-//		if (returnedIlluminance>0){
-//			//Distortion function
-//			if(returnedIlluminance > maxIlluminance)
-//				returnedIlluminance = maxIlluminance;
-//			if(returnedIlluminance <0)
-//				returnedIlluminance = 0;
-//		}
-//		
-//		return returnedIlluminance;			
-}
+		//		/** Change by jeremy */
+		//		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
+		//		double returnedIlluminance;
+		//		int height = m_zone.getHeight();
+		//		int width = m_zone.getWidth();
+		//		double surface = height*width;				
+		//		double powerLevel = getPowerLevel();
+		//		double scaleFactor = 0.014; //1px -> 0.014m
+		//		
+		//		surface = scaleFactor*scaleFactor*surface;
+		//		
+		//		System.out.println("[DEBUG] width : "+width+" height : "+height+" surface : "+surface);
+		//		returnedIlluminance = (powerLevel*maxIlluminance*lumens)/surface;
+		//		if (returnedIlluminance>0){
+		//			//Distortion function
+		//			if(returnedIlluminance > maxIlluminance)
+		//				returnedIlluminance = maxIlluminance;
+		//			if(returnedIlluminance <0)
+		//				returnedIlluminance = 0;
+		//		}
+		//		
+		//		return returnedIlluminance;			
+	}
 
 
 	@Override
