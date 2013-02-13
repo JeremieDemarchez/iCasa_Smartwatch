@@ -40,7 +40,9 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	@ServiceProperty(name = DimmerLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	
+	@LogConfig
+	private ComponentLogger m_logger;
+
 	/**
 	 * Influence zone corresponding to the zone with highest level where the device is located
 	 */
@@ -50,7 +52,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 		setPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
 		setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, 0.0d);	
 	}
-	
+
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
@@ -68,32 +70,35 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	public synchronized double setPowerLevel(double level) {
 		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) 
 			throw new IllegalArgumentException("Invalid power level : " + level);
-		
+		//Add by jeremy
+		setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, level);
+
 		return level;
 	}
 
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
-	   if (propertyName.equals(DimmerLight.LIGHT_POWER_LEVEL)) {
+		if (propertyName.equals(DimmerLight.LIGHT_POWER_LEVEL)) {
 			double previousLevel = getPowerLevel();
-						
+
 			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
-	
+
 			if (previousLevel!=level) {
 				super.setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, level);
 				// Trying to modify zone variable
 				if (m_zone!=null) {
 					try {
 						m_zone.setVariableValue("Illuminance", computeIlluminance());
-		         } catch (Exception e) {
-		         }
+					} catch (Exception e) {
+						m_logger.error("Variable Illuminance does not exist in zone " + m_zone.getId());
+					}
 				}
 			}
-	   } else 
-	   	super.setPropertyValue(propertyName, value);
+		} else 
+			super.setPropertyValue(propertyName, value);
 	}
-	
-	
+
+
 	/**
 	 * Return the illuminance currently emitted by this light, according to its
 	 * state.
@@ -101,9 +106,33 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	 * @return the illuminance currently emitted by this light
 	 */
 	private double computeIlluminance() {
+		
 		double maxIlluminance = (Double) getPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE);
 		return getPowerLevel() * maxIlluminance;
-	}
+
+//		/** Change by jeremy */
+//		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
+//		double returnedIlluminance;
+//		int height = m_zone.getHeight();
+//		int width = m_zone.getWidth();
+//		double surface = height*width;				
+//		double powerLevel = getPowerLevel();
+//		double scaleFactor = 0.014; //1px -> 0.014m
+//		
+//		surface = scaleFactor*scaleFactor*surface;
+//		
+//		System.out.println("[DEBUG] width : "+width+" height : "+height+" surface : "+surface);
+//		returnedIlluminance = (powerLevel*maxIlluminance*lumens)/surface;
+//		if (returnedIlluminance>0){
+//			//Distortion function
+//			if(returnedIlluminance > maxIlluminance)
+//				returnedIlluminance = maxIlluminance;
+//			if(returnedIlluminance <0)
+//				returnedIlluminance = 0;
+//		}
+//		
+//		return returnedIlluminance;			
+}
 
 
 	@Override
@@ -115,6 +144,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
-	   m_zone = null;	
+		m_zone = null;	
 	}
 }
