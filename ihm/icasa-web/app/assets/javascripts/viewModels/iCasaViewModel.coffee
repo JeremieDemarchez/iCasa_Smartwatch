@@ -878,6 +878,30 @@ define(['jquery',
               device.statusWindowVisible(false);
               device.statusWindowVisible(true);
 
+           @deviceFilter = ko.observable("");
+
+           @sortDevices = (order, property) =>
+             @devices().sort((a,b) ->
+               if a[property]() > b[property]()
+                 return 1*order
+               else if b[property]() > a[property]()
+                 return -1*order
+               else
+                 return 0
+             )
+             tps = @deviceFilter();
+             @deviceFilter("\\");
+             @deviceFilter(tps);
+
+           @filteredDevices = ko.computed(() =>
+              try
+                filter = new RegExp(@deviceFilter(), "i")
+              catch err
+                console.log("Bad regexp : "+err.message);
+                filter = new RegExp("", "i")
+              return ko.utils.arrayFilter(@devices(), (device) ->
+                return filter.test(device.name()))
+           , @);
 
            # person management
 
