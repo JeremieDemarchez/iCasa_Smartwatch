@@ -90,12 +90,12 @@
     });
 
     $( ".scriptLineCell" ).click(function() {
-        console.log("click on raw");
         $( ".scriptLineCell" ).each(function(){
             $( this ).parent().css("background", "#FFFFFF");
         });
         $(this).parent().css("background", "#E5E5E5");
 
+        $( "#scriptPlayerDialogForm" ).children().remove();
     });
 
     $( "#scriptPlayerDialogCb").change(function() {
