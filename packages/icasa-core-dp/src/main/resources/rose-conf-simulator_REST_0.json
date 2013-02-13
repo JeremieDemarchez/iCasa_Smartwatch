@@ -6,7 +6,7 @@
 		"connection" : [
 				{
 				"out" : {
-					"service_filter" : "(|(objectClass=fr.liglab.adele.icasa.remote.impl.ScriptPlayerREST)(objectClass=fr.liglab.adele.icasa.remote.impl.ZoneREST)(objectClass=fr.liglab.adele.icasa.remote.impl.PersonREST)(objectClass=fr.liglab.adele.icasa.remote.impl.DeviceREST))"
+					"service_filter" : "(|(objectClass=fr.liglab.adele.icasa.remote.impl.ScriptPlayerREST)(objectClass=fr.liglab.adele.icasa.remote.impl.ClockREST)(objectClass=fr.liglab.adele.icasa.remote.impl.ZoneREST)(objectClass=fr.liglab.adele.icasa.remote.impl.PersonREST)(objectClass=fr.liglab.adele.icasa.remote.impl.DeviceREST))"
 					}
 				}
 		],

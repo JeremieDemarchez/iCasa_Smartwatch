@@ -51,6 +51,7 @@ public class MovePersonIntoZoneCommand extends AbstractCommand {
 
 	@Override
 	public Object execute() throws Exception {
+		System.out.println("Moving " + personId + " to Zone " + zoneId);
 		simulationManager.setPersonZone(personId, zoneId);
 		return null;
 	}

@@ -15,10 +15,18 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.simulator.*;
-import fr.liglab.adele.icasa.simulator.listener.MultiEventListener;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
 
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Validate;
 import org.atmosphere.cpr.AtmosphereInterceptor;
 import org.atmosphere.cpr.AtmosphereResponse;
 import org.atmosphere.cpr.Broadcaster;
@@ -31,11 +39,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Zone;
+import fr.liglab.adele.icasa.simulator.listener.MultiEventListener;
 
 @Component(name = "iCasa-event-broadcast")
 @Instantiate(name = "iCasa-event-broadcast-1")

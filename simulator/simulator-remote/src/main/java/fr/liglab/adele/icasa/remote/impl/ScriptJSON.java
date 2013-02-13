@@ -15,19 +15,12 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import java.text.ParseException;
-import java.util.Date;
-import java.text.SimpleDateFormat;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 public class ScriptJSON {
 

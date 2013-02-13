@@ -77,7 +77,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * Flag to determine if a current execution script is paused 
 	 */
-	private boolean paused = false;
+	//private boolean paused = false;
 
 	private float executedPercentage;
 	
@@ -88,7 +88,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	public State getState() {
 		if (executorThread != null)
 			if (executorThread.isAlive())
-				if (!paused)
+				if (!clock.isPaused())
 					return ScriptExecutor.State.EXECUTING;
 				else
 					return ScriptExecutor.State.PAUSED;
@@ -123,17 +123,17 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Override
 	public void pause() {
+		System.out.println("=========  Pausing script =========");
 		synchronized (clock) {
 			clock.pause();
-			paused = true;
 		}
 	}
 
 	@Override
 	public void resume() {
+		System.out.println("=========  Resuming script =========");
 		synchronized (clock) {
 			clock.resume();
-			paused = false;
 		}
 	}
 
@@ -168,6 +168,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			return;
 
 		executorThread = new Thread(new CommandExecutorRunnable(actions));
+		clock.reset();
 		clock.setStartDate(startDate);
 		clock.setFactor(factor);
 		clock.resume();
@@ -368,7 +369,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
     }
 
     @Override
-    public Date getStartDate() {
+    public long getStartDate() {
         return clock.getStartDate();
     }
 

@@ -45,7 +45,7 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 @Instantiate(name="remote-rest-script-player-0")
 @Provides(specifications={ScriptPlayerREST.class})
 @Path(value="/scriptPlayer/")
-public class ScriptPlayerREST {
+public class ScriptPlayerREST extends AbstractREST {
 
     public enum ScriptState {
         STARTED("started"), STOPPED("stopped"), PAUSED("paused");
@@ -82,31 +82,10 @@ public class ScriptPlayerREST {
     private SimulationManager _simulationMgr;
         
 
-    /*
-     * Methods to manage cross domain requests
-     */
-    private String _corsHeaders;
-
-    private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
-        Response.ResponseBuilder rb = req
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
-                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
-                .header("Access-Control-Max-Age", "-1")
-                .header("Pragma", "no-cache");
-
-        return rb.build();
-    }
-
-    private Response makeCORS(Response.ResponseBuilder req) {
-        return makeCORS(req, _corsHeaders);
-    }
-
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/scripts/")
-    public Response zones() {
+    public Response scripts() {
         return makeCORS(Response.ok(getScripts()));
     }
 
@@ -145,7 +124,7 @@ public class ScriptPlayerREST {
      * @return a JSON array containing all scripts.
      */
     public String getScripts() {
-        boolean atLeastOne = false;
+        //boolean atLeastOne = false;
         JSONArray scripts = new JSONArray();
         for (String scriptName : _scriptExecutor.getScriptList()) {
             JSONObject script = getScriptJSON(scriptName);
@@ -154,7 +133,6 @@ public class ScriptPlayerREST {
 
             scripts.put(script);
         }
-
         return scripts.toString();
     }
 
@@ -263,8 +241,7 @@ public class ScriptPlayerREST {
     @Path(value="/script/")
     public Response createScript(String content) {
    	 
-   	 ScriptJSON scriptJSON = ScriptJSON.fromString(content);
-   	 
+   	 ScriptJSON scriptJSON = ScriptJSON.fromString(content);   	 
    	 String fileName = scriptJSON.getId();
    	 
    	 _simulationMgr.saveSimulationState(fileName);

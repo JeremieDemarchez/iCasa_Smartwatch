@@ -19,17 +19,64 @@ import java.util.Date;
 
 /**
  * @author Gabriel Pedraza Ferreira
- *
+ * 
  */
 public interface Clock {
-   
-    public long currentTimeMillis();
-    public void setStartDate(long startDate);
-    public void setFactor(int factor);
-    public long getElapsedTime();
-    public void pause();
-    public void resume();
-    public void reset();
-    public int getFactor();
-    public Date getStartDate();
+
+	/**
+	 * Returns the current time in (virtual) milliseconds
+	 * @return
+	 */
+	public long currentTimeMillis();
+
+	/**
+	 * Sets the start date of the clock
+	 * @param startDate
+	 */
+	public void setStartDate(long startDate);
+
+	/**
+	 * Set the clock factor (speed of virtual time)
+	 * @param factor
+	 */
+	public void setFactor(int factor);
+
+	/**
+	 * gets the elapsed time in (virtual) milliseconds from the start date.
+	 * @return
+	 */
+	public long getElapsedTime();
+
+	/**
+	 * Pauses the (virtual) time flowing
+	 */
+	public void pause();
+
+	/**
+	 * Resumes the (virtual) time flowing
+	 */
+	public void resume();
+
+	/**
+	 * Sets the elapsed time to 0 and pauses the (virtual) time flowing
+	 */
+	public void reset();
+
+	/**
+	 * Returns the clock factor
+	 * @return
+	 */
+	public int getFactor();
+
+	/**
+	 * Returns the clock start date
+	 * @return
+	 */
+	public long getStartDate();
+	
+	/**
+	 * Returns true if the clock is paused, false otherwise
+	 * @return
+	 */
+	public boolean isPaused();
 }

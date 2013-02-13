@@ -39,31 +39,12 @@ import fr.liglab.adele.icasa.simulator.Position;
 @Instantiate(name="remote-rest-person-0")
 @Provides(specifications={PersonREST.class})
 @Path(value="/persons/")
-public class PersonREST {
+public class PersonREST extends AbstractREST {
 
     @Requires
     private SimulationManager _simulationMgr;
 
-    /*
-     * Methods to manage cross domain requests
-     */
-    private String _corsHeaders;
 
-    private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
-        Response.ResponseBuilder rb = req
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
-                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
-                .header("Access-Control-Max-Age", "-1")
-                .header("Pragma", "no-cache");
-
-        return rb.build();
-    }
-
-    private Response makeCORS(Response.ResponseBuilder req) {
-        return makeCORS(req, _corsHeaders);
-    }
 
     /**
      * Returns a JSON array containing all persons.
@@ -71,7 +52,7 @@ public class PersonREST {
      * @return a JSON array containing all persons.
      */
     public String getPersons() {
-        boolean atLeastOne = false;
+        // boolean atLeastOne = false;
         JSONArray currentPersons = new JSONArray();
         for (Person person : _simulationMgr.getPersons()) {
             JSONObject personJSON = getPersonJSON(person);
@@ -126,7 +107,7 @@ public class PersonREST {
      * @return a JSON array containing all person types.
      */
     public String getPersonTypes() {
-        boolean atLeastOne = false;
+        //boolean atLeastOne = false;
         JSONArray currentPersonTypes = new JSONArray();
         for (String personTypeStr : _simulationMgr.getPersonTypes()) {
             JSONObject personType = getPersonTypeJSON(personTypeStr);
@@ -263,7 +244,7 @@ public class PersonREST {
 
         Person foundPerson = findPerson(personId);
         if (foundPerson == null)
-            return Response.status(404).build();
+      	  return makeCORS(Response.status(Response.Status.NOT_FOUND));
 
         if ((personJSON.getPositionX() != null) || (personJSON.getPositionY() != null)) {
             Position personPosition = foundPerson.getCenterAbsolutePosition();
@@ -276,9 +257,7 @@ public class PersonREST {
             _simulationMgr.setPersonZone(personId, personJSON.getLocation());
         }
 
-        if (foundPerson == null)
-            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
-
+        
         JSONObject newPersonJSON = getPersonJSON(foundPerson);
 
         return makeCORS(Response.ok(newPersonJSON.toString()));

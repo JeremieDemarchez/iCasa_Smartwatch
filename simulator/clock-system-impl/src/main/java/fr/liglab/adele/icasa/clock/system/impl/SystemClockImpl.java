@@ -28,7 +28,6 @@ import java.util.Date;
  */
 public class SystemClockImpl implements Clock {
 
-	private static final Logger logger = LoggerFactory.getLogger(SystemClockImpl.class);
    
 	
 	private long initDate;
@@ -84,8 +83,14 @@ public class SystemClockImpl implements Clock {
 	   return currentTimeMillis() - initDate;
    }
 
-    public Date getStartDate() {
-        return new Date(initDate);
+    public long getStartDate() {
+   	 return initDate;
+        //return new Date(initDate);
     }
+
+	@Override
+   public boolean isPaused() {
+	   return false;
+   }
 
 }

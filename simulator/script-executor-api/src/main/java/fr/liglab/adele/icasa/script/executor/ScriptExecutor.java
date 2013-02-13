@@ -130,6 +130,6 @@ public interface ScriptExecutor {
 	 * 
 	 * @return
 	 */
-	public Date getStartDate();
+	public long getStartDate();
 
 }

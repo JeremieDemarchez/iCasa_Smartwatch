@@ -1,6 +1,41 @@
 <behavior startdate="2011.10.27.00.00.00" factor="1440">
 
-  <set-property deviceID="BiLi-A7496W-S" propertyId="light.powerStatus" value="true" />
-  <set-property deviceID="Dimi-X3258Q-P" propertyId="light.powerLevel" value="0.3" />
+	<!--
+	<create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
+	<create-zone id="livingroom" leftX="410" topY="28" width="245" height="350" />
+	<create-zone id="bedroom"  leftX="55" topY="370" width="259" height="210" />	
+	<create-zone id="bathroom"  leftX="55" topY="20" width="260" height="350" />			
+	-->
+	
+	<delay value="200" />
+	<create-person id="Paul" type="Grandfather" />
+	
+	
+	<delay value="200" />
+	<move-person-zone zoneId="bedroom" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="livingroom" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="kitchen" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="bathroom" personId="Paul" />
+	
+	<delay value="200" />
+	<move-person-zone zoneId="bedroom" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="livingroom" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="kitchen" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="bathroom" personId="Paul" />
+
+    <delay value="200" />
+	<move-person-zone zoneId="bedroom" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="livingroom" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="kitchen" personId="Paul" />
+	<delay value="200" />
+	<move-person-zone zoneId="bathroom" personId="Paul" />	
   
 </behavior>

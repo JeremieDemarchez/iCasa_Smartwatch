@@ -77,8 +77,6 @@
 	<repair-device deviceId="Pres-A1255D-D" />
 	<delay value="100" />
 	<remove-device deviceId="Pres-A1255D-D" />	
-	<delay value="100" />
-	<create-person id="Paul" type="Grandfather" />
     <delay value="100" />
 	<set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
 	

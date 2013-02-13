@@ -15,12 +15,9 @@
  */
 package fr.liglab.adele.icasa.clock.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.Date;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
-
-import java.util.Date;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -46,7 +43,7 @@ public class SimulatedClockImpl implements Clock {
 	/**
 	 * Indicates if the clock has been paused
 	 */
-	private boolean pause = true;
+	private volatile boolean pause = true;
 	
 	private static final int TIME_THREAD_STEEP = 20;
 
@@ -55,7 +52,6 @@ public class SimulatedClockImpl implements Clock {
 	 */
 	private Thread timeThread;
 
-	private static final Logger logger = LoggerFactory.getLogger(SimulatedClockImpl.class);
 
 	/*
 	 * (non-Javadoc)
@@ -76,8 +72,9 @@ public class SimulatedClockImpl implements Clock {
 	}
 
     @Override
-    public Date getStartDate() {
-        return new Date(initDate);
+    public long getStartDate() {
+        //return new Date(initDate);
+   	 return initDate;
     }
 
     /*
@@ -120,6 +117,11 @@ public class SimulatedClockImpl implements Clock {
 	   return elapsedTime;
 	}
 	
+	@Override
+   public boolean isPaused() {
+	   return pause;
+   }
+	
 	public void start() {		
 		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
 		timeThread.start();
@@ -133,6 +135,7 @@ public class SimulatedClockImpl implements Clock {
 	      e.printStackTrace();
       }
 	}
+	
 	
 	/**
 	 * Clock Time mover Thread (Runnable) class
@@ -159,4 +162,6 @@ public class SimulatedClockImpl implements Clock {
 			}
 		}
 	}
+
+
 }

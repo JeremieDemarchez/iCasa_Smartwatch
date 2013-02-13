@@ -35,7 +35,6 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.Zone;
@@ -47,31 +46,11 @@ import fr.liglab.adele.icasa.simulator.Zone;
 @Instantiate(name = "remote-rest-zone-0")
 @Provides(specifications = { ZoneREST.class })
 @Path(value = "/zones/")
-public class ZoneREST {
+public class ZoneREST extends AbstractREST {
 
 	@Requires
 	private SimulationManager _simulationMgr;
 
-	/*
-	 * Methods to manage cross domain requests
-	 */
-	private String _corsHeaders;
-
-	private Response makeCORS(Response.ResponseBuilder req, String returnMethod) {
-		Response.ResponseBuilder rb = req
-		      .header("Access-Control-Allow-Origin", "*")
-		      .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		      .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
-		      .header("Access-Control-Allow-Headers",
-		            "Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
-		      .header("Access-Control-Max-Age", "-1").header("Pragma", "no-cache");
-
-		return rb.build();
-	}
-
-	private Response makeCORS(Response.ResponseBuilder req) {
-		return makeCORS(req, _corsHeaders);
-	}
 
 	public JSONObject getZoneJSON(Zone zone) {
 		JSONObject zoneJSON = null;
@@ -84,8 +63,7 @@ public class ZoneREST {
 			zoneJSON.put("topY", zone.getLeftTopAbsolutePosition().y);
 			zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
 			zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
-			zoneJSON.put("isRoom", true); // TODO change it when Zone API will be
-			                              // improved
+			zoneJSON.put("isRoom", true); // TODO change it when Zone API will be improved
 
 			JSONObject propObject = new JSONObject();
 			for (String variable : zone.getVariableNames()) {

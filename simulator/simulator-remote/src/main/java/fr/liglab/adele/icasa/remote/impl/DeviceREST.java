@@ -18,23 +18,34 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
-import fr.liglab.adele.icasa.simulator.Position;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import java.text.ParseException;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import java.util.*;
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.ResponseBuilder;
-import java.text.ParseException;
-
-import org.json.*;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * @author Thomas Leveque
@@ -44,31 +55,11 @@ import org.json.*;
 @Instantiate(name="remote-rest-device-0")
 @Provides(specifications={DeviceREST.class})
 @Path(value="/devices/")
-public class DeviceREST {
+public class DeviceREST extends AbstractREST {
 
     @Requires
     private SimulationManager _simulationMgr;
 
-    /*
-     * Methods to manage cross domain requests
-     */
-    private String _corsHeaders;
-
-    private Response makeCORS(ResponseBuilder req, String returnMethod) {
-        ResponseBuilder rb = req
-                .header("Access-Control-Allow-Origin", "*")
-                .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-                .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
-                .header("Access-Control-Allow-Headers","Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
-                .header("Access-Control-Max-Age", "-1")
-                .header("Pragma", "no-cache");
-
-        return rb.build();
-    }
-
-    private Response makeCORS(ResponseBuilder req) {
-        return makeCORS(req, _corsHeaders);
-    }
 
     /**
      * Returns a JSON array containing all devices.
@@ -76,7 +67,7 @@ public class DeviceREST {
      * @return a JSON array containing all devices.
      */
     public String getDevices() {
-        boolean atLeastOne = false;
+        //boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
         for (LocatedDevice device : _simulationMgr.getDevices()) {
             JSONObject deviceJSON = getDeviceJSON(device);
@@ -142,7 +133,6 @@ public class DeviceREST {
      * @return a JSON array containing all devices.
      */
     public String getDeviceTypes() {
-        boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
         for (String deviceTypeStr : _simulationMgr.getDeviceTypes()) {
             JSONObject deviceType = getDeviceTypeJSON(deviceTypeStr);
@@ -284,15 +274,13 @@ public class DeviceREST {
         LocatedDevice newDevice = null;
         if (deviceType != null) {
             // Generate a serial number
-            Random m_random = new Random();
+            //Random m_random = new Random();
             //String deviceId = deviceType + "-" + Long.toString(m_random.nextLong(), 16);
 
             String deviceId = deviceJSON.getId();
             
             Map<String, Object> properties = new HashMap<String, Object>();
             properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-            //properties.put(GenericDevice.STATE_PROPERTY_NAME, GenericDevice.STATE_ACTIVATED);
-            //properties.put(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
 
             try {
                 _simulationMgr.createDevice(deviceType, deviceId, properties);
@@ -309,7 +297,7 @@ public class DeviceREST {
 
         JSONObject newDeviceJSON = getDeviceJSON(newDevice);
 
-        return makeCORS(Response.ok(newDeviceJSON.toString())); //TODO check that newDevice must be included in the response body
+        return makeCORS(Response.ok(newDeviceJSON.toString()));
     }
 
     /**
