@@ -24,6 +24,7 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -37,7 +38,7 @@ import fr.liglab.adele.icasa.simulator.Position;
  */
 @Component(name="remote-rest-person")
 @Instantiate(name="remote-rest-person-0")
-@Provides(specifications={PersonREST.class})
+@Provides(specifications={PersonREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value="/persons/")
 public class PersonREST extends AbstractREST {
 

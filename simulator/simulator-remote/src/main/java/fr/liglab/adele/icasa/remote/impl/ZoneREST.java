@@ -31,6 +31,7 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -44,7 +45,7 @@ import fr.liglab.adele.icasa.simulator.Zone;
  */
 @Component(name = "remote-rest-zone")
 @Instantiate(name = "remote-rest-zone-0")
-@Provides(specifications = { ZoneREST.class })
+@Provides(specifications = { ZoneREST.class }, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value = "/zones/")
 public class ZoneREST extends AbstractREST {
 

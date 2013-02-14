@@ -38,6 +38,7 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -45,6 +46,7 @@ import org.json.JSONObject;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
@@ -53,7 +55,7 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  */
 @Component(name="remote-rest-device")
 @Instantiate(name="remote-rest-device-0")
-@Provides(specifications={DeviceREST.class})
+@Provides(specifications={DeviceREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value="/devices/")
 public class DeviceREST extends AbstractREST {
 
@@ -93,7 +95,7 @@ public class DeviceREST extends AbstractREST {
             deviceJSON.putOnce("id", device.getSerialNumber());
             deviceJSON.putOnce("name", device.getSerialNumber());
             deviceJSON.put("fault", device.getPropertyValue(GenericDevice.FAULT_PROPERTY_NAME));
-            deviceJSON.put("location", device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME));
+            deviceJSON.put("location", device.getPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME));
             deviceJSON.put("state", device.getPropertyValue(GenericDevice.STATE_PROPERTY_NAME));
             deviceJSON.put("type", deviceType);
             if (devicePosition != null) {
@@ -248,7 +250,7 @@ public class DeviceREST extends AbstractREST {
                     newPosY = updatedDevice.getPositionY();
                 _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
             } else if (updatedDevice.getLocation() != null)
-                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulationManager.LOCATION_PROP_NAME, updatedDevice.getLocation());
+                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, updatedDevice.getLocation());
         }
 
         JSONObject deviceJSON = getDeviceJSON(device);

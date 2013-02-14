@@ -3,14 +3,15 @@
 		"id" : "server1",
 		"host" : "localhost",
 
-		"connection" : [
+		"connection" : [				
 				{
 				"out" : {
-					"service_filter" : "(|(objectClass=fr.liglab.adele.icasa.remote.impl.ScriptPlayerREST)(objectClass=fr.liglab.adele.icasa.remote.impl.ClockREST)(objectClass=fr.liglab.adele.icasa.remote.impl.ZoneREST)(objectClass=fr.liglab.adele.icasa.remote.impl.PersonREST)(objectClass=fr.liglab.adele.icasa.remote.impl.DeviceREST))"
-					}
+					"service_filter" : "(&(iCasa-REST=true)(!(objectClass=org.osgi.service.remoteserviceadmin.ExportReference)))"
+					}					
 				}
+				
 		],
-
+		
 		"component" : [
 			{ 
 			  "factory" : "RoSe_exporter.jersey",

@@ -147,8 +147,4 @@ public class ZoneJSON {
    public void setBottomY(Integer bottomY) {
    	this.bottomY = bottomY;
    }
-
-
-
-
 }

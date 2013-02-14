@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.remote.impl;
 
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -39,6 +40,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
+import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
@@ -63,6 +65,11 @@ public class EventBroadcast extends OnMessage<String> {
 
 	@Requires
 	private SimulationManager _simulMgr;
+	
+	@Requires
+	private Clock clock;
+	
+	private Thread clockThread;
 
 	
 	// TODO: Is it really necessary?
@@ -106,6 +113,12 @@ public class EventBroadcast extends OnMessage<String> {
 		} catch (NamespaceException e) {
 			e.printStackTrace();
 		}
+		
+		//Start the clock thread 
+		
+		clockThread = new Thread(new ClockRunnable());
+		clockThread.start();
+		
 	}
 
 	@Invalidate
@@ -119,6 +132,17 @@ public class EventBroadcast extends OnMessage<String> {
 		_interceptors.clear();
 
 		_httpService.unregister("/event");
+		
+		
+		//Stops the clock thread
+
+		try {
+			clockThread.interrupt();
+	      clockThread.join();
+      } catch (InterruptedException e) {
+	      e.printStackTrace();
+      }
+		
 	}
 
 	@Override
@@ -441,6 +465,46 @@ public class EventBroadcast extends OnMessage<String> {
             }
       }
 
+	}
+	
+	class ClockRunnable implements Runnable {
+
+		@Override
+      public void run() {
+			boolean isInterrupted = false;
+			while (!isInterrupted) {
+				try {
+					JSONObject clockJSON = new JSONObject();
+					try {
+	               clockJSON.putOnce("startDateStr", getDate(clock.getStartDate()));
+						clockJSON.putOnce("startDate", clock.getStartDate());
+						clockJSON.putOnce("currentDateStr", getDate(clock.currentTimeMillis()));
+						clockJSON.putOnce("currentTime", clock.currentTimeMillis());
+						clockJSON.putOnce("factor", clock.getFactor());
+						clockJSON.putOnce("pause", clock.isPaused());
+						sendEvent(clockJSON);
+               } catch (JSONException e) {
+	               e.printStackTrace();
+               }
+
+					
+					Thread.sleep(1000);
+				} catch (InterruptedException e) {
+					isInterrupted = true;
+				}
+			}
+		}
+	            
+		
+		private String getDate(long timeInMs) {
+			return getDate((new Date(timeInMs)));
+		}
+
+		private String getDate(Date date) {
+			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
+			return format.format(date);
+		}
+		
 	}
 
 }
