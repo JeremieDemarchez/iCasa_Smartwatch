@@ -47,7 +47,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 
 	public SimulatedDimmerLightImpl() {
 		setPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
-		setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, 0.0d);	
+		super.setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, 0.0d);	
 	}
 
 	@Override
@@ -99,36 +99,24 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	/**
 	 * Return the illuminance currently emitted by this light, according to its
 	 * state.
-	 * 
+	 * The formula used to compute the illuminance is :
+	 * Illuminance [cd/m² or lux]=(power[W]*680.0[lumens])/surface[m²] 
 	 * @return the illuminance currently emitted by this light
 	 */
 	private double computeIlluminance() {
-
-		double maxIlluminance = (Double) getPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE);
-		return getPowerLevel() * maxIlluminance;
-
-		//		/** Change by jeremy */
-		//		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
-		//		double returnedIlluminance;
-		//		int height = m_zone.getHeight();
-		//		int width = m_zone.getWidth();
-		//		double surface = height*width;				
-		//		double powerLevel = getPowerLevel();
-		//		double scaleFactor = 0.014; //1px -> 0.014m
-		//		
-		//		surface = scaleFactor*scaleFactor*surface;
-		//		
-		//		System.out.println("[DEBUG] width : "+width+" height : "+height+" surface : "+surface);
-		//		returnedIlluminance = (powerLevel*maxIlluminance*lumens)/surface;
-		//		if (returnedIlluminance>0){
-		//			//Distortion function
-		//			if(returnedIlluminance > maxIlluminance)
-		//				returnedIlluminance = maxIlluminance;
-		//			if(returnedIlluminance <0)
-		//				returnedIlluminance = 0;
-		//		}
-		//		
-		//		return returnedIlluminance;			
+		
+		double returnedIlluminance=0.0;
+		int height = m_zone.getHeight();
+		int width = m_zone.getWidth();
+		double surface = 0;				
+		double powerLevel = getPowerLevel();
+		double scaleFactor = 0.014; //1px -> 0.014m
+		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
+		
+		surface = scaleFactor*scaleFactor*height*width;
+		returnedIlluminance = (powerLevel*100.0*lumens)/surface;
+		
+		return returnedIlluminance;			
 	}
 
 
