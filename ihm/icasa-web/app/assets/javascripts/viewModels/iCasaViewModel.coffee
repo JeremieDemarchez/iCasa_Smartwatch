@@ -879,9 +879,11 @@ define(['jquery',
               device.statusWindowVisible(true);
 
            @deviceFilter = ko.observable("");
+           @zoneFilter = ko.observable("");
+           @personFilter = ko.observable("");
 
-           @sortDevices = (order, property) =>
-             @devices().sort((a,b) ->
+           @sortField = (order, list, property) =>
+             @[list+"s"]().sort((a,b) ->
                if a[property]() > b[property]()
                  return 1*order
                else if b[property]() > a[property]()
@@ -889,19 +891,47 @@ define(['jquery',
                else
                  return 0
              )
-             tps = @deviceFilter();
-             @deviceFilter("\\");
-             @deviceFilter(tps);
+             tps = @[list+"Filter"]();
+             @[list+"Filter"]("\\");
+             @[list+"Filter"](tps);
 
-           @filteredDevices = ko.computed(() =>
+           @filteredList = (list) =>
+              opt = @[list+"Filter"]().split("=");
+              if opt.length <= 1
+                attr = "name";
+                search = opt[0];
+              else
+                attr = opt[0];
+                search = opt[1];
+
               try
-                filter = new RegExp(@deviceFilter(), "i")
+                filter = new RegExp(search, "i");
               catch err
                 console.log("Bad regexp : "+err.message);
                 filter = new RegExp("", "i")
-              return ko.utils.arrayFilter(@devices(), (device) ->
-                return filter.test(device.name()))
-           , @);
+              return ko.utils.arrayFilter( @[list+"s"](), (element) ->
+                try
+                  if attr == "name" or attr == "state" or attr == "location" or attr == "falt" or attr == "id"
+                    return filter.test( element[attr]() )
+                  else
+                    return filter.test( element.getPropertyValue(attr) )
+
+                catch err
+                  return false
+              )
+
+           # 3 fct for each tab
+           @filteredDevices = ko.computed(() =>
+              return @filteredList("device")
+           , @)
+
+           @filteredZones = ko.computed(() =>
+              return @filteredList("zone")
+           , @)
+
+           @filteredPersons = ko.computed(() =>
+              return @filteredList("person")
+           , @)
 
            # person management
 
