@@ -42,9 +42,6 @@ public class ZoneJSON {
     private Integer bottomY;
     
 
-    public ZoneJSON() {
-        //do nothing
-    }
 
     public static ZoneJSON fromString(String jsonStr) {
         ZoneJSON zone = null;

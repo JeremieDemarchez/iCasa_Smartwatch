@@ -15,22 +15,30 @@
  */
 package fr.liglab.adele.icasa.remote.impl;
 
-import javax.ws.rs.*;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.OPTIONS;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * @author Thomas Leveque
@@ -56,7 +64,7 @@ public class PersonREST extends AbstractREST {
         // boolean atLeastOne = false;
         JSONArray currentPersons = new JSONArray();
         for (Person person : _simulationMgr.getPersons()) {
-            JSONObject personJSON = getPersonJSON(person);
+            JSONObject personJSON = IcasaJSONUtil.getPersonJSON(person);
             if (personJSON == null)
                 continue;
 
@@ -66,41 +74,6 @@ public class PersonREST extends AbstractREST {
         return currentPersons.toString();
     }
 
-    public JSONObject getPersonJSON(Person person) {
-        JSONObject personJSON = null;
-        try {
-            personJSON = new JSONObject();
-            personJSON.putOnce(PersonJSON.ID_PROP, person.getName());
-            personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
-            personJSON.putOnce(PersonJSON.TYPE_PROP, person.getPersonType());
-
-            Position personPosition = person.getCenterAbsolutePosition();
-            if (personPosition != null) {
-                personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
-                personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
-            }
-            personJSON.putOnce(PersonJSON.LOCATION_PROP, person.getLocation());
-        } catch (JSONException e) {
-            e.printStackTrace();
-            personJSON = null;
-        }
-
-        return personJSON;
-    }
-
-    private JSONObject getPersonTypeJSON(String personTypeStr) {
-        JSONObject personTypeJSON = null;
-        try {
-            personTypeJSON = new JSONObject();
-            personTypeJSON.putOnce("id", personTypeStr);
-            personTypeJSON.putOnce("name", personTypeStr);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            personTypeJSON = null;
-        }
-
-        return personTypeJSON;
-    }
 
     /**
      * Returns a JSON array containing all person types.
@@ -111,7 +84,7 @@ public class PersonREST extends AbstractREST {
         //boolean atLeastOne = false;
         JSONArray currentPersonTypes = new JSONArray();
         for (String personTypeStr : _simulationMgr.getPersonTypes()) {
-            JSONObject personType = getPersonTypeJSON(personTypeStr);
+            JSONObject personType = IcasaJSONUtil.getPersonTypeJSON(personTypeStr);
             if (personType == null)
                 continue;
 
@@ -183,7 +156,7 @@ public class PersonREST extends AbstractREST {
         if (foundPerson == null) {
             return makeCORS(Response.status(404));
         } else {
-            JSONObject foundPersonJSON = getPersonJSON(foundPerson);
+            JSONObject foundPersonJSON = IcasaJSONUtil.getPersonJSON(foundPerson);
 
             return makeCORS(Response.ok(foundPersonJSON.toString()));
         }
@@ -222,7 +195,7 @@ public class PersonREST extends AbstractREST {
         if (newPerson == null)
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
-        JSONObject newPersonJSON = getPersonJSON(newPerson);
+        JSONObject newPersonJSON = IcasaJSONUtil.getPersonJSON(newPerson);
 
         return makeCORS(Response.ok(newPersonJSON.toString()));
     }
@@ -259,7 +232,7 @@ public class PersonREST extends AbstractREST {
         }
 
         
-        JSONObject newPersonJSON = getPersonJSON(foundPerson);
+        JSONObject newPersonJSON = IcasaJSONUtil.getPersonJSON(foundPerson);
 
         return makeCORS(Response.ok(newPersonJSON.toString()));
     }
