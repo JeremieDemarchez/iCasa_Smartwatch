@@ -38,13 +38,15 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Position;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
@@ -53,98 +55,13 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  */
 @Component(name="remote-rest-device")
 @Instantiate(name="remote-rest-device-0")
-@Provides(specifications={DeviceREST.class})
+@Provides(specifications={DeviceREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value="/devices/")
 public class DeviceREST extends AbstractREST {
 
     @Requires
     private SimulationManager _simulationMgr;
-
-
-    /**
-     * Returns a JSON array containing all devices.
-     *
-     * @return a JSON array containing all devices.
-     */
-    public String getDevices() {
-        //boolean atLeastOne = false;
-        JSONArray currentDevices = new JSONArray();
-        for (LocatedDevice device : _simulationMgr.getDevices()) {
-            JSONObject deviceJSON = getDeviceJSON(device);
-            if (deviceJSON == null)
-                continue;
-
-            currentDevices.put(deviceJSON);
-        }
-
-        return currentDevices.toString();
-    }
-
-    public JSONObject getDeviceJSON(LocatedDevice device) {
-        String deviceType = device.getType();
-        if (deviceType == null)
-            deviceType = "undefined";
-
-        Position devicePosition = _simulationMgr.getDevicePosition(device.getSerialNumber());
-
-        JSONObject deviceJSON = null;
-        try {
-            deviceJSON = new JSONObject();
-            deviceJSON.putOnce("id", device.getSerialNumber());
-            deviceJSON.putOnce("name", device.getSerialNumber());
-            deviceJSON.put("fault", device.getPropertyValue(GenericDevice.FAULT_PROPERTY_NAME));
-            deviceJSON.put("location", device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME));
-            deviceJSON.put("state", device.getPropertyValue(GenericDevice.STATE_PROPERTY_NAME));
-            deviceJSON.put("type", deviceType);
-            if (devicePosition != null) {
-                deviceJSON.put("positionX", devicePosition.x);
-                deviceJSON.put("positionY", devicePosition.y);
-            }
-            JSONObject propObject = new JSONObject();
-            for (String property : device.getProperties()) {
-            	propObject.put(property, device.getPropertyValue(property));
-            }
-            deviceJSON.put("properties", propObject);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            deviceJSON = null;
-        }
-
-        return deviceJSON;
-    }
-
-    private JSONObject getDeviceTypeJSON(String deviceTypeStr) {
-        JSONObject deviceTypeJSON = null;
-        try {
-            deviceTypeJSON = new JSONObject();
-            deviceTypeJSON.putOnce("id", deviceTypeStr);
-            deviceTypeJSON.putOnce("name", deviceTypeStr);
-        } catch (JSONException e) {
-            e.printStackTrace();
-            deviceTypeJSON = null;
-        }
-
-        return deviceTypeJSON;
-    }
-
-    /**
-     * Returns a JSON array containing all devices.
-     *
-     * @return a JSON array containing all devices.
-     */
-    public String getDeviceTypes() {
-        JSONArray currentDevices = new JSONArray();
-        for (String deviceTypeStr : _simulationMgr.getDeviceTypes()) {
-            JSONObject deviceType = getDeviceTypeJSON(deviceTypeStr);
-            if (deviceType == null)
-                continue;
-
-            currentDevices.put(deviceType);
-        }
-
-        return currentDevices.toString();
-    }
-
+    
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
     @Path(value="/deviceTypes/")
@@ -207,7 +124,7 @@ public class DeviceREST extends AbstractREST {
         if (foundDevice == null) {
             return makeCORS(Response.status(404));
         } else {
-            JSONObject foundDeviceJSON = getDeviceJSON(foundDevice);
+            JSONObject foundDeviceJSON = IcasaJSONUtil.getDeviceJSON(foundDevice, _simulationMgr);
 
             return makeCORS(Response.ok(foundDeviceJSON.toString()));
         }
@@ -248,10 +165,10 @@ public class DeviceREST extends AbstractREST {
                     newPosY = updatedDevice.getPositionY();
                 _simulationMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
             } else if (updatedDevice.getLocation() != null)
-                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulationManager.LOCATION_PROP_NAME, updatedDevice.getLocation());
+                _simulationMgr.getDevice(device.getSerialNumber()).setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, updatedDevice.getLocation());
         }
 
-        JSONObject deviceJSON = getDeviceJSON(device);
+        JSONObject deviceJSON = IcasaJSONUtil.getDeviceJSON(device, _simulationMgr);
 
         return makeCORS(Response.ok(deviceJSON.toString()));
     }
@@ -273,9 +190,6 @@ public class DeviceREST extends AbstractREST {
 
         LocatedDevice newDevice = null;
         if (deviceType != null) {
-            // Generate a serial number
-            //Random m_random = new Random();
-            //String deviceId = deviceType + "-" + Long.toString(m_random.nextLong(), 16);
 
             String deviceId = deviceJSON.getId();
             
@@ -295,7 +209,7 @@ public class DeviceREST extends AbstractREST {
         if (newDevice == null)
             return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
 
-        JSONObject newDeviceJSON = getDeviceJSON(newDevice);
+        JSONObject newDeviceJSON = IcasaJSONUtil.getDeviceJSON(newDevice, _simulationMgr);
 
         return makeCORS(Response.ok(newDeviceJSON.toString()));
     }
@@ -321,6 +235,44 @@ public class DeviceREST extends AbstractREST {
         }
 
         return makeCORS(Response.ok());
+    }
+    
+    
+    /**
+     * Returns a JSON array containing all devices.
+     *
+     * @return a JSON array containing all devices.
+     */
+    private String getDeviceTypes() {
+        JSONArray currentDevices = new JSONArray();
+        for (String deviceTypeStr : _simulationMgr.getDeviceTypes()) {
+            JSONObject deviceType = IcasaJSONUtil.getDeviceTypeJSON(deviceTypeStr);
+            if (deviceType == null)
+                continue;
+
+            currentDevices.put(deviceType);
+        }
+
+        return currentDevices.toString();
+    }
+    
+    /**
+     * Returns a JSON array containing all devices.
+     *
+     * @return a JSON array containing all devices.
+     */
+    private String getDevices() {
+        //boolean atLeastOne = false;
+        JSONArray currentDevices = new JSONArray();
+        for (LocatedDevice device : _simulationMgr.getDevices()) {
+            JSONObject deviceJSON =  IcasaJSONUtil.getDeviceJSON(device, _simulationMgr);
+            if (deviceJSON == null)
+                continue;
+
+            currentDevices.put(deviceJSON);
+        }
+
+        return currentDevices.toString();
     }
 
 }

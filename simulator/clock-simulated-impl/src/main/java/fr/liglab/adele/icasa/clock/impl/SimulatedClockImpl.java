@@ -15,20 +15,32 @@
  */
 package fr.liglab.adele.icasa.clock.impl;
 
-import java.util.Date;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.clock.api.ClockListener;
 
 /**
  * @author Gabriel Pedraza Ferreira
  * 
  */
+@Component(name="SimulatedClock")
+@Provides
+@Instantiate(name="simulated-clock")
 public class SimulatedClockImpl implements Clock {
 
 	/**
 	 * Initial date
 	 */
-	private long initDate;
+	private volatile long initDate;
 
 	/**
 	 * Time elapsed from initial date
@@ -38,7 +50,7 @@ public class SimulatedClockImpl implements Clock {
 	/**
 	 * Factor of virtual time
 	 */
-	private int factor;
+	private volatile int factor;
 
 	/**
 	 * Indicates if the clock has been paused
@@ -46,6 +58,8 @@ public class SimulatedClockImpl implements Clock {
 	private volatile boolean pause = true;
 	
 	private static final int TIME_THREAD_STEEP = 20;
+	
+	private final List<ClockListener> listeners = new ArrayList<ClockListener>();
 
 	/**
 	 * Thread used to increment the clock
@@ -73,7 +87,6 @@ public class SimulatedClockImpl implements Clock {
 
     @Override
     public long getStartDate() {
-        //return new Date(initDate);
    	 return initDate;
     }
 
@@ -83,7 +96,17 @@ public class SimulatedClockImpl implements Clock {
       * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
       */
 	public void setFactor(int factor) {
+		if (factor == this.factor) 
+			return;
+		
+		int oldFactor = this.factor;
+				
 		this.factor = factor;
+		
+		// Call all listeners sequentially
+		for (ClockListener listener : getListenersCopy()) {
+			listener.factorModified(oldFactor);
+		}
 	}
 
 	/*
@@ -92,24 +115,53 @@ public class SimulatedClockImpl implements Clock {
 	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setStartDate(long)
 	 */
 	public void setStartDate(long startDate) {
-		initDate = startDate;		
+		long oldDate = initDate;
+		initDate = startDate;
+		
+
+		// Call all listeners sequentially
+		for (ClockListener listener : getListenersCopy()) {
+			listener.startDateModified(oldDate);
+		}
 	}
 
 	@Override
 	public void pause() {
+		if (pause)
+			return;
+		
 		pause = true;
+		
+		// Call all listeners sequentially
+		for (ClockListener listener : getListenersCopy()) {
+			listener.clockPaused();
+		}
 	}
 
 	@Override
 	public void resume() {
+		if (!pause)
+			return;
+		
 		pause = false;		
+		
+		// Call all listeners sequentially
+		for (ClockListener listener : getListenersCopy()) {
+			listener.clockResumed();
+		}
+		
 	}
 		
 
 	@Override
-	public void reset(){
+	public void reset(){		
 		pause();
-		elapsedTime = 0;		
+		elapsedTime = 0;
+		
+		// Call all listeners sequentially
+		for (ClockListener listener : getListenersCopy()) {
+			listener.clockReset();
+		}
 	}
 	
 	@Override
@@ -122,11 +174,13 @@ public class SimulatedClockImpl implements Clock {
 	   return pause;
    }
 	
+	@Validate
 	public void start() {		
 		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
 		timeThread.start();
 	}
 	
+	@Invalidate
 	public void stop() {
 		try {
 			timeThread.interrupt();
@@ -135,7 +189,37 @@ public class SimulatedClockImpl implements Clock {
 	      e.printStackTrace();
       }
 	}
+
+
+	@Override
+   public void addListener(final ClockListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("listener");
+		}
+		synchronized (listeners) {
+			listeners.add(listener);
+		}	   
+   }
+
 	
+	@Override
+	public void removeListener(ClockListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("listener");
+		}
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}	 	   
+	}
+	
+	
+	private List<ClockListener> getListenersCopy() {
+		List<ClockListener> listenersCopy;
+		synchronized (listeners) {
+			listenersCopy = Collections.unmodifiableList(new ArrayList<ClockListener>(listeners));
+		}
+		return listenersCopy;
+	}
 	
 	/**
 	 * Clock Time mover Thread (Runnable) class
@@ -163,5 +247,8 @@ public class SimulatedClockImpl implements Clock {
 		}
 	}
 
+
+	
+	
 
 }

@@ -30,6 +30,7 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,7 +44,7 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  */
 @Component(name="remote-rest-script-player")
 @Instantiate(name="remote-rest-script-player-0")
-@Provides(specifications={ScriptPlayerREST.class})
+@Provides(specifications={ScriptPlayerREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value="/scriptPlayer/")
 public class ScriptPlayerREST extends AbstractREST {
 

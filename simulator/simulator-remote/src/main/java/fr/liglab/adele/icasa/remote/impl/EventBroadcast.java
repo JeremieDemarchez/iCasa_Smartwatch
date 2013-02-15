@@ -39,6 +39,9 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
+import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.clock.api.ClockListener;
+import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
@@ -64,35 +67,30 @@ public class EventBroadcast extends OnMessage<String> {
 	@Requires
 	private SimulationManager _simulMgr;
 
-	
-	// TODO: Is it really necessary?
 	@Requires
-	DeviceREST deviceREST;
-	
-	@Requires
-	PersonREST personREST;
-	
-	@Requires
-	ZoneREST zoneREST;
-	
-	
-	
+	private Clock _clock;
+
 	private Broadcaster _eventBroadcaster;
 
 	private ICasaEventListener _iCasaListener;
 
-	private final BundleContext _context;
-	
-	
+	private ClockEventListener _clockListener;
+
+	// private final BundleContext _context;
 
 	public EventBroadcast(BundleContext context) {
-		_context = context;
+		// _context = context;
 	}
 
 	@Validate
-	private void start() {
+	protected void start() {
+
+		// Register iCasa listeners
 		_iCasaListener = new ICasaEventListener();
 		_simulMgr.addListener(_iCasaListener);
+
+		_clockListener = new ClockEventListener();
+		_clock.addListener(_clockListener);
 
 		_eventBroadcaster = _atmoService.getBroadcasterFactory().get();
 
@@ -106,19 +104,28 @@ public class EventBroadcast extends OnMessage<String> {
 		} catch (NamespaceException e) {
 			e.printStackTrace();
 		}
+
 	}
 
 	@Invalidate
-	private void stop() {
+	protected void stop() {
+
+		// Unregister iCasa listeners
+
 		if (_iCasaListener != null) {
 			_simulMgr.removeListener(_iCasaListener);
 			_iCasaListener = null;
+		}
+		if (_clockListener != null) {
+			_clock.removeListener(_clockListener);
+			_clockListener = null;
 		}
 
 		_atmoService.removeAtmosphereHandler(mapping);
 		_interceptors.clear();
 
 		_httpService.unregister("/event");
+
 	}
 
 	@Override
@@ -145,37 +152,37 @@ public class EventBroadcast extends OnMessage<String> {
 
 	private class ICasaEventListener implements MultiEventListener {
 
-        @Override
-        public void deviceTypeRemoved(String deviceType) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-type-removed");
-                json.put("deviceTypeId", deviceType);
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void deviceTypeRemoved(String deviceType) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-type-removed");
+				json.put("deviceTypeId", deviceType);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void deviceTypeAdded(String deviceType) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-type-added");
-                json.put("deviceTypeId", deviceType);                
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void deviceTypeAdded(String deviceType) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-type-added");
+				json.put("deviceTypeId", deviceType);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
+		@Override
 		public void deviceMoved(LocatedDevice device, Position position) {
 			JSONObject json = new JSONObject();
 			try {
 				json.put("eventType", "device-position-update");
 				json.put("deviceId", device.getSerialNumber());
-				json.put("device", deviceREST.getDeviceJSON(device));
+				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _simulMgr));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -188,7 +195,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "device-added");
 				json.put("deviceId", device.getSerialNumber());
-				json.put("device", deviceREST.getDeviceJSON(device));
+				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _simulMgr));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -207,46 +214,44 @@ public class EventBroadcast extends OnMessage<String> {
 			}
 		}
 
-        @Override
-        public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-property-updated");
-                json.put("deviceId", device.getSerialNumber());
-    				json.put("device", deviceREST.getDeviceJSON(device));
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-property-updated");
+				json.put("deviceId", device.getSerialNumber());
+				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _simulMgr));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void devicePropertyAdded(LocatedDevice device, String propertyName) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-property-added");
-                json.put("deviceId", device.getSerialNumber());
-                //json.put("propertyName", propertyName);
-                json.put("device", deviceREST.getDeviceJSON(device));
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void devicePropertyAdded(LocatedDevice device, String propertyName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-property-added");
+				json.put("deviceId", device.getSerialNumber());
+				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _simulMgr));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        @Override
-        public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "device-property-removed");
-                json.put("deviceId", device.getSerialNumber());
-                //json.put("propertyName", propertyName);
-                json.put("device", deviceREST.getDeviceJSON(device));
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		@Override
+		public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "device-property-removed");
+				json.put("deviceId", device.getSerialNumber());
+				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _simulMgr));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
 		@Override
 		public void personMoved(Person person, Position position) {
@@ -255,7 +260,7 @@ public class EventBroadcast extends OnMessage<String> {
 				json.put("eventType", "person-position-update");
 				json.put("personId", person.getName());
 				// New position is maybe enough
-				json.put("person", personREST.getPersonJSON(person));				
+				json.put("person", IcasaJSONUtil.getPersonJSON(person));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -268,7 +273,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "person-added");
 				json.put("personId", person.getName());
-				json.put("person", personREST.getPersonJSON(person));
+				json.put("person", IcasaJSONUtil.getPersonJSON(person));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -287,29 +292,29 @@ public class EventBroadcast extends OnMessage<String> {
 			}
 		}
 
-        public void personDeviceAttached(Person person, LocatedDevice device) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "person-device-attached");
-                json.put("personId", person.getName());
-                json.put("deviceId", device.getSerialNumber());
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		public void personDeviceAttached(Person person, LocatedDevice device) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-device-attached");
+				json.put("personId", person.getName());
+				json.put("deviceId", device.getSerialNumber());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
-        public void personDeviceDetached(Person person, LocatedDevice device) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "person-device-dettached");
-                json.put("personId", person.getName());
-                json.put("deviceId", device.getSerialNumber());
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
+		public void personDeviceDetached(Person person, LocatedDevice device) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-device-dettached");
+				json.put("personId", person.getName());
+				json.put("deviceId", device.getSerialNumber());
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
 		@Override
 		public void zoneVariableAdded(Zone zone, String variableName) {
@@ -317,8 +322,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-variable-added");
 				json.put("zoneId", zone.getId());
-				//json.put("variableName", variableName);
-				json.put("zone", zoneREST.getZoneJSON(zone));
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -331,8 +335,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-variable-removed");
 				json.put("zoneId", zone.getId());
-				//json.put("variableName", variableName);	
-				json.put("zone", zoneREST.getZoneJSON(zone));
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -345,8 +348,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-variable-updated");
 				json.put("zoneId", zone.getId());
-				//json.put("variableName", variableName);
-				json.put("zone", zoneREST.getZoneJSON(zone));
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -355,41 +357,41 @@ public class EventBroadcast extends OnMessage<String> {
 
 		@Override
 		public void zoneMoved(Zone zone, Position oldPosition) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-moved");
-                json.put("zoneId", zone.getId());
-    				json.put("zone", zoneREST.getZoneJSON(zone));
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-moved");
+				json.put("zoneId", zone.getId());
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void zoneResized(Zone zone) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-resized");
-                json.put("zoneId", zone.getId());
-                json.put("zone", zoneREST.getZoneJSON(zone));
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-resized");
+				json.put("zoneId", zone.getId());
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
 		public void zoneParentModified(Zone zone, Zone oldParent) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "zone-parent-updated");
-                json.put("zoneId", zone.getId());
-                json.put("zone", zoneREST.getZoneJSON(zone));
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "zone-parent-updated");
+				json.put("zoneId", zone.getId());
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
 		}
 
 		@Override
@@ -398,7 +400,7 @@ public class EventBroadcast extends OnMessage<String> {
 			try {
 				json.put("eventType", "zone-added");
 				json.put("zoneId", zone.getId());
-				json.put("zone", zoneREST.getZoneJSON(zone));
+				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent(json);
 			} catch (JSONException e) {
 				e.printStackTrace();
@@ -418,28 +420,68 @@ public class EventBroadcast extends OnMessage<String> {
 		}
 
 		@Override
-      public void personTypeAdded(String personType) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "person-type-removed");
-                json.put("personTypeId", personType);
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-      }
+		public void personTypeAdded(String personType) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-type-removed");
+				json.put("personTypeId", personType);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
 		@Override
-      public void personTypeRemoved(String personType) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("eventType", "person-type-added");
-                json.put("personTypeId", personType);
-                sendEvent(json);
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-      }
+		public void personTypeRemoved(String personType) {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "person-type-added");
+				json.put("personTypeId", personType);
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+
+	}
+
+	private class ClockEventListener implements ClockListener {
+
+		@Override
+		public void factorModified(int oldFactor) {
+			sendClockModifiedEvent();
+		}
+
+		@Override
+		public void startDateModified(long oldStartDate) {
+			sendClockModifiedEvent();
+		}
+
+		@Override
+		public void clockPaused() {
+			sendClockModifiedEvent();
+		}
+
+		@Override
+		public void clockResumed() {
+			sendClockModifiedEvent();
+		}
+
+		@Override
+		public void clockReset() {
+			sendClockModifiedEvent();
+		}
+
+		private void sendClockModifiedEvent() {
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", "clock-modified");
+				json.put("clock", IcasaJSONUtil.getClockJSON(_clock));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
 
 	}
 

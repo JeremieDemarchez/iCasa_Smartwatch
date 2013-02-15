@@ -20,135 +20,131 @@ import org.json.JSONObject;
 
 /**
  * TODO
- *
+ * 
  * @author Gabriel Pedraza Ferreira
  */
 public class ZoneJSON {
 
-    public static final String POSITION_TOPY_PROP = "topY";
-    public static final String POSITION_LEFTX_PROP = "leftX";
-    public static final String POSITION_BOTTOMY_PROP = "bottomY";
-    public static final String POSITION_RIGHTX_PROP = "rightX";
-    public static final String NAME_PROP = "name";
-    public static final String TYPE_PROP = "type";
-    public static final String ZONE_ID_PROP = "zoneId";
-    public static final String ID_PROP = "id";
+	public static final String IS_ROOM_PROP = "isRoom";
+	public static final String VARIABLE_PROP = "variables";
+	public static final String POSITION_TOPY_PROP = "topY";
+	public static final String POSITION_LEFTX_PROP = "leftX";
+	public static final String POSITION_BOTTOMY_PROP = "bottomY";
+	public static final String POSITION_RIGHTX_PROP = "rightX";
+	public static final String NAME_PROP = "name";
+	public static final String TYPE_PROP = "type";
+	public static final String ZONE_ID_PROP = "zoneId";
+	public static final String ID_PROP = "id";
 
-    private String name;
-    private String id;
-    private Integer leftX;
-    private Integer topY;
-    private Integer rigthX;
-    private Integer bottomY;
-    
+	private String name;
+	private String id;
+	private Integer leftX;
+	private Integer topY;
+	private Integer rigthX;
+	private Integer bottomY;
 
-    public ZoneJSON() {
-        //do nothing
-    }
+	public static ZoneJSON fromString(String jsonStr) {
+		ZoneJSON zone = null;
+		JSONObject json = null;
+		try {
+			json = new JSONObject(jsonStr);
+			zone = new ZoneJSON();
+			if (json.has(ID_PROP)) {
+				zone.setId(json.getString(ID_PROP));
+			} else if (json.has(ZONE_ID_PROP)) {
+				zone.setId(json.getString(ZONE_ID_PROP));
+			}
+			;
+			if (json.has(NAME_PROP))
+				zone.setName(json.getString(NAME_PROP));
+			if (json.has(POSITION_LEFTX_PROP))
+				zone.setLeftX(json.getInt(POSITION_LEFTX_PROP));
+			if (json.has(POSITION_TOPY_PROP))
+				zone.setTopY(json.getInt(POSITION_TOPY_PROP));
+			if (json.has(POSITION_RIGHTX_PROP))
+				zone.setRigthX(json.getInt(POSITION_RIGHTX_PROP));
+			if (json.has(POSITION_BOTTOMY_PROP))
+				zone.setBottomY(json.getInt(POSITION_BOTTOMY_PROP));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
 
-    public static ZoneJSON fromString(String jsonStr) {
-        ZoneJSON zone = null;
-        JSONObject json = null;
-        try {
-            json = new JSONObject(jsonStr);
-            zone = new ZoneJSON();
-            if (json.has(ID_PROP)) {
-                zone.setId(json.getString(ID_PROP));
-            } else if (json.has(ZONE_ID_PROP)) {
-                zone.setId(json.getString(ZONE_ID_PROP));
-            };
-            if (json.has(NAME_PROP))
-                zone.setName(json.getString(NAME_PROP));
-            if (json.has(POSITION_LEFTX_PROP))
-                zone.setLeftX(json.getInt(POSITION_LEFTX_PROP));
-            if (json.has(POSITION_TOPY_PROP))
-                zone.setTopY(json.getInt(POSITION_TOPY_PROP));
-            if (json.has(POSITION_RIGHTX_PROP))
-               zone.setRigthX(json.getInt(POSITION_RIGHTX_PROP));
-           if (json.has(POSITION_BOTTOMY_PROP))
-               zone.setBottomY(json.getInt(POSITION_BOTTOMY_PROP));            
-        } catch (JSONException e) {
-            e.printStackTrace();
-        }
+		return zone;
+	}
 
-        return zone;
-    }
+	public String getName() {
+		return name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public void setName(String name) {
+		this.name = name;
+	}
 
-    public void setName(String name) {
-        this.name = name;
-    }
+	public String getId() {
+		return id;
+	}
 
-
-
-    public String getId() {
-        return id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
+	public void setId(String id) {
+		this.id = id;
+	}
 
 	/**
-    * @return the leftX
-    */
-   public Integer getLeftX() {
-   	return leftX;
-   }
+	 * @return the leftX
+	 */
+	public Integer getLeftX() {
+		return leftX;
+	}
 
 	/**
-    * @param leftX the leftX to set
-    */
-   public void setLeftX(Integer leftX) {
-   	this.leftX = leftX;
-   }
+	 * @param leftX
+	 *           the leftX to set
+	 */
+	public void setLeftX(Integer leftX) {
+		this.leftX = leftX;
+	}
 
 	/**
-    * @return the topY
-    */
-   public Integer getTopY() {
-   	return topY;
-   }
+	 * @return the topY
+	 */
+	public Integer getTopY() {
+		return topY;
+	}
 
 	/**
-    * @param topY the topY to set
-    */
-   public void setTopY(Integer topY) {
-   	this.topY = topY;
-   }
+	 * @param topY
+	 *           the topY to set
+	 */
+	public void setTopY(Integer topY) {
+		this.topY = topY;
+	}
 
 	/**
-    * @return the rigthX
-    */
-   public Integer getRigthX() {
-   	return rigthX;
-   }
+	 * @return the rigthX
+	 */
+	public Integer getRigthX() {
+		return rigthX;
+	}
 
 	/**
-    * @param rigthX the rigthX to set
-    */
-   public void setRigthX(Integer rigthX) {
-   	this.rigthX = rigthX;
-   }
+	 * @param rigthX
+	 *           the rigthX to set
+	 */
+	public void setRigthX(Integer rigthX) {
+		this.rigthX = rigthX;
+	}
 
 	/**
-    * @return the bottomY
-    */
-   public Integer getBottomY() {
-   	return bottomY;
-   }
+	 * @return the bottomY
+	 */
+	public Integer getBottomY() {
+		return bottomY;
+	}
 
 	/**
-    * @param bottomY the bottomY to set
-    */
-   public void setBottomY(Integer bottomY) {
-   	this.bottomY = bottomY;
-   }
-
-
-
-
+	 * @param bottomY
+	 *           the bottomY to set
+	 */
+	public void setBottomY(Integer bottomY) {
+		this.bottomY = bottomY;
+	}
 }
