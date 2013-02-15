@@ -915,12 +915,10 @@ define(['jquery',
                     return filter.test( element[attr]() )
                   else
                     return filter.test( element.getPropertyValue(attr) )
-
                 catch err
                   return false
               )
 
-           # 3 fct for each tab
            @filteredDevices = ko.computed(() =>
               return @filteredList("device")
            , @)
@@ -932,6 +930,19 @@ define(['jquery',
            @filteredPersons = ko.computed(() =>
               return @filteredList("person")
            , @)
+
+           @checkAllDevices = ko.computed({
+              read: =>
+                selected = 0
+                for device in @devices()
+                  if device.isSelected()
+                    selected++
+                return @devices().length == selected
+
+              write: (val) =>
+                for device in @devices()
+                  device.isSelected(val)
+           }, @)
 
            # person management
 
@@ -967,6 +978,17 @@ define(['jquery',
               person.statusWindowVisible(false);
               person.statusWindowVisible(true);
 
+           @checkAllPersons = ko.computed({
+             read: =>
+               selected = 0
+               for person in @persons()
+                 if person.isSelected()
+                   selected++
+               return @persons().length == selected
+             write: (val) =>
+               for person in @persons()
+                 person.isSelected(val)
+           }, @)
 
            # zone management
 
@@ -997,6 +1019,18 @@ define(['jquery',
            @showZoneWindow = (zone) =>
               zone.statusWindowVisible(false);
               zone.statusWindowVisible(true);
+
+           @checkAllZones = ko.computed({
+           read: =>
+             selected = 0
+             for zone in @zones()
+               if zone.isSelected()
+                 selected++
+             return @zones().length == selected
+           write: (val) =>
+             for zone in @zones()
+               zone.isSelected(val)
+           }, @)
 
            # script management
 

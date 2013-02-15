@@ -41,13 +41,13 @@
 
     <div class="controls controls-row">
         <label class="span1">Name</label>
-        <input type="text" class="span2" data-bind="value: $root.newPersonName" />
+        <input type="text" class="span2" data-bind="value: $root.newPersonName, valueUpdate:'afterkeydown'" />
     </div>
     <div class="controls controls-row">
         <label class="span1">Type</label>
         <select class="span2" data-bind="options: $root.personTypes, value: $root.newPersonType, optionsText: 'name'"></select>
 
-        <a href="#" class="btn span1" data-bind="click: $root.createPerson">Create</a>
+        <button class="btn span1" style="font-size:15px" data-bind="click: $root.createPerson, enable: $root.newPersonName().length > 0">Create</button>
     </div>
 
     <div class="controls controls-row">
@@ -58,7 +58,9 @@
 
     <thead>
         <tr>
-            <th></th>
+            <th>
+                <input type="checkbox" data-bind="checked: checkAllPersons" />
+            </th>
             <th>
                 Type
                 <i id="typepersonsdesc" data-bind="click: function() { sortField(-1,'person','type') }, visible: 0" class="icon-chevron-down pull-right"></i>
