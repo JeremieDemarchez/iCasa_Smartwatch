@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.clock.api;
 
-import java.util.Date;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -79,4 +78,7 @@ public interface Clock {
 	 * @return
 	 */
 	public boolean isPaused();
+	
+	void addListener(ClockListener listener);
+	void removeListener(ClockListener listener);
 }

@@ -49,6 +49,15 @@
             <module>packages</module>
          </modules>
       </profile>
+      <profile>
+         <id>backend</id>
+         <modules>
+            <module>parent</module>
+            <module>simulator</module>
+            <module>packages</module>
+            <module>distribution</module>
+         </modules>
+      </profile>	  
    </profiles>
       
 

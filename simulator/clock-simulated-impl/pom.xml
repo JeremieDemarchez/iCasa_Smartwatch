@@ -16,6 +16,10 @@
   
   <dependencies>
     <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+    </dependency>  
+    <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>clock.api</artifactId>
       <version>${iCasaVersion}</version>

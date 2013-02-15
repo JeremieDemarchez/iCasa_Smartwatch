@@ -1,8 +1,5 @@
 package fr.liglab.adele.icasa.remote.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.OPTIONS;
@@ -21,6 +18,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 
 /**
  * 
@@ -39,7 +37,7 @@ public class ClockREST extends AbstractREST {
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public Response clock() {
-		return makeCORS(Response.ok(getClockJSON()));
+		return makeCORS(Response.ok(IcasaJSONUtil.getClockJSON(clock).toString()));
 	}
 
 	@OPTIONS
@@ -57,10 +55,6 @@ public class ClockREST extends AbstractREST {
 			int factor = clockObject.getInt("factor");
 			boolean pause = clockObject.getBoolean("pause");
 			long startDate = clockObject.getLong("startDate");
-
-			System.out.println("New Date --->" + startDate);
-			System.out.println("New Factor --->" + factor);
-			System.out.println("New Pause --->" + pause);
 			
 			synchronized (clock) {
 				if (clock.getStartDate() != startDate)
@@ -83,37 +77,10 @@ public class ClockREST extends AbstractREST {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return makeCORS(Response.ok(getClockJSON()));
+		return makeCORS(Response.ok(IcasaJSONUtil.getClockJSON(clock).toString()));
 	}
 
 
 
-	private String getClockJSON() {
-		JSONObject scriptJSON = null;
-		try {
-			scriptJSON = new JSONObject();
-			scriptJSON.putOnce("startDateStr", getDate(clock.getStartDate()));
-			scriptJSON.putOnce("startDate", clock.getStartDate());
-			scriptJSON.putOnce("currentDateStr", getDate(clock.currentTimeMillis()));
-			scriptJSON.putOnce("currentTime", clock.currentTimeMillis());
-			scriptJSON.putOnce("factor", clock.getFactor());
-			scriptJSON.putOnce("pause", clock.isPaused());
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-			scriptJSON = null;
-		}
-
-		return scriptJSON.toString();
-	}
-
-	private String getDate(long timeInMs) {
-		return getDate((new Date(timeInMs)));
-	}
-
-	private String getDate(Date date) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-		return format.format(date);
-	}
 
 }
