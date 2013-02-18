@@ -16,24 +16,24 @@
 
 -->
 <script>
-    $("#typepersonsdesc").click(function() {
-        $("#typepersonsdesc").css("display", "none");
+    $("#typepersondesc").click(function() {
+        $("#typepersondesc").css("display", "none");
         $("#typepersonasc").css("display", "inline-block");
     });
 
     $("#typepersonasc").click(function() {
         $("#typepersonasc").css("display", "none");
-        $("#typepersonsdesc").css("display", "inline-block");
+        $("#typepersondesc").css("display", "inline-block");
     });
 
-    $("#namepersonsdesc").click(function() {
-        $("#namepersonsdesc").css("display", "none");
+    $("#namepersondesc").click(function() {
+        $("#namepersondesc").css("display", "none");
         $("#namepersonasc").css("display", "inline-block");
     });
 
     $("#namepersonasc").click(function() {
         $("#namepersonasc").css("display", "none");
-        $("#namepersonsdesc").css("display", "inline-block");
+        $("#namepersondesc").css("display", "inline-block");
     });
 </script>
 
@@ -63,12 +63,12 @@
             </th>
             <th>
                 Type
-                <i id="typepersonsdesc" data-bind="click: function() { sortField(-1,'person','type') }, visible: 0" class="icon-chevron-down pull-right"></i>
+                <i id="typepersondesc" data-bind="click: function() { sortField(-1,'person','type') }, visible: 0" class="icon-chevron-down pull-right"></i>
                 <i id="typepersonasc" data-bind="click: function() { sortField(1,'person','type') }" class="icon-chevron-up pull-right"></i>
             </th>
             <th>
                 Name
-                <i id="namepersonsdesc" data-bind="click: function() { sortField(-1,'person','name') }, visible: 0" class="icon-chevron-down pull-right"></i>
+                <i id="namepersondesc" data-bind="click: function() { sortField(-1,'person','name') }, visible: 0" class="icon-chevron-down pull-right"></i>
                 <i id="namepersonasc" data-bind="click: function() { sortField(1,'person','name') }" class="icon-chevron-up pull-right"></i>
             </th>
         </tr>
