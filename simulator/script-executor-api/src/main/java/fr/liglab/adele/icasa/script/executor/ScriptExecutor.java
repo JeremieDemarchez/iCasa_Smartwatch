@@ -26,8 +26,33 @@ import java.util.List;
  */
 public interface ScriptExecutor {
 
+	
 	public enum State {
-		STOPPED, EXECUTING, PAUSED
+		STARTED("started"), STOPPED("stopped"), PAUSED("paused");
+
+		private String _stateStr;
+
+		private State(String stateStr) {
+			_stateStr = stateStr;
+		}
+
+		public String toString() {
+			return _stateStr;
+		}
+
+		public static State fromString(String stateStr) {
+			if (stateStr == null)
+				return null;
+
+			if (STARTED.toString().equals(stateStr))
+				return STARTED;
+			if (STOPPED.toString().equals(stateStr))
+				return STOPPED;
+			if (PAUSED.toString().equals(stateStr))
+				return PAUSED;
+
+			return null;
+		}
 	}
 
 	/**
@@ -81,7 +106,7 @@ public interface ScriptExecutor {
 	 * 
 	 * @return
 	 */
-	public State getState();
+	public State getCurrentScriptState();
 
 	/**
 	 * Returns percentage of completed instructions of current script.
@@ -89,47 +114,61 @@ public interface ScriptExecutor {
 	 * @return percentage of completed instructions of current script.
 	 */
 	public float getExecutedPercentage();
+	
+	
+	
+	public int getFactor(String scriptName);
+	
+	public long getStartDate(String scriptName);
+	
+	public int getActionsNumber(String scriptName);
+	
+	public int getExecutionTime(String scriptName);
+	
+	public State getState(String scriptName);
+	
+	
 
 	/**
 	 * Wrapper for clock function
 	 * 
 	 * @return
 	 */
-	public long currentTimeMillis();
+	//public long currentTimeMillis();
 
 	/**
 	 * Wrapper for clock function
 	 * 
 	 * @param startDate
 	 */
-	public void setStartDate(long startDate);
+	//public void setStartDate(long startDate);
 
 	/**
 	 * Wrapper for clock function
 	 * 
 	 * @param factor
 	 */
-	public void setFactor(int factor);
+	//public void setFactor(int factor);
 
 	/**
 	 * Wrapper for clock function
 	 * 
 	 * @return
 	 */
-	public long getElapsedTime();
+	//public long getElapsedTime();
 
 	/**
 	 * Wrapper for clock function
 	 * 
 	 * @return
 	 */
-	public int getFactor();
+	//public int getFactor();
 
 	/**
 	 * Wrapper for clock function
 	 * 
 	 * @return
 	 */
-	public long getStartDate();
+	//public long getStartDate();
 
 }
