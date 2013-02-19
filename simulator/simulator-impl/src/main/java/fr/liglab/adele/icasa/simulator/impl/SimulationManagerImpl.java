@@ -791,8 +791,8 @@ public class SimulationManagerImpl implements SimulationManager {
 
 				out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
 
-				String location = (String) device.getPropertyValue(SimulationManager.LOCATION_PROP_NAME);
-				if (location != null)
+				String location = (String) device.getPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME);
+				if (location != null && !(location.equals(SimulatedDevice.LOCATION_UNKNOWN)))
 					out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
 
 				out.println();

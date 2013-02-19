@@ -15,17 +15,19 @@
  */
 package fr.liglab.adele.icasa.clock.system.impl;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Provides;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
-
-import java.util.Date;
+import fr.liglab.adele.icasa.clock.api.ClockListener;
 
 /**
  * @author Gabriel Pedraza Ferreira
  *
  */
+
+@Component(name="SystemClock")
+@Provides
 public class SystemClockImpl implements Clock {
 
    
@@ -85,12 +87,22 @@ public class SystemClockImpl implements Clock {
 
     public long getStartDate() {
    	 return initDate;
-        //return new Date(initDate);
     }
 
 	@Override
    public boolean isPaused() {
 	   return false;
    }
+
+	@Override
+   public void addListener(ClockListener listener) {
+
+	   
+   }
+	
+	@Override
+	public void removeListener(ClockListener listener) {
+	   
+	}
 
 }

@@ -81,7 +81,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 		if (deviceComponent==null)
 			return;
 		
-		if (propertyName.equals(SimulationManager.LOCATION_PROP_NAME)) {
+		if (propertyName.equals(SimulatedDevice.LOCATION_PROPERTY_NAME)) {
 			deviceComponent.setPropertyValue(propertyName, value);
 		} else {
 			if (deviceComponent instanceof SimulatedDevice)

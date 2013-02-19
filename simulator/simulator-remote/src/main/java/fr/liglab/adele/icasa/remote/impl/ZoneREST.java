@@ -31,10 +31,11 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.Zone;
@@ -44,40 +45,12 @@ import fr.liglab.adele.icasa.simulator.Zone;
  */
 @Component(name = "remote-rest-zone")
 @Instantiate(name = "remote-rest-zone-0")
-@Provides(specifications = { ZoneREST.class })
+@Provides(specifications = { ZoneREST.class }, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value = "/zones/")
 public class ZoneREST extends AbstractREST {
 
 	@Requires
 	private SimulationManager _simulationMgr;
-
-
-	public JSONObject getZoneJSON(Zone zone) {
-		JSONObject zoneJSON = null;
-		try {
-			String zoneId = zone.getId();
-			zoneJSON = new JSONObject();
-			zoneJSON.putOnce("id", zoneId);
-			zoneJSON.putOnce("name", zoneId);
-			zoneJSON.put("leftX", zone.getLeftTopAbsolutePosition().x);
-			zoneJSON.put("topY", zone.getLeftTopAbsolutePosition().y);
-			zoneJSON.put("rightX", zone.getRightBottomAbsolutePosition().x);
-			zoneJSON.put("bottomY", zone.getRightBottomAbsolutePosition().y);
-			zoneJSON.put("isRoom", true); // TODO change it when Zone API will be improved
-
-			JSONObject propObject = new JSONObject();
-			for (String variable : zone.getVariableNames()) {
-				propObject.put(variable, zone.getVariableValue(variable));
-			}
-			zoneJSON.put("variables", propObject);
-
-		} catch (JSONException e) {
-			e.printStackTrace();
-			zoneJSON = null;
-		}
-
-		return zoneJSON;
-	}
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -119,7 +92,7 @@ public class ZoneREST extends AbstractREST {
 		if (zoneFound == null) {
 			return makeCORS(Response.status(404));
 		} else {
-			JSONObject zoneJSON = getZoneJSON(zoneFound);
+			JSONObject zoneJSON = IcasaJSONUtil.getZoneJSON(zoneFound);
 
 			return makeCORS(Response.ok(zoneJSON.toString()));
 		}
@@ -138,7 +111,7 @@ public class ZoneREST extends AbstractREST {
 			if (zone == null)
 				continue;
 
-			JSONObject zoneJSON = getZoneJSON(zone);
+			JSONObject zoneJSON = IcasaJSONUtil.getZoneJSON(zone);
 			if (zoneJSON == null)
 				continue;
 
@@ -190,7 +163,7 @@ public class ZoneREST extends AbstractREST {
 				e.printStackTrace();
 			}
 
-		return makeCORS(Response.ok(getZoneJSON(zoneFound).toString()));
+		return makeCORS(Response.ok(IcasaJSONUtil.getZoneJSON(zoneFound).toString()));
 
 	}
 
@@ -208,7 +181,7 @@ public class ZoneREST extends AbstractREST {
 		Zone newZone = _simulationMgr
 		      .createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), width, height);
 
-		return makeCORS(Response.ok(getZoneJSON(newZone).toString()));
+		return makeCORS(Response.ok(IcasaJSONUtil.getZoneJSON(newZone).toString()));
 
 	}
 

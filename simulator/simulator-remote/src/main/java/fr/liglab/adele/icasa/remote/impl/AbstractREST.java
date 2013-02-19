@@ -4,6 +4,7 @@ import javax.ws.rs.core.Response;
 
 public abstract class AbstractREST {
 
+	public static final String ICASA_REST_PROPERTY_NAME = "iCasa-REST";
 	
 	protected Response makeCORS(Response.ResponseBuilder req) {
 		Response.ResponseBuilder rb = req

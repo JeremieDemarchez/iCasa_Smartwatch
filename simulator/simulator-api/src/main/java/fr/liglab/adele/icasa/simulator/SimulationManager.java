@@ -28,7 +28,6 @@ import fr.liglab.adele.icasa.simulator.listener.IcasaListener;
  */
 public interface SimulationManager {
 
-	public String LOCATION_PROP_NAME = "location";
 
 	// -- Zone related methods --//
 

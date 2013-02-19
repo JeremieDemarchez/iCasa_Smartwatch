@@ -88,7 +88,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.remote.impl</Private-Package>
+            <Private-Package>fr.liglab.adele.icasa.remote.impl,fr.liglab.adele.icasa.remote.impl.util</Private-Package>
             <Export-Package>fr.liglab.adele.icasa.remote</Export-Package>
           </instructions>
         </configuration>

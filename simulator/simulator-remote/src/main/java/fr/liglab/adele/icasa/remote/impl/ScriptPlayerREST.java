@@ -30,10 +30,12 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -41,213 +43,228 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 /**
  * @author Thomas Leveque
  */
-@Component(name="remote-rest-script-player")
-@Instantiate(name="remote-rest-script-player-0")
-@Provides(specifications={ScriptPlayerREST.class})
-@Path(value="/scriptPlayer/")
+@Component(name = "remote-rest-script-player")
+@Instantiate(name = "remote-rest-script-player-0")
+@Provides(specifications = { ScriptPlayerREST.class }, properties = { @StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value = "true", type = "java.lang.Boolean") })
+@Path(value = "/scriptPlayer/")
 public class ScriptPlayerREST extends AbstractREST {
 
-    public enum ScriptState {
-        STARTED("started"), STOPPED("stopped"), PAUSED("paused");
+	/*
+	 * public enum ScriptState { STARTED("started"), STOPPED("stopped"),
+	 * PAUSED("paused");
+	 * 
+	 * private String _stateStr;
+	 * 
+	 * private ScriptState(String stateStr) { _stateStr = stateStr; }
+	 * 
+	 * public String toString() { return _stateStr; }
+	 * 
+	 * public static ScriptState fromString(String stateStr) { if (stateStr ==
+	 * null) return null;
+	 * 
+	 * if (STARTED.toString().equals(stateStr)) return STARTED; if
+	 * (STOPPED.toString().equals(stateStr)) return STOPPED; if
+	 * (PAUSED.toString().equals(stateStr)) return PAUSED;
+	 * 
+	 * return null; } }
+	 */
 
-        private String _stateStr;
+	@Requires
+	private ScriptExecutor _scriptExecutor;
 
-        private ScriptState(String stateStr) {
-            _stateStr = stateStr;
-        }
+	@Requires
+	private SimulationManager _simulationMgr;
 
-        public String toString() {
-            return _stateStr;
-        }
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/scripts/")
+	public Response scripts() {
+		return makeCORS(Response.ok(getScripts()));
+	}
 
-        public static ScriptState fromString(String stateStr) {
-            if (stateStr == null)
-                return null;
+	/*
+	 * private JSONObject getScriptJSON(String scriptName) {
+	 * 
+	 * State scriptState = _scriptExecutor.getCurrentScriptState(); ScriptState
+	 * scriptStateJSON = ScriptState.STOPPED; String selectedScriptName =
+	 * _scriptExecutor.getCurrentScript(); if
+	 * (scriptName.equals(selectedScriptName)) { if
+	 * (State.EXECUTING.equals(scriptState)) scriptStateJSON =
+	 * ScriptState.STARTED; else if (State.PAUSED.equals(scriptState))
+	 * scriptStateJSON = ScriptState.PAUSED; else if
+	 * (State.STOPPED.equals(scriptState)) scriptStateJSON = ScriptState.STOPPED;
+	 * }
+	 * 
+	 * JSONObject scriptJSON = null; try { scriptJSON = new JSONObject();
+	 * scriptJSON.putOnce(ScriptJSON.ID_PROP, scriptName);
+	 * scriptJSON.putOnce(ScriptJSON.NAME_PROP, scriptName);
+	 * scriptJSON.putOnce(ScriptJSON.STATE_PROP, scriptStateJSON.toString());
+	 * scriptJSON.putOnce(ScriptJSON.COMPLETE_PERCENT_PROP,
+	 * _scriptExecutor.getExecutedPercentage());
+	 * scriptJSON.putOnce("actionNumber",
+	 * _scriptExecutor.getActionsNumber(scriptName)); //
+	 * scriptJSON.putOnce("startDate", //
+	 * _scriptExecutor.getStartDate(scriptName)); scriptJSON.putOnce("factor",
+	 * _scriptExecutor.getFactor(scriptName));
+	 * scriptJSON.putOnce("executionTime",
+	 * _scriptExecutor.getExecutionTime(scriptName));
+	 * 
+	 * } catch (JSONException e) { e.printStackTrace(); scriptJSON = null; }
+	 * 
+	 * return scriptJSON; }
+	 */
 
-            if (STARTED.toString().equals(stateStr))
-                return STARTED;
-            if (STOPPED.toString().equals(stateStr))
-                return STOPPED;
-            if (PAUSED.toString().equals(stateStr))
-                return PAUSED;
+	/**
+	 * Returns a JSON array containing all scripts.
+	 * 
+	 * @return a JSON array containing all scripts.
+	 */
+	public String getScripts() {
+		JSONArray scripts = new JSONArray();
+		for (String scriptName : _scriptExecutor.getScriptList()) {
+			JSONObject script = IcasaJSONUtil.getScriptJSON(scriptName, _scriptExecutor);
+			if (script == null)
+				continue;
+			scripts.put(script);
+		}
+		return scripts.toString();
+	}
 
-            return null;
-        }
-    }
+	/**
+	 * Retrieve a script.
+	 * 
+	 * @param scriptId
+	 *           The ID of the script to retrieve
+	 * @return The required script, return
+	 *         <code>null<code> if the script does not exist.
+	 */
+	@GET
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/script/{scriptId}")
+	public Response script(@PathParam("scriptId") String scriptId) {
+		if (scriptId == null || scriptId.length() < 1) {
+			return makeCORS(Response.ok(getScripts()));
+		}
 
-    @Requires
-    private ScriptExecutor _scriptExecutor;
-    
-    @Requires
-    private SimulationManager _simulationMgr;
-        
+		boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
+		if (!scriptFound) {
+			return makeCORS(Response.status(404));
+		} else {
+			JSONObject scriptJSON = IcasaJSONUtil.getScriptJSON(scriptId, _scriptExecutor);
+			return makeCORS(Response.ok(scriptJSON.toString()));
+		}
+	}
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/scripts/")
-    public Response scripts() {
-        return makeCORS(Response.ok(getScripts()));
-    }
+	@OPTIONS
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/scripts/")
+	public Response getScriptsOptions() {
+		return makeCORS(Response.ok());
+	}
 
-    private JSONObject getScriptJSON(String scriptName) {
+	@OPTIONS
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/script/{scriptId}")
+	public Response updatesScriptOptions(@PathParam("scriptId") String scriptId) {
+		return makeCORS(Response.ok());
+	}
 
-        State scriptState = _scriptExecutor.getState();
-        ScriptState scriptStateJSON = ScriptState.STOPPED;
-        String selectedScriptName = _scriptExecutor.getCurrentScript();
-        if (scriptName.equals(selectedScriptName)) {
-            if (State.EXECUTING.equals(scriptState))
-                scriptStateJSON = ScriptState.STARTED;
-            else if (State.PAUSED.equals(scriptState))
-                scriptStateJSON = ScriptState.PAUSED;
-            else if (State.STOPPED.equals(scriptState))
-                scriptStateJSON = ScriptState.STOPPED;
-        }
+	@OPTIONS
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(value = "/script/")
+	public Response createsScriptOptions() {
+		return makeCORS(Response.ok());
+	}
 
-        JSONObject scriptJSON = null;
-        try {
-            scriptJSON = new JSONObject();
-            scriptJSON.putOnce(ScriptJSON.ID_PROP, scriptName);
-            scriptJSON.putOnce(ScriptJSON.NAME_PROP, scriptName);
-            scriptJSON.putOnce(ScriptJSON.STATE_PROP, scriptStateJSON.toString());
-            scriptJSON.putOnce(ScriptJSON.COMPLETE_PERCENT_PROP, _scriptExecutor.getExecutedPercentage());
-        } catch (JSONException e) {
-            e.printStackTrace();
-            scriptJSON = null;
-        }
+	@PUT
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path(value = "/script/{scriptId}")
+	public Response updatesScriptPut(@PathParam("scriptId") String scriptId, String content) {
+		if (scriptId == null || scriptId.length() < 1) {
+			return makeCORS(Response.status(404));
+		}
 
-        return scriptJSON;
-    }
+		boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
+		if (!scriptFound) {
+			return makeCORS(Response.status(404));
+		}
 
-    /**
-     * Returns a JSON array containing all scripts.
-     *
-     * @return a JSON array containing all scripts.
-     */
-    public String getScripts() {
-        //boolean atLeastOne = false;
-        JSONArray scripts = new JSONArray();
-        for (String scriptName : _scriptExecutor.getScriptList()) {
-            JSONObject script = getScriptJSON(scriptName);
-            if (script == null)
-                continue;
+		ScriptJSON script = ScriptJSON.fromString(content);
 
-            scripts.put(script);
-        }
-        return scripts.toString();
-    }
+		if (script == null)
+			return makeCORS(Response.status(404));
 
-    /**
-     * Retrieve a script.
-     *
-     * @param scriptId The ID of the script to retrieve
-     * @return The required script,
-     * return <code>null<code> if the script does not exist.
-     */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/script/{scriptId}")
-    public Response script(@PathParam("scriptId") String scriptId) {
-        if (scriptId == null || scriptId.length()<1){
-            return makeCORS(Response.ok(getScripts()));
-        }
+		String currentScriptName = _scriptExecutor.getCurrentScript();
+		State currentScriptState = _scriptExecutor.getCurrentScriptState();
 
-        boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
-        if (!scriptFound) {
-            return makeCORS(Response.status(404));
-        } else {
-            JSONObject scriptJSON = getScriptJSON(scriptId);
+		if (scriptId.equals(currentScriptName)) { // Same script
+			if (currentScriptState == State.STARTED) {
+				if (State.STOPPED.equals(script.getState()))
+					_scriptExecutor.stop();
+				if (State.PAUSED.equals(script.getState()))
+					_scriptExecutor.pause();
+			} else if (currentScriptState == State.PAUSED) {
+				if (State.STARTED.equals(script.getState()))
+					_scriptExecutor.resume();
+			} else if (currentScriptState == State.STOPPED) {
+				if (State.STARTED.equals(script.getState()))
+					_scriptExecutor.execute(scriptId);
+			} else {
+				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
+			}				
+		} else { // New script
+			if (currentScriptState == State.STOPPED)
+				_scriptExecutor.execute(scriptId);
+			else
+				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
+		}
 
-            return makeCORS(Response.ok(scriptJSON.toString()));
-        }
-    }
+		/*
+		 * 
+		 * boolean isSelected = scriptId.equals(currentScriptName);
+		 * 
+		 * if (!isSelected && !State.STOPPED.equals(currentScriptState)) {
+		 * _scriptExecutor.stop(); currentScriptState = State.STOPPED; }
+		 * 
+		 * boolean isStarted = State.EXECUTING.equals(currentScriptState); boolean
+		 * isStopped = State.STOPPED.equals(currentScriptState); boolean isPaused
+		 * = State.PAUSED.equals(currentScriptState);
+		 * 
+		 * ScriptJSON script = ScriptJSON.fromString(content); if (script != null)
+		 * {
+		 * 
+		 * ScriptState newScriptState = ScriptState.fromString(script.getState());
+		 * 
+		 * if (ScriptState.STARTED.equals(newScriptState)) { if (isStopped) { if
+		 * ((script.getFactor() == null) && (script.getStartDate() == null))
+		 * _scriptExecutor.execute(scriptId); else
+		 * _scriptExecutor.execute(scriptId); // See the execution //
+		 * _scriptExecutor.execute(scriptId, script.getStartDate(), //
+		 * script.getFactor()); } else if (isPaused) _scriptExecutor.resume(); }
+		 * else if (ScriptState.PAUSED.equals(newScriptState)) { if (isStarted)
+		 * _scriptExecutor.pause(); } else if
+		 * (ScriptState.STOPPED.equals(newScriptState)) { if (isStarted ||
+		 * isPaused) _scriptExecutor.stop(); } }
+		 */
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/scripts/")
-    public Response getScriptsOptions() {
-        return makeCORS(Response.ok());
-    }
+		JSONObject scriptJSON = IcasaJSONUtil.getScriptJSON(scriptId, _scriptExecutor);
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/script/{scriptId}")
-    public Response updatesScriptOptions(@PathParam("scriptId") String scriptId) {
-        return makeCORS(Response.ok());
-    }
+		return makeCORS(Response.ok(scriptJSON.toString()));
+	}
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/script/")
-    public Response createsScriptOptions() {
-        return makeCORS(Response.ok());
-    }
+	@POST
+	@Produces(MediaType.APPLICATION_JSON)
+	@Consumes(MediaType.APPLICATION_JSON)
+	@Path(value = "/script/")
+	public Response createScript(String content) {
 
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/script/{scriptId}")
-    public Response updatesScriptPut(@PathParam("scriptId") String scriptId, String content) {
-        if (scriptId == null || scriptId.length()<1){
-            return makeCORS(Response.status(404));
-        }
+		ScriptJSON scriptJSON = ScriptJSON.fromString(content);
+		String fileName = scriptJSON.getId();
 
-        boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
-        if (!scriptFound) {
-            return makeCORS(Response.status(404));
-        }
+		_simulationMgr.saveSimulationState(fileName);
 
-        String selectedScriptName = _scriptExecutor.getCurrentScript();
-        boolean isSelected = scriptId.equals(selectedScriptName);
-        State scriptState = _scriptExecutor.getState();
-        if (!isSelected && !State.STOPPED.equals(scriptState)) {
-            _scriptExecutor.stop();
-            scriptState = State.STOPPED;
-        }
+		return makeCORS(Response.ok(scriptJSON.toString()));
+	}
 
-        boolean isStarted = State.EXECUTING.equals(scriptState);
-        boolean isStopped = State.STOPPED.equals(scriptState);
-        boolean isPaused = State.PAUSED.equals(scriptState);
-
-        ScriptJSON script = ScriptJSON.fromString(content);
-        if (script != null) {
-
-            ScriptState newScriptState = ScriptState.fromString(script.getState());
-            if (ScriptState.STARTED.equals(newScriptState)) {
-               if (isStopped) {
-                   if ((script.getFactor() == null) && (script.getStartDate() == null))
-                       _scriptExecutor.execute(scriptId);
-                   else
-                       _scriptExecutor.execute(scriptId, script.getStartDate(), script.getFactor());
-               }
-               else if (isPaused)
-                   _scriptExecutor.resume();
-            } else if (ScriptState.PAUSED.equals(newScriptState)) {
-                if (isStarted)
-                    _scriptExecutor.pause();
-            } else if (ScriptState.STOPPED.equals(newScriptState)) {
-                if (isStarted || isPaused)
-                    _scriptExecutor.stop();
-            }
-        }
-
-        JSONObject scriptJSON = getScriptJSON(scriptId);
-
-        return makeCORS(Response.ok(scriptJSON.toString()));
-    }
-    
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/script/")
-    public Response createScript(String content) {
-   	 
-   	 ScriptJSON scriptJSON = ScriptJSON.fromString(content);   	 
-   	 String fileName = scriptJSON.getId();
-   	 
-   	 _simulationMgr.saveSimulationState(fileName);
-   	 
-   	
-       return makeCORS(Response.ok(scriptJSON.toString()));
-    }
-    
 }

@@ -27,14 +27,39 @@
 	<artifactId>root</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
-
-	<modules>
-		<module>parent</module>
-		<module>simulator</module>
-		<!-- <module>ihm</module> -->
-        <module>packages</module>
-		<module>distribution</module>
-	</modules>
+   <profiles>
+      <profile>
+         <id>all</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>parent</module>
+            <module>simulator</module>
+            <module>ihm</module>
+            <module>packages</module>
+            <module>distribution</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>jenkins</id>
+         <modules>
+            <module>parent</module>
+            <module>simulator</module>
+            <module>packages</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>backend</id>
+         <modules>
+            <module>parent</module>
+            <module>simulator</module>
+            <module>packages</module>
+            <module>distribution</module>
+         </modules>
+      </profile>	  
+   </profiles>
+      
 
 	<build>
 		<plugins>

@@ -15,8 +15,6 @@
   <name>${productName} :: ${projectName}</name>
 
   <dependencies>
-
-
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.ipojo.annotations</artifactId>
