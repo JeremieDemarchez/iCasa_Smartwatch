@@ -48,8 +48,9 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 	public SimulatedBinaryLightImpl() {
 		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);		
-		super.setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 100.0d);
+		super.setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 0.0d);
 		super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
+		super.setPropertyValue(BinaryLight.LIGHT_MAX_POWER_LEVEL, 100.0d);
 	}
 
 	@Override
@@ -78,8 +79,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
 
-			
-			
 			if (previousStatus != status) {
 				super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
 				// Trying to modify zone variable
@@ -97,12 +96,24 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	/**
 	 * Return the illuminance currently emitted by this light, according to its
 	 * state.
-	 * 
+	 * The formula used to compute the illuminance is :
+	 * Illuminance [cd/m² or lux]=(power[W]*680.0[lumens])/surface[m²] 
 	 * @return the illuminance currently emitted by this light
 	 */
 	private double computeIlluminance() {
-		double maxIlluminance = (Double) getPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE);
-		return getPowerStatus() ? maxIlluminance : 0.0d;
+	
+		double returnedIlluminance=0.0;
+		int height = m_zone.getHeight();
+		int width = m_zone.getWidth();
+		double surface = 0;				
+		double powerLevel = getPowerStatus() ? getMaxPowerLevel() : 0.0d;
+		double scaleFactor = 0.014d; //1px -> 0.014m
+		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
+		
+		surface = scaleFactor*scaleFactor*height*width;
+		returnedIlluminance = (powerLevel*lumens)/surface;
+
+		return getPowerStatus() ? returnedIlluminance : 0.0d;			
 	}
 
 
@@ -116,6 +127,14 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;
+	}
+	
+	@Override
+	public double getMaxPowerLevel() {
+		Double maxLevel = (Double) getPropertyValue(BinaryLight.LIGHT_MAX_POWER_LEVEL);
+		if (maxLevel==null)
+			return 0;
+		return maxLevel;
 	}
 
 }
