@@ -20,6 +20,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -43,7 +44,9 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.clock.util.DateTextUtil;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutorListener;
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
@@ -69,9 +72,9 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	@Requires
 	private Clock clock;
 
-   @Requires
-   private SimulationManager simulationManager;
-	
+	@Requires
+	private SimulationManager simulationManager;
+
 	/**
 	 * Simulator commands added to the platorm
 	 */
@@ -87,12 +90,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	 */
 	private Thread executorThread;
 
-
 	private float executedPercentage;
 
 	private String currentScript;
-	
 
+	private List<ScriptExecutorListener> listeners = new ArrayList<ScriptExecutorListener>();
 
 	@Override
 	public State getCurrentScriptState() {
@@ -107,45 +109,74 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Override
 	public void execute(String scriptName) {
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null)
-			internalExecute(handler, handler.getStartDate(), handler.getFactor());
+		internalExecute(scriptName, 0, 0, true);
 	}
 
 	@Override
 	public void execute(String scriptName, final Date startDate, final int factor) {
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null)
-			internalExecute(handler, startDate.getTime(), factor);
+		internalExecute(scriptName, startDate.getTime(), factor, false);
 	}
 
-	private void internalExecute(ScriptSAXHandler handler, long startDate, int factor) {
-		if (currentScript != null && getCurrentScriptState() != ScriptExecutor.State.STOPPED)
+	private void internalExecute(String scriptName, long startDate, int factor, boolean useInternal) {
+		if (scriptInExecution())
 			return;
-
-		startExecutionThread(handler.getActionList(), startDate, factor);
+		
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null) {
+			if (useInternal)
+				startExecutionThread(handler.getActionList(), handler.getStartDate(), handler.getFactor());
+			else
+				startExecutionThread(handler.getActionList(), startDate, factor);
+			currentScript = scriptName;
+			
+			for (ScriptExecutorListener listener : getListenersCopy()) {
+				listener.scriptStarted(getCurrentScript());
+			}
+		}
 	}
 
 	@Override
 	@Invalidate
 	public void stop() {
+		if (!scriptInExecution())
+			return;
+		
+		
+		String stoppedScript = currentScript;
+		
 		currentScript = null;
 		stopExecutionThread();
+		
+		for (ScriptExecutorListener listener : getListenersCopy()) {
+			listener.scriptStopped(stoppedScript);
+		}
 	}
 
 	@Override
 	public void pause() {
-		System.out.println("=========  Pausing script =========");
+		if (!scriptInExecution())
+			return;
+		
 		synchronized (clock) {
 			clock.pause();
+		}
+		
+		for (ScriptExecutorListener listener : getListenersCopy()) {
+			listener.scriptPaused(getCurrentScript());
 		}
 	}
 
 	@Override
 	public void resume() {
-		System.out.println("=========  Resuming script =========");
+		if (!scriptInExecution())
+			return;
+		
 		synchronized (clock) {
 			clock.resume();
+		}
+		
+		for (ScriptExecutorListener listener : getListenersCopy()) {
+			listener.scriptResumed(getCurrentScript());
 		}
 	}
 
@@ -163,7 +194,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	private void startExecutionThread(List<ActionDescription> actions, final long startDate, final int factor) {
 		if (actions.isEmpty()) // Nothing to execute
 			return;
-
+		
 		executorThread = new Thread(new CommandExecutorRunnable(actions));
 		clock.reset();
 		clock.setStartDate(startDate);
@@ -278,11 +309,13 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		FileWriter outFile;
 		PrintWriter out;
 		try {
+
+			String dateStr = DateTextUtil.getTextDate(System.currentTimeMillis());
+
 			outFile = new FileWriter("load" + System.getProperty("file.separator") + fileName);
 			out = new PrintWriter(outFile);
 
-						
-			out.println("<behavior startdate=\"27/10/2012-00:00:00\" factor=\"1440\">");
+			out.println("<behavior startdate=\"" + dateStr + "\" factor=\"1440\">");
 			out.println();
 			out.println("\t<!-- Zone Section -->");
 			out.println();
@@ -350,7 +383,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			e1.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Parses the script file
 	 * 
@@ -412,6 +445,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 					execute = false;
 				}
 			}
+			currentScript = null; // Script execution finished
 		}
 
 		private List<ActionDescription> calculeToExecute(int index, long elapsedTime) {
@@ -448,6 +482,38 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				}
 			}
 		}
+	}
+
+	@Override
+	public void addListener(ScriptExecutorListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("listener");
+		}
+		synchronized (listeners) {
+			listeners.add(listener);
+		}
+	}
+
+	@Override
+	public void removeListener(ScriptExecutorListener listener) {
+		if (listener == null) {
+			throw new NullPointerException("listener");
+		}
+		synchronized (listeners) {
+			listeners.remove(listener);
+		}
+	}
+
+	private List<ScriptExecutorListener> getListenersCopy() {
+		List<ScriptExecutorListener> listenersCopy;
+		synchronized (listeners) {
+			listenersCopy = Collections.unmodifiableList(new ArrayList<ScriptExecutorListener>(listeners));
+		}
+		return listenersCopy;
+	}
+
+	private boolean scriptInExecution() {
+		return (currentScript != null && getCurrentScriptState() != ScriptExecutor.State.STOPPED);
 	}
 
 }
