@@ -32,13 +32,11 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * @author Thomas Leveque
@@ -49,31 +47,10 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
 @Path(value = "/scriptPlayer/")
 public class ScriptPlayerREST extends AbstractREST {
 
-	/*
-	 * public enum ScriptState { STARTED("started"), STOPPED("stopped"),
-	 * PAUSED("paused");
-	 * 
-	 * private String _stateStr;
-	 * 
-	 * private ScriptState(String stateStr) { _stateStr = stateStr; }
-	 * 
-	 * public String toString() { return _stateStr; }
-	 * 
-	 * public static ScriptState fromString(String stateStr) { if (stateStr ==
-	 * null) return null;
-	 * 
-	 * if (STARTED.toString().equals(stateStr)) return STARTED; if
-	 * (STOPPED.toString().equals(stateStr)) return STOPPED; if
-	 * (PAUSED.toString().equals(stateStr)) return PAUSED;
-	 * 
-	 * return null; } }
-	 */
 
 	@Requires
 	private ScriptExecutor _scriptExecutor;
 
-	@Requires
-	private SimulationManager _simulationMgr;
 
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
@@ -262,7 +239,8 @@ public class ScriptPlayerREST extends AbstractREST {
 		ScriptJSON scriptJSON = ScriptJSON.fromString(content);
 		String fileName = scriptJSON.getId();
 
-		_simulationMgr.saveSimulationState(fileName);
+		//_simulationMgr.saveSimulationState(fileName);
+		_scriptExecutor.saveSimulationScript(fileName);
 
 		return makeCORS(Response.ok(scriptJSON.toString()));
 	}

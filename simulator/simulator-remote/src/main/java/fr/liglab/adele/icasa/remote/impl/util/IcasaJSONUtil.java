@@ -1,12 +1,10 @@
 package fr.liglab.adele.icasa.remote.impl.util;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.clock.util.DateTextUtil;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.remote.impl.DeviceJSON;
 import fr.liglab.adele.icasa.remote.impl.PersonJSON;
@@ -135,23 +133,6 @@ public class IcasaJSONUtil {
 	
 	
 	public static JSONObject getScriptJSON(String scriptName, ScriptExecutor _scriptExecutor) {
-		
-		/*
-		State scriptState = _scriptExecutor.getCurrentScriptState();
-		ScriptState scriptStateJSON = ScriptState.STOPPED;
-		String selectedScriptName = _scriptExecutor.getCurrentScript();
-		if (scriptName.equals(selectedScriptName)) {
-			if (State.STARTED.equals(scriptState))
-				scriptStateJSON = ScriptState.STARTED;
-			else if (State.PAUSED.equals(scriptState))
-				scriptStateJSON = ScriptState.PAUSED;
-			else if (State.STOPPED.equals(scriptState))
-				scriptStateJSON = ScriptState.STOPPED;
-		}
-		*/
-		
-		
-
 		JSONObject scriptJSON = null;
 		try {
 			scriptJSON = new JSONObject();
@@ -159,16 +140,14 @@ public class IcasaJSONUtil {
 			scriptJSON.putOnce(ScriptJSON.NAME_PROP, scriptName);
 			scriptJSON.putOnce(ScriptJSON.STATE_PROP, _scriptExecutor.getState(scriptName));
 			scriptJSON.putOnce(ScriptJSON.COMPLETE_PERCENT_PROP, _scriptExecutor.getExecutedPercentage());
-			scriptJSON.putOnce("actionNumber", _scriptExecutor.getActionsNumber(scriptName));
-			scriptJSON.putOnce(ScriptJSON.START_DATE_PROP, _scriptExecutor.getStartDate(scriptName));
+			scriptJSON.putOnce(ScriptJSON.ACTION_NUMBER_PROP, _scriptExecutor.getActionsNumber(scriptName));
+			scriptJSON.putOnce(ScriptJSON.START_DATE_PROP, DateTextUtil.getTextDate(_scriptExecutor.getStartDate(scriptName)));
 			scriptJSON.putOnce(ScriptJSON.FACTOR_PROP, _scriptExecutor.getFactor(scriptName));
-			scriptJSON.putOnce("executionTime", _scriptExecutor.getExecutionTime(scriptName));
-
+			scriptJSON.putOnce(ScriptJSON.EXECUTION_TIME_PROP, _scriptExecutor.getExecutionTime(scriptName));
 		} catch (JSONException e) {
 			e.printStackTrace();
 			scriptJSON = null;
 		}
-
 		return scriptJSON;
 	}
 	
@@ -176,9 +155,9 @@ public class IcasaJSONUtil {
 		JSONObject clockJSON = null;
 		try {
 			clockJSON = new JSONObject();
-			clockJSON.putOnce("startDateStr", getDate(clock.getStartDate()));
+			clockJSON.putOnce("startDateStr", DateTextUtil.getTextDate(clock.getStartDate()));
 			clockJSON.putOnce("startDate", clock.getStartDate());
-			clockJSON.putOnce("currentDateStr", getDate(clock.currentTimeMillis()));
+			clockJSON.putOnce("currentDateStr", DateTextUtil.getTextDate((clock.currentTimeMillis())));
 			clockJSON.putOnce("currentTime", clock.currentTimeMillis());
 			clockJSON.putOnce("factor", clock.getFactor());
 			clockJSON.putOnce("pause", clock.isPaused());
@@ -189,14 +168,8 @@ public class IcasaJSONUtil {
 		return clockJSON;
 	}
 
-	private static String getDate(long timeInMs) {
-		return getDate((new Date(timeInMs)));
-	}
-
-	private static String getDate(Date date) {
-		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-		return format.format(date);
-	}
+	
+	
 	
 	
 	

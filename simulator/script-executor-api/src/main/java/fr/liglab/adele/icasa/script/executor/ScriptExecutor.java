@@ -25,7 +25,6 @@ import java.util.List;
  * 
  */
 public interface ScriptExecutor {
-
 	
 	public enum State {
 		STARTED("started"), STOPPED("stopped"), PAUSED("paused");
@@ -115,7 +114,7 @@ public interface ScriptExecutor {
 	 */
 	public float getExecutedPercentage();
 	
-	
+	void saveSimulationScript(String fileName);
 	
 	public int getFactor(String scriptName);
 	
@@ -126,6 +125,9 @@ public interface ScriptExecutor {
 	public int getExecutionTime(String scriptName);
 	
 	public State getState(String scriptName);
+
+
+		
 	
 	
 

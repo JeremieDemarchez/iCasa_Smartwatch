@@ -16,8 +16,9 @@
 package fr.liglab.adele.icasa.script.executor.impl;
 
 import java.io.File;
+import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -44,6 +45,11 @@ import org.xml.sax.SAXException;
 import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
+import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -63,6 +69,9 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	@Requires
 	private Clock clock;
 
+   @Requires
+   private SimulationManager simulationManager;
+	
 	/**
 	 * Simulator commands added to the platorm
 	 */
@@ -82,6 +91,8 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	private float executedPercentage;
 
 	private String currentScript;
+	
+
 
 	@Override
 	public State getCurrentScriptState() {
@@ -262,6 +273,84 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		return ScriptExecutor.State.STOPPED;
 	}
 
+	@Override
+	public void saveSimulationScript(String fileName) {
+		FileWriter outFile;
+		PrintWriter out;
+		try {
+			outFile = new FileWriter("load" + System.getProperty("file.separator") + fileName);
+			out = new PrintWriter(outFile);
+
+						
+			out.println("<behavior startdate=\"27/10/2012-00:00:00\" factor=\"1440\">");
+			out.println();
+			out.println("\t<!-- Zone Section -->");
+			out.println();
+
+			for (Zone zone : simulationManager.getZones()) {
+				String id = zone.getId();
+				int leftX = zone.getLeftTopAbsolutePosition().x;
+				int topY = zone.getLeftTopAbsolutePosition().y;
+				int width = zone.getWidth();
+				int height = zone.getHeight();
+				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\""
+				      + width + "\" height=\"" + height + "\" />");
+				out.println();
+
+				for (String variable : zone.getVariableNames()) {
+					Object value = zone.getVariableValue(variable);
+
+					out.println("\t<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
+					out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\""
+					      + value + "\" />");
+				}
+				out.println();
+			}
+
+			out.println("\t<!-- Device Section -->");
+			out.println();
+
+			for (LocatedDevice device : simulationManager.getDevices()) {
+				String id = device.getSerialNumber();
+				String type = device.getType();
+
+				out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
+
+				String location = (String) device.getPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME);
+				if (location != null && !(location.equals(SimulatedDevice.LOCATION_UNKNOWN)))
+					out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
+
+				out.println();
+
+			}
+
+			out.println();
+			out.println("\t<!-- Person Section -->");
+			out.println();
+
+			for (Person person : simulationManager.getPersons()) {
+				String id = person.getName();
+				String type = person.getPersonType();
+
+				out.println("\t<create-person id=\"" + id + "\" type=\"" + type + "\" />");
+
+				Zone zone = simulationManager.getZoneFromPosition(person.getCenterAbsolutePosition());
+
+				if (zone != null)
+					out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
+
+				out.println();
+
+			}
+
+			out.println("</behavior>");
+
+			out.close();
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+	}
+	
 	/**
 	 * Parses the script file
 	 * 
@@ -343,8 +432,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 		private void executeActions(List<ActionDescription> toExecute) {
 			if (!toExecute.isEmpty()) {
-				logger.info("Init time ---> " + getDate(clock.currentTimeMillis()));
-				logger.info("To Execute ---> " + toExecute.size() + " Actions");
 				synchronized (clock) {
 					clock.pause();
 					for (ActionDescription actionDescription : toExecute) {
@@ -359,13 +446,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 					}
 					clock.resume();
 				}
-				logger.info("End time ---> " + getDate(clock.currentTimeMillis()));
 			}
-		}
-
-		private String getDate(long timeInMs) {
-			SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
-			return format.format(new Date(timeInMs));
 		}
 	}
 

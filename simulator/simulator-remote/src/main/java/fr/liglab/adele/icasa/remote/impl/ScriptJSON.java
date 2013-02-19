@@ -22,6 +22,8 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+
 public class ScriptJSON {
 
 	public static final String START_DATE_PROP = "startDate";
@@ -31,6 +33,9 @@ public class ScriptJSON {
 	public static final String NAME_PROP = "name";
 	public static final String ID_PROP = "id";
 	public static final String SCRIPT_ID_PROP = "scriptId";
+	public static final String ACTION_NUMBER_PROP = "actionNumber";
+	public static final String EXECUTION_TIME_PROP = "executionTime";
+	
 
 	private String name;
 	private String id;
@@ -38,10 +43,9 @@ public class ScriptJSON {
 	private Integer completePercent;
 	private Integer factor;
 	private Date startDate;
+	private long executionTime;
 
-	public ScriptJSON() {
-		// do nothing
-	}
+
 
 	public static ScriptJSON fromString(String jsonStr) {
 		ScriptJSON script = null;
@@ -120,12 +124,7 @@ public class ScriptJSON {
 	}
 
 	public void setStartDate(String startDateStr) {
-		SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy:HH:mm:SS");
-		try {
-			this.startDate = formatter.parse(startDateStr);
-		} catch (ParseException e) {
-			e.printStackTrace();
-		}
+		this.startDate = DateTextUtil.getDateFromText(startDateStr);
 	}
 
 }
