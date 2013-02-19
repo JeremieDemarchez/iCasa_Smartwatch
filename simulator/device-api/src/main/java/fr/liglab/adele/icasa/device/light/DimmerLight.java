@@ -41,13 +41,11 @@ public interface DimmerLight extends GenericDevice {
 	String LIGHT_POWER_LEVEL = "power_level";
 
 	/**
-	 * Device property indicating the Lamp maximum Illuminance (in Lumen)
+	 * Device property indicating the Lamp maximum Illuminance (in Lux)
 	 * <ul>
 	 * <li>This property is <b>mandatory</b></li>
-	 * <li>Type of values : <b><code>java.lang.Double</code></b>, between
-	 * <code>100d</code> and <code>2500d</code></li>
-	 * <li>Description : value is <code>100d</code> for small lamps,
-	 * <code>2500d</code> for very big ones.</li>
+	 * <li>Type of values : <b><code>java.lang.Double</code></b> compute by
+	 * the method computeIlluminance.
 	 * </ul>
 	 */
 	String LIGHT_MAX_ILLUMINANCE = "max_illuminance";

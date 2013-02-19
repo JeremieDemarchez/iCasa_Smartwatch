@@ -24,13 +24,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.felix.ipojo.annotations.*;
-
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
 import org.apache.felix.fileinstall.ArtifactInstaller;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,53 +48,47 @@ import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 /**
  * @author Gabriel Pedraza Ferreira
  * 
- * Implementation of the ScriptExecutor specification
+ *         Implementation of the ScriptExecutor specification
  */
-@Component(name="script-executor")
-@Instantiate(name="script-executor-0")
+@Component(name = "script-executor")
+@Instantiate(name = "script-executor-0")
 @Provides
 public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
-
 
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
 
 	/**
 	 * The clock use for simulation
 	 */
-    @Requires
+	@Requires
 	private Clock clock;
 
 	/**
 	 * Simulator commands added to the platorm
 	 */
 	private Map<String, SimulatorCommand> commands;
-	
+
 	/**
 	 * Scripts added to the platform
 	 */
-	private Map<String, File> scriptMap = new HashMap<String, File>();
+	private Map<String, ScriptSAXHandler> scriptMap = new HashMap<String, ScriptSAXHandler>();
 
 	/**
-	 * Simulation Execution Thread 
+	 * Simulation Execution Thread
 	 */
 	private Thread executorThread;
 
-	/**
-	 * Flag to determine if a current execution script is paused 
-	 */
-	//private boolean paused = false;
 
 	private float executedPercentage;
-	
+
 	private String currentScript;
 
-
 	@Override
-	public State getState() {
+	public State getCurrentScriptState() {
 		if (executorThread != null)
 			if (executorThread.isAlive())
 				if (!clock.isPaused())
-					return ScriptExecutor.State.EXECUTING;
+					return ScriptExecutor.State.STARTED;
 				else
 					return ScriptExecutor.State.PAUSED;
 		return ScriptExecutor.State.STOPPED;
@@ -97,25 +96,27 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Override
 	public void execute(String scriptName) {
-		File scriptFile = scriptMap.get(scriptName);
-		if (scriptFile != null) {
-			currentScript = scriptName;
-			executeScript(scriptFile);
-		}
-			
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null)
+			internalExecute(handler, handler.getStartDate(), handler.getFactor());
 	}
 
 	@Override
 	public void execute(String scriptName, final Date startDate, final int factor) {
-		File scriptFile = scriptMap.get(scriptName);
-		if (scriptFile != null) {
-			currentScript = scriptName;
-			executeScript(scriptFile, startDate, factor);
-		}
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null)
+			internalExecute(handler, startDate.getTime(), factor);
 	}
-	
+
+	private void internalExecute(ScriptSAXHandler handler, long startDate, int factor) {
+		if (currentScript != null && getCurrentScriptState() != ScriptExecutor.State.STOPPED)
+			return;
+
+		startExecutionThread(handler.getActionList(), startDate, factor);
+	}
+
 	@Override
-    @Invalidate
+	@Invalidate
 	public void stop() {
 		currentScript = null;
 		stopExecutionThread();
@@ -138,31 +139,16 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	@Override
-   public String getCurrentScript() {
-	   return currentScript;
-   }
-	
+	public String getCurrentScript() {
+		return currentScript;
+	}
+
 	@Override
 	public List<String> getScriptList() {
 		List<String> list = new ArrayList<String>(scriptMap.keySet());
 		return list;
 	}
-	
-	private void executeScript(File file) {
-		ScenarioSAXHandler handler = parseFile(file);
-		if (handler != null) {
-			startExecutionThread(handler.getActionList(), handler.getStartDate(), handler.getFactor());
-		}
-	}
 
-	private void executeScript(File file, final Date startDate, final int factor) {
-		ScenarioSAXHandler handler = parseFile(file);
-		if (handler != null) {
-			startExecutionThread(handler.getActionList(), startDate.getTime(), factor);
-		}
-	}
-
-	
 	private void startExecutionThread(List<ActionDescription> actions, final long startDate, final int factor) {
 		if (actions.isEmpty()) // Nothing to execute
 			return;
@@ -173,7 +159,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		clock.setFactor(factor);
 		clock.resume();
 		executorThread.start();
-
 	}
 
 	private void stopExecutionThread() {
@@ -187,32 +172,8 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		}
 	}
 
-
-	/**
-	 * Parses the script file 
-	 * @param file
-	 * @return
-	 */
-	private ScenarioSAXHandler parseFile(File file) {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		try {
-			SAXParser saxParser = factory.newSAXParser();
-			ScenarioSAXHandler handler = new ScenarioSAXHandler(this);
-			saxParser.parse(file, handler);
-			return handler;
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-
-	
 	// -- Component bind methods -- //
-    @Bind(id="commands", aggregate=true, optional=true)
+	@Bind(id = "commands", aggregate = true, optional = true)
 	public void bindCommand(SimulatorCommand commandService, ServiceReference reference) {
 		String name = (String) reference.getProperty("name");
 		if (commands == null)
@@ -220,7 +181,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		commands.put(name, commandService);
 	}
 
-    @Unbind(id="commands")
+	@Unbind(id = "commands")
 	public void unbindCommand(ServiceReference reference) {
 		String name = (String) reference.getProperty("name");
 		commands.remove(name);
@@ -239,12 +200,16 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	@Override
 	public void install(File artifact) throws Exception {
 		logger.info("--------------------  New Script File added : " + artifact.getName());
-		scriptMap.put(artifact.getName(), artifact);
+
+		ScriptSAXHandler handler = parseFile(artifact);
+		if (handler != null)
+			scriptMap.put(artifact.getName(), handler);
+
 	}
 
 	@Override
 	public void update(File artifact) throws Exception {
-		// Nothing to do
+		install(artifact);
 	}
 
 	@Override
@@ -252,27 +217,88 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		scriptMap.remove(artifact);
 	}
 
+	@Override
+	public float getExecutedPercentage() {
+		return executedPercentage;
+	}
 
 	@Override
-   public float getExecutedPercentage() {
-      return executedPercentage;
-   }
+	public int getFactor(String scriptName) {
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null)
+			return handler.getFactor();
+		return 1;
+	}
 
-    /**
+	@Override
+	public long getStartDate(String scriptName) {
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null)
+			return handler.getStartDate();
+		return 0;
+	}
+
+	@Override
+	public int getActionsNumber(String scriptName) {
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null)
+			if (handler.getActionList() != null)
+				return handler.getActionList().size();
+		return 0;
+	}
+
+	@Override
+	public int getExecutionTime(String scriptName) {
+		ScriptSAXHandler handler = scriptMap.get(scriptName);
+		if (handler != null)
+			return handler.getExecutionTime();
+		return 0;
+	}
+
+	@Override
+	public State getState(String scriptName) {
+		if (scriptName.equals(scriptName))
+			return getCurrentScriptState();
+		return ScriptExecutor.State.STOPPED;
+	}
+
+	/**
+	 * Parses the script file
+	 * 
+	 * @param file
+	 * @return
+	 */
+	private ScriptSAXHandler parseFile(File file) {
+		SAXParserFactory factory = SAXParserFactory.newInstance();
+		try {
+			SAXParser saxParser = factory.newSAXParser();
+			ScriptSAXHandler handler = new ScriptSAXHandler();
+			saxParser.parse(file, handler);
+			return handler;
+		} catch (ParserConfigurationException e) {
+			e.printStackTrace();
+		} catch (SAXException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	/**
 	 * Command executor Thread (Runnable) class
 	 * 
-	 * @author Gabriel
-	 *
+	 * @author Gabriel Pedraza Ferreira
+	 * 
 	 */
 	private final class CommandExecutorRunnable implements Runnable {
-		
+
 		private List<ActionDescription> actionDescriptions;
-		
+
 		public CommandExecutorRunnable(List<ActionDescription> actionDescriptions) {
 			this.actionDescriptions = actionDescriptions;
 		}
-		
-		
+
 		@Override
 		public void run() {
 			int index = 0;
@@ -286,8 +312,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 				if (index >= actionDescriptions.size())
 					execute = false;
-				
-				
+
 				executeActions(toExecute);
 
 				// Computes the execution percentage
@@ -295,7 +320,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				try {
 					Thread.sleep(20);
 				} catch (InterruptedException e) {
-					execute = false;					
+					execute = false;
 				}
 			}
 		}
@@ -305,7 +330,9 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 			for (int i = index; i < actionDescriptions.size(); i++) {
 				ActionDescription action = actionDescriptions.get(i);
-				int actionDelay = action.getDelay() * 60 * 1000; // action delay in virtual milliseconds
+				int actionDelay = action.getDelay() * 60 * 1000; // action delay in
+				                                                 // virtual
+				                                                 // milliseconds
 				if (elapsedTime >= actionDelay)
 					toExecute.add(action);
 				else
@@ -341,41 +368,5 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			return format.format(new Date(timeInMs));
 		}
 	}
-
-
-    @Override
-    public long currentTimeMillis() {
-        return clock.currentTimeMillis();
-    }
-
-    @Override
-    public void setStartDate(long startDate) {
-        clock.setStartDate(startDate);
-    }
-
-    @Override
-    public void setFactor(int factor) {
-        clock.setFactor(factor);
-    }
-
-    @Override
-    public long getElapsedTime() {
-        return clock.getElapsedTime();
-    }
-
-    @Override
-    public int getFactor() {
-        return clock.getFactor();
-    }
-
-    @Override
-    public long getStartDate() {
-        return clock.getStartDate();
-    }
-
-
-
-
-
 
 }

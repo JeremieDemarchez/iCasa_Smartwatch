@@ -1,6 +1,6 @@
 <behavior startdate="2011.10.27.00.00.00" factor="1440">
-	
-	
+	 
+	 
 	<create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
 	
 	<add-zone-variable zoneId="kitchen" variable="Temperature" />
@@ -79,5 +79,7 @@
 	<remove-device deviceId="Pres-A1255D-D" />	
     <delay value="100" />
 	<set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
+	
+	
 	
 </behavior>

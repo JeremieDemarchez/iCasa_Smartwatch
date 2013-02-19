@@ -58,7 +58,6 @@ public class ExecuteScriptCommand extends AbstractCommand {
 	public void executeScript(String scriptName) throws Exception {
 		this.scriptName = scriptName;
 		execute();
-
 	}
 
 }

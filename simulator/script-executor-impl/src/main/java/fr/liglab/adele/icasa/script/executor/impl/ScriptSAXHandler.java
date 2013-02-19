@@ -27,18 +27,17 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
-public class ScenarioSAXHandler extends DefaultHandler {
+public class ScriptSAXHandler extends DefaultHandler {
 
-	ScriptExecutorImpl scriptExecutorImpl;
+	
 	List<ActionDescription> list = new ArrayList<ActionDescription>();
+	
 	private int delay;
 
-	private int factor;
+	private int factor = 1;
+	
 	private String startdateStr;
 
-	public ScenarioSAXHandler(ScriptExecutorImpl scriptExecutorImpl) {
-		this.scriptExecutorImpl = scriptExecutorImpl;
-	}
 
 	@Override
 	public void startDocument() throws SAXException {
@@ -97,5 +96,9 @@ public class ScenarioSAXHandler extends DefaultHandler {
 	public int getFactor() {
 	   return factor;
    }
+	
+	public int getExecutionTime() {
+		return delay;
+	}
 
 }

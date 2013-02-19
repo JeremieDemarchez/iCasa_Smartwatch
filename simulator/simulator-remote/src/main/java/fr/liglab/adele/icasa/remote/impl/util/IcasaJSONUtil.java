@@ -10,7 +10,9 @@ import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.remote.impl.DeviceJSON;
 import fr.liglab.adele.icasa.remote.impl.PersonJSON;
+import fr.liglab.adele.icasa.remote.impl.ScriptJSON;
 import fr.liglab.adele.icasa.remote.impl.ZoneJSON;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
@@ -132,6 +134,44 @@ public class IcasaJSONUtil {
 	}
 	
 	
+	public static JSONObject getScriptJSON(String scriptName, ScriptExecutor _scriptExecutor) {
+		
+		/*
+		State scriptState = _scriptExecutor.getCurrentScriptState();
+		ScriptState scriptStateJSON = ScriptState.STOPPED;
+		String selectedScriptName = _scriptExecutor.getCurrentScript();
+		if (scriptName.equals(selectedScriptName)) {
+			if (State.STARTED.equals(scriptState))
+				scriptStateJSON = ScriptState.STARTED;
+			else if (State.PAUSED.equals(scriptState))
+				scriptStateJSON = ScriptState.PAUSED;
+			else if (State.STOPPED.equals(scriptState))
+				scriptStateJSON = ScriptState.STOPPED;
+		}
+		*/
+		
+		
+
+		JSONObject scriptJSON = null;
+		try {
+			scriptJSON = new JSONObject();
+			scriptJSON.putOnce(ScriptJSON.ID_PROP, scriptName);
+			scriptJSON.putOnce(ScriptJSON.NAME_PROP, scriptName);
+			scriptJSON.putOnce(ScriptJSON.STATE_PROP, _scriptExecutor.getState(scriptName));
+			scriptJSON.putOnce(ScriptJSON.COMPLETE_PERCENT_PROP, _scriptExecutor.getExecutedPercentage());
+			scriptJSON.putOnce("actionNumber", _scriptExecutor.getActionsNumber(scriptName));
+			scriptJSON.putOnce(ScriptJSON.START_DATE_PROP, _scriptExecutor.getStartDate(scriptName));
+			scriptJSON.putOnce(ScriptJSON.FACTOR_PROP, _scriptExecutor.getFactor(scriptName));
+			scriptJSON.putOnce("executionTime", _scriptExecutor.getExecutionTime(scriptName));
+
+		} catch (JSONException e) {
+			e.printStackTrace();
+			scriptJSON = null;
+		}
+
+		return scriptJSON;
+	}
+	
 	public static JSONObject getClockJSON(Clock clock) {
 		JSONObject clockJSON = null;
 		try {
@@ -157,5 +197,7 @@ public class IcasaJSONUtil {
 		SimpleDateFormat format = new SimpleDateFormat("dd/MM/yyyy - HH:mm:ss");
 		return format.format(date);
 	}
+	
+	
 	
 }
