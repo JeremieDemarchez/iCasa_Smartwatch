@@ -21,7 +21,7 @@
   <parent>
 	<groupId>fr.liglab.adele.common</groupId>
 	<artifactId>distribution.base</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<relativePath />
   </parent>
 
@@ -30,7 +30,7 @@
   <artifactId>icasa.teaching.distribution</artifactId>
   <packaging>pom</packaging>
   <name>${productName} :: ${projectName}</name>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
     <!-- Project repositories -->
     <repositories>
