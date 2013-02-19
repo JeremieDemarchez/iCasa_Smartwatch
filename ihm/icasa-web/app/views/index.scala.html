@@ -31,7 +31,60 @@
                     <img src="/maps/@map.imgFile" class="img-rounded"/>
                     <p>@map.name</p>
                 </a>
+                <div class="mapButton mapRemoveButton pull-right">
+                    <i class="icon-remove"></i>
+                </div>
+                <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-target="#form@map.id">
+                    <i class="icon-pencil"></i>
+                </div>
             </li>
+
+            <div style="width:300px;margin-left:-150px;" id="form@map.id" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel@map.id" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="ModalLabel@map.id">Edit @map.name</h3>
+                </div>
+                <form action="/mapUpdate" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label class="control-label" for="mapId@map.id">ID</label>
+                            <div class="controls">
+                                <input type="text" name="mapId" id="mapId@map.id" value="@map.id" readonly/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapName@map.id">Name</label>
+                            <div class="controls">
+                                <input type="text" name="mapName" id="mapName@map.id" value="@map.name"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapDescription@map.id">Description</label>
+                            <div class="controls">
+                                <input type="text" name="mapDescription" id="mapDescription@map.id" value="@map.description"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="gatewayURL@map.id">Box URL</label>
+                            <div class="controls">
+                                <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="picture">Picture</label>
+                            <div class="controls">
+                                <input type="file" name="picture" id="picture@map.id"/>
+                            </div>
+                            <img src="/maps/@map.imgFile" class="img-rounded"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
+                    </div>
+                </form>
+            </div>
+
             }
             <li class="span3">
                 <a href="#addForm" class="thumbnail" data-toggle="modal">
@@ -41,7 +94,7 @@
             </li>
         </ul>
 
-        <div id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div style="width:300px;margin-left:-150px;" id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h3 id="myModalLabel">Add a new map</h3>
