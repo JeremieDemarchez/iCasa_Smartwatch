@@ -3,7 +3,7 @@
         <h1 style="text-align: center;">iCasa</h1>
         <p style="text-align: center;" class="lead">Digital Home Application Development Toolkit</p>
         <p>
-            <span class="span8">&nbsp;</span>
+            <span class="span2">&nbsp;</span>
            <a href="TODO-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator</a>
             <a href="TODO-${project.version}.zip" class="btn
@@ -12,6 +12,7 @@
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Store</a>
             <a href="TODO-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Dashboard</a>
+            <span class="span2">&nbsp;</span>
         </p>
     </div>
 </div>

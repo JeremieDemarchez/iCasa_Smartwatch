@@ -38,7 +38,7 @@
             </googleSearch>
 
 			<gitHub>
-		        <projectId>iCasa</projectId>
+		        <projectId>AdeleResearchGroup/iCasa</projectId>
 		        <ribbonOrientation>right</ribbonOrientation>
 		        <ribbonColor>black</ribbonColor>
             </gitHub>
