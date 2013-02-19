@@ -54,6 +54,10 @@ public interface ScriptExecutor {
 		}
 	}
 
+	public void addListener(ScriptExecutorListener listener);
+	
+	public void removeListener(ScriptExecutorListener listener);
+	
 	/**
 	 * Gets a lists of scripts in the platform
 	 * 

@@ -174,25 +174,27 @@ public class ScriptPlayerREST extends AbstractREST {
 
 		String currentScriptName = _scriptExecutor.getCurrentScript();
 		State currentScriptState = _scriptExecutor.getCurrentScriptState();
-
+		State newState = State.fromString(script.getState());
+		
 		if (scriptId.equals(currentScriptName)) { // Same script
-			if (currentScriptState == State.STARTED) {
-				if (State.STOPPED.equals(script.getState()))
+			if (currentScriptState == State.STARTED) {				
+				if (State.STOPPED == newState)
 					_scriptExecutor.stop();
-				if (State.PAUSED.equals(script.getState()))
+				if (State.PAUSED == newState)
 					_scriptExecutor.pause();
 			} else if (currentScriptState == State.PAUSED) {
-				if (State.STARTED.equals(script.getState()))
+				if (State.STARTED == newState)
 					_scriptExecutor.resume();
 			} else if (currentScriptState == State.STOPPED) {
-				if (State.STARTED.equals(script.getState()))
+				if (State.STARTED == newState)
 					_scriptExecutor.execute(scriptId);
 			} else {
 				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
 			}				
 		} else { // New script
 			if (currentScriptState == State.STOPPED)
-				_scriptExecutor.execute(scriptId);
+				if (State.STARTED == newState)
+					_scriptExecutor.execute(scriptId);
 			else
 				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
 		}

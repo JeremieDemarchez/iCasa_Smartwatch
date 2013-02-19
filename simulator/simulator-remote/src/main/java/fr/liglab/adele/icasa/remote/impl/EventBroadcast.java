@@ -42,6 +42,8 @@ import org.osgi.service.http.NamespaceException;
 import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.clock.api.ClockListener;
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.script.executor.ScriptExecutorListener;
 import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.Position;
@@ -66,6 +68,10 @@ public class EventBroadcast extends OnMessage<String> {
 
 	@Requires
 	private SimulationManager _simulMgr;
+	
+	@Requires
+	private ScriptExecutor _scriptExecutor;
+	
 
 	@Requires
 	private Clock _clock;
@@ -75,6 +81,8 @@ public class EventBroadcast extends OnMessage<String> {
 	private ICasaEventListener _iCasaListener;
 
 	private ClockEventListener _clockListener;
+	
+	private ScriptPlayerEventListener _scriptListener;
 
 	// private final BundleContext _context;
 
@@ -88,9 +96,13 @@ public class EventBroadcast extends OnMessage<String> {
 		// Register iCasa listeners
 		_iCasaListener = new ICasaEventListener();
 		_simulMgr.addListener(_iCasaListener);
+		
 
 		_clockListener = new ClockEventListener();
 		_clock.addListener(_clockListener);
+		
+		_scriptListener = new ScriptPlayerEventListener();
+		_scriptExecutor.addListener(_scriptListener);
 
 		_eventBroadcaster = _atmoService.getBroadcasterFactory().get();
 
@@ -119,6 +131,11 @@ public class EventBroadcast extends OnMessage<String> {
 		if (_clockListener != null) {
 			_clock.removeListener(_clockListener);
 			_clockListener = null;
+		}
+		
+		if (_scriptListener != null) {
+			_scriptExecutor.removeListener(_scriptListener);
+			_scriptListener = null;
 		}
 
 		_atmoService.removeAtmosphereHandler(mapping);
@@ -483,6 +500,42 @@ public class EventBroadcast extends OnMessage<String> {
 			}
 		}
 
+	}
+	
+	private class ScriptPlayerEventListener implements ScriptExecutorListener {
+
+		@Override
+      public void scriptPaused(String scriptName) {
+			sendModifiedEvent("script-paused", scriptName);	
+      }
+
+		@Override
+      public void scriptResumed(String scriptName) {
+			sendModifiedEvent("script-resumed", scriptName);	
+      }
+
+		@Override
+      public void scriptStopped(String scriptName) {
+			sendModifiedEvent("script-stopped", scriptName);		      
+      }
+
+		@Override
+      public void scriptStarted(String scriptName) {
+			sendModifiedEvent("script-started", scriptName);	      
+      }
+		
+		private void sendModifiedEvent(String eventType, String scriptName) {
+			System.out.println("Sending ----> " + eventType);
+			JSONObject json = new JSONObject();
+			try {
+				json.put("eventType", eventType);
+				json.put("script", IcasaJSONUtil.getScriptJSON(scriptName, _scriptExecutor));
+				sendEvent(json);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}
+		
 	}
 
 }

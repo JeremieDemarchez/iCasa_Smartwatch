@@ -75,30 +75,8 @@ public class ScriptSAXHandler extends DefaultHandler {
 		return list;
 	}
 
-	public long getStartDate() {
-		/*
-		if (startdateStr != null && (!startdateStr.isEmpty())) {
-			SimpleDateFormat formatter = new SimpleDateFormat(ScriptExecutor.SIMULATOR_DATE_FORMAT);
-			Date startDate = null;
-
-			try {
-				startDate = formatter.parse(startdateStr);
-			} catch (ParseException e) {
-				// e.printStackTrace();
-			} finally {
-				if (startDate == null)
-					startDate = new Date(System.currentTimeMillis());
-			}
-			return startDate.getTime();
-		} else
-			return System.currentTimeMillis();
-			
-		*/
-		
-		
-		System.out.println("Text Date ------------------------------------------> " + startdateStr);
+	public long getStartDate() {		
 		Date date = DateTextUtil.getDateFromText(startdateStr);
-		System.out.println("Date ------------------------------------------> " + date);
 		if (date!=null)
 			return date.getTime();
 		return System.currentTimeMillis();
