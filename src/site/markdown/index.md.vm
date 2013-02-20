@@ -1,0 +1,55 @@
+<div class="row-fluid page-header">
+    <div class="title span12">
+        <h1 style="text-align: center;">iCasa</h1>
+        <p style="text-align: center;" class="lead">Digital Home Application Development Toolkit</p>
+        <p>
+            <span class="span2">&nbsp;</span>
+           <a href="TODO-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator</a>
+            <a href="TODO-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Runtime</a>
+            <a href="TODO-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Store</a>
+            <a href="TODO-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Dashboard</a>
+            <span class="span2">&nbsp;</span>
+        </p>
+    </div>
+</div>
+
+<div class="row-fluid page-header">
+    <div class="span4">
+        <h1><i class="fa-icon-sitemap"></i>&nbsp; Customizable</h1>
+        <p><p>TODO.</p></p>
+    </div>
+
+    <div class="span4">
+        <h1><i class="fa-icon-cogs"></i>&nbsp; Dynamic</h1>
+        <p><p>TODO.</p>
+    </div>
+
+    <div class="span4">
+        <h1><i class="fa-icon-reorder"></i>&nbsp; Integrable</h1>
+        <p><p>TODO.</p>
+    </div>
+</div>
+
+<div class="row-fluid page-header">
+    <div class="span6">
+       <h1><i class="fa-icon-th-large"></i>&nbsp; About the project</h1>
+       <p>
+       TODO.</p>
+    </div>
+    <div class="span6">
+        <h1><i class="fa-icon-gift"></i>&nbsp; What's in the box ?</h1>
+        <ul class="feature-list">
+            <li><strong>TODO</strong>: TODO.</li>
+        </ul>
+    </div>
+</div>
+
+
+<h1>License</h1>
+iCasa toolkit is licensed under the Apache License 2.0. The project is founded and maintained by
+<a href="http://www-adele.imag.fr/">LIG ADELE team</a>.
+

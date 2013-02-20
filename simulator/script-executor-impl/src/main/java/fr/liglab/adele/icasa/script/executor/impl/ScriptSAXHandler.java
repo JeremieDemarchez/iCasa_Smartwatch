@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.icasa.script.executor.impl;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -26,6 +24,8 @@ import org.json.JSONObject;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
+
+import fr.liglab.adele.icasa.clock.util.DateTextUtil;
 
 public class ScriptSAXHandler extends DefaultHandler {
 
@@ -75,22 +75,12 @@ public class ScriptSAXHandler extends DefaultHandler {
 		return list;
 	}
 
-	public long getStartDate() {
-		if (startdateStr != null && (!startdateStr.isEmpty())) {
-			SimpleDateFormat formatter = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
-			Date startDate = null;
-
-			try {
-				startDate = formatter.parse(startdateStr);
-			} catch (ParseException e) {
-				// e.printStackTrace();
-			} finally {
-				if (startDate == null)
-					startDate = new Date(System.currentTimeMillis());
-			}
-			return startDate.getTime();
-		} else
-			return System.currentTimeMillis();
+	public long getStartDate() {		
+		Date date = DateTextUtil.getDateFromText(startdateStr);
+		if (date!=null)
+			return date.getTime();
+		return System.currentTimeMillis();
+			
 	}
 	
 	public int getFactor() {
