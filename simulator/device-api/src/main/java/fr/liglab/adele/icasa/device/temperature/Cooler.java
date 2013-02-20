@@ -40,19 +40,6 @@ public interface Cooler extends GenericDevice {
      */
     String COOLER_POWER_LEVEL = "cooler.powerLevel";
     
-    /**
-     * Service property indicating the max power level of the cooler in Watts.
-     * 
-     * <ul>
-     * <li>This property is <b>mandatory</b></li>
-     * <li>Type of value : <b><code>java.lang.Double</code></b> fixed to 1000.0 Watts.
-     * </ul>
-     * 
-     * @see #getMaxPowerLevel()
-     * 
-     */
-    String COOLER_MAX_POWER_LEVEL ="cooler.maxPowerLevel";
-    
     String COOLER_UPDATE_PERIOD = "cooler.updaterThread.period";
 
     /**
@@ -74,13 +61,5 @@ public interface Cooler extends GenericDevice {
      * @see #COOLER_POWER_LEVEL
      */
     double setPowerLevel(double level);
-    
-    /**
-     * Return the max power level of this cooler
-     * 
-     * @return the max power level of this cooler in Watts.
-     * @see #COOLER_MAX_POWER_LEVEL
-     */
-    double getMaxPowerLevel();
 
 }
