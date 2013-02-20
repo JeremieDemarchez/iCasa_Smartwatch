@@ -35,7 +35,6 @@
 		<module>clock-system-impl</module>
 		<module>simulator-api</module>
 		<module>simulator-impl</module>
-	    <module>script-executor-impl</module>		
 		<module>simulated-devices</module>
       <module>simulator-remote</module>
 		<module>gogo-adapter</module>

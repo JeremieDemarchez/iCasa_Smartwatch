@@ -20,6 +20,11 @@
 			<artifactId>context.api</artifactId>
          <version>${iCasaVersion}</version>
 		</dependency>
+      <dependency>
+         <groupId>fr.liglab.adele.icasa</groupId>
+         <artifactId>context.impl</artifactId>
+         <version>${iCasaVersion}</version>
+      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>simulator.api</artifactId>
@@ -73,11 +78,6 @@
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>clock.simulated.impl</artifactId>
-         <version>${iCasaVersion}</version>
-      </dependency>
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>script.executor.impl</artifactId>
          <version>${iCasaVersion}</version>
       </dependency>
 		<dependency>
