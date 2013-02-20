@@ -1,7 +1,8 @@
 iCasa
 =====
 
-This project aims at providing a simulator to do funtional testing of digital home application.
+This project aims at providing a simulator to do functional testing of digital home application based on iCasa runtime.
+The project website is <http://adeleresearchgroup.github.com/iCasa/>.
 
 License
 =====
@@ -19,10 +20,12 @@ The main contributors are
 Source Organization
 ====
 
-- _ihm_: Contains android applications and web application to use the simulator.  
-- _parent_: Contain the global build configuration including licensing information.
-- _simulator_: Contains technical services of the simulator. 
-- _web-tools-common_: Contains web librayr used to implement the simulator web application.
+- _distribution_: Contains ready to use distributions of client and server simulator parts.
+- _packages_: Contains deployment packages of client and server simulator parts.
+- _ihm_: Contains android applications and a client web application to use the simulator.
+- _parent_: Contains the global build configuration including licensing information.
+- _simulator_: Contains server part of the simulator.
+- _src_: Contains the project web site source code.
 
 How to use it
 =====
@@ -32,13 +35,13 @@ Use a distribution
 
 1. Install jdk 6 (NOT java 7 !!!)
 2. Unzip one of the distribution
-3. Execute PRODUCT file (or PRODUCT.bat file on Windows)
+3. Execute startGateway file on Unix (or startGateway.bat file on Windows)
 
 Build a new distribution
 ----
 
-Install all build prerequisites.
-Then add the following maven repositories to your project pom.xml file.
+1. Install all build prerequisites (described in next section).
+2. Then add the following maven repositories to your project pom.xml file.
 ```xml
 <repository>
 	<id>maven-icasa-repository-release</id>
@@ -53,7 +56,7 @@ Then add the following maven repositories to your project pom.xml file.
 	<layout>default</layout>
 </repository>
 ```
-TODO
+3.
 
 Build
 =====

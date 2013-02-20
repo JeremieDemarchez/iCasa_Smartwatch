@@ -45,11 +45,12 @@ public interface BinaryLight extends GenericDevice {
 	 * 
 	 * <ul>
 	 * <li>This property is <b>mandatory</b></li>
-	 * <li>Type of values : <b><code>java.lang.Integer</code></b>, is
+	 * <li>Type of values : <b><code>java.lang.Double</code></b>, is
 	 * <code>100</code> Watts</li>
 	 * <li>Description : value is the wattage of the light.  <code>100</code> watts for a normal lamp.</li>
 	 * </ul>
 	 * 
+	 * @see #getMaxPowerLevel()
 	 */
 	String LIGHT_MAX_POWER_LEVEL = "max_power";
 	

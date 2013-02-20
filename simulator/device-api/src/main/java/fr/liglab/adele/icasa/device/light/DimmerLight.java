@@ -41,6 +41,19 @@ public interface DimmerLight extends GenericDevice {
 	String LIGHT_POWER_LEVEL = "power_level";
 
 	/**
+	 * Device property indicating the maximum power level of the dimmer light.
+	 * 
+	 * <ul>
+	 * <li>This property is <b>mandatory</b></li>
+	 * <li>Type of values : <b><code>java.lang.Double</code></b>, is
+	 * <code>100</code> Watts</li>
+	 * <li>Description : value is the wattage of the light.  <code>100</code> watts for a normal lamp.</li>
+	 * </ul>
+	 * 
+	 * @see #getMaxPowerLevel()
+	 */
+	String LIGHT_MAX_POWER_LEVEL = "max_power";
+	/**
 	 * Device property indicating the Lamp maximum Illuminance (in Lux)
 	 * <ul>
 	 * <li>This property is <b>mandatory</b></li>
@@ -69,5 +82,13 @@ public interface DimmerLight extends GenericDevice {
 	 * @see #LIGHT_POWER_LEVEL
 	 */
 	double setPowerLevel(double level);
+	
+	/**
+	 * Return the current power level of this dimmer light
+	 * @return the power level of this dimmer light
+	 * 
+	 * @see #LIGHT_MAX_POWER_LEVEL
+	 */
+	double getMaxPowerLevel();
 
 }

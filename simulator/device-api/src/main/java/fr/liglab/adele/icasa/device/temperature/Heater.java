@@ -40,6 +40,19 @@ public interface Heater extends GenericDevice {
      */
     String HEATER_POWER_LEVEL = "heater.powerLevel";
     
+    /**
+     * Service property indicating the max power level of the heater in Watts.
+     * 
+     * <ul>
+     * <li>This property is <b>mandatory</b></li>
+     * <li>Type of value : <b><code>java.lang.Double</code></b> fixed to 1000.0 Watts.
+     * </ul>
+     * 
+     * @see #getMaxPowerLevel()
+     * 
+     */
+    String HEATER_MAX_POWER_LEVEL ="heater.maxPowerLevel";
+    
     String HEATER_UPDATE_PERIOD = "heater.updaterThread.period";
 
     /**
@@ -61,5 +74,13 @@ public interface Heater extends GenericDevice {
      * @see #HEATER_POWER_LEVEL
      */
     double setPowerLevel(double level);
+    
+    /**
+     * Return the max power level of this heater
+     * 
+     * @return the max power level of this heater in Watts.
+     * @see #HEATER_MAX_POWER_LEVEL
+     */
+    double getMaxPowerLevel();
 
 }
