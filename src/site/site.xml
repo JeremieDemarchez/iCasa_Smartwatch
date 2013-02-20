@@ -82,6 +82,10 @@
 
 		</menu>		
 		
+        <menu>
+           <item name="Simulated Devices" href="simulatedDevices.html"/>
+        </menu>
+      
 		<menu name="Advanced Topics">
             <item name="TODO" href=""/>
 
