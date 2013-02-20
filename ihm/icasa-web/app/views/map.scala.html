@@ -36,7 +36,7 @@
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.devices() -->
-                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name}, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }" data-original-title="Device detail">
                     <div class="deviceWidgetContainer">
                         <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
@@ -45,11 +45,13 @@
                         <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }">
                         </div>
                     </div>
+                    <div class="deviceWidgetHalo"></div>
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.zones() -->
                  <div class="zoneSection" data-bind="jqueryResizable: {}, jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight, visibility: visibility , background: background}">
-                </div>
+                    <div data-bind="text: name"></div>
+                 </div>
             <!-- /ko -->
         </section>
     </article>

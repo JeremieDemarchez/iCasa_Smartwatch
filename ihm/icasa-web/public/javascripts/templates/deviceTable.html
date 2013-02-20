@@ -20,10 +20,15 @@
     table th i { cursor: pointer}
     table th, table td { overflow: hidden; }
 </style>
+<script>
+    $(function () {
+        $(".deviceWidget").popover({trigger:'hover'});
+    });
+</script>
 
 <script>
-   $("#typdevicedesc").click(function() {
-       $("#typdevicedesc").css("display", "none");
+   $("#typedevicedesc").click(function() {
+       $("#typedevicedesc").css("display", "none");
        $("#typedeviceasc").css("display", "inline-block");
    });
 
