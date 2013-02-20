@@ -46,8 +46,11 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	private Zone m_zone;
 
 	public SimulatedDimmerLightImpl() {
-		setPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE, 0.0d);
-		super.setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, 0.0d);	
+		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE, 0.0d);
+		super.setPropertyValue(DimmerLight.LIGHT_MAX_POWER_LEVEL, 100.0d);
+		super.setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, 0.0d);
+		
 	}
 
 	@Override
@@ -114,7 +117,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
 		
 		surface = scaleFactor*scaleFactor*height*width;
-		returnedIlluminance = (powerLevel*100.0*lumens)/surface;
+		returnedIlluminance = (powerLevel*getMaxPowerLevel()*lumens)/surface;
 		return returnedIlluminance;			
 	}
 
@@ -129,5 +132,13 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;	
+	}
+	
+	@Override
+	public double getMaxPowerLevel() {
+		Double maxLevel = (Double) getPropertyValue(DimmerLight.LIGHT_MAX_POWER_LEVEL);
+		if (maxLevel==null)
+			return 0;
+		return maxLevel;
 	}
 }
