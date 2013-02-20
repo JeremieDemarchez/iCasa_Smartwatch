@@ -84,12 +84,11 @@
 		
         <menu name="Simulated Devices">
            <item name="Lights" href="lights.html"/>
-          <item name="Heater/Cooler" href="heater.html"/>
-          <item name="Multimedia" href="multimedia.html"/>
-          <item name="Health" href="health.html"/>
-          <item name="Electricity" href="electricity.html"/>
-          <item name="Detectors" href="detectors.html"/>
-          
+           <item name="Heater/Cooler" href="heater.html"/>
+           <item name="Multimedia" href="multimedia.html"/>
+           <item name="Health" href="health.html"/>
+           <item name="Electricity" href="electricity.html"/>
+           <item name="Detectors" href="detectors.html"/>
         </menu>
       
 		<menu name="Advanced Topics">
