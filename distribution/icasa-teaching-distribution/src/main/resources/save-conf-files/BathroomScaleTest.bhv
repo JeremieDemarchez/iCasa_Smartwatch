@@ -1,4 +1,4 @@
-<behavior startdate="2011.10.27.00.00.00" factor="1440">
+<behavior startdate="27/10/2011-00:00:00" factor="1440">
 	
 	
 	<add-device deviceID="BathroomScale-ABC-1231234-ZZ" type="iCASA.BathroomScale" />
