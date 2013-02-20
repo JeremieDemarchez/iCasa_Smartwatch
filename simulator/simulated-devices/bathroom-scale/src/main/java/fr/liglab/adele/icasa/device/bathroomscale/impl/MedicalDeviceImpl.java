@@ -18,14 +18,14 @@ package fr.liglab.adele.icasa.device.bathroomscale.impl;
 import java.util.List;
 import java.util.Random;
 
+import fr.liglab.adele.icasa.context.LocatedDevice;
+import fr.liglab.adele.icasa.context.Position;
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.listener.LocatedDeviceListener;
 import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
-import fr.liglab.adele.icasa.simulator.listener.LocatedDeviceListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 public abstract class MedicalDeviceImpl extends AbstractDevice implements LocatedDeviceListener, PersonListener, SimulatedDevice {

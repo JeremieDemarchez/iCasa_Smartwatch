@@ -26,11 +26,11 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 import fr.liglab.adele.icasa.device.sound.Speaker;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * Implementation of a simulated speaker device.

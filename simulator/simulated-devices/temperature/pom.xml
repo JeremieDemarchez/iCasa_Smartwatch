@@ -46,7 +46,7 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>device.api</artifactId>
+      <artifactId>context.api</artifactId>
       <version>${iCasaVersion}</version>
    </dependency>
     <dependency>

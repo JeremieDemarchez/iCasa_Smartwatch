@@ -37,7 +37,7 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>script.executor.api</artifactId>
+      <artifactId>simulator.api</artifactId>
       <version>${iCasaVersion}</version>
     </dependency>
 

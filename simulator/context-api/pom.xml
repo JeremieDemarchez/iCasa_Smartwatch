@@ -32,7 +32,7 @@
 					<instructions>
 						<Export-Package>fr.liglab.adele.icasa.device,
 							fr.liglab.adele.icasa.device.*, fr.liglab.adele.icasa.clock.api,
-							fr.liglab.adele.icasa.clock.util</Export-Package>
+							fr.liglab.adele.icasa.clock.util, fr.liglab.adele.icasa.context, fr.liglab.adele.icasa.listener</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

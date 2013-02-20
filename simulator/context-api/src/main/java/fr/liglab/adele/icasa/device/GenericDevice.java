@@ -15,8 +15,10 @@
  */
 package fr.liglab.adele.icasa.device;
 
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -51,6 +53,9 @@ public interface GenericDevice {
 	public static String FAULT_YES = "yes";
 	public static String FAULT_NO = "no";
 	public static String FAULT_UNKNOWN = "unknown";
+	
+	public static String LOCATION_PROPERTY_NAME = "Location";
+	public static String LOCATION_UNKNOWN = "unknown";	
 
 	/**
 	 * Default icon width, in px.
@@ -141,5 +146,10 @@ public interface GenericDevice {
 	 * @param value
 	 */
 	public void setPropertyValue(String propertyName, Object value);
+	
+	public void enterInZones(List<Zone> zones);
+	
+	public void leavingZones(List<Zone> zones);
+	
 
 }

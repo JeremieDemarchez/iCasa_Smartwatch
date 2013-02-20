@@ -23,8 +23,8 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * 

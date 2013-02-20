@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulator.listener;
 
+import fr.liglab.adele.icasa.listener.IcasaListener;
+
 
 /**
  * @author Thomas Leveque

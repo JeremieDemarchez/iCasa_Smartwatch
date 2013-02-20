@@ -36,7 +36,12 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>device.api</artifactId>
+      <artifactId>context.api</artifactId>
+      <version>${iCasaVersion}</version>
+    </dependency>
+        <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>context.impl</artifactId>
       <version>${iCasaVersion}</version>
     </dependency>
     <dependency>
@@ -53,7 +58,7 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.simulator.impl, fr.liglab.adele.icasa.simulator.impl.util</Private-Package>
+            <Private-Package>fr.liglab.adele.icasa.simulator.impl</Private-Package>
             <Export-Package />
           </instructions>
         </configuration>

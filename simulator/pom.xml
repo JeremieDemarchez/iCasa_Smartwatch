@@ -30,6 +30,7 @@
 
 	<modules>
 		<module>context-api</module>
+      <module>context-impl</module>
 		<module>clock-simulated-impl</module>
 		<module>clock-system-impl</module>
 		<module>simulator-api</module>

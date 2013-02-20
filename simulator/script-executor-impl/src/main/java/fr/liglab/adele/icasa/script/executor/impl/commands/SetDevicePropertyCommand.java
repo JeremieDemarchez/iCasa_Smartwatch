@@ -23,7 +23,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.context.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 @Component(name = "SetDevicePropertyCommand")

@@ -25,11 +25,6 @@
       <version>${iCasaVersion}</version>
    </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>clock.api</artifactId>
-      <version>${iCasaVersion}</version>
-   </dependency>
-    <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.ipojo</artifactId>
     </dependency>
@@ -47,7 +42,7 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>device.api</artifactId>
+      <artifactId>context.api</artifactId>
       <version>${iCasaVersion}</version>
    </dependency>
     <dependency>

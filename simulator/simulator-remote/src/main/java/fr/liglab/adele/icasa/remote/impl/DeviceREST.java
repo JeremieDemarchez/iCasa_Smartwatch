@@ -42,10 +42,10 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import fr.liglab.adele.icasa.context.LocatedDevice;
+import fr.liglab.adele.icasa.context.Position;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
-import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 

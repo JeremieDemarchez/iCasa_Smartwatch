@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.DeviceListener;
@@ -167,6 +168,24 @@ public abstract class AbstractDevice implements GenericDevice {
 				ee.printStackTrace();
 			}
 		}
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.liglab.adele.icasa.device.GenericDevice#enterInZones(java.util.List)
+	 */
+	@Override
+	public void enterInZones(List<Zone> zones) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.liglab.adele.icasa.device.GenericDevice#leavingZones(java.util.List)
+	 */
+	@Override
+	public void leavingZones(List<Zone> zones) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

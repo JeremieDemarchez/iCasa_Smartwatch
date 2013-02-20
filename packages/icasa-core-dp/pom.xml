@@ -17,7 +17,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>device.api</artifactId>
+			<artifactId>context.api</artifactId>
          <version>${iCasaVersion}</version>
 		</dependency>
 		<dependency>
@@ -70,11 +70,6 @@
 			<artifactId>continua-rest-client</artifactId>
 			<version>${iCasaVersion}</version>
 		</dependency>
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>clock.api</artifactId>
-         <version>${iCasaVersion}</version>
-      </dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>clock.simulated.impl</artifactId>

@@ -24,11 +24,11 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.bathroomscale.BathroomScale;
 import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 
 @Component(name = "iCASA.BathroomScale")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })

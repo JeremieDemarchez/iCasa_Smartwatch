@@ -45,14 +45,14 @@ import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.api.Clock;
 import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.context.LocatedDevice;
+import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.script.executor.ScriptExecutorListener;
 import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * @author Gabriel Pedraza Ferreira

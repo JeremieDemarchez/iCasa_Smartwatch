@@ -21,7 +21,7 @@
     </dependency>  
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>clock.api</artifactId>
+      <artifactId>context.api</artifactId>
       <version>${iCasaVersion}</version>
     </dependency>
     <dependency>
