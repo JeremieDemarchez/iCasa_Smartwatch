@@ -49,7 +49,8 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	private Zone m_zone;
 
 	public SimulatedHeaterImpl() {
-		setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.0d);
+		super.setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.0d);
+		setPropertyValue(Heater.HEATER_MAX_POWER_LEVEL, 1000.0d);
 		setPropertyValue(Heater.HEATER_UPDATE_PERIOD, 5000);
 	}
 
@@ -91,10 +92,10 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
 		if (propertyName.equals(Heater.HEATER_POWER_LEVEL)) {
-			
+
 			double previousLevel = getPowerLevel();		
 			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
-			
+
 			if (previousLevel!=level) {
 				super.setPropertyValue(Heater.HEATER_POWER_LEVEL, level);			
 			}			
@@ -102,27 +103,47 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 			super.setPropertyValue(propertyName, value);
 	}
 
-	private void calculateTemperature() {
+	/**
+	 * Return the current temperature produced by the heater, according to its
+	 * powerLevel.
+	 * The formula used to compute the temperature is :
+	 * CurrentTemperature [K]=(P[W]/C[J/K])*t[s]+T0[K]
+	 * @return the temperature currently produced by this heater
+	 * @author jeremy savonet
+	 */
+	private double computeTemperature() {
 		long time = System.currentTimeMillis();
 		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
 		m_lastUpdateTime = time;
-		
+
+		//Define constant to compute the value of the thermal capacity
+		double airMassCapacity=1000; //mass capacity of the air in J/(Kg.K)
+		double airMass = 1.2; //mass of the air in Kg/m^3
+		Double roomVolume=0.0; //volume of the room in m^3
+		double thermalCapacity = 0.0; //Thermal capacity used to compute the temperature. Expressed in J/K.
+
+		Double currentTemperature = 0.0;
+		double returnedTemperature = 0.0;
+		double heaterPowerLevel = 0.0; 		
+
 		if (m_zone != null) {
-			
+
 			try {
-				Double current = (Double) m_zone.getVariableValue("Temperature");
-				Double volume = (Double) m_zone.getVariableValue("Volume");				
-				double powerLevel = getPowerLevel();
-				
-				if (volume>0) {
-					double decrease = powerLevel * timeDiff / volume;
-					if (decrease>0)
-						m_zone.setVariableValue("Temperature", current + decrease);				
+				currentTemperature = (Double) m_zone.getVariableValue("Temperature");
+				roomVolume = (Double) m_zone.getVariableValue("Volume");				
+				heaterPowerLevel = getPowerLevel()*getMaxPowerLevel();
+
+				if (roomVolume>0) {
+					thermalCapacity = airMass * roomVolume * airMassCapacity;
+					returnedTemperature = ((heaterPowerLevel*timeDiff)/thermalCapacity)+currentTemperature;
+					//clippinp function
+					if(returnedTemperature > 303.16) returnedTemperature = 303.16;
 				}								
-         } catch (Exception e) {
-	         e.printStackTrace();
-         }				
+			} catch (Exception e) {
+				e.printStackTrace();
+			}				
 		}
+		return returnedTemperature;
 	}
 
 	/**
@@ -143,7 +164,8 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 					Thread.sleep(sleepTime);
 					synchronized (SimulatedHeaterImpl.this) {
 						if (m_zone != null) {
-							calculateTemperature();
+
+							m_zone.setVariableValue("Temperature", computeTemperature());	
 						}
 					}
 				} catch (InterruptedException e) {
@@ -165,6 +187,14 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		m_zone = null;
+	}
+
+	@Override
+	public double getMaxPowerLevel() {
+		Double maxLevel = (Double) getPropertyValue(Heater.HEATER_MAX_POWER_LEVEL);
+		if (maxLevel==null)
+			return 0;
+		return maxLevel;
 	}
 
 }
