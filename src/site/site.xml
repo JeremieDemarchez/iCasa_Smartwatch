@@ -19,7 +19,7 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/DECORATION/1.0.0 http://maven.apache.org/xsd/decoration-1.0.0.xsd">
     <bannerLeft>
-        <name>iCasa - Digital Home Development Kit</name>
+        <name>iCasa Simulator - Digital Home Simulator</name>
         <src>icasa-small.png</src>
         <href>#</href>
     </bannerLeft>
@@ -71,16 +71,26 @@
             <link rel="shortcut icon"  href="favicon.png" />
         </head>
 
-        <menu name="iCasa">
+        <menu name="iCasa Simulator">
             <item name="Home" href="index.html"/>
 
         </menu>
 
 		<menu name="User Guide">
+            <item name="Script" href="script.html"/>
 			<item name="TODO" href=""/>
 
 		</menu>		
 		
+        <menu name="Simulated Devices">
+           <item name="Lights" href="lights.html"/>
+           <item name="Heater/Cooler" href="heater.html"/>
+           <item name="Multimedia" href="multimedia.html"/>
+           <item name="Health" href="health.html"/>
+           <item name="Electricity" href="electricity.html"/>
+           <item name="Detectors" href="detectors.html"/>
+        </menu>
+      
 		<menu name="Advanced Topics">
             <item name="TODO" href=""/>
 
