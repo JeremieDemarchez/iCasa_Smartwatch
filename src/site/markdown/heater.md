@@ -58,7 +58,7 @@ We take into account physical consideration to compute the temperature (expresse
  
 <div class="descriptionCard">Overview</div> 
  
-Heater can supply only one model of heater which is a 1000 Watts electrical heater. 
+Cooler can supply only one model of heater which is a 1000 Watts electrical cooler. 
 The heater power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (heater is off) and 1000 Watts (completely turned on).
 
 <div class="propertiesCard">Thermal properties</div>
