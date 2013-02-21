@@ -15,6 +15,12 @@ Lights
 BinaryLight can supply only one model of lamp which is a 100 Watts incandescent. The radiation color is white monochromatic emission type. The lamp power is fixed at 100 Watts.
  
 <div class="propertiesCard">Electro-optical properties</div>
+
+|    Model    | power_status |  max_power  |
+| ----------- | ------------ | ----------: |
+| BinaryLight |	True - False |	100 Watts  |
+
+
         
 <div class="methodsCard">Methods</div>
 <ul>
