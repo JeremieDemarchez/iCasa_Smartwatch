@@ -39,19 +39,9 @@ We take into account physical consideration to compute the temperature (expresse
 <div class="methodsCard">Methods</div>
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
-<li><code>getPowerStatus()</code>: Get the power status of the lamp:
-<ul>
-<li>switched On: true</li>
-<li>switched Off: false</li>
-</ul>
-</li>
-<li><code>setPowerStatus(Boolean state)</code>: Set the power status of the lamp:
-<ul>
-<li>switched On: true</li>
-<li>switched Off: false</li>
-</ul>
-</li>
-<li><code>getMaxPowerLevel()</code>: Get the max power level of the lamp in Watts</li>
+<li><code>getPowerLevel()</code>: Get the power level in percentage</li>
+<li><code>setPowerLevel(double level)</code>: Set the power level of the heater in percentage</li>
+<li><code>getMaxPowerLevel()</code>: Get the max power level of the heater in Watts</li>
 </ul>
 
 [Full datasheet here](http://example.net/)
