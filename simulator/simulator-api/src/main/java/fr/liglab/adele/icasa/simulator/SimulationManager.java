@@ -19,8 +19,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import fr.liglab.adele.icasa.context.ContextManager;
-import fr.liglab.adele.icasa.context.Position;
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.location.Position;
 
 /**
  * TODO Comments.

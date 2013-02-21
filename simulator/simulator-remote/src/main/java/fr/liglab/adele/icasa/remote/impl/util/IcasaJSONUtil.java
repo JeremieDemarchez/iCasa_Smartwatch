@@ -3,20 +3,20 @@ package fr.liglab.adele.icasa.remote.impl.util;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.util.DateTextUtil;
-import fr.liglab.adele.icasa.context.LocatedDevice;
-import fr.liglab.adele.icasa.context.Position;
-import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.impl.DeviceJSON;
 import fr.liglab.adele.icasa.remote.impl.PersonJSON;
 import fr.liglab.adele.icasa.remote.impl.ScriptJSON;
 import fr.liglab.adele.icasa.remote.impl.ZoneJSON;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 
 public class IcasaJSONUtil {
 

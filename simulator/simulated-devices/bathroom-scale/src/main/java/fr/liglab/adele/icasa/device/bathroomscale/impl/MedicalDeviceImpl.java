@@ -18,11 +18,11 @@ package fr.liglab.adele.icasa.device.bathroomscale.impl;
 import java.util.List;
 import java.util.Random;
 
-import fr.liglab.adele.icasa.context.LocatedDevice;
-import fr.liglab.adele.icasa.context.Position;
-import fr.liglab.adele.icasa.context.Zone;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.listener.LocatedDeviceListener;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedDeviceListener;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;

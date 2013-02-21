@@ -24,9 +24,9 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 
-import fr.liglab.adele.icasa.context.ContextManager;
-import fr.liglab.adele.icasa.context.LocatedDevice;
-import fr.liglab.adele.icasa.context.Zone;
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.Zone;
 
 @Component
 @Provides(properties = {

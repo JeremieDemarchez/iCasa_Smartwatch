@@ -17,7 +17,7 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.clock.api.Clock;
+import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 
 /**

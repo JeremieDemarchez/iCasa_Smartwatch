@@ -30,9 +30,9 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Export-Package>fr.liglab.adele.icasa.device,
-							fr.liglab.adele.icasa.device.*, fr.liglab.adele.icasa.clock.api,
-							fr.liglab.adele.icasa.clock.util, fr.liglab.adele.icasa.context, fr.liglab.adele.icasa.listener</Export-Package>
+						<Export-Package>fr.liglab.adele.icasa, fr.liglab.adele.icasa.device,
+							fr.liglab.adele.icasa.device.*, fr.liglab.adele.icasa.clock,
+							fr.liglab.adele.icasa.clock.util, fr.liglab.adele.icasa.location, fr.liglab.adele.icasa.listener</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

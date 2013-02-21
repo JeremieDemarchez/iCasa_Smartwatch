@@ -31,17 +31,19 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Unbind;
 
-import fr.liglab.adele.icasa.context.ContextManager;
-import fr.liglab.adele.icasa.context.LocatedDevice;
-import fr.liglab.adele.icasa.context.LocatedObject;
-import fr.liglab.adele.icasa.context.Position;
-import fr.liglab.adele.icasa.context.Zone;
-import fr.liglab.adele.icasa.context.impl.util.ZoneComparable;
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.device.DeviceTypeListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.listener.DeviceTypeListener;
 import fr.liglab.adele.icasa.listener.IcasaListener;
-import fr.liglab.adele.icasa.listener.LocatedDeviceListener;
-import fr.liglab.adele.icasa.listener.ZoneListener;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedDeviceListener;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.ZoneListener;
+import fr.liglab.adele.icasa.location.impl.LocatedDeviceImpl;
+import fr.liglab.adele.icasa.location.impl.ZoneImpl;
+import fr.liglab.adele.icasa.location.util.ZoneComparable;
 
 @Component
 @Provides

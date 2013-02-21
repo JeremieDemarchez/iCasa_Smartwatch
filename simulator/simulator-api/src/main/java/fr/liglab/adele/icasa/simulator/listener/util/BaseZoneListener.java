@@ -15,9 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulator.listener.util;
 
-import fr.liglab.adele.icasa.context.Position;
-import fr.liglab.adele.icasa.context.Zone;
-import fr.liglab.adele.icasa.listener.ZoneListener;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.ZoneListener;
 
 public class BaseZoneListener implements ZoneListener {
 

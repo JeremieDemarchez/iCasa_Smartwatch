@@ -35,7 +35,7 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.context.Position;
+import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;

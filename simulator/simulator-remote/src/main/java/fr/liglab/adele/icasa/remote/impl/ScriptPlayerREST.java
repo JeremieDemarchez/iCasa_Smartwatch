@@ -35,8 +35,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor.State;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor.State;
 
 /**
  * @author Thomas Leveque

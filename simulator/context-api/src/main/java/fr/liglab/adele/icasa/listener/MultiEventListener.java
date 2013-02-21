@@ -15,6 +15,10 @@
  */
 package fr.liglab.adele.icasa.listener;
 
+import fr.liglab.adele.icasa.device.DeviceTypeListener;
+import fr.liglab.adele.icasa.location.LocatedDeviceListener;
+import fr.liglab.adele.icasa.location.ZoneListener;
+
 
 
 public interface MultiEventListener extends ZoneListener,  LocatedDeviceListener, DeviceTypeListener {

@@ -18,8 +18,8 @@ package fr.liglab.adele.icasa.clock.system.impl;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 
-import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.clock.api.ClockListener;
+import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clock.ClockListener;
 
 /**
  * @author Gabriel Pedraza Ferreira

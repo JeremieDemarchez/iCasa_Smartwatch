@@ -18,12 +18,11 @@ package fr.liglab.adele.osgi.shell.gogo.adapter;
 import java.util.List;
 import java.util.Map;
 
-import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Function;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
+import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
 
 /**
  * AdaptedCommandFunction are used to expose ICommandService as gogo shell

@@ -39,17 +39,17 @@ import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
-import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.clock.api.ClockListener;
-import fr.liglab.adele.icasa.context.LocatedDevice;
-import fr.liglab.adele.icasa.context.Position;
-import fr.liglab.adele.icasa.context.Zone;
+import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.impl.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutor;
-import fr.liglab.adele.icasa.script.executor.ScriptExecutorListener;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.SimulationMultiEventListener;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 
 @Component(name = "iCasa-event-broadcast")
 @Instantiate(name = "iCasa-event-broadcast-1")

@@ -48,8 +48,8 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.context.impl, fr.liglab.adele.icasa.context.impl.util</Private-Package>
-            <Export-Package />
+            <Private-Package>fr.liglab.adele.icasa.context.impl</Private-Package>
+            <Export-Package>fr.liglab.adele.icasa.location.impl, fr.liglab.adele.icasa.location.util</Export-Package>
           </instructions>
         </configuration>
       </plugin>

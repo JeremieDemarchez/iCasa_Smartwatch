@@ -18,9 +18,9 @@ package fr.liglab.adele.icasa.simulator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.liglab.adele.icasa.context.Position;
-import fr.liglab.adele.icasa.context.Zone;
-import fr.liglab.adele.icasa.context.impl.LocatedObjectImpl;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.impl.LocatedObjectImpl;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
