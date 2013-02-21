@@ -46,7 +46,7 @@
 						<Export-Package>fr.liglab.adele.icasa.simulator,
 							fr.liglab.adele.icasa.simulator.listener,
 							fr.liglab.adele.icasa.simulator.listener.util,
-							fr.liglab.adele.icasa.script.executor</Export-Package>
+							fr.liglab.adele.icasa.simulator.script.executor</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

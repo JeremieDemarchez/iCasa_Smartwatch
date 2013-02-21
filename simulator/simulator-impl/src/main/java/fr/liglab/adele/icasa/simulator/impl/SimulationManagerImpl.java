@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -39,11 +38,9 @@ import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.device.DeviceTypeListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.LocatedDeviceListener;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
@@ -62,7 +59,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
-	
+
 	private Map<String, SimulatedDevice> m_devices = new HashMap<String, SimulatedDevice>();
 
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
@@ -176,7 +173,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		manager.moveDeviceIntoZone(deviceId, zoneId);
 	}
 
-	
+
 
 	@Override
 	public void setPersonPosition(String userName, Position position) {
@@ -267,7 +264,15 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
-		throw new UnsupportedOperationException("Devices can't be set to fault");
+		LocatedDevice device = manager.getDevice(deviceId);
+
+		if (value) {
+			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
+		}
+		else {
+			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
+		}
+
 	}
 
 	@Override
@@ -325,7 +330,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public void bindDevice(SimulatedDevice simDev) {
 		String sn = simDev.getSerialNumber();
 		m_devices.put(sn, simDev);
-		
+
 	}
 
 	@Unbind(id = "devices")
@@ -527,7 +532,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	public Set<String> getDeviceTypes() {
 		return manager.getDeviceTypes();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes()
 	 */

@@ -19,28 +19,12 @@
 	</parent>
 
 	<!-- Project coordinates -->
-	<artifactId>simulator.impl</artifactId>
+	<artifactId>simulator.remote</artifactId>
 	<packaging>bundle</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<!-- Project dependencies -->
 	<dependencies>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.compendium</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.ipojo</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.fileinstall</artifactId>
-		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
@@ -52,8 +36,21 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>context.impl</artifactId>
+			<artifactId>simulator.api</artifactId>
 			<version>${iCasaVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>icasa.remote</artifactId>
+			<version>${iCasaVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.ipojo</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
@@ -61,22 +58,45 @@
 			<version>${iCasaVersion}</version>
 		</dependency>
 		<dependency>
-			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-api</artifactId>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.chameleon.json</groupId>
+			<artifactId>json-service-json.org</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.barjo.atmosgi</groupId>
+			<artifactId>atmosgi-service</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.barjo.atmosgi</groupId>
+			<artifactId>atmosgi-component</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>javax.servlet</groupId>
+			<artifactId>servlet-api</artifactId>
 		</dependency>
 	</dependencies>
 
 	<build>
 		<plugins>
+
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.icasa.simulator.impl,
-							fr.liglab.adele.icasa.simulator.script.executor.impl,
-							fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
-						<Export-Package />
+						<Private-Package>fr.liglab.adele.icasa.remote.impl,fr.liglab.adele.icasa.remote.impl.util</Private-Package>
+						<Export-Package>fr.liglab.adele.icasa.remote</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
