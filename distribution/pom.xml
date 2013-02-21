@@ -29,7 +29,6 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-        <module>icasa-dev</module>
         <module>icasa-teaching-distribution</module>
 	</modules>
    <build>
