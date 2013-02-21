@@ -483,7 +483,10 @@ define(['jquery',
       getVariableValue:(variable)->
         return @.variables()[variable]+"";
       generateBackgroundColor:()->
-        return "#"+((1<<24)*Math.random()|0).toString(16);
+        r = Math.floor(Math.random() * 256);
+        g = Math.floor(Math.random() * 256);
+        b = Math.floor(Math.random() * 256);
+        return "rgba("+r+","+g+","+b+", 0.4)";
 
     
 
@@ -629,6 +632,11 @@ define(['jquery',
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
            @updateWidgetImg();
+           @popoverdata = ()=>
+             pop = "Name : "+@.name()
+             for property in @properties_name()
+               pop+= "<br/>"+property+" : "+@getPropertyValue(property);
+             return pop;
         
         getPropertyValue:(property)->
           return @.properties()[property]+""
