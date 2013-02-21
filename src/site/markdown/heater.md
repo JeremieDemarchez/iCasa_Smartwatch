@@ -9,6 +9,8 @@ Heater/Cooler
 
 <div class="titleCard">Heater</div>
  
+![Alt text](/devices/T456/radiateur.png)
+ 
 <div class="descriptionCard">Overview</div> 
  
 Heater can supply only one model of heater which is a 1000 Watts electrical heater. 
