@@ -1,18 +1,16 @@
 <div class="row-fluid page-header">
     <div class="title span12">
-        <h1 style="text-align: center;">iCasa</h1>
-        <p style="text-align: center;" class="lead">Digital Home Application Development Toolkit</p>
+        <h1 style="text-align: center;">iCasa Simulator</h1>
+        <p style="text-align: center;" class="lead">Digital Home Simulation Tool</p>
         <p>
-            <span class="span2">&nbsp;</span>
-           <a href="TODO-${project.version}.zip" class="btn
-       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator</a>
-            <a href="TODO-${project.version}.zip" class="btn
-       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Runtime</a>
-            <a href="TODO-${project.version}.zip" class="btn
-       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Store</a>
-            <a href="TODO-${project.version}.zip" class="btn
-       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Dashboard</a>
-            <span class="span2">&nbsp;</span>
+            <span class="span3">&nbsp;</span>
+           <a href="https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator Runtime</a>
+            <a href="https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator IHM</a>
+            <a href="https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator Runtime + IHM</a>
+            <span class="span3">&nbsp;</span>
         </p>
     </div>
 </div>
