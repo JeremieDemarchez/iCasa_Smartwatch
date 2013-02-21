@@ -16,9 +16,28 @@ BinaryLight can supply only one model of lamp which is a 100 Watts incandescent.
  
 <div class="propertiesCard">Electro-optical properties</div>
 
-|    Model    | power_status |  max_power  |
-| ----------- | ------------ | ----------: |
-| BinaryLight |	True - False |	100 Watts  |
+<table>
+	<thead>
+		<tr>
+    		<td>Model</td>
+        	<td>power_status</td>
+        	<td>max_power</td>
+    	</tr>
+    </thead>
+    <tbody>
+		<tr>
+    		<td>BinaryLight</td>
+       	 	<td>True - False</td>
+        	<td>100 Watts</td>
+    	</tr>
+    </tbody>
+</table>
+
+We take into account physical consideration to compute the illuminance (expressed in Lux unit) returned by the device. We have considered that:
+
+_1 Watt=680.0 lumens at 555nm_
+
+This conversion is only applicable at wavelength of 555 nm (maximum of sensibility of vision for human eyes).
 
 
         

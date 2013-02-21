@@ -73,6 +73,8 @@
 
         <menu name="iCasa Simulator">
             <item name="Home" href="index.html"/>
+            <item name="Download" href="index.html"/>
+            <item name="Install" href="index.html"/>
 
         </menu>
 
