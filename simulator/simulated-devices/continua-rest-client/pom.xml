@@ -37,12 +37,11 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>context.api</artifactId>
-      <version>${iCasaVersion}</version>
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
-      <version>${iCasaVersion}</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>com.sun.jersey</groupId>

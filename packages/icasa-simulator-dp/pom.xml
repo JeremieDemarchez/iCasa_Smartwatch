@@ -10,86 +10,77 @@
 	</parent>
 
 	<!-- Project Description -->
-	<artifactId>icasa.core.dp</artifactId>
+	<artifactId>icasa.simulator.dp</artifactId>
 	<packaging>deployment-package</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<dependencies>
+      <!-- Simulator --> 
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>context.api</artifactId>
-         <version>${iCasaVersion}</version>
-		</dependency>
-      <dependency>
-         <groupId>fr.liglab.adele.icasa</groupId>
-         <artifactId>context.impl</artifactId>
-         <version>${iCasaVersion}</version>
-      </dependency>
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simulator.api</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>simulator.impl</artifactId>
-         <version>${iCasaVersion}</version>
-		</dependency>
+         <version>${project.version}</version>
+      </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>device.light</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>device.sound</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>device.temperature</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>device.presence</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>device.power</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>		
         <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
+           <groupId>${project.groupId}</groupId>
             <artifactId>device.personal</artifactId>
-            <version>${iCasaVersion}</version>
-        </dependency>
+            <version>${project.version}</version>
+         </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>device.bathroom.scale</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>continua-rest-client</artifactId>
-			<version>${iCasaVersion}</version>
-		</dependency>
-		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>clock.simulated.impl</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
+			<artifactId>clock.simulated.impl</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+		<dependency>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>gogo.adapter</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>		
 
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
+         <groupId>${project.groupId}</groupId>
 			<artifactId>simulator.remote</artifactId>
-         <version>${iCasaVersion}</version>
+         <version>${project.version}</version>
       </dependency>
         <dependency>
             <groupId>org.barjo.atmosgi</groupId>

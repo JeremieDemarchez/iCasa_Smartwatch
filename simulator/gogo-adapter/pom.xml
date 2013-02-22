@@ -38,7 +38,7 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
-      <version>${iCasaVersion}</version>
+      <version>${project.version}</version>
     </dependency>
 
       <!-- OW2 Chameleon handies & annotations -->

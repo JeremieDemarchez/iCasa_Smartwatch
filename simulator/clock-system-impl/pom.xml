@@ -23,7 +23,6 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>context.api</artifactId>
-      <version>${iCasaVersion}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
