@@ -1,17 +1,490 @@
-Introduction
-====
+# iCasa Script Language
 
-iCASA Simulation module provides a script language that can be used to create execution scenarios in pervasive applications. In the next section we show instructions set supported by the language and their (XML) syntax.
+iCASA Simulation module provides a script language that can be used to create scripts scenarios to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
 
-Script File Syntax
-====
+<br>
+
+# Script File Syntax
 
 Scenarios in iCASA simulation module are specified in a XML file. 
 
 _Example:_
 
-`
-<behavior startdate="27/10/2011-00:00:00" factor="1440">
-   <!-- Scenario instructions -->
-</behavior>
-`
+    <behavior startdate="27/10/2011-00:00:00" factor="1440">
+       <!-- Scenario instructions -->
+    </behavior>
+
+The root tag of this XML file is the tag '''behavior''' and its attributes are:
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>startdate</td>
+  <td>Starting date of script execution in format "dd/MM/yyyy-HH:mm:ss"</td>
+</tr>
+<tr>
+  <td>factor</td>
+  <td>speed factor for script execution</td>
+</tr>
+</table>
+
+<br>
+
+# Instructions
+<br>
+## General 
+<br>
+### Delay
+<br>
+
+Introduces a delay (in minutes) between the previous instruction and the next one
+
+_Example:_
+
+    <delay value="60" />
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>value</td>
+  <td>Time in (virtual) minutes</td>
+</tr>
+</table>
+
+<br>
+## Zone Instructions
+<br>
+### Create Zone
+
+Creates a zone in application context
+
+_Example:_
+
+    <create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Zone's Identifier</td>
+</tr>
+<tr>
+  <td>leftX</td>
+  <td>Left X coordinate value</td>
+</tr>
+<tr>
+  <td>topY</td>
+  <td>Top Y coordinate value</td>
+</tr>
+<tr>
+  <td>width</td>
+  <td>Zone width</td>
+</tr>
+<tr>
+  <td>height</td>
+  <td>Zone height</td>
+</tr>
+</table>
+
+
+### Move Zone
+
+Move a zone in application context
+
+_Example:_
+
+    <move-zone id="kitchen"  leftX="410" topY="370" />	
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Zone's Identifier</td>
+</tr>
+<tr>
+  <td>leftX</td>
+  <td>New left X coordinate value</td>
+</tr>
+<tr>
+  <td>topY</td>
+  <td>New top Y coordinate value</td>
+</tr>
+</table>
+
+### Resize Zone
+
+Resize a zone in application context
+
+_Example:_
+
+    <resize-zone id="kitchen"  width="245" height="210" />	
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Zone's Identifier</td>
+</tr>
+<tr>
+  <td>width</td>
+  <td>New zone width</td>
+</tr>
+<tr>
+  <td>height</td>
+  <td>New zone height</td>
+</tr>
+</table>
+
+### Add Variable to Zone
+
+It adds a simulation variable to a zone
+
+_Example:_
+
+    <add-zone-variable zoneId="livingroom" variable="Temperature" />
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>zoneId</td>
+  <td>Zone's Identifier</td>
+</tr>
+<tr>
+  <td>variable</td>
+  <td>Variable name</td>
+</tr>
+</table>
+
+### Modify Variable in Zone
+
+It modifies a simulation variable in a zone
+
+_Example:_
+
+    <modify-zone-variable zoneId="kitchen" variable="Temperature" value="296.15"/>
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>zoneId</td>
+  <td>Zone's Identifier</td>
+</tr>
+<tr>
+  <td>variable</td>
+  <td>Variable name</td>
+</tr>
+<tr>
+  <td>value</td>
+  <td>Variable value</td>
+</tr>
+</table>
+
+## Device Commands
+
+### Create Device
+
+It creates a device instance in the application context
+
+_Example:_
+
+    <create-device id="Pres-A1255D-D" type="iCASA.PresenceSensor" />
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Device's Identifier</td>
+</tr>
+<tr>
+  <td>type</td>
+  <td>Device's type</td>
+</tr>
+</table>
+
+### Remove Device
+
+_Example:_
+
+    <remove-device deviceId="Pres-A1255D-D" />
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+</table>
+
+
+### Move device into zone
+
+Places a device in a zone of application context.
+
+_Example:_
+
+    <move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+<tr>
+  <td>zoneId</td>
+  <td>Zone's Identifier</td>
+</tr>
+</table>
+
+### Activate Device
+
+Changes the device's state to __activated__. 
+
+_Example:_
+    
+	<activate-device deviceId="Pres-A1255D-D" />
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+</table>	
+
+### Deactivate Device
+
+Changes the device's state to __deactivated__. 
+
+_Example:_
+    
+	<deactivate-device deviceId="Pres-A1255D-D" />
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+</table>	
+
+### Fault Device
+
+Changes the device's fault state to __yes__. 
+
+_Example:_
+    
+	<fault-device deviceId="Pres-A1255D-D" />
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+</table>	
+
+### Repair Device
+
+Changes the device's fault state to __no__. 
+
+_Example:_
+    
+	<repair-device deviceId="Pres-A1255D-D" />
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+</table>
+
+
+### Set device property value
+
+Set the value of the device property
+
+_Example:_
+
+    <set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
+	
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>deviceId</td>
+  <td>Device's Identifier</td>
+</tr>
+<tr>
+  <td>property</td>
+  <td>property name</td>
+</tr>
+<tr>
+  <td>value</td>
+  <td>property value</td>
+</tr>
+</table>
+
+
+## Person's Commands
+
+### Create Person
+
+Adds a person to the simulation context
+
+_Example:_
+
+    <create-person id="Paul" type="Grandfather" />
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>id</td>
+  <td>Person's Identifier</td>
+</tr>
+<tr>
+  <td>type</td>
+  <td>Person's type</td>
+</tr>
+</table>
+
+
+### Move Person into zone
+
+Places a person in a zone in the application context
+
+_Example:_
+
+    <move-person-zone personId="Paul" zoneId="bedroom"  />
+
+<table cellpadding="2" cellspacing="0" border="1">
+<tr>
+  <th>Attribute
+  </th><th>Description
+  </th>
+</tr>
+<tr>
+  <td>personId</td>
+  <td>Person's Identifier</td>
+</tr>
+<tr>
+  <td>zoneId</td>
+  <td>Zone's identifier</td>
+</tr>
+</table>
+
+## Scenario Example
+
+    <behavior startdate="27/10/2011-00:00:00" factor="1440">
+	   
+       <!-- Creation of kitchen zone -->   
+	   <create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
+	
+	   <!-- Adding and setting variables in kitchen zone -->
+	   <add-zone-variable zoneId="kitchen" variable="Temperature" />
+	   <add-zone-variable zoneId="kitchen" variable="Illuminance" />
+	   <modify-zone-variable zoneId="kitchen" variable="Temperature" value="296.15"/>
+	   <modify-zone-variable zoneId="kitchen" variable="Illuminance" value="0"/>
+	
+	   <!-- Creating and placing devices in kitchen zone -->
+	   <create-device id="Pres-A1255D-D" type="iCASA.PresenceSensor" />
+	   <create-device id="Ther-A3654Q-S" type="iCASA.Thermometer" />
+	   <create-device id="Phot-A4894S-S" type="iCASA.Photometer" />
+	   <create-device id="BiLi-A7496W-S" type="iCASA.BinaryLight" />	
+	   <move-device-zone deviceId="Pres-A1255D-D" zoneId="kitchen" />
+	   <move-device-zone deviceId="Ther-A3654Q-S" zoneId="kitchen" />
+	   <move-device-zone deviceId="Phot-A4894S-S" zoneId="kitchen" />
+	   <move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
+
+	   <!-- Creation of livingroom zone --> 
+       <create-zone id="livingroom" leftX="410" topY="28" width="245" height="350" />
+	   <!-- Adding and setting variables in kitchen zone -->
+	   
+	   <add-zone-variable zoneId="livingroom" variable="Temperature" />
+	   <add-zone-variable zoneId="livingroom" variable="Illuminance" />
+	   <add-zone-variable zoneId="livingroom" variable="Volume" />
+	   <modify-zone-variable zoneId="livingroom" variable="Temperature" value="295.15"/>
+	   <modify-zone-variable zoneId="livingroom" variable="Illuminance" value="5"/>
+	   <modify-zone-variable zoneId="livingroom" variable="Volume" value="10"/>
+	
+	   <!-- Others instructions --> 
+	   <delay value="100" />	
+	   <deactivate-device deviceId="Pres-A1255D-D" />
+	   <delay value="100" />
+	   <activate-device deviceId="Pres-A1255D-D" />
+	   <delay value="100" />
+	   <fault-device deviceId="Pres-A1255D-D" />
+	   <delay value="100" />
+	   <repair-device deviceId="Pres-A1255D-D" />
+	   <delay value="100" />
+	   <remove-device deviceId="Pres-A1255D-D" />	
+       <delay value="100" />
+	   <set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
+	
+	
+    </behavior>
+
