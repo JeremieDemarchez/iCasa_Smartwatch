@@ -159,5 +159,9 @@
             <name>iCasa Cloudbees Snapshot Private Repository</name>
             <url>dav:https://repository-icasa.forge.cloudbees.com/snapshot</url>
         </snapshotRepository>
+        <site>
+            <id>tmp</id>
+            <url>file:///tmp</url>
+        </site>
     </distributionManagement>
 </project>

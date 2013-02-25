@@ -27,6 +27,15 @@
 	<artifactId>root</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
+
+    <properties>
+        <site.path>snapshot</site.path>
+        <!-- TODO add property to get current snapshot version qualifier -->
+
+        <!-- Site Title -->
+        <title>iCasa Simulator</title>
+    </properties>
+
    <profiles>
       <profile>
          <id>all</id>
@@ -129,6 +138,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <!-- Create the file to download -->
                 <groupId>com.github.github</groupId>
