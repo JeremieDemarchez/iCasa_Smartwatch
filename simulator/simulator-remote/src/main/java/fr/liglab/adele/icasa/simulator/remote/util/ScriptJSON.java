@@ -13,10 +13,8 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.util;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.json.JSONException;
@@ -43,7 +41,6 @@ public class ScriptJSON {
 	private Integer completePercent;
 	private Integer factor;
 	private Date startDate;
-	private long executionTime;
 
 
 

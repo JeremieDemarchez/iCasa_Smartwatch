@@ -35,7 +35,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.simulator.remote.impl.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.util.ScriptJSON;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor.State;
 

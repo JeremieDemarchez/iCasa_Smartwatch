@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.simulator.remote.impl.util;
+package fr.liglab.adele.icasa.simulator.remote.util;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -7,8 +7,6 @@ import fr.liglab.adele.icasa.clock.util.DateTextUtil;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.remote.impl.PersonJSON;
-import fr.liglab.adele.icasa.simulator.remote.impl.ScriptJSON;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 
 public class IcasaSimulatorJSONUtil extends IcasaJSONUtil{

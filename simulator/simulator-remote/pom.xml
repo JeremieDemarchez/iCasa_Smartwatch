@@ -35,6 +35,10 @@
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>context.remote</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simulator.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
@@ -79,14 +83,13 @@
 
 	<build>
 		<plugins>
-
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.icasa.remote.impl,fr.liglab.adele.icasa.remote.impl.util</Private-Package>
-						<Export-Package>fr.liglab.adele.icasa.remote</Export-Package>
+						<Private-Package>fr.liglab.adele.icasa.simulator.remote.impl, 
+						fr.liglab.adele.icasa.simulator.remote.util</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>

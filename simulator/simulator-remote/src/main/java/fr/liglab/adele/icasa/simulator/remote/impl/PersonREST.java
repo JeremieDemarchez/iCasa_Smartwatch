@@ -39,7 +39,8 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.AbstractREST;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.remote.impl.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.util.PersonJSON;
 
 /**
  * @author Thomas Leveque
