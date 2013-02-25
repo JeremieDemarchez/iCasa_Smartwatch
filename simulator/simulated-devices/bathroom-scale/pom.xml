@@ -21,7 +21,7 @@
   <parent>
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../../../parent</relativePath>
   </parent>
   
@@ -38,18 +38,17 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>device.api</artifactId>
-      <version>${iCasaVersion}</version>
+      <artifactId>context.api</artifactId>
    </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
-      <version>${iCasaVersion}</version>
+      <version>${project.version}</version>
    </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>continua-rest-client</artifactId>
-      <version>${iCasaVersion}</version>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

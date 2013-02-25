@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator;
 
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 

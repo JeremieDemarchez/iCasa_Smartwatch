@@ -27,8 +27,8 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.Zone;
 
 /**
  * Implementation of a simulated heater device.

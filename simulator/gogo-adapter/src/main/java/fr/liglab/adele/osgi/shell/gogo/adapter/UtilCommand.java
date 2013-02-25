@@ -35,7 +35,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
 
-import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
+import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
 
 @Component(immediate = true)
 @Provides(specifications = { UtilCommand.class })

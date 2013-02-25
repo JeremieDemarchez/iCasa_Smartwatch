@@ -25,8 +25,8 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Validate;
 
-import fr.liglab.adele.icasa.clock.api.Clock;
-import fr.liglab.adele.icasa.clock.api.ClockListener;
+import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clock.ClockListener;
 
 /**
  * @author Gabriel Pedraza Ferreira

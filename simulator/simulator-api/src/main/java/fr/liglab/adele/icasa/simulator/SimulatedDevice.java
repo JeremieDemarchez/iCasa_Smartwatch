@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator;
 
-import java.util.List;
-
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
@@ -26,13 +24,5 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * @author Thomas Leveque
  */
 public interface SimulatedDevice extends GenericDevice {
-
-	public static String LOCATION_PROPERTY_NAME = "Location";
-	public static String LOCATION_UNKNOWN = "unknown";	
-	
-	public void enterInZones(List<Zone> zones);
-	
-	public void leavingZones(List<Zone> zones);
-	
 	
 }

@@ -15,9 +15,10 @@
  */
 package fr.liglab.adele.icasa.simulator.listener;
 
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.listener.IcasaListener;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.Position;
 
 /**
  * Created with IntelliJ IDEA.
