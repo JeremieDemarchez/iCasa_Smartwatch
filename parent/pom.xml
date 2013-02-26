@@ -7,20 +7,21 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
-    <parent>
-        <groupId>fr.liglab.adele.common</groupId>
-        <artifactId>base</artifactId>
-        <version>1.0.3</version>
-        <relativePath />
-    </parent>
+	<parent>
+		<groupId>fr.liglab.adele.common</groupId>
+		<artifactId>base</artifactId>
+		<version>1.0.3</version>
+		<relativePath />
+	</parent>
 
 	<!-- Project coordinates -->
 	<groupId>fr.liglab.adele.icasa</groupId>
 	<artifactId>parent</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>1.0.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<!-- Project description -->
@@ -30,134 +31,160 @@
 
 	<!-- Project common properties -->
 	<properties>
-		<productName>iCasa</productName>
+		<productName>iCasa Simulator</productName>
 		<productVersion>${project.version}</productVersion>
 		<projectName>${project.artifactId}</projectName>
-		<iCasaVersion>${productVersion}</iCasaVersion>
-		
+		<iCasaPlatformVersion>1.0.0-SNAPSHOT</iCasaPlatformVersion>
+
 		<!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
-    <developers>
-        <developer>
-            <name>Philippe Lalanda</name>
-            <email> philippe.lalanda @nospam@ imag.fr	</email>
-            <roles>
-                <role>Project Manager</role>
-            </roles>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-        </developer>
-        <developer>
-            <name>Catherine Hamon</name>
-            <email> Catherine.Hamon @nospam@ orange-ftgroup.com	</email>
-            <roles>
-                <role>Project Manager</role>
-            </roles>
-            <organization>Orange Labs</organization>
-            <organizationUrl>http://orange-ftgroup.com</organizationUrl>
-        </developer>
-        <developer>
-            <name>Thomas Leveque</name>
-            <email> leveque.thomas @nospam@ gmail.com	</email>
-            <roles>
-                <role>Project Manager</role>
-            </roles>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-        </developer>
-        <developer>
-            <name>Bassem Debbabi</name>
-            <email>bassem @nospam@ debbabi.net</email>
-            <roles>
-            </roles>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-        </developer>
-        <developer>
-            <name>Issac Noé Garcia Garza</name>
-            <email> 	 torito @nospam@ gmail.com</email>
-            <roles>
-            </roles>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-        </developer>
-        <developer>
-            <name>Gabriel Pedraza Ferreira</name>
-            <email>gabriel.pedraza-ferreira @nospam@ imag.fr</email>
-            <roles>
-            </roles>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-        </developer>
-    </developers>
+	<developers>
+		<developer>
+			<name>Philippe Lalanda</name>
+			<email> philippe.lalanda @nospam@ imag.fr	</email>
+			<roles>
+				<role>Project Manager</role>
+			</roles>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+		</developer>
+		<developer>
+			<name>Catherine Hamon</name>
+			<email> Catherine.Hamon @nospam@ orange-ftgroup.com	</email>
+			<roles>
+				<role>Project Manager</role>
+			</roles>
+			<organization>Orange Labs</organization>
+			<organizationUrl>http://orange-ftgroup.com</organizationUrl>
+		</developer>
+		<developer>
+			<name>Thomas Leveque</name>
+			<email> leveque.thomas @nospam@ gmail.com	</email>
+			<roles>
+				<role>Project Manager</role>
+			</roles>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+		</developer>
+		<developer>
+			<name>Bassem Debbabi</name>
+			<email>bassem @nospam@ debbabi.net</email>
+			<roles>
+			</roles>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+		</developer>
+		<developer>
+			<name>Issac Noé Garcia Garza</name>
+			<email> 	 torito @nospam@ gmail.com</email>
+			<roles>
+			</roles>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+		</developer>
+		<developer>
+			<name>Gabriel Pedraza Ferreira</name>
+			<email>gabriel.pedraza-ferreira @nospam@ imag.fr</email>
+			<roles>
+			</roles>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+		</developer>
+	</developers>
 
-    <contributors>
-        <contributor>
-            <name>Elmehdi Damou</name>
-            <email>elmehdi.damou @nospam@ imag.fr</email>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </contributor>
-        <contributor>
-            <name>Pierre Bourret</name>
-            <email> 	 bourretp @nospam@ gmail.com</email>
-            <organization>Adele | LIG</organization>
-            <organizationUrl>http://adele.imag.fr</organizationUrl>
-            <roles>
-                <role>Developer</role>
-            </roles>
-        </contributor>
-    </contributors>
+	<contributors>
+		<contributor>
+			<name>Elmehdi Damou</name>
+			<email>elmehdi.damou @nospam@ imag.fr</email>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</contributor>
+		<contributor>
+			<name>Pierre Bourret</name>
+			<email> 	 bourretp @nospam@ gmail.com</email>
+			<organization>Adele | LIG</organization>
+			<organizationUrl>http://adele.imag.fr</organizationUrl>
+			<roles>
+				<role>Developer</role>
+			</roles>
+		</contributor>
+	</contributors>
 
-    <!-- Project repositories -->
-    <repositories>
-        <repository>
-            <id>icasa-snapshot-repository</id>
-            <name>iCASA Snapshot repository</name>
-            <url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-        <repository>
-            <id>icasa-release-repository</id>
-            <name>iCASA Release repository</name>
-            <url>https://repository-icasa.forge.cloudbees.com/release/</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-        </repository>
-    </repositories>
+	<!-- Project repositories -->
+	<repositories>
+		<repository>
+			<id>icasa-snapshot-repository</id>
+			<name>iCASA Snapshot repository</name>
+			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
+			<releases>
+				<enabled>false</enabled>
+			</releases>
+			<snapshots>
+				<enabled>true</enabled>
+			</snapshots>
+		</repository>
+		<repository>
+			<id>icasa-release-repository</id>
+			<name>iCASA Release repository</name>
+			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</repository>
+	</repositories>
 
-    <scm>
-        <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
-        <url>http://github.com/AdeleResearchGroup/iCasa/</url>
-        <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
+	<scm>
+		<connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
+		<url>http://github.com/AdeleResearchGroup/iCasa/</url>
+		<developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
+		<tag>HEAD</tag>
+	</scm>
+
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>context.api</artifactId>
+				<version>${iCasaPlatformVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>context.impl</artifactId>
+				<version>${iCasaPlatformVersion}</version>
+			</dependency>
+			<dependency>
+				<groupId>fr.liglab.adele.icasa</groupId>
+				<artifactId>context.remote</artifactId>
+				<version>${iCasaPlatformVersion}</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 
 
     <distributionManagement>
-       <repository>
-          <id>cloudbees-adele-release</id>
-          <name>Cloudbees Adele Repository</name>
-          <url>dav:https://repository-icasa.forge.cloudbees.com/release</url>
-       </repository>
+        <repository>
+            <id>cloudbees-adele-release</id>
+            <name>Cloudbees Adele Repository</name>
+            <url>dav:https://repository-icasa.forge.cloudbees.com/release</url>
+        </repository>
         <snapshotRepository>
             <id>icasa-deploy-cloudbees-snapshot</id>
             <name>iCasa Cloudbees Snapshot Private Repository</name>
             <url>dav:https://repository-icasa.forge.cloudbees.com/snapshot</url>
         </snapshotRepository>
+        <site>
+            <id>tmp</id>
+            <url>file:///tmp</url>
+        </site>
     </distributionManagement>
+
 </project>
+      

@@ -21,7 +21,7 @@
   <parent>
 	<groupId>fr.liglab.adele.common</groupId>
 	<artifactId>distribution.base</artifactId>
-	<version>1.0.3</version>
+	<version>1.0.4</version>
 	<relativePath />
   </parent>
 
@@ -30,7 +30,7 @@
   <artifactId>icasa.teaching.distribution</artifactId>
   <packaging>pom</packaging>
   <name>${productName} :: ${projectName}</name>
-  <version>0.0.2-SNAPSHOT</version>
+  <version>1.0.0-SNAPSHOT</version>
 
     <!-- Project repositories -->
     <repositories>
@@ -59,8 +59,8 @@
     </repositories>
 
   <properties>
-      <productName>iCasa</productName>
-      <productVersion>${iCasaVersion}</productVersion>
+      <productName>iCasa Simulator</productName>
+      <iCasaPlatformVersion>1.0.0-SNAPSHOT</iCasaPlatformVersion>
 
       <!-- flag to flatten deployment packages -->
       <flattenDP>true</flattenDP>
@@ -75,12 +75,20 @@
 		<artifactId>rose.dp</artifactId>
 		<type>deployment-package</type>
 	</dependency>
+   <dependency>
+      <!-- iCasa Platform -->
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>icasa.platform.dp</artifactId>
+      <version>${iCasaPlatformVersion}</version>
+      <type>deployment-package</type>
+   </dependency>
 	<dependency>
 		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>icasa.core.dp</artifactId>
+		<artifactId>icasa.simulator.dp</artifactId>
       <version>${project.version}</version>
 		<type>deployment-package</type>
 	</dependency>
+   
 
       <!-- Play 2 applications-->
       <dependency>

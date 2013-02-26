@@ -18,9 +18,9 @@ package fr.liglab.adele.icasa.device.power.impl;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.Constants;
 

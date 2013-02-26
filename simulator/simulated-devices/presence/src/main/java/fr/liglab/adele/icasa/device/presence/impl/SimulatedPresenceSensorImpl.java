@@ -28,12 +28,12 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.simulator.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.Position;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.Zone;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 /**

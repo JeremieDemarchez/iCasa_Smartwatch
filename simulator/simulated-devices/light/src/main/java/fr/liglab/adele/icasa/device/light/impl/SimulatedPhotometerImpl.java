@@ -25,8 +25,8 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.Zone;
 import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
 
 /**

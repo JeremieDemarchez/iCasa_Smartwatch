@@ -29,7 +29,7 @@ import org.apache.felix.service.command.Function;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import fr.liglab.adele.icasa.script.executor.SimulatorCommand;
+import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
 
 /**
  * <p>

@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.2-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>../parent</relativePath>
 	</parent>
 
@@ -29,14 +29,10 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>clock-api</module>
 		<module>clock-simulated-impl</module>
 		<module>clock-system-impl</module>
-		<module>device-api</module>
 		<module>simulator-api</module>
 		<module>simulator-impl</module>
-		<module>script-executor-api</module>		
-	    <module>script-executor-impl</module>		
 		<module>simulated-devices</module>
       <module>simulator-remote</module>
 		<module>gogo-adapter</module>

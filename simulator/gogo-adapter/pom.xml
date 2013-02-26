@@ -4,7 +4,7 @@
   <parent>
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>parent</artifactId>
-    <version>0.0.2-SNAPSHOT</version>
+    <version>1.0.0-SNAPSHOT</version>
     <relativePath>../../parent</relativePath>
   </parent>
 
@@ -37,8 +37,8 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>script.executor.api</artifactId>
-      <version>${iCasaVersion}</version>
+      <artifactId>simulator.api</artifactId>
+      <version>${project.version}</version>
     </dependency>
 
       <!-- OW2 Chameleon handies & annotations -->

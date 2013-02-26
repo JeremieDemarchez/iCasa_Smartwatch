@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
-		<version>0.0.2-SNAPSHOT</version>
+		<version>1.0.0-SNAPSHOT</version>
 		<relativePath>parent</relativePath>
 	</parent>
 
@@ -27,6 +27,15 @@
 	<artifactId>root</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
+
+    <properties>
+        <site.path>snapshot</site.path>
+        <!-- TODO add property to get current snapshot version qualifier -->
+
+        <!-- Site Title -->
+        <title>iCasa Simulator</title>
+    </properties>
+
    <profiles>
       <profile>
          <id>all</id>
@@ -129,6 +138,7 @@
                     </execution>
                 </executions>
             </plugin>
+
             <plugin>
                 <!-- Create the file to download -->
                 <groupId>com.github.github</groupId>
