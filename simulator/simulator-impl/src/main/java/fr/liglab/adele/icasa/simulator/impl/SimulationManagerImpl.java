@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
@@ -538,7 +539,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	 */
 	@Override
 	public Set<String> getSimulatedDeviceTypes() {
-		return manager.getDeviceTypes();
+		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
 
 
