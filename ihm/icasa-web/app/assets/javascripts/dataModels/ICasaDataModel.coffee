@@ -47,7 +47,7 @@ define(['backbone', 'underscore', 'domReady'],
            model: DataModel.Models.Zone
 
          class DataModel.Models.Clock extends Backbone.Model
-           urlRoot : "#server#/clock".replace /#server#/, serverUrl
+           urlRoot : "#server#/clocks/clock".replace /#server#/, serverUrl
 
          class DataModel.Models.Script extends Backbone.Model
            urlRoot : "#server#/scriptPlayer/script".replace /#server#/, serverUrl
@@ -57,7 +57,7 @@ define(['backbone', 'underscore', 'domReady'],
            model: DataModel.Models.Script
 
          # initial import of data model
-         DataModel.models.clock = new DataModel.Models.Clock();
+         DataModel.models.clock = new DataModel.Models.Clock({id: "default"});
          DataModel.models.clock.fetch({
            success : (data) -> console.log(data);
            error : (err) -> throw err;
