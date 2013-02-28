@@ -26,28 +26,6 @@
     });
 </script>
 
-<script>
-   $("#typedevicedesc").click(function() {
-       $("#typedevicedesc").css("display", "none");
-       $("#typedeviceasc").css("display", "inline-block");
-   });
-
-   $("#typedeviceasc").click(function() {
-       $("#typedeviceasc").css("display", "none");
-       $("#typedevicedesc").css("display", "inline-block");
-   });
-
-   $("#namedevicedesc").click(function() {
-       $("#namedevicedesc").css("display", "none");
-       $("#namedeviceasc").css("display", "inline-block");
-   });
-
-   $("#namedeviceasc").click(function() {
-       $("#namedeviceasc").css("display", "none");
-       $("#namedevicedesc").css("display", "inline-block");
-   });
-</script>
-
 <table class="table table-striped table-bordered" id="devicesTab">
     <div class="input-prepend">
         <a class="btn" data-bind="click: $root.createDevice">Create</a>
@@ -66,15 +44,11 @@
             <th>
                 <input type="checkbox" data-bind="checked: checkAllDevices" />
             </th>
-            <th>
+            <th data-bind="sortable: {obj: 'device', column: 'type'}">
                 Type
-                <i id="typedevicedesc" data-bind="click: function() { sortField(-1,'device','type') }, visible: 0" class="icon-chevron-down pull-right"></i>
-                <i id="typedeviceasc" data-bind="click: function() { sortField(1,'device','type') }" class="icon-chevron-up pull-right"></i>
             </th>
-            <th>
+            <th data-bind="sortable: {obj: 'device', column: 'name'}">
                 Name
-                <i id="namedevicedesc" data-bind="click: function() { sortField(-1,'device','name') }, visible: 0" class="icon-chevron-down pull-right"></i>
-                <i id="namedeviceasc" data-bind="click: function() { sortField(1,'device','name') }" class="icon-chevron-up pull-right"></i>
             </th>
         </tr>
     </thead>

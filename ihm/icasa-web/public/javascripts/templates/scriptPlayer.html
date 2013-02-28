@@ -15,98 +15,6 @@
       limitations under the License.
 
 -->
-<script>
-    $( "#date" ).datepicker({
-        dateFormat: "dd/mm/yy",
-        firstDay: 1,
-        gotoCurrent: true
-    });
-    $( "#scriptStart" ).datepicker({
-        dateFormat: "dd/mm/yy",
-        firstDay: 1,
-        gotoCurrent: true
-    });
-
-    var d = new Date();
-    $("#hour").val(d.getHours());
-    $("#minute").val((d.getMinutes()<10?'0':'') + d.getMinutes());
-    $("#date").datepicker("setDate", d);
-    $("#scriptStart").datepicker("setDate", d);
-
-    $( "#timeSpeedSlider" ).slider({
-        min: 0,
-        max: 30000,
-        value: 1,
-        slide: function( event, ui ) {
-            $( "#timeSpeed" ).val("x"+ui.value);
-            $(ui.value).val($('#timeSpeed').val().replace("x",""));
-        }
-    });
-
-    $( "#scriptSlider" ).slider({
-        min: d.valueOf(),
-        max: d.valueOf(),
-        value: d.valueOf()
-    });
-
-    $( "#timeSpeed" ).val("x" + $("#timeSpeedSlider").slider("value") );
-    $( "#timeSpeed" ).change(function() {
-        if( $(this).val() > $("#maxSpeed").val()){$(this).val("x" + $("#maxSpeed").val())}
-        if( $(this).val() < 0){$(this).val("x" + 0)}
-        $("#timeSpeedSlider").slider("value", $(this).val().replace("x",""));
-    });
-    $( "#hour" ).change(function() {
-        if( $(this).val() < 0){$(this).val(0)}
-        if( $(this).val() > 23){$(this).val(23)}
-    });
-    $( "#minute" ).change(function() {
-        if( $(this).val() < 0){$(this).val(0)}
-        if( $(this).val() > 59){$(this).val(59)}
-    });
-    $( "#maxSpeed" ).change(function() {
-        $( "#timeSpeedSlider" ).slider("option","max", $("#maxSpeed").val());
-    });
-    $( "#pause" ).click(function() {
-        $("#timeSpeed").val("x" + 0);
-    });
-    $( "#play" ).click(function() {
-        $("#timeSpeed").val("x" + $("#timeSpeedSlider").slider("value") );
-    });
-
-    $( "#scriptStart" ).change(function() {
-        $( "#scriptSlider" ).slider("option","min", $(this).datepicker("getDate").valueOf());
-    });
-    $( "#scriptEnd" ).change(function() {
-        $( "#scriptSlider" ).slider("option","max", $(this).datepicker("getDate").valueOf());
-    });
-
-    $( "#scriptPlayerDialog" ).dialog({
-        autoOpen: false,
-        width:505
-    });
-
-    $( "#scriptPlayerDialogBtn" ).click(function() {
-        $( "#scriptPlayerDialog" ).dialog( "open" );
-    });
-
-    $( ".scriptLineCell" ).click(function() {
-        $( ".scriptLineCell" ).each(function(){
-            $( this ).parent().css("background", "#FFFFFF");
-        });
-        $(this).parent().css("background", "#E5E5E5");
-
-        $( "#scriptPlayerDialogForm" ).children().remove();
-    });
-
-    $( "#scriptPlayerDialogCb").change(function() {
-        $( ".scriptPlayerDialogBoxes" ).attr("checked", $(this).is(':checked'));
-    });
-
-    $( "#scriptPlayerDialogDelete").click(function(){
-        $( ".scriptPlayerDialogBoxes:checked" ).parent().parent().remove();
-    });
-
-</script>
 
 <table class="table table-striped table-bordered">
     <fieldset class="scriptPlayerGrp">
@@ -245,8 +153,8 @@
             </p>
         </form>
     </div>
-
-
 </div>
+
+<script src="@routes.Assets.at("javascripts/templates/scriptPlayer.coffee")"></script>
 
 

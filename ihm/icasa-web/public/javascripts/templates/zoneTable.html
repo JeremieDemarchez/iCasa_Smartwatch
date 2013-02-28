@@ -15,17 +15,6 @@
       limitations under the License.
 
 -->
-<script>
-    $("#namezonedesc").click(function() {
-        $("#namezonedesc").css("display", "none");
-        $("#namezoneasc").css("display", "inline-block");
-    });
-
-    $("#namezoneasc").click(function() {
-        $("#namezoneasc").css("display", "none");
-        $("#namezonedesc").css("display", "inline-block");
-    });
-</script>
 
 <table class="table table-striped table-bordered" id="zonesTab">
 
@@ -46,10 +35,8 @@
         <th>
             <input type="checkbox" data-bind="checked: checkAllZones" />
         </th>
-        <th>
+        <th data-bind="sortable: {obj: 'zone', column: 'name'}">
             Name
-            <i id="namezonedesc" data-bind="click: function() { sortField(-1,'zone','name') }, visible: 0" class="icon-chevron-down pull-right"></i>
-            <i id="namezoneasc" data-bind="click: function() { sortField(1,'zone','name') }" class="icon-chevron-up pull-right"></i>
         </th>
     </tr>
     </thead>

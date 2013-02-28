@@ -231,6 +231,28 @@ define(['jquery',
             return { controlsDescendantBindings: false };
     };
 
+    ko.bindingHandlers.sortable = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+            asc = $('<i></i>').addClass("icon-chevron-down pull-right");
+            desc = $('<i></i>').addClass("icon-chevron-up pull-right").hide();
+            asc.click(()->
+                desc.show()
+                asc.hide()
+                viewModel.sortFields(1, valueAccessor().obj, valueAccessor().column)
+            )
+            desc.click(()->
+                asc.show()
+                desc.hide()
+                viewModel.sortFields(-1, valueAccessor().obj, valueAccessor().column)
+            )
+            $(element).append(asc);
+            $(element).append(desc);
+
+            return { controlsDescendantBindings: false };
+    };
+
     # View models
 
     class NamedViewModel extends kb.ViewModel
@@ -890,7 +912,7 @@ define(['jquery',
            @zoneFilter = ko.observable("");
            @personFilter = ko.observable("");
 
-           @sortField = (order, list, property) =>
+           @sortFields = (order, list, property) =>
              @[list+"s"]().sort((a,b) ->
                if a[property]() > b[property]()
                  return 1*order

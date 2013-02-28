@@ -15,27 +15,6 @@
       limitations under the License.
 
 -->
-<script>
-    $("#typepersondesc").click(function() {
-        $("#typepersondesc").css("display", "none");
-        $("#typepersonasc").css("display", "inline-block");
-    });
-
-    $("#typepersonasc").click(function() {
-        $("#typepersonasc").css("display", "none");
-        $("#typepersondesc").css("display", "inline-block");
-    });
-
-    $("#namepersondesc").click(function() {
-        $("#namepersondesc").css("display", "none");
-        $("#namepersonasc").css("display", "inline-block");
-    });
-
-    $("#namepersonasc").click(function() {
-        $("#namepersonasc").css("display", "none");
-        $("#namepersondesc").css("display", "inline-block");
-    });
-</script>
 
 <table class="table table-striped table-bordered" id="personsTab">
 
@@ -61,15 +40,11 @@
             <th>
                 <input type="checkbox" data-bind="checked: checkAllPersons" />
             </th>
-            <th>
+            <th data-bind="sortable: {obj: 'person', column: 'type'}">
                 Type
-                <i id="typepersondesc" data-bind="click: function() { sortField(-1,'person','type') }, visible: 0" class="icon-chevron-down pull-right"></i>
-                <i id="typepersonasc" data-bind="click: function() { sortField(1,'person','type') }" class="icon-chevron-up pull-right"></i>
             </th>
-            <th>
+            <th data-bind="sortable: {obj: 'person', column: 'name'}">
                 Name
-                <i id="namepersondesc" data-bind="click: function() { sortField(-1,'person','name') }, visible: 0" class="icon-chevron-down pull-right"></i>
-                <i id="namepersonasc" data-bind="click: function() { sortField(1,'person','name') }" class="icon-chevron-up pull-right"></i>
             </th>
         </tr>
     </thead>
