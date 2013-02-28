@@ -2,8 +2,18 @@
 
 iCASA Simulation module provides a script language that can be used to create scenarios in order to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
 
+##Outline
+
+- <a href="#Syntax">Script Syntax</a>
+- <a href="#General">General Instructions</a>
+- <a href="#Zone">Zone Instructions</a>
+- <a href="#Device">Device Instructions</a>
+- <a href="#Person">Person Instructions</a>
+- <a href="#Scenario">Scenario example</a>
+
 <br>
 
+<a name="Syntax"></a>
 # Script File Syntax
 
 Scenarios in iCASA simulation module are specified in a XML file using the tag __behavior__. 
@@ -34,7 +44,9 @@ _Example:_
 
 # Instructions
 <br>
-## General 
+
+<a name="General"></a>
+## General Instructions
 <br>
 ### Delay
 <br>
@@ -58,6 +70,8 @@ _Example:_
 </table>
 
 <br>
+
+<a name="Zone"></a>
 ## Zone Instructions
 <br>
 ### Create Zone
@@ -97,6 +111,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Move Zone
 
 Move a zone in application context
@@ -126,6 +141,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Resize Zone
 
 Resize a zone in application context
@@ -155,6 +171,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Add Variable to Zone
 
 It adds a simulation variable to a zone
@@ -180,6 +197,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Modify Variable in Zone
 
 It modifies a simulation variable in a zone
@@ -209,7 +227,9 @@ _Example:_
 </table>
 
 <br>
-## Device Commands
+
+<a name="Device"></a>
+## Device Instructions
 
 <br>
 ### Create Device
@@ -237,6 +257,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Remove Device
 
 _Example:_
@@ -256,6 +277,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Move device into zone
 
 Places a device in a zone of application context.
@@ -281,6 +303,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Activate Device
 
 Changes the device's state to __activated__. 
@@ -302,6 +325,7 @@ _Example:_
 </table>	
 
 <br>
+
 ### Deactivate Device
 
 Changes the device's state to __deactivated__. 
@@ -323,6 +347,7 @@ _Example:_
 </table>	
 
 <br>
+
 ### Fault Device
 
 Changes the device's fault state to __yes__. 
@@ -344,6 +369,7 @@ _Example:_
 </table>	
 
 <br>
+
 ### Repair Device
 
 Changes the device's fault state to __no__. 
@@ -365,6 +391,7 @@ _Example:_
 </table>
 
 <br>
+
 ### Set device property value
 
 Set the value of the device property
@@ -394,7 +421,9 @@ _Example:_
 </table>
 
 <br>
-## Person's Commands
+
+<a name="Person"></a>
+## Person Instructions
 
 <br>
 ### Create Person
@@ -447,6 +476,8 @@ _Example:_
 </table>
 
 <br>
+
+<a name="Scenario"></a>
 ## Scenario Example
 
     <behavior startdate="27/10/2011-00:00:00" factor="1440">
@@ -497,3 +528,5 @@ _Example:_
 	
     </behavior>
 
+
+	
