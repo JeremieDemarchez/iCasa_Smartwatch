@@ -19,6 +19,7 @@
 package fr.liglab.adele.icasa.simulator.remote.impl;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -55,6 +56,14 @@ public class SimulatedDeviceREST implements SimulatedDeviceManager {
 	@Override
 	public void removeDevice(String deviceId) {
         _simulationMgr.removeDevice(deviceId);
+	}
+
+	/* (non-Javadoc)
+	 * @see fr.liglab.adele.icasa.remote.SimulatedDeviceManager#getDeviceTypes()
+	 */
+	@Override
+	public Set<String> getDeviceTypes() {
+		return _simulationMgr.getSimulatedDeviceTypes();
 	}
     
   

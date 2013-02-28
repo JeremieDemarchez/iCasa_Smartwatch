@@ -1,20 +1,18 @@
 # iCasa Script Language
 
-iCASA Simulation module provides a script language that can be used to create scripts scenarios to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
+iCASA Simulation module provides a script language that can be used to create scenarios in order to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
 
 <br>
 
 # Script File Syntax
 
-Scenarios in iCASA simulation module are specified in a XML file. 
+Scenarios in iCASA simulation module are specified in a XML file using the tag __behavior__. 
 
 _Example:_
 
     <behavior startdate="27/10/2011-00:00:00" factor="1440">
        <!-- Scenario instructions -->
     </behavior>
-
-The root tag of this XML file is the tag '''behavior''' and its attributes are:
 
 <table cellpadding="2" cellspacing="0" border="1">
 <tr>
@@ -98,7 +96,7 @@ _Example:_
 </tr>
 </table>
 
-
+<br>
 ### Move Zone
 
 Move a zone in application context
@@ -127,6 +125,7 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ### Resize Zone
 
 Resize a zone in application context
@@ -155,6 +154,7 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ### Add Variable to Zone
 
 It adds a simulation variable to a zone
@@ -179,6 +179,7 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ### Modify Variable in Zone
 
 It modifies a simulation variable in a zone
@@ -207,8 +208,10 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ## Device Commands
 
+<br>
 ### Create Device
 
 It creates a device instance in the application context
@@ -233,6 +236,7 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ### Remove Device
 
 _Example:_
@@ -251,7 +255,7 @@ _Example:_
 </tr>
 </table>
 
-
+<br>
 ### Move device into zone
 
 Places a device in a zone of application context.
@@ -276,6 +280,7 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ### Activate Device
 
 Changes the device's state to __activated__. 
@@ -296,6 +301,7 @@ _Example:_
 </tr>
 </table>	
 
+<br>
 ### Deactivate Device
 
 Changes the device's state to __deactivated__. 
@@ -316,6 +322,7 @@ _Example:_
 </tr>
 </table>	
 
+<br>
 ### Fault Device
 
 Changes the device's fault state to __yes__. 
@@ -336,6 +343,7 @@ _Example:_
 </tr>
 </table>	
 
+<br>
 ### Repair Device
 
 Changes the device's fault state to __no__. 
@@ -356,7 +364,7 @@ _Example:_
 </tr>
 </table>
 
-
+<br>
 ### Set device property value
 
 Set the value of the device property
@@ -385,9 +393,10 @@ _Example:_
 </tr>
 </table>
 
-
+<br>
 ## Person's Commands
 
+<br>
 ### Create Person
 
 Adds a person to the simulation context
@@ -412,7 +421,7 @@ _Example:_
 </tr>
 </table>
 
-
+<br>
 ### Move Person into zone
 
 Places a person in a zone in the application context
@@ -437,6 +446,7 @@ _Example:_
 </tr>
 </table>
 
+<br>
 ## Scenario Example
 
     <behavior startdate="27/10/2011-00:00:00" factor="1440">
@@ -484,7 +494,6 @@ _Example:_
 	   <remove-device deviceId="Pres-A1255D-D" />	
        <delay value="100" />
 	   <set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
-	
 	
     </behavior>
 
