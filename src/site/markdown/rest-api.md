@@ -2,11 +2,17 @@
 
 iCasa provides a set of functional and simulation services used by pervasive application developers. A set of REST web services is provide to access those services. In this document the iCasa REST API will be presented. All web services use JSON as data representation.
 
+- <a href="#Zone">Zone Service</a>
+- <a href="#Device">Device Service</a>
+- <a href="#Clock">Clock Service</a><br>
+- <a href="#Person">Person Service</a><br>
+
+<a name="Zone"></a>
 ## Zone Service
 
 Base URL: _http://host:port/icasa/zone_
 
-### Method GET
+### Gets the zone list (GET)
 
 Gets the list of zones in the iCasa execution platform.
 
@@ -18,7 +24,7 @@ Data parameter -> None
 
 #### Example:
 
-curl -X GET http://localhost:8080/icasa/zones/zones
+    > curl -X GET http://localhost:8080/icasa/zones/zones
 
 Result:
 
@@ -66,7 +72,7 @@ Result:
       }
     ]
 
-### Method GET
+### Gets a specific zone (GET)
 
 Gets the information of a particular zone
 
@@ -79,7 +85,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-curl -X GET _http://localhost:8080/icasa/zones/zone/bathroom_
+    > curl -X GET http://localhost:8080/icasa/zones/zone/bathroom
 
 Result:
 
@@ -98,7 +104,7 @@ Result:
         }
     }
 	
-### Method POST
+### Craete a zone (POST)
 
 Creates a new zone in the iCasa execution platform.
 
@@ -111,7 +117,7 @@ Data parameter -> the JSON data associated with the new zone
 
 #### Example:  
 
-curl -X POST -d "{"zoneId":"hall","name":"hall","isRoom":false,"leftX":1,"topY":1,"rightX":50,"bottomY":50}" _http://localhost:8080/icasa/zones/zone_
+    > curl -X POST -d "{"zoneId":"hall","name":"hall","isRoom":false,"leftX":1,"topY":1,"rightX":50,"bottomY":50}" http://localhost:8080/icasa/zones/zone
 
 Result:
 
@@ -127,7 +133,7 @@ Result:
 	}
 
 	
-### Method DELETE
+### Delete an zone (DELETE)
 
 Deletes a zone in the iCasa execution platform.
 
@@ -140,10 +146,10 @@ Data parameter -> _None_
 
 #### Example:  
 
-curl -X DELETE http://localhost:8080/icasa/zones/zone/hall
+    > curl -X DELETE http://localhost:8080/icasa/zones/zone/hall
 
 	
-### Method PUT
+### Updates a zone (PUT)
 
 Updates a zone in the iCasa execution platform.
 
@@ -156,7 +162,7 @@ Data parameter -> the JSON data associated with new zone
 
 #### Example:  
 
-curl -X POST -d "{"id":"hall","isRoom":true,"rightX":316,"leftX":98,"name":"hall","topY":72,"bottomY":277,"variables":{}}" _http://localhost:8080/icasa/zones/zone/hall_
+    > curl -X POST -d "{"id":"hall","isRoom":true,"rightX":316,"leftX":98,"name":"hall","topY":72,"bottomY":277,"variables":{}}" _http://localhost:8080/icasa/zones/zone/hall_
 
 Result:
 
@@ -173,12 +179,12 @@ Result:
 
 <br>
 
-
+<a name="Device"></a>
 ## Device Service
 
 Base URL: _http://host:port/icasa/devices_
 
-### Method GET
+### Gets the device list (GET)
 
 Gets the list of devices in the iCasa execution platform.
 
@@ -190,7 +196,7 @@ Data parameter -> None
 
 #### Example:
 
-curl -X GET http://localhost:8080/icasa/devices/devices
+    > curl -X GET http://localhost:8080/icasa/devices/devices
 
 Result:
 
@@ -231,7 +237,7 @@ Result:
     ]
 	
 
-### Method GET
+### Gets a specific device (GET)
 
 Gets the information of a particular device
 
@@ -244,7 +250,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-curl -X GET _http://localhost:8080/icasa/devices/device/Ther-A3654Q-S_
+    > curl -X GET _http://localhost:8080/icasa/devices/device/Ther-A3654Q-S_
 
 Result:
 
@@ -264,8 +270,10 @@ Result:
           "type": "iCASA.Thermometer",
           "fault": "no"
        }
-	  
-### Method POST
+
+<br>
+	   
+### Creates a device (POST)
 
 Creates a new device in the iCasa execution platform.
 
@@ -278,7 +286,7 @@ Data parameter -> the JSON data associated with the new device
 
 #### Example:  
 
-curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCASA.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:8080/icasa/devices/device
+    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCASA.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:8080/icasa/devices/device
 
 Result:
 
@@ -298,7 +306,7 @@ Result:
 	}
 	
 
-### Method PUT
+### Updates a device (PUT)
 
 Updates a device in the iCasa execution platform.
 
@@ -311,7 +319,7 @@ Data parameter -> the JSON data associated with the device
 
 #### Example:  
 
-curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCASA.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" _http://localhost:8080/icasa/zones/zone/hall_
+    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCASA.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:8080/icasa/zones/zone/hall
 
 Result:
 
@@ -332,7 +340,7 @@ Result:
 	}
 	
 	
-### Method DELETE
+### Deleta a device (DELETE)
 
 Deletes a device in the iCasa execution platform.
 
@@ -342,14 +350,12 @@ Path parameter -> ${deviceId} the id of the device to be deleted
 
 Data parameter -> _None_
 
-
-<br>
-
+<a name="Clock"></a>
 ## Clock Service
 
 Base URL: _http://host:port/icasa/clock_
 
-### Method GET
+### Gets the clock (GET)
 
 Gets the information associated to the clock service
 
@@ -361,7 +367,7 @@ Data parameter -> None
 
 #### Example:
 
-curl -X GET http://localhost:8080/icasa/clock
+    > curl -X GET http://localhost:8080/icasa/clock
 
 Result:
 
@@ -374,7 +380,7 @@ Result:
        "factor": 1440
     }
 
-### Method PUT
+### Updates the clock (PUT)
 
 Updates the state of the clock service in the execution platform
 
@@ -384,7 +390,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-curl -X POST -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" _http://localhost:8080/icasa/clock_
+    > curl -X PUT -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" http://localhost:8080/icasa/clock
 
 Result:
 
@@ -397,12 +403,13 @@ Result:
        "factor": 1440
     }
 
-	
+
+<a name="Person"></a>	
 ## Person Service
 
 Base URL: _http://host:port/icasa/persons_
 
-### Method GET
+### Gets the person type list (GET)
 
 Gets the list of person types in the iCasa execution platform.
 
@@ -414,7 +421,7 @@ Data parameter -> None
 
 #### Example:
 
-curl -X GET http://localhost:8080/icasa/persons/personTypes
+    > curl -X GET http://localhost:8080/icasa/persons/personTypes
 
 Result:
 
@@ -437,7 +444,7 @@ Result:
        }
     ]
 
-### Method GET
+### Gets the person list (GET)
 
 Gets the list of person in the iCasa execution platform.
 
@@ -449,7 +456,7 @@ Data parameter -> None
 
 #### Example:
 
-curl -X GET http://localhost:8080/icasa/persons/persons
+    > curl -X GET http://localhost:8080/icasa/persons/persons
 
 Result:
 
@@ -472,7 +479,7 @@ Result:
        }
     ]
 
-### Method PUT
+### Updates a person (PUT)
 
 Updates the state of a persion service in the execution platform
 
@@ -485,7 +492,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-curl -X PUT -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":542,"positionY":294,"id":"Paul","width":50,"height":50,"location":"kitchen"}" http://localhost:8080/icasa/persons/person/Paul
+    > curl -X PUT -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":542,"positionY":294,"id":"Paul","width":50,"height":50,"location":"kitchen"}" http://localhost:8080/icasa/persons/person/Paul
 
 Result:
 
@@ -498,7 +505,7 @@ Result:
 	   "type":"Grandfather"
 	}
 
-### Method POST
+### Creates a person (POST)
 
 Creates a new person in the iCasa execution platform.
 
@@ -511,7 +518,7 @@ Data parameter -> the JSON data associated with the new person
 
 #### Example:  
 
-curl -X POST -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":1,"positionY":1}" http://localhost:8080/icasa/persons/person
+    > curl -X POST -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":1,"positionY":1}" http://localhost:8080/icasa/persons/person
 
 Result:
 
@@ -524,7 +531,7 @@ Result:
 	   "type":"Grandfather"
 	}
 	
-### Method DELETE
+### Deletes a person (DELETE)
 
 Deletes a person in the iCasa execution platform.
 
