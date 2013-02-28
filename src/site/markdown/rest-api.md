@@ -353,13 +353,13 @@ Data parameter -> _None_
 <a name="Clock"></a>
 ## Clock Service
 
-Base URL: _http://host:port/icasa/clock_
+Base URL: _http://host:port/icasa/clocks/clock/default_
 
 ### Gets the clock (GET)
 
-Gets the information associated to the clock service
+Gets the information associated to the default clock service
 
-Path: __http://host:port/icasa/clock__
+Path: __http://host:port/icasa/clocks/clock/default__
 
 Path parameter -> None
 
@@ -367,7 +367,11 @@ Data parameter -> None
 
 #### Example:
 
+<<<<<<< HEAD
     > curl -X GET http://localhost:8080/icasa/clock
+=======
+curl -X GET http://localhost:8080/icasa/clocks/clock/default
+>>>>>>> e7d3583014f21cbb1dc6cc7de44339680d254fce
 
 Result:
 
@@ -384,13 +388,17 @@ Result:
 
 Updates the state of the clock service in the execution platform
 
-Path -> __http://host:port/icasa/clock/clock__
+Path -> __http://host:port/icasa/clocks/clock/default__
 
 Path parameter -> None
 
 Data parameter -> None
 
+<<<<<<< HEAD
     > curl -X PUT -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" http://localhost:8080/icasa/clock
+=======
+curl -X POST -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" _http://localhost:8080/icasa/clocks/clock/default_
+>>>>>>> e7d3583014f21cbb1dc6cc7de44339680d254fce
 
 Result:
 
