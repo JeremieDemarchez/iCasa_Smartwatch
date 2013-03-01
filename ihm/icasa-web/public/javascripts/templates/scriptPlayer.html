@@ -37,7 +37,7 @@
 
     <div class="controls controls-row">
         <label class="span2">Speed</label>
-        <label class="span2">Maximum speed</label>
+        <label class="span1">Maximum speed</label>
     </div>
 
     <div class="controls controls-row">
@@ -57,7 +57,7 @@
 
     <div class="controls controls-row">
         <label class="span1">Script</label>
-        <select class="span2" data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name'"></select>
+        <select class="span2" data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name', enable: $root.selectedScriptState() != 'started'"></select>
 
         <button class="btn span1" id="scriptPlayerDialogBtn">Details</button>
     </div>
@@ -155,6 +155,6 @@
     </div>
 </div>
 
-<script src="@routes.Assets.at("javascripts/templates/scriptPlayer.coffee")"></script>
+<script src="/assets/javascripts/templates/scriptPlayer.js"></script>
 
 
