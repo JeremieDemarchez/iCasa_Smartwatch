@@ -1,3 +1,47 @@
+Standard Install
+==========
+
+iCasa Simulator is decomposed in two parts:
+ * _Gateway part_ corresponding to the box runtime including the simulator runtime.
+ * _Web server part_ serving the client web application code.
+
+Installation Prerequesites
+----------
+ * Java Development Toolkit 6 (Avoid Java 7 that may cause troubles).
+ * A modern Web browser (We recommend to use Firefox but you can also use Chrome)).
+
+Installation procedure
+----------
+ 1. Download a full iCasa Simulator binary distribution (TODO icasa.teaching.distribution).
+ 2. Unzip it on a local folder.
+
+Launch
+========
+
+Gateway Part Launch
+--------
+ 1. Go to the unzipped directory.
+ 2. Execute start script on Unix systems and start.bat script on Windows systems.
+
+By default, the gateway port is set to 8080.
+
+Web Server Part Launch
+--------
+ 1. Go to the unzipped directory.
+ 2. Execute startIHM script on Unix systems and startIHM.bat script on Windows systems.
+
+By default, the web server port is set to 9000.
+
+The home screen is available at http://localhost:9000/
+
+Advanced Install
+==========
+
+Depending on your needs, you can choose between other installation options:
+ * _Gateway part_ and _Web server part_ on different machines.
+ * TODO.
+
 [iCasa Runtime](https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip)
+
 
 
