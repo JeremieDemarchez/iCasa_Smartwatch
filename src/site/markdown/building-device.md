@@ -1,43 +1,49 @@
 # How to build an iCasa Device
 
-<br>
-
 ## Requirements
 
-- OSGi & iPOJO skills : iCasa is built on top of <a href="http://www.osgi.org">OSGi</a> platform and <a href="http://felix.apache.org/site/apache-felix-ipojo.html">iPOJO</a> component model
-- Maven (optional) : <a href="http://felix.apache.org/site/apache-felix-ipojo.html">Maven</a> tool can be used to build new iCasa devices
-
-<br>
+- OSGi & iPOJO : iCasa is built on top of <a href="http://www.osgi.org">OSGi</a> platform and <a href="http://felix.apache.org/site/apache-felix-ipojo.html">iPOJO</a> component model
+- Maven (Optional) : <a href="http://felix.apache.org/site/apache-felix-ipojo.html">Maven</a> tool can be used to build new iCasa devices
 
 ## Platform Device Model
 
-<p>
-iCasa framework provides a device model that must be used to create new devices. In this model, each device has to publish a description based in a Java interface and a set of properties. Device interface is used to expose device's functionality and the properties set are used to known its state.
-</p>
-<p>
-To integrate a new device into the iCasa framework, this device has to implement the GenericDevice interface (_fr.liglab.adele.icasa.device.GenericDevice_). The GenericDevice interface defines methods to get the device serial number (unique ID), to access state and fault values, and to interrogate device to obtain its properties values.
-</p>
-In addition, each device in the framework has the possibility of notify clients about changes in its state, mainly when the properties' values had been changed using a listener pattern. The device sends events (using _fr.liglab.adele.icasa.device.DeviceEvent_ interface) to its listeners; a device listener must implement the DeviceListener interface (_fr.liglab.adele.icasa.device.DeviceListener_).
-<p>
-The framework includes an abstract implementation class for GenericDevice that eases the development of new devices implementation in the framework, the class is _fr.liglab.adele.icasa.simulator.AbstractDevice_.
-There exists mainly two types of devices in iCasa: devices using a scope zone and localization (thermometer gets the temperature of a room by example) and devices that are independent of their localization i.e. a bathroom scale.
-</p>
+
+
+iCasa framework provides a device model that must be used to create new devices. In this model, each device has to publish a description based in a Java interface and a set of properties. Device interface is used to expose device functionality, on the other hand properties set is used to known device state.
+
+To integrate a new device into the iCasa framework the device has to implement the ___fr.liglab.adele.icasa.device.GenericDevice___ interface. The GenericDevice interface defines methods to get the device unique identifier (___getSerialNumber()___), to access its state (___getState()___) and its fault situation (___getFault()___), and also a method to interrogate device to obtain its properties values (___getPropertyValue(String propertyName)___).
+
+In addition, each device has the possibility of notify clients about changes in its state (when its properties' values have been changed) using the listener pattern. The device sends events to its listeners using a callback method (___devicePropertyModified(GenericDevice device, String propertyName, Object oldValue)___). Events sent must implement the Java interface ___fr.liglab.adele.icasa.device.DeviceEvent___ and listeners must implement ___fr.liglab.adele.icasa.device.DeviceListener___ interface.
+
+iCasa framework provides an abstract implementation class for _GenericDevice_ interface: ___fr.liglab.adele.icasa.device.util.AbstractDevice___. This abstract class eases the development of new devices implementation by inheriting from it. There exists mainly two types of devices in iCasa: devices using a scope zone and localization (thermometer gets the temperature of a room by example) and devices that are independent of their localization i.e. a bathroom scale.
+
 
 ## Simulated Devices
 
-Testing and debugging pervasive applications is a difficult task because usually developers have not access to all physical devices. On the other hand is not easy to generate the adequate events in the right moment in order to produce conditions for testing applications in different execution scenarios. For this reason iCasa platform includes a simulation module allowing testing and debugging of pervasive applications. 
-The iCasa simulation module provides a set of prebuilt simulated devices, but it is extensible allowing developers to build new types of simulated devices. 
-Every simulated device is a full compliant iCasa device, in addition of GenericDevice a simulated device must implement the SimulatedDevice interface to be recognized by the iCasa simulation framework. 
+<p>
+Testing and debugging pervasive applications is a difficult task because usually developers have not access to all physical devices. On the other hand is not easy to generate the adequate events in the right moment in order to produce conditions for testing applications in different execution scenarios. For this reason iCasa framework includes a simulation module allowing testing and debugging of pervasive applications. 
+</p>
+<p>
+The iCasa simulation module provides a set of prebuilt simulated devices, it is extensible, allowing developers to build new types of simulated devices. Every simulated device is a full compliant iCasa device, but simulated device must implement _fr.liglab.adele.icasa.simulator.SimulatedDevice_ interface to be recognized by the iCasa simulation framework. 
+</p>
 <br>
 
 ## Device using scope zone: A Thermometer Device
 
-In this section we will show how to extend the iCasa simulation module adding a new simulated device that uses a scope zone; the thermometer device.
+In this section we will show how to extend the iCasa simulation module adding a new simulated device that uses a scope zone; the thermometer device. The section is divided in 4 subsections:
+  
+- <a href="#Description">Device Description:</a> shows how to describe the device in the iCasa platform
+- <a href="#Implementation">Device Implementation:</a> presents the java class implementing the simulated device functionality
+- <a href="#Component">Device Component:</a> shows how to produce a iPOJO component from its implementation class
+- <a href="#Packaging">Device Packaging:</a> illustrate how to build the OSGi bundle using the maven tool.
+
 <br>
 
+<a name="Description"></a>
 ### Device Description
 
-As show in the figure the description of the Thermometer device includes one Java interface (Thermometer) and a set of properties (state, fault and current_temperature).
+As show in the next code fragment, the description of the Thermometer device includes is made in a Java interface (___fr.liglab.adele.icasa.device.temperature.Thermometer___) and a set of properties (_state_, _fault_ and _current_temperature_). Usually the properties name are defined as static fields (constants) of the Java interface as <em>THERMOMETER_CURRENT_TEMPERATURE</em> .
+
 The Thermometer java interface is as follows
 
     package fr.liglab.adele.icasa.device.temperature;
@@ -46,7 +52,7 @@ The Thermometer java interface is as follows
 
     public interface Thermometer extends GenericDevice {
 
-       String THERMOMETER_CURRENT_TEMPERATURE = "current_temperature";
+       static String THERMOMETER_CURRENT_TEMPERATURE = "current_temperature"; // Temperature Property
 
        double getTemperature();
 
@@ -56,30 +62,15 @@ To access device current temperature the client has two options, call the method
 
 <br>
 
-### Device Implementation Class
+<a name="Implementation"></a>
+### Device Implementation 
 
 Once the device interface defined a implementation class to this device must be provided. 
 
     package fr.liglab.adele.icasa.device.temperature.impl;
 
-    import java.util.List;
-
-    import org.apache.felix.ipojo.annotations.Component;
-    import org.apache.felix.ipojo.annotations.Invalidate;
-    import org.apache.felix.ipojo.annotations.Provides;
-    import org.apache.felix.ipojo.annotations.ServiceProperty;
-    import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-    import org.apache.felix.ipojo.annotations.Validate;
-    import org.osgi.framework.Constants;
-
-    import fr.liglab.adele.icasa.device.temperature.Thermometer;
-    import fr.liglab.adele.icasa.device.util.AbstractDevice;
-    import fr.liglab.adele.icasa.location.Zone;
-    import fr.liglab.adele.icasa.location.ZoneListener;
-    import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-    import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
-
-
+	// Imports section omitted
+	
     @Component(name = "iCASA.Thermometer")
     @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
     public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice {
@@ -93,7 +84,9 @@ Once the device interface defined a implementation class to this device must be 
 
 	    public SimulatedThermometerImpl() {
 		    super();
-		    setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
+			
+			// Property initialization
+		    setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0); 
 	    }
 
 	    @Override
@@ -113,6 +106,8 @@ Once the device interface defined a implementation class to this device must be 
 				    if (zone.getVariableValue("Temperature") != null) {
 					    m_zone = zone;
 					    getTemperatureFromZone();
+						
+						// Zone listener registration
 					    m_zone.addListener(listener);
 					    break;
 				    }
@@ -123,7 +118,8 @@ Once the device interface defined a implementation class to this device must be 
 	    @Override
 	    public void leavingZones(List<Zone> zones) {
 		    setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, null);
-		    if (m_zone != null)
+			// Zone listener unregistration
+		    if (m_zone != null)			
     			m_zone.removeListener(listener);
     	}
 
@@ -135,6 +131,7 @@ Once the device interface defined a implementation class to this device must be 
 		    }
 	    }
 
+		// Zone listener implementation
 	    class ThermometerZoneListener extends BaseZoneListener {
 
 		    @Override
@@ -152,19 +149,27 @@ Once the device interface defined a implementation class to this device must be 
 	
 ### Device Properties Initialization
 	
-The device's properties should be initialized to avoid any problem of associated to null pointers in the device implementation. This initialization should be done in the constructor.
+The device's properties should be initialized for two reasons: 
+- to establish the initial state of the device
+- to avoid any problem of associated to null pointers in the device implementation
+
+Usually, this initialization should be done in the constructor as show in the class SimulatedThermometerImpl above.
 	
-### Zones Callbacks Methods
-As is shown in the SimulatedThermometerImpl class two methods have been implemented: enterInZones and leaveZones, these methods are callback methods defined in GenericDevice interface. iCasa platform call these methods when de device is placed in a different Zone to indicate its new scope zones and which are it leaving. In our example the device will try to find the first Zone that contains the "Temperature" variable. 
+### Zones Scope Utilisation
+
+As is shown in the SimulatedThermometerImpl class two methods have been implemented: enterInZones and leaveZones, these methods are callback methods defined in GenericDevice interface. iCasa platform call these methods when de device is placed in a new Zone to indicate its new scope zones and which are it leaving. In our example the device will try to find the first Zone that contains the _Temperature_ variable. Then, the simulated device uses the Temperature variable to obtain the value used in to set its property current_temperature
 
 <br>
 
 ### Zone Listener 
 
-In addition our Thermometer implements a ZoneListener class (_ThermometerZoneListener_ inner class) to be notified when variables in its scope zone have been modified. This listener has to be subscribed to zone events as is done in enterInZones method ( _m_zone.addListener(listener)_ ).
+The SimulatedThermometerImpl class defines an inner class _ThermometerZoneListener_ to be notified when variables in its scope zone have been modified. Our listener is interested in changes in Temperature variable in the device's scope zone. 
+This listener has to be subscribed to zone events as is done in enterInZones method ( _m_zone.addListener(listener)_ ), and in leavingZones method the listener is unregistered.
+
 
 <br>
 
+<a name="Component"></a>
 ## Device Component
 
 The iCasa platform has been built on top of the OSGi and iPOJO technologies. Each device to be incorporated to iCasa framework has to be built as an iPOJO component and deployed in the runtime as an OSGi Bundle.
@@ -173,25 +178,29 @@ To know more about the iPOJO compoenent model see <a href="http://felix.apache.o
 
 <br>
 
-## Device Building
 
-You can use <a href="http://felix.apache.org/site/apache-felix-ipojo.html">maven</a>  tool to build device projects
+<a name="Packaging"></a>
+## Device Packaging
+
+You can use <a href="http://felix.apache.org/site/apache-felix-ipojo.html">maven</a> tool to build a device project. Two iCasa maven artifacts are necessary to build your project, the first one context.api defines the interfaces used in the Device model, the simulation.api provides the SimulatedDevice interface.
 
 Artifacs :
 
 ### Context API - Device interfaces
 
     <groupId>fr.liglab.adele.icasa</groupId>
-    <artifactId>platform.parent</artifactId>
+    <artifactId>context.api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
 ### Simulation API - Simulated Device interface
 
-	<groupId>fr.liglab.adele.icasa</groupId>
-	<artifactId>parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+    <groupId>fr.liglab.adele.icasa</groupId>
+    <artifactId>simulator.api</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
 
-### Pom file example for thermometer device	
+### Pom Model File
+
+The pom file used in iCasa simulator module to build the simulated Thermometer is shown in the next fragment code. In addition to the two iCasa artifacts this pom includes other dependencies to iPojo and OSGi code. Finally, the pom defines the utilization of two plugins to iPOJO manipulation and OSGi bundle packaging.
 
     <?xml version="1.0" encoding="UTF-8"?>
 

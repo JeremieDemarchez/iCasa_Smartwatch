@@ -367,11 +367,8 @@ Data parameter -> None
 
 #### Example:
 
-<<<<<<< HEAD
-    > curl -X GET http://localhost:8080/icasa/clock
-=======
+
 curl -X GET http://localhost:8080/icasa/clocks/clock/default
->>>>>>> e7d3583014f21cbb1dc6cc7de44339680d254fce
 
 Result:
 
@@ -394,11 +391,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-<<<<<<< HEAD
-    > curl -X PUT -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" http://localhost:8080/icasa/clock
-=======
-curl -X POST -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" _http://localhost:8080/icasa/clocks/clock/default_
->>>>>>> e7d3583014f21cbb1dc6cc7de44339680d254fce
+curl -X POST -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" http://localhost:8080/icasa/clocks/clock/default
 
 Result:
 
