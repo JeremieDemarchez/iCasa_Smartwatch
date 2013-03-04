@@ -34,6 +34,7 @@
 
         <!-- Site Title -->
         <title>iCasa Simulator</title>
+        <lastStableSnapshotVersionQualifier>TODO</lastStableSnapshotVersionQualifier>
     </properties>
 
    <profiles>
