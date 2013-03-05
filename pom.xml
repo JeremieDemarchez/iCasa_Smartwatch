@@ -151,7 +151,7 @@
                 <!-- Create the file to download -->
                 <groupId>com.github.github</groupId>
                 <artifactId>downloads-maven-plugin</artifactId>
-                <version>0.5</version>
+                <version>0.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -161,6 +161,11 @@
                     </execution>
                 </executions>
                 <configuration>
+                    <!-- configure the repository -->
+                    <repositoryName>iCasa-Simulator</repositoryName>
+                    <repositoryOwner>AdeleResearchGroup</repositoryOwner>
+                    <!-- end repository configuration -->
+                    
                     <description>${project.version} version of ${project.name}</description>
                     <override>true</override>
                     <includeAttached>true</includeAttached>
