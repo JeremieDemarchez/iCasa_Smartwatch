@@ -102,6 +102,7 @@
                             <version>1.0.0</version>
                             <configuration>
                                 <jsdocIncludePrivate>true</jsdocIncludePrivate>
+                                <skipJSDOC>true</skipJSDOC>
                             </configuration>
                         </plugin>
                         <plugin>
@@ -124,7 +125,7 @@
                 <!-- Deploy the web site -->
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.5</version>
+                <version>0.7</version>
                 <executions>
                     <execution>
                         <goals>
@@ -132,8 +133,14 @@
                         </goals>
                         <phase>site-deploy</phase>
                         <configuration>
+                            <!-- configure the repository -->
+                            <repositoryName>iCasa-Simulator</repositoryName>
+                            <repositoryOwner>AdeleResearchGroup</repositoryOwner>
+                            <!-- end repository configuration -->
+
                             <message>Building site for ${project.version}</message>
                             <path>${site.path}</path>
+                            
                             <merge>true</merge>
                         </configuration>
                     </execution>
