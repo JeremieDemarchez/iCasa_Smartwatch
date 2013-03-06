@@ -1,0 +1,51 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  <!-- Project parent -->
+  <parent>
+     <groupId>fr.liglab.adele.icasa</groupId>
+     <artifactId>platform.parent</artifactId>
+     <version>1.0.0-SNAPSHOT</version>
+     <relativePath>../../../../parent</relativePath>
+  </parent>
+
+	<!-- Project Description -->
+	<artifactId>measure.generator.mock.dp</artifactId>
+	<packaging>deployment-package</packaging>
+   <name>${productName} :: Habits Monitoring :: Measure Generator :: Mock DP</name>
+
+	<dependencies>
+      <!-- habits monitoring application -->
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>event.webservice.mock.impl</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>event.webservice.api</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>measure.generator</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>de.akquinet.gomobile</groupId>
+				<artifactId>maven-dp-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<writeExtraData>true</writeExtraData>
+					<deploymentPackage>
+					</deploymentPackage>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
