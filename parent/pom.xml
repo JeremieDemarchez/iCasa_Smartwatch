@@ -7,7 +7,7 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
    the specific language governing permissions and limitations under the License. -->
    
-   <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
          <modelVersion>4.0.0</modelVersion>
          
          <!-- Project coordinates -->
@@ -15,7 +15,8 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             <groupId>fr.liglab.adele.common</groupId>
             <artifactId>base</artifactId>
             <version>1.0.3</version>
-            <relativePath></relativePath>
+            <relativePath>
+            </relativePath>
          </parent>
          <groupId>fr.liglab.adele.icasa.apps</groupId>
          <artifactId>parent</artifactId>
@@ -55,7 +56,13 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
          <!-- Dependencies version management -->
          <dependencyManagement>
             <dependencies>
-               
+               <!-- Distribution Base-->
+               <dependency>
+                  <groupId>fr.liglab.adele.common</groupId>
+                  <artifactId>distribution.base</artifactId>
+                  <version>${AdeleBaseVersion}</version>
+                  <type>osgi-distribution</type>
+               </dependency>
                <!-- iCasa -->
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
@@ -223,9 +230,24 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                   <type>deployment-package</type>
                   <version>${ciliaVersion}</version>
                </dependency>
+               
             </dependencies>
          </dependencyManagement>
-         
+         <build>
+            <pluginManagement>
+               <plugins>
+                  <plugin>
+                     <groupId>fr.liglab.adele.common</groupId>
+                     <artifactId>osgi-distribution-plugin</artifactId>
+                     <version>${osgiDistributionPluginVersion}</version>
+                     <extensions>true</extensions>
+                     <configuration>
+                        <generateScripts>true</generateScripts>
+                     </configuration>
+                  </plugin>
+               </plugins>
+            </pluginManagement>
+         </build>
          <scm>
             <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</connection>
             <url>https://github.com/AdeleResearchGroup/iCasa-Apps.git</url>

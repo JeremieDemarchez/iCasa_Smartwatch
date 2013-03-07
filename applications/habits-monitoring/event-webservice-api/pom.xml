@@ -17,8 +17,8 @@ limitations under the License.
 
 <!-- Project parent -->
 	<parent>
-		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>platform.parent</artifactId>
+      <groupId>fr.liglab.adele.icasa.apps</groupId>
+      <artifactId>parent</artifactId>
       <version>1.0.0-SNAPSHOT</version>
       <relativePath>../../../parent</relativePath>
 	</parent>
@@ -37,7 +37,6 @@ limitations under the License.
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Private-Package>YOUR_PRIVATE_PACKAGES</Private-Package>
             <Import-Package>*</Import-Package> 
             <Export-Package>*</Export-Package> 
           </instructions>

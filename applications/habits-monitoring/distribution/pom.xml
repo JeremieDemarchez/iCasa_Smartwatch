@@ -16,8 +16,8 @@
 
 	<!-- Project parent -->
 	<parent>
-		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>platform.parent</artifactId>
+		<groupId>fr.liglab.adele.icasa.apps</groupId>
+		<artifactId>parent</artifactId>
       <version>1.0.0-SNAPSHOT</version>
       <relativePath>../../../parent</relativePath>
 	</parent>
@@ -29,7 +29,7 @@
 	<name>${productName} :: Habits Monitoring :: Distributions</name>
 
 	<modules>
-		<module>box-aurelie</module>
+      <module>box-aurelie</module>
 	</modules>
    <build>
       <plugins>

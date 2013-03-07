@@ -20,46 +20,31 @@ limitations under the License.
          
          <!-- Project parent -->
          <parent>
-            <groupId>fr.liglab.adele.common</groupId>
-            <artifactId>distribution.base</artifactId>
-            <version>1.0.4</version>
-            <relativePath />
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>parent</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <relativePath>../../../parent</relativePath>
          </parent>
          
          <!-- Project coordinates -->
-         <groupId>fr.liglab.adele.icasa</groupId>
          <artifactId>habits.monitoring.distribution.box.aurelie</artifactId>
-         <packaging>pom</packaging>
-         <version>1.0.0-SNAPSHOT</version>         
+         <packaging>osgi-distribution</packaging>
          <!-- Project description -->
          <name>${productName} :: Habits Monitoring :: Distribution :: Box Aurelie</name>
          
          <properties>
-            <productName>iCasa Platform</productName>
-            <iCasaPlatformVersion>1.0.0-SNAPSHOT</iCasaPlatformVersion>
+            <productName>iCasa Apps</productName>
             <!-- flag to flatten deployment packages -->
             <flattenDP>false</flattenDP>
          </properties>
          
-         <!-- Project repositories -->
-         <repositories>
-            <!-- iCASA repositories -->
-            <repository>
-               <id>icasa-snapshot-repository</id>
-               <name>iCASA Snapshot repository</name>
-               <url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-            </repository>
-            <repository>
-               <id>icasa-release-repository</id>
-               <name>iCASA Release repository</name>
-               <url>https://repository-icasa.forge.cloudbees.com/release/</url>
-            </repository>
-            
-         </repositories>
-         
          <!-- Project dependencies -->
          <dependencies>
-            
+            <dependency>
+               <groupId>fr.liglab.adele.common</groupId>
+               <artifactId>distribution.base</artifactId>
+               <type>osgi-distribution</type>
+            </dependency>
             <!-- deployed packages -->
             <dependency>
                <groupId>fr.liglab.adele.common</groupId>
@@ -79,13 +64,11 @@ limitations under the License.
             <dependency>
                <groupId>fr.liglab.adele.icasa</groupId>
                <artifactId>icasa.platform.dp</artifactId>
-               <version>${iCasaPlatformVersion}</version>
                <type>deployment-package</type>
             </dependency>
             <dependency>
                <groupId>fr.liglab.adele.icasa</groupId>
                <artifactId>icasa.simulator.dp</artifactId>
-               <version>${iCasaPlatformVersion}</version>
                <type>deployment-package</type>
             </dependency>
             
@@ -94,8 +77,8 @@ limitations under the License.
             <dependency>
                <groupId>fr.liglab.adele.icasa</groupId>
                <artifactId>measure.generator.mock.dp</artifactId>
-               <version>${iCasaPlatformVersion}</version>
                <type>deployment-package</type>
+               <version>${project.version}</version>
             </dependency>
             
             <!-- Jersey Dependencies-->
@@ -113,5 +96,14 @@ limitations under the License.
             </dependency>
             
          </dependencies>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>fr.liglab.adele.common</groupId>
+                  <artifactId>osgi-distribution-plugin</artifactId>
+               </plugin>
+            </plugins>
+         </build>
+           
       </project>
       

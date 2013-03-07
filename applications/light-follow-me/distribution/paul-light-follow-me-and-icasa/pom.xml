@@ -43,7 +43,6 @@
      <dependency>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>distribution.base</artifactId>
-        <version>${AdeleBaseVersion}</version>
         <type>osgi-distribution</type>
      </dependency>
 	<!-- deployed packages -->
@@ -85,11 +84,6 @@
         <plugin>
            <groupId>fr.liglab.adele.common</groupId>
            <artifactId>osgi-distribution-plugin</artifactId>
-           <version>${osgiDistributionPluginVersion}</version>
-           <extensions>true</extensions>
-           <configuration>
-              <generateScripts>true</generateScripts>
-           </configuration>
         </plugin>
      </plugins>
   </build>
