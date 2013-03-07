@@ -29,7 +29,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
          
          <!-- Project common properties -->
          <properties>
-            <productName>ADELE-Common</productName>
+            <productName>iCasa Apps</productName>
             <productVersion>${project.version} </productVersion>
             <projectName>${project.artifactId}</projectName>
             
