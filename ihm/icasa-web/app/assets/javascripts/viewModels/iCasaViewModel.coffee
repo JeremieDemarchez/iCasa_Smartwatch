@@ -864,6 +864,8 @@ define(['jquery',
           @currentTime = kb.observable(model, 'currentTime')
           @startDate = kb.observable(model, 'startDate')
           @pause = kb.observable(model, 'pause')
+
+          #TODO describe
           @pausedUI = ko.observable(true)
 
           @minutes = ko.computed({
@@ -902,6 +904,8 @@ define(['jquery',
                d.setDate(val.substring(0,2))
                @currentTime(d.getTime())
           }, @)
+
+
 
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
@@ -1295,6 +1299,11 @@ define(['jquery',
 
            @pauseClock = ()=>
               @clock.pausedUI(true)
+
+
+           # init clock state
+           if (! @clock.pause())
+             @startClock();
 
            # managing map size change (must update position of persons, zones and devices)
            @updateModelPosition=(model)=>
