@@ -40,8 +40,8 @@
         <label class="span1">Factor</label>
         <div class="controls">
             <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.selectedScriptFactor, valueUpdate:'afterkeydown'"/>
-            <button class="btn span" id="play" data-bind="click: $root.playClock, visible: $root.clock.pausedUI"><i class="icon-play"></i>Play</button>
-            <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pausedUI"><i class="icon-pause"></i>Pause</button>
+            <button class="btn span" id="play" data-bind="click: $root.startClock, visible: $root.clock.pausedUI"><i class="icon-play"></i>Play</button>
+            <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pausedUI()"><i class="icon-pause"></i>Pause</button>
         </div>
     </div>
 
