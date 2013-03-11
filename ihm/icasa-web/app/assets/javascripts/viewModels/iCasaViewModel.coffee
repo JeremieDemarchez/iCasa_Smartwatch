@@ -1276,13 +1276,24 @@ define(['jquery',
                   @selectedScript().factor(val)
            }, @)
 
-           @maxFactor = ko.observable(15000)
+           @maxFactor = ko.computed( ()=>
+             if (@selectedScript())
+               if (@selectedScript().factor() > 15000)
+                 return @selectedScript().factor()
+               else
+                 return 15000
+             else
+               return 15000;
+           )
 
            @scriptProgress = ko.computed( ()=>
               if @selectedScript()
-                scriptTime = @clock.currentTime() - @clock.startDate()
-                executionTimeMs = (@selectedScript().executionTime() * 60 * 1000)
-                return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) )*100
+                if @selectedScript().executionTime() != 0 && (@selectedScript().state() == 'started' || @selectedScript().state() == 'paused')
+                  scriptTime = @clock.currentTime() - @clock.startDate()
+                  executionTimeMs = (@selectedScript().executionTime() * 60 * 1000)
+                  return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) )*100
+                else
+                  return 0
               else
                 return 0
            );
