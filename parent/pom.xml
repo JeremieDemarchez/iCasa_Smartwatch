@@ -14,7 +14,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
          <parent>
             <groupId>fr.liglab.adele.common</groupId>
             <artifactId>base</artifactId>
-            <version>1.0.3</version>
+            <version>1.0.4-SNAPSHOT</version>
             <relativePath>
             </relativePath>
          </parent>
@@ -100,13 +100,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                   <artifactId>device.manager.api</artifactId>
                   <version>${iCasaVersion}</version>
                </dependency>
-               
-               <dependency>
-                  <groupId>fr.liglab.adele.icasa</groupId>
-                  <artifactId>play2.osgi</artifactId>
-                  <version>${iCasaVersion}</version>
-                  <type>play2</type>
-               </dependency>
+
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>icasa.web</artifactId>
@@ -168,7 +162,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>continua-rest-client</artifactId>
-                  <version>$iCasaVersion}</version>
+                  <version>${iCasaVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
@@ -238,7 +232,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                <plugins>
                   <plugin>
                      <groupId>fr.liglab.adele.common</groupId>
-                     <artifactId>osgi-distribution-plugin</artifactId>
+                     <artifactId>maven-osgi-distribution-plugin</artifactId>
                      <version>${osgiDistributionPluginVersion}</version>
                      <extensions>true</extensions>
                      <configuration>
