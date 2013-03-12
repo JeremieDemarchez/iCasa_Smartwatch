@@ -142,9 +142,9 @@
 	</repositories>
 
 	<scm>
-		<connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
-		<url>http://github.com/AdeleResearchGroup/iCasa/</url>
-		<developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
+		<connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</connection>
+		<url>http://github.com/AdeleResearchGroup/iCasa-Simulator/</url>
+		<developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</developerConnection>
 		<tag>HEAD</tag>
 	</scm>
 

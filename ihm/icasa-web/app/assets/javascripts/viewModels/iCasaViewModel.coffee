@@ -36,7 +36,7 @@ define(['jquery',
 
             return { controlsDescendantBindings: true };
             
-         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+        update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
 
             # Next, whether or not the supplied model property is observable, get its current value
             valueUnwrapped = ko.utils.unwrapObservable(valueAccessor());
@@ -252,6 +252,77 @@ define(['jquery',
 
             return { controlsDescendantBindings: false };
     };
+
+    ko.bindingHandlers.scriptButtons = {
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+            playBt = $("<button><i class='icon-play'></i>Start</button>").addClass("btn span");
+            pauseBt = $("<button><i class='icon-pause'></i>Pause</button>").addClass("btn span").hide();
+            stopBt = $("<button><i class='icon-stop'></i>Stop</button>").addClass("btn span").attr("disabled", "disabled");
+
+            playBt.click(() ->
+                pauseBt.show()
+                playBt.hide()
+                stopBt.removeAttr("disabled");
+                viewModel.startScript()
+            )
+            pauseBt.click(() ->
+                playBt.show()
+                pauseBt.hide()
+                viewModel.pauseScript()
+            )
+            stopBt.click(() ->
+                playBt.show()
+                pauseBt.hide()
+                stopBt.attr("disabled", "disabled");
+                viewModel.stopScript()
+            )
+
+            $(element).append(pauseBt)
+            $(element).append(playBt)
+            $(element).append(stopBt)
+
+            return { controlsDescendantBindings: false };
+    };
+
+    ko.bindingHandlers.jqFactorSlider = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            options = allBindingsAccessor().sliderOpt || {}
+            sliderValue = ko.utils.unwrapObservable(valueAccessor());
+
+            options.slide = (e, ui) ->
+                sliderValue.value(ui.value)
+
+            ko.utils.domNodeDisposal.addDisposeCallback(element, () ->
+              $(element).slider("destroy")
+            )
+            $(element).slider(options)
+        update: (element, valueAccessor) ->
+            sliderValue = ko.toJS(valueAccessor())
+            $(element).slider("value", sliderValue.value);
+
+    }
+
+    ko.bindingHandlers.jqScriptProgress = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+            label = $("<div></div>").text("0%").width("100%").css("text-align", "center").addClass("pull-left")
+            $(element).append(label)
+            $(element).progressbar({
+              value: valueAccessor().value,
+              max: 100,
+              change: () ->
+                  label.text( $(element).progressbar( "value" ).toFixed(2) + "%" );
+              complete: () ->
+                label.text( "Complete" );
+            })
+
+        update: (element, valueAccessor) ->
+            valueProgress = ko.toJS(valueAccessor())
+            $(element).progressbar("value", valueProgress.value);
+    }
 
     # View models
 
@@ -786,6 +857,56 @@ define(['jquery',
                return "#" + @tabHtmlId();
            , @);
 
+    class ClockViewModel extends kb.ViewModel
+        constructor: (model) ->
+          super(model);
+
+          @currentTime = kb.observable(model, 'currentTime')
+          @startDate = kb.observable(model, 'startDate')
+          @pause = kb.observable(model, 'pause')
+
+          #TODO describe
+          @pausedUI = ko.observable(true)
+
+          @minutes = ko.computed({
+             read: =>
+               d = new Date(@currentTime())
+               return d.getMinutes()
+
+             write: (val)=>
+               d = new Date(@currentTime())
+               d.setMinutes(val)
+               @currentTime(d.getTime())
+          }, @)
+
+          @hours = ko.computed({
+             read: =>
+               d = new Date(@currentTime())
+               return d.getHours()
+
+             write: (val)=>
+               d = new Date(@currentTime())
+               d.setHours(val)
+               @currentTime(d.getTime())
+          }, @)
+
+          @date = ko.computed({
+             read: =>
+               d = new Date(@currentTime())
+               day = if d.getDate() < 10 then '0'+ d.getDate() else d.getDate()
+               month = if d.getMonth() < 9 then '0'+ (d.getMonth()+1) else (d.getMonth()+1)
+               return day + "/" + month + "/" + d.getFullYear();
+
+             write: (val)=>
+               d = new Date(@currentTime())
+               d.setFullYear(val.substring(6,10))
+               d.setMonth(val.substring(3,5)-1)
+               d.setDate(val.substring(0,2))
+               @currentTime(d.getTime())
+          }, @)
+
+
+
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
 
@@ -814,13 +935,14 @@ define(['jquery',
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 
            @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
-           
 
            @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
 
            @personTypes = kb.collectionObservable(DataModel.collections.personTypes, {view_model: PersonTypeViewModel});
 
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
+
+           @clock = new ClockViewModel(DataModel.models.clock);
 
            @notRoomZones = ko.computed(() =>
                 return ko.utils.arrayFilter(@zones, (zone) ->
@@ -1051,20 +1173,27 @@ define(['jquery',
               zone.statusWindowVisible(true);
 
            @checkAllZones = ko.computed({
-           read: =>
-             selected = 0
-             for zone in @zones()
-               if zone.isSelected()
-                 selected++
-             return @zones().length == selected
-           write: (val) =>
-             for zone in @zones()
-               zone.isSelected(val)
+             read: =>
+               selected = 0
+               for zone in @zones()
+                 if zone.isSelected()
+                   selected++
+               return @zones().length == selected
+             write: (val) =>
+               for zone in @zones()
+                 zone.isSelected(val)
            }, @)
 
            # script management
 
            @selectedScript = ko.observable();
+
+           @selectedScript.subscribe((script) =>
+             startDate = script.startDate()
+             d = new Date(startDate.substring(6,10),startDate.substring(3,5)-1,startDate.substring(0,2),startDate.substring(11,13),startDate.substring(14,16),startDate.substring(17,19),0)
+             @clock.startDate(d.getTime())
+             @clock.currentTime(d.getTime())
+           )
 
            @selectedScriptState = ko.computed( () =>
               if (@selectedScript())
@@ -1083,14 +1212,17 @@ define(['jquery',
            @startScript = () =>
               @selectedScript().state('started');
               @selectedScript().model().save();
+              @startClock();
 
            @stopScript = () =>
               @selectedScript().state('stopped');
               @selectedScript().model().save();
+              @pauseClock();
 
            @pauseScript = () =>
               @selectedScript().state('paused');
               @selectedScript().model().save();
+              @pauseClock();
 
            @newScriptName = ko.observable("");
 
@@ -1101,6 +1233,77 @@ define(['jquery',
               newScript.set(id: newName);
               DataModel.collections.scripts.push(newScript);
               @newScriptName("");
+
+           @scriptStartDate = ko.computed({
+              read: =>
+                 if (@selectedScript())
+                   return @selectedScript().startDate().substring(0,10)
+                 else
+                   d = new Date()
+                   day = if d.getDate() < 10 then '0'+ d.getDate() else d.getDate()
+                   month = if d.getMonth() < 9 then '0'+ d.getMonth() else d.getMonth()
+                   return day + "/" + month + "/" + d.getFullYear();
+              write: (date)=>
+                @selectedScript().startDate(date+"-00:00:00")
+                d = new Date(date.substring(6,10),date.substring(3,5)-1,date.substring(0,2))
+                @clock.startDate(d.getTime())
+                @clock.currentTime(d.getTime())
+           }, @)
+
+           @scriptEndDate = ko.computed( () =>
+              if @selectedScript()
+                dateStr = @selectedScript().startDate()
+                d = new Date(dateStr.substring(6,10),dateStr.substring(3,5)-1,dateStr.substring(0,2),dateStr.substring(11,13),dateStr.substring(14,16),dateStr.substring(17,19),0)
+                timestamp = d.getTime() + (@selectedScript().executionTime() * 60 * 1000)
+                d = new Date(timestamp)
+                day = if d.getDate() < 10 then '0'+ d.getDate() else d.getDate()
+                return day + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
+              else
+                d = new Date()
+                day = if d.getDate() < 10 then '0'+ d.getDate() else d.getDate()
+                return day + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
+           );
+
+           @selectedScriptFactor = ko.computed({
+              read: =>
+                if (@selectedScript())
+                  return @selectedScript().factor()
+                else
+                  return 1;
+
+              write: (val)=>
+                if(@selectedScript())
+                  @selectedScript().factor(val)
+           }, @)
+
+           @maxFactor = ko.observable(15000)
+
+           @scriptProgress = ko.computed( ()=>
+              if @selectedScript()
+                scriptTime = @clock.currentTime() - @clock.startDate()
+                executionTimeMs = (@selectedScript().executionTime() * 60 * 1000)
+                return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) )*100
+              else
+                return 0
+           );
+
+           @startClock = ()=>
+              @clock.pausedUI(false);
+              timer = ()=>
+                if !@clock.pausedUI()
+                  currentTime = @clock.currentTime()
+                  @clock.currentTime(currentTime + 100*@selectedScriptFactor())
+                  setTimeout(timer, 100)
+
+              timer();
+
+           @pauseClock = ()=>
+              @clock.pausedUI(true)
+
+
+           # init clock state
+           if (! @clock.pause())
+             @startClock();
 
            # managing map size change (must update position of persons, zones and devices)
            @updateModelPosition=(model)=>
@@ -1133,7 +1336,6 @@ define(['jquery',
            if (testExistance != undefined && testExistance != null)
               return createRandomId(collection, type);
            return nid;
-
 
 
     return ICasaViewModel;

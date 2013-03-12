@@ -73,8 +73,9 @@
 
         <menu name="iCasa Simulator">
             <item name="Home" href="index.html"/>
-            <item name="Download" href="index.html"/>
-            <item name="Install" href="index.html"/>
+            <item name="Overview" href="overview.html"/>
+            <item name="Download" href="download.html"/>
+            <item name="Install" href="install.html"/>
 
         </menu>
 
@@ -83,7 +84,6 @@
             <item name="Script Language" href="script.html"/>
 			<item name="REST API" href="rest-api.html"/>
 			<item name="Device Building Tutorial" href="building-device.html"/>
-			<item name="TODO" href=""/>
 
 		</menu>		
 		
@@ -97,7 +97,7 @@
         </menu>
       
 		<menu name="Advanced Topics">
-            <item name="TODO" href=""/>
+            <!--item name="TODO" href=""/-->
 
 		</menu>	
 

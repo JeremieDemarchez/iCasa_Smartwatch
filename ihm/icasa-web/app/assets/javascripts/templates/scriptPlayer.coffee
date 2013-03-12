@@ -15,37 +15,21 @@ require([
   $( "#scriptStart" ).datepicker({
     dateFormat: "dd/mm/yy",
     firstDay: 1,
-    gotoCurrent: true
-  });
-
-  d = new Date();
-  $("#hour").val(d.getHours());
-  $("#minute").val((d.getMinutes() < 10 ? '0' : '') + d.getMinutes());
-  $("#date").datepicker("setDate", d);
-  $("#scriptStart").datepicker("setDate", d);
-
-  $( "#timeSpeedSlider" ).slider({
-    min: 0,
-    max: 30000,
-    value: 1,
-    slide: ( event, ui ) ->
-      $( "#timeSpeed" ).val("x"+ui.value);
-      $(ui.value).val($('#timeSpeed').val().replace("x",""));
+    gotoCurrent: false
   });
 
   $( "#scriptSlider" ).slider({
-    min: d.valueOf(),
-    max: d.valueOf(),
-    value: d.valueOf()
+    min: 0,
+    max: 100,
+    value: 0
   });
 
-  $( "#timeSpeed" ).val("x" + $("#timeSpeedSlider").slider("value") );
   $( "#timeSpeed" ).change(() ->
     if $(this).val() > $("#maxSpeed").val()
-      $(this).val("x" + $("#maxSpeed").val())
+      $(this).val($("#maxSpeed").val())
     if $(this).val() < 0
-      $(this).val("x" + 0)
-    $("#timeSpeedSlider").slider("value", $(this).val().replace("x",""));
+      $(this).val(0)
+    $("#timeSpeedSlider").slider("value", $(this).val());
   );
 
   $( "#hour" ).change(() ->
@@ -62,26 +46,6 @@ require([
       $(this).val(59)
   );
 
-  $( "#maxSpeed" ).change(() ->
-    $( "#timeSpeedSlider" ).slider("option","max", $("#maxSpeed").val());
-  );
-
-  $( "#pause" ).click(() ->
-    $("#timeSpeed").val("x" + 0);
-  );
-
-  $( "#play" ).click(() ->
-    $("#timeSpeed").val("x" + $("#timeSpeedSlider").slider("value") );
-  );
-
-  $( "#scriptStart" ).change(() ->
-    $( "#scriptSlider" ).slider("option","min", $(this).datepicker("getDate").valueOf());
-  );
-
-  $( "#scriptEnd" ).change(() ->
-    $( "#scriptSlider" ).slider("option","max", $(this).datepicker("getDate").valueOf());
-  );
-
   $( "#scriptPlayerDialog" ).dialog({
     autoOpen: false,
     width:505
@@ -90,7 +54,6 @@ require([
   $( "#scriptPlayerDialogBtn" ).click(() ->
     $( "#scriptPlayerDialog" ).dialog( "open" );
   );
-
   $( ".scriptLineCell" ).click(() ->
     $( ".scriptLineCell" ).each(() ->
       $( this ).parent().css("background", "#FFFFFF");
@@ -107,4 +70,5 @@ require([
     $( ".scriptPlayerDialogBoxes:checked" ).parent().parent().remove();
   );
 
+  $( "#scriptPlayerDialogBtn" ).hide();
 );

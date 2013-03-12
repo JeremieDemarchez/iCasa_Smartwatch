@@ -225,6 +225,34 @@ body section
       /* TODO */
       }
     }
+
+    #scriptPlayerSlider {
+      position:relative;
+      height:50px;
+
+      #scriptPlayerSliderMin {
+        position:absolute;
+        top:42%
+      }
+
+      #scriptPlayerSliderBar {
+        width:78%;
+        margin-left:4%;
+        position:absolute;
+        top:50%
+      }
+
+      #scriptPlayerSliderMax {
+        width:15%;
+        position:absolute;
+        right:7px;
+        top:0;
+
+        input {
+          width:50px
+        }
+      }
+    }
   }
 
   aside {
@@ -388,3 +416,7 @@ body footer
   }
 }
 
+/* Fix btn class */
+body .btn {
+  font-family: "Arial";
+}

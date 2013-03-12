@@ -23,33 +23,36 @@
     <div class="controls controls-row">
         <label class="span1" for="date">Day</label>
         <div class="controls">
-            <input type="text" class="span2" id="date"/>
+            <input type="text" class="span2" id="date" data-bind="value: $root.clock.date"/>
         </div>
     </div>
+
     <div class="controls controls-row">
         <label class="span1">Hour</label>
         <div class="input-prepend input-append">
-            <input type="number" id="hour" class="input-mini" maxlength="2" min="0" max="23"/>
+            <input type="number" id="hour" class="input-mini" maxlength="2" min="0" max="23" data-bind="value: $root.clock.hours"/>
             <span class="add-on">:</span>
-            <input type="number" id="minute" class="input-mini" maxlength="2" min="0" max="59"/>
+            <input type="number" id="minute" class="input-mini" maxlength="2" min="0" max="59" data-bind="value: $root.clock.minutes"/>
         </div>
     </div>
 
     <div class="controls controls-row">
-        <label class="span2">Speed</label>
-        <label class="span1">Maximum speed</label>
-    </div>
-
-    <div class="controls controls-row">
-        <div class="input-append span2">
-            <input type="text" id="timeSpeed" value="x1" class="input-mini"/>
-            <a class="btn" id="play"><i class="icon-play"></i></a>
-            <a class="btn" id="pause"><i class="icon-pause"></i></a>
+        <label class="span1">Factor</label>
+        <div class="controls">
+            <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.selectedScriptFactor, valueUpdate:'afterkeydown'"/>
+            <button class="btn span" id="play" data-bind="click: $root.startClock, visible: $root.clock.pausedUI"><i class="icon-play"></i>Play</button>
+            <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pausedUI()"><i class="icon-pause"></i>Pause</button>
         </div>
-        <input type="text" id="maxSpeed" class="span1" value="30000"/>
     </div>
 
-    <div class="slider" id="timeSpeedSlider"></div>
+    <div id="scriptPlayerSlider">
+        <span id="scriptPlayerSliderMin" class="pull-left">0</span>
+        <div id="scriptPlayerSliderBar" style="" data-bind="jqFactorSlider: {value: selectedScriptFactor}, sliderOpt: {min: 0, max: 15000}"></div>
+        <div id="scriptPlayerSliderMax">
+            <span>Max</span>
+            <input type="text" data-bind="value: $root.maxFactor"/>
+        </div>
+    </div>
 
     </fieldset>
     <fieldset class="scriptPlayerGrp">
@@ -57,24 +60,21 @@
 
     <div class="controls controls-row">
         <label class="span1">Script</label>
-        <select class="span2" data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name', enable: $root.selectedScriptState() != 'started'"></select>
-
+        <div class="controls">
+            <select class="span2" data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name', enable: ($root.selectedScriptState() != 'started' && $root.selectedScriptState() != 'paused')"></select>
+        </div>
         <button class="btn span1" id="scriptPlayerDialogBtn">Details</button>
     </div>
     <div class="controls controls-row">
-        <div class="input-append span2">
-            <div class="btn-group">
-                <button class="btn" data-bind="click: $root.startScript"><i class="icon-play"></i>Start</button>
-                <button class="btn" data-bind="click: $root.stopScript"><i class="icon-stop"></i>Stop</button>
-                <button class="btn" data-bind="click: $root.pauseScript"><i class="icon-pause"></i>Pause</button>
-            </div>
+        <div class="controls" data-bind="scriptButtons: true">
+
         </div>
     </div>
     <br/>
-    <div class="slider" id="scriptSlider"></div>
+    <div class="progress" data-bind="jqScriptProgress: {value: $root.scriptProgress}"></div>
 
-    <input class="input-small pull-left" type="text" id="scriptStart" />
-    <input class="input-small pull-right" type="text" id="scriptEnd" readonly/>
+    <input class="input-small pull-left" type="text" id="scriptStart" data-bind="value: $root.scriptStartDate"/>
+    <input class="input-small pull-right" type="text" id="scriptEnd" data-bind="value: $root.scriptEndDate" readonly/>
 
     <div class="clearfix"></div>
 
@@ -83,11 +83,15 @@
     <legend>Save State into Script</legend>
         <!--Save script state-->
         <div class="input-prepend">
-            <a href="#" class="btn" data-bind="click: $root.saveScript">Save as</a>
-            <input class="span2" type="text" data-bind="value: $root.newScriptName"/>
+            <button class="btn" style="font-size:15px" data-bind="click: $root.saveScript, enable: $root.newScriptName().length > 0">Save as</button>
+            <input class="span2" type="text" data-bind="value: $root.newScriptName, valueUpdate:'afterkeydown'"/>
         </div>
     </fieldset>
 </table>
+
+
+    <!-- Hidden block : Dialog -->
+
 
 <div id="scriptPlayerDialog">
     <div class="controls">

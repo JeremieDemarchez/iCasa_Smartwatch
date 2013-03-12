@@ -111,8 +111,11 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       person = locateModel(DataModel.collections.persons, json.personId, "personId");
       if ((person != null) && (person != undefined))
         person.set(json.person);
-  
 
+    # manage clock event
+    if (json.eventType == "clock-modified")
+      clock = DataModel.models.clock;
+      clock.set(json.clock);
 
   request.onClose = (response) ->
     return console.log "Connection closed"
