@@ -2,19 +2,17 @@
 
 iCASA Simulation module provides a script language that can be used to create scenarios in order to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
 
-##Outline
+___Outline___
 
-- <a href="#Syntax">Script Syntax</a>
-- <a href="#General">General Instructions</a>
-- <a href="#Zone">Zone Instructions</a>
-- <a href="#Device">Device Instructions</a>
-- <a href="#Person">Person Instructions</a>
-- <a href="#Scenario">Scenario example</a>
-
-<br>
-
+- [Script Syntax](#Syntax)
+- [General Instructions](#General)
+- [Zone Instructions](#Zone)
+- [Device Instructions](#Device)
+- [Person Instructions](#Person)
+- [Scenario Example](#Scenario)
+   
 <a name="Syntax"></a>
-# Script File Syntax
+## Script File Syntax
 
 Scenarios in iCASA simulation module are specified in a XML file using the tag __behavior__. 
 
@@ -39,18 +37,12 @@ _Example:_
   <td>speed factor for script execution</td>
 </tr>
 </table>
-
-<br>
-
-# Instructions
-<br>
-
+    
 <a name="General"></a>
 ## General Instructions
-<br>
+   
 ### Delay
-<br>
-
+   
 Introduces a delay (in minutes) between the previous instruction and the next one
 
 _Example:_
@@ -73,10 +65,10 @@ _Example:_
 
 <a name="Zone"></a>
 ## Zone Instructions
-<br>
+   
 ### Create Zone
 
-Creates a zone in application context
+>  Creates a zone in application context
 
 _Example:_
 
@@ -109,9 +101,7 @@ _Example:_
   <td>Zone height</td>
 </tr>
 </table>
-
-<br>
-
+   
 ### Move Zone
 
 Move a zone in application context
@@ -139,9 +129,7 @@ _Example:_
   <td>New top Y coordinate value</td>
 </tr>
 </table>
-
-<br>
-
+   
 ### Resize Zone
 
 Resize a zone in application context
@@ -169,9 +157,7 @@ _Example:_
   <td>New zone height</td>
 </tr>
 </table>
-
-<br>
-
+    
 ### Add Variable to Zone
 
 It adds a simulation variable to a zone
@@ -195,9 +181,7 @@ _Example:_
   <td>Variable name</td>
 </tr>
 </table>
-
-<br>
-
+   
 ### Modify Variable in Zone
 
 It modifies a simulation variable in a zone
@@ -225,13 +209,11 @@ _Example:_
   <td>Variable value</td>
 </tr>
 </table>
-
-<br>
-
+   
 <a name="Device"></a>
 ## Device Instructions
 
-<br>
+   
 ### Create Device
 
 It creates a device instance in the application context
@@ -255,9 +237,7 @@ _Example:_
   <td>Device's type</td>
 </tr>
 </table>
-
-<br>
-
+   
 ### Remove Device
 
 _Example:_
