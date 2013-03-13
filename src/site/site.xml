@@ -80,7 +80,8 @@
         </menu>
 
 		<menu name="User Guide">
-            <item name="Script" href="script.html"/>
+		    <item name="iCasa Overview" href="overview.html"/>
+            <item name="Script Language" href="script.html"/>
 			<item name="REST API" href="rest-api.html"/>
 			<item name="Device Building Tutorial" href="building-device.html"/>
 
