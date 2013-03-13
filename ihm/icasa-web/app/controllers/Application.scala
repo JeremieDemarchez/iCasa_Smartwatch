@@ -135,10 +135,6 @@ object Application extends Controller {
     }
   }
 
-  def showMaps() = Action {
-    Ok(views.html.maps());
-  }
-
   def getMap(file: String) = Action {
     val fileToServe = new File(Play.application.getFile(MAP_DIRECTORY), file);
     val defaultCache = Play.configuration.getString("assets.defaultCache").getOrElse("max-age=3600")
