@@ -58,6 +58,12 @@
             <version>${project.version}</version>
             <type>deployment-package</type>
         </dependency>
+        <!-- Only one clock must be available in the platform-->
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>clock.simulated.impl</artifactId>
+           <version>${project.version}</version>
+        </dependency>
 
 
         <!-- Play 2 applications-->

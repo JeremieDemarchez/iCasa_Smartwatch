@@ -68,11 +68,6 @@
       </dependency>
 		<dependency>
          <groupId>${project.groupId}</groupId>
-			<artifactId>clock.simulated.impl</artifactId>
-         <version>${project.version}</version>
-      </dependency>
-		<dependency>
-         <groupId>${project.groupId}</groupId>
 			<artifactId>gogo.adapter</artifactId>
          <version>${project.version}</version>
       </dependency>		
