@@ -7,7 +7,6 @@ GET     /                           controllers.Application.index
 
 # Map management
 GET     /map/*mapId                 controllers.Application.connectToMap(mapId)
-GET     /maps                       controllers.Application.showMaps
 GET     /maps/*file                 controllers.Application.getMap(file)
 POST    /mapUpload                  controllers.Application.uploadMap
 POST    /mapUpdate                  controllers.Application.updateMap
