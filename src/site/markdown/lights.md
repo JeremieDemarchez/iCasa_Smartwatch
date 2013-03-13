@@ -9,11 +9,11 @@ Lights
 
 <div class="titleCard">Binary Light</div>
  
-<div class="descriptionCard">Overview</div> 
+<div class="hCard">Overview</div> 
  
 BinaryLight can supply only one model of lamp which is a 100 Watts incandescent. The radiation color is white monochromatic emission type. The lamp power is fixed at 100 Watts.
  
-<div class="propertiesCard">Electro-optical properties</div>
+<div class="hCard">Electro-optical properties</div>
 
 <table>
 	<thead>
@@ -40,7 +40,7 @@ This conversion is only applicable at wavelength of 555 nm (maximum of sensibili
 
 
         
-<div class="methodsCard">Methods</div>
+<div class="hCard">Methods</div>
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
 <li><code>getPowerStatus()</code>: Get the power status of the lamp:
@@ -63,20 +63,17 @@ This conversion is only applicable at wavelength of 555 nm (maximum of sensibili
 </div>
 
 
-* * * * 
-
-
 <div class="idCard">
 
 <div class="titleCard">Dimmer Light</div>
  
-<div class="descriptionCard">Overview</div> 
+<div class="hCard">Overview</div> 
  
 DimmerLight can supply only one model of lamp which is a 100 Watts halogen. The radiation color is white monochromatic emission type.
 
 The lamp power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (lamp is off) and 100 Watts (completely turned on). 
  
-<div class="propertiesCard">Electro-optical properties</div>
+<div class="hCard">Electro-optical properties</div>
 
 <table>
 	<thead>
@@ -103,7 +100,7 @@ This conversion is only applicable at wavelength of 555 nm (maximum of sensibili
 
 
         
-<div class="methodsCard">Methods</div>
+<div class="hCard">Methods</div>
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
 <li><code>getPowerLevel()</code>: Get the power level in percentage</li>
