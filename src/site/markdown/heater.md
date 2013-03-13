@@ -9,7 +9,7 @@ Heater/Cooler
 
 <div class="titleCard">Heater</div>
  
-![Alt text](/devices/T456/radiateur.png)
+![Heater](./resources/devices/T456/radiateur.png)
  
 <div class="hCard">Overview</div> 
  
