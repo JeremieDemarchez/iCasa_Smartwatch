@@ -2,7 +2,7 @@ iCasa
 =====
 
 This project aims at providing a simulator to do functional testing of digital home application based on iCasa runtime.
-The project website is <http://adeleresearchgroup.github.com/iCasa-Simulator/>.
+The project website is <http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/>.
 
 License
 =====
