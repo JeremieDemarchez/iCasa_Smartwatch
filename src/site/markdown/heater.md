@@ -89,6 +89,9 @@ We take into account physical consideration to compute the temperature (expresse
 
         
 <div class="methodsCard">Methods</div>
+
+Interface: <code>fr.liglab.adele.icasa.device.temperature.Cooler</code>
+
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
 <li><code>getPowerLevel()</code>: Get the power level in percentage</li>
