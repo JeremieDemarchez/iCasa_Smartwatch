@@ -11,12 +11,12 @@ Heater/Cooler
  
 ![Alt text](/devices/T456/radiateur.png)
  
-<div class="descriptionCard">Overview</div> 
+<div class="hCard">Overview</div> 
  
 Heater can supply only one model of heater which is a 1000 Watts electrical heater. 
 The heater power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (heater is off) and 1000 Watts (completely turned on).
 
-<div class="propertiesCard">Thermal properties</div>
+<div class="hCard">Thermal properties</div>
 
 <table>
 	<thead>
@@ -38,7 +38,7 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.
 
         
-<div class="methodsCard">Methods</div>
+<div class="hCard">Methods</div>
 
 Interface: <code>fr.liglab.adele.icasa.device.temperature.Heater</code>
 
@@ -61,12 +61,12 @@ Interface: <code>fr.liglab.adele.icasa.device.temperature.Heater</code>
 
 <div class="titleCard">Cooler</div>
  
-<div class="descriptionCard">Overview</div> 
+<div class="hCard">Overview</div> 
  
 Cooler can supply only one model of cooler which is a 1000 Watts electrical cooler. 
 The cooler power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (cooler is off) and 1000 Watts (completely turned on).
 
-<div class="propertiesCard">Thermal properties</div>
+<div class="hCard">Thermal properties</div>
 
 <table>
 	<thead>
@@ -88,7 +88,7 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
 We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.
 
         
-<div class="methodsCard">Methods</div>
+<div class="hCard">Methods</div>
 
 Interface: <code>fr.liglab.adele.icasa.device.temperature.Cooler</code>
 
