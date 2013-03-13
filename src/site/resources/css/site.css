@@ -32,7 +32,13 @@
   	 background-color: #E3EBF5;
 }
 
+.titleCard {
+ 	 font-weight: bold;
+  	 font-size: x-large;
+}
+
 .hCard {
  	font-weight: bold;
   	font-size: large;
+  	color: #101010;
 }
