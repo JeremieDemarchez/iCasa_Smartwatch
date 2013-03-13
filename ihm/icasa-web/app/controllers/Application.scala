@@ -144,4 +144,56 @@ object Application extends Controller {
     val defaultCache = Play.configuration.getString("assets.defaultCache").getOrElse("max-age=3600")
     Ok.sendFile(fileToServe, inline = true).withHeaders(CACHE_CONTROL -> defaultCache);
   }
+
+  def updateMap = Action (parse.multipartFormData) { implicit request =>
+    val body = request.body;
+    val newMap = mapForm.bindFromRequest.data;
+    body.file("picture").map { picture =>
+          import java.io.File
+          val fileName = picture.filename
+          val contentType = picture.contentType
+          picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + fileName))
+
+          def map = new HouseMap {
+              var id = newMap("mapId");
+              var name = newMap("mapName");
+              var description = newMap("mapDescription");
+              var gatewayURL = newMap("gatewayURL");
+              var imgFile = fileName;
+          }
+
+          mapsLock.synchronized {
+            if (maps.isEmpty)
+              loadMaps();
+
+            maps(map.id) = map;
+          }
+        }.getOrElse {
+
+            var oldMap = maps(newMap("mapId"));
+            def map = new HouseMap {
+                  var id = oldMap.id; //mapId is not modified
+                  var name = newMap("mapName");
+                  var description = newMap("mapDescription");
+                  var gatewayURL = newMap("gatewayURL");
+                  var imgFile = oldMap.imgFile; //We didn't modify the image
+             }
+             mapsLock.synchronized {
+                maps(map.id) = map; //replace the map
+             }
+        }
+    saveMaps();
+    Redirect(routes.Application.index);
+
+  }
+
+  def deleteMap() = Action {  implicit request =>
+    val body = request.body;
+    val map = mapForm.bindFromRequest.data;
+    mapsLock.synchronized {
+        maps.remove(map("mapId"));
+    }
+    saveMaps();
+    Redirect(routes.Application.index);
+  }
 }

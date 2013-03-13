@@ -31,9 +31,12 @@
                     <img src="/maps/@map.imgFile" class="img-rounded"/>
                     <p>@map.name</p>
                 </a>
-                <div class="mapButton mapRemoveButton pull-right">
+                <div class="mapButton mapRemoveButton pull-right" onclick="document.remove@(map.id).submit()">
                     <i class="icon-remove"></i>
                 </div>
+                <form action="/mapDelete" method="POST" name="remove@map.id">
+                    <input type="hidden" name="mapId" value="@map.id"/>
+                </form>
                 <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-target="#form@map.id">
                     <i class="icon-pencil"></i>
                 </div>

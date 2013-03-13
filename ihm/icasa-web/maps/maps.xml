@@ -17,7 +17,7 @@
 
 -->
 <maps>
-<map id="paulHouse" name="Paul House" description="Paul House" gatewayURL="http://localhost:8081" imgFile="paulHouse.png"/>
+<map id="paulHouse" name="Paul House" description="Paul House" gatewayURL="http://192.168.2.8:8081" imgFile="paulHouse.png"/>
 <map id="Gabo_House" name="Gabo House" description="Gabo House" gatewayURL="http://localhost:8080" imgFile="paulHouse.png"/>
 <map id="rosemarieHouse" name="Rose Marie House" description="Rose Marie House" gatewayURL="http://localhost:8080" imgFile="rosemarieHouse.png"/>
 </maps>
