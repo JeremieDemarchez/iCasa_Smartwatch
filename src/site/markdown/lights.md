@@ -103,6 +103,7 @@ This conversion is only applicable at wavelength of 555 nm (maximum of sensibili
 
         
 <div class="hCard">Methods</div>
+Interface: <code>fr.liglab.adele.icasa.device.light.DimmerLight</code>
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
 <li><code>getPowerLevel()</code>: Get the power level in percentage</li>
