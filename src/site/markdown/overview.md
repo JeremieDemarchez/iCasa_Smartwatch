@@ -44,7 +44,7 @@ In addition, an iCasa application must be packaged as an OSGi bundle to be deplo
 <a name="Simulator"></a>   
 ## iCasa Simulator
 
-The simulator module allows developers to test their digital home applications. 
+The simulator module allows developers to test their digital home applications. In its GUI there are two sections; the map presents the home plan and the context tabs set information about the execution state of the iCasa platform. 
 
 ![iCasa Simulator GUI](overview/simulator.png "iCasa Simulator GUI")
 
