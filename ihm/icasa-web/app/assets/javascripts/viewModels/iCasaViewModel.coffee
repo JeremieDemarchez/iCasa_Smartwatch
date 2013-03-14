@@ -317,6 +317,7 @@ define(['jquery',
                   label.text( $(element).progressbar( "value" ).toFixed(2) + "%" );
               complete: () ->
                 label.text( "Complete" );
+                viewModel.selectedScript().state('stopped');
             })
 
         update: (element, valueAccessor) ->
@@ -864,8 +865,10 @@ define(['jquery',
           @currentTime = kb.observable(model, 'currentTime')
           @startDate = kb.observable(model, 'startDate')
           @pause = kb.observable(model, 'pause')
+          @factor = kb.observable(model, 'factor')
+          @factor(1)
 
-          #TODO describe
+          #variable to avoid clock to pause when we receive a notification with pause = true
           @pausedUI = ko.observable(true)
 
           @minutes = ko.computed({
@@ -943,6 +946,9 @@ define(['jquery',
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
 
            @clock = new ClockViewModel(DataModel.models.clock);
+
+           d = new Date();
+           @clock.currentTime(d.getTime());
 
            @notRoomZones = ko.computed(() =>
                 return ko.utils.arrayFilter(@zones, (zone) ->
@@ -1188,13 +1194,6 @@ define(['jquery',
 
            @selectedScript = ko.observable();
 
-           @selectedScript.subscribe((script) =>
-             startDate = script.startDate()
-             d = new Date(startDate.substring(6,10),startDate.substring(3,5)-1,startDate.substring(0,2),startDate.substring(11,13),startDate.substring(14,16),startDate.substring(17,19),0)
-             @clock.startDate(d.getTime())
-             @clock.currentTime(d.getTime())
-           )
-
            @selectedScriptState = ko.computed( () =>
               if (@selectedScript())
                   return @selectedScript().state();
@@ -1210,6 +1209,10 @@ define(['jquery',
            ]);
 
            @startScript = () =>
+              startDate =  @selectedScript().startDate()
+              d = new Date(startDate.substring(6,10),startDate.substring(3,5)-1,startDate.substring(0,2),startDate.substring(11,13),startDate.substring(14,16),startDate.substring(17,19),0)
+              @clock.startDate(d.getTime())
+              @clock.currentTime(d.getTime())
               @selectedScript().state('started');
               @selectedScript().model().save();
               @startClock();
@@ -1303,7 +1306,7 @@ define(['jquery',
               timer = ()=>
                 if !@clock.pausedUI()
                   currentTime = @clock.currentTime()
-                  @clock.currentTime(currentTime + 100*@selectedScriptFactor())
+                  @clock.currentTime(currentTime + (100*@selectedScriptFactor()))
                   setTimeout(timer, 100)
 
               timer();
@@ -1313,7 +1316,7 @@ define(['jquery',
 
 
            # init clock state
-           if (! @clock.pause())
+           if (@clock.pause())
              @startClock();
 
            # managing map size change (must update position of persons, zones and devices)
