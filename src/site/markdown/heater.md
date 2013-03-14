@@ -59,7 +59,7 @@ Interface: <code>fr.liglab.adele.icasa.device.temperature.Heater</code>
 
 <div class="idCard">
 
-<div class="titleCard">Cooler</div>
+<div class="titleCard"><a name="coolerCard"/>Cooler</div>
  
 <div class="hCard">Overview</div> 
  
