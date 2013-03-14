@@ -20,20 +20,20 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 <div class="hCard">Thermal properties</div>
 
 <table>
-	<thead>
-		<tr>
-    		<td>Model</td>
-        	<td>heater.powerLevel</td>
-        	<td>heater.maxPowerLevel</td>
-    	</tr>
-    </thead>
-    <tbody>
-		<tr>
-    		<td>Heater</td>
-       	 	<td>[0-1.0]</td>
-        	<td>1000 Watts</td>
-    	</tr>
-    </tbody>
+<thead>
+<tr>
+<td>Model</td>
+<td>heater.powerLevel</td>
+<td>heater.maxPowerLevel</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Heater</td>
+<td>[0-1.0]</td>
+<td>1000 Watts</td>
+</tr>
+</tbody>
 </table>
 
 We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.
@@ -52,6 +52,7 @@ We take into account physical consideration to compute the temperature (expresse
 
 [Full datasheet here](http://example.net/)
 </div>
+
 </div>
 
 
