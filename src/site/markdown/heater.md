@@ -1,13 +1,13 @@
 Heater/Cooler
 ====
 
-* Heater
-* Cooler
+* <a href="#heaterCard">Heater</a>
+* <a href="#coolerCard">Cooler</a>
 
 
 <div class="idCard">
 
-<div class="titleCard">Heater</div>
+<div class="titleCard"><a name="heaterCard"/>Heater</div>
  
 <img src="./resources/devices/heater.png"/>
  
