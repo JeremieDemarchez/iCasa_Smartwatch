@@ -9,7 +9,7 @@ Heater/Cooler
 
 <div class="titleCard">Heater</div>
  
-![Heater](./resources/devices/heater.png)
+<img src="./resources/devices/heater.png"/>
  
 <div class="hCard">Overview</div> 
  
