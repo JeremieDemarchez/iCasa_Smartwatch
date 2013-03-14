@@ -28,8 +28,8 @@
 }
 
 .idCard {
-     border: 1px solid #101010;
-  	 background-color: #E3EBF5;
+     border: 1px solid #90F064;
+  	 background-color: white;
   	 margin-bottom: 30px;
   	 padding: 10px;
 }
@@ -37,10 +37,12 @@
 .titleCard {
  	 font-weight: bold;
   	 font-size: x-large;
+  	 color: #90F064;
+  	 margin-bottom: 10px;
 }
 
 .hCard {
  	font-weight: bold;
   	font-size: normal;
-  	color: #101010;
+  	color: ;
 }
