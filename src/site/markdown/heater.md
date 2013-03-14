@@ -9,7 +9,7 @@ Heater/Cooler
 
 <div class="titleCard"><a name="heaterCard"/>Heater</div>
  
-<img src="./resources/devices/heater.png"/>
+<div class="photo"><img src="./resources/devices/heater.png"/></div>
  
 <div class="hCard">Overview</div> 
  
