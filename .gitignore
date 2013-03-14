@@ -10,7 +10,6 @@
 # maven folders
 
 target
-load
 felix-cache
 
 # other folders
