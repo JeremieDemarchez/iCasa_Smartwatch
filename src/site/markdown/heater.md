@@ -10,7 +10,8 @@ Heater/Cooler
 <div class="titleCard"><a name="heaterCard"/>Heater</div>
  
 <div class="photo"><img src="./devices/heater.png"/></div>
- 
+
+<div class="description">
 <div class="hCard">Overview</div> 
  
 Heater can supply only one model of heater which is a 1000 Watts electrical heater. 
@@ -50,7 +51,7 @@ Interface: <code>fr.liglab.adele.icasa.device.temperature.Heater</code>
 </ul>
 
 [Full datasheet here](http://example.net/)
-
+</div>
 </div>
 
 
