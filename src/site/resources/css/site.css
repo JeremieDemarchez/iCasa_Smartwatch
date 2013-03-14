@@ -52,3 +52,7 @@
 .photo {
  	float: right; 
 }
+
+.description {
+  	float: left;
+}
