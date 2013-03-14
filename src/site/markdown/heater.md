@@ -7,7 +7,7 @@ Heater/Cooler
 
 <div class="idCard">
 
-<div class="titleCard"><a name="heaterCard"/>Heater</div>
+<div class="titleCard"><a name="heaterCard">Heater</a></div>
  
 <div class="photo"><img src="./devices/heater.png"/></div>
 
