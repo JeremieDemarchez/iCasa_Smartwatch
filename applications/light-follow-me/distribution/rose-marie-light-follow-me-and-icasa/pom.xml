@@ -68,20 +68,19 @@
        </dependency>
        
        <!-- Play 2 applications-->
-       <!--
+
        <dependency>
           <groupId>fr.liglab.adele.icasa</groupId>
           <artifactId>icasa.web</artifactId>
           <version>${iCasaVersion}</version>
-          <type>zip</type>
+          <type>play2</type>
        </dependency>
-       -->
     </dependencies>
     <build>
        <plugins>
           <plugin>
              <groupId>fr.liglab.adele.common</groupId>
-             <artifactId>osgi-distribution-plugin</artifactId>
+             <artifactId>maven-osgi-distribution-plugin</artifactId>
           </plugin>
        </plugins>
     </build>
