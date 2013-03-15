@@ -56,3 +56,8 @@
 .description {
   	float: left;
 }
+
+.separator {
+	clear: both;
+	visibility: hidden;	
+}

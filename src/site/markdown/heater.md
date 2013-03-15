@@ -9,7 +9,7 @@ Heater/Cooler
 
 <div class="titleCard"><a name="heaterCard">Heater</a></div>
  
-<div class="photo"><img src="./devices/T456/radiateur.png"/></div>
+<div class="photo"><img src="./devices/T456/radiateur.png" width="100"/></div>
 
 <div class="description">
 <div class="hCard">Overview</div> 
@@ -41,7 +41,7 @@ We take into account physical consideration to compute the temperature (expresse
         
 <div class="hCard">Methods</div>
 
-**Interface:** <code>fr.liglab.adele.icasa.device.temperature.Heater</code>
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.temperature.Heater</code>
 
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
@@ -56,6 +56,7 @@ We take into account physical consideration to compute the temperature (expresse
 </div>
 
 
+<div class="separator"></div>
 
 
 
@@ -92,7 +93,7 @@ We take into account physical consideration to compute the temperature (expresse
         
 <div class="hCard">Methods</div>
 
-Interface: <code>fr.liglab.adele.icasa.device.temperature.Cooler</code>
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.temperature.Cooler</code>
 
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>

@@ -13,6 +13,11 @@ To launch the web server part, execute startIHM.bat on Windows or startIHM file 
 Use iCasa-Simulator
 ====================
 
-Supported .
+Recommended browser:
+- Firefox
 
-Open a web browser.
+Supported browsers:
+- Firefox
+- Chrome
+
+Open a web browser on url http://localhost:9000/ to get home simulator screen
