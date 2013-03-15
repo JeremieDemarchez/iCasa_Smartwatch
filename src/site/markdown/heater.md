@@ -56,6 +56,7 @@ We take into account physical consideration to compute the temperature (expresse
 </div>
 
 
+<div class="separator"></div>
 
 
 
