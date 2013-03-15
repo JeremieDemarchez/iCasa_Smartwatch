@@ -81,7 +81,7 @@
         </menu>
 
 		<menu name="User Guide">
-		    <item name="iCasa Overview" href="overview.html"/>
+		    <item name="Simulator Guide" href="guide.html"/>
             <item name="Script Language" href="script.html"/>
 			<item name="REST API" href="rest-api.html"/>
 			<item name="Device Building Tutorial" href="building-device.html"/>
