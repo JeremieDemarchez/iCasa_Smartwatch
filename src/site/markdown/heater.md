@@ -93,7 +93,7 @@ We take into account physical consideration to compute the temperature (expresse
         
 <div class="hCard">Methods</div>
 
-Interface: <code>fr.liglab.adele.icasa.device.temperature.Cooler</code>
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.temperature.Cooler</code>
 
 <ul>
 <li><code>getSerialNumber()</code>: Get the device ID</li>
