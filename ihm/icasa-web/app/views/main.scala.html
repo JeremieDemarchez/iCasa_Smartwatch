@@ -19,18 +19,9 @@
 
 <!DOCTYPE html>
 
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <title>@title</title>
-
-    <script src="@routes.Assets.at("javascripts/BrowserDetection.js")"></script>
-    <script>
-        console.log(BrowserDetect.browser);
-        if (!((BrowserDetect.browser == "Chrome") || (BrowserDetect.browser == "Firefox"))) {
-            alert("Browser not officially supported !!! It may works but there is no guarantee !");
-            //window.location = "../";
-        }
-    </script>
 
     <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
@@ -45,6 +36,9 @@
     <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
     <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
 
+    <script src="@routes.Assets.at("javascripts/frameworks/jquery/core/jquery-1.8.2.min.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/bootstrap/js/bootstrap.min.js")"> </script>
+
     <!-- Use to add browser prefix automatically -->
     <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
     <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
@@ -53,6 +47,28 @@
 
 </head>
 <body>
+
+<script src="@routes.Assets.at("javascripts/BrowserDetection.js")"></script>
+<script>
+
+if (!((BrowserDetect.browser == "Chrome") && (BrowserDetect.browser == "Firefox"))) {
+    var modal = $('<div></div>').addClass("modal hide fade");
+    var header = $('<div></div>').addClass("modal-header");
+    var body = $('<div></div>').addClass("modal-body");
+    var warning = $('<h4>Warning</h4>');
+    var text = $('<div></div>').addClass("alert alert-error").append(warning, "Your browser is not officially supported, It may works but there is no guarantee");
+    var footer = $('<div></div>').addClass("modal-footer");
+    var doc = $('<a href="http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/" target="_blank">See documentation</a>').addClass("btn btn-primary");
+    var con = $('<button data-dismiss="modal" aria-hidden="true">Close</button>').addClass("btn");
+
+    body.append(text);
+    footer.append(doc, con);
+    modal.append(body, footer);
+    $('body').append(modal);
+    modal.modal('toggle');
+};
+</script>
+
 <header>
     <div class="navbar navbar-inverse navbar-static-top">
         <div class="navbar-inner">
