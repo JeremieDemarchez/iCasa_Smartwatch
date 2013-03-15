@@ -23,6 +23,15 @@
 <head>
     <title>@title</title>
 
+    <script src="@routes.Assets.at("javascripts/BrowserDetection.js")"></script>
+    <script>
+        console.log(BrowserDetect.browser);
+        if (!((BrowserDetect.browser == "Chrome") || (BrowserDetect.browser == "Firefox"))) {
+            alert("Browser not officially supported !!! It may works but there is no guarantee !");
+            //window.location = "../";
+        }
+    </script>
+
     <!--[if lt IE 9]>
         <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
         <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>

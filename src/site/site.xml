@@ -34,11 +34,11 @@
             <sideBarEnabled>true</sideBarEnabled>
             <googlePlusOne />
 			<googleSearch>
-			        <sitesearch>http://adeleresearchgroup.github.com/iCasa</sitesearch>
+			        <sitesearch>http://adeleresearchgroup.github.com/iCasa-Simulator</sitesearch>
             </googleSearch>
 
 			<gitHub>
-		        <projectId>AdeleResearchGroup/iCasa</projectId>
+		        <projectId>AdeleResearchGroup/iCasa-Simulator</projectId>
 		        <ribbonOrientation>right</ribbonOrientation>
 		        <ribbonColor>black</ribbonColor>
             </gitHub>
@@ -73,6 +73,7 @@
 
         <menu name="iCasa Simulator">
             <item name="Home" href="index.html"/>
+            <item name="License" href="license.html"/>
             <item name="Overview" href="overview.html"/>
             <item name="Download" href="download.html"/>
             <item name="Install" href="install.html"/>
@@ -97,7 +98,7 @@
         </menu>
       
 		<menu name="Advanced Topics">
-            <!--item name="TODO" href=""/-->
+            <item name="Shell Commands" href="shellCommands.html"/>
 
 		</menu>	
 
