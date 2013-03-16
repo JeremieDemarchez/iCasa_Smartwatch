@@ -1,6 +1,8 @@
 # Simulator Web Guide
 
-The simulator module of iCasa platform provides a web interface for interaction. In the home page the user can select the simulation platform to be used, it can create, modify or remove the platforms in the list. Once the platform selected, the interface is divide in two sections, the map section presents the home plan and the actions section shows information about the execution state of the iCasa platform and allows execution of actions to modify it.
+The simulator module of iCasa platform provides a web interface for interaction. In the home page the user can select the simulation platform to be used, it can create, modify or remove the platforms of the list. To access the home page locally in your browser uses this url : [http://localhost:9000](http://localhost:9000). 
+    
+Once the platform selected, the main interface is displayed. It is divide in two sections, the map section presents the house plan and the actions section shows information about the execution state of the iCasa platform and allows execution of actions to modify it.
 
 
 - [Platforms Operations](#Platform)
@@ -10,9 +12,13 @@ The simulator module of iCasa platform provides a web interface for interaction.
 <a name="Platform"></a> 
 ## Platforms Operations
 
-Each platform has to define an ID, a name, the platform URL and a house map (png file). In this page the user can pick a platform, edit it or remove it. Finally a user can create new platform description. Each platform has to define an ID, a name, the platform URL and a house map (png file). In this page the user can pick a platform, edit it or remove it. Finally a user can create new platform description. Platforms will persist in the GUI server and can be reused among different server executions.
+Each platform has to define an unique ID, a name, the platform URL and a house map (png file). In this page the user can add a platform, edit it or remove it. Platforms will persist in the GUI server and can be reused among different server executions. 
 
 ![Devices Tab](guide/home-page.png "Device Tab")
+
+The user picks a platform to start the main interface of the simulator shown in the next image. Users can also go directly to simulator main interface using the url pattern _http://localhost:9000/map/$platformID_, for example to access the platform having the id Default_House the user have to go to [http://localhost:9000/map/Default_House](http://localhost:9000/map/Default_House)
+
+![Devices Tab](guide/main-interface.png "Device Tab")
 
 <a name="Map"></a> 
 ## Map Section
