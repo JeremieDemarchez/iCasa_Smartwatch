@@ -25,6 +25,10 @@ define(['backbone', 'underscore', 'domReady'],
             url: "#server#/devices/deviceTypes".replace /#server#/, serverUrl
             model: DataModel.Models.DeviceType
 
+         class DataModel.Collections.SimulatedDeviceTypes extends Backbone.Collection
+            url: "#server#/devices/simulatedDeviceTypes".replace /#server#/, serverUrl
+            model: DataModel.Models.DeviceType
+
          class DataModel.Models.PersonType extends Backbone.Model
             urlRoot : "#server#/persons/personType".replace /#server#/, serverUrl
 
@@ -93,7 +97,7 @@ define(['backbone', 'underscore', 'domReady'],
             error : (err) -> throw err;
          });
 
-         DataModel.collections.deviceTypes = new DataModel.Collections.DeviceTypes();
+         DataModel.collections.deviceTypes = new DataModel.Collections.SimulatedDeviceTypes();
          DataModel.collections.deviceTypes.fetch({
             success : (data) -> console.log(data);
             error : (err) -> throw err;
