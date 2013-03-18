@@ -14,8 +14,8 @@ Heater/Cooler
 <div class="description">
 <div class="hCard">Overview</div> 
  
-Heater can supply only one model of heater which is a 1000 Watts electrical heater. 
-The heater power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (heater is off) and 1000 Watts (completely turned on).
+<p>Heater can supply only one model of heater which is a 1000 Watts electrical heater. 
+The heater power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (heater is off) and 1000 Watts (completely turned on).</p>
 
 <div class="hCard">Thermal properties</div>
 
@@ -36,7 +36,7 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 </tbody>
 </table>
 
-We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.
+<p>We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.</p>
 
         
 <div class="hCard">Methods</div>
@@ -69,8 +69,8 @@ We take into account physical consideration to compute the temperature (expresse
 <div class="description"> 
 <div class="hCard">Overview</div> 
  
-Cooler can supply only one model of cooler which is a 1000 Watts electrical cooler. 
-The cooler power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (cooler is off) and 1000 Watts (completely turned on).
+<p>Cooler can supply only one model of cooler which is a 1000 Watts electrical cooler. 
+The cooler power level can be adjusted between 0 and 1.0 which means into range of 0 Watt (cooler is off) and 1000 Watts (completely turned on).</p>
 
 <div class="hCard">Thermal properties</div>
 
@@ -91,7 +91,7 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
     </tbody>
 </table>
 
-We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.
+<p>We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.</p>
 
         
 <div class="hCard">Methods</div>
@@ -105,7 +105,7 @@ We take into account physical consideration to compute the temperature (expresse
 <li><code>getMaxPowerLevel()</code>: Get the max power level of the cooler in Watts</li>
 </ul>
 
-[Full datasheet here](http://example.net/)
+<a href="#">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
