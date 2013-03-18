@@ -14,7 +14,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.common</groupId>
 		<artifactId>base</artifactId>
-		<version>1.0.4-SNAPSHOT</version>
+		<version>1.0.4</version>
 		<relativePath />
 	</parent>
 
@@ -40,8 +40,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.0.4-SNAPSHOT</AdeleBaseVersion>
-        <osgiDistributionPluginVersion>1.0.0-SNAPSHOT</osgiDistributionPluginVersion>
+        <AdeleBaseVersion>1.0.4</AdeleBaseVersion>
         <roseVersion>1.0.2</roseVersion>
         <iCasaVersion>1.0.0-SNAPSHOT</iCasaVersion>
 	</properties>
@@ -292,7 +291,6 @@
                 <plugin>
                     <groupId>fr.liglab.adele.common</groupId>
                     <artifactId>maven-osgi-distribution-plugin</artifactId>
-                    <version>${osgiDistributionPluginVersion}</version>
                     <extensions>true</extensions>
                     <configuration>
                         <generateScripts>true</generateScripts>
