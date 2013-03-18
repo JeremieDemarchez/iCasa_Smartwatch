@@ -81,7 +81,7 @@
         </menu>
 
 		<menu name="User Guide">
-		    <item name="Simulator Guide" href="guide.html"/>
+		    <item name="Simulator IHM Guide" href="guide.html"/>
             <item name="Script Language" href="script.html"/>
 			<item name="REST API" href="rest-api.html"/>
 			<item name="Device Building Tutorial" href="building-device.html"/>
@@ -91,16 +91,16 @@
         <menu name="Simulated Devices">
            <item name="Lights" href="lights.html"/>
            <item name="Heater/Cooler" href="heater.html"/>
-           <item name="Multimedia" href="multimedia.html"/>
+           <!--item name="Multimedia" href="multimedia.html"/>
            <item name="Health" href="health.html"/>
-           <item name="Electricity" href="electricity.html"/>
+           <item name="Electricity" href="electricity.html"/-->
            <item name="Detectors" href="detectors.html"/>
         </menu>
       
-		<menu name="Advanced Topics">
+		<!--menu name="Advanced Topics">
             <item name="Shell Commands" href="shellCommands.html"/>
 
-		</menu>	
+		</menu-->
 
         <menu ref="reports"/>
     </body>

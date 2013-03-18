@@ -52,11 +52,11 @@ We take into account physical consideration to compute the temperature (expresse
 
 [Full datasheet here](http://example.net/)
 </div>
-
+<div class="separator"></div>
 </div>
 
 
-<div class="separator"></div>
+
 
 
 
