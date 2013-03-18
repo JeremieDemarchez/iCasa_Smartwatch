@@ -3,13 +3,13 @@ Lights
 
 <br/>
 
-* Binary Light
-* Dimmer Light
+* <a href="#binaryCard">Binary Light</a>
+* <a href="#dimmerCard">Dimmer Light</a>
 
 
 <div class="idCard">
 
-<div class="titleCard">Binary Light</div>
+<div class="titleCard"><a name="binaryCard">Binary Light</a></div>
 
 <div class="photo"><img src="./devices/T456/lampe.png" width="100"/></div>
 
@@ -71,11 +71,12 @@ Lights
 
 
 <div class="idCard">
+
+<div class="titleCard"><a name="dimmerCard">Dimmer Light</a></div>
+
 <div class="photo"><img src="./devices/T456/lampeVariable.png" width="100"/></div>
 
 <div class="description">
-
-<div class="titleCard">Dimmer Light</div>
  
 <div class="hCard">Overview</div> 
  
@@ -121,8 +122,8 @@ Lights
 <li><code>getMaxPowerLevel()</code>: Get the max power level of the lamp in Watts</li>
 </ul>
 
-
-
 <a href="./datasheets/Datasheet_DimmerLight.pdf">Full datasheet here</a>
+</div>
 
+<div class="separator"></div>
 </div>
