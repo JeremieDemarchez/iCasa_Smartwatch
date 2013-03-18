@@ -37,11 +37,7 @@ Lights
     </tbody>
 </table>
 
-<p>We take into account physical consideration to compute the illuminance (expressed in Lux unit) returned by the device. We have considered that:</p>
-
-<i>1 Watt=680.0 lumens at 555nm</i>
-
-<p>This conversion is only applicable at wavelength of 555 nm (maximum of sensibility for human vision).</p>
+<p>We take into account physical consideration to compute the illuminance (expressed in Lux unit) returned by the device. We have considered that: <i>1 Watt=680.0 lumens at 555nm</i> This conversion is only applicable at wavelength of 555 nm (maximum of sensibility for human vision).</p>
 
 
         
