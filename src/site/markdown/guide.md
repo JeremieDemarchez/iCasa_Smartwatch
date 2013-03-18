@@ -18,7 +18,7 @@ In this page the user can add a simulation platform, edit it or remove it. Platf
 The user picks a platform to start the main interface of the simulator, shown in the next image. Users can also go directly to simulator main interface using the url pattern _http://localhost:9000/map/$platformID_, for example to access the default platform that have the id __default__ the user have to go to [http://localhost:9000/map/default](http://localhost:9000/map/default)
 
 ![Main Interface](guide/main-interface.png "Main Interface")
-
+   
 <a name="Map"></a> 
 ## Map Section
 

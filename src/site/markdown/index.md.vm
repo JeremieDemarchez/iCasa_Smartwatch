@@ -1,48 +1,48 @@
 <div class="row-fluid page-header">
-    <div class="title span12">
+    <div class="title span10">
         <h1 style="text-align: center;">iCasa Simulator</h1>
         <p style="text-align: center;" class="lead">Digital Home Simulation Tool</p>
-        <p>
-            <span class="span5">&nbsp;</span>
-            <a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+        <!--p>
+            <span class="span4">&nbsp;</span>
+            <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator</a>
-            <span class="span5">&nbsp;</span>
-        </p>
+            <span class="span4">&nbsp;</span>
+        </p-->
     </div>
 </div>
 
-<div class="row-fluid page-header">
-    <div class="span6">
-        <img src="guide/main-interface.png" alt="iCasa Simulator Main Interface" />
+<div class="span11 well">
+    <div class="span4">
+        <img src="index/map.png" alt="iCasa Simulator Main Interface" />
     </div>
 
     <div class="span6">
         <h1>&nbsp; iCasa Simulator</h1>
         <p>iCasa Simulator provides a digital home application testing environment. </p>
-        <p><a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+        <p><a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a></p>
     </div>
 </div>
 
-<div class="row-fluid page-header">
-    <div class="span6">
+<!--div class="span11 page-header">
+    <div class="span5">
        <h1><i class="fa-icon-th-large"></i>&nbsp; Features</h1>
        <ul class="feature-list">
             <li><strong>Feature1</strong>: TODO.</li>
             <li><strong>Feature2</strong>: TODO.</li>
         </ul>
     </div>
-    <div class="span6">
+    <div class="span5">
         <h1><i class="fa-icon-gift"></i>&nbsp; What's new ?</h1>
         <ul class="feature-list">
             <li><strong>News1</strong>: TODO.</li>
             <li><strong>News2</strong>: TODO.</li>
         </ul>
     </div>
+</div-->
+
+<div class="span11 page-header">
+    <h1>License</h1>
+    iCasa Simulator is licensed under a <a href="license.html">specific end user license</a>. This project is maintained by
+    <a href="http://www-adele.imag.fr/">LIG ADELE team</a>.
 </div>
-
-
-<h1>License</h1>
-iCasa Simulator is licensed under a <a href="license.html">specific end user license</a>. This project is maintained by
-<a href="http://www-adele.imag.fr/">LIG ADELE team</a>.
-

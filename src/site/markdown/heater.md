@@ -24,16 +24,20 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 <table>
 <thead>
 <tr>
-<td>Model</td>
-<td>heater.powerLevel</td>
-<td>heater.maxPowerLevel</td>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td>Heater</td>
-<td>[0-1.0]</td>
-<td>1000 Watts</td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
 </tr>
 </tbody>
 </table>
@@ -77,21 +81,26 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
 <div class="hCard">Thermal properties</div>
 
 <table>
-	<thead>
-		<tr>
-    		<td>Model</td>
-        	<td>cooler.powerLevel</td>
-        	<td>cooler.maxPowerLevel</td>
-    	</tr>
-    </thead>
-    <tbody>
-		<tr>
-    		<td>Cooler</td>
-       	 	<td>[0-1.0]</td>
-        	<td>1000 Watts</td>
-    	</tr>
-    </tbody>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
+
 
 <p>We take into account physical consideration to compute the temperature (expressed in Kelvin unit) returned by the device. We have considered that the room has no thermal loss and the external temperature does not influence the internal temperature.</p>
 

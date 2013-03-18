@@ -1,50 +1,62 @@
-Standard Install
-==========
+# Standard Install
 
 iCasa Simulator is decomposed in two parts:
 
-* _Gateway part_ corresponding to the box runtime including the simulator runtime.
-* _Web server part_ serving the client web application code.
+* _Gateway part_ corresponding to the box runtime (iCasa Home Server) including the simulator module.
+* _Web server part_ serving the client web application code (Content Server).
 
-Installation Prerequesites
-----------
+A client using a Web browser access first the Web Server to get the content of web application and then, it access the Gateway to get information about the iCasa platform and to interact with it.
 
-* Java Development Toolkit 6 (Avoid Java 7 that may cause troubles).
-* A modern Web browser (We recommend to use Firefox but you can also use Chrome, Internet Explorer is not yet supported)).
+![Web Architecture](install/install-architecture.png "Web Architecture")
 
-Installation procedure
-----------
+
+## Installation Prerequesites
+
+- Java Development Toolkit 6 (Avoid Java 7 that may cause troubles).
+- A modern Web browser (We recommend to use Firefox but you can also use Chrome, Internet Explorer is not yet supported).
+
+
+Installation Procedure
+-----------
 
 1. Download a full iCasa Simulator binary distribution (We recommend the icasa.teaching.distribution to start).
-2. Unzip it on a local folder.
+2. Unzip it on a local folder i.e. the ICASA_HOME directory.
 
+The unziped directory should have this structure
+
+![Icasa Structure](install/icasa-home.png "Icasa Structure")
+   
+In addition four launch scripts are in the root directory: startGateway.bat, startGateway, startGUI.bat and startGUI.
+
+   
 Launch
-========
-
-Gateway Part Launch
---------
-
-1. Go to the unzipped directory.
-2. Execute startGateway script on Unix systems and startGateway.bat script on Windows systems.
-
-By default, the gateway port is set to 8080.
-In this case, the gateway url would be http://localhost:8080/.
+======
 
 Web Server Part Launch
---------
+---------------
 
-1. Go to the unzipped directory.
-2. Execute startIHM script on Unix systems and startIHM.bat script on Windows systems.
+1. Go to the ICASA_HOME directory.
+2. Execute startGUI script on Unix systems or startGUI.bat script on Windows systems.
 
 By default, the web server port is set to 9000.
-The home screen is available at http://localhost:9000/
+The simulator home page is available at [http://localhost:9000/](http://localhost:9000/) 
+
+Gateway Part Launch
+--------------
+
+1. Go to the ICASA_HOME directory.
+2. Execute startGateway script on Unix systems or startGateway.bat script on Windows systems.
+
+By default, the gateway port is set to 8080.
+In this case, the platform url would be _http://localhost:8080/_.
+
 
 Advanced Installation
-==========
+========
 
-Depending on your needs, you can choose between different installation options:
+Depending on your needs, you can choose between different installation architectures:
 
-* _Gateway part_ and _Web server part_ on the same machine.
+* _Gateway part_ and _Web server part_ on the same machine. (Default installation)
 * One instance of _Web server part_ per _Gateway part_.
 * One shared instance of _Web server part_ for several _Gateway parts_.
 

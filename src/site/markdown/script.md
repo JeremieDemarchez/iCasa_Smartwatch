@@ -10,6 +10,7 @@ ___Outline___
 - [Device Instructions](#Device)
 - [Person Instructions](#Person)
 - [Scenario Example](#Scenario)
+- [Script Deployment](#Deployment)
    
 <a name="Syntax"></a>
 ## Script File Syntax
@@ -508,5 +509,8 @@ _Example:_
 	
     </behavior>
 
+<a name="Deployment"></a>
+## Script Deployment
 
+New scripts have to be deployed to the directory __ICASA_HOME/load__ in the gateway. All scripts files must have the .bhv extensions to be recognized by the iCasa platform.
 	
