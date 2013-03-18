@@ -11,7 +11,7 @@ Lights
 
 <div class="titleCard">Binary Light</div>
 
-<div class="photo"><img src="./devices/T456/lampe.png"/></div>
+<div class="photo"><img src="./devices/T456/lampe.png" width="100"/></div>
 
 <div class="description">
 <div class="hCard">Overview</div> 
@@ -75,7 +75,7 @@ Lights
 
 
 <div class="idCard">
-<div class="photo"><img src="./devices/T456/lampeVariable.png"/></div>
+<div class="photo"><img src="./devices/T456/lampeVariable.png" width="100"/></div>
 
 <div class="description">
 
