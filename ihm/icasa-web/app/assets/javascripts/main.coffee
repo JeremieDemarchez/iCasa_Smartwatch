@@ -121,7 +121,7 @@ class SizeUtil
     actionTabs = $("#actionTabs");
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
-    availableWidth = viewportSize.width - (4 * areaBorderSize) - 5;
+    availableWidth = viewportSize.width - (4 * areaBorderSize) - 25;
     if ((resizedAreaId == undefined) || (resizedAreaId == null) || (resizedAreaId == "map"))
       actionTabs.width(availableWidth - mapWidth);
       actionTabs.height(mapHeight);

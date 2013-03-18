@@ -67,9 +67,9 @@
     </div>
     <div class="controls controls-row">
         <div class="controls">
-            <button class="btn span" data-bind="click: startScript, visible: ($root.selectedScript().state() == 'stopped' || $root.selectedScript().state() == 'paused' || $root.selectedScript == undefined) "><i class='icon-play'></i>Start</button>
-            <button class="btn span" data-bind="click: pauseScript, visible: $root.selectedScript().state() == 'started'"><i class='icon-pause'></i>Pause</button>
-            <button class="btn span" data-bind="click: stopScript, enable: ($root.selectedScript().state() == 'started' || $root.selectedScript().state() == 'paused')"><i class='icon-stop'></i>Stop</button>
+            <button class="btn span" data-bind="click: startScript, visible: ($root.selectedScript == undefined || $root.selectedScript().state() == 'stopped' || $root.selectedScript().state() == 'paused') "><i class='icon-play'></i>Start</button>
+            <button class="btn span" data-bind="click: pauseScript, visible: ($root.selectedScript == undefined || $root.selectedScript().state() == 'started')"><i class='icon-pause'></i>Pause</button>
+            <button class="btn span" data-bind="click: stopScript, enable: ($root.selectedScript == undefined || $root.selectedScript().state() == 'started' || $root.selectedScript().state() == 'paused')"><i class='icon-stop'></i>Stop</button>
         </div>
     </div>
     <br/>
