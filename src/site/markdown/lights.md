@@ -36,7 +36,7 @@ We take into account physical consideration to compute the illuminance (expresse
 
 _1 Watt=680.0 lumens at 555nm_
 
-This conversion is only applicable at wavelength of 555 nm (maximum of sensibility of vision for human eyes).
+This conversion is only applicable at wavelength of 555 nm (maximum of sensibility for human vision).
 
 
         
@@ -99,7 +99,7 @@ We take into account physical consideration to compute the illuminance (expresse
 
 _1 Watt=680.0 lumens at 555nm_
 
-This conversion is only applicable at wavelength of 555 nm (maximum of sensibility of vision for human eyes).
+This conversion is only applicable at wavelength of 555 nm (maximum of sensibility for human vision).
 
 
         
