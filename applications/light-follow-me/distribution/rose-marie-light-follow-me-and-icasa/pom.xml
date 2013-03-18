@@ -39,41 +39,16 @@
     <!-- Project dependencies -->
     <dependencies>
        <dependency>
-          <groupId>fr.liglab.adele.common</groupId>
-          <artifactId>distribution.base</artifactId>
+          <groupId>fr.liglab.adele.icasa</groupId>
+          <artifactId>icasa.teaching.distribution</artifactId>
+          <version>${iCasaVersion}</version>
           <type>osgi-distribution</type>
        </dependency>
-       <!-- deployed packages -->
-       <dependency>
-          <groupId>fr.liglab.adele.common</groupId>
-          <artifactId>rose.dp</artifactId>
-          <type>deployment-package</type>
-       </dependency>
+       
        <dependency>
           <groupId>fr.liglab.adele.icasa.apps</groupId>
           <artifactId>light.follow.me.application</artifactId>
           <version>${project.version}</version>
-       </dependency>
-       <dependency>
-          <groupId>fr.liglab.adele.icasa</groupId>
-          <artifactId>icasa.platform.dp</artifactId>
-          <version>${iCasaVersion}</version>
-          <type>deployment-package</type>
-       </dependency>
-       <dependency>
-          <groupId>fr.liglab.adele.icasa</groupId>
-          <artifactId>icasa.simulator.dp</artifactId>
-          <version>${iCasaVersion}</version>
-          <type>deployment-package</type>
-       </dependency>
-       
-       <!-- Play 2 applications-->
-
-       <dependency>
-          <groupId>fr.liglab.adele.icasa</groupId>
-          <artifactId>icasa.web</artifactId>
-          <version>${iCasaVersion}</version>
-          <type>play2</type>
        </dependency>
     </dependencies>
     <build>

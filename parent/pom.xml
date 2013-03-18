@@ -36,7 +36,6 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             
             <!-- ADELE Projects -->
             <AdeleBaseVersion>1.0.4-SNAPSHOT</AdeleBaseVersion>
-            <osgiDistributionPluginVersion>1.0.0-SNAPSHOT</osgiDistributionPluginVersion>
             <ciliaVersion>1.6.4-SNAPSHOT</ciliaVersion>
             <roseVersion>1.0.2</roseVersion>
             <iCasaVersion>1.0.0-SNAPSHOT</iCasaVersion>
@@ -233,7 +232,6 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                   <plugin>
                      <groupId>fr.liglab.adele.common</groupId>
                      <artifactId>maven-osgi-distribution-plugin</artifactId>
-                     <version>${osgiDistributionPluginVersion}</version>
                      <extensions>true</extensions>
                      <configuration>
                         <generateScripts>true</generateScripts>
