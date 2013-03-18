@@ -62,3 +62,14 @@
 	clear: both;
 	visibility: hidden;	
 }
+
+.idCard thead td {
+	border-bottom: 1px solid #c0c0c0;	
+	width: 150px;
+	text-align: center;
+	font-weight: bold;
+}
+
+.idCard tbody td {
+	text-align: center;	
+}
