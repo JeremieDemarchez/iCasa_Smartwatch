@@ -50,7 +50,7 @@ We take into account physical consideration to compute the temperature (expresse
 <li><code>getMaxPowerLevel()</code>: Get the max power level of the heater in Watts</li>
 </ul>
 
-[Full datasheet here](http://example.net/)
+<a href="#">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
