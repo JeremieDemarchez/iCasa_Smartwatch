@@ -77,7 +77,7 @@ The photometer returns the value of the current illuminance. This value is expre
  
 <p>PowerSwitch can supply only one model of power switch which is a standard binary switch. The power switch can switch ON and OFF an equipment (i.e.: binaryLight).</p>
  
-<div class="hCard">properties</div>
+<div class="hCard">Device properties</div>
 
 <table>
 <thead>
