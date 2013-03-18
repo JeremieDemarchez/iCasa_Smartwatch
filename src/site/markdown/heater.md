@@ -1,6 +1,8 @@
 Heater/Cooler
 ====
 
+<br/>
+
 * <a href="#heaterCard">Heater</a>
 * <a href="#coolerCard">Cooler</a>
 
@@ -50,7 +52,7 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 <li><code>getMaxPowerLevel()</code>: Get the max power level of the heater in Watts</li>
 </ul>
 
-<a href="#">Full datasheet here</a>
+<a href="./datasheets/Datasheet_Heater.pdf">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
@@ -105,7 +107,7 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
 <li><code>getMaxPowerLevel()</code>: Get the max power level of the cooler in Watts</li>
 </ul>
 
-<a href="#">Full datasheet here</a>
+<a href="./datasheets/Datasheet_Cooler.pdf">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
