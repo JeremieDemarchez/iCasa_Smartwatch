@@ -21,21 +21,26 @@ Lights
 <div class="hCard">Electro-optical properties</div>
 
 <table>
-	<thead>
-		<tr>
-    		<td>Model</td>
-        	<td>power_status</td>
-        	<td>max_power</td>
-    	</tr>
-    </thead>
-    <tbody>
-		<tr>
-    		<td>BinaryLight</td>
-       	 	<td>True - False</td>
-        	<td>100 Watts</td>
-    	</tr>
-    </tbody>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
+
 
 <p>We take into account physical consideration to compute the illuminance (expressed in Lux unit) returned by the device. We have considered that: <i>1 Watt=680.0 lumens at 555nm</i> This conversion is only applicable at wavelength of 555 nm (maximum of sensibility for human vision).</p>
 
