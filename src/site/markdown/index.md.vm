@@ -4,7 +4,7 @@
         <p style="text-align: center;" class="lead">Digital Home Simulation Tool</p>
         <!--p>
             <span class="span4">&nbsp;</span>
-            <a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+            <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator</a>
             <span class="span4">&nbsp;</span>
         </p-->
@@ -19,7 +19,7 @@
     <div class="span6">
         <h1>&nbsp; iCasa Simulator</h1>
         <p>iCasa Simulator provides a digital home application testing environment. </p>
-        <p><a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+        <p><a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a></p>
     </div>
 </div>
