@@ -64,6 +64,9 @@ We take into account physical consideration to compute the temperature (expresse
 
 <div class="titleCard"><a name="coolerCard"/>Cooler</div>
  
+<div class="photo"><img src="./devices/T456/airConditionne.png" width="100"/></div>
+ 
+ 
 <div class="hCard">Overview</div> 
  
 Cooler can supply only one model of cooler which is a 1000 Watts electrical cooler. 
@@ -101,7 +104,7 @@ We take into account physical consideration to compute the temperature (expresse
 <li><code>setPowerLevel(double level)</code>: Set the power level of the cooler in percentage</li>
 <li><code>getMaxPowerLevel()</code>: Get the max power level of the cooler in Watts</li>
 </ul>
-
+<div class="separator"></div>
 [Full datasheet here](http://example.net/)
 
 </div>
