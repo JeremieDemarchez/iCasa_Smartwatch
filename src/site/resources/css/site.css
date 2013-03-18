@@ -65,6 +65,7 @@
 
 .idCard table {
 	border: 1px solid #c0c0c0;	
+  	margin: 10px;
 }
 
 .idCard thead td {
