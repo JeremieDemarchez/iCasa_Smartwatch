@@ -16,8 +16,8 @@
 <a name="Requirements"></a>
 ## Tutorial Requirements
 
-- OSGi & iPOJO : iCasa is built on top of <a href="http://www.osgi.org">OSGi</a> platform and <a href="http://felix.apache.org/site/apache-felix-ipojo.html">iPOJO</a> component model
-- Maven (Optional) : <a href="http://felix.apache.org/site/apache-felix-ipojo.html">Maven</a> tool can be used to build new iCasa devices
+- OSGi & iPOJO : iCasa is built on top of [OSGi](http://www.osgi.org) platform and [iPOJO](http://felix.apache.org/site/apache-felix-ipojo.html) component model
+- Maven (Optional) : [Maven](http://maven.apache.org/) tool can be used to build new iCasa devices
 
 <a name="Model"></a>
 ## iCasa Device Model
