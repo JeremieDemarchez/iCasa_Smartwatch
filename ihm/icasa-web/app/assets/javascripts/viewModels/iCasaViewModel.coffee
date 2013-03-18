@@ -1209,23 +1209,26 @@ define(['jquery',
            ]);
 
            @startScript = () =>
-              startDate =  @selectedScript().startDate()
-              d = new Date(startDate.substring(6,10),startDate.substring(3,5)-1,startDate.substring(0,2),startDate.substring(11,13),startDate.substring(14,16),startDate.substring(17,19),0)
-              @clock.startDate(d.getTime())
-              @clock.currentTime(d.getTime())
-              @selectedScript().state('started');
-              @selectedScript().model().save();
-              @startClock();
+              if (@selectedScript())
+                startDate =  @selectedScript().startDate()
+                d = new Date(startDate.substring(6,10),startDate.substring(3,5)-1,startDate.substring(0,2),startDate.substring(11,13),startDate.substring(14,16),startDate.substring(17,19),0)
+                @clock.startDate(d.getTime())
+                @clock.currentTime(d.getTime())
+                @selectedScript().state('started');
+                @selectedScript().model().save();
+                @startClock();
 
            @stopScript = () =>
-              @selectedScript().state('stopped');
-              @selectedScript().model().save();
-              @pauseClock();
+              if (@selectedScript())
+                @selectedScript().state('stopped');
+                @selectedScript().model().save();
+                @pauseClock();
 
            @pauseScript = () =>
-              @selectedScript().state('paused');
-              @selectedScript().model().save();
-              @pauseClock();
+              if (@selectedScript())
+                @selectedScript().state('paused');
+                @selectedScript().model().save();
+                @pauseClock();
 
            @newScriptName = ko.observable("");
 
