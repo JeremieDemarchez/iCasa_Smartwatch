@@ -63,11 +63,16 @@
 	visibility: hidden;	
 }
 
+.idCard table {
+	border: 1px solid #c0c0c0;	
+}
+
 .idCard thead td {
-	border-bottom: 1px solid #c0c0c0;	
 	width: 150px;
 	text-align: center;
 	font-weight: bold;
+	background-color: #cbf8c8;
+	margin: 1px;
 }
 
 .idCard tbody td {
