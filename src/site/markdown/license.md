@@ -1,11 +1,13 @@
 License
 ==========
 
-The execution platform _iCasa-Platform_ is under the Apache V2 license.
+The execution platform _iCasa-Platform_ is under the Apache V2 license ().
 The iCasa-Simulator is under the following license.
 
-iCasa-Simulator licensed application end user license agreementLICENSED APPLICATION END USER LICENSE AGREEMENT
-=============
+iCasa-Simulator licensed application end user license agreement
+----------
+
+LICENSED APPLICATION END USER LICENSE AGREEMENT
 
 The Products transacted through the Service are licensed, not sold, to You for use only under the terms of this license, unless a Product is accompanied by a separate license agreement, in which case the terms of that separate license agreement will govern, subject to Your prior acceptance of that separate license agreement. The licensor (“Application Provider”) reserves all rights not expressly granted to You. The Product that is subject to this license is referred to in this license as the “Licensed Application.”
 
