@@ -22,19 +22,26 @@ The photometer returns the value of the current illuminance. This value is expre
 <div class="hCard">Electro-optical properties</div>
 
 <table>
-	<thead>
-		<tr>
-    		<td>Model</td>
-        	<td>current_illuminance</td>
-    	</tr>
-    </thead>
-    <tbody>
-		<tr>
-    		<td>Photometer</td>
-       	 	<td>Default = 0.0</td>
-    	</tr>
-    </tbody>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
 </table>
+
 
 <p>There is no physical consideration for this type of device. Indeed, this device is used to return a physical value. In our case, we do not care about the way the sensor gives this value.</p>
 
