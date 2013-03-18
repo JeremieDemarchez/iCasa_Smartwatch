@@ -8,7 +8,7 @@ iCasa-Platform is licensed under Apache V2 license.
 iCasa-Simulator is licensed under a specific end user license (http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html).
 
 To launch the gateway part, execute startGateway.bat on Windows or startGateway.sh file on Unix systems depending on your operating system.
-To launch the web server part, execute startIHM.bat on Windows or startIHM.sh file on Unix systems depending on your operating system.
+To launch the web server part, execute startGUI.bat on Windows or startGUI.sh file on Unix systems depending on your operating system.
 
 Use iCasa-Simulator
 ====================

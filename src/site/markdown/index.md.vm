@@ -4,11 +4,7 @@
         <p style="text-align: center;" class="lead">Digital Home Simulation Tool</p>
         <p>
             <span class="span3">&nbsp;</span>
-           <a href="https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip" class="btn
-       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator Runtime</a>
-            <a href="https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip" class="btn
-       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator IHM</a>
-            <a href="https://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-0.0.2-20130219.201110-1.zip" class="btn
+            <a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator Runtime + IHM</a>
             <span class="span3">&nbsp;</span>
         </p>
@@ -48,6 +44,6 @@
 
 
 <h1>License</h1>
-iCasa toolkit is licensed under the Apache License 2.0. The project is founded and maintained by
+iCasa Platform is licensed under the Apache License 2.0. iCasa Simulator . These projects is founded and maintained by
 <a href="http://www-adele.imag.fr/">LIG ADELE team</a>.
 

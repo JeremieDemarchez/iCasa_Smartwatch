@@ -1,7 +1,24 @@
 Download
 ==========
 
-TODO
+iCasa Teaching distribution
+----------
+
+It contains the iCasa Simulator gateway without any application and the iCasa Simulator Graphical User Interface (GUI).
+Version=${project.version}
+<a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+
+Light Follow Me application
+----------
+
+The Light Follow Me application automates light up and down according to person presence detection.
+All binary lights in a room are up if at least one person is detected in it.
+
+It contains the iCasa Simulator gateway with the Light Follow Me application and the iCasa Simulator Graphical User Interface (GUI).
+Version=${project.version}
+<a href="https://repository-icasa.forge.cloudbees.com/release/fr/liglab/adele/icasa/apps/paul.light.follow.me.and.icasa/${project.version}/paul.light.follow.me.and.icasa-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
 
 
 
