@@ -36,7 +36,7 @@ Web Server Part Launch
 ---------------
 
 1. Go to the ICASA_HOME directory.
-2. Execute startGUI script on Unix systems and startGUI.bat script on Windows systems.
+2. Execute startGUI script on Unix systems or startGUI.bat script on Windows systems.
 
 By default, the web server port is set to 9000.
 The simulator home page is available at [http://localhost:9000/](http://localhost:9000/) 
@@ -45,7 +45,7 @@ Gateway Part Launch
 --------------
 
 1. Go to the ICASA_HOME directory.
-2. Execute startGateway script on Unix systems and startGateway.bat script on Windows systems.
+2. Execute startGateway script on Unix systems or startGateway.bat script on Windows systems.
 
 By default, the gateway port is set to 8080.
 In this case, the platform url would be _http://localhost:8080/_.
