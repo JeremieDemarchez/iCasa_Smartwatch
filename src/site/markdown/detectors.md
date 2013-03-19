@@ -4,6 +4,7 @@ Detectors
 <br/>
 
 * <a href="#PhotometerCard">Photometer</a>
+* <a href="#PresenceSensorCard">Presence Sensor</a>
 * <a href="#PowerSwitchCard">Power Switch</a>
 
 
@@ -60,6 +61,73 @@ The photometer returns the value of the current illuminance. This value is expre
 </div>
 <div class="separator"></div>
 </div>
+
+
+
+
+<div class="idCard">
+
+<div class="titleCard"><a name="PresenceSensorCard">Presence Sensor</a></div>
+
+<div class="photo"><img src="./devices/T456/detecteurMouvements.png" width="100"/></div>
+
+<div class="description">
+<div class="hCard">Overview</div> 
+ 
+<p>PresenceSensor can supply only one model of presence sensor switch which is a standard presence sensor. The presence sensor can be used to detect if someone is present in a room.</p>
+ 
+<div class="hCard">Device properties</div>
+
+<table>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+<p>If the sensed_presence property is true then there is someone close to the sensor. On the contrary, if the sensed_presence is false, there is no one close to the sensor.</p>
+
+
+        
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.presence.PresenceSensor</code>
+
+<ul>
+<li><code>getSerialNumber()</code>: Get the device ID</li>
+<li><code>getSensedPresence()</code>: Get the current status of the switch:
+<ul>
+<li>switched On: true</li>
+<li>switched Off: false</li>
+</ul>
+</li>
+</ul>
+
+<a href="./datasheets/Datasheet_PresenceSensor.pdf">Full datasheet here</a>
+</div>
+<div class="separator"></div>
+</div>
+
+
+
+
+
+
+
 
 
 
