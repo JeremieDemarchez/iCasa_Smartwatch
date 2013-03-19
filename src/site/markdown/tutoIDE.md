@@ -189,7 +189,7 @@ You need to create and generate the skeleton of the unique class of your applica
 	   }
 	   return binaryLightsLocation;
     }</code></pre>
-   `LOCATION_PROPERTY_NAME` is a constant defined and intialize previously in this class:
+   `LOCATION_PROPERTY_NAME` is a constant defined and intialized previously in this class:
    <pre><code>public static String LOCATION_PROPERTY_NAME = "Location";</code></pre>
 
 7. Manage the light(s) if a presence is sensed in a location. In the method `devicePropertyModified`, there is the core of the application: if the device is an instance of `PresenceSensor`, the device is identified by its serial number. According to its location, all the lights in the same location are turn on or off. 
@@ -210,8 +210,10 @@ You need to create and generate the skeleton of the unique class of your applica
 		}
 	}</code></pre>
 
-   `LOCATION_UNKNOWN` is a constant defined and intialize previously in this class:
+   `LOCATION_UNKNOWN` is a constant defined and intialized previously in this class:
    <pre><code>public static String LOCATION_UNKNOWN = "unknown";</code></pre>
+   
+8. Create a component instance from the metadata.xml file with the *iPOJO Metadata Editor*. Open the second tab *Component Configuration*. Click right on *BinaryLightFollowMe* bundle -> New Instance Declaration. 
    
    ![Create an instance](tutorial/fig12-instance.png "Create an instance")
 
