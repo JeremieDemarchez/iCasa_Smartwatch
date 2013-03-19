@@ -18,12 +18,6 @@ require([
     gotoCurrent: false
   });
 
-  $( "#scriptSlider" ).slider({
-    min: 0,
-    max: 100,
-    value: 0
-  });
-
   $( "#timeSpeed" ).change(() ->
     if $(this).val() > $("#maxSpeed").val()
       $(this).val($("#maxSpeed").val())
