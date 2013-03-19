@@ -112,36 +112,34 @@ You need to create and generate the skeleton of the unique class of your applica
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
    
-   <pre><code>
-   /** List containing all the lights in the house */
-    private List<BinaryLight> listBinaryLights;
-    
-    /** Map containing all the presenceSensors in the house */
-	private Map<String, PresenceSensor> mapPresenceSensors;</code></pre>
-    
-   
+        <pre><code>/** List containing all the lights in the house */
+     private List<BinaryLight> listBinaryLights;
+      
+     /** Map containing all the presenceSensors in the house */
+	 private Map<String, PresenceSensor> mapPresenceSensors;</code></pre>
+     
 3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
+ 
+   <pre><code>/** Bind Method for null dependency */
+   public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
+       listBinaryLights.add(binaryLight);
+   }
 
-	   /** Bind Method for null dependency */
-	   public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-		   listBinaryLights.add(binaryLight);
-	   }
+   /** Unbind Method for null dependency */
+   public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
+       listBinaryLights.remove(binaryLight);
+   }
 
-	   /** Unbind Method for null dependency */
-	   public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-		   listBinaryLights.remove(binaryLight);
-	   }
+   /** Bind Method for null dependency */
+   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+	   mapPresenceSensors.put(presenceSensor.getSerialNumber(), presenceSensor);
+   }
 
-	   /** Bind Method for null dependency */
-	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		   mapPresenceSensors.put(presenceSensor.getSerialNumber(), presenceSensor);
-	   }
-
-	   /** Unbind Method for null dependency */
-	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
-		  	Map properties) {
-		   mapPresenceSensors.remove(presenceSensor.getSerialNumber());
-	   }
+   /** Unbind Method for null dependency */
+   public void unbindPresenceSensor(PresenceSensor presenceSensor,
+	  	Map properties) {
+	   mapPresenceSensors.remove(presenceSensor.getSerialNumber());
+   }</code></pre>
 
 4. Attach the listener to the interesting devices (in our case all the presence sensors) in the `bind` method. Also unregister the listener when the sensor is leaving in the `unbind` method.
 
