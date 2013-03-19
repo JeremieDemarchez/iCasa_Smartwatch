@@ -112,11 +112,11 @@ You need to create and generate the skeleton of the unique class of your applica
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
     
-         /** List containing all the lights in the house */
-	     private List<BinaryLight> listBinaryLights;
-	
-	     /** Map containing all the presenceSensors in the house */
-	     private Map<String, PresenceSensor> mapPresenceSensors;
+          /** List containing all the lights in the house */
+	      private List<BinaryLight> listBinaryLights;
+          
+	      /** Map containing all the presenceSensors in the house */
+	      private Map<String, PresenceSensor> mapPresenceSensors;
    
 3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
 
