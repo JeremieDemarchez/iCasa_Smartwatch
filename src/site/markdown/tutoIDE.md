@@ -1,7 +1,5 @@
 # Tutorial: Light Follow Me
 
-   ![FollowMe Application](tutorial/followMe.png "FollowMe Application")
-
 // Introduction
 
 
@@ -58,6 +56,7 @@ You need to create and generate the skeleton of the unique class of your applica
 
 9. If you have done that successfully, you will have a skeleton like this:
 
+   <pre><code>
        package com.example.binary.follow.me;
        
        import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -103,6 +102,7 @@ You need to create and generate the skeleton of the unique class of your applica
         	   // TODO: Add your implementation code here
           }
        }
+    </code></pre>
 
 ### 2.2. Complete the Code Skeleton
 
