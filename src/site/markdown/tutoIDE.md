@@ -94,19 +94,20 @@ You need to create and generate the skeleton of the unique class of your applica
 
 1. In order to be notified when something is modified in the environment, the `BinaryLightFollowMeImpl` class must implement `DeviceListener` interface.
 
-    public class BinaryLightFollowMeImpl implements DeviceListener
+       public class BinaryLightFollowMeImpl implements DeviceListener
 
 2. Add two attributes in this `BinaryLightFollowMeImpl` class:
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
     
-    /** List containing all the lights in the house */
-	private List<BinaryLight> listBinaryLights;
+         /** List containing all the lights in the house */
+	     private List<BinaryLight> listBinaryLights;
 	
-	/** Map containing all the presenceSensors in the house */
-	private Map<String, PresenceSensor> mapPresenceSensors;
+	     /** Map containing all the presenceSensors in the house */
+	     private Map<String, PresenceSensor> mapPresenceSensors;
    
 3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
+
 
 4. Attach the listener to the interesting devices (in our case all the presence sensors) in the `bind` method. Also unregister the listener when the sensor is leaving in the `unbind` method.
 
