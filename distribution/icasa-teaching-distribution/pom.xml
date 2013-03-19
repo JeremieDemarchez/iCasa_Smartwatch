@@ -58,6 +58,13 @@
             <version>${project.version}</version>
             <type>deployment-package</type>
         </dependency>
+        <!-- DP Remote installer-->
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>dp-rest-installer.dp</artifactId>
+           <version>${iCasaPlatformVersion}</version>
+           <type>deployment-package</type>
+        </dependency>
         <!-- Only one clock must be available in the platform-->
         <dependency>
            <groupId>${project.groupId}</groupId>
