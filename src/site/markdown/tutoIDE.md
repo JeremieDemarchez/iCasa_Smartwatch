@@ -143,18 +143,18 @@ You need to create and generate the skeleton of the unique class of your applica
 
 4. Attach the listener to the interesting devices (in our case all the presence sensors) in the `bind` method. Also unregister the listener when the sensor is leaving in the `unbind` method.
 
-	   /** Bind Method for null dependency */
-	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		   presenceSensor.addListener(this);
-		   mapPresenceSensors.put(presenceSensor.getSerialNumber(), presenceSensor);
-	   }
+   <pre><code>/** Bind Method for null dependency */
+   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+	   presenceSensor.addListener(this);
+	   mapPresenceSensors.put(presenceSensor.getSerialNumber(), presenceSensor);
+   }
 
-	   /** Unbind Method for null dependency */
-	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
-			Map properties) {
-		   presenceSensor.removeListener(this);
-		   mapPresenceSensors.remove(presenceSensor.getSerialNumber());
-	   }
+   /** Unbind Method for null dependency */
+   public void unbindPresenceSensor(PresenceSensor presenceSensor,
+		Map properties) {
+	   presenceSensor.removeListener(this);
+	   mapPresenceSensors.remove(presenceSensor.getSerialNumber());
+   }</code></pre>
 
 5. Complete the `start` and `stop` lifecycle methods with a message. Initialize the required fields at validate and clear those fields at invalidate.
 
