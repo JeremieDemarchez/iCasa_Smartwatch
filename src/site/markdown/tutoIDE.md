@@ -166,6 +166,9 @@ You need to create and generate the skeleton of the unique class of your applica
 7. Manage the light(s) if a presence is sensed. 
 
 
+![Create an instance](tutorial/fig12-instance.png "Create an instance")
+
+
 ## 3. Application Deployment and Test
 
 ![Deploy action](tutorial/fig13-deploy.png "Deploy action")
