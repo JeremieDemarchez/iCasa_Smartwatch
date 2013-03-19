@@ -1,16 +1,18 @@
-# Standard Install
+Standard Install
+==========
 
 iCasa Simulator is decomposed in two parts:
 
 * _Gateway part_ corresponding to the box runtime (iCasa Home Server) including the simulator module.
 * _Web server part_ serving the client web application code (Content Server).
 
-A client using a Web browser access first the Web Server to get the content of web application and then, it access the Gateway to get information about the iCasa platform and to interact with it.
+A client using a Web browser access first the Web Server to get the content of web application and then, it access the Gateway to get information about the iCasa execution context and to interact with it.
 
 ![Web Architecture](install/install-architecture.png "Web Architecture")
 
 
-## Installation Prerequesites
+Installation Prerequesites
+------------
 
 - Java Development Toolkit 6 (Avoid Java 7 that may cause troubles).
 - A modern Web browser (We recommend to use Firefox but you can also use Chrome, Internet Explorer is not yet supported).
