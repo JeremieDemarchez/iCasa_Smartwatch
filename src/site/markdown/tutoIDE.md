@@ -8,7 +8,7 @@
 ## 1. Prerequisite
 
 - Install Java Development Kit 6 (Avoid Java 7 that may cause troubles).
-- Install iCasa-IDE following installation instructions on iCasa-IDE website(http://adeleresearchgroup.github.com/iCasa-IDE/).
+- Install iCasa-IDE following installation instructions on <a href="http://adeleresearchgroup.github.com/iCasa-IDE/">iCasa-IDE website</a>.
 - Install an iCasa distribution. We recommend to use the iCasa Teaching distribution (See <a href="download.html">download page</a>).
 
 ## 2. Application Development
