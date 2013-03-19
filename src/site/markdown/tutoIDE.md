@@ -192,9 +192,27 @@ You need to create and generate the skeleton of the unique class of your applica
    `LOCATION_PROPERTY_NAME` is a constant defined and intialize previously in this class:
    <pre><code>public static String LOCATION_PROPERTY_NAME = "Location";</code></pre>
 
-7. Manage the light(s) if a presence is sensed. 
+7. Manage the light(s) if a presence is sensed in a location. In the method `devicePropertyModified`, there is the core of the application: if the device is an instance of `PresenceSensor`, the device is identified by its serial number. According to its location, all the lights in the same location are turn on or off. 
 
+   <pre><code>@Override
+   public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue) {
+		if(device instanceof PresenceSensor) {
+			PresenceSensor activSensor = mapPresenceSensors.get(device.getSerialNumber());
+		    if(activSensor != null && propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {
+		    	String detectorLocation = (String) activSensor.getPropertyValue(LOCATION_PROPERTY_NAME);
+		    	if(!detectorLocation.equals(LOCATION_UNKNOW)) {
+		    		List<BinaryLight> sameLocationLights = getBinaryLightFromLocation(detectorLocation);
+		    		for(BinaryLight binaryLight : sameLocationLights) {
+		    			binaryLight.setPowerStatus(!(Boolean) oldValue);
+		    		}
+		    	}
+		    }
+		}
+	}</code></pre>
 
+   `LOCATION_UNKNOWN` is a constant defined and intialize previously in this class:
+   <pre><code>public static String LOCATION_UNKNOWN = "unknown";</code></pre>
+   
    ![Create an instance](tutorial/fig12-instance.png "Create an instance")
 
 
