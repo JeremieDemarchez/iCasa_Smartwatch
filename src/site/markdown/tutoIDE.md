@@ -44,18 +44,15 @@ You need to create and generate the skeleton of the unique class of your applica
 
 9. If you have done that successfully, you will have a skeleton like this:
 
-
-
-<pre><code>
     package com.example.binary.follow.me;
-	
-	import fr.liglab.adele.icasa.device.light.BinaryLight;
-	import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-	import java.util.Map;
+
+    import fr.liglab.adele.icasa.device.light.BinaryLight;
+    import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+    import java.util.Map;
     
-	public class BinaryLightFollowMeImpl {
+    public class BinaryLightFollowMeImpl {
     
-		/** Field for binaryLights dependency */
+    	/** Field for binaryLights dependency */
     	private BinaryLight[] binaryLights;
     	/** Field for presenceSensors dependency */
     	private PresenceSensor[] presenceSensors;
@@ -92,8 +89,7 @@ You need to create and generate the skeleton of the unique class of your applica
     	}
     
     }
-</code></pre>
-	
+
 ### 2.2. Complete the Code Skeleton
 
 1. In order to be notified when something is modified in the environment, the `BinaryLightFollowMeImpl` class must implement `DeviceListener` interface.
@@ -104,7 +100,15 @@ You need to create and generate the skeleton of the unique class of your applica
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
    
-3.    
+3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
+
+4. Attach the listener to the interesting devices (in our case all the presence sensors) in the `bind` method. Also unregister the listener when the sensor is leaving in the `unbind` method.
+
+5. Complete the `start` and `stop` lifecycle methods with a message. Initialize the required fields at validate and clear those fields at invalidate.
+
+6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
+
+7. Manage the light(s) if a presence is sensed. 
 
 
 ## 3. Application Deployment and Test
