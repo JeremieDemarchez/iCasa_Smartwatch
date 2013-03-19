@@ -232,11 +232,11 @@ The photometer returns the value of the current illuminance. This value is expre
 </thead>
 <tbody>
 <tr>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
-<td></td>
+<td>current_temperature</td>
+<td>[0.0-undefined]</td>
+<td>0.0</td>
+<td>Double</td>
+<td>No</td>
 </tr>
 </tbody>
 </table>
