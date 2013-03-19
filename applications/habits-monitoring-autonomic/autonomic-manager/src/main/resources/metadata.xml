@@ -16,37 +16,38 @@
 <ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="org.apache.felix.ipojo http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd"
   xmlns:ipojo="org.apache.felix.ipojo" xmlns:cilia="fr.liglab.adele.cilia">
    
-  <component name="DevicePolicy" classname="fr.liglab.adele.habits.autonomic.manager.rules.DevicePolicy" >
+  <!-- Modify the Cilia topology according new devices an policies configured   -->
+  <component name="DevicePolicyManager" classname="fr.liglab.adele.habits.autonomic.manager.DevicePolicyManager" >
     <requires field="ciliaContext"  />
   	<requires field="iCasaContext" />
     <properties>
-      <property name="bundle.symbolic.name" 
-                field="bundleSymbolicName" type="String" 
-                value="cilia.components.compendium" />
-      <property name="bundle.compendium.name" 
-      			field="bundleName" 
-      			value="../../../cilia-components-compendium/cilia.components.compendium-1.0.0-SNAPSHOT.jar" 
-      			type="String"/>
-      <property name ="url.config" field ="m_urlProperties" value="file:./load/devices.properties" />
+      <property name ="devices.config" field ="m_devicesProperties" value="file:./load/devicesPolicy.properties" />
+      <property name ="mediators.config" field ="m_mediatorsProperties" value="file:./load/mediatorsPolicy.properties" />      
      </properties>
     <callback transition="validate" method="start" />
   	<callback transition="invalidate" method="stop" />
   </component>
-  <instance component="DevicePolicy" name="rule.DevicePolicy" />
+  <instance component="DevicePolicyManager" name="autonomicManager.DevicePolicy" />
   
-  <component name="MonitoringPolicy" classname="fr.liglab.adele.habits.autonomic.manager.rules.MonitoringPolicy" >
+  <!--   QoS Management  -->
+  <component name="QoSPolicyManager" classname="fr.liglab.adele.habits.autonomic.manager.QoSPolicyManager" >
     <requires field="ciliaContext"  />
+    <properties>
+      <property name ="countdown.timer.period" field ="m_period" value="60000" />
+      <property name ="threshold.max.filter" field ="m_threshold" value="1" />
+   </properties>
     <callback transition="validate" method="start" />
   	<callback transition="invalidate" method="stop" />
   </component>
-  <instance component="MonitoringPolicy" name="rule.MonitoringPolicy" />
+  <instance component="QoSPolicyManager" name="autonomicManager.QosPolicy" />
 
-  <component name="LiveUpdateManager" classname="fr.liglab.adele.habits.autonomic.manager.rules.LiveUpdateManager" >
+  <!--  Apply Patch  -->
+  <component name="LiveUpdateManager" classname="fr.liglab.adele.habits.autonomic.manager.LiveUpdateManager" >
     <requires field="ciliaContext"  />
     <callback transition="validate" method="start" />
   	<callback transition="invalidate" method="stop" />
   </component>
-  <instance component="LiveUpdateManager" name="rule.LiveUpdateManager" />
+  <instance component="LiveUpdateManager" name="autonomicManager.LiveUpdateManager" />
   
  
 </ipojo>

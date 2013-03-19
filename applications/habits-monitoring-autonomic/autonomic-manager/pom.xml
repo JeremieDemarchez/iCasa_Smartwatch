@@ -13,71 +13,73 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
    -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-
-<!-- Project parent -->
-	<parent>
-		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>platform.parent</artifactId>
-      <version>1.0.0-SNAPSHOT</version>
-		<relativePath>../../../parent</relativePath>
-	</parent>
-
-<!-- Project Descrkiption -->
-  <modelVersion>4.0.0</modelVersion>
-  <packaging>bundle</packaging>
-  <artifactId>autonomic.manager</artifactId>
-  <name>${productName} :: Habits autonomic :: Autonomic Manager</name>
-
-  <dependencies>
-    <dependency>
-      <groupId>fr.liglab.adele.cilia</groupId>
-      <artifactId>cilia-core</artifactId>
-    </dependency>
-    
-     <dependency>
-          <groupId>fr.liglab.adele.cilia</groupId>
-          <artifactId>cilia-runtime</artifactId>
-      </dependency>
+      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+         
+         <!-- Project parent -->
+         <parent>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>parent</artifactId>
+            <version>1.0.0-SNAPSHOT</version>
+            <relativePath>../../../parent</relativePath>
+         </parent>
+         
+         <!-- Project Descrkiption -->
+         <modelVersion>4.0.0</modelVersion>
+         <packaging>bundle</packaging>
+         <artifactId>autonomic.manager</artifactId>
+         <name>${productName} :: Habits autonomic :: Autonomic Manager</name>
+         
+         <dependencies>
+            <dependency>
+               <groupId>fr.liglab.adele.cilia</groupId>
+               <artifactId>cilia-core</artifactId>
+               <version>1.6.4-SNAPSHOT</version> 
+            </dependency>
+            
+            <dependency>
+               <groupId>fr.liglab.adele.cilia</groupId>
+               <artifactId>cilia-runtime</artifactId>
+               <version>1.6.4-SNAPSHOT</version> 
+            </dependency>
+            
+            <dependency>
+               <groupId>org.slf4j</groupId>
+               <artifactId>slf4j-api</artifactId>
+            </dependency>
+            
+            <dependency>
+               <groupId>fr.liglab.adele.icasa</groupId>
+               <artifactId>context.api</artifactId>
+            </dependency>
+            
+         </dependencies>
+         
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.felix</groupId>
+                  <artifactId>maven-bundle-plugin</artifactId>
+                  <extensions>true</extensions>
+                  <configuration>
+                     <instructions>
+                        <Private-Package>
+                           fr.liglab.adele.self.management.autonomic.manager.rules
+                        </Private-Package>
+                     </instructions>
+                  </configuration>
+               </plugin>
+               <plugin>
+                  <groupId>org.apache.felix</groupId>
+                  <artifactId>maven-ipojo-plugin</artifactId>
+                  <executions>
+                     <execution>
+                        <goals>
+                           <goal>ipojo-bundle</goal>
+                        </goals>
+                     </execution>
+                  </executions>
+               </plugin>
+            </plugins>
+         </build>
+      </project>
       
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-    
-    <dependency>
-     <groupId>${project.groupId}</groupId>
-      <artifactId>context.api</artifactId>
-      <version>${project.version}</version>
-     </dependency>
-  
-  </dependencies>
-  
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Private-Package>
-            	fr.liglab.adele.self.management.autonomic.manager.rules
-            </Private-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-ipojo-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>ipojo-bundle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
-</project>

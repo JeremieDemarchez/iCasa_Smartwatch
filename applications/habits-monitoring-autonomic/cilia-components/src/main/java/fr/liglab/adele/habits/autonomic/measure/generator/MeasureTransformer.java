@@ -19,24 +19,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.cilia.Data;
+import fr.liglab.adele.habits.autonomic.measure.Measure;
 
 /**
  * @author Gabriel Pedraza Ferreira
- *
+ * 
  */
 public class MeasureTransformer {
 
 	private String user;
-	
-   private static final Logger logger = LoggerFactory.getLogger(MeasureTransformer.class);
-   
-   public Data process(Data data) {
-      if (data != null) {
-         Measure measure = (Measure) data.getContent();
-         measure.setPatientId(user);
-         logger.info("The patientId was setted");
-         return data;
-      }      
-      return null;
-   } 
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(MeasureTransformer.class);
+
+	public Data process(Data data) {
+		if (data != null) {
+			Measure measure = (Measure) data.getContent();
+			measure.setPatientId(user);
+			logger.info("Mediator transformer --> Patient Id set {}", user);
+			return data;
+		}
+		return null;
+	}
 }

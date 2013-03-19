@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
-import fr.liglab.adele.habits.autonomic.measure.generator.Measure;
+import fr.liglab.adele.habits.autonomic.measure.Measure;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -52,7 +52,7 @@ public class PhotometerCollector extends AbstractCollector implements
 	 */
 
 	/**
-	 * It is called when a new service of type PresenceDetector is registered
+	 * It is called when a new service of type Photometer is registered
 	 * into the gateway. (callback method, see metadata.xml).
 	 * 
 	 * @param detector
@@ -68,7 +68,7 @@ public class PhotometerCollector extends AbstractCollector implements
 	}
 
 	public void unbindProxy(Photometer detector) {
-		logger.info("A proxy is now outside from the zone, id "
+		logger.info("A proxy [iCasa.PresenceSensor] is now outside from the zone, id "
 				+ detector.getSerialNumber());
 		if (detectors != null)
 			detectors.remove(detector.getSerialNumber());
@@ -87,27 +87,14 @@ public class PhotometerCollector extends AbstractCollector implements
 		Photometer detector = (Photometer) detectors.get(deviceSerialNumber);
 
 		if (detector != null) {
-			if (detector.getIlluminance() > 0) {
-				Measure measure = new Measure();
-				measure.setDeviceId(deviceSerialNumber);
-				measure.setLocalisation((String) detector
-						.getPropertyValue("Location"));
-				long date = clock.currentTimeMillis();
-				measure.setTimestamp(date);
-				Data data = new Data(measure);
-
-				// simulation realibility
-				int res = counter % 4;
-				if (res != 0)
-					measure.setRealibility(100);
-				else
-					measure.setRealibility(60);
-				counter++;
-
-				notifyDataArrival(data);
-			}
+			Measure measure = new Measure();
+			measure.setDeviceId(deviceSerialNumber); 
+			measure.setLocalisation((String) detector.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
+			long date = clock.currentTimeMillis();
+			measure.setTimestamp(date);
+			Data data = new Data(measure);
+			notifyDataArrival(data);
 		}
-
 	}
 
 	public void deviceAdded(GenericDevice device) {

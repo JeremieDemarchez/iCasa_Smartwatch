@@ -1,0 +1,38 @@
+<behavior startdate="06/03/2013-17:05:59" factor="1440">
+
+	<!-- Zone Section -->
+
+	<create-zone id="salon" leftX="500" topY="211" width="207" height="307" />
+
+
+	<create-zone id="chambre" leftX="186" topY="523" width="210" height="168" />
+
+
+	<create-zone id="cuisine" leftX="505" topY="526" width="209" height="177" />
+
+
+	<create-zone id="salle-de-bain" leftX="188" topY="209" width="216" height="308" />
+
+
+	<!-- Device Section -->
+
+	<create-device id="PresenceSensor-9010820069" type="iCASA.PresenceSensor" />
+	<move-device-zone deviceId="PresenceSensor-9010820069" zoneId="cuisine" />
+
+	<create-device id="PresenceSensor-2d0fb87fd0" type="iCASA.PresenceSensor" />
+	<move-device-zone deviceId="PresenceSensor-2d0fb87fd0" zoneId="chambre" />
+
+	<create-device id="PresenceSensor-313b945379" type="iCASA.PresenceSensor" />
+	<move-device-zone deviceId="PresenceSensor-313b945379" zoneId="salon" />
+
+	<create-device id="PresenceSensor-e80e96969d" type="iCASA.PresenceSensor" />
+	<move-device-zone deviceId="PresenceSensor-e80e96969d" zoneId="salle-de-bain" />
+
+
+	<!-- Person Section -->
+
+	<create-person id="Paul" type="Grandfather" />
+
+	<create-person id="Louise" type="Grandmother" />
+
+</behavior>

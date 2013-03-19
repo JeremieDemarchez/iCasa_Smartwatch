@@ -19,22 +19,23 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.cilia.Data;
+import fr.liglab.adele.habits.autonomic.measure.Measure;
 
 /**
  * @author Gabriel Pedraza Ferreira
- *
+ * 
  */
 public class MeasureEnricher {
+	private String gateway_id;
+	private static final Logger logger = LoggerFactory.getLogger(MeasureEnricher.class);
 
-   private static final Logger logger = LoggerFactory.getLogger(MeasureEnricher.class);
-   
-   public Data process(Data data) {
-      if (data != null) {
-         Measure measure = (Measure) data.getContent();
-         measure.setGatewayId("303");
-         logger.info("The gatewayId was setted");
-         return data;
-      }      
-      return null;
-   } 
+	public Data process(Data data) {
+		if (data != null) {
+			Measure measure = (Measure) data.getContent();
+			measure.setGatewayId(gateway_id);
+			logger.info("Mediator enricher --> the gatewayId set to [{}]", gateway_id);
+			return data;
+		}
+		return null;
+	}
 }

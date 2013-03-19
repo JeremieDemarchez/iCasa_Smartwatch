@@ -19,7 +19,7 @@
   xmlns:ipojo="org.apache.felix.ipojo" xmlns:cilia="fr.liglab.adele.cilia">
 
   <collector classname="fr.liglab.adele.habits.autonomic.measure.compendium.PhotometerCollector" 
-             name="PhotometerCollector" architecture="true">
+             name="PhotometerCollector" architecture="true" >
     <requires aggregate="true" optional="true">
       <callback type="bind" method="bindProxy" />
       <callback type="unbind" method="unbindProxy" />
@@ -27,13 +27,30 @@
     <requires field="clock" optional="false" nullable="false" />
   </collector>
 
-  <adapter name="Adapter.Photometer" pattern="in-only" version="1.0.0">
+  <adapter name="PhotometerAdapter" pattern="in-only" version="1.0.0">
     <collector type="PhotometerCollector" />
     <ports>
        <out-port name="out" type="*" />
     </ports>
   </adapter>
 
-
-
+  <processor name="MeasureReliabilityProcessor-V2" 
+             classname="fr.liglab.adele.habits.autonomic.measure.compendium.MeasureReliability">
+    <cilia:method name="process" data.type="fr.liglab.adele.cilia.Data" />
+    <properties>
+      <property name="illuminance.threshold" field="thresold_illuminance" value="60" />
+    </properties>
+  </processor>
+  
+   <mediator-component name="MeasureReliabilityMediator-V2" category="medical" version="2.0.0" >
+    <cilia:processor name="MeasureReliabilityProcessor-V2" />
+    <cilia:scheduler name="immediate-scheduler" />
+    <cilia:dispatcher name="multicast-dispatcher" />
+    <ports>
+       <in-port name="in" type="*" />
+       <in-port name="in-photometer" type="*" /> 
+       <out-port name="out" type="*" />
+    </ports>    
+  </mediator-component>
+  
 </ipojo>

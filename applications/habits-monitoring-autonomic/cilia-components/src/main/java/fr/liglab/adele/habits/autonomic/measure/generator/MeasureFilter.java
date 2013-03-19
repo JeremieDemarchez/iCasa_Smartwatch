@@ -19,25 +19,27 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.cilia.Data;
+import fr.liglab.adele.habits.autonomic.measure.Measure;
 
 /**
  * @author Gabriel Pedraza Ferreira
- *
+ * 
  */
 public class MeasureFilter {
 
-   private static final Logger logger = LoggerFactory.getLogger(MeasureFilter.class);
-   private float threshold ;
-   public Data process(Data data) {
-      if (data != null) {
-         Measure measure = (Measure) data.getContent();
-         if (measure.getRealibility()>threshold) {
-            logger.info("realibility superior to {}%"+threshold);
-            return data;
-         }
-            
-      }
-      logger.info("realibility inferior to %");
-      return null;
-   } 
+	private static final Logger logger = LoggerFactory.getLogger(MeasureFilter.class);
+	private float threshold;
+
+	public Data process(Data data) {
+		if (data != null) {
+			Measure measure = (Measure) data.getContent();
+			if (measure.getRealibility() > threshold) {
+				return data;
+			}
+			logger.info(
+					"Mediator Filter --> reliability {}%, threshold={}% ,**** measure filtered ****",
+					measure.getRealibility(), threshold);
+		}
+		return null;
+	}
 }

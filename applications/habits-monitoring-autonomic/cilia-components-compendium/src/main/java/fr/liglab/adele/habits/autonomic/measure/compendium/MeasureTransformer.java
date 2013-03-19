@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.habits.autonomic.measure.generator;
+package fr.liglab.adele.habits.autonomic.measure.compendium;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -22,37 +22,23 @@ import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.habits.autonomic.measure.Measure;
 
 /**
- * Computes a level of realibility
- * 
- * @author Denis Morand
+ * @author Gabriel Pedraza Ferreira
  * 
  */
-public class MeasureReliability {
+public class MeasureTransformer {
+
+	private String user;
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(MeasureReliability.class);
-	private int detecteurs_on;
-
-	public MeasureReliability() {
-		detecteurs_on = 0;
-	}
+			.getLogger(MeasureTransformer.class);
 
 	public Data process(Data data) {
 		if (data != null) {
 			Measure measure = (Measure) data.getContent();
-			if (measure.getSensorValue()) {
-				detecteurs_on++;
-				/* Decrease by 10% for each sensor on */
-				measure.setRealibility((float) ((90 - (10 * detecteurs_on))));
-			} else {
-				measure.setRealibility((float) 90);
-				if (detecteurs_on > 0)
-					detecteurs_on--;
-			}
-			logger.info("Mediator reliability --> reliability set to {}%",
-					measure.getRealibility());
+			measure.setPatientId(user);
+			logger.info("Mediator transformer V2--> Patient Id set {}", user);
+			return data;
 		}
-		return data;
+		return null;
 	}
-
 }

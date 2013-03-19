@@ -71,7 +71,19 @@ limitations under the License.
                <artifactId>icasa.simulator.dp</artifactId>
                <type>deployment-package</type>
             </dependency>
-            
+            <!-- DP Remote installer-->
+            <dependency>
+               <groupId>fr.liglab.adele.icasa</groupId>
+               <artifactId>dp-rest-installer.dp</artifactId>
+               <version>${iCasaPlatformVersion}</version>
+               <type>deployment-package</type>
+            </dependency>
+            <!-- Only one clock must be available in the platform-->
+            <dependency>
+               <groupId>fr.liglab.adele.icasa</groupId>
+               <artifactId>clock.simulated.impl</artifactId>
+               <version>${iCasaSimulatorVersion}</version>
+            </dependency>
             
             <!-- habits monitoring application -->
             <dependency>
