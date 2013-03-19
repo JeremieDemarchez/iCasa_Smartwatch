@@ -82,6 +82,10 @@
 
 		<menu name="User Guide">
 		    <item name="Simulator GUI Guide" href="guide.html"/>
+            <item name="First App">
+              <item name="With iPOJO IDE" href="tutoIDE.html"/>
+              <item name="With Maven" href="tutoMaven.html"/>
+            </item>
             <item name="Script Language" href="script.html"/>
 			<item name="REST API" href="rest-api.html"/>
 			<item name="Device Building Tutorial" href="building-device.html"/>
