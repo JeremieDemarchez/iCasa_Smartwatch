@@ -6,9 +6,12 @@ iCasa Teaching distribution
 
 It contains the iCasa Simulator gateway without any application and the iCasa Simulator Graphical User Interface (GUI).
 Version=${project.version}
+
 <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
        btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
-
+	   
+	 
+	   
 Light Follow Me application distribution
 ----------
 
