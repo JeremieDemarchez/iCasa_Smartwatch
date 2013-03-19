@@ -82,7 +82,7 @@
 
 		<menu name="User Guide">
 		    <item name="Simulator GUI Guide" href="guide.html"/>
-            <item name="First App" href="#" collapse="false">
+            <item name="First App" href="#" collapse="true">
               <item name="With iPOJO IDE" href="tutoIDE.html"/>
               <item name="With Maven" href="tutoMaven.html"/>
             </item>
