@@ -39,7 +39,7 @@ In the next figure we show an example of a typical device implementation using t
 ## iCasa Applications
 
 iCasa applications are developed following the application model of the OSGi platform, in iCasa each device is exposed as an OSGi service in the its register. In OSGi each service can provide one or more interfaces, in iCasa each device exposes the GenericDevice and also the specific device interface.
-In addition, an iCasa application must be packaged as an OSGi bundle to be deployed on the platform.
+In addition, an iCasa application must be packaged as an OSGi bundle to be deployed on the platform. A tutorial showing how to build a new iCasa application is available [here](tutoIDE.html).
    
 <a name="Simulator"></a>   
 ## iCasa Simulator
@@ -48,4 +48,4 @@ The simulator module allows developers to test their digital home applications. 
 
 ![iCasa Simulator GUI](guide/main-interface.png "iCasa Simulator GUI")
 
-A utilization guide of the Simulator iCasa GUI of is avalaible [here](guide.html)
+A user guide of the iCasa Simulator GUI is available [here](guide.html)
