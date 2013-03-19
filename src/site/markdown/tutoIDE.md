@@ -31,16 +31,28 @@ You need to create and generate the skeleton of the unique class of your applica
 
 4. Click *Add* and change the component name to *BinaryFollowMe*.
 
+![Create BinaryFollowMe Component](tutorial/fig6-metadataEditor.png "Create BinaryFollowMe Component")
+
 5. Add to service dependencies (i.e. required services) with **Multiple** and **Optional** characteristics:
 
    * one dependency to `BinaryLight` with a field `binaryLights` and bind/unbind methods named respectively `bindBinaryLight` and `unbindBinaryLight`;
    * one dependency to `PresenceSensor` with a field `presenceSensors` and bind/unbind methods named respectively `bindPresenceSensor` and `unbindPresenceSensor`.
 
+![Add binary light dependency](tutorial/fig7-binaryLightDependency.png "Add binary light dependency")
+
+![Add presence sensor dependency](tutorial/fig8-presenceSensorDependency.png "Add presence sensor dependency")
+
 6. Add new methods `start` and `stop` for the *Component Lifecycle Callbacks*.
+
+![Setup component lifecycle](tutorial/fig9-lifecycle.png "Setup component lifecycle")
 
 7. Generate the class with right click on your component.
 
+![Generate component implementation Action](tutorial/fig10-generate.png "Generate component implementation Action")
+
 8. Complete the package field.
+
+![Generate component implementation Setup](tutorial/fig11-generate2.png "Generate component implementation Setup")
 
 9. If you have done that successfully, you will have a skeleton like this:
 
@@ -112,3 +124,5 @@ You need to create and generate the skeleton of the unique class of your applica
 
 
 ## 3. Application Deployment and Test
+
+![Deploy action](tutorial/fig13-deploy.png "Deploy action")
