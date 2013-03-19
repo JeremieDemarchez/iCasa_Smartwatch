@@ -213,11 +213,13 @@ You need to create and generate the skeleton of the unique class of your applica
    `LOCATION_UNKNOWN` is a constant defined and intialized previously in this class:
    <pre><code>public static String LOCATION_UNKNOWN = "unknown";</code></pre>
    
-8. Create a component instance from the metadata.xml file with the *iPOJO Metadata Editor*. Open the second tab *Component Configuration*. Click right on *BinaryLightFollowMe* bundle -> New Instance Declaration. 
+8. Create a component instance from the metadata.xml file with the *iPOJO Metadata Editor*. Open the second tab *Component Configuration*. Right click on *BinaryLightFollowMe* bundle -> New Instance Declaration. 
    
    ![Create an instance](tutorial/fig12-instance.png "Create an instance")
 
 
 ## 3. Application Deployment and Test
 
-![Deploy action](tutorial/fig13-deploy.png "Deploy action")
+1. Right click on your project: *iCasa -> iCasa Bundle Deployment*
+   
+   ![Deploy action](tutorial/fig13-deploy.png "Deploy action")
