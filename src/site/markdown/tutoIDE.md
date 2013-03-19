@@ -17,15 +17,15 @@ You need to create and generate the skeleton of the unique class of your applica
 
 1. Create a new iPOJO Project.
 
-![Create New iPojo Projet](tutorial/fig1-project.png "Create New iPojo Projet")
+   ![Create New iPojo Projet](tutorial/fig1-project.png "Create New iPojo Projet")
 
-![Create New iPojo Projet](tutorial/fig2-iPOJOProject.png "Create New iPojo Projet")
+   ![Create New iPojo Projet](tutorial/fig2-iPOJOProject.png "Create New iPojo Projet")
 
-![iPojo Projet Content](tutorial/fig4-iPOJOProjectContent.png "iPojo Projet Content")
+   ![iPojo Projet Content](tutorial/fig4-iPOJOProjectContent.png "iPojo Projet Content")
 
 2. Configure the iPOJO Preferences. Go to *Windows -> Preferences -> iPOJO Preferences.*
 
-![iPojo Preferences](tutorial/fig5-setiPojoPreferences.png "iPojo Preferences")
+   ![iPojo Preferences](tutorial/fig5-setiPojoPreferences.png "iPojo Preferences")
 
 3. Create a new component *BinaryFollowMe*. Open the `metadata.xml` file with the iPOJO Metadata Editor.
 
@@ -56,67 +56,110 @@ You need to create and generate the skeleton of the unique class of your applica
 
 9. If you have done that successfully, you will have a skeleton like this:
 
-    package com.example.binary.follow.me;
+       package com.example.binary.follow.me;
 
-    import fr.liglab.adele.icasa.device.light.BinaryLight;
-    import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-    import java.util.Map;
+       import fr.liglab.adele.icasa.device.light.BinaryLight;
+       import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+       import java.util.Map;
     
-    public class BinaryLightFollowMeImpl {
+       public class BinaryLightFollowMeImpl {
     
-    	/** Field for binaryLights dependency */
-    	private BinaryLight[] binaryLights;
-    	/** Field for presenceSensors dependency */
-    	private PresenceSensor[] presenceSensors;
-    
-    	/** Bind Method for null dependency */
-    	public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-    		// TODO: Add your implementation code here
-    	}
-    
-    	/** Unbind Method for null dependency */
-    	public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-    		// TODO: Add your implementation code here
-    	}
+    	   /** Field for binaryLights dependency */
+    	   private BinaryLight[] binaryLights;
 
-    	/** Bind Method for null dependency */
-    	public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-    		// TODO: Add your implementation code here
-    	}
+           /** Field for presenceSensors dependency */
+    	   private PresenceSensor[] presenceSensors;
     
-    	/** Unbind Method for null dependency */
-    	public void unbindPresenceSensor(PresenceSensor presenceSensor,
+    	   /** Bind Method for null dependency */
+    	   public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
+    		   // TODO: Add your implementation code here
+    	   }
+    
+           /** Unbind Method for null dependency */
+    	   public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
+    		   // TODO: Add your implementation code here
+    	   }
+
+    	   /** Bind Method for null dependency */
+    	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+    		   // TODO: Add your implementation code here
+    	   }
+    
+    	   /** Unbind Method for null dependency */
+    	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
     			Map properties) {
-    		// TODO: Add your implementation code here
-    	}
+    		   // TODO: Add your implementation code here
+    	   }
     
-    	/** Component Lifecycle Method */
-    	public void stop() {
-    		// TODO: Add your implementation code here
-    	}
+    	   /** Component Lifecycle Method */
+    	   public void stop() {
+    		   // TODO: Add your implementation code here
+    	   }
     
-    	/** Component Lifecycle Method */
-    	public void start() {
-    		// TODO: Add your implementation code here
-    	}
+    	   /** Component Lifecycle Method */
+    	   public void start() {
+    		   // TODO: Add your implementation code here
+    	   }
     
-    }
+       }
 
 ### 2.2. Complete the Code Skeleton
 
 1. In order to be notified when something is modified in the environment, the `BinaryLightFollowMeImpl` class must implement `DeviceListener` interface.
 
-    public class BinaryLightFollowMeImpl implements DeviceListener
+       public class BinaryLightFollowMeImpl implements DeviceListener
 
 2. Add two attributes in this `BinaryLightFollowMeImpl` class:
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
+    
+         /** List containing all the lights in the house */
+	     private List<BinaryLight> listBinaryLights;
+	
+	     /** Map containing all the presenceSensors in the house */
+	     private Map<String, PresenceSensor> mapPresenceSensors;
    
 3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
 
+	   /** Bind Method for null dependency */
+	   public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
+		   listBinaryLights.add(binaryLight);
+	   }
+
+	   /** Unbind Method for null dependency */
+	   public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
+		   listBinaryLights.remove(binaryLight);
+	   }
+
+	   /** Bind Method for null dependency */
+	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+		   mapPresenceSensors.put(presenceSensor.getSerialNumber(), presenceSensor);
+	   }
+
+	   /** Unbind Method for null dependency */
+	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
+		  	Map properties) {
+		   mapPresenceSensors.remove(presenceSensor.getSerialNumber());
+	   }
+
 4. Attach the listener to the interesting devices (in our case all the presence sensors) in the `bind` method. Also unregister the listener when the sensor is leaving in the `unbind` method.
 
+	   /** Bind Method for null dependency */
+	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+		   presenceSensor.addListener(this);
+		   mapPresenceSensors.put(presenceSensor.getSerialNumber(), presenceSensor);
+	   }
+
+	   /** Unbind Method for null dependency */
+	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
+			Map properties) {
+		   presenceSensor.removeListener(this);
+		   mapPresenceSensors.remove(presenceSensor.getSerialNumber());
+	   }
+
 5. Complete the `start` and `stop` lifecycle methods with a message. Initialize the required fields at validate and clear those fields at invalidate.
+
+
 
 6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
 
