@@ -74,14 +74,6 @@
 			<organizationUrl>http://adele.imag.fr</organizationUrl>
 		</developer>
 		<developer>
-			<name>Bassem Debbabi</name>
-			<email>bassem @nospam@ debbabi.net</email>
-			<roles>
-			</roles>
-			<organization>Adele | LIG</organization>
-			<organizationUrl>http://adele.imag.fr</organizationUrl>
-		</developer>
-		<developer>
 			<name>Issac Noé Garcia Garza</name>
 			<email> 	 torito @nospam@ gmail.com</email>
 			<roles>
@@ -281,13 +273,49 @@
         </snapshotRepository>
         <site>
             <id>tmp</id>
-            <url>file:///tmp</url>
+            <url>http://adeleresearchgroup.github.com/iCasa-Simulator/</url>
         </site>
     </distributionManagement>
 
     <build>
         <pluginManagement>
             <plugins>
+
+                <!-- License plugin -->
+                <plugin>
+                    <groupId>com.google.code.maven-license-plugin</groupId>
+                    <artifactId>maven-license-plugin</artifactId>
+                    <version>1.4.0</version>
+                    <configuration>
+                        <header>${basedir}/../parent/license.txt</header>
+                        <aggregate>true</aggregate>
+                        <excludes>
+                            <exclude>.gitignore</exclude>
+                            <exclude>license.txt</exclude>
+                            <exclude>**/.idea/**</exclude>
+                            <exclude>**/*.iml</exclude>
+                            <exclude>**/src/test/resources/**</exclude>
+                            <exclude>**/src/test/data/**</exclude>
+                            <exclude>**/*.so</exclude>
+                            <exclude>**/*.dll</exclude>
+                            <exclude>**/*.bhv</exclude>
+                            <exclude>**/*.cfg</exclude>
+                            <exclude>**/*.dp</exclude>
+                            <exclude>**/*.xcf</exclude>
+                            <exclude>**/*.md</exclude>
+                            <exclude>**/*.jj</exclude>
+                            <exclude>.git/**/*</exclude>
+                        </excludes>
+                    </configuration>
+                    <executions>
+                        <execution>
+                            <phase>verify</phase>
+                            <goals>
+                                <goal>format</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                </plugin>
                 <plugin>
                     <groupId>fr.liglab.adele.common</groupId>
                     <artifactId>maven-osgi-distribution-plugin</artifactId>
