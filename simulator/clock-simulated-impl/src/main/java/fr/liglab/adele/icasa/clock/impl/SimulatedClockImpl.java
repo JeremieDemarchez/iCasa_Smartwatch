@@ -177,7 +177,8 @@ public class SimulatedClockImpl implements Clock {
 	@Validate
 	public void start() {
 		initDate = System.currentTimeMillis();
-		pause = false;
+		factor = 1;
+		pause = false;		
 		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
 		timeThread.start();
 	}
