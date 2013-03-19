@@ -189,6 +189,8 @@ You need to create and generate the skeleton of the unique class of your applica
 	   }
 	   return binaryLightsLocation;
     }</code></pre>
+   `LOCATION_PROPERTY_NAME` is a constant defined and intialize previously in this class:
+   <pre><code>public static String LOCATION_PROPERTY_NAME = "Location";</code></pre>
 
 7. Manage the light(s) if a presence is sensed. 
 
