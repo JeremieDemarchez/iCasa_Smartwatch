@@ -27,5 +27,15 @@ You need to create and generate the skeleton of the unique class of your applica
    * one dependency to `BinaryLight` with a field `binaryLights` and bind/unbind methods named respectively `bindBinaryLight` and `unbindBinaryLight`;
    * one dependency to `PresenceSensor` with a field `presenceSensors` and bind/unbind methods named respectively `bindPresenceSensor` and `unbindPresenceSensor`.
 
+6. Add new methods `start` and `stop` for the *Component Lifecycle Callbacks*.
+
+7. Generate the class with right click on your component.
+
+8. Complete the package field.
+
+9. If you have done that successfully, you will have a skeleton like this:
+
+
+
 
 ## 3. Application Deployment and Test
