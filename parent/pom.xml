@@ -35,10 +35,12 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             <projectName>${project.artifactId}</projectName>
             
             <!-- ADELE Projects -->
-            <AdeleBaseVersion>1.0.4-SNAPSHOT</AdeleBaseVersion>
-            <ciliaVersion>1.6.4-SNAPSHOT</ciliaVersion>
+            <AdeleBaseVersion>1.0.4</AdeleBaseVersion>
+            <ciliaVersion>1.6.3</ciliaVersion>
             <roseVersion>1.0.2</roseVersion>
-            <iCasaVersion>1.0.0-SNAPSHOT</iCasaVersion>
+            <iCasaPlatformVersion>1.0.0</iCasaPlatformVersion>
+            <iCasaSimulatorVersion>1.0.0-SNAPSHOT</iCasaSimulatorVersion>
+            
          </properties>
          <repositories>
             <repository>
@@ -62,116 +64,117 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                   <version>${AdeleBaseVersion}</version>
                   <type>osgi-distribution</type>
                </dependency>
+               <dependency>
+                  <groupId>fr.liglab.adele.icasa</groupId>
+                  <artifactId>icasa.teaching.distribution</artifactId>
+                  <version>${iCasaSimulatorVersion}</version>
+                  <type>osgi-distribution</type>
+               </dependency>
                <!-- iCasa -->
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>common</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>application.api</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>context.api</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>context.remote</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>context.impl</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>application.impl</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
                
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.manager.api</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                </dependency>
 
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>icasa.web</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                   <type>play2</type>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>icasa.platform.dp</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaPlatformVersion}</version>
                   <type>deployment-package</type>
                </dependency>
                <!-- iCasa Simulator-->
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>simulator.api</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>simulator.impl</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.light</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.sound</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.temperature</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.presence</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.power</artifactId>
-                  <version>${project.version}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>     
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.personal</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>device.bathroom.scale</artifactId>
-                  <version>${iCasaVersion}</version>
-               </dependency>
-               <dependency>
-                  <groupId>fr.liglab.adele.icasa</groupId>
-                  <artifactId>continua-rest-client</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>clock.simulated.impl</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                </dependency>
                <dependency>
                   <groupId>fr.liglab.adele.icasa</groupId>
                   <artifactId>icasa.simulator.dp</artifactId>
-                  <version>${iCasaVersion}</version>
+                  <version>${iCasaSimulatorVersion}</version>
                   <type>deployment-package</type>
                </dependency>
                <!--RoSe DP-->

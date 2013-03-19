@@ -26,9 +26,7 @@
   </parent>
 
   <!-- Project coordinates -->
-  <groupId>fr.liglab.adele.icasa.apps</groupId>
   <artifactId>paul.light.follow.me.and.icasa</artifactId>
-  <version>1.0.0-SNAPSHOT</version>
   <packaging>osgi-distribution</packaging>
   <name>${productName} :: ${projectName}</name>
 
@@ -43,7 +41,6 @@
      <dependency>
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>icasa.teaching.distribution</artifactId>
-        <version>${iCasaVersion}</version>
         <type>osgi-distribution</type>
      </dependency>
 
