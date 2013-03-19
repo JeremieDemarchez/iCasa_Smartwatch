@@ -31,76 +31,75 @@ You need to create and generate the skeleton of the unique class of your applica
 
 4. Click *Add* and change the component name to *BinaryFollowMe*.
 
-![Create BinaryFollowMe Component](tutorial/fig6-metadataEditor.png "Create BinaryFollowMe Component")
+    ![Create BinaryFollowMe Component](tutorial/fig6-metadataEditor.png "Create BinaryFollowMe Component")
 
 5. Add to service dependencies (i.e. required services) with **Multiple** and **Optional** characteristics:
 
    * one dependency to `BinaryLight` with a field `binaryLights` and bind/unbind methods named respectively `bindBinaryLight` and `unbindBinaryLight`;
    * one dependency to `PresenceSensor` with a field `presenceSensors` and bind/unbind methods named respectively `bindPresenceSensor` and `unbindPresenceSensor`.
 
-![Add binary light dependency](tutorial/fig7-binaryLightDependency.png "Add binary light dependency")
+   ![Add binary light dependency](tutorial/fig7-binaryLightDependency.png "Add binary light dependency")
 
-![Add presence sensor dependency](tutorial/fig8-presenceSensorDependency.png "Add presence sensor dependency")
+   ![Add presence sensor dependency](tutorial/fig8-presenceSensorDependency.png "Add presence sensor dependency")
 
 6. Add new methods `start` and `stop` for the *Component Lifecycle Callbacks*.
 
-![Setup component lifecycle](tutorial/fig9-lifecycle.png "Setup component lifecycle")
+   ![Setup component lifecycle](tutorial/fig9-lifecycle.png "Setup component lifecycle")
 
 7. Generate the class with right click on your component.
 
-![Generate component implementation Action](tutorial/fig10-generate.png "Generate component implementation Action")
+   ![Generate component implementation Action](tutorial/fig10-generate.png "Generate component implementation Action")
 
 8. Complete the package field.
 
-![Generate component implementation Setup](tutorial/fig11-generate2.png "Generate component implementation Setup")
+   ![Generate component implementation Setup](tutorial/fig11-generate2.png "Generate component implementation Setup")
 
 9. If you have done that successfully, you will have a skeleton like this:
 
        package com.example.binary.follow.me;
-
+       
        import fr.liglab.adele.icasa.device.light.BinaryLight;
        import fr.liglab.adele.icasa.device.presence.PresenceSensor;
        import java.util.Map;
-    
+       
        public class BinaryLightFollowMeImpl {
-    
-    	   /** Field for binaryLights dependency */
-    	   private BinaryLight[] binaryLights;
-
+       
+           /** Field for binaryLights dependency */
+           private BinaryLight[] binaryLights;
+       
            /** Field for presenceSensors dependency */
-    	   private PresenceSensor[] presenceSensors;
-    
-    	   /** Bind Method for null dependency */
-    	   public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-    		   // TODO: Add your implementation code here
-    	   }
-    
+           private PresenceSensor[] presenceSensors;
+       
+           /** Bind Method for null dependency */
+           public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
+       	   // TODO: Add your implementation code here
+           }
+       
            /** Unbind Method for null dependency */
-    	   public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-    		   // TODO: Add your implementation code here
-    	   }
-
-    	   /** Bind Method for null dependency */
-    	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-    		   // TODO: Add your implementation code here
-    	   }
-    
-    	   /** Unbind Method for null dependency */
-    	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
-    			Map properties) {
-    		   // TODO: Add your implementation code here
-    	   }
-    
-    	   /** Component Lifecycle Method */
-    	   public void stop() {
-    		   // TODO: Add your implementation code here
-    	   }
-    
-    	   /** Component Lifecycle Method */
-    	   public void start() {
-    		   // TODO: Add your implementation code here
-    	   }
-    
+           public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
+        	   // TODO: Add your implementation code here
+           }
+       
+           /** Bind Method for null dependency */
+       	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+        	   // TODO: Add your implementation code here
+           }
+       
+           /** Unbind Method for null dependency */
+           public void unbindPresenceSensor(PresenceSensor presenceSensor,
+        		Map properties) {
+        	   // TODO: Add your implementation code here
+           }
+       
+       	   /** Component Lifecycle Method */
+           public void stop() {
+        	   // TODO: Add your implementation code here
+           }
+       
+           /** Component Lifecycle Method */
+           public void start() {
+        	   // TODO: Add your implementation code here
+          }
        }
 
 ### 2.2. Complete the Code Skeleton
@@ -113,11 +112,11 @@ You need to create and generate the skeleton of the unique class of your applica
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
     
-         /** List containing all the lights in the house */
-	     private List<BinaryLight> listBinaryLights;
-	
-	     /** Map containing all the presenceSensors in the house */
-	     private Map<String, PresenceSensor> mapPresenceSensors;
+          /** List containing all the lights in the house */
+	      private List<BinaryLight> listBinaryLights;
+          
+	      /** Map containing all the presenceSensors in the house */
+	      private Map<String, PresenceSensor> mapPresenceSensors;
    
 3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
 
@@ -175,10 +174,27 @@ You need to create and generate the skeleton of the unique class of your applica
 
 6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
 
+       /**
+	    * Method which	catches all BinaryLights from a location
+	    * @param location
+	    * @return List of BinaryLights
+	    */
+	    private List<BinaryLight> getBinaryLightFromLocation(String location) {
+		   List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
+		
+	  	   for(BinaryLight binaryLight : listBinaryLights) {
+			   if(binaryLight.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
+   				   binaryLightsLocation.add(binaryLight);
+			   }
+		   }
+		   return binaryLightsLocation;
+	    }
+
+
 7. Manage the light(s) if a presence is sensed. 
 
 
-![Create an instance](tutorial/fig12-instance.png "Create an instance")
+   ![Create an instance](tutorial/fig12-instance.png "Create an instance")
 
 
 ## 3. Application Deployment and Test
