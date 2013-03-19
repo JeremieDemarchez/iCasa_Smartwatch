@@ -25,7 +25,7 @@ You need to create and generate the skeleton of the unique class of your applica
 
 2. Configure the iPOJO Preferences. Go to *Windows -> Preferences -> iPOJO Preferences.*
 
-![iPojo Preferences](tutorial/fig5-setiPojoPreferences.png "iPojo Preferences")
+   ![iPojo Preferences](tutorial/fig5-setiPojoPreferences.png "iPojo Preferences")
 
 3. Create a new component *BinaryFollowMe*. Open the `metadata.xml` file with the iPOJO Metadata Editor.
 
@@ -44,51 +44,52 @@ You need to create and generate the skeleton of the unique class of your applica
 
 9. If you have done that successfully, you will have a skeleton like this:
 
-    package com.example.binary.follow.me;
+       package com.example.binary.follow.me;
 
-    import fr.liglab.adele.icasa.device.light.BinaryLight;
-    import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-    import java.util.Map;
+       import fr.liglab.adele.icasa.device.light.BinaryLight;
+       import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+       import java.util.Map;
     
-    public class BinaryLightFollowMeImpl {
+       public class BinaryLightFollowMeImpl {
     
-    	/** Field for binaryLights dependency */
-    	private BinaryLight[] binaryLights;
-    	/** Field for presenceSensors dependency */
-    	private PresenceSensor[] presenceSensors;
-    
-    	/** Bind Method for null dependency */
-    	public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-    		// TODO: Add your implementation code here
-    	}
-    
-    	/** Unbind Method for null dependency */
-    	public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-    		// TODO: Add your implementation code here
-    	}
+    	   /** Field for binaryLights dependency */
+    	   private BinaryLight[] binaryLights;
 
-    	/** Bind Method for null dependency */
-    	public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-    		// TODO: Add your implementation code here
-    	}
+           /** Field for presenceSensors dependency */
+    	   private PresenceSensor[] presenceSensors;
     
-    	/** Unbind Method for null dependency */
-    	public void unbindPresenceSensor(PresenceSensor presenceSensor,
+    	   /** Bind Method for null dependency */
+    	   public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
+    		   // TODO: Add your implementation code here
+    	   }
+    
+           /** Unbind Method for null dependency */
+    	   public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
+    		   // TODO: Add your implementation code here
+    	   }
+
+    	   /** Bind Method for null dependency */
+    	   public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+    		   // TODO: Add your implementation code here
+    	   }
+    
+    	   /** Unbind Method for null dependency */
+    	   public void unbindPresenceSensor(PresenceSensor presenceSensor,
     			Map properties) {
-    		// TODO: Add your implementation code here
-    	}
+    		   // TODO: Add your implementation code here
+    	   }
     
-    	/** Component Lifecycle Method */
-    	public void stop() {
-    		// TODO: Add your implementation code here
-    	}
+    	   /** Component Lifecycle Method */
+    	   public void stop() {
+    		   // TODO: Add your implementation code here
+    	   }
     
-    	/** Component Lifecycle Method */
-    	public void start() {
-    		// TODO: Add your implementation code here
-    	}
+    	   /** Component Lifecycle Method */
+    	   public void start() {
+    		   // TODO: Add your implementation code here
+    	   }
     
-    }
+       }
 
 ### 2.2. Complete the Code Skeleton
 
