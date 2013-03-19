@@ -175,6 +175,23 @@ You need to create and generate the skeleton of the unique class of your applica
 
 6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
 
+       /**
+	    * Method which	catches all BinaryLights from a location
+	    * @param location
+	    * @return List of BinaryLights
+	    */
+	    private List<BinaryLight> getBinaryLightFromLocation(String location) {
+		   List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
+		
+	  	   for(BinaryLight binaryLight : listBinaryLights) {
+			   if(binaryLight.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
+   				   binaryLightsLocation.add(binaryLight);
+			   }
+		   }
+		   return binaryLightsLocation;
+	    }
+
+
 7. Manage the light(s) if a presence is sensed. 
 
 
