@@ -5,8 +5,9 @@
 
 ## 1. Prerequisite
 
-
-
+- Install Java Development Kit 6 (Avoid Java 7 that may cause troubles).
+- Install iCasa-IDE following installation instructions on iCasa-IDE website(http://adeleresearchgroup.github.com/iCasa-IDE/).
+- Install an iCasa distribution. We recommend to use the iCasa Teaching distribution (See <a href="download.html">download page</a>).
 
 ## 2. Application Development
 
@@ -16,7 +17,15 @@ You need to create and generate the skeleton of the unique class of your applica
 
 1. Create a new iPOJO Project.
 
+![Create New iPojo Projet](tutorial/fig1-project.png "Create New iPojo Projet")
+
+![Create New iPojo Projet](tutorial/fig2-iPOJOProject.png "Create New iPojo Projet")
+
+![iPojo Projet Content](tutorial/fig4-iPOJOProjectContent.png "iPojo Projet Content")
+
 2. Configure the iPOJO Preferences. Go to *Windows -> Preferences -> iPOJO Preferences.*
+
+![iPojo Preferences](tutorial/fig5-setiPojoPreferences.png "iPojo Preferences")
 
 3. Create a new component *BinaryFollowMe*. Open the `metadata.xml` file with the iPOJO Metadata Editor.
 
