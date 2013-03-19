@@ -59,27 +59,27 @@ You need to create and generate the skeleton of the unique class of your applica
     	}
 
     	/** Bind Method for null dependency */
-	public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
-		// TODO: Add your implementation code here
-	}
-
-	/** Unbind Method for null dependency */
-	public void unbindPresenceSensor(PresenceSensor presenceSensor,
-			Map properties) {
-		// TODO: Add your implementation code here
-	}
-
-	/** Component Lifecycle Method */
-	public void stop() {
-		// TODO: Add your implementation code here
-	}
-
-	/** Component Lifecycle Method */
-	public void start() {
-		// TODO: Add your implementation code here
-	}
-
-}
+    	public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
+    		// TODO: Add your implementation code here
+    	}
+    
+    	/** Unbind Method for null dependency */
+    	public void unbindPresenceSensor(PresenceSensor presenceSensor,
+    			Map properties) {
+    		// TODO: Add your implementation code here
+    	}
+    
+    	/** Component Lifecycle Method */
+    	public void stop() {
+    		// TODO: Add your implementation code here
+    	}
+    
+    	/** Component Lifecycle Method */
+    	public void start() {
+    		// TODO: Add your implementation code here
+    	}
+    
+    }
 
 
 
