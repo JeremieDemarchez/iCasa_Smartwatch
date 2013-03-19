@@ -262,6 +262,9 @@ define(['jquery',
             options.slide = (e, ui) ->
                 sliderValue.value(ui.value)
 
+            options.stop = (e, ui) ->
+                viewModel.clock.model().save();
+
             ko.utils.domNodeDisposal.addDisposeCallback(element, () ->
               $(element).slider("destroy")
             )
@@ -1179,7 +1182,7 @@ define(['jquery',
            @newScriptName = ko.observable("");
 
            @saveScript = ()=>
-              newName = @newScriptName() + ".bhv";
+              newName = @newScriptName().replace(".bhv", "") + ".bhv";
               newScript = new DataModel.Models.Script({ scriptId: newName, name: newName, state: "stopped"});
               newScript.save();
               newScript.set(id: newName);

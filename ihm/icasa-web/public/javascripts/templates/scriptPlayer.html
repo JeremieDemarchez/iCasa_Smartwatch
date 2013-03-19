@@ -28,11 +28,12 @@
     </div>
 
     <div class="controls controls-row">
-        <label class="span1">Hour</label>
-        <div class="input-prepend input-append">
+        <label class="span1">Time</label>
+        <div class="input-append input-prepend">
             <input type="number" id="hour" class="input-mini" maxlength="2" min="0" max="23" data-bind="value: $root.clock.hours"/>
-            <span class="add-on">:</span>
+            <span class="add-on">H</span>
             <input type="number" id="minute" class="input-mini" maxlength="2" min="0" max="59" data-bind="value: $root.clock.minutes"/>
+            <span class="add-on">Min</span>
         </div>
     </div>
 
