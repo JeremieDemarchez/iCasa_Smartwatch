@@ -24,9 +24,9 @@
 
 
 <ul>
-<li>A graphical user interface: Simulations are run on top of an OSGi platform and displayed in a web browser. The interface displays a map of the house and the localization of the different devices. It allows students to create and configure devices, create and move physical users, and watch their actual configurations. Synchronization is automatically maintained between the GUI and the running platform ensuring that the interface is kept up to date.</li>
-<li>Scripting facilities: iCASA supports the scripts writing to control the environment. Scripts provide a convenient way to test the applications under reproducible conditions.</li>
-<li>Notification facilities: iCASA is event-based and is able to notify subscribers of any modifications in the environment.</li>
+<li><strong>A graphical user interface:</strong> The interface displays a map of the house and the localization of the different devices. It allows developers to create and configure devices, create and move physical users, and watch their actual configurations.</li>
+<li><strong>Scripting facilities:</strong> iCASA supports the scripts writing to control the environment. Scripts provide a convenient way to test the applications under reproducible conditions.</li>
+<li><strong>Notification facilities:</strong> iCASA is event-based and is able to notify subscribers of any modifications in the environment.</li>
 </ul>
 
 <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
