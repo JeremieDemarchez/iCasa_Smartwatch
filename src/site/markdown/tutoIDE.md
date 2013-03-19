@@ -1,5 +1,7 @@
 # Tutorial: Light Follow Me
 
+   ![FollowMe Application](tutorial/followMe.png "FollowMe Application")
+
 // Introduction
 
 
