@@ -17,11 +17,11 @@ You need to create and generate the skeleton of the unique class of your applica
 
 1. Create a new iPOJO Project.
 
-![Create New iPojo Projet](tutorial/fig1-project.png "Create New iPojo Projet")
+   ![Create New iPojo Projet](tutorial/fig1-project.png "Create New iPojo Projet")
 
-![Create New iPojo Projet](tutorial/fig2-iPOJOProject.png "Create New iPojo Projet")
+   ![Create New iPojo Projet](tutorial/fig2-iPOJOProject.png "Create New iPojo Projet")
 
-![iPojo Projet Content](tutorial/fig4-iPOJOProjectContent.png "iPojo Projet Content")
+   ![iPojo Projet Content](tutorial/fig4-iPOJOProjectContent.png "iPojo Projet Content")
 
 2. Configure the iPOJO Preferences. Go to *Windows -> Preferences -> iPOJO Preferences.*
 
