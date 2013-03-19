@@ -39,15 +39,15 @@
     <div class="controls controls-row">
         <label class="span1">Factor</label>
         <div class="controls">
-            <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.selectedScriptFactor, valueUpdate:'afterkeydown'"/>
-            <button class="btn span" id="play" data-bind="click: $root.startClock, visible: $root.clock.pausedUI"><i class="icon-play"></i>Play</button>
-            <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pausedUI()"><i class="icon-pause"></i>Pause</button>
+            <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.clock.factor, valueUpdate:'afterkeydown'"/>
+            <button class="btn span" id="play" data-bind="click: $root.startClock, visible: $root.clock.pause"><i class="icon-play"></i>Play</button>
+            <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pause()"><i class="icon-pause"></i>Pause</button>
         </div>
     </div>
 
     <div id="scriptPlayerSlider">
         <span id="scriptPlayerSliderMin" class="pull-left">0</span>
-        <div id="scriptPlayerSliderBar" style="" data-bind="jqFactorSlider: {value: selectedScriptFactor}, sliderOpt: {min: 0, max: 15000}"></div>
+        <div id="scriptPlayerSliderBar" style="" data-bind="jqFactorSlider: {value: $root.clock.factor}, sliderOpt: {min: 0, max: 15000}"></div>
         <div id="scriptPlayerSliderMax">
             <span>Max</span>
             <input type="text" data-bind="value: $root.maxFactor"/>
@@ -68,8 +68,8 @@
     <div class="controls controls-row">
         <div class="controls">
             <button class="btn span" data-bind="click: startScript, visible: ($root.selectedScript() == undefined || $root.selectedScript().state() == 'stopped' || $root.selectedScript().state() == 'paused') "><i class='icon-play'></i>Start</button>
-            <button class="btn span" data-bind="click: pauseScript, visible: ($root.selectedScript() == undefined || $root.selectedScript().state() == 'started')"><i class='icon-pause'></i>Pause</button>
-            <button class="btn span" data-bind="click: stopScript, enable: ($root.selectedScript() == undefined || $root.selectedScript().state() == 'started' || $root.selectedScript().state() == 'paused')"><i class='icon-stop'></i>Stop</button>
+            <button class="btn span" data-bind="click: pauseScript, visible: (($root.selectedScript() != undefined) && ($root.selectedScript().state() == 'started'))"><i class='icon-pause'></i>Pause</button>
+            <button class="btn span" data-bind="click: stopScript, enable: (($root.selectedScript() != undefined) && (($root.selectedScript().state() == 'started') || ($root.selectedScript().state() == 'paused') ))"><i class='icon-stop'></i>Stop</button>
         </div>
     </div>
     <br/>
