@@ -241,22 +241,35 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Override
 	public void install(File artifact) throws Exception {
-		logger.info("--------------------  New Script File added : " + artifact.getName());
-
 		ScriptSAXHandler handler = parseFile(artifact);
-		if (handler != null)
-			scriptMap.put(artifact.getName(), handler);
-
+		if (handler != null) {
+			String scriptName = artifact.getName();
+			scriptMap.put(scriptName, handler);
+			for (ScriptExecutorListener listener : getListenersCopy()) {
+				listener.scriptAdded(scriptName);
+			}
+		}
 	}
 
 	@Override
 	public void update(File artifact) throws Exception {
-		install(artifact);
+		ScriptSAXHandler handler = parseFile(artifact);
+		if (handler != null) {
+			String scriptName = artifact.getName();
+			scriptMap.put(scriptName, handler);
+			for (ScriptExecutorListener listener : getListenersCopy()) {
+				listener.scriptUpdated(scriptName);
+			}
+		}
 	}
 
 	@Override
 	public void uninstall(File artifact) throws Exception {
-		scriptMap.remove(artifact);
+		String scriptName = artifact.getName();
+		scriptMap.remove(scriptName);
+		for (ScriptExecutorListener listener : getListenersCopy()) {
+			listener.scriptRemoved(scriptName);
+		}
 	}
 
 	@Override

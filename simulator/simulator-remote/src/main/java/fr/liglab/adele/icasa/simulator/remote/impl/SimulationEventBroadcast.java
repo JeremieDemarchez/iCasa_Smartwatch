@@ -217,6 +217,21 @@ public class SimulationEventBroadcast  {
 	private class ScriptPlayerEventListener implements ScriptExecutorListener {
 
 		@Override
+      public void scriptAdded(String scriptName) {
+			sendModifiedEvent("script-added", scriptName);		      
+      }
+
+		@Override
+      public void scriptRemoved(String scriptName) {
+			sendModifiedEvent("script-removed", scriptName);		      
+      }
+		
+		@Override
+      public void scriptUpdated(String scriptName) {
+			sendModifiedEvent("script-updated", scriptName);	      
+      }
+		
+		@Override
       public void scriptPaused(String scriptName) {
 			sendModifiedEvent("script-paused", scriptName);	
       }
@@ -246,6 +261,10 @@ public class SimulationEventBroadcast  {
 				e.printStackTrace();
 			}
 		}
+
+
+
+
 		
 	}
 

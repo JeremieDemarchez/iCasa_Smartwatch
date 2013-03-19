@@ -24,7 +24,7 @@ Installation Procedure
 1. Download a full iCasa Simulator binary distribution (We recommend the icasa.teaching.distribution to start).
 2. Unzip it on a local folder i.e. the ICASA_HOME directory.
 
-The unziped directory should have this structure
+The ICASA_HOME directory should have this structure
 
 ![Icasa Structure](install/icasa-home.png "Icasa Structure")
    
