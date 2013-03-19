@@ -161,7 +161,6 @@ You need to create and generate the skeleton of the unique class of your applica
 		   mapPresenceSensors = new HashMap<String, PresenceSensor>();
 	   }
 
-
 6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
 
 7. Manage the light(s) if a presence is sensed. 
