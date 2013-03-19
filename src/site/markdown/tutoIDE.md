@@ -81,6 +81,17 @@ You need to create and generate the skeleton of the unique class of your applica
     
     }
 
+### 2.2. Complete the Code Skeleton
+
+1. In order to be notified when something is modified in the environment, the `BinaryLightFollowMeImpl` class must implement `DeviceListener` interface.
+
+    public class BinaryLightFollowMeImpl implements DeviceListener
+
+2. Add two attributes in this `BinaryLightFollowMeImpl` class:
+   * `listBinaryLight` is a list containing all the lights available in the environment;
+   * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
+   
+3.    
 
 
 ## 3. Application Deployment and Test
