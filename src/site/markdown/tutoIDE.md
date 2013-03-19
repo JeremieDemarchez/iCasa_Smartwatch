@@ -44,15 +44,18 @@ You need to create and generate the skeleton of the unique class of your applica
 
 9. If you have done that successfully, you will have a skeleton like this:
 
-    package com.example.binary.follow.me;
 
-    import fr.liglab.adele.icasa.device.light.BinaryLight;
-    import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-    import java.util.Map;
+
+<pre><code>
+    package com.example.binary.follow.me;
+	
+	import fr.liglab.adele.icasa.device.light.BinaryLight;
+	import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+	import java.util.Map;
     
-    public class BinaryLightFollowMeImpl {
+	public class BinaryLightFollowMeImpl {
     
-    	/** Field for binaryLights dependency */
+		/** Field for binaryLights dependency */
     	private BinaryLight[] binaryLights;
     	/** Field for presenceSensors dependency */
     	private PresenceSensor[] presenceSensors;
@@ -89,7 +92,8 @@ You need to create and generate the skeleton of the unique class of your applica
     	}
     
     }
-
+</code></pre>
+	
 ### 2.2. Complete the Code Skeleton
 
 1. In order to be notified when something is modified in the environment, the `BinaryLightFollowMeImpl` class must implement `DeviceListener` interface.
