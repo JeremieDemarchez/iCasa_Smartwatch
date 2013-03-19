@@ -55,9 +55,8 @@ You need to create and generate the skeleton of the unique class of your applica
    ![Generate component implementation Setup](tutorial/fig11-generate2.png "Generate component implementation Setup")
 
 9. If you have done that successfully, you will have a skeleton like this:
-
-   <pre><code>
-   package com.example.binary.follow.me;
+  
+   <pre><code>package com.example.binary.follow.me;
        
    import fr.liglab.adele.icasa.device.light.BinaryLight;
    import fr.liglab.adele.icasa.device.presence.PresenceSensor;
@@ -106,19 +105,20 @@ You need to create and generate the skeleton of the unique class of your applica
 ### 2.2. Complete the Code Skeleton
 
 1. In order to be notified when something is modified in the environment, the `BinaryLightFollowMeImpl` class must implement `DeviceListener` interface.
-   <pre><code>
-       public class BinaryLightFollowMeImpl implements DeviceListener
-   </code></pre>
+   
+   <pre><code>public class BinaryLightFollowMeImpl implements DeviceListener</code></pre>
 
 2. Add two attributes in this `BinaryLightFollowMeImpl` class:
    * `listBinaryLight` is a list containing all the lights available in the environment;
    * `mapPresenceSensor`is a map containing all the presence sensors available in the environment.
+   
+   <pre><code>
+   /** List containing all the lights in the house */
+    private List<BinaryLight> listBinaryLights;
     
-          /** List containing all the lights in the house */
-	      private List<BinaryLight> listBinaryLights;
-          
-	      /** Map containing all the presenceSensors in the house */
-	      private Map<String, PresenceSensor> mapPresenceSensors;
+    /** Map containing all the presenceSensors in the house */
+	private Map<String, PresenceSensor> mapPresenceSensors;</code></pre>
+    
    
 3. Complete the code of `bind` and `unbind` methods by adding and removing devices from their respective sets.
 
