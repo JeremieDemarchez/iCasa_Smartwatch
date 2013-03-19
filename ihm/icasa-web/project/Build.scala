@@ -4,8 +4,12 @@ import PlayProject._
 
 object ApplicationBuild extends Build {
 
-    val appName         = "icasa-web"
-    val appVersion      = "1.0.0-SNAPSHOT"
+    def fromEnv(name: String) = System.getenv(name) match {
+      case null => None
+      case value => Some(value)
+    }
+    val appName = fromEnv("project.artifactId").getOrElse("icasa-web")
+    val appVersion = fromEnv("project.version").getOrElse("1.0.0-SNAPSHOT")
 
     val appDependencies = Seq(
 

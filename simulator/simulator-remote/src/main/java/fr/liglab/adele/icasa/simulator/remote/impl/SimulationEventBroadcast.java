@@ -237,10 +237,10 @@ public class SimulationEventBroadcast  {
       }
 		
 		private void sendModifiedEvent(String eventType, String scriptName) {
-			System.out.println("Sending ----> " + eventType);
 			JSONObject json = new JSONObject();
 			try {
-				json.put("script", IcasaSimulatorJSONUtil.getScriptJSON(scriptName, _scriptExecutor));
+                json.put("scriptId", scriptName);
+                json.put("script", IcasaSimulatorJSONUtil.getScriptJSON(scriptName, _scriptExecutor));
 				_broadcaster.sendEvent(eventType, json);
 			} catch (JSONException e) {
 				e.printStackTrace();
