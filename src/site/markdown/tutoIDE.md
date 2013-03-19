@@ -158,38 +158,37 @@ You need to create and generate the skeleton of the unique class of your applica
 
 5. Complete the `start` and `stop` lifecycle methods with a message. Initialize the required fields at validate and clear those fields at invalidate.
 
-   	   /** Component Lifecycle Method */
-	   public void stop() {
-		   System.out.println("Component is stopping...");
-		   listBinaryLights = null;
-		   mapPresenceSensors = null;
-	   }
+   <pre><code>/** Component Lifecycle Method */
+   public void stop() {
+	   System.out.println("Component is stopping...");
+	   listBinaryLights = null;
+	   mapPresenceSensors = null;
+   }
 
-	   /** Component Lifecycle Method */
-	   public void start() {
-		   System.out.println("Component is starting...");
-		   listBinaryLights = new ArrayList<BinaryLight>();
-		   mapPresenceSensors = new HashMap<String, PresenceSensor>();
-	   }
+   /** Component Lifecycle Method */
+   public void start() {
+	   System.out.println("Component is starting...");
+	   listBinaryLights = new ArrayList<BinaryLight>();
+	   mapPresenceSensors = new HashMap<String, PresenceSensor>();
+   }</code></pre>
 
 6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
 
-       /**
-	    * Method which	catches all BinaryLights from a location
-	    * @param location
-	    * @return List of BinaryLights
-	    */
-	    private List<BinaryLight> getBinaryLightFromLocation(String location) {
-		   List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
-		
-	  	   for(BinaryLight binaryLight : listBinaryLights) {
-			   if(binaryLight.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
-   				   binaryLightsLocation.add(binaryLight);
-			   }
+   <pre><code>/**
+    * Method which	catches all BinaryLights from a location
+    * @param location
+    * @return List of BinaryLights
+    */
+    private List<BinaryLight> getBinaryLightFromLocation(String location) {
+	   List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
+	
+  	   for(BinaryLight binaryLight : listBinaryLights) {
+		   if(binaryLight.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
+ 			   binaryLightsLocation.add(binaryLight);
 		   }
-		   return binaryLightsLocation;
-	    }
-
+	   }
+	   return binaryLightsLocation;
+    }</code></pre>
 
 7. Manage the light(s) if a presence is sensed. 
 
