@@ -19,11 +19,12 @@ limitations under the License.
          <modelVersion>4.0.0</modelVersion>
          
          <!-- Project parent -->
+         <!-- Project parent -->
          <parent>
-            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <groupId>fr.liglab.adele.icasa.actimetry.autonomic</groupId>
             <artifactId>parent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <relativePath>../../../../parent</relativePath>
+            <relativePath>../../</relativePath>
          </parent>
          
          <!-- Project coordinates -->
@@ -52,26 +53,23 @@ limitations under the License.
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
                <artifactId>cilia.dp</artifactId>
-               <version>1.6.4-SNAPSHOT</version> 
                <type>deployment-package</type>
             </dependency>
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
                <artifactId>cilia-remote.dp</artifactId>
-               <version>1.6.4-SNAPSHOT</version> 
                <type>deployment-package</type>
             </dependency>
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
                <artifactId>cilia-eventadmin.dp</artifactId>
-               <version>1.6.4-SNAPSHOT</version> 
                <type>deployment-package</type>
             </dependency>
             
             <!-- Components  -->
             <dependency>
                <groupId>${project.groupId}</groupId>
-               <artifactId>cilia.components.mock.dp</artifactId>
+               <artifactId>measure.generator.mock.dp</artifactId>
                <version>${project.version}</version>
                <type>deployment-package</type>
             </dependency>

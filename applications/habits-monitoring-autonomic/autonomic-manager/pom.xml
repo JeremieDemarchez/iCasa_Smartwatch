@@ -17,10 +17,10 @@ limitations under the License.
          
          <!-- Project parent -->
          <parent>
-            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <groupId>fr.liglab.adele.icasa.actimetry.autonomic</groupId>
             <artifactId>parent</artifactId>
             <version>1.0.0-SNAPSHOT</version>
-            <relativePath>../../../parent</relativePath>
+            <relativePath>../</relativePath>
          </parent>
          
          <!-- Project Descrkiption -->

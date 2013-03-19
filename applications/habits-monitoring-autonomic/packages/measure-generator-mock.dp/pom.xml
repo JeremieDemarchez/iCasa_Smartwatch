@@ -3,35 +3,34 @@
 
   <!-- Project parent -->
   <parent>
-     <groupId>fr.liglab.adele.icasa.apps</groupId>
+     <groupId>fr.liglab.adele.icasa.actimetry.autonomic</groupId>
      <artifactId>parent</artifactId>
      <version>1.0.0-SNAPSHOT</version>
-     <relativePath>../../../../parent</relativePath>
+     <relativePath>../../</relativePath>
   </parent>
 
 	<!-- Project Description -->
-	<artifactId>cilia.components.dp</artifactId>
+	<artifactId>measure.generator.mock.dp</artifactId>
 	<packaging>deployment-package</packaging>
-   <name>${productName} :: Habits autonomic :: Cilia Components :: DP</name>
+   <name>${productName} :: Habits autonomic :: Measure Generator :: Mock DP</name>
 
 	<dependencies>
       <!-- habits monitoring application -->
       <dependency>
-         <groupId>${project.groupId}</groupId>
-         <artifactId>event.webservice.impl</artifactId>
+         <groupId>fr.liglab.adele.icasa.apps</groupId>
+         <artifactId>event.webservice.mock.impl</artifactId>
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>fr.liglab.adele.icasa.apps</groupId>
          <artifactId>event.webservice.api</artifactId>
          <version>${project.version}</version>
       </dependency>
       <dependency>
          <groupId>${project.groupId}</groupId>
-         <artifactId>cilia.components</artifactId>
+         <artifactId>measure.generator</artifactId>
          <version>${project.version}</version>
       </dependency>
-
 	</dependencies>
 
 	<build>

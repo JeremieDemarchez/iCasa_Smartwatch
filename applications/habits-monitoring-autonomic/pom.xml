@@ -24,14 +24,19 @@
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>habits.autonomic</artifactId>
+   <groupId>fr.liglab.adele.icasa.actimetry.autonomic</groupId>
+	<artifactId>parent</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
+  <properties>
+     <ciliaVersion>1.6.4-SNAPSHOT</ciliaVersion>
+  </properties>
+	
 	<modules>
 		<module>autonomic-manager</module>
-		<module>cilia-components</module>
-		<module>cilia-components-compendium</module>
+		<module>measure-generator</module>
+		<module>photometer-adapter</module>
 		<module>packages</module>
 		<module>distribution</module>
 	</modules>
@@ -45,4 +50,37 @@
          </plugin>
       </plugins>
    </build>
+   <dependencyManagement>
+      <dependencies>
+         <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia-core</artifactId>
+            <version>${ciliaVersion}</version> 
+         </dependency>
+         
+         <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia-runtime</artifactId>
+            <version>${ciliaVersion}</version> 
+            </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia.dp</artifactId>
+            <version>${ciliaVersion}</version> 
+            <type>deployment-package</type>
+         </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia-remote.dp</artifactId>
+            <version>${ciliaVersion}</version> 
+            <type>deployment-package</type>
+         </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia-eventadmin.dp</artifactId>
+            <version>${ciliaVersion}</version> 
+            <type>deployment-package</type>
+         </dependency>
+      </dependencies>
+   </dependencyManagement>
 </project>
