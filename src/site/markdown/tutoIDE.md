@@ -159,7 +159,19 @@ You need to create and generate the skeleton of the unique class of your applica
 
 5. Complete the `start` and `stop` lifecycle methods with a message. Initialize the required fields at validate and clear those fields at invalidate.
 
+   	   /** Component Lifecycle Method */
+	   public void stop() {
+		   System.out.println("Component is stopping...");
+		   listBinaryLights = null;
+		   mapPresenceSensors = null;
+	   }
 
+	   /** Component Lifecycle Method */
+	   public void start() {
+		   System.out.println("Component is starting...");
+		   listBinaryLights = new ArrayList<BinaryLight>();
+		   mapPresenceSensors = new HashMap<String, PresenceSensor>();
+	   }
 
 6. Create a method named `getBinaryLightFromLocation`. This method will create a list of all binary lights from a location.
 
