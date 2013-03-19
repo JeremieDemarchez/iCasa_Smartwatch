@@ -6,6 +6,7 @@ Detectors
 * <a href="#PhotometerCard">Photometer</a>
 * <a href="#PresenceSensorCard">Presence Sensor</a>
 * <a href="#PowerSwitchCard">Power Switch</a>
+* <a href="#ThermometerCard">Thermometer</a>
 
 
 <div class="idCard">
@@ -134,6 +135,7 @@ The photometer returns the value of the current illuminance. This value is expre
 
 
 
+
 <div class="idCard">
 
 <div class="titleCard"><a name="PowerSwitchCard">Power Switch</a></div>
@@ -205,5 +207,55 @@ The photometer returns the value of the current illuminance. This value is expre
 
 
 
+<div class="idCard">
+
+<div class="titleCard"><a name="ThermometerCard">Thermometer</a></div>
+
+<div class="photo"><img src="./devices/thermometer.png" width="100"/></div>
+
+<div class="description">
+<div class="hCard">Overview</div> 
+ 
+<p>Thermometer can supply only one model of thermometer which is a standard thermometer. The thermometer can be used to have the current temperature in a room. The thermometer device returns a value in Kelvin degree for the temperature.</p>
+ 
+<div class="hCard">Device properties</div>
+
+<table>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+
+
+        
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.temperature.Thermometer</code>
+
+<ul>
+<li><code>getSerialNumber()</code>: Get the device ID</li>
+<li><code>getTemperature()</code>: Get the current temperature of the thermometer in Kelvin degree</li>
+
+</ul>
+
+<a href="./datasheets/Datasheet_Thermometer.pdf">Full datasheet here</a>
+</div>
+<div class="separator"></div>
+</div>
 
 
