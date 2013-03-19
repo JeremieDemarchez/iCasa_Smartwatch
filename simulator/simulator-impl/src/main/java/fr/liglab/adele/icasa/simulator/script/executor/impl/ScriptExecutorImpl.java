@@ -246,8 +246,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			String scriptName = artifact.getName();
 			scriptMap.put(scriptName, handler);
 			for (ScriptExecutorListener listener : getListenersCopy()) {
-				listener.scriptAdded(scriptName);
-			}
+                try {
+                    listener.scriptAdded(scriptName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 		}
 	}
 
@@ -258,8 +262,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			String scriptName = artifact.getName();
 			scriptMap.put(scriptName, handler);
 			for (ScriptExecutorListener listener : getListenersCopy()) {
-				listener.scriptUpdated(scriptName);
-			}
+                try {
+                    listener.scriptUpdated(scriptName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 		}
 	}
 
@@ -268,8 +276,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		String scriptName = artifact.getName();
 		scriptMap.remove(scriptName);
 		for (ScriptExecutorListener listener : getListenersCopy()) {
-			listener.scriptRemoved(scriptName);
-		}
+            try {
+                listener.scriptRemoved(scriptName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
@@ -503,8 +515,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			throw new NullPointerException("listener");
 		}
 		synchronized (listeners) {
-			listeners.add(listener);
-		}
+            try {
+                listeners.add(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
@@ -513,8 +529,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			throw new NullPointerException("listener");
 		}
 		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+            try {
+                listeners.remove(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	private List<ScriptExecutorListener> getListenersCopy() {

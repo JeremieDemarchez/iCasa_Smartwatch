@@ -1,6 +1,6 @@
 # Simulator Web Guide
 
-The simulator module of iCasa platform provides a web interface for interaction with the server side (gateway). In the home page the user can select a simulation platform of the list. To access (locally) the home page in your browser go to this url : [http://localhost:9000](http://localhost:9000). If you prefer the cloud version go to [http://simulator-icasa.rhcloud.com/](http://simulator-icasa.rhcloud.com/).
+The simulator module of iCasa platform provides a web interface for interaction with the server side (gateway). In the home page the user can select a simulation platform of the list. To access (locally) the home page in your browser go to this url : [http://localhost:9000](http://localhost:9000).
     
 Once one platform selected, the simulator main interface is displayed. The main interface is divided in two sections: the map section presents the house plan, and the actions section shows information about the execution state of the iCasa platform and allows user to modify it.
     

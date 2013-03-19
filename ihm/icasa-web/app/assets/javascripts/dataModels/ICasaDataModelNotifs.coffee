@@ -118,11 +118,18 @@ define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataMo
       clock.set(json.clock);
 
     # manage script events
-    if ((json.eventType == "script-started") || (json.eventType == "script-stopped") || (json.eventType == "script-resumed") || (json.eventType == "script-paused"))
+    if ((json.eventType == "script-updated") || (json.eventType == "script-started") || (json.eventType == "script-stopped") || (json.eventType == "script-resumed") || (json.eventType == "script-paused"))
       script = locateModel(DataModel.collections.scripts, json.scriptId, "scriptId");
       if ((script != null) && (script != undefined))
         script.set(json.script);
-        #TODO update selectedScript and corresponding state
+    if (json.eventType == "script-added")
+      script = locateModel(DataModel.collections.scripts, json.scriptId, "scriptId");
+      if ((script != null) && (script != undefined))
+        DataModel.collections.scripts.add(json.script);
+    if (json.eventType == "script-removed")
+      script = locateModel(DataModel.collections.scripts, json.scriptId, "scriptId");
+      if ((script != null) && (script != undefined))
+        DataModel.collections.scripts.remove(script);
 
   request.onClose = (response) ->
     return console.log "Connection closed"

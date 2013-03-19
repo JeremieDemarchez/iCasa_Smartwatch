@@ -105,8 +105,12 @@ public class SimulatedClockImpl implements Clock {
 		
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.factorModified(oldFactor);
-		}
+            try {
+                listener.factorModified(oldFactor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	/*
@@ -121,8 +125,12 @@ public class SimulatedClockImpl implements Clock {
 
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.startDateModified(oldDate);
-		}
+            try {
+                listener.startDateModified(oldDate);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
@@ -147,8 +155,12 @@ public class SimulatedClockImpl implements Clock {
 		
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.clockResumed();
-		}
+            try {
+                listener.clockResumed();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 		
 	}
 		
@@ -160,8 +172,12 @@ public class SimulatedClockImpl implements Clock {
 		
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.clockReset();
-		}
+            try {
+                listener.clockReset();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 	
 	@Override
@@ -177,6 +193,8 @@ public class SimulatedClockImpl implements Clock {
 	@Validate
 	public void start() {
 		initDate = System.currentTimeMillis();
+		factor = 1;
+		pause = false;		
 		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
 		timeThread.start();
 	}
