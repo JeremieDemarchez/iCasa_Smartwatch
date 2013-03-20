@@ -42,7 +42,6 @@
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.0.4</AdeleBaseVersion>
         <roseVersion>1.0.2</roseVersion>
-        <iCasaVersion>1.0.0-SNAPSHOT</iCasaVersion>
 	</properties>
 
 	<developers>
@@ -174,7 +173,7 @@
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.platform.dp</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${iCasaPlatformVersion}</version>
                 <type>deployment-package</type>
             </dependency>
 
@@ -190,32 +189,32 @@
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>simulator.api</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>simulator.impl</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.light</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.sound</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.temperature</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.presence</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
@@ -225,34 +224,34 @@
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.personal</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.bathroom.scale</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>continua-rest-client</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>clock.simulated.impl</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.simulator.dp</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
                 <type>deployment-package</type>
             </dependency>
 
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.web</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
                 <type>play2</type>
             </dependency>
 
