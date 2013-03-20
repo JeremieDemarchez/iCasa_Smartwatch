@@ -1,11 +1,11 @@
 /**
  *
  *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
- *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   Licensed under a specific end user license agreement;
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html
  *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
@@ -246,8 +246,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			String scriptName = artifact.getName();
 			scriptMap.put(scriptName, handler);
 			for (ScriptExecutorListener listener : getListenersCopy()) {
-				listener.scriptAdded(scriptName);
-			}
+                try {
+                    listener.scriptAdded(scriptName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 		}
 	}
 
@@ -258,8 +262,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			String scriptName = artifact.getName();
 			scriptMap.put(scriptName, handler);
 			for (ScriptExecutorListener listener : getListenersCopy()) {
-				listener.scriptUpdated(scriptName);
-			}
+                try {
+                    listener.scriptUpdated(scriptName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
 		}
 	}
 
@@ -268,8 +276,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		String scriptName = artifact.getName();
 		scriptMap.remove(scriptName);
 		for (ScriptExecutorListener listener : getListenersCopy()) {
-			listener.scriptRemoved(scriptName);
-		}
+            try {
+                listener.scriptRemoved(scriptName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
@@ -503,8 +515,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			throw new NullPointerException("listener");
 		}
 		synchronized (listeners) {
-			listeners.add(listener);
-		}
+            try {
+                listeners.add(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
@@ -513,8 +529,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			throw new NullPointerException("listener");
 		}
 		synchronized (listeners) {
-			listeners.remove(listener);
-		}
+            try {
+                listeners.remove(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	private List<ScriptExecutorListener> getListenersCopy() {

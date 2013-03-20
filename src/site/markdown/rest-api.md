@@ -1,6 +1,6 @@
 # iCasa REST API
 
-iCasa provides a set of functional and simulation services used by pervasive application developers. A set of REST web services is provide to access those services. In this document the iCasa REST API will be presented. All web services use JSON as data representation.
+iCasa provides a set of functional and simulation services used by pervasive application developers. A set of REST web services is provided to access those services. In this document the iCasa REST API will be presented. All web services use JSON as data representation.
 
 - <a href="#Zone">Zone Service</a>
 - <a href="#Device">Device Service</a>

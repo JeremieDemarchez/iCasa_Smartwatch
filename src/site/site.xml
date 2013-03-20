@@ -89,7 +89,7 @@
             <item name="Script Language" href="script.html"/>
 			<item name="REST API" href="rest-api.html"/>
 			<item name="Device Building Tutorial" href="building-device.html"/>
-
+            <item name="Javadoc" href="apidocs/index.html"/>
 		</menu>		
 		
         <menu name="Simulated Devices">

@@ -253,38 +253,6 @@ define(['jquery',
             return { controlsDescendantBindings: false };
     };
 
-    ko.bindingHandlers.scriptButtons = {
-        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-
-            playBt = $("<button><i class='icon-play'></i>Start</button>").addClass("btn span");
-            pauseBt = $("<button><i class='icon-pause'></i>Pause</button>").addClass("btn span").hide();
-            stopBt = $("<button><i class='icon-stop'></i>Stop</button>").addClass("btn span").attr("disabled", "disabled");
-
-            playBt.click(() ->
-                pauseBt.show()
-                playBt.hide()
-                stopBt.removeAttr("disabled");
-                viewModel.startScript()
-            )
-            pauseBt.click(() ->
-                playBt.show()
-                pauseBt.hide()
-                viewModel.pauseScript()
-            )
-            stopBt.click(() ->
-                playBt.show()
-                pauseBt.hide()
-                stopBt.attr("disabled", "disabled");
-                viewModel.stopScript()
-            )
-
-            $(element).append(pauseBt)
-            $(element).append(playBt)
-            $(element).append(stopBt)
-
-            return { controlsDescendantBindings: false };
-    };
-
     ko.bindingHandlers.jqFactorSlider = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
@@ -293,6 +261,9 @@ define(['jquery',
 
             options.slide = (e, ui) ->
                 sliderValue.value(ui.value)
+
+            options.stop = (e, ui) ->
+                viewModel.clock.model().save();
 
             ko.utils.domNodeDisposal.addDisposeCallback(element, () ->
               $(element).slider("destroy")
@@ -866,10 +837,6 @@ define(['jquery',
           @startDate = kb.observable(model, 'startDate')
           @pause = kb.observable(model, 'pause')
           @factor = kb.observable(model, 'factor')
-          @factor(1)
-
-          #variable to avoid clock to pause when we receive a notification with pause = true
-          @pausedUI = ko.observable(true)
 
           @minutes = ko.computed({
              read: =>
@@ -946,21 +913,6 @@ define(['jquery',
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
 
            @clock = new ClockViewModel(DataModel.models.clock);
-
-           d = new Date();
-           @clock.currentTime(d.getTime());
-
-           @notRoomZones = ko.computed(() =>
-                return ko.utils.arrayFilter(@zones, (zone) ->
-                    return !zone.isRoom();
-                );
-           , @);
-
-           @rooms = ko.computed(() =>
-                return ko.utils.arrayFilter(@zones, (zone) ->
-                    return zone.isRoom();
-                );
-           , @);
 
            @scripts = kb.collectionObservable(DataModel.collections.scripts, {view_model: ScriptViewModel});
 
@@ -1216,24 +1168,21 @@ define(['jquery',
                 @clock.currentTime(d.getTime())
                 @selectedScript().state('started');
                 @selectedScript().model().save();
-                @startClock();
 
            @stopScript = () =>
               if (@selectedScript())
                 @selectedScript().state('stopped');
                 @selectedScript().model().save();
-                @pauseClock();
 
            @pauseScript = () =>
               if (@selectedScript())
                 @selectedScript().state('paused');
                 @selectedScript().model().save();
-                @pauseClock();
 
            @newScriptName = ko.observable("");
 
            @saveScript = ()=>
-              newName = @newScriptName() + ".bhv";
+              newName = @newScriptName().replace(".bhv", "") + ".bhv";
               newScript = new DataModel.Models.Script({ scriptId: newName, name: newName, state: "stopped"});
               newScript.save();
               newScript.set(id: newName);
@@ -1251,9 +1200,6 @@ define(['jquery',
                    return day + "/" + month + "/" + d.getFullYear();
               write: (date)=>
                 @selectedScript().startDate(date+"-00:00:00")
-                d = new Date(date.substring(6,10),date.substring(3,5)-1,date.substring(0,2))
-                @clock.startDate(d.getTime())
-                @clock.currentTime(d.getTime())
            }, @)
 
            @scriptEndDate = ko.computed( () =>
@@ -1270,6 +1216,7 @@ define(['jquery',
                 return day + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
            );
 
+           # NOT USED for now
            @selectedScriptFactor = ko.computed({
               read: =>
                 if (@selectedScript())
@@ -1283,44 +1230,53 @@ define(['jquery',
            }, @)
 
            @maxFactor = ko.computed( ()=>
-             if (@selectedScript())
-               if (@selectedScript().factor() > 15000)
-                 return @selectedScript().factor()
+             clockFactor = @clock.factor();
+             if (clockFactor)
+               if (clockFactor > 15000)
+                 return clockFactor;
                else
-                 return 15000
+                 return 15000;
              else
                return 15000;
            )
 
            @scriptProgress = ko.computed( ()=>
-              if @selectedScript()
-                if @selectedScript().executionTime() != 0 && (@selectedScript().state() == 'started' || @selectedScript().state() == 'paused')
+              if (@selectedScript())
+                if ( (@selectedScript().executionTime() != 0) && ( (@selectedScript().state() == 'started') || (@selectedScript().state() == 'paused')))
                   scriptTime = @clock.currentTime() - @clock.startDate()
                   executionTimeMs = (@selectedScript().executionTime() * 60 * 1000)
-                  return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) )*100
+                  return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) ) * 100
                 else
                   return 0
               else
                 return 0
            );
 
-           @startClock = ()=>
-              @clock.pausedUI(false);
+           @startClockTimer = ()=>
               timer = ()=>
-                if !@clock.pausedUI()
+                if (! @clock.pause())
                   currentTime = @clock.currentTime()
-                  @clock.currentTime(currentTime + (100*@selectedScriptFactor()))
+                  @clock.currentTime(currentTime + (100 * @clock.factor()))
                   setTimeout(timer, 100)
 
               timer();
 
            @pauseClock = ()=>
-              @clock.pausedUI(true)
+              @clock.pause(true);
+              @clock.model().save();
 
+           @startClock = ()=>
+              @clock.pause(false);
+              @clock.model().save();
 
            # init clock state
-           if (@clock.pause())
-             @startClock();
+           @updateClockTimer= (newValue) =>
+             clockPaused = newValue;
+             if (! clockPaused)
+               @startClockTimer();
+
+           @clock.pause.subscribe(@updateClockTimer);
+           @startClockTimer();
 
            # managing map size change (must update position of persons, zones and devices)
            @updateModelPosition=(model)=>

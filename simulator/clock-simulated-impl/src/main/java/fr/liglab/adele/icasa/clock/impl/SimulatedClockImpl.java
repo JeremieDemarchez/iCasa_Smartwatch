@@ -1,11 +1,11 @@
 /**
  *
  *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
- *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   Licensed under a specific end user license agreement;
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
  *
- *     http://www.apache.org/licenses/LICENSE-2.0
+ *     http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html
  *
  *   Unless required by applicable law or agreed to in writing, software
  *   distributed under the License is distributed on an "AS IS" BASIS,
@@ -105,8 +105,12 @@ public class SimulatedClockImpl implements Clock {
 		
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.factorModified(oldFactor);
-		}
+            try {
+                listener.factorModified(oldFactor);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	/*
@@ -121,8 +125,12 @@ public class SimulatedClockImpl implements Clock {
 
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.startDateModified(oldDate);
-		}
+            try {
+                listener.startDateModified(oldDate);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 
 	@Override
@@ -147,8 +155,12 @@ public class SimulatedClockImpl implements Clock {
 		
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.clockResumed();
-		}
+            try {
+                listener.clockResumed();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 		
 	}
 		
@@ -160,8 +172,12 @@ public class SimulatedClockImpl implements Clock {
 		
 		// Call all listeners sequentially
 		for (ClockListener listener : getListenersCopy()) {
-			listener.clockReset();
-		}
+            try {
+                listener.clockReset();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
 	}
 	
 	@Override
@@ -177,7 +193,8 @@ public class SimulatedClockImpl implements Clock {
 	@Validate
 	public void start() {
 		initDate = System.currentTimeMillis();
-		pause = false;
+		factor = 1;
+		pause = false;		
 		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
 		timeThread.start();
 	}
