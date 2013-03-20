@@ -1,7 +1,7 @@
 # Tutorial: Light Follow Me
 
-// Introduction
 
+![Follow Me in action](tutorial/followMe.png "Follow Me")
 
 ## 1. Prerequisite
 
@@ -223,3 +223,5 @@ You need to create and generate the skeleton of the unique class of your applica
 1. Right click on your project: *iCasa -> iCasa Bundle Deployment*
    
    ![Deploy action](tutorial/fig13-deploy.png "Deploy action")
+   
+2. Test your application with iCASA Simulator.
