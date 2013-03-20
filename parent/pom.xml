@@ -273,7 +273,7 @@
         </snapshotRepository>
         <site>
             <id>tmp</id>
-            <url>http://adeleresearchgroup.github.com/iCasa-Simulator/</url>
+            <url>file:target/site-tmp</url>
         </site>
     </distributionManagement>
 
