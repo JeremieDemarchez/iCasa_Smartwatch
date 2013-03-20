@@ -34,7 +34,8 @@
 		<module>presence</module>
 		<module>sound</module>
 		<module>temperature</module>
-      <module>personal</module>
+		<module>gazSensor</module>
+		<module>personal</module>
 		<module>continua-rest-client</module>
 		<module>bathroom-scale</module>
 	</modules>
