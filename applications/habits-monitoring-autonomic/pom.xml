@@ -35,7 +35,8 @@
 	
 	<modules>
 		<module>autonomic-manager</module>
-		<module>photometer-adapter</module>
+		<module>cilia-components</module>
+      <module>cilia-components-compendium</module>
 		<module>packages</module>
 		<module>distribution</module>
 	</modules>
