@@ -1,7 +1,8 @@
 # Tutorial: Light Follow Me
 
-// Introduction
+The principle of the *Light Follow Me* application is to switch on/off the lights in the different rooms if there is somebody or anybody. The following screenshot is an example of the application in action:
 
+![Follow Me in action](tutorial/followMe.png "Follow Me")
 
 ## 1. Prerequisite
 
@@ -223,3 +224,5 @@ You need to create and generate the skeleton of the unique class of your applica
 1. Right click on your project: *iCasa -> iCasa Bundle Deployment*
    
    ![Deploy action](tutorial/fig13-deploy.png "Deploy action")
+   
+2. Test your application with iCASA Simulator.
