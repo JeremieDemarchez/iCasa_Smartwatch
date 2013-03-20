@@ -19,7 +19,7 @@ limitations under the License.
 	<parent>
       <groupId>fr.liglab.adele.icasa.apps</groupId>
       <artifactId>parent</artifactId>
-      <version>1.0.0</version>
+      <version>1.0.1-SNAPSHOT</version>
       <relativePath>../../../parent</relativePath>
 	</parent>
 
