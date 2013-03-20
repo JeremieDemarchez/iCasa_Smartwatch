@@ -54,6 +54,31 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                <url>http://repository-icasa.forge.cloudbees.com/snapshot/</url>
             </repository>
          </repositories>
+         <pluginRepositories>
+            <!-- iCASA repositories -->
+            <pluginRepository>
+               <id>icasa-plugin-snapshot-repository</id>
+               <name>iCASA Plugin Snapshot repository</name>
+               <url>http://repository-icasa.forge.cloudbees.com/snapshot/</url>
+               <releases>
+                  <enabled>false</enabled>
+               </releases>
+               <snapshots>
+                  <enabled>true</enabled>
+               </snapshots>
+            </pluginRepository>
+            <pluginRepository>
+               <id>icasa-plugin-release-repository</id>
+               <name>iCASA Plugin Release repository</name>
+               <url>http://repository-icasa.forge.cloudbees.com/release/</url>
+               <releases>
+                  <enabled>true</enabled>
+               </releases>
+               <snapshots>
+                  <enabled>false</enabled>
+               </snapshots>
+            </pluginRepository>
+         </pluginRepositories>
          <!-- Dependencies version management -->
          <dependencyManagement>
             <dependencies>
