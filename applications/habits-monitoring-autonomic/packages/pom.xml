@@ -30,7 +30,6 @@
 
 	<modules>
       <module>measure-generator-mock.dp</module>
-		<module>measure-generator.dp</module>
 	</modules>
    <build>
       <plugins>

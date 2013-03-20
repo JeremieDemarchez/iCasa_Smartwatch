@@ -34,6 +34,7 @@ public class Measure implements Serializable{
    private String localisation;
    private float realibility;
    private long timestamp;
+   private boolean isPatientPresent ;
    
    /**
     * @return the gatewayId
@@ -107,6 +108,15 @@ public class Measure implements Serializable{
    public void setTimestamp(long timestamp) {
       this.timestamp = timestamp;
    }
+
+    public void setSensorValue(boolean value) {
+        this.isPatientPresent = value;
+    }
+
+
+    public boolean getSensorValue() {
+        return this.isPatientPresent ;
+    }
    
    
 }

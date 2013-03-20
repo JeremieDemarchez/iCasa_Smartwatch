@@ -30,6 +30,7 @@
 
 	<modules>
         <module>habits-monitoring</module>
+        <module>habits-monitoring-autonomic</module>
         <module>light-follow-me</module>
 	</modules>
 

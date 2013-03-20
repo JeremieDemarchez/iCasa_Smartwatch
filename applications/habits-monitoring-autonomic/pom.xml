@@ -35,7 +35,6 @@
 	
 	<modules>
 		<module>autonomic-manager</module>
-		<module>measure-generator</module>
 		<module>photometer-adapter</module>
 		<module>packages</module>
 		<module>distribution</module>
@@ -57,12 +56,11 @@
             <artifactId>cilia-core</artifactId>
             <version>${ciliaVersion}</version> 
          </dependency>
-         
          <dependency>
             <groupId>fr.liglab.adele.cilia</groupId>
             <artifactId>cilia-runtime</artifactId>
             <version>${ciliaVersion}</version> 
-            </dependency>
+         </dependency>
          <dependency>
             <groupId>fr.liglab.adele.cilia</groupId>
             <artifactId>cilia.dp</artifactId>

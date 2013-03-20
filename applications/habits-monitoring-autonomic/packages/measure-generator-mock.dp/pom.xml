@@ -27,7 +27,7 @@
          <version>${project.version}</version>
       </dependency>
       <dependency>
-         <groupId>${project.groupId}</groupId>
+         <groupId>fr.liglab.adele.icasa.apps</groupId>
          <artifactId>measure.generator</artifactId>
          <version>${project.version}</version>
       </dependency>

@@ -1,6 +1,6 @@
 package fr.liglab.adele.habits.autonomic.measure.compendium;
 
-import fr.liglab.adele.habits.autonomic.measure.Measure;
+import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 
 public class MeasurePhotoMeter extends Measure {
 	private static final long serialVersionUID = -5369097163595442220L;
