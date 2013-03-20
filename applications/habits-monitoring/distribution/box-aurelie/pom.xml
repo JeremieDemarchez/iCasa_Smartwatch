@@ -87,7 +87,7 @@ limitations under the License.
             
             <!-- habits monitoring application -->
             <dependency>
-               <groupId>fr.liglab.adele.icasa</groupId>
+               <groupId>${project.groupId}</groupId>
                <artifactId>measure.generator.mock.dp</artifactId>
                <type>deployment-package</type>
                <version>${project.version}</version>
