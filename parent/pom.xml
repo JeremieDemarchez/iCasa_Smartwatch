@@ -39,7 +39,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             <ciliaVersion>1.6.3</ciliaVersion>
             <roseVersion>1.0.2</roseVersion>
             <iCasaPlatformVersion>1.0.0</iCasaPlatformVersion>
-            <iCasaSimulatorVersion>1.0.0-SNAPSHOT</iCasaSimulatorVersion>
+            <iCasaSimulatorVersion>1.0.0</iCasaSimulatorVersion>
             
          </properties>
          <repositories>
