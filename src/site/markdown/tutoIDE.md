@@ -1,5 +1,6 @@
 # Tutorial: Light Follow Me
 
+The principle of the *Light Follow Me* application is to switch on/off the lights in the different rooms if there is somebody or anybody. The following screenshot is an example of the application in action:
 
 ![Follow Me in action](tutorial/followMe.png "Follow Me")
 
