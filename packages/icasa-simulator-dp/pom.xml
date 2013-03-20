@@ -61,6 +61,11 @@
 			<artifactId>device.bathroom.scale</artifactId>
          <version>${project.version}</version>
       </dependency>
+	  <dependency>
+         <groupId>${project.groupId}</groupId>
+			<artifactId>device.gazSensor</artifactId>
+         <version>${project.version}</version>
+      </dependency>
 		<dependency>
          <groupId>${project.groupId}</groupId>
 			<artifactId>continua-rest-client</artifactId>
