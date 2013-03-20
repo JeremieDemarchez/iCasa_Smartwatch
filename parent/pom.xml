@@ -33,7 +33,7 @@
 		<productName>iCasa Simulator</productName>
 		<productVersion>${project.version}</productVersion>
 		<projectName>${project.artifactId}</projectName>
-		<iCasaPlatformVersion>1.0.0</iCasaPlatformVersion>
+		<iCasaPlatformVersion>1.0.1-SNAPSHOT</iCasaPlatformVersion>
 
 		<!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
