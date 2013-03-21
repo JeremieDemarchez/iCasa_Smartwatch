@@ -41,6 +41,12 @@
 			<artifactId>device.temperature</artifactId>
          <version>${project.version}</version>
       </dependency>
+	   </dependency>
+		<dependency>
+         <groupId>${project.groupId}</groupId>
+			<artifactId>device.gazSensor</artifactId>
+         <version>${project.version}</version>
+      </dependency>	
 		<dependency>
          <groupId>${project.groupId}</groupId>
 			<artifactId>device.presence</artifactId>
