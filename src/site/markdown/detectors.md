@@ -74,8 +74,7 @@ Detectors
 <div class="hCard">Overview</div> 
  
  <p>GazSensor can supply two models of gaz sensor which are a standard CO2 sensor and a standard CO sensor.</p>
-<p>Gaz sensor can be used to detect the air quality in a room and prevent of asphyxiation. 
-	We describe in section GazSensor devices Outline methods linked to those devices.</p>
+<p>Gaz sensor can be used to detect the air quality in a room and prevent of asphyxiation.</p>
  
 <div class="hCard">Physical properties</div>
 
