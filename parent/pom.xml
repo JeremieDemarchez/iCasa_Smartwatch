@@ -7,8 +7,7 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<parent>
@@ -21,7 +20,7 @@
 	<!-- Project coordinates -->
 	<groupId>fr.liglab.adele.icasa</groupId>
 	<artifactId>parent</artifactId>
-	<version>1.0.0-SNAPSHOT</version>
+	<version>1.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<!-- Project description -->
@@ -34,7 +33,7 @@
 		<productName>iCasa Simulator</productName>
 		<productVersion>${project.version}</productVersion>
 		<projectName>${project.artifactId}</projectName>
-		<iCasaPlatformVersion>1.0.0</iCasaPlatformVersion>
+		<iCasaPlatformVersion>1.0.1-SNAPSHOT</iCasaPlatformVersion>
 
 		<!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -42,7 +41,6 @@
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.0.4</AdeleBaseVersion>
         <roseVersion>1.0.2</roseVersion>
-        <iCasaVersion>1.0.0-SNAPSHOT</iCasaVersion>
 	</properties>
 
 	<developers>
@@ -174,7 +172,7 @@
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.platform.dp</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${iCasaPlatformVersion}</version>
                 <type>deployment-package</type>
             </dependency>
 
@@ -190,32 +188,32 @@
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>simulator.api</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>simulator.impl</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.light</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.sound</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.temperature</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.presence</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
@@ -225,34 +223,34 @@
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.personal</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>device.bathroom.scale</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>continua-rest-client</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>clock.simulated.impl</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.simulator.dp</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
                 <type>deployment-package</type>
             </dependency>
 
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.web</artifactId>
-                <version>${iCasaVersion}</version>
+                <version>${project.version}</version>
                 <type>play2</type>
             </dependency>
 
