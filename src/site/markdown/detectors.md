@@ -3,10 +3,121 @@ Detectors
 
 <br/>
 
+* <a href="#COSensorCard">Carbon Monoxyde Sensor</a>
+* <a href="#CO2SensorCard">Carbon Dioxyde Sensor</a>
 * <a href="#PhotometerCard">Photometer</a>
 * <a href="#PresenceSensorCard">Presence Sensor</a>
 * <a href="#PowerSwitchCard">Power Switch</a>
 * <a href="#ThermometerCard">Thermometer</a>
+
+<div class="idCard">
+
+<div class="titleCard"><a name="COSensorCard">Carbon Monoxyde Sensor</a></div>
+
+<div class="photo"><img src="./devices/gazSensor.png" width="100"/></div>
+
+<div class="description">
+<div class="hCard">Overview</div> 
+ 
+ <p>GazSensor can supply two models of gaz sensor which are a standard CO2 sensor and a standard CO sensor.</p>
+<p>Gaz sensor can be used to detect the air quality in a room and prevent of asphyxiation. </p>
+ 
+<div class="hCard">Physical properties</div>
+
+<table>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>co_current_concentration</td>
+<td>[0.0-undefined]</td>
+<td>0.0</td>
+<td>Double</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>There is no physical consideration for this type of device. Indeed, this device is used to return a physical value. In our case, we do not care about the way the sensor gives this value.</p>
+
+
+        
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.gazSensor.CarbonMonoxydeSensor</code>
+
+<ul>
+<li><code>getSerialNumber()</code>: Get the device ID</li>
+<li><code>getCOConcentration()</code>: Get the current gaz (CO) concentration of the sensor in µg/m^3</li>
+</ul>
+
+<a href="./datasheets/Datasheet_GazSensor.pdf">Full datasheet here</a>
+</div>
+<div class="separator"></div>
+</div>
+
+<div class="idCard">
+
+<div class="titleCard"><a name="CO2SensorCard">Carbon Dioxyde Sensor</a></div>
+
+<div class="photo"><img src="./devices/smokeDetector.png" width="100"/></div>
+
+<div class="description">
+<div class="hCard">Overview</div> 
+ 
+ <p>GazSensor can supply two models of gaz sensor which are a standard CO2 sensor and a standard CO sensor.</p>
+<p>Gaz sensor can be used to detect the air quality in a room and prevent of asphyxiation. 
+	We describe in section GazSensor devices Outline methods linked to those devices.</p>
+ 
+<div class="hCard">Physical properties</div>
+
+<table>
+<thead>
+<tr>
+<td>Name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>co2_current_concentration</td>
+<td>[0.0-undefined]</td>
+<td>0.0</td>
+<td>Double</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+
+<p>There is no physical consideration for this type of device. Indeed, this device is used to return a physical value. In our case, we do not care about the way the sensor gives this value.</p>
+
+
+        
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor</code>
+
+<ul>
+<li><code>getSerialNumber()</code>: Get the device ID</li>
+<li><code>getCO2Concentration()</code>: Get the current gaz (CO2) concentration of the sensor in µg/m^3</li>
+</ul>
+
+<a href="./datasheets/Datasheet_GazSensor.pdf">Full datasheet here</a>
+</div>
+<div class="separator"></div>
+</div>
 
 
 <div class="idCard">
