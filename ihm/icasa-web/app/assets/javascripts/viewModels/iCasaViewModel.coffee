@@ -370,9 +370,9 @@ define(['jquery',
            @styleLeft = ko.computed({
               read: () =>
                 if ((@sizeFactor() > 1.0) && ((@widgetWidth() - @width()) >= @containerSizeDelta()))
-                  effPostionX = @positionX();
-                else
                   effPositionX = @positionX() + (@containerSizeDelta() / 2) - ((@widgetWidth() - @width()) / 2);
+                else
+                  effPositionX = @positionX();
                 return effPositionX + "px";
               owner: @
            }
@@ -380,9 +380,9 @@ define(['jquery',
            @styleTop = ko.computed({
               read: () =>
                 if ((@sizeFactor() > 1.0) && ((@widgetHeight() - @height()) >= @containerSizeDelta()))
-                  effPositionY = @positionY();
-                else
                   effPositionY = @positionY() + (@containerSizeDelta() / 2)- ((@widgetHeight() - @height()) / 2);
+                else
+                  effPositionY = @positionY();
                 return effPositionY + "px";
               owner: @
            }
@@ -657,6 +657,18 @@ define(['jquery',
                     @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
+                if (@type() == "iCASA.COGazSensor" )
+                  concentration = @properties()["co_current_concentration"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "redLed")
+                       decorator.show(concentration >= 2.0);
+                  );
+                if (@type() == "iCASA.CO2GazSensor" )
+                  concentration = @properties()["co2_current_concentration"];
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "redLed")
+                       decorator.show(concentration >= 2.0);
+                  );
           
            @initDeviceImages= () =>
                 if (@type() == "iCASA.BathroomScale")
@@ -669,6 +681,21 @@ define(['jquery',
                        positionY: 1,
                        show: false
                      });
+                if ((@type() == "iCASA.COGazSensor") || (@type() == "iCASA.CO2GazSensor"))
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "redLed",
+                       imgSrc: '/assets/images/devices/decorators/redLed.png',
+                       width: 8,
+                       height: 8,
+                       positionX: 4,
+                       positionY: 4,
+                       show: false
+                     });
+                     ko.utils.arrayForEach(@decorators(), (decorator) ->
+                       if ((decorator.name() == "activated") || (decorator.name() == "fault"))
+                         decorator.positionY(1);
+                         decorator.positionX(0);
+                     );
                 if (@type() == "iCASA.Sphygmometer")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "sphygmometer_measure",
@@ -724,6 +751,10 @@ define(['jquery',
               imgName = "photometer";
             if (@type() == "iCASA.BinaryLight")
               imgName = "binaryLight_off";
+            if (@type() == "iCASA.COGazSensor")
+              imgName = "COGazSensor";
+            if (@type() == "iCASA.CO2GazSensor")
+              imgName = "CO2GazSensor";
             if (@type() == "iCASA.PresenceSensor")
               imgName = "movementDetector";
             if (@type() == "iCASA.Speaker")

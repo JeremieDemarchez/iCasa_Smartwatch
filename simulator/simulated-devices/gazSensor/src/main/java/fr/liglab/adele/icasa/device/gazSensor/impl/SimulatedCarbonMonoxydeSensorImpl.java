@@ -37,7 +37,7 @@ import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
  * 
  * @author jeremy
  */
-@Component(name = "iCASA.GazSensor")
+@Component(name = "iCASA.COGazSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedCarbonMonoxydeSensorImpl extends AbstractDevice implements CarbonMonoxydeSensor, SimulatedDevice {
 
