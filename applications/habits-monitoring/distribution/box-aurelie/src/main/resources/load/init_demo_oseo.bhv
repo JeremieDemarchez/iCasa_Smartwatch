@@ -1,4 +1,4 @@
-<behavior startdate="2011.10.20.00.00.00" factor="1440">
+<behavior startdate="2011/10/20-00:00:00" factor="1440">
 
 	<create-person id="aurelie" type="Grandfather" />
 
