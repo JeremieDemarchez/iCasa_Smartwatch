@@ -22,7 +22,7 @@
 			
 			<mediator-instance id="transformer" type="MeasureTransformerMediator" >
 				<processor>
-					<property name="user" value="Aurelie"/>
+					<property name="user" value="Paul"/>
 				</processor>
 
 			</mediator-instance>
