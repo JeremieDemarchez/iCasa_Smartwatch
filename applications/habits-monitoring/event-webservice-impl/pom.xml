@@ -43,7 +43,7 @@
         <configuration>
           <instructions>
             <Private-Package>javax.mail.*,com.sun.mail.*</Private-Package>
-            <Import-Package>sun.security.util;resolution:=optional,javax.ws.*,com.sun.jersey.*,*</Import-Package>
+            <Import-Package>jcifs.ntlmssp;resolution:=optional,sun.security.util;resolution:=optional,javax.ws.*,com.sun.jersey.*,*</Import-Package>
             <Export-Package>fr.liglab.adele.habits.monitoring.event.webservice.impl</Export-Package>
           </instructions>
         </configuration>

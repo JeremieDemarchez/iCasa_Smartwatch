@@ -34,7 +34,7 @@ public class MeasureTransformer {
       if (data != null) {
          Measure measure = (Measure) data.getContent();
          measure.setPatientId(user);
-         logger.info("The patientId was setted");
+         logger.info("The patientId was set");
          return data;
       }      
       return null;

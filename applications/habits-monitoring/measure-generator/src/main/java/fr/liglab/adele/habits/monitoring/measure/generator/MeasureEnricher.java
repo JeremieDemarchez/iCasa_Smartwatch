@@ -32,7 +32,7 @@ public class MeasureEnricher {
       if (data != null) {
          Measure measure = (Measure) data.getContent();
          measure.setGatewayId("303");
-         logger.info("The gatewayId was setted");
+         logger.info("The gatewayId was set");
          return data;
       }      
       return null;
