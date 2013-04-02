@@ -1,3 +1,0 @@
-[submodule "ihm/icasa-web/openshift"]
-	path = ihm/icasa-web/openshift
-	url = ssh://e76598506bff4371896f7d67f8225c5c@simulator-icasa.rhcloud.com/~/git/simulator.git/
