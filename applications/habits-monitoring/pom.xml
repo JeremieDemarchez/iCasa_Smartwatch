@@ -33,8 +33,9 @@
 		<module>event-webservice-mock-impl</module>
 		<module>event-webservice-impl</module>
 		<module>measure-generator</module>
-      <module>packages</module>
-      <module>distribution</module>
+        <module>packages</module>
+        <module>distribution</module>
+        <module>tests</module>
 	</modules>
    <build>
       <plugins>
