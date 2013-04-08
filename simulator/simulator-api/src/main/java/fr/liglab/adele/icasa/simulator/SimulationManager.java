@@ -27,7 +27,7 @@ import fr.liglab.adele.icasa.location.Position;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-public interface SimulationManager extends ContextManager{
+public interface SimulationManager extends ContextManager {
 	
 	public void setDeviceFault(String deviceId, boolean value);
 
@@ -36,6 +36,8 @@ public interface SimulationManager extends ContextManager{
 	public void removeDevice(String deviceId);
 
 	public Set<String> getSimulatedDeviceTypes();
+	
+	public void removeAllDevices();
 
 	
 	
@@ -62,6 +64,7 @@ public interface SimulationManager extends ContextManager{
 	public void removePersonType(String personType);
 
 	public List<String> getPersonTypes();
+	
 	
 	// -- Attachements methods -- //
 	
