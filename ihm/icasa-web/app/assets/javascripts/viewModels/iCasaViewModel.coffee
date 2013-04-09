@@ -465,6 +465,8 @@ define(['jquery',
         @bottomY = kb.observable(model, 'bottomY');
         @topY = kb.observable(model, 'topY');
         @variables = kb.observable(model, 'variables');
+        if model.get('isSelected')?
+          @isSelected(model, 'isSelected');
         @width(@rightX() - @leftX());
         @height(@bottomY() - @topY());
         @positionX((@leftX() + @rightX()) / 2);
@@ -1136,7 +1138,7 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 50, bottomY: 50 });
+              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 50, bottomY: 50 , isSelected: true});
               newZone.save();
               newZone.set(id: @newZoneName());
               DataModel.collections.zones.push(newZone);
