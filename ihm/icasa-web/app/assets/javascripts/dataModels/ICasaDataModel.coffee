@@ -2,14 +2,21 @@
 define(['backbone', 'underscore', 'domReady'],
      (Backbone, _) ->
 
+         serverUrl = $("#map").attr("gatewayURL") + "/icasa";
+
          DataModel =
             Models : {}
             Collections : {}
             collections : {}
             models : {}
+            resetState : ()->
+                console.log "reseting State"
+                $.ajax(
+                    type: 'DELETE',
+                    url: $("#map").attr("gatewayURL") + "/icasa/simulation",
+                )
 
-         #serverUrl = "http://" + window.location.hostname + ":8080/icasa";
-         serverUrl = $("#map").attr("gatewayURL") + "/icasa";
+
 
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/devices/device".replace /#server#/, serverUrl

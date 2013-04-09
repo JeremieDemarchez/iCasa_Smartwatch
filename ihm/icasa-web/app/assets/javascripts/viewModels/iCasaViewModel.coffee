@@ -1221,6 +1221,8 @@ define(['jquery',
               newScript.set(id: newName);
               DataModel.collections.scripts.push(newScript);
               @newScriptName("");
+           @resetState = ()=>
+              DataModel.resetState();
 
            @scriptStartDate = ko.computed({
               read: =>
