@@ -11,6 +11,7 @@ GET     /maps/*file                 controllers.Application.getMap(file)
 POST    /mapUpload                  controllers.Application.uploadMap
 POST    /mapUpdate                  controllers.Application.updateMap
 POST    /mapDelete                  controllers.Application.deleteMap
+GET     /frontend/version           controllers.Application.version
 
 
 # Map static resources from the /public folder to the /assets URL path
