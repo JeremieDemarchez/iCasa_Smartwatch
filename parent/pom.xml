@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.common</groupId>
 		<artifactId>base</artifactId>
-		<version>1.0.4</version>
+		<version>1.0.5-SNAPSHOT</version>
 		<relativePath />
 	</parent>
 
@@ -39,7 +39,7 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.0.4</AdeleBaseVersion>
+        <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
         <roseVersion>1.0.2</roseVersion>
 	</properties>
 

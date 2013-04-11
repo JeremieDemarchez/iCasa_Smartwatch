@@ -9,7 +9,7 @@ object ApplicationBuild extends Build {
       case value => Some(value)
     }
     val appName = fromEnv("project.artifactId").getOrElse("icasa-web")
-    val appVersion = fromEnv("project.version").getOrElse("1.0.0-SNAPSHOT")
+    val appVersion = fromEnv("project.version").getOrElse("1.1.0-SNAPSHOT")
 
     val appDependencies = Seq(
 

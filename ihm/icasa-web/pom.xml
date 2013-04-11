@@ -13,7 +13,7 @@
 	<artifactId>icasa.web</artifactId>
 	<packaging>play2</packaging>
 	<name>${productName} :: ${projectName}</name>
-	
+
   <properties>
     <play2.version>2.0.4</play2.version>
   </properties>
@@ -57,7 +57,7 @@
         <plugins>
 
             <plugin>
-                <groupId>de.akquinet.innovation.play2</groupId>
+                <groupId>org.nanoko.playframework</groupId>
                 <artifactId>play2-maven-plugin</artifactId>
                 <extensions>true</extensions>
 				<configuration>
