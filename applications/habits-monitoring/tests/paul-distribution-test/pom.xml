@@ -19,12 +19,12 @@
 		<distrib.groupId>fr.liglab.adele.icasa.apps</distrib.groupId>
 		<distrib.artifactId>habits.monitoring.distribution.box.paul</distrib.artifactId>
 		<distrib.version>${project.version}</distrib.version>
-        <DistributionTestVersion>1.0.5-SNAPSHOT</DistributionTestVersion>
+		<DistributionTestVersion>1.0.5-SNAPSHOT</DistributionTestVersion>
 
 	</properties>
-	
+
 	<repositories>
-	<!-- iCASA repositories -->
+		<!-- iCASA repositories -->
 		<repository>
 			<id>icasa-snapshot-repository</id>
 			<name>iCASA Snapshot repository</name>
@@ -35,14 +35,6 @@
 			<name>iCASA Release repository</name>
 			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
 		</repository>
-      <!-- For android apps-->
-      <repository>
-         <id>teleal-repo</id>
-         <url>http://teleal.org/m2</url>
-         <snapshots>
-            <enabled>true</enabled>
-         </snapshots>
-      </repository>
 	</repositories>
 
 	<dependencies>
@@ -50,6 +42,10 @@
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>context.api</artifactId>
 			<version>${iCasaPlatformVersion}</version>
+		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>simulator.api</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
@@ -90,6 +86,12 @@
 			<scope>test</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.mockito</groupId>
+			<artifactId>mockito-all</artifactId>
+			<version>1.9.5</version>
+		</dependency>
+
 		<!-- Distribution to test -->
 		<dependency>
 			<groupId>${distrib.groupId}</groupId>
@@ -102,7 +104,7 @@
 		<dependency>
 			<groupId>fr.liglab.adele.common</groupId>
 			<artifactId>base.distribution.test</artifactId>
-            <version>${DistributionTestVersion}</version>
+			<version>${DistributionTestVersion}</version>
 		</dependency>
 
 		<dependency>
@@ -122,7 +124,7 @@
 		<dependency>
 			<groupId>fr.liglab.adele.common</groupId>
 			<artifactId>distribution.factory</artifactId>
-            <version>${DistributionTestVersion}</version>
+			<version>${DistributionTestVersion}</version>
 			<scope>test</scope>
 			<exclusions>
 				<exclusion>
