@@ -912,6 +912,18 @@ define(['jquery',
 
     class ICasaViewModel extends kb.ViewModel
         constructor : (model) ->
+           #backend and frontend information
+           @backendVersion = kb.observable(DataModel.models.backend, 'version');
+           @frontendVersion = kb.observable(DataModel.models.frontend, 'version');
+
+           @sameVersion = ko.computed( () =>
+                sv = @frontendVersion() == @backendVersion();
+                if sv == false
+                    $("#compatibilityWarn").removeClass("hidden");
+                else
+                    $("#compatibilityWarn").addClass("hidden");
+                return sv;
+           , @);
 
            @imgSrc = ko.observable(model.imgSrc);
            @mapWidth = ko.observable(0);
