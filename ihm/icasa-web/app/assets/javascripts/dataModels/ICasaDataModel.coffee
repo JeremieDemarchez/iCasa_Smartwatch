@@ -10,13 +10,16 @@ define(['backbone', 'underscore', 'domReady'],
             collections : {}
             models : {}
             resetState : ()->
-                console.log "reseting State"
                 $.ajax(
                     type: 'DELETE',
                     url: $("#map").attr("gatewayURL") + "/icasa/simulation",
                 )
 
+         class DataModel.Models.Backend extends Backbone.Model
+            urlRoot : "#server#/backend".replace /#server#/, serverUrl
 
+         class DataModel.Models.Frontend extends Backbone.Model
+            urlRoot : "/frontend"
 
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/devices/device".replace /#server#/, serverUrl
@@ -66,6 +69,11 @@ define(['backbone', 'underscore', 'domReady'],
          class DataModel.Collections.Scripts extends Backbone.Collection
            url: "#server#/scriptPlayer/scripts".replace /#server#/, serverUrl
            model: DataModel.Models.Script
+         #initial backend and frontend information
+         DataModel.models.backend = new DataModel.Models.Backend();
+         DataModel.models.backend.fetch();
+         DataModel.models.frontend = new DataModel.Models.Frontend();
+         DataModel.models.frontend.fetch();
 
          # initial import of data model
          DataModel.models.clock = new DataModel.Models.Clock({id: "default"});

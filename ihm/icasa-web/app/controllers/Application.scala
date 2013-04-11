@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import libs.EventSource
+import libs.json.Json
 import libs.json.Json._
 import play.api.mvc._
 import play.api.Play.current
@@ -193,9 +194,19 @@ object Application extends Controller {
     Redirect(routes.Application.index);
   }
 
-  def version() = Action {  implicit request =>
-    val configuration = ConfigFactory.load("version.conf");
-    val version = configuration.getString("app.version");
-    Ok(version);
+  def frontendInfo() = Action {  implicit request =>
+    def version = "0.0.0";
+    try {
+      val configuration = ConfigFactory.load("version.conf");
+      version = configuration.getString("app.version");
+    } catch {
+      case e: Exception =>
+        e.printStackTrace();
+        version = "0.0.0";
+    }
+    val jsonObject = Json.toJson( Map (
+      "version" -> version)
+    )
+    Ok(jsonObject);
   }
 }
