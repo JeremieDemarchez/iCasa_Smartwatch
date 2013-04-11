@@ -11,6 +11,7 @@ import play.api.data.Forms._
 import scala.collection.mutable
 import models.HouseMap
 import utils.RichFile.enrichFile
+import com.typesafe.config.ConfigFactory
 
 object Application extends Controller {
 
@@ -184,12 +185,17 @@ object Application extends Controller {
   }
 
   def deleteMap() = Action {  implicit request =>
-    val body = request.body;
     val map = mapForm.bindFromRequest.data;
     mapsLock.synchronized {
         maps.remove(map("mapId"));
     }
     saveMaps();
     Redirect(routes.Application.index);
+  }
+
+  def version() = Action {  implicit request =>
+    val configuration = ConfigFactory.load("version.conf");
+    val version = configuration.getString("app.version");
+    Ok(version);
   }
 }

@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -58,7 +59,6 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Requires
 	ContextManager manager;
 
-
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
 	private Map<String, SimulatedDevice> m_devices = new HashMap<String, SimulatedDevice>();
@@ -82,8 +82,9 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Zone createZone(String id, int leftX, int topY, int width, int height) {
-		return manager.createZone(id, leftX,topY, width, height);
+		return manager.createZone(id, leftX, topY, width, height);
 	}
+
 	@Override
 	public Zone createZone(String id, Position center, int detectionScope) {
 		return manager.createZone(id, center, detectionScope);
@@ -174,8 +175,6 @@ public class SimulationManagerImpl implements SimulationManager {
 		manager.moveDeviceIntoZone(deviceId, zoneId);
 	}
 
-
-
 	@Override
 	public void setPersonPosition(String userName, Position position) {
 		Person person = persons.get(userName);
@@ -195,20 +194,9 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public void removeAllPersons() {
-		synchronized (persons) {
-			for (Person person : persons.values()) {
-				// Listeners notification
-				for (PersonListener listener : personListeners) {
-					try {
-						person.removeListener(listener);
-						listener.personRemoved(person);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-
-			persons.clear();
+		List<Person> tempPersons = getPersons();
+		for (Person person : tempPersons) {
+			removePerson(person.getName());
 		}
 	}
 
@@ -269,8 +257,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 		if (value) {
 			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
-		}
-		else {
+		} else {
 			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
 		}
 
@@ -325,8 +312,6 @@ public class SimulationManagerImpl implements SimulationManager {
 		}
 	}
 
-
-
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public void bindDevice(SimulatedDevice simDev) {
 		String sn = simDev.getSerialNumber();
@@ -357,7 +342,6 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public void addListener(IcasaListener listener) {
 
-
 		if (listener instanceof PersonListener) {
 			PersonListener personListener = (PersonListener) listener;
 			synchronized (personListeners) {
@@ -379,7 +363,6 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public void removeListener(IcasaListener listener) {
-
 
 		if (listener instanceof PersonListener) {
 			PersonListener personListener = (PersonListener) listener;
@@ -534,13 +517,39 @@ public class SimulationManagerImpl implements SimulationManager {
 		return manager.getDeviceTypes();
 	}
 
-	/* (non-Javadoc)
-	 * @see fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes()
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see
+	 * fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes
+	 * ()
 	 */
 	@Override
 	public Set<String> getSimulatedDeviceTypes() {
 		return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
 	}
 
+	@Override
+	public void removeAllZones() {
+		manager.removeAllZones();
+	}
+
+	@Override
+	public void removeAllDevices() {
+		List<SimulatedDevice> tempDevices;
+		synchronized (m_devices) {
+			tempDevices = Collections.unmodifiableList(new ArrayList<SimulatedDevice>(m_devices.values()));
+		}
+		for (SimulatedDevice simulatedDevice : tempDevices) {
+			removeDevice(simulatedDevice.getSerialNumber());
+		}
+	}
+
+	@Override
+	public void resetContext() {
+		manager.resetContext();
+		removeAllPersons();
+		removeAllDevices();
+	}
 
 }
