@@ -35,11 +35,10 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             <projectName>${project.artifactId}</projectName>
             
             <!-- ADELE Projects -->
-            <AdeleBaseVersion>1.0.4</AdeleBaseVersion>
+            <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
             <ciliaVersion>1.6.3</ciliaVersion>
-            <roseVersion>1.0.2</roseVersion>
-            <iCasaPlatformVersion>1.0.0</iCasaPlatformVersion>
-            <iCasaSimulatorVersion>1.0.0</iCasaSimulatorVersion>
+            <iCasaPlatformVersion>1.0.1-SNAPSHOT</iCasaPlatformVersion>
+            <iCasaSimulatorVersion>1.0.1-SNAPSHOT</iCasaSimulatorVersion>
             <DistributionTestVersion>${parent.version}</DistributionTestVersion>
             
          </properties>

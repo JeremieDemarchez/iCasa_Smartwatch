@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright 2010-2011 Université Joseph Fourier
+Copyright 2010-2011 Universitï¿½ Joseph Fourier
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -34,8 +34,6 @@ limitations under the License.
          
          <properties>
             <productName>iCasa Apps</productName>
-            <!-- flag to flatten deployment packages -->
-            <flattenDP>true</flattenDP>
          </properties>
          
          <!-- Project dependencies -->
@@ -45,12 +43,8 @@ limitations under the License.
 				<artifactId>icasa.teaching.distribution</artifactId>
 				<type>osgi-distribution</type>
 			</dependency>
+
             <!-- deployed packages -->
-            <dependency>
-               <groupId>fr.liglab.adele.common</groupId>
-               <artifactId>rose.dp</artifactId>
-               <type>deployment-package</type>
-            </dependency>
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
                <artifactId>cilia.dp</artifactId>
@@ -61,29 +55,6 @@ limitations under the License.
                <artifactId>cilia-remote.dp</artifactId>
                <type>deployment-package</type>
             </dependency>
-            <dependency>
-               <groupId>fr.liglab.adele.icasa</groupId>
-               <artifactId>icasa.platform.dp</artifactId>
-               <type>deployment-package</type>
-            </dependency>
-            <dependency>
-               <groupId>fr.liglab.adele.icasa</groupId>
-               <artifactId>icasa.simulator.dp</artifactId>
-               <type>deployment-package</type>
-            </dependency>
-            <!-- DP Remote installer-->
-            <dependency>
-               <groupId>fr.liglab.adele.icasa</groupId>
-               <artifactId>dp-rest-installer.dp</artifactId>
-               <version>${iCasaPlatformVersion}</version>
-               <type>deployment-package</type>
-            </dependency>
-            <!-- Only one clock must be available in the platform-->
-            <dependency>
-               <groupId>fr.liglab.adele.icasa</groupId>
-               <artifactId>clock.simulated.impl</artifactId>
-               <version>${iCasaSimulatorVersion}</version>
-            </dependency>
             
             <!-- habits monitoring application -->
             <dependency>
@@ -93,26 +64,15 @@ limitations under the License.
                <version>${project.version}</version>
             </dependency>
             
-            <!-- Jersey Dependencies-->
-            <dependency>                
-               <groupId>com.sun.jersey</groupId>
-               <artifactId>jersey-core</artifactId>
-            </dependency>
-            <dependency>                
-               <groupId>com.sun.jersey</groupId>
-               <artifactId>jersey-client</artifactId>
-            </dependency>
-            <dependency>                
-               <groupId>com.sun.jersey</groupId>
-               <artifactId>jersey-server</artifactId>
-            </dependency>
-            
          </dependencies>
          <build>
             <plugins>
                <plugin>
                   <groupId>fr.liglab.adele.common</groupId>
-                  <artifactId>osgi-distribution-plugin</artifactId>
+                  <artifactId>maven-osgi-distribution-plugin</artifactId>
+                   <configuration>
+                       <flattenDP>true</flattenDP>
+                   </configuration>
                </plugin>
             </plugins>
          </build>
