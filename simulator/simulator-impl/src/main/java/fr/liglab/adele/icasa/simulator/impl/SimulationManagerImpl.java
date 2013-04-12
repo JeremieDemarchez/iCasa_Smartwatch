@@ -55,8 +55,11 @@ import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 @Instantiate(name = "SimulationManager-1")
 public class SimulationManagerImpl implements SimulationManager {
 
-	@Requires
-	ContextManager manager;
+    /*
+     * WARNING : UPDATE following filter if you change the componant instance name !!!
+     */
+	@Requires(filter = "(!(instance.name=SimulationManager-1))")
+	private ContextManager manager;
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
 

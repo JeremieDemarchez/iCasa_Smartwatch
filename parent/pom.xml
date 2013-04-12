@@ -41,7 +41,6 @@
 
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
-        <roseVersion>1.0.2</roseVersion>
 	</properties>
 
 	<developers>
