@@ -14,9 +14,9 @@
    <packaging>play2</packaging>
    <name>${productName} :: ${projectName}</name>
    
-<properties>
-   <play2.version>2.0.4</play2.version>
-</properties>
+    <properties>
+       <play2.version>2.0.4</play2.version>
+    </properties>
 
    <repositories>
       <repository>
@@ -78,6 +78,7 @@
                 <artifactId>play2-maven-plugin</artifactId>
                 <extensions>true</extensions>
 				<configuration>
+                    <buildWar>false</buildWar>
                     <play2Home>${user.home}/opt/play-${play2.version}</play2Home>
                 </configuration>
                 <executions>
