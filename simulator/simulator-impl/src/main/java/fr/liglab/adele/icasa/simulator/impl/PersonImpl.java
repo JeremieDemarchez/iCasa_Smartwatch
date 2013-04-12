@@ -18,6 +18,8 @@ package fr.liglab.adele.icasa.simulator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.impl.LocatedObjectImpl;
@@ -62,12 +64,16 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public void addListener(PersonListener listener) {
-		listeners.add(listener);
+        synchronized (listeners){
+		    listeners.add(listener);
+        }
 	}
 
 	@Override
 	public void removeListener(PersonListener listener) {
-		listeners.remove(listener);
+        synchronized (listeners){
+		    listeners.remove(listener);
+        }
 	}
 
 	@Override
@@ -82,12 +88,46 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 		super.setCenterAbsolutePosition(position);
 
 		// Listeners notification
-		for (PersonListener listener : listeners) {
-			listener.personMoved(this, oldPosition);
-		}
+        synchronized (listeners){
+            for (PersonListener listener : listeners) {
+                listener.personMoved(this, oldPosition);
+            }
+        }
 	}
 
-	@Override
+    @Override
+    protected void notifyAttachedObject(LocatedObject attachedObject) {
+        LocatedDevice device;
+
+        if (attachedObject instanceof LocatedDevice){
+            device = (LocatedDevice)attachedObject;
+        }else {
+            return; //nothing to notify.
+        }
+        synchronized (listeners){
+            for (PersonListener listener : listeners) {
+                listener.personDeviceAttached(this, device);
+            }
+        }
+    }
+
+    @Override
+    protected void notifyDetachedObject(LocatedObject attachedObject) {
+        LocatedDevice device;
+
+        if (attachedObject instanceof LocatedDevice){
+            device = (LocatedDevice)attachedObject;
+        }else {
+            return; //nothing to notify.
+        }
+        synchronized (listeners){
+            for (PersonListener listener : listeners) {
+                listener.personDeviceDetached(this, device);
+            }
+        }
+    }
+
+    @Override
 	public String toString() {
 		return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType(); 
 	}

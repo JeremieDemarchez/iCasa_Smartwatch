@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.impl;
 
+import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -129,7 +130,17 @@ public class SimulationEventBroadcast  {
 			//Handled by EventBroadcast in icasa.remote
 		}
 
-		@Override
+        @Override
+        public void deviceAttached(LocatedDevice container, LocatedDevice child) {
+            //Handled by EventBroadcast in icasa.remote
+        }
+
+        @Override
+        public void deviceDetached(LocatedDevice container, LocatedDevice child) {
+            //Handled by EventBroadcast in icasa.remote
+        }
+
+        @Override
 		public void personMoved(Person person, Position position) {
 			JSONObject json = new JSONObject();
 			try {
