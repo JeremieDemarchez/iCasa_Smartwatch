@@ -59,8 +59,9 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	private volatile Zone m_zone;
 
 	public SimulatedPresenceSensorImpl() {
-		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
+		super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
 	}
 
 	@Override

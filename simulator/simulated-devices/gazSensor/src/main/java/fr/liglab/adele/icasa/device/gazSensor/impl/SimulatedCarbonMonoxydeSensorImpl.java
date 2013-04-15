@@ -15,104 +15,88 @@
  */
 package fr.liglab.adele.icasa.device.gazSensor.impl;
 
-import java.util.List;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.apache.felix.ipojo.annotations.Validate;
-import org.osgi.framework.Constants;
-
 import fr.liglab.adele.icasa.device.gazSensor.CarbonMonoxydeSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
+import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.Constants;
+
+import java.util.List;
 
 /**
  * Implementation of a CO sensor device.
- * 
+ *
  * @author jeremy
  */
 @Component(name = "iCASA.COGazSensor")
-@Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
+@Provides(properties = {@StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION)})
 public class SimulatedCarbonMonoxydeSensorImpl extends AbstractDevice implements CarbonMonoxydeSensor, SimulatedDevice {
 
-	@ServiceProperty(name = CarbonMonoxydeSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
-	private String m_serialNumber;
+    @ServiceProperty(name = CarbonMonoxydeSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
+    private String m_serialNumber;
 
-	private volatile Zone m_zone;
+    private volatile Zone m_zone;
 
-	private ZoneListener listener = new GazSensorZoneListener();
+    private ZoneListener listener = new GazSensorZoneListener();
 
-	public SimulatedCarbonMonoxydeSensorImpl() {
-		super();
-		setPropertyValue(CarbonMonoxydeSensor.CO_CURRENT_CONCENTRATION, 0.0);
-	}
+    public SimulatedCarbonMonoxydeSensorImpl() {
+        super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(CarbonMonoxydeSensor.CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION, 0.0d);
+    }
 
-	@Override
-	public String getSerialNumber() {
-		return m_serialNumber;
-	}
+    @Override
+    public String getSerialNumber() {
+        return m_serialNumber;
+    }
 
-	@Override
-	public double getCOConcentration() {
-		return (Double) getPropertyValue(CarbonMonoxydeSensor.CO_CURRENT_CONCENTRATION);
-	}
-	
-	@Validate
-	public synchronized void start() {
+    @Override
+    public double getCOConcentration() {
+        return (Double) getPropertyValue(CarbonMonoxydeSensor.CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION);
+    }
 
-	}
+    @Override
+    public void enterInZones(List<Zone> zones) {
+        if (!zones.isEmpty()) {
+            for (Zone zone : zones) {
+                if (zone.getVariableValue("COConcentration") != null) {
+                    m_zone = zone;
+                    getCOConcentrationFromZone();
+                    m_zone.addListener(listener);
+                    break;
+                }
+            }
+        }
+    }
 
-	@Invalidate
-	public synchronized void stop() throws InterruptedException {
+    @Override
+    public void leavingZones(List<Zone> zones) {
+        setPropertyValue(CarbonMonoxydeSensor.CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION, -1.0d);
+        if (m_zone != null)
+            m_zone.removeListener(listener);
+    }
 
-	}
+    private void getCOConcentrationFromZone() {
+        if (m_zone != null) {
+            Double currentCOConcentration = ((Double) m_zone.getVariableValue("COConcentration"));
+            if (currentCOConcentration != null)
+                setPropertyValue(CarbonMonoxydeSensor.CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION, currentCOConcentration);
+        }
+    }
 
+    class GazSensorZoneListener extends BaseZoneListener {
 
-	@Override
-	public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty()) {
-			for (Zone zone : zones) {
-				if (zone.getVariableValue("COConcentration") != null) {
-					m_zone = zone;
-					getCOConcentrationFromZone();
-					m_zone.addListener(listener);
-					break;
-				}
-			}
-		}
-	}
+        @Override
+        public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
 
-	@Override
-	public void leavingZones(List<Zone> zones) {
-		setPropertyValue(CarbonMonoxydeSensor.CO_CURRENT_CONCENTRATION, null);
-		if (m_zone != null)
-			m_zone.removeListener(listener);
-	}
-
-	private void getCOConcentrationFromZone() {
-		if (m_zone != null) {
-			Object currentCOConcentration = m_zone.getVariableValue("COConcentration");
-			if (currentCOConcentration != null)
-				setPropertyValue(CarbonMonoxydeSensor.CO_CURRENT_CONCENTRATION, currentCOConcentration);
-		}
-	}
-
-	class GazSensorZoneListener extends BaseZoneListener {
-
-		@Override
-		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
-
-			if (m_zone == zone) {
-				if (!(getFault().equalsIgnoreCase("yes")))
-					if (variableName.equals("COConcentration"))
-						getCOConcentrationFromZone();
-			}
-		}
-	}
+            if (m_zone == zone) {
+                if (!(getFault().equalsIgnoreCase("yes")))
+                    if (variableName.equals("COConcentration"))
+                        getCOConcentrationFromZone();
+            }
+        }
+    }
 }

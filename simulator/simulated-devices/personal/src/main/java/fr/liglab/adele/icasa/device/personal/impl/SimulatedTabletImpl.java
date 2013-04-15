@@ -49,7 +49,8 @@ public class SimulatedTabletImpl extends AbstractDevice implements SimulatedDevi
 	private String m_serialNumber;
 
 	public SimulatedTabletImpl() {
-		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 	}
 
 	@Override
