@@ -49,7 +49,9 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	private PhotometerZoneListener listener = new PhotometerZoneListener();
 
 	public SimulatedPhotometerImpl() {
-		setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, 0.0d);
+        super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, 0.0d);
 	}
 
 	@Override
@@ -79,7 +81,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
-		setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, null);
+		setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, -1.0d);
 		if (m_zone != null)
 			m_zone.removeListener(listener);
 	}

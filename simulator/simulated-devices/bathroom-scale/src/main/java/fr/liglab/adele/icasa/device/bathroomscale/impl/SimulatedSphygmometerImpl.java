@@ -45,9 +45,10 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 
 	public SimulatedSphygmometerImpl() {
 		super();
-		setPropertyValue(SYSTOLIC_PROPERTY, 0);
-		setPropertyValue(DIASTOLIC_PROPERTY, 0);
-		setPropertyValue(PULSATIONS_PROPERTY, 0);
+        super.setPropertyValue(MedicalDeviceImpl.LOCATION_PROPERTY_NAME, MedicalDeviceImpl.LOCATION_UNKNOWN);
+        super.setPropertyValue(SPHYGMOMETER_CURRENT_SYSTOLIC, 0);
+        super.setPropertyValue(SPHYGMOMETER_CURRENT_DIASTOLIC, 0);
+        super.setPropertyValue(SPHYGMOMETER_CURRENT_PULSATIONS, 0);
 	}
 
 	@Validate
@@ -75,9 +76,9 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 		int diastolic = getRandomIntValue(60, 90);
 		int pulsations = getRandomIntValue(60, 100);
 		
-		setPropertyValue(SYSTOLIC_PROPERTY, systolic);
-		setPropertyValue(DIASTOLIC_PROPERTY, diastolic);
-		setPropertyValue(PULSATIONS_PROPERTY, pulsations); 
+		setPropertyValue(SPHYGMOMETER_CURRENT_SYSTOLIC, systolic);
+		setPropertyValue(SPHYGMOMETER_CURRENT_DIASTOLIC, diastolic);
+		setPropertyValue(SPHYGMOMETER_CURRENT_PULSATIONS, pulsations);
 		
 		if (restAPI != null) {
 			try {
@@ -90,14 +91,14 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 
 	@Override
    protected void resetSpecificState() {
-		setPropertyValue(SYSTOLIC_PROPERTY, 0);
-		setPropertyValue(DIASTOLIC_PROPERTY, 0);
-		setPropertyValue(PULSATIONS_PROPERTY, 0);  
+		setPropertyValue(SPHYGMOMETER_CURRENT_SYSTOLIC, 0);
+		setPropertyValue(SPHYGMOMETER_CURRENT_DIASTOLIC, 0);
+		setPropertyValue(SPHYGMOMETER_CURRENT_PULSATIONS, 0);
    }
 
 	@Override
    public int getSystolic() {
-		Integer value = (Integer) getPropertyValue(SYSTOLIC_PROPERTY);
+		Integer value = (Integer) getPropertyValue(SPHYGMOMETER_CURRENT_SYSTOLIC);
 		if (value != null)
 			return value;
 	   return 0;
@@ -105,7 +106,7 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 
 	@Override
    public int getDiastolic() {
-		Integer value = (Integer) getPropertyValue(DIASTOLIC_PROPERTY);
+		Integer value = (Integer) getPropertyValue(SPHYGMOMETER_CURRENT_DIASTOLIC);
 		if (value != null)
 			return value;
 	   return 0;
@@ -113,7 +114,7 @@ public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphy
 
 	@Override
    public int getPulsations() {
-		Integer value = (Integer) getPropertyValue(PULSATIONS_PROPERTY);
+		Integer value = (Integer) getPropertyValue(SPHYGMOMETER_CURRENT_PULSATIONS);
 		if (value != null)
 			return value;
 	   return 0;

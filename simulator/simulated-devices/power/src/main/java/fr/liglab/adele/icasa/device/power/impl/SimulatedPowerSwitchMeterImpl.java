@@ -47,7 +47,7 @@ public class SimulatedPowerSwitchMeterImpl extends AbstractDevice implements Pow
 	@ServiceProperty(name = AbstractDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@ServiceProperty(name = PowerSwitch.POWERSWITCH_CURRENT_STATUS, value = "false")
+	@ServiceProperty(name = PowerSwitch.POWER_SWITCH_CURRENT_STATUS, value = "false")
 	private boolean m_currentStatus;
 
 	@ServiceProperty(name = Powermeter.POWERMETER_CURRENT_RATING, value = "NaN")

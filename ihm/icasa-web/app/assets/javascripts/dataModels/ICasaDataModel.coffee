@@ -13,7 +13,14 @@ define(['backbone', 'underscore', 'domReady'],
                 $.ajax(
                     type: 'DELETE',
                     url: $("#map").attr("gatewayURL") + "/icasa/simulation",
-                )
+                    success: () =>
+                        DataModel.collections.zones.reset();
+                        DataModel.collections.persons.reset();
+                        DataModel.collections.devices.reset();
+                    error :() =>
+                        console.log "Unable to reset simulation in backend";
+                );
+
 
          class DataModel.Models.Backend extends Backbone.Model
             urlRoot : "#server#/backend".replace /#server#/, serverUrl

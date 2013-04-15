@@ -46,13 +46,14 @@ public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwi
 	private volatile Zone m_zone;
 
 	public SimulatedPowerSwitchImpl() {
-		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-		setPropertyValue(POWERSWITCH_CURRENT_STATUS, false);
+		super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(POWER_SWITCH_CURRENT_STATUS, false);
 	}
 
 	@Override
     public boolean getStatus() {
-   	 Boolean status = (Boolean) getPropertyValue(POWERSWITCH_CURRENT_STATUS);
+   	 Boolean status = (Boolean) getPropertyValue(POWER_SWITCH_CURRENT_STATUS);
    	 if (status==null)
    		 return false;
         return status;
@@ -60,13 +61,13 @@ public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwi
 
 	@Override
 	public boolean switchOn() {
-		setPropertyValue(POWERSWITCH_CURRENT_STATUS, true);
+		setPropertyValue(POWER_SWITCH_CURRENT_STATUS, true);
 		return getStatus();
 	}
 
 	@Override
 	public boolean switchOff() {
-		setPropertyValue(POWERSWITCH_CURRENT_STATUS, false);
+		setPropertyValue(POWER_SWITCH_CURRENT_STATUS, false);
 		return getStatus();
 	}
 

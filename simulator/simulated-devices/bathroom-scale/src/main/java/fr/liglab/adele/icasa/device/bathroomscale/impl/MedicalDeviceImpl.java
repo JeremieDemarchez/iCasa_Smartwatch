@@ -37,8 +37,8 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	public final String DETECTION_SCOPE = "detection_scope"; 
 
 	public MedicalDeviceImpl() {
-		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
-		setPropertyValue(DETECTION_SCOPE, 33);
+		super.setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
+        super.setPropertyValue(DETECTION_SCOPE, 33);
 	}
 	
 	protected boolean personInZone() {
@@ -144,7 +144,17 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	   
    }
 
-	@Override
+    @Override
+    public void deviceAttached(LocatedDevice locatedDevice, LocatedDevice locatedDevice2) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void deviceDetached(LocatedDevice locatedDevice, LocatedDevice locatedDevice2) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
    public void personDeviceAttached(Person person, LocatedDevice device) {
 	   // TODO Auto-generated method stub
 	   

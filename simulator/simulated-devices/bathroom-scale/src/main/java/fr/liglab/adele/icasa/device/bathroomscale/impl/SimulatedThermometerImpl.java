@@ -44,7 +44,8 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 
 	public SimulatedThermometerImpl() {
 		super();
-		setPropertyValue(TEMPERATURE_PROPERTY, 0.0f);
+        super.setPropertyValue(MedicalDeviceImpl.LOCATION_PROPERTY_NAME, MedicalDeviceImpl.LOCATION_UNKNOWN);
+        super.setPropertyValue(MEDICAL_THERMOMETER_TEMPERATURE_PROPERTY, 0.0f);
 	}
 
 	@Validate
@@ -69,7 +70,7 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 	@Override
    protected void updateSpecificState() {
 		float temperature = getRandomFloatValue(30, 40);
-	   setPropertyValue(TEMPERATURE_PROPERTY, temperature);	   
+	   setPropertyValue(MEDICAL_THERMOMETER_TEMPERATURE_PROPERTY, temperature);
 		if (restAPI != null) {
 			try {
 				restAPI.sendMeasure(temperature);
@@ -81,12 +82,12 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 
 	@Override
    protected void resetSpecificState() {
-		setPropertyValue(TEMPERATURE_PROPERTY, 0.0f);	   
+		setPropertyValue(MEDICAL_THERMOMETER_TEMPERATURE_PROPERTY, 0.0f);
    }
 
 	@Override
    public float getCurrentTemperature() {
-		Float value = (Float) getPropertyValue(TEMPERATURE_PROPERTY);
+		Float value = (Float) getPropertyValue(MEDICAL_THERMOMETER_TEMPERATURE_PROPERTY);
 		if (value != null)
 			return value;
 		return 0.0f;

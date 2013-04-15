@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.listener.util;
 
+import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
@@ -68,5 +69,15 @@ public class BaseZoneListener implements ZoneListener {
 		// TODO Auto-generated method stub
 
 	}
+
+    @Override
+    public void deviceAttached(Zone zone, LocatedDevice locatedDevice) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public void deviceDetached(Zone zone, LocatedDevice locatedDevice) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 
 }

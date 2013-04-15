@@ -47,10 +47,11 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	private Zone m_zone;
 
 	public SimulatedBinaryLightImpl() {
-		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);		
-		super.setPropertyValue(BinaryLight.LIGHT_MAX_ILLUMINANCE, 0.0d);
-		super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, false);
-		super.setPropertyValue(BinaryLight.LIGHT_MAX_POWER_LEVEL, 100.0d);
+		super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(BinaryLight.BINARY_LIGHT_CURRENT_ILLUMINANCE, 0.0d);
+		super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
+		super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 100.0d);
 	}
 
 	@Override
@@ -60,7 +61,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 	@Override
 	public synchronized boolean getPowerStatus() {
-		Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.LIGHT_POWER_STATUS);
+		Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS);
 		if (powerStatus == null)
 			return false;
 		return powerStatus;
@@ -68,22 +69,23 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 
 	@Override
 	public synchronized boolean setPowerStatus(boolean status) {
-		setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, (Boolean) status);
+		setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, (Boolean) status);
 		return status;
 	}
 
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
-		if (propertyName.equals(BinaryLight.LIGHT_POWER_STATUS)) {
+		if (propertyName.equals(BinaryLight.BINARY_LIGHT_POWER_STATUS)) {
 			boolean previousStatus = getPowerStatus();
 
 			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
 
 			if (previousStatus != status) {
-				super.setPropertyValue(BinaryLight.LIGHT_POWER_STATUS, status);
+				super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, status);
 				// Trying to modify zone variable
 				if (m_zone != null) {
 					try {
+                        super.setPropertyValue(BinaryLight.BINARY_LIGHT_CURRENT_ILLUMINANCE, computeIlluminance());
 						m_zone.setVariableValue("Illuminance", computeIlluminance());
 					} catch (Exception e) {
 					}
@@ -131,7 +133,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	
 	@Override
 	public double getMaxPowerLevel() {
-		Double maxLevel = (Double) getPropertyValue(BinaryLight.LIGHT_MAX_POWER_LEVEL);
+		Double maxLevel = (Double) getPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL);
 		if (maxLevel==null)
 			return 0;
 		return maxLevel;

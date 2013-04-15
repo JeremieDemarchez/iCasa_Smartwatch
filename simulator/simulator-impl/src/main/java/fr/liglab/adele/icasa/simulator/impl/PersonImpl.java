@@ -18,6 +18,8 @@ package fr.liglab.adele.icasa.simulator.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.impl.LocatedObjectImpl;
@@ -40,7 +42,8 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 	
 	private SimulationManager manager;
 
-	public PersonImpl(String name, Position position, String personType, SimulationManager manager) {
+
+    public PersonImpl(String name, Position position, String personType, SimulationManager manager) {
 		super(position);
 		m_name = name;
 		this.personType = personType;
@@ -62,12 +65,16 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public void addListener(PersonListener listener) {
-		listeners.add(listener);
+        synchronized (listeners){
+		    listeners.add(listener);
+        }
 	}
 
 	@Override
 	public void removeListener(PersonListener listener) {
-		listeners.remove(listener);
+        synchronized (listeners){
+		    listeners.remove(listener);
+        }
 	}
 
 	@Override
@@ -82,12 +89,46 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 		super.setCenterAbsolutePosition(position);
 
 		// Listeners notification
-		for (PersonListener listener : listeners) {
-			listener.personMoved(this, oldPosition);
-		}
+        synchronized (listeners){
+            for (PersonListener listener : listeners) {
+                listener.personMoved(this, oldPosition);
+            }
+        }
 	}
 
-	@Override
+    @Override
+    protected void notifyAttachedObject(LocatedObject attachedObject) {
+        LocatedDevice device;
+
+        if (attachedObject instanceof LocatedDevice){
+            device = (LocatedDevice)attachedObject;
+        }else {
+            return; //nothing to notify.
+        }
+        synchronized (listeners){
+            for (PersonListener listener : listeners) {
+                listener.personDeviceAttached(this, device);
+            }
+        }
+    }
+
+    @Override
+    protected void notifyDetachedObject(LocatedObject attachedObject) {
+        LocatedDevice device;
+
+        if (attachedObject instanceof LocatedDevice){
+            device = (LocatedDevice)attachedObject;
+        }else {
+            return; //nothing to notify.
+        }
+        synchronized (listeners){
+            for (PersonListener listener : listeners) {
+                listener.personDeviceDetached(this, device);
+            }
+        }
+    }
+
+    @Override
 	public String toString() {
 		return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType(); 
 	}
@@ -101,5 +142,23 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
    public void setPersonType(String personType) {
 		this.personType = personType;	   
    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        PersonImpl person = (PersonImpl) o;
+
+        if (!m_name.equals(person.m_name)) return false;
+        if (!personType.equals(person.personType)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = m_name.hashCode();
+        result = 31 * result + personType.hashCode();
+        return result;
+    }
 }

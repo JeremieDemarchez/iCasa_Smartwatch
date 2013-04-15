@@ -20,6 +20,7 @@ import java.util.Map;
 import java.util.Set;
 
 import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 
 /**
@@ -31,7 +32,7 @@ public interface SimulationManager extends ContextManager {
 	
 	public void setDeviceFault(String deviceId, boolean value);
 
-	public void createDevice(String deviceType, String deviceId, Map<String, Object> properties);
+	public LocatedDevice createDevice(String deviceType, String deviceId, Map<String, Object> properties);
 
 	public void removeDevice(String deviceId);
 
