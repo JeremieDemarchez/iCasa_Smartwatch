@@ -42,7 +42,8 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 	
 	private SimulationManager manager;
 
-	public PersonImpl(String name, Position position, String personType, SimulationManager manager) {
+
+    public PersonImpl(String name, Position position, String personType, SimulationManager manager) {
 		super(position);
 		m_name = name;
 		this.personType = personType;
@@ -141,5 +142,23 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
    public void setPersonType(String personType) {
 		this.personType = personType;	   
    }
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
+        PersonImpl person = (PersonImpl) o;
+
+        if (!m_name.equals(person.m_name)) return false;
+        if (!personType.equals(person.personType)) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = m_name.hashCode();
+        result = 31 * result + personType.hashCode();
+        return result;
+    }
 }
