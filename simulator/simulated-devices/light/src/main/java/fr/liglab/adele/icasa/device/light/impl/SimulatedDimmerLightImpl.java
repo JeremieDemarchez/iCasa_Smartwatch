@@ -46,10 +46,11 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	private Zone m_zone;
 
 	public SimulatedDimmerLightImpl() {
-		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-		super.setPropertyValue(DimmerLight.LIGHT_MAX_ILLUMINANCE, 0.0d);
-		super.setPropertyValue(DimmerLight.LIGHT_MAX_POWER_LEVEL, 100.0d);
-		super.setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, 0.0d);
+		super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_CURRENT_ILLUMINANCE, 0.0d);
+		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 100.0d);
+		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
 		
 	}
 
@@ -60,7 +61,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 
 	@Override
 	public synchronized double getPowerLevel() {
-		Double powerLevel = (Double) getPropertyValue(DimmerLight.LIGHT_POWER_LEVEL);
+		Double powerLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL);
 		if (powerLevel == null)
 			return 0.0d;
 		return powerLevel;
@@ -71,23 +72,24 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) 
 			throw new IllegalArgumentException("Invalid power level : " + level);
 		//Add by jeremy
-		setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, level);
+		setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, level);
 
 		return level;
 	}
 
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
-		if (propertyName.equals(DimmerLight.LIGHT_POWER_LEVEL)) {
+		if (propertyName.equals(DimmerLight.DIMMER_LIGHT_POWER_LEVEL)) {
 			double previousLevel = getPowerLevel();
 
 			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
 
 			if (previousLevel!=level) {
-				super.setPropertyValue(DimmerLight.LIGHT_POWER_LEVEL, level);
+				super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, level);
 				// Trying to modify zone variable
 				if (m_zone!=null) {
 					try {
+                        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_CURRENT_ILLUMINANCE,computeIlluminance());
 						m_zone.setVariableValue("Illuminance", computeIlluminance());
 					} catch (Exception e) {
 						e.printStackTrace();
@@ -136,7 +138,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	
 	@Override
 	public double getMaxPowerLevel() {
-		Double maxLevel = (Double) getPropertyValue(DimmerLight.LIGHT_MAX_POWER_LEVEL);
+		Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
 		if (maxLevel==null)
 			return 0;
 		return maxLevel;

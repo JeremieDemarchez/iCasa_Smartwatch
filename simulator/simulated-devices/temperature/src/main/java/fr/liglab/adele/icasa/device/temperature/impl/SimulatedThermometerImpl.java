@@ -49,8 +49,9 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	private ZoneListener listener = new ThermometerZoneListener();
 
 	public SimulatedThermometerImpl() {
-		super();
-		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0);
+        super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0d);
 	}
 
 	@Override
@@ -90,14 +91,14 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
-		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, null);
+		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, -1.0d);
 		if (m_zone != null)
 			m_zone.removeListener(listener);
 	}
 
 	private void getTemperatureFromZone() {
 		if (m_zone != null) {
-			Object currentTemperature = m_zone.getVariableValue("Temperature");
+			Double currentTemperature = ((Double) m_zone.getVariableValue("Temperature"));
 			if (currentTemperature != null)
 				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, currentTemperature);
 		}

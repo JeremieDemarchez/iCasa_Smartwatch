@@ -646,25 +646,25 @@ define(['jquery',
                          decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.PresenceSensor" )
-                  presence = @properties()["sensed_presence"];
+                  presence = @properties()["presenceSensor.sensedPresence"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "presence")
                        decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.BinaryLight")
-                  powerLevel = @properties()["power_status"]
+                  powerLevel = @properties()["binaryLight.powerStatus"]
                   if (powerLevel)
                     @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
                 if (@type() == "iCASA.COGazSensor" )
-                  concentration = @properties()["co_current_concentration"];
+                  concentration = @properties()["carbonMonoxydeSensor.currentConcentration"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);
                   );
                 if (@type() == "iCASA.CO2GazSensor" )
-                  concentration = @properties()["co2_current_concentration"];
+                  concentration = @properties()["carbonDioxydeSensor.currentConcentration"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);

@@ -47,7 +47,8 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	public SimulatedBathroomScaleImpl() {
 		super();
-		setPropertyValue(WEIGHT_PROPERTY, 0.0);
+        super.setPropertyValue(MedicalDeviceImpl.LOCATION_PROPERTY_NAME, MedicalDeviceImpl.LOCATION_UNKNOWN);
+        super.setPropertyValue(BATHROOM_SCALE_WEIGHT_PROPERTY, 0.0);
 	}
 
 	@Validate
@@ -66,7 +67,7 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	@Override
 	public float getCurrentWeight() {
-		Float weight = (Float) getPropertyValue(WEIGHT_PROPERTY);
+		Float weight = (Float) getPropertyValue(BATHROOM_SCALE_WEIGHT_PROPERTY);
 		if (weight != null)
 			return weight;
 		return 0.0f;
@@ -80,7 +81,7 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 	@Override
    protected void updateSpecificState() {
 		float weight = getRandomFloatValue(55, 95);
-		setPropertyValue(WEIGHT_PROPERTY, weight);
+		setPropertyValue(BATHROOM_SCALE_WEIGHT_PROPERTY, weight);
 		if (restAPI != null) {
 			try {
 				restAPI.sendMeasure(weight);
@@ -92,7 +93,7 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	@Override
    protected void resetSpecificState() {
-		setPropertyValue(WEIGHT_PROPERTY, 0.0f);	   
+		setPropertyValue(BATHROOM_SCALE_WEIGHT_PROPERTY, 0.0f);
    }
 	
 	

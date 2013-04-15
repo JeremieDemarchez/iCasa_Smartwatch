@@ -49,9 +49,11 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	private Zone m_zone;
 
 	public SimulatedHeaterImpl() {
-		super.setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.0d);
-		setPropertyValue(Heater.HEATER_MAX_POWER_LEVEL, 1000.0d);
-		setPropertyValue(Heater.HEATER_UPDATE_PERIOD, 5000);
+        super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.0d);
+        super.setPropertyValue(Heater.HEATER_MAX_POWER_LEVEL, 1000.0d);
+        super.setPropertyValue(Heater.HEATER_UPDATE_PERIOD, 5000);
 	}
 
 	@Override

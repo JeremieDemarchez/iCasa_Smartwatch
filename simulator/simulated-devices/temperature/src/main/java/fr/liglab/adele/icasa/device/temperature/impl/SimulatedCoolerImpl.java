@@ -49,9 +49,11 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	private Zone m_zone;
 
 	public SimulatedCoolerImpl() {
-		super.setPropertyValue(Cooler.COOLER_POWER_LEVEL, 0.0d);
-		setPropertyValue(Cooler.COOLER_MAX_POWER_LEVEL, 1000.0d);
-		setPropertyValue(Cooler.COOLER_UPDATE_PERIOD, 5000);
+        super();
+        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+        super.setPropertyValue(Cooler.COOLER_POWER_LEVEL, 0.0d);
+        super.setPropertyValue(Cooler.COOLER_MAX_POWER_LEVEL, 1000.0d);
+        super.setPropertyValue(Cooler.COOLER_UPDATE_PERIOD, 5000);
 	}
 
 	@Override

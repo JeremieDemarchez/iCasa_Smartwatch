@@ -37,8 +37,8 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	public final String DETECTION_SCOPE = "detection_scope"; 
 
 	public MedicalDeviceImpl() {
-		setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
-		setPropertyValue(DETECTION_SCOPE, 33);
+		super.setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
+        super.setPropertyValue(DETECTION_SCOPE, 33);
 	}
 	
 	protected boolean personInZone() {
