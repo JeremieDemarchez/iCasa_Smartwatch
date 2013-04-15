@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -36,22 +39,36 @@ public class ScriptSAXHandler extends DefaultHandler {
 
 	private int factor = 1;
 	
-	private String startdateStr;
+	private String startdateStr = null;
 
 
-	@Override
+    @Override
 	public void startDocument() throws SAXException {
 		delay = 0;
 	}
 
 	@Override
 	public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {
-		if (qName.equals("behavior")) {
-			startdateStr = attributes.getValue("startdate");
-			String factorStr = attributes.getValue("factor");
-			factor = Integer.parseInt(factorStr);
+        String factorStr = null;
+        if (qName.equals("behavior")) {
+            if (attributes.getValue("startdate") != null){
+                startdateStr = attributes.getValue("startdate");
+            } else {
+                startdateStr = DateTextUtil.getTextDate(new Date());
+            }
+            if (attributes.getValue("factor") != null){
+			    factorStr = attributes.getValue("factor");
+                try{
+                    factor = Integer.parseInt(factorStr);
+                }catch(Exception e){
+                    factor = 1;
+                }
+            }
+
 		} else if (qName.equals("delay")) {
-			delay += Integer.valueOf(attributes.getValue("value"));
+            try {
+			    delay += Integer.valueOf(attributes.getValue("value"));
+            }catch(Exception ex){ }
 		} else {
 			list.add(new ActionDescription(delay, qName, createParameters(attributes)));
 		}
@@ -75,10 +92,10 @@ public class ScriptSAXHandler extends DefaultHandler {
 		return list;
 	}
 
-	public long getStartDate() {		
+	public Long getStartDate() {
 		Date date = DateTextUtil.getDateFromText(startdateStr);
 		if (date!=null)
-			return date.getTime();
+			return null;
 		return System.currentTimeMillis();
 			
 	}
