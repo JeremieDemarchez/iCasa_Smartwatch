@@ -106,8 +106,20 @@ class SizeUtil
 
   @initAreaSizes = (mapWidth, mapHeight) ->
     map = $("#map");
-    map.width(mapWidth);
-    map.height(mapHeight);
+    # hypothesys : areaBorderSize = padding + marging + border = 10 + 3 + 15 = 28px
+    areaBorderSize = 28;
+    actionTabMinWidth = parseInt($('#actionTabs').css('min-width'), 10) ;
+    availableWidth = @.getViewportSize().width - (4 * areaBorderSize) - 25;
+    #calculate width and height to fith in available space
+    calculatedWidth = availableWidth - actionTabMinWidth;
+    calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+
+    if availableWidth >= 900 && calculatedWidth <= mapWidth
+        map.width(calculatedWidth);
+        map.height(calculatedHeight);
+    else
+        map.width(mapWidth);
+        map.height(mapHeight);
     @computeAreaSizes("map");
 
   @computeAreaSizes = (resizedAreaId) ->

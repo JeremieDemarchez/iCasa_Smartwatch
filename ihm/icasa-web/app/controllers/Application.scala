@@ -2,6 +2,7 @@ package controllers
 
 import play.api._
 import libs.EventSource
+import libs.json.Json
 import libs.json.Json._
 import play.api.mvc._
 import play.api.Play.current
@@ -11,6 +12,7 @@ import play.api.data.Forms._
 import scala.collection.mutable
 import models.HouseMap
 import utils.RichFile.enrichFile
+import com.typesafe.config.ConfigFactory
 
 object Application extends Controller {
 
@@ -184,12 +186,27 @@ object Application extends Controller {
   }
 
   def deleteMap() = Action {  implicit request =>
-    val body = request.body;
     val map = mapForm.bindFromRequest.data;
     mapsLock.synchronized {
         maps.remove(map("mapId"));
     }
     saveMaps();
     Redirect(routes.Application.index);
+  }
+
+  def frontendInfo() = Action {  implicit request =>
+    var version = "0.0.0";
+    try {
+      val configuration = ConfigFactory.load("version.conf");
+      version = configuration.getString("app.version");
+    } catch {
+      case e: Exception =>
+        e.printStackTrace();
+        version = "0.0.0";
+    }
+    val jsonObject = Json.toJson( Map (
+      "version" -> version)
+    )
+    Ok(jsonObject);
   }
 }

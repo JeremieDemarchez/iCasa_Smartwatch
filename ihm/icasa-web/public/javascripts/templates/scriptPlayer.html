@@ -83,11 +83,14 @@
 
     </fieldset>
     <fieldset class="scriptPlayerGrp">
-    <legend>Save State into Script</legend>
+    <legend>Simulation State</legend>
         <!--Save script state-->
         <div class="input-prepend">
-            <button class="btn" style="font-size:15px" data-bind="click: $root.saveScript, enable: $root.newScriptName().length > 0">Save as</button>
             <input class="span2" type="text" data-bind="value: $root.newScriptName, valueUpdate:'afterkeydown'"/>
+            <button class="btn" style="font-size:15px" data-bind="click: $root.saveScript, enable: $root.newScriptName().length > 0">Save as</button>
+        </div>
+        <div class="controls controls-row">
+            <button class="btn" id="reset" data-bind="click: $root.resetState"><i class="icon-fast-backward"></i>Reset State</button>
         </div>
     </fieldset>
 </table>

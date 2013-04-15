@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.device.bathroomscale.impl;
 
+import fr.liglab.adele.icasa.location.LocatedDevice;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -95,7 +96,7 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
    protected void resetSpecificState() {
 		setPropertyValue(BATHROOM_SCALE_WEIGHT_PROPERTY, 0.0f);
    }
-	
-	
+
+
 
 }

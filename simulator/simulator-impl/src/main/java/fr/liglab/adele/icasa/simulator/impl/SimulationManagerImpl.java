@@ -16,7 +16,6 @@
 package fr.liglab.adele.icasa.simulator.impl;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -56,8 +55,11 @@ import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 @Instantiate(name = "SimulationManager-1")
 public class SimulationManagerImpl implements SimulationManager {
 
-	@Requires
-	ContextManager manager;
+    /*
+     * WARNING : UPDATE following filter if you change the componant instance name !!!
+     */
+	@Requires(filter = "(!(instance.name=SimulationManager-1))")
+	private ContextManager manager;
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
@@ -269,9 +271,11 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void createDevice(String factoryName, String deviceId, Map<String, Object> properties) {
+	public LocatedDevice createDevice(String factoryName, String deviceId, Map<String, Object> properties) {
 		Factory factory = m_factories.get(factoryName);
-		if (factory != null) {
+        LocatedDevice device =  null;
+        int count = 0;
+        if (factory != null) {
 			// Create the device
 			Dictionary<String, String> configProperties = new Hashtable<String, String>();
 			configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
@@ -292,6 +296,18 @@ public class SimulationManagerImpl implements SimulationManager {
 				e.printStackTrace();
 			}
 		}
+        while (device == null && count++ < 500){
+            device = manager.getDevice(deviceId);
+            try {
+                Thread.sleep(50);
+            } catch (InterruptedException e) {}
+            device = manager.getDevice(deviceId);
+        }
+        if (device == null){
+            throw new IllegalStateException("Unable to obtain device (" + deviceId + ") after 500 tries ");
+        }
+
+        return device;
 	}
 
 	@Override
