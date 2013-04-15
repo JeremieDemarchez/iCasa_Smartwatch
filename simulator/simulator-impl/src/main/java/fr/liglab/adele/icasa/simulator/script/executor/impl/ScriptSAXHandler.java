@@ -39,7 +39,7 @@ public class ScriptSAXHandler extends DefaultHandler {
 
 	private int factor = 1;
 	
-	private String startdateStr = null;
+	private String startdateStr;
 
 
     @Override
@@ -95,7 +95,7 @@ public class ScriptSAXHandler extends DefaultHandler {
 	public Long getStartDate() {
 		Date date = DateTextUtil.getDateFromText(startdateStr);
 		if (date!=null)
-			return null;
+			return date.getTime();
 		return System.currentTimeMillis();
 			
 	}
