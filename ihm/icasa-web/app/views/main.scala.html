@@ -51,7 +51,7 @@
 <script src="@routes.Assets.at("javascripts/BrowserDetection.js")"></script>
 <script>
 
-if (!((BrowserDetect.browser == "Chrome") || (BrowserDetect.browser == "Firefox"))) {
+if (!(BrowserDetect.browser == "Firefox")) {
     var modal = $('<div></div>').addClass("modal hide fade");
     var header = $('<div></div>').addClass("modal-header");
     var body = $('<div></div>').addClass("modal-body");
