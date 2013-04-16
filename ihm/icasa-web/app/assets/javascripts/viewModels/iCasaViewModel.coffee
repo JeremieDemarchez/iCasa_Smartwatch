@@ -546,6 +546,7 @@ define(['jquery',
           }
           ,@);
         @background = @.generateBackgroundColor();
+        @borderColor = @background;
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
       getVariableValue:(variable)->
         return @.variables()[variable]+"";
