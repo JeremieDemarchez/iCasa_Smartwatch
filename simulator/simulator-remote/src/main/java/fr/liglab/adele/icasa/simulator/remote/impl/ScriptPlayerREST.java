@@ -201,34 +201,6 @@ public class ScriptPlayerREST extends AbstractREST {
 				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
 		}
 
-		/*
-		 * 
-		 * boolean isSelected = scriptId.equals(currentScriptName);
-		 * 
-		 * if (!isSelected && !State.STOPPED.equals(currentScriptState)) {
-		 * _scriptExecutor.stop(); currentScriptState = State.STOPPED; }
-		 * 
-		 * boolean isStarted = State.EXECUTING.equals(currentScriptState); boolean
-		 * isStopped = State.STOPPED.equals(currentScriptState); boolean isPaused
-		 * = State.PAUSED.equals(currentScriptState);
-		 * 
-		 * ScriptJSON script = ScriptJSON.fromString(content); if (script != null)
-		 * {
-		 * 
-		 * ScriptState newScriptState = ScriptState.fromString(script.getState());
-		 * 
-		 * if (ScriptState.STARTED.equals(newScriptState)) { if (isStopped) { if
-		 * ((script.getFactor() == null) && (script.getStartDate() == null))
-		 * _scriptExecutor.execute(scriptId); else
-		 * _scriptExecutor.execute(scriptId); // See the execution //
-		 * _scriptExecutor.execute(scriptId, script.getStartDate(), //
-		 * script.getFactor()); } else if (isPaused) _scriptExecutor.resume(); }
-		 * else if (ScriptState.PAUSED.equals(newScriptState)) { if (isStarted)
-		 * _scriptExecutor.pause(); } else if
-		 * (ScriptState.STOPPED.equals(newScriptState)) { if (isStarted ||
-		 * isPaused) _scriptExecutor.stop(); } }
-		 */
-
 		JSONObject scriptJSON = IcasaSimulatorJSONUtil.getScriptJSON(scriptId, _scriptExecutor);
 
 		return makeCORS(Response.ok(scriptJSON.toString()));
