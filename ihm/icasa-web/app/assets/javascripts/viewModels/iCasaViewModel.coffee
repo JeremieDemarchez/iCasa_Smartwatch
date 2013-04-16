@@ -863,14 +863,20 @@ define(['jquery',
            , @);
 
     class ClockViewModel extends kb.ViewModel
-        constructor: (model) ->
+        constructor: (@model) ->
           super(model);
 
-          @currentTime = kb.observable(model, 'currentTime')
-          @startDate = kb.observable(model, 'startDate')
-          @pause = kb.observable(model, 'pause')
-          @factor = kb.observable(model, 'factor')
+          @currentTime = kb.observable(model, 'currentTime');
+          @startDate = kb.observable(model, 'startDate');
+          @pause = kb.observable(model, 'pause');
+          @factor = kb.observable(model, 'factor');
+          @factorTmp = kb.observable(model,'factor');
+          @factorEditing = ko.observable(false);
+          @updateFactor = ()=>
+                if !@factorEditing() && @factorTmp() != @.model().previous('factor')
+                    @.model().save();
 
+          @factorEditing.subscribe(@updateFactor);
           @minutes = ko.computed({
              read: =>
                d = new Date(@currentTime())
