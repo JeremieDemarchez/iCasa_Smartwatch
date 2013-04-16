@@ -65,7 +65,7 @@ import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
 public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
-
+    private static final String SCRIPTS_DIRECTORY = "scripts";
 	/**
 	 * The clock use for simulation
 	 */
@@ -336,8 +336,15 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		try {
 
 			String dateStr = DateTextUtil.getTextDate(System.currentTimeMillis());
-
-			outFile = new FileWriter("load" + System.getProperty("file.separator") + fileName);
+            File scriptsDir = new File(SCRIPTS_DIRECTORY);
+            if (!scriptsDir.exists()) {
+                logger.info("creating directory: " + SCRIPTS_DIRECTORY);
+                boolean result = scriptsDir.mkdir();
+                if(!result){
+                    logger.error("Unable to create directory: " + SCRIPTS_DIRECTORY);
+                }
+            }
+			outFile = new FileWriter(SCRIPTS_DIRECTORY + System.getProperty("file.separator") + fileName);
 			out = new PrintWriter(outFile);
 
 			out.println("<behavior startdate=\"" + dateStr + "\" factor=\"1440\">");

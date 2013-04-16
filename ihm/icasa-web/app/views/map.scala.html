@@ -54,7 +54,7 @@
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.zones() -->
-                 <div class="zoneSection" data-bind="jqueryResizable: {}, jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight, visibility: visibility , background: background}">
+                 <div class="zoneSection" data-bind="jqueryResizable: {}, jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight, visibility: visibility , background: background, 'border-color': borderColor}">
                     <div data-bind="text: name"></div>
                  </div>
             <!-- /ko -->

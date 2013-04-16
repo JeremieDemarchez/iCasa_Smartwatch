@@ -40,7 +40,7 @@
     <div class="controls controls-row">
         <label class="span1">Factor</label>
         <div class="controls">
-            <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.clock.factor, valueUpdate:'afterkeydown'"/>
+            <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.clock.factorTmp, hasfocus: $root.clock.factorEditing"/>
             <button class="btn span" id="play" data-bind="click: $root.startClock, visible: $root.clock.pause"><i class="icon-play"></i>Play</button>
             <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pause()"><i class="icon-pause"></i>Pause</button>
         </div>
