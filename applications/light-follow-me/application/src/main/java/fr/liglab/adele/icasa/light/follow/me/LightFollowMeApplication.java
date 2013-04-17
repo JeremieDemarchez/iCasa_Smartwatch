@@ -113,7 +113,7 @@ public class LightFollowMeApplication implements DeviceListener {
         if (device instanceof PowerSwitch) {
 
             PowerSwitch switchActiv = switchs.get(device.getSerialNumber());
-            if (switchActiv != null && propertyName.equals(PowerSwitch.POWERSWITCH_CURRENT_STATUS)) {
+            if (switchActiv != null && propertyName.equals(PowerSwitch.POWER_SWITCH_CURRENT_STATUS)) {
                 String switchLocation = (String) switchActiv.getPropertyValue(LOCATION_PROPERTY_NAME);
                 if (!switchLocation.equals(LOCATION_UNKNOWN)) {
                     List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(switchLocation);
