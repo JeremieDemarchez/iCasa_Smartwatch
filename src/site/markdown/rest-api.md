@@ -103,7 +103,7 @@ Result:
           "Temperature": 295.15
         }
     }
-	
+    
 ### Craete a zone (POST)
 
 Creates a new zone in the iCasa execution platform.
@@ -122,17 +122,17 @@ Data parameter -> the JSON data associated with the new zone
 Result:
 
     {
-	  "id":"hall",
-	  "isRoom":true,
-	  "rightX":50,
-	  "leftX":1,
-	  "name":"hall",
-	  "topY":1,
-	  "bottomY":50,
-	  "variables":{}
-	}
+     "id":"hall",
+     "isRoom":true,
+     "rightX":50,
+     "leftX":1,
+     "name":"hall",
+     "topY":1,
+     "bottomY":50,
+     "variables":{}
+   }
 
-	
+   
 ### Delete an zone (DELETE)
 
 Deletes a zone in the iCasa execution platform.
@@ -148,7 +148,7 @@ Data parameter -> _None_
 
     > curl -X DELETE http://localhost:8080/icasa/zones/zone/hall
 
-	
+   
 ### Updates a zone (PUT)
 
 Updates a zone in the iCasa execution platform.
@@ -167,15 +167,15 @@ Data parameter -> the JSON data associated with new zone
 Result:
 
     {
-	  "id":"hall",
-	  "isRoom":true,
-	  "rightX":316,
-	  "leftX":98,
-	  "name":"hall",
-	  "topY":72,
-	  "bottomY":277,
-	  "variables":{}
-	}
+     "id":"hall",
+     "isRoom":true,
+     "rightX":316,
+     "leftX":98,
+     "name":"hall",
+     "topY":72,
+     "bottomY":277,
+     "variables":{}
+   }
 
 <br>
 
@@ -216,6 +216,9 @@ Result:
              "fault": "no"
           },
           "type": "iCASA.DimmerLight",
+          "services":["fr.liglab.adele.icasa.device.light.DimmerLight",
+                    "fr.liglab.adele.icasa.simulator.SimulatedDevice",
+                    "fr.liglab.adele.icasa.device.GenericDevice"],
           "fault": "no"
        },
        {
@@ -232,10 +235,13 @@ Result:
              "fault": "no"
           },
           "type": "iCASA.Thermometer",
+          "services":["fr.liglab.adele.icasa.device.light.Photometer",
+                    "fr.liglab.adele.icasa.simulator.SimulatedDevice",
+                    "fr.liglab.adele.icasa.device.GenericDevice"],
           "fault": "no"
        }
     ]
-	
+   
 
 ### Gets a specific device (GET)
 
@@ -268,11 +274,14 @@ Result:
              "fault": "no"
           },
           "type": "iCASA.Thermometer",
+          "services":["fr.liglab.adele.icasa.device.light.Photometer",
+                    "fr.liglab.adele.icasa.simulator.SimulatedDevice",
+                    "fr.liglab.adele.icasa.device.GenericDevice"],
           "fault": "no"
        }
 
 <br>
-	   
+      
 ### Creates a device (POST)
 
 Creates a new device in the iCasa execution platform.
@@ -291,20 +300,23 @@ Data parameter -> the JSON data associated with the new device
 Result:
 
     {
-	   "id":"Heater-970c350695",
-	   "positionX":-1,
-	   "name":"Heater-970c350695",
-	   "positionY":-1,
-	   "state":"activated",
-	   "properties":{
-	      "heater.updaterThread.period":5000,
-		  "state":"activated",
-		  "fault":"no"
-		},
-		"type":"iCASA.Heater",
-		"fault":"no"}
-	}
-	
+      "id":"Heater-970c350695",
+      "positionX":-1,
+      "name":"Heater-970c350695",
+      "positionY":-1,
+      "state":"activated",
+      "properties":{
+         "heater.updaterThread.period":5000,
+        "state":"activated",
+        "fault":"no"
+      },
+      "type":"iCASA.Heater",
+        "services":["fr.liglab.adele.icasa.device.temperature.Heater",
+                    "fr.liglab.adele.icasa.simulator.SimulatedDevice",
+                    "fr.liglab.adele.icasa.device.GenericDevice"],
+      "fault":"no"}
+   }
+   
 
 ### Updates a device (PUT)
 
@@ -326,20 +338,23 @@ Result:
     {
         "id":"Heater-970c350695",
         "location":"bedroom",
-	    "positionX":182,
-		"name":"Heater-970c350695",
-		"positionY":441,
-		"state":"activated",
-		"properties":{
-		   "heater.updaterThread.period":5000,
-		   "state":"activated",
-		   "Location":"bedroom",
-		   "fault":"no"},
-		"type":"iCASA.Heater",
-		"fault":"no"
-	}
-	
-	
+       "positionX":182,
+      "name":"Heater-970c350695",
+      "positionY":441,
+      "state":"activated",
+      "properties":{
+         "heater.updaterThread.period":5000,
+         "state":"activated",
+         "Location":"bedroom",
+         "fault":"no"},
+      "type":"iCASA.Heater",
+        "services":["fr.liglab.adele.icasa.device.temperature.Heater",
+                "fr.liglab.adele.icasa.simulator.SimulatedDevice",
+                "fr.liglab.adele.icasa.device.GenericDevice"],
+      "fault":"no"
+   }
+   
+   
 ### Deleta a device (DELETE)
 
 Deletes a device in the iCasa execution platform.
@@ -404,7 +419,7 @@ Result:
     }
 
 
-<a name="Person"></a>	
+<a name="Person"></a>   
 ## Person Service
 
 Base URL: _http://host:port/icasa/persons_
@@ -497,13 +512,13 @@ Data parameter -> _None_
 Result:
 
     {  
-	   "id":"Paul",
-	   "location":"livingroom",
-	   "positionX":542,
-	   "name":"Paul",
-	   "positionY":294,
-	   "type":"Grandfather"
-	}
+      "id":"Paul",
+      "location":"livingroom",
+      "positionX":542,
+      "name":"Paul",
+      "positionY":294,
+      "type":"Grandfather"
+   }
 
 ### Creates a person (POST)
 
@@ -523,14 +538,14 @@ Data parameter -> the JSON data associated with the new person
 Result:
 
     {  
-	   "id":"Paul",
-	   "location":"unknown",
-	   "positionX":1,
-	   "name":"Paul",
-	   "positionY":1,
-	   "type":"Grandfather"
-	}
-	
+      "id":"Paul",
+      "location":"unknown",
+      "positionX":1,
+      "name":"Paul",
+      "positionY":1,
+      "type":"Grandfather"
+   }
+   
 ### Deletes a person (DELETE)
 
 Deletes a person in the iCasa execution platform.
