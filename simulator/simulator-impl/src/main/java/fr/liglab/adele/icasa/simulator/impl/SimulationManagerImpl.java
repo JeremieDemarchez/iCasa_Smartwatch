@@ -620,13 +620,18 @@ public class SimulationManagerImpl implements SimulationManager {
 		return manager.getDeviceTypes();
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see
-	 * fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes
-	 * ()
-	 */
+    @Override
+    public Set<String> getProvidedServices(String deviceType) {
+        return manager.getProvidedServices(deviceType);
+    }
+
+    /*
+     * (non-Javadoc)
+     *
+     * @see
+     * fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes
+     * ()
+     */
 	@Override
 	public Set<String> getSimulatedDeviceTypes() {
         lock.readLock().lock();
