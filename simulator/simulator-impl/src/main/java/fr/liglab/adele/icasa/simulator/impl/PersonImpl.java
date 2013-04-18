@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.simulator.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.LocatedObject;
@@ -38,7 +39,9 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 	
 	private String personType;
 
-	private List<PersonListener> listeners = new ArrayList<PersonListener>();
+    private List<PersonListener> listeners = new ArrayList<PersonListener>();
+
+    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 	
 	private SimulationManager manager;
 
@@ -52,7 +55,12 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public String getName() {
-		return m_name;
+        lock.readLock().lock();
+        try{
+		    return m_name;
+        }finally {
+            lock.readLock().unlock();
+        }
 	}
 
 	@Override
@@ -65,21 +73,30 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	@Override
 	public void addListener(PersonListener listener) {
-        synchronized (listeners){
-		    listeners.add(listener);
+        lock.writeLock().lock();
+        try{
+	        listeners.add(listener);
+        }finally {
+            lock.writeLock().unlock();
         }
 	}
 
 	@Override
 	public void removeListener(PersonListener listener) {
-        synchronized (listeners){
-		    listeners.remove(listener);
+        lock.writeLock().lock();
+        try{
+	        listeners.remove(listener);
+        }finally {
+            lock.writeLock().unlock();
         }
+
 	}
 
 	@Override
 	public void setName(String name) {
+        lock.writeLock().lock();
 		m_name = name;
+        lock.writeLock().unlock();
 	}
 
 
@@ -89,10 +106,9 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 		super.setCenterAbsolutePosition(position);
 
 		// Listeners notification
-        synchronized (listeners){
-            for (PersonListener listener : listeners) {
-                listener.personMoved(this, oldPosition);
-            }
+        List<PersonListener> snapshotListeners = getListeners();
+        for (PersonListener listener : snapshotListeners ) {
+           listener.personMoved(this, oldPosition);
         }
 	}
 
@@ -105,10 +121,9 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
         }else {
             return; //nothing to notify.
         }
-        synchronized (listeners){
-            for (PersonListener listener : listeners) {
-                listener.personDeviceAttached(this, device);
-            }
+        List<PersonListener> snapshotListeners = getListeners();
+        for (PersonListener listener : snapshotListeners) {
+            listener.personDeviceAttached(this, device);
         }
     }
 
@@ -121,26 +136,37 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
         }else {
             return; //nothing to notify.
         }
-        synchronized (listeners){
-            for (PersonListener listener : listeners) {
-                listener.personDeviceDetached(this, device);
-            }
+        List<PersonListener> snapshotListeners = getListeners();
+        for (PersonListener listener : snapshotListeners) {
+            listener.personDeviceDetached(this, device);
         }
     }
 
     @Override
 	public String toString() {
-		return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType(); 
+        lock.readLock().lock();
+        try{
+		    return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType();
+        }finally {
+            lock.readLock().unlock();
+        }
 	}
 
 	@Override
    public String getPersonType() {
-	   return personType;
+        lock.readLock().lock();
+        try {
+	        return personType;
+        }finally {
+            lock.readLock().unlock();
+        }
    }
 
 	@Override
    public void setPersonType(String personType) {
-		this.personType = personType;	   
+        lock.writeLock().lock();
+		this.personType = personType;
+        lock.writeLock().unlock();
    }
     @Override
     public boolean equals(Object o) {
@@ -148,17 +174,33 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
         if (o == null || getClass() != o.getClass()) return false;
 
         PersonImpl person = (PersonImpl) o;
-
-        if (!m_name.equals(person.m_name)) return false;
-        if (!personType.equals(person.personType)) return false;
-
+        lock.readLock().lock();//this lock
+        person.lock.readLock().lock();//take the person read lock
+        try{
+            if (!m_name.equals(person.m_name)) return false;
+            if (!personType.equals(person.personType)) return false;
+        }finally {
+            person.lock.readLock().unlock();//free the person read lock.
+            lock.readLock().unlock();//this lock
+        }
         return true;
     }
 
     @Override
     public int hashCode() {
+        lock.readLock().lock();
         int result = m_name.hashCode();
         result = 31 * result + personType.hashCode();
+        lock.readLock().unlock();
         return result;
+    }
+
+    public List<PersonListener> getListeners() {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<PersonListener>(listeners);
+        }finally {
+            lock.readLock().unlock();
+        }
     }
 }
