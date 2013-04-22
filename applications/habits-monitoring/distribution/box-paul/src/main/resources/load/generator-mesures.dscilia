@@ -20,6 +20,10 @@
 
 			</mediator-instance>
 			
+			<mediator-instance id="ts-enricher" type="TimeStampEnricherMediator" >
+
+			</mediator-instance>
+			
 			<mediator-instance id="transformer" type="MeasureTransformerMediator" >
 				<processor>
 					<property name="user" value="Paul"/>
@@ -31,7 +35,8 @@
 		<bindings>
 			<binding from="presence-collector:out" to="filter:in" />
 			<binding from="filter:out" to="enricher:in" />
-			<binding from="enricher:out" to="transformer:in" />
+			<binding from="enricher:out" to="ts-enricher:in" />
+			<binding from="ts-enricher:out" to="transformer:in" />
 			<binding from="transformer:out" to="event-webservice:in" />
 		</bindings>
 	</chain>

@@ -79,11 +79,11 @@
 			<scope>test</scope>
 		</dependency>
 
-        <dependency>
-            <groupId>org.ops4j.pax.url</groupId>
-            <artifactId>pax-url-wrap</artifactId>
-            <version>1.5.2</version>
-        </dependency>
+		<dependency>
+			<groupId>org.ops4j.pax.url</groupId>
+			<artifactId>pax-url-wrap</artifactId>
+			<version>1.5.2</version>
+		</dependency>
 
 		<dependency>
 			<groupId>junit</groupId>
@@ -103,7 +103,7 @@
 			<version>1.6.4-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
-		
+
 
 		<!-- Distribution to test -->
 		<dependency>
@@ -112,6 +112,11 @@
 			<version>${distrib.version}</version>
 			<type>osgi-distribution</type>
 			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>${distrib.groupId}</groupId>
+			<artifactId>measure.generator</artifactId>
+			<version>${distrib.version}</version>
 		</dependency>
 		<!--Test to herit -->
 		<dependency>

@@ -23,7 +23,6 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
-import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
@@ -33,8 +32,6 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
  * 
  */
 public class MeasureCollector extends AbstractCollector implements DeviceListener {
-
-	private Clock clock;
 
 	private Map<String, PresenceSensor> detectors;
 
@@ -86,11 +83,9 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 				Measure measure = new Measure();
 				measure.setDeviceId(deviceSerialNumber);
 				measure.setLocalisation((String) detector.getPropertyValue("Location"));
-				long date = clock.currentTimeMillis();
-				measure.setTimestamp(date);
 				Data data = new Data(measure);
 
-				// simulation realibility
+				// simulation reliability
 				int res = counter % 4;
 				if (res != 0)
 					measure.setRealibility(100);

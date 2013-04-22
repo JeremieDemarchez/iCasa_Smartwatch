@@ -23,7 +23,6 @@
       <callback type="bind" method="bindProxy" />
       <callback type="unbind" method="unbindProxy" />
     </requires>
-    <requires field="clock" optional="false" nullable="false" />
   </collector>
 
   <adapter name="PresenceDetectorAdapter" pattern="in-only">
@@ -65,6 +64,21 @@
 
   <mediator-component name="MeasureEnricherMediator" category="medical">
     <cilia:processor name="MeasureEnricherProcessor" />
+    <cilia:scheduler name="immediate-scheduler" />
+    <cilia:dispatcher name="multicast-dispatcher" />
+    <ports>
+       <in-port name="in" type="*" />
+       <out-port name="out" type="*" />
+    </ports>    
+  </mediator-component>
+  
+  <processor name="TimeStampEnricherProcessor" classname="fr.liglab.adele.habits.monitoring.measure.generator.TimeStampEnricher">
+    <cilia:method name="process" data.type="fr.liglab.adele.cilia.Data" />
+    <requires field="clock" optional="false" nullable="false" />
+  </processor>
+  
+  <mediator-component name="TimeStampEnricherMediator" category="medical">
+    <cilia:processor name="TimeStampEnricherProcessor" />
     <cilia:scheduler name="immediate-scheduler" />
     <cilia:dispatcher name="multicast-dispatcher" />
     <ports>

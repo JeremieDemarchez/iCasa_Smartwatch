@@ -32,7 +32,7 @@ public class Measure implements Serializable{
    private String patientId;
    private String deviceId;
    private String localisation;
-   private float realibility;
+   private float reliability;
    private long timestamp;
    private boolean isPatientPresent ;
    
@@ -88,13 +88,13 @@ public class Measure implements Serializable{
     * @return the realibility
     */
    public float getRealibility() {
-      return realibility;
+      return reliability;
    }
    /**
     * @param realibility the realibility to set
     */
    public void setRealibility(float realibility) {
-      this.realibility = realibility;
+      this.reliability = realibility;
    }
    /**
     * @return the timestamp

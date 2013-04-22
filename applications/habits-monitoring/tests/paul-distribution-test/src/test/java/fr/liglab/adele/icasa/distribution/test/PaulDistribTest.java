@@ -14,13 +14,17 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.IsInstanceOf.instanceOf;
+import static org.junit.Assert.assertThat;
+import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.repository;
 import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -31,20 +35,22 @@ import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.CoreOptions;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
+import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.helper.CiliaHelper;
+import fr.liglab.adele.cilia.helper.MediatorTestHelper;
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.device.DeviceEvent;
-import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 
@@ -56,9 +62,9 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 	@Inject
 	public BundleContext context;
 	
-//	@Mock
-//	public ScriptExecutorListener listener;
-
+	@Inject
+	public SimulationManager simulationManager;
+	
 	@Inject
 	public ContextManager icasa;
 	
@@ -67,7 +73,6 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 	
 	@Before
 	public void setUp() {
-		//MockitoAnnotations.initMocks(this);
 		waitForStability(context);
 	}
 	
@@ -132,41 +137,60 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 	    }
 
 	/**
-	 * Test the creation of a new zone.
+	 * Test the reception of a valid measure.
 	 */
 	@org.junit.Test
-	public void creationZoneTest(){
+	public void validMeasureTest(){
 		
 		String firstScript = "demo_config.bhv";
+		String secondScript = "init_demo_oseo.bhv";
+		
+		// instrument a cilia helper class
+		CiliaHelper helper = new CiliaHelper(context);
+		Assert.assertEquals(true, helper.waitToChain("generator-mesures", 2000));
+		MediatorTestHelper transformer = helper.instrumentMediatorInstance("generator-mesures", "transformer", new String[]{"in"}, new String[]{"out"});
+		Assert.assertNotNull(transformer);
+		
 		// init data : run scripts
 		ScriptExecutorListener listener = mock(ScriptExecutorListener.class);
 		scriptExecutor.addListener(listener);
 		
-		scriptExecutor.getScriptList();
-		for (String script : scriptExecutor.getScriptList()){
-			System.out.println("script n : " + script);
-		}
-		
 		// execute script for zones and devices
 		scriptExecutor.execute(firstScript);
-		try {
-			Thread.sleep(3000);
-		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//verify(listener).scriptStopped(firstScript);
+		wait(3000);
 		
 		Set<String> devices = icasa.getDeviceIds();
 		Set<String> zones = icasa.getZoneIds();
 		Assert.assertEquals(4, devices.size());
 		Assert.assertEquals(4, zones.size());
 		
-		// instrument a cilia helper class
-		CiliaHelper helper = new CiliaHelper(context);
-		Assert.assertEquals(true, helper.waitToChain("generator-mesures", 2000));
+		//verify(listener).scriptStopped(firstScript);
+		// execute second script to trigger events
+		scriptExecutor.execute(secondScript);
 		
+		wait(3000);
+		scriptExecutor.stop();
+		
+		Assert.assertEquals(1, transformer.getAmountData());
+		Data lastData = transformer.getLastData();
+		assertThat(lastData.getContent(), instanceOf(Measure.class));
+		
+		Measure measure = (Measure) lastData.getContent();
+		Assert.assertEquals(measure.getLocalisation(), simulationManager.getPerson("Paul").getLocation());
+		assertThat(devices, hasItem(measure.getDeviceId()));
+		assertThat(true, equalTo(measure.getRealibility() >  (float)50));
+		assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < 1000));
 	}
 
+	/**
+	 * wait a specific amount of time.
+	 * @param time
+	 */
+	private void wait(int time){
+		try {
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			e.printStackTrace();
+		}
+	}
 }
