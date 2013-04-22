@@ -284,7 +284,7 @@ public class SimulationManagerImpl implements SimulationManager {
 		if (value) {
 			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
 		} else {
-			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
+			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_NO);
 		}
 
 	}
