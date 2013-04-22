@@ -87,8 +87,9 @@
               <!--item name="With Maven" href="tutoMaven.html"/-->
             </item>
             <item name="Script Language" href="script.html"/>
-			<item name="REST API" href="rest-api.html"/>
-			<item name="Device Building Tutorial" href="building-device.html"/>
+            <item name="REST API" href="rest-api.html"/>
+            <item name="Gogo commands" href="gogo-commands.html"/>
+            <item name="Device Building Tutorial" href="building-device.html"/>
             <item name="Javadoc" href="apidocs/index.html"/>
 		</menu>		
 		
