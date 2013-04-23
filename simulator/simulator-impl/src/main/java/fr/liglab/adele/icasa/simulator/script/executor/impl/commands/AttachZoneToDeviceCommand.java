@@ -68,8 +68,8 @@ public class AttachZoneToDeviceCommand extends AbstractCommand {
 	}
 	
 	
-	public void attachZoneToDevice(String person, String zone, boolean attach) throws Exception {
-	   this.device = person;
+	public void attachZoneToDevice(String device, String zone, boolean attach) throws Exception {
+	   this.device = device;
 	   this.zone = zone;
 	   this.attach = attach;
 	   execute();

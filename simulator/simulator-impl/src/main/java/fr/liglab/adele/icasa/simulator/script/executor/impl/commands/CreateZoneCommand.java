@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -31,8 +32,11 @@ import org.json.JSONObject;
  * 
  */
 @Component(name = "CreateZoneCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+@Provides(properties = {
+      @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
+        @StaticServiceProperty(type = "java.lang.String", name = SimulatorCommand.PROP_NAMESPACE, value= SimulatorCommand.DEFAULT_NAMESPACE),
       @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{createZone}"),
+      @StaticServiceProperty(name = "description", type = "String", value = "creates a new zone"),
       @StaticServiceProperty(name = "name", value = "create-zone", type = "String") })
 @Instantiate(name="create-zone-command")
 public class CreateZoneCommand extends AbstractCommand {
@@ -64,7 +68,7 @@ public class CreateZoneCommand extends AbstractCommand {
 		this.width = param.getInt("width");
 	}
 
-	public void createZone(String id, String description, int leftX, int topY, int width, int height) throws Exception {
+	public void createZone(String id, int leftX, int topY, int width, int height) throws Exception {
 		this.id = id;
 		this.leftX = leftX;
 		this.topY = topY;
