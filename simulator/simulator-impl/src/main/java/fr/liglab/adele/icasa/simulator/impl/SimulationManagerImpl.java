@@ -26,6 +26,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Variable;
+import fr.liglab.adele.icasa.simulator.PhysicalModel;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -57,10 +59,13 @@ import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 public class SimulationManagerImpl implements SimulationManager {
 
     /*
-     * WARNING : UPDATE following filter if you change the componant instance name !!!
+     * WARNING : UPDATE following filter if you change the component instance name !!!
      */
 	@Requires(filter = "(!(instance.name=SimulationManager-1))")
 	private ContextManager manager;
+
+    @Requires(optional = true)
+    private PhysicalModel[] _physicalModels;
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
@@ -74,7 +79,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private List<String> personTypes = new ArrayList<String>();
 
-    ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public SimulationManagerImpl() {
 		addPersonType("Grandfather");
@@ -339,7 +344,12 @@ public class SimulationManagerImpl implements SimulationManager {
 		return manager.getDevice(deviceId);
 	}
 
-	@Override
+    @Override
+    public GenericDevice getGenericDevice(String sn) {
+        return manager.getGenericDevice(sn);
+    }
+
+    @Override
 	public void removeDevice(String deviceId) {
 		GenericDevice device = getSimulatedDevice(deviceId);
 
@@ -623,6 +633,26 @@ public class SimulationManagerImpl implements SimulationManager {
     @Override
     public Set<String> getProvidedServices(String deviceType) {
         return manager.getProvidedServices(deviceType);
+    }
+
+    @Override
+    public Set<Variable> getGlobalVariables() {
+        return manager.getGlobalVariables();
+    }
+
+    @Override
+    public Object getGlobalVariableValue(String varName) {
+        return getGlobalVariableValue(varName);
+    }
+
+    @Override
+    public void addGlobalVariable(String varName) {
+        manager.addGlobalVariable(varName);
+    }
+
+    @Override
+    public void setGlobalVariable(String varName, Object value) {
+        manager.setGlobalVariable(varName, value);
     }
 
     /*

@@ -48,7 +48,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	public SimulatedDimmerLightImpl() {
 		super();
         super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_CURRENT_ILLUMINANCE, 0.0d);
 		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 100.0d);
 		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
 		
@@ -75,65 +74,6 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 		setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, level);
 
 		return level;
-	}
-
-	@Override
-	public void setPropertyValue(String propertyName, Object value) {
-		if (propertyName.equals(DimmerLight.DIMMER_LIGHT_POWER_LEVEL)) {
-			double previousLevel = getPowerLevel();
-
-			double level = (value instanceof String) ? Double.parseDouble((String)value) : (Double) value;
-
-			if (previousLevel!=level) {
-				super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, level);
-				// Trying to modify zone variable
-				if (m_zone!=null) {
-					try {
-                        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_CURRENT_ILLUMINANCE,computeIlluminance());
-						m_zone.setVariableValue("Illuminance", computeIlluminance());
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			}
-		} else 
-			super.setPropertyValue(propertyName, value);
-	}
-
-
-	/**
-	 * Return the illuminance currently emitted by this light, according to its
-	 * state.
-	 * The formula used to compute the illuminance is :
-	 * Illuminance [cd/m² or lux]=(power[W]*680.0[lumens])/surface[m²] 
-	 * @return the illuminance currently emitted by this light
-	 */
-	private double computeIlluminance() {
-		
-		double returnedIlluminance=0.0;
-		int height = m_zone.getHeight();
-		int width = m_zone.getWidth();
-		double surface = 0;				
-		double powerLevel = getPowerLevel();
-		double scaleFactor = 0.014; //1px -> 0.014m
-		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
-		
-		surface = scaleFactor*scaleFactor*height*width;
-		returnedIlluminance = (powerLevel*getMaxPowerLevel()*lumens)/surface;
-		return returnedIlluminance;			
-	}
-
-
-	@Override
-	public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty()) {
-			m_zone = zones.get(0);
-		}
-	}
-
-	@Override
-	public void leavingZones(List<Zone> zones) {
-		m_zone = null;	
 	}
 	
 	@Override

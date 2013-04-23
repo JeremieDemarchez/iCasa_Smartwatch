@@ -72,6 +72,7 @@
 					<instructions>
 						<Private-Package>fr.liglab.adele.icasa.simulator.impl,
 							fr.liglab.adele.icasa.simulator.script.executor.impl,
+                            fr.liglab.adele.icasa.simulator.illuminance.impl,
 							fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
 						<Export-Package />
 					</instructions>

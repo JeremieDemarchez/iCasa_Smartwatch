@@ -49,7 +49,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	public SimulatedBinaryLightImpl() {
 		super();
         super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-		super.setPropertyValue(BinaryLight.BINARY_LIGHT_CURRENT_ILLUMINANCE, 0.0d);
 		super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
 		super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 100.0d);
 	}
@@ -64,6 +63,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 		Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS);
 		if (powerStatus == null)
 			return false;
+
 		return powerStatus;
 	}
 
@@ -72,70 +72,13 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 		setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, (Boolean) status);
 		return status;
 	}
-
-	@Override
-	public void setPropertyValue(String propertyName, Object value) {
-		if (propertyName.equals(BinaryLight.BINARY_LIGHT_POWER_STATUS)) {
-			boolean previousStatus = getPowerStatus();
-
-			boolean status = (value instanceof String) ? Boolean.parseBoolean((String) value) : (Boolean) value;
-
-			if (previousStatus != status) {
-				super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, status);
-				// Trying to modify zone variable
-				if (m_zone != null) {
-					try {
-                        super.setPropertyValue(BinaryLight.BINARY_LIGHT_CURRENT_ILLUMINANCE, computeIlluminance());
-						m_zone.setVariableValue("Illuminance", computeIlluminance());
-					} catch (Exception e) {
-					}
-				}
-			}
-		} else
-			super.setPropertyValue(propertyName, value);
-	}
-
-	/**
-	 * Return the illuminance currently emitted by this light, according to its
-	 * state.
-	 * The formula used to compute the illuminance is :
-	 * Illuminance [cd/m² or lux]=(power[W]*680.0[lumens])/surface[m²] 
-	 * @return the illuminance currently emitted by this light
-	 */
-	private double computeIlluminance() {
-	
-		double returnedIlluminance=0.0;
-		int height = m_zone.getHeight();
-		int width = m_zone.getWidth();
-		double surface = 0;				
-		double powerLevel = getPowerStatus() ? getMaxPowerLevel() : 0.0d;
-		double scaleFactor = 0.014d; //1px -> 0.014m
-		double lumens = 680.0d; //Rought Constant to establish the correspondance between power & illuminance
-		
-		surface = scaleFactor*scaleFactor*height*width;
-		returnedIlluminance = (powerLevel*lumens)/surface;
-
-		return getPowerStatus() ? returnedIlluminance : 0.0d;			
-	}
-
-
-	@Override
-	public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty()) {
-			m_zone = zones.get(0);
-		}
-	}
-
-	@Override
-	public void leavingZones(List<Zone> zones) {
-		m_zone = null;
-	}
 	
 	@Override
 	public double getMaxPowerLevel() {
 		Double maxLevel = (Double) getPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL);
 		if (maxLevel==null)
 			return 0;
+
 		return maxLevel;
 	}
 
