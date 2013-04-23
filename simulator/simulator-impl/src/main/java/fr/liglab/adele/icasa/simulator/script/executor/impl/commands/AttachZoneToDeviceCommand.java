@@ -16,14 +16,15 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.SimulationManager;import java.lang.Exception;import java.lang.Object;import java.lang.Override;import java.lang.String;
 
 /**
  * 
@@ -33,47 +34,48 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "AttachZoneToDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{attachZoneToDevice}"),
-      @StaticServiceProperty(name = "name", value = "attach-zone-device", type = "String") })
+@Provides
 @Instantiate(name = "attach-zone-device-command")
 public class AttachZoneToDeviceCommand extends AbstractCommand {
 
-		
-	private String device;
-	
-	private String zone;
-
-	private boolean attach;
-	
 	@Requires
 	private SimulationManager simulationManager;
 
+    @Override
+	public Object execute(JSONObject param) throws Exception {
 
-	@Override
-	public Object execute() throws Exception {
+        String device = param.getString(ScriptLanguage.DEVICE);
+        String zone = param.getString(ScriptLanguage.ZONE);
+        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
 		if (attach)
 			simulationManager.attachZoneToDevice(zone, device);
 		else
 			simulationManager.detachZoneFromDevice(zone, device);
 		return null;
 	}
-	
-	
-	@Override
-	public void configure(JSONObject param) throws Exception {
-		this.device = param.getString("device");
-		this.zone = param.getString("zone");
-		this.attach = param.getBoolean("attach");
-	}
-	
-	
-	public void attachZoneToDevice(String device, String zone, boolean attach) throws Exception {
-	   this.device = device;
-	   this.zone = zone;
-	   this.attach = attach;
-	   execute();
-   }
-	
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "attach-zone-device";
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH};
+    }
+
+    @Override
+    public String getDescription(){
+        return "Attach/detach a zone to/from a device.\n\t" + super.getDescription();
+    }
 
 }

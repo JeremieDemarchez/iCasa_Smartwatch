@@ -73,12 +73,6 @@
       </dependency>
 		<dependency>
          <groupId>${project.groupId}</groupId>
-			<artifactId>gogo.adapter</artifactId>
-         <version>${project.version}</version>
-      </dependency>		
-
-		<dependency>
-         <groupId>${project.groupId}</groupId>
 			<artifactId>simulator.remote</artifactId>
          <version>${project.version}</version>
       </dependency>

@@ -16,12 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+import org.json.JSONObject;
 
 /**
  * 
@@ -31,25 +33,47 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
  *
  */
 @Component(name = "ActivateDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{activateDevice}"),
-      @StaticServiceProperty(name = "name", value = "activate-device", type = "String") })
+@Provides
 @Instantiate(name="activate-device-command")
-public class ActivateDeviceCommand extends DeviceCommand {
+public class ActivateDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
 
-	@Override
-   public Object execute() throws Exception {
-		simulationManager.setDeviceState(deviceId, true);
-		return null;
-   }
-	
-	public void activateDevice(String deviceId) throws Exception {
-	   this.deviceId = deviceId;
-	   execute();
-   }
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "activate-device";
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.DEVICE_ID};
+    }
+
+    @Override
+    public boolean validate(JSONObject param) throws Exception {
+        return param.has(ScriptLanguage.DEVICE_ID);
+    }
+
+    @Override
+    public Object execute(JSONObject param) throws Exception {
+        simulationManager.setDeviceState(param.getString(ScriptLanguage.DEVICE_ID), true);
+        return null;
+    }
+    @Override
+    public String getDescription(){
+        return "Activates a device \n\t" + super.getDescription();
+    }
 
 }

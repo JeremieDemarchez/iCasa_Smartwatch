@@ -16,15 +16,15 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * 
@@ -34,41 +34,44 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "MovePersonCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{movePerson}"),
-      @StaticServiceProperty(name = "name", value = "move-person", type = "String") })
+@Provides
 @Instantiate(name = "move-person-command")
 public class MovePersonCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-	private String personId;
-	private int newX;
-	private int newY;
-	
-
 	@Override
-	public Object execute() throws Exception {
-		simulationManager.setPersonPosition(personId, new Position(newX, newY));
+	public Object execute(JSONObject param) throws Exception {
+        String personId = param.getString(ScriptLanguage.PERSON_ID);
+        int newX = param.getInt(ScriptLanguage.NEW_X);
+        int newY = param.getInt(ScriptLanguage.NEW_Y);
+        simulationManager.setPersonPosition(personId, new Position(newX, newY));
 		return null;
 	}
-	
-	
-	@Override
-	public void configure(JSONObject param) throws Exception {
-		this.personId = param.getString("personId");
-		this.newX = param.getInt("newX");
-		this.newY = param.getInt("newY");  
-	}
-	
-	
-	public void movePerson(String person, int newX, int newY) throws Exception {		
-	   this.personId = person;
-	   this.newX = newX;
-	   this.newY = newY;
-	   execute();
-   }
-	
+
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "move-person";
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.NEW_X, ScriptLanguage.NEW_Y};
+    }
+    @Override
+    public String getDescription(){
+        return "Move a person to a new X,Y position.\n\t" + super.getDescription();
+    }
 
 }

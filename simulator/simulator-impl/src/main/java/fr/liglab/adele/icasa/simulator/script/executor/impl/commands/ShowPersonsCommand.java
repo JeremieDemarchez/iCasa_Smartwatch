@@ -15,40 +15,32 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.util.List;
 
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.json.JSONObject;
 
-import java.util.HashMap;
-
-/**
- * 
- * Create a new device instance
- * 
- * @author Gabriel
- *
- */
-@Component(name = "CreateDeviceCommand")
+@Component
 @Provides
-@Instantiate(name="create-device-command")
-public class CreateDeviceCommand extends AbstractCommand {
+@Instantiate
+public class ShowPersonsCommand extends AbstractCommand {
 
-	@Requires	
-	private SimulationManager simulationManager;
+	@Requires
+	private SimulationManager manager;
 
-	@Override
-   public Object execute(JSONObject param) throws Exception {
-        String deviceId = param.getString(ScriptLanguage.ID);
-        String deviceType = param.getString(ScriptLanguage.TYPE);
-		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
-		return null;
-   }
+    private static final String[] PARAMS =  new String[]{};
+
+    private static final String NAME= "show-persons";
+
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -56,7 +48,7 @@ public class CreateDeviceCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "create-device";
+        return NAME;
     }
 
     /**
@@ -66,11 +58,26 @@ public class CreateDeviceCommand extends AbstractCommand {
      */
     @Override
     public String[] getParameters() {
-        return new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE};
+        return PARAMS;
+    }
+
+    @Override
+    public Object execute(InputStream in, PrintStream out, JSONObject param) throws Exception {
+        out.println("Persons: ");
+        List<Person> persons = manager.getPersons();
+        for (Person person : persons) {
+            out.println("Person " + person);
+        }
+        return null;  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
+    public Object execute(JSONObject param) throws Exception {
+        return execute(System.in, System.out, param);
     }
 
     @Override
     public String getDescription(){
-        return "Creates a new simulated device instance.\n\t" + super.getDescription();
+        return "Shows the list of persons.\n\t" + super.getDescription();
     }
 }

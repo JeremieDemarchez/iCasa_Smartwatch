@@ -34,7 +34,6 @@
 		<module>simulator-impl</module>
 		<module>simulated-devices</module>
         <module>simulator-remote</module>
-		<module>gogo-adapter</module>
 	</modules>
    <build>
       <plugins>

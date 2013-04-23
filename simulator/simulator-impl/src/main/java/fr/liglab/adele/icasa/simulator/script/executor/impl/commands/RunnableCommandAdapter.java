@@ -15,16 +15,15 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
+import fr.liglab.adele.icasa.iCasaCommand;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
 
 public class RunnableCommandAdapter implements Runnable {
 
-	private SimulatorCommand commandService;
+	private iCasaCommand commandService;
 	private JSONObject param;
 	
-	public RunnableCommandAdapter(SimulatorCommand commandService, JSONObject param) {
+	public RunnableCommandAdapter(iCasaCommand commandService, JSONObject param) {
 		this.commandService = commandService;
 		this.param = param;
 	}
@@ -32,7 +31,7 @@ public class RunnableCommandAdapter implements Runnable {
 	@Override
 	public void run() {
 		try {
-	      commandService.execute(null, null, param);
+	      commandService.execute(System.in, System.out, param);
       } catch (Exception e) {
 	      e.printStackTrace();
       }

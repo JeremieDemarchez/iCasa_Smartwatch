@@ -16,13 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import org.json.JSONObject;
 
 /**
  * 
@@ -32,25 +33,47 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "RepairDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{repairDevice}"),
-      @StaticServiceProperty(name = "name", value = "repair-device", type = "String") })
+@Provides
 @Instantiate(name="repair-device-command")
-public class RepairDeviceCommand extends DeviceCommand {
+public class RepairDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
+    private static final String[] PARAMS =  new String[]{ScriptLanguage.DEVICE_ID};
+
+    private static final String NAME= "repair-device";
+
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return PARAMS;
+    }
 
 	@Override
-   public Object execute() throws Exception {
-		simulationManager.setDeviceFault(deviceId, false);
+   public Object execute(JSONObject param) throws Exception {
+        String deviceId = param.getString(PARAMS[0]);
+        simulationManager.setDeviceFault(deviceId, false);
 		return null;
    }
-		
-	public void repairDevice(String deviceId) throws Exception {
-	   this.deviceId = deviceId;
-	   execute();
-   }
+
+    @Override
+    public String getDescription(){
+        return "Simulates the device reparation.\n\t" + super.getDescription();
+    }
 
 }

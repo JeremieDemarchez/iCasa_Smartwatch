@@ -16,14 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * 
@@ -33,47 +33,48 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "AttachDeviceToPersonCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{attachDeviceToPerson}"),
-      @StaticServiceProperty(name = "name", value = "attach-device-person", type = "String") })
+@Provides
 @Instantiate(name = "attach-device-person-command")
 public class AttachDeviceToPersonCommand extends AbstractCommand {
 
-		
-	private String person;
-	
-	private String device;
-
-	private boolean attach;
-	
 	@Requires
 	private SimulationManager simulationManager;
 
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "attach-device-person";  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
-	@Override
-	public Object execute() throws Exception {
-		if (attach)
-			simulationManager.attachDeviceToPerson(device, person);
-		else
-			simulationManager.detachDeviceFromPerson(device, person);
-		return null;
-	}
-	
-	
-	@Override
-	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.device = param.getString("device");
-		this.attach = param.getBoolean("attach");
-	}
-	
-	
-	public void attachDeviceToPerson(String device, String person, boolean attach) throws Exception {
-	   this.person = person;
-	   this.device = device;
-	   this.attach = attach;
-	   execute();
-   }
-	
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH};  //To change body of implemented methods use File | Settings | File Templates.
+    }
 
+    @Override
+    public Object execute(JSONObject param) throws Exception {
+        String person = param.getString(ScriptLanguage.PERSON);
+        String device = param.getString(ScriptLanguage.DEVICE);
+        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
+        if (attach)
+            simulationManager.attachDeviceToPerson(device, person);
+        else
+            simulationManager.detachDeviceFromPerson(device, person);
+        return null;
+    }
+
+
+    @Override
+    public String getDescription(){
+        return "Attach or detach a device to a person.\n\t" + super.getDescription();
+    }
 }

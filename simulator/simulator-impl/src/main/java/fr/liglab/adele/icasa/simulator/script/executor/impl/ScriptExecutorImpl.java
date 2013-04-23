@@ -38,7 +38,6 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
@@ -52,7 +51,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
-import fr.liglab.adele.icasa.simulator.script.executor.SimulatorCommand;
+import fr.liglab.adele.icasa.iCasaCommand;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -78,7 +77,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * Simulator commands added to the platorm
 	 */
-	private Map<String, SimulatorCommand> commands;
+	private Map<String, iCasaCommand> commands;
 
 	/**
 	 * Scripts added to the platform
@@ -216,16 +215,16 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	// -- Component bind methods -- //
 	@Bind(id = "commands", aggregate = true, optional = true)
-	public void bindCommand(SimulatorCommand commandService, ServiceReference reference) {
-		String name = (String) reference.getProperty("name");
+	public void bindCommand(iCasaCommand commandService) {
+		String name = commandService.getName();
 		if (commands == null)
-			commands = new HashMap<String, SimulatorCommand>();
+			commands = new HashMap<String, iCasaCommand>();
 		commands.put(name, commandService);
 	}
 
 	@Unbind(id = "commands")
-	public void unbindCommand(ServiceReference reference) {
-		String name = (String) reference.getProperty("name");
+	public void unbindCommand(iCasaCommand commandService) {
+		String name =  commandService.getName();
 		commands.remove(name);
 	}
 
@@ -501,7 +500,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				synchronized (clock) {
 					clock.pause();
 					for (ActionDescription actionDescription : toExecute) {
-						SimulatorCommand command = commands.get(actionDescription.getCommandName());
+						iCasaCommand command = commands.get(actionDescription.getCommandName());
 						if (command != null) {
 							try {
 								command.execute(null, null, actionDescription.getConfiguration());

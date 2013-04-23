@@ -16,14 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * 
@@ -33,25 +33,18 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "AttachPersonZoneCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{attachPersonToZone}"),
-      @StaticServiceProperty(name = "name", value = "attach-person-zone", type = "String") })
+@Provides
 @Instantiate(name = "attach-person-zone-command")
 public class AttachPersonToZoneCommand extends AbstractCommand {
 
-		
-	private String person;
-	
-	private String zone;
-
-	private boolean attach;
-	
 	@Requires
 	private SimulationManager simulationManager;
 
-
 	@Override
-	public Object execute() throws Exception {
+	public Object execute(JSONObject obj) throws Exception {
+        String person = obj.getString(ScriptLanguage.PERSON);
+        String zone = obj.getString(ScriptLanguage.ZONE);
+        boolean attach = obj.getBoolean(ScriptLanguage.ATTACH);
 		if (attach)
 			simulationManager.attachPersonToZone(zone, person);
 		else
@@ -61,19 +54,35 @@ public class AttachPersonToZoneCommand extends AbstractCommand {
 	
 	
 	@Override
-	public void configure(JSONObject param) throws Exception {
-		this.person = param.getString("person");
-		this.zone = param.getString("zone");
-		this.attach = param.getBoolean("attach");
-	}
-	
-	
-	public void attachPersonToZone(String person, String zone, boolean attach) throws Exception {
-	   this.person = person;
-	   this.zone = zone;
-	   this.attach = attach;
-	   execute();
-   }
-	
+	public boolean validate(JSONObject param) throws Exception {
+        return param.has(ScriptLanguage.PERSON) && param.has(ScriptLanguage.ZONE) && param.has(ScriptLanguage.ATTACH);
+
+    }
+
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "attach-person-zone";  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH};  //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+
+    @Override
+    public String getDescription(){
+        return "Attach/detach a person to/from a zone.\n\t" + super.getDescription();
+    }
 
 }

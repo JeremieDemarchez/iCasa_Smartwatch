@@ -16,11 +16,11 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -33,9 +33,7 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "ResetContextCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{resetContext}"),
-      @StaticServiceProperty(name = "name", value = "reset-context", type = "String") })
+@Provides
 @Instantiate(name = "reset-context-command")
 public class ResetContextCommand extends AbstractCommand {
 
@@ -43,8 +41,33 @@ public class ResetContextCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
 
-	@Override
-	public Object execute() throws Exception {
+    private static final String[] PARAMS =  new String[0];
+
+    private static final String NAME= "reset-context";
+
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return PARAMS;
+    }
+
+
+    @Override
+	public Object execute(JSONObject param) throws Exception {
 		//System.out.println("Trying to reset context ... " + simulationManager);
 		simulationManager.resetContext();
 		return null;
@@ -52,13 +75,11 @@ public class ResetContextCommand extends AbstractCommand {
 	
 	
 	@Override
-	public void configure(JSONObject param) throws Exception {
+	public boolean validate(JSONObject param) throws Exception {
+        return true;
 	}
-	
-	
-	public void resetContext() throws Exception {		
-	   execute();
-   }
-	
-
+    @Override
+    public String getDescription(){
+        return "Remove all the zones, persons and devices from the iCasa Context.\n\t" + super.getDescription();
+    }
 }

@@ -15,14 +15,14 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 
 /**
  * 
@@ -32,32 +32,44 @@ import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
  * 
  */
 @Component(name = "ExecuteScriptCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{executeScript}"),
-      @StaticServiceProperty(name = "name", value = "execute-script", type = "String") })
+@Provides
 @Instantiate(name = "execute-script-command")
 public class ExecuteScriptCommand extends AbstractCommand {
 
 	@Requires
 	private ScriptExecutor executor;
 
-	private String scriptName;
-
 	@Override
-	public Object execute() throws Exception {
-		System.out.println("Executing script ... " + scriptName);
+	public Object execute(JSONObject param) throws Exception {
+        String scriptName = param.getString(ScriptLanguage.SCRIPT_NAME);
+        System.out.println("Executing script ... " + scriptName);
 		executor.execute(scriptName);
 		return null;
 	}
 
-	@Override
-	public void configure(JSONObject param) throws Exception {
-		this.scriptName = param.getString("scriptName");
-	}
 
-	public void executeScript(String scriptName) throws Exception {
-		this.scriptName = scriptName;
-		execute();
-	}
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "execute-script";
+    }
 
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.SCRIPT_NAME};
+    }
+
+    @Override
+    public String getDescription(){
+        return "Execute a script.\n\t" + super.getDescription();
+    }
 }

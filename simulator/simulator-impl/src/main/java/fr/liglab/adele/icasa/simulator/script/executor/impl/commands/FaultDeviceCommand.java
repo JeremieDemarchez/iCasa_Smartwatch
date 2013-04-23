@@ -16,13 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import org.json.JSONObject;
 
 /**
  * 
@@ -32,26 +33,43 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  *
  */
 @Component(name = "FaultDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{faultDevice}"),
-      @StaticServiceProperty(name = "name", value = "fault-device", type = "String") })
+@Provides
 @Instantiate(name="fault-device-command")
-public class FaultDeviceCommand extends DeviceCommand {
+public class FaultDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
 
 	@Override
-   public Object execute() throws Exception {
+   public Object execute(JSONObject obj) throws Exception {
+        String deviceId = obj.getString(ScriptLanguage.DEVICE_ID);
 		simulationManager.setDeviceFault(deviceId, true);
 		return null;
    }
-	
-	
-	public void faultDevice(String deviceId) throws Exception {
-	   this.deviceId = deviceId;
-	   execute();
-   }
 
+
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "fault-device";
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.DEVICE_ID};
+    }
+    @Override
+    public String getDescription(){
+        return "Simulate a fail in a device.\n\t" + super.getDescription();
+    }
 }

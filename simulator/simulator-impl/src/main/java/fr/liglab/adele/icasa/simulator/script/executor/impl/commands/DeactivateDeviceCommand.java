@@ -16,12 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+import org.json.JSONObject;
 
 /**
  * 
@@ -31,25 +33,43 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
  *
  */
 @Component(name = "DeactivateDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{deactivateDevice}"),
-      @StaticServiceProperty(name = "name", value = "deactivate-device", type = "String") })
+@Provides
 @Instantiate(name="deactivate-device-command")
-public class DeactivateDeviceCommand extends DeviceCommand {
+public class DeactivateDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
 
 	@Override
-   public Object execute() throws Exception {
+   public Object execute(JSONObject params) throws Exception {
+        String deviceId = params.getString(ScriptLanguage.DEVICE_ID);
 		simulationManager.setDeviceState(deviceId, false);
 		return null;
    }
-	
-	public void deactivateDevice(String deviceId) throws Exception {
-	   this.deviceId = deviceId;
-	   execute();
-   }
 
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "deactivate-device";
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return new String[]{ScriptLanguage.DEVICE_ID};
+    }
+
+    @Override
+    public String getDescription(){
+        return "Deactivate a device.\n\t" + super.getDescription();
+    }
 }

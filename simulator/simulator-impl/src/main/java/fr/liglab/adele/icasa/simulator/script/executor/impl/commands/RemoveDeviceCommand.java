@@ -16,12 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+import org.json.JSONObject;
 
 /**
  * 
@@ -31,29 +33,50 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
  *
  */
 @Component(name = "RemoveDeviceCommand")
-@Provides(properties = { @StaticServiceProperty(name = "osgi.command.scope", value = "icasa", type = "String"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{removeDevice}"),
-      @StaticServiceProperty(name = "name", value = "remove-device", type = "String") })
+@Provides
 @Instantiate(name="remove-device-command")
-public class RemoveDeviceCommand extends DeviceCommand {
+public class RemoveDeviceCommand extends AbstractCommand {
 
-	@Requires	
-	private SimulationManager simulationManager;
+    @Requires
+    private SimulationManager simulationManager;
 
+
+    private static final String[] PARAMS =  new String[]{ScriptLanguage.DEVICE_ID};
+
+    private static final String NAME= "remove-device";
+
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
+    /**
+     * Get the list of parameters.
+     *
+     * @return
+     */
+    @Override
+    public String[] getParameters() {
+        return PARAMS;
+    }
 
 	@Override
-   public Object execute() throws Exception {
+   public Object execute(JSONObject param) throws Exception {
+        String deviceId = param.getString(PARAMS[0]);
 		simulationManager.removeDevice(deviceId);
 		return null;
    }
-	
-	
-	public void removeDevice(String deviceId) throws Exception {
-		this.deviceId = deviceId;
-		execute();
-	}
-	
-	
-	
+
+    @Override
+    public String getDescription(){
+        return "Remove a simulated device.\n\t" + super.getDescription();
+    }
+
+
 
 }
