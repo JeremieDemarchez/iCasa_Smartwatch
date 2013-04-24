@@ -236,6 +236,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     private void updateIlluminance(Zone zone) {
         synchronized (_zoneLock) {
             double returnedIlluminance = 0.0; //TODO manage external illuminance
+            int activeLightSize = 0;
             int height = zone.getHeight();
             int width = zone.getWidth();
             double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
@@ -245,15 +246,23 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
             for (GenericDevice device : devices) {
                 if (device instanceof BinaryLight) {
                     BinaryLight binaryLight = (BinaryLight) device;
-                    powerLevelTotal += binaryLight.getPowerStatus() ? binaryLight.getMaxPowerLevel() : 0.0d;
+
+                    if (binaryLight.getPowerStatus()) {
+                        activeLightSize += 1;
+                        powerLevelTotal += binaryLight.getMaxPowerLevel();
+                    } else powerLevelTotal += 0.0d;
                 } else if (device instanceof DimmerLight) {
                     DimmerLight dimmerLight = (DimmerLight) device;
-                    powerLevelTotal += dimmerLight.getPowerLevel() * dimmerLight.getMaxPowerLevel();
+
+                    if (dimmerLight.getPowerLevel() != 0.0d) {
+                        activeLightSize += 1;
+                        powerLevelTotal += dimmerLight.getPowerLevel() * dimmerLight.getMaxPowerLevel();
+                    }
                 }
             }
 
-            if (!devices.isEmpty())
-                returnedIlluminance += ((powerLevelTotal / devices.size()) * LUMENS_CONSTANT_VALUE) / surface;
+            if (activeLightSize != 0)
+                returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
 
             zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
         }
