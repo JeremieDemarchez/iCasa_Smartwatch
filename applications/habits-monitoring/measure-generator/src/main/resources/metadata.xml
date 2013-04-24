@@ -86,6 +86,21 @@
        <out-port name="out" type="*" />
     </ports>    
   </mediator-component>
+  
+  <processor name="LocationEnricherProcessor" classname="fr.liglab.adele.habits.monitoring.measure.generator.LocationEnricher">
+    <cilia:method name="process" data.type="fr.liglab.adele.cilia.Data" />
+    <requires field="icasa" optional="false" nullable="false" />
+  </processor>
+  
+  <mediator-component name="LocationEnricherMediator" category="medical">
+    <cilia:processor name="LocationEnricherProcessor" />
+    <cilia:scheduler name="immediate-scheduler" />
+    <cilia:dispatcher name="multicast-dispatcher" />
+    <ports>
+       <in-port name="in" type="*" />
+       <out-port name="out" type="*" />
+    </ports>    
+  </mediator-component>
 
   <processor name="MeasureTransformerProcessor" classname="fr.liglab.adele.habits.monitoring.measure.generator.MeasureTransformer">
     <cilia:method name="process" data.type="fr.liglab.adele.cilia.Data" />
