@@ -16,15 +16,16 @@ Creates a new simulated device.
 
 Scope -> __icasa__
 
-Name-> __createDevice__
+Name-> __create-device__
 
 Parameters:
 
-- __${deviceType}__ The device type of the new device.
 - __${deviceId}__ The device Id of the new device.
+- __${deviceType}__ The device type of the new device.
+
 
 #### Example:
-    > g! icasa:createDevice iCASA.Thermometer therm-1
+    > g! icasa:create-device iCASA.Thermometer therm-1
    
 ### List of devices
 
@@ -32,13 +33,13 @@ Gets the list of devices in the iCasa execution platform, this command shows the
 
 Scope -> __icasa__
 
-Name -> __listdevices__
+Name -> __show-devices__
 
 Parameters -> __NONE__
 
 #### Example:
 
-    > g! icasa:listdevices
+    > g! icasa:show-devices
     Devices:
     Device Id: Pres-B1255D-D - Position: (413:185)
     Device Id: BiLi-C7496W-S - Position: (58:427)
@@ -58,7 +59,7 @@ Active a device.
 
 Scope -> __icasa__
 
-Name-> __activateDevoce__
+Name-> __activate-device__
 
 Parameters-> 
 
@@ -66,14 +67,14 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:activateDevice Pres-B1255D-D
+    > g! icasa:activate-device Pres-B1255D-D
     
 ### Deactive device
 Deactive a device.
 
 Scope -> __icasa__
 
-Name-> __deactivateDevice__
+Name-> __deactivate-device__
 
 Parameters-> 
 
@@ -81,14 +82,14 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:deactivateDevice Pres-B1255D-D
+    > g! icasa:deactivate-device Pres-B1255D-D
     
 ### List device properties
 Shows the list of properties of a device.
 
 Scope -> __icasa__
 
-Name-> __listDeviceProperties__
+Name-> __show-device__
 
 Parameters-> 
 
@@ -96,7 +97,7 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:listDeviceProperties Pres-B1255D-D
+    > g! icasa:show-device Pres-B1255D-D
     Properties: 
     Property: presenceSensor.sensedPresence - Value: false
     Property: state - Value: activated
@@ -108,7 +109,7 @@ Simulate a fail in a device.
 
 Scope -> __icasa__
 
-Name-> __faultDevice__
+Name-> __fault-device__
 
 Parameters-> 
 
@@ -116,14 +117,14 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:faultDevice Pres-B1255D-D
+    > g! icasa:fault-device Pres-B1255D-D
 
 ### Simulate a reparation in device
 Repair a device.
 
 Scope -> __icasa__
 
-Name-> __repairDevice__
+Name-> __repair-device__
 
 Parameters-> 
 
@@ -131,14 +132,14 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:repairDevice Pres-B1255D-D
+    > g! icasa:repair-device Pres-B1255D-D
    
 ### Move device
 Move a device into new X,Y coordinates
 
 Scope -> __icasa__
 
-Name-> __moveDevice__
+Name-> __move-device__
 
 Parameters-
 
@@ -148,14 +149,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:moveDevice Pres-B1255D-D 60 80
+    > g! icasa:move-device Pres-B1255D-D 60 80
     
 ### Move device into zone
 Move a device into new X,Y coordinates
 
 Scope -> __icasa__
 
-Name-> __moveDeviceIntoZone__
+Name-> __move-device-zone__
 
 Parameters-
 
@@ -165,7 +166,7 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:moveDeviceIntoZone Pres-B1255D-D kitchen
+    > g! icasa:move-device-zone Pres-B1255D-D kitchen
     
    
 ### Set device property
@@ -173,7 +174,7 @@ Set a new device property
 
 Scope -> __icasa__
 
-Name-> __setDeviceProperty__
+Name-> __set-device-property__
 
 Parameters-
 
@@ -183,14 +184,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:setDeviceProperty Pres-B1255D-D newProp newValue
+    > g! icasa:set-device-property Pres-B1255D-D newProp newValue
     
 ### Remove a device
 Remove a simulated device
 
 Scope -> __icasa__
 
-Name-> __removeDevice__
+Name-> __remove-device__
 
 Parameters-
 
@@ -199,7 +200,7 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:removeDevice Pres-A1255D-D
+    > g! icasa:remove-device Pres-A1255D-D
  
 
 ### Attach device to a person
@@ -207,7 +208,7 @@ Attach or deatach a device from a person
 
 Scope -> __icasa__
 
-Name-> __attachDeviceToPerson__
+Name-> __attach-device-person__
 
 Parameters-
 
@@ -217,8 +218,8 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:attachDeviceToPerson Pres-A1255D-D Philippe true
-    > g! icasa:attachDeviceToPerson Pres-A1255D-D Philippe false
+    > g! icasa:attach-device-person Pres-A1255D-D Philippe true
+    > g! icasa:attach-device-person Pres-A1255D-D Philippe false
   
 <a name="Zone"></a>
 ## Manipulating Zones
@@ -227,7 +228,7 @@ Creates a new zone.
 
 Scope -> __icasa__
 
-Name-> __createZone__
+Name-> __create-zone__
 
 Parameters-
 
@@ -239,14 +240,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:createZone kitchen  50 50 100 100
+    > g! icasa:create-zone kitchen  50 50 100 100
 
 ### List zones
 Show the existant zones.
 
 Scope -> __icasa__
 
-Name-> __listZones__
+Name-> __show-zones__
 
 Parameters-
 
@@ -254,7 +255,7 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:listZones
+    > g! icasa:show-zones
     Zones: 
     Zone livingroom des Zone: livingroom X: 410 Y: 28 -- Width: 245 Height: 350 - Parent: Unset - Use parent: false
     Zone kitchen des Zone: kitchen X: 410 Y: 370 -- Width: 245 Height: 210 - Parent: Unset - Use parent: false
@@ -267,7 +268,7 @@ Move a zone to a new position
 
 Scope -> __icasa__
 
-Name-> __moveZone__
+Name-> __move-zone__
 
 Parameters-
 
@@ -277,14 +278,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:moveZone livingroom 410 25
+    > g! icasa:move-zone livingroom 410 25
     
 ### Resize zone
 Resize a zone
 
 Scope -> __icasa__
 
-Name-> __resizeZone__
+Name-> __resize-zone__
 
 Parameters-
 
@@ -294,14 +295,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:resizeZone livingroom 245 300
+    > g! icasa:resize-zone livingroom 245 300
     
 ### Add parent
 Add a parent to a zone.
 
 Scope -> __icasa__
 
-Name-> __setZoneParent__
+Name-> __set-zone-parent__
 
 Parameters-
 
@@ -313,7 +314,7 @@ Throws-> Exception when zone does not fit in the parent.
 
 
 #### Example:
-    > g! icasa:setZoneParent livingroom chair true
+    > g! icasa:set-zone-parent livingroom chair true
            
   
 ### Add variable
@@ -321,7 +322,7 @@ Add a variable to a zone.
 
 Scope -> __icasa__
 
-Name-> __addZoneVariable__
+Name-> __add-zone-variable__
 
 Parameters-
 
@@ -330,14 +331,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:addZoneVariable livingroom comfortable
+    > g! icasa:add-zone-variable livingroom comfortable
 
 ### Modify variable
 Modifies a variable in a given zone.
 
 Scope -> __icasa__
 
-Name-> __modifyZoneVariableValue__
+Name-> __modify-zone-variable__
 
 Parameters-
 
@@ -347,14 +348,14 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:modifyZoneVariableValue livingroom comfortable 100
+    > g! icasa:modify-zone-variable livingroom comfortable 100
      
-### Attach Device to zone
-Attach a specific device to a given zone.
+### Attach a zone to a device
+Attach a zone to a device .
 
 Scope -> __icasa__
 
-Name-> __attachZoneToDevice__
+Name-> __attach-zone-device__
 
 Parameters-
 
@@ -364,15 +365,15 @@ Parameters-
 
 
 #### Example:
-    > g! icasa:attachZoneToDevice Pres-A1255D-D chair true
-    > g! icasa:attachZoneToDevice Pres-A1255D-D chair false
+    > g! icasa:attach-zone-device Pres-A1255D-D chair true
+    > g! icasa:attach-zone-device Pres-A1255D-D chair false
        
-### List zone variables
-Shows the list of variables of a zone.
+### Show zone
+Shows the information of a zone.
 
 Scope -> __icasa__
 
-Name-> __listZoneVariables__
+Name-> __show-zone__
 
 Parameters-> 
 
@@ -380,7 +381,7 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:listZoneVariables livingroom
+    > g! icasa:show-zone livingroom
     Variables: 
     Variable: Volume - Value: 10.0
     Variable: Illuminance - Value: 5.0
@@ -393,7 +394,7 @@ Creates a new simulated person.
 
 Scope -> __icasa__
 
-Name-> __createPerson__
+Name-> __create-person__
 
 Parameters:
 
@@ -402,14 +403,14 @@ Parameters:
 
 
 #### Example:
-    > g! icasa:createPerson Pierre Boy
+    > g! icasa:create-person Pierre Boy
 
 ### Get persons in zone
 Get the zones where a given person is located.
 
 Scope -> __icasa__
 
-Name-> __getPersonZones__
+Name-> __show-person-zones__
 
 Parameters:
 
@@ -417,7 +418,7 @@ Parameters:
 
 
 #### Example:
-    > g! icasa:getPersonZones Pierre 
+    > g! icasa:show-person-zones Pierre 
     Zones: 
     Zone : Zone: bedroom X: 55 Y: 370 -- Width: 259 Height: 210 - Parent: Unset - Use parent: false
     
@@ -426,7 +427,7 @@ Shows the list of persons.
 
 Scope -> __icasa__
 
-Name-> __listPersons__
+Name-> __show-persons__
 
 Parameters-> 
 
@@ -434,7 +435,7 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:listPersons
+    > g! icasa:show-persons
     Persons: 
     Person Person: Pierre - Position: (215:444) - Type: Boy
 
@@ -443,7 +444,7 @@ Move a person to new positions
 
 Scope -> __icasa__
 
-Name-> __movePerson__
+Name-> __move-person__
 
 Parameters-> 
 
@@ -451,14 +452,14 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:movePerson Pierre 100 100
+    > g! icasa:move-person Pierre 100 100
 
 ### Move person to a zone
 Move a person to a zone.
 
 Scope -> __icasa__
 
-Name-> __movePersonIntoZone__
+Name-> __move-person-zone__
 
 Parameters-> 
 
@@ -467,14 +468,14 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:movePersonIntoZone Pierre kitchen
+    > g! icasa:move-person-zone Pierre kitchen
 
 ### Attach person to a zone
-Move a person to a zone.
+Attach/detach a person to/from a zone.
 
 Scope -> __icasa__
 
-Name-> __movePersonIntoZone__
+Name-> __attach-person-zone__
 
 Parameters-> 
 
@@ -484,8 +485,8 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:attachPersonToZone Pierre chair true
-    > g! icasa:attachPersonToZone Pierre chair false
+    > g! icasa:attach-person-zone Pierre chair true
+    > g! icasa:attach-person-zone Pierre chair false
 
 
 <a name="General"></a>
@@ -495,7 +496,7 @@ Clear the simulation context, it will remove all zones, simulated devices and pe
 
 Scope -> __icasa__
 
-Name-> __resetContext__
+Name-> __reset-context__
 
 Parameters-> 
 
@@ -503,14 +504,33 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:resetContext
+    > g! icasa:reset-context
+
+### Show scripts
+Shows the list of available scripts
+
+Scope -> __icasa__
+
+Name-> __show-scripts__
+
+Parameters-> 
+
+- __NONE__ 
+
+
+#### Example:
+    > g! icasa:show-scripts
+    Scripts: 
+    SetupHouse.bhv
+    SetupHouseWithLights.bhv
+
 
 ### Execute script
 Execute a script. The scripts must be already loaded (available in the script directory)
 
 Scope -> __icasa__
 
-Name-> __executeScript__
+Name-> __execute-script__
 
 Parameters-> 
 
@@ -518,4 +538,4 @@ Parameters->
 
 
 #### Example:
-    > g! icasa:executeScript SetupHouseWithLights.bhv
+    > g! icasa:execute-script SetupHouseWithLights.bhv

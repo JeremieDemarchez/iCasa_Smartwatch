@@ -24,7 +24,8 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -34,6 +35,7 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 <tbody>
 <tr>
 <td>heater.powerLevel</td>
+<td>HEATER_POWER_LEVEL</td>
 <td>[0-1.0]</td>
 <td>0.0</td>
 <td>Double</td>
@@ -41,16 +43,10 @@ The heater power level can be adjusted between 0 and 1.0 which means into range 
 </tr>
 <tr>
 <td>heater.maxPowerLevel</td>
+<td>HEATER_MAX_POWER_LEVEL</td>
 <td>1000</td>
 <td>1000</td>
 <td>Double</td>
-<td>No</td>
-</tr>
-<tr>
-<td>heater.updaterThreadPeriod</td>
-<td>5000</td>
-<td>5000</td>
-<td>Integer</td>
 <td>No</td>
 </tr>
 </tbody>
@@ -97,7 +93,8 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -107,6 +104,7 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
 <tbody>
 <tr>
 <td>cooler.powerLevel</td>
+<td>COOLER_POWER_LEVEL</td>
 <td>[0-1.0]</td>
 <td>0.0</td>
 <td>Double</td>
@@ -114,16 +112,10 @@ The cooler power level can be adjusted between 0 and 1.0 which means into range 
 </tr>
 <tr>
 <td>cooler.maxPowerLevel</td>
+<td>COOLER_MAX_POWER_LEVEL</td>
 <td>1000</td>
 <td>1000</td>
 <td>Double</td>
-<td>No</td>
-</tr>
-<tr>
-<td>cooler.updaterThreadPeriod</td>
-<td>5000</td>
-<td>5000</td>
-<td>Integer</td>
 <td>No</td>
 </tr>
 </tbody>
