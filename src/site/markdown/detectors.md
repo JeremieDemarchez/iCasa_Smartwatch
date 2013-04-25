@@ -19,15 +19,16 @@ Detectors
 <div class="description">
 <div class="hCard">Overview</div> 
  
- <p>GazSensor can supply two models of gaz sensor which are a standard CO2 sensor and a standard CO sensor.</p>
-<p>Gaz sensor can be used to detect the air quality in a room and prevent of asphyxiation. </p>
+ <p>GasSensor can supply two models of gas sensor which are a standard CO2 sensor and a standard CO sensor.</p>
+<p>Gas sensor can be used to detect the air quality in a room and prevent of asphyxiation. </p>
  
 <div class="hCard">Physical properties</div>
 
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -36,7 +37,8 @@ Detectors
 </thead>
 <tbody>
 <tr>
-<td>co_current_concentration</td>
+<td>carbonMonoxydeSensor.currentConcentration</td>
+<td>CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION</td>
 <td>[0.0-undefined]</td>
 <td>0.0</td>
 <td>Double</td>
@@ -48,6 +50,7 @@ Detectors
 
 <p>There is no physical consideration for this type of device. Indeed, this device is used to return a physical value. In our case, we do not care about the way the sensor gives this value.</p>
 
+<p>It is necessary to have the global variable named CO2Concentration in a room if you want to use the CarbonDioxydeSensor sensor without getting errors. Likewise, it is required to set the global variable named COConcentration in a room if you want to use the sensor CarbonMonoxydeSensor.</p>
 
         
 <div class="hCard">Methods</div>
@@ -73,15 +76,16 @@ Detectors
 <div class="description">
 <div class="hCard">Overview</div> 
  
- <p>GazSensor can supply two models of gaz sensor which are a standard CO2 sensor and a standard CO sensor.</p>
-<p>Gaz sensor can be used to detect the air quality in a room and prevent of asphyxiation.</p>
+ <p>GasSensor can supply two models of gas sensor which are a standard CO2 sensor and a standard CO sensor.</p>
+<p>Gas sensor can be used to detect the air quality in a room and prevent of asphyxiation.</p>
  
 <div class="hCard">Physical properties</div>
 
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -90,7 +94,8 @@ Detectors
 </thead>
 <tbody>
 <tr>
-<td>co2_current_concentration</td>
+<td>carbonDioxydeSensor.currentConcentration</td>
+<td>CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION</td>
 <td>[0.0-undefined]</td>
 <td>0.0</td>
 <td>Double</td>
@@ -102,6 +107,7 @@ Detectors
 
 <p>There is no physical consideration for this type of device. Indeed, this device is used to return a physical value. In our case, we do not care about the way the sensor gives this value.</p>
 
+<p>It is necessary to have the global variable named CO2Concentration in a room if you want to use the CarbonDioxydeSensor sensor without getting errors. Likewise, it is required to set the global variable named COConcentration in a room if you want to use the sensor CarbonMonoxydeSensor.</p>
 
         
 <div class="hCard">Methods</div>
@@ -136,7 +142,8 @@ The photometer returns the value of the current illuminance. This value is expre
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -145,6 +152,8 @@ The photometer returns the value of the current illuminance. This value is expre
 </thead>
 <tbody>
 <tr>
+<td>photometer.currentIlluminance</td>
+<td>PHOTOMETER_CURRENT_ILLUMINANCE</td>
 <td>current_illuminance</td>
 <td>[0.0-undefined]</td>
 <td>0.0</td>
@@ -157,7 +166,7 @@ The photometer returns the value of the current illuminance. This value is expre
 
 <p>There is no physical consideration for this type of device. Indeed, this device is used to return a physical value. In our case, we do not care about the way the sensor gives this value.</p>
 
-
+<p>It is necessary to have the global variable named Illuminance in a room if you want to use the photometer sensor without getting errors. </p>
         
 <div class="hCard">Methods</div>
 
@@ -192,7 +201,8 @@ The photometer returns the value of the current illuminance. This value is expre
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -201,7 +211,8 @@ The photometer returns the value of the current illuminance. This value is expre
 </thead>
 <tbody>
 <tr>
-<td>sensed_presence</td>
+<td>presenceSensor.sensedPresence</td>
+<td>PRESENCE_SENSOR_SENSED_PRESENCE</td>
 <td>True/False</td>
 <td>False</td>
 <td>Boolean</td>
@@ -210,7 +221,7 @@ The photometer returns the value of the current illuminance. This value is expre
 </tbody>
 </table>
 
-<p>If the sensed_presence property is true then there is someone close to the sensor. On the contrary, if the sensed_presence is false, there is no one close to the sensor.</p>
+<p>If the sensedPresence property is true then there is someone close to the sensor. On the contrary, if the sensedPresence is false, there is no one close to the sensor.</p>
 
 
         
@@ -234,18 +245,6 @@ The photometer returns the value of the current illuminance. This value is expre
 </div>
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 <div class="idCard">
 
 <div class="titleCard"><a name="PowerSwitchCard">Power Switch</a></div>
@@ -262,7 +261,8 @@ The photometer returns the value of the current illuminance. This value is expre
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -271,7 +271,8 @@ The photometer returns the value of the current illuminance. This value is expre
 </thead>
 <tbody>
 <tr>
-<td>current_status</td>
+<td>powerSwitch.currentStatus</td>
+<td>POWER_STATUS_CURRENT_STATUS</td>
 <td>True/False</td>
 <td>False</td>
 <td>Boolean</td>
@@ -281,7 +282,7 @@ The photometer returns the value of the current illuminance. This value is expre
 </table>
 
 
-<p>If the current_status property is true then all equipment in a room will be switched on. On the contrary, if the current_status is false, all equipment will be turn off.</p>
+<p>If the currentStatus property is true then all equipment in a room will be switched on. On the contrary, if the currentStatus is false, all equipment will be turn off.</p>
 
 
         
@@ -333,7 +334,8 @@ The photometer returns the value of the current illuminance. This value is expre
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -342,7 +344,8 @@ The photometer returns the value of the current illuminance. This value is expre
 </thead>
 <tbody>
 <tr>
-<td>current_temperature</td>
+<td>thermometer.currentTemperature</td>
+<td>THERMOMETER_CURRENT_TEMPERATURE</td>
 <td>[0.0-undefined]</td>
 <td>0.0</td>
 <td>Double</td>
@@ -351,6 +354,7 @@ The photometer returns the value of the current illuminance. This value is expre
 </tbody>
 </table>
 
+<p>It is necessary to have the global variable named Temperature in a room if you want to use the Thermometer sensor without getting errors. </p>
 
         
 <div class="hCard">Methods</div>
