@@ -23,7 +23,8 @@ Lights
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -32,14 +33,16 @@ Lights
 </thead>
 <tbody>
 <tr>
-<td>power_status</td>
+<td>binaryLight.powerStatus</td>
+<td>BINARY_LIGHT_POWER_STATUS</td>
 <td>True/False</td>
 <td>False</td>
 <td>Boolean</td>
 <td>Yes</td>
 </tr>
 <tr>
-<td>max_power</td>
+<td>binaryLight.maxPowerLevel</td>
+<td>BINARY_LIGHT_MAX_POWER_LEVEL</td>
 <td>100.0</td>
 <td>100.0</td>
 <td>Double</td>
@@ -101,7 +104,8 @@ Lights
 <table>
 <thead>
 <tr>
-<td>Name</td>
+<td>Property name</td>
+<td>Constant name</td>
 <td>Value</td>
 <td>Default value</td>
 <td>Type</td>
@@ -110,14 +114,16 @@ Lights
 </thead>
 <tbody>
 <tr>
-<td>power_level</td>
+<td>dimmerLight.powerLevel</td>
+<td>DIMMER_LIGHT_POWER_LEVEL</td>
 <td>[0-1.0]</td>
 <td>0.0</td>
 <td>Double</td>
 <td>Yes</td>
 </tr>
 <tr>
-<td>max_power</td>
+<td>dimmerLight.maxPowerLevel</td>
+<td>DIMMER_LIGHT_MAX_POWER_LEVEL</td>
 <td>100.0</td>
 <td>100.0</td>
 <td>Double</td>
