@@ -49,15 +49,22 @@
             <module>ihm</module>
             <module>packages</module>
             <module>distribution</module>
+             <module>tests</module>
          </modules>
       </profile>
       <profile>
-         <id>jenkins</id>
-         <modules>
-            <module>parent</module>
-            <module>simulator</module>
-            <module>packages</module>
-         </modules>
+           <id>tests</id>
+           <activation>
+               <activeByDefault>true</activeByDefault>
+           </activation>
+           <modules>
+               <module>parent</module>
+               <module>simulator</module>
+               <module>ihm</module>
+               <module>packages</module>
+               <module>distribution</module>
+               <module>tests</module>
+           </modules>
       </profile>
       <profile>
          <id>backend</id>

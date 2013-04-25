@@ -211,10 +211,10 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void addPerson(String userName, String personType) {
+	public Person addPerson(String userName, String personType) {
 		String aPersonType = getPersonType(personType);
 		if (aPersonType == null)
-			return;
+		    throw new IllegalArgumentException("Person type " + personType + " is not defined");
 
 		Person person = new PersonImpl(userName, new Position(-1, -1), aPersonType, this);
         List<PersonListener> snapshotListener;
@@ -235,6 +235,8 @@ public class SimulationManagerImpl implements SimulationManager {
 				e.printStackTrace();
 			}
 		}
+
+        return person;
 	}
 
 	@Override

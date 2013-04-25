@@ -50,7 +50,7 @@ public interface SimulationManager extends ContextManager {
 
 	public void removeAllPersons();
 
-	public void addPerson(String personName, String personType);
+	public Person addPerson(String personName, String personType);
 
 	public Person getPerson(String personName);
 
