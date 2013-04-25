@@ -660,13 +660,13 @@ define(['jquery',
                     @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
-                if (@type() == "iCASA.COGazSensor" )
+                if (@type() == "iCASA.COGasSensor" )
                   concentration = @properties()["carbonMonoxydeSensor.currentConcentration"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);
                   );
-                if (@type() == "iCASA.CO2GazSensor" )
+                if (@type() == "iCASA.CO2GasSensor" )
                   concentration = @properties()["carbonDioxydeSensor.currentConcentration"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
@@ -684,7 +684,7 @@ define(['jquery',
                        positionY: 1,
                        show: false
                      });
-                if ((@type() == "iCASA.COGazSensor") || (@type() == "iCASA.CO2GazSensor"))
+                if ((@type() == "iCASA.COGasSensor") || (@type() == "iCASA.CO2GasSensor"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "redLed",
                        imgSrc: '/assets/images/devices/decorators/redLed.png',
@@ -754,9 +754,9 @@ define(['jquery',
               imgName = "photometer";
             if (@type() == "iCASA.BinaryLight")
               imgName = "binaryLight_off";
-            if (@type() == "iCASA.COGazSensor")
+            if (@type() == "iCASA.COGasSensor")
               imgName = "COGazSensor";
-            if (@type() == "iCASA.CO2GazSensor")
+            if (@type() == "iCASA.CO2GasSensor")
               imgName = "CO2GazSensor";
             if (@type() == "iCASA.PresenceSensor")
               imgName = "movementDetector";

@@ -13,9 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device.gazSensor.impl;
+package fr.liglab.adele.icasa.device.gasSensor.impl;
 
-import fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor;
+import fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author jeremy
  */
-@Component(name = "iCASA.CO2GazSensor")
+@Component(name = "iCASA.CO2GasSensor")
 @Provides(properties = {@StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION)})
 public class SimulatedCarbonDioxydeSensorImpl extends AbstractDevice implements CarbonDioxydeSensor, SimulatedDevice {
 
@@ -43,7 +43,7 @@ public class SimulatedCarbonDioxydeSensorImpl extends AbstractDevice implements 
 
     private volatile Zone m_zone;
 
-    private ZoneListener listener = new GazSensorZoneListener();
+    private ZoneListener listener = new GasSensorZoneListener();
 
     public SimulatedCarbonDioxydeSensorImpl() {
         super();
@@ -77,7 +77,7 @@ public class SimulatedCarbonDioxydeSensorImpl extends AbstractDevice implements 
 
     @Override
     public void leavingZones(List<Zone> zones) {
-        setPropertyValue(CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION, -1.0d);
+        setPropertyValue(CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION, 0.0d);
         if (m_zone != null)
             m_zone.removeListener(listener);
     }
@@ -90,7 +90,7 @@ public class SimulatedCarbonDioxydeSensorImpl extends AbstractDevice implements 
         }
     }
 
-    class GazSensorZoneListener extends BaseZoneListener {
+    class GasSensorZoneListener extends BaseZoneListener {
 
         @Override
         public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {

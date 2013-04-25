@@ -43,7 +43,7 @@
       </dependency>
 		<dependency>
          <groupId>${project.groupId}</groupId>
-			<artifactId>device.gazSensor</artifactId>
+			<artifactId>device.gasSensor</artifactId>
          <version>${project.version}</version>
       </dependency>	
 		<dependency>
