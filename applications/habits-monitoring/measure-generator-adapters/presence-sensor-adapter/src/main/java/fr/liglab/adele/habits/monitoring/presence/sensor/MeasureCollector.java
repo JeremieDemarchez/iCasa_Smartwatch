@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.habits.monitoring.measure.generator;
+package fr.liglab.adele.habits.monitoring.presence.sensor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
+import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
@@ -82,7 +83,6 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 			if (detector.getSensedPresence()) {
 				Measure measure = new Measure();
 				measure.setDeviceId(deviceSerialNumber);
-//				measure.setLocalisation((String) detector.getPropertyValue("Location"));
 				Data data = new Data(measure);
 
 				// simulation reliability

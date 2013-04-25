@@ -36,7 +36,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             
             <!-- ADELE Projects -->
             <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
-            <ciliaVersion>1.6.3</ciliaVersion>
+            <ciliaVersion>1.6.4-SNAPSHOT</ciliaVersion>
             <iCasaPlatformVersion>1.0.1-SNAPSHOT</iCasaPlatformVersion>
             <iCasaSimulatorVersion>1.0.1-SNAPSHOT</iCasaSimulatorVersion>
             <DistributionTestVersion>${parent.version}</DistributionTestVersion>

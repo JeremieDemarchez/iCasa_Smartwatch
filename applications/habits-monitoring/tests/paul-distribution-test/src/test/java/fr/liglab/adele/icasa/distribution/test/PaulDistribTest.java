@@ -157,7 +157,7 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		
 		// execute script for zones and devices
 		scriptExecutor.execute(firstScript);
-		wait(3000);
+		wait(10000);
 		
 		Set<String> devices = icasa.getDeviceIds();
 		Set<String> zones = icasa.getZoneIds();
