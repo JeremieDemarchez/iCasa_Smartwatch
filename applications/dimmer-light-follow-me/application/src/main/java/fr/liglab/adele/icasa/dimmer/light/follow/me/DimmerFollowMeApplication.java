@@ -15,34 +15,44 @@
  */
 package fr.liglab.adele.icasa.dimmer.light.follow.me;
 
-import java.util.*;
-
-import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.light.Photometer;
-import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
 
-public class DimmerFollowMeApplication implements DeviceListener{
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 
-    /** Field for dimmerLight dependency */
+public class DimmerFollowMeApplication extends AbstractDeviceListener {
+
+    /**
+     * Field for dimmerLight dependency
+     */
     private DimmerLight[] dimmerLights;
-    /** Field for presenceSensor dependency */
+    /**
+     * Field for presenceSensor dependency
+     */
     private PresenceSensor[] presenceSensors;
-    /** Field for photometer dependency */
+    /**
+     * Field for photometer dependency
+     */
     private Photometer[] photometers;
 
     public static String LOCATION_PROPERTY_NAME = "Location";
     public static String LOCATION_UNKNOWN = "unknown";
 
-    /** Constant for illuminance **/
+    /**
+     * Constant for illuminance *
+     */
     public static double EXPECTED_MAX_ILLUMINANCE = 4000.0;
     public static double EXPECTED_MEAN_ILLUMINANCE = 2750.0;
     public static double EXPECTED_MIN_ILLUMINANCE = 1500.0;
 
-    /** Constant for each room surface.
+    /**
+     * Constant for each room surface.
      * Note : In the end this will be configurable !
      */
 
@@ -50,43 +60,57 @@ public class DimmerFollowMeApplication implements DeviceListener{
     public static double SURFACE_LIVINGROOM = 16.807;
     public static double SURFACE_KITCHEN = 10.0842;
 
-    private static boolean flag=false;
+    private static boolean flag = false;
 
-    /** Bind Method for null dependency */
+    /**
+     * Bind Method for null dependency
+     */
     public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
         presenceSensor.addListener(this);
     }
 
-    /** Unbind Method for null dependency */
+    /**
+     * Unbind Method for null dependency
+     */
     public void unbindPresenceSensor(PresenceSensor presenceSensor,
                                      Map properties) {
         presenceSensor.removeListener(this);
     }
 
-    /** Bind Method for null dependency */
+    /**
+     * Bind Method for null dependency
+     */
     public void bindPhotometer(Photometer photometer, Map properties) {
         photometer.addListener(this);
     }
 
-    /** Unbind Method for null dependency */
+    /**
+     * Unbind Method for null dependency
+     */
     public void unbindPhotometer(Photometer photometer, Map properties) {
         photometer.removeListener(this);
     }
 
-    /** Bind Method for null dependency */
+    /**
+     * Bind Method for null dependency
+     */
     public void bindDimmerLight(DimmerLight dimmerLight, Map properties) {
         // do nothing
     }
 
-    /** Unbind Method for null dependency */
+    /**
+     * Unbind Method for null dependency
+     */
     public void unbindDimmerLight(DimmerLight dimmerLight, Map properties) {
         // do nothing
     }
 
-    /** Component Lifecycle Method */
+    /**
+     * Component Lifecycle Method
+     */
     public void stop() {
         /*
-		 * It is extremely important to unregister the device listener.
+         * It is extremely important to unregister the device listener.
 		 * Otherwise, iCASA will continue to send notifications to the
 		 * unpredictable and invalid component instance.
 		 * This will also causes problem when the bundle is stopped as iCASA
@@ -97,18 +121,21 @@ public class DimmerFollowMeApplication implements DeviceListener{
         for (PresenceSensor presenceSensor : presenceSensors) {
             presenceSensor.removeListener(this);
         }
-        for(Photometer photometer : photometers) {
+        for (Photometer photometer : photometers) {
             photometer.removeListener(this);
         }
     }
 
-    /** Component Lifecycle Method */
+    /**
+     * Component Lifecycle Method
+     */
     public void start() {
         // do nothing
     }
 
     /**
      * Method which catch all dimmerlight from a location
+     *
      * @param location
      * @return
      */
@@ -125,6 +152,7 @@ public class DimmerFollowMeApplication implements DeviceListener{
 
     /**
      * Method which catch all photometer from a location
+     *
      * @param location
      * @return
      */
@@ -140,6 +168,7 @@ public class DimmerFollowMeApplication implements DeviceListener{
 
     /**
      * Method which compute the mean value of a list of photometers
+     *
      * @param photometers collection of photometer devices
      * @return
      */
@@ -155,6 +184,7 @@ public class DimmerFollowMeApplication implements DeviceListener{
 
     /**
      * Method which allows to light a list of dimmerLight at a wanted value
+     *
      * @param dimmer
      * @param meanIlluminanceValue
      * @param profilIlluminance
@@ -163,43 +193,47 @@ public class DimmerFollowMeApplication implements DeviceListener{
     public void setDimmerPowerLevelOnValue(List<DimmerLight> dimmer, double meanIlluminanceValue, int profilIlluminance, double roomSurface) {
 
         double diffIllumiance = 0;
-        double diffPowerLevel=0;
-        double powerLevel=0;
+        double diffPowerLevel = 0;
+        double powerLevel = 0;
 
-        switch(profilIlluminance){
+        switch (profilIlluminance) {
 
             //Profil 1 : soft lighting
-            case 1:{
+            case 1: {
                 diffIllumiance = (EXPECTED_MIN_ILLUMINANCE - meanIlluminanceValue);
-            }break;
+            }
+            break;
 
             //Profil 2 : atmosphere to watch a film
-            case 2:{
+            case 2: {
                 diffIllumiance = (EXPECTED_MEAN_ILLUMINANCE - meanIlluminanceValue);
-            }break;
+            }
+            break;
 
             //Profil 3 : Full lighting
-            case 3:{
+            case 3: {
                 diffIllumiance = (EXPECTED_MAX_ILLUMINANCE - meanIlluminanceValue);
-            }break;
+            }
+            break;
 
-            default:break;
+            default:
+                break;
 
         }
 
         //Compute the difference of powerLevel to have the expected illuminance
-        diffPowerLevel = (diffIllumiance * roomSurface)/68000.0;
+        diffPowerLevel = (diffIllumiance * roomSurface) / 68000.0;
 
         //Set the powerLevel to have the expected illuminance
         for (DimmerLight dimmerlight : dimmer) {
 
             double currentPowerLevel = dimmerlight.getPowerLevel();
-            powerLevel=currentPowerLevel+diffPowerLevel;
+            powerLevel = currentPowerLevel + diffPowerLevel;
 
             //Clipping function
-            if( powerLevel > 1.0) powerLevel=1.0;
-            else if (powerLevel <0.0) powerLevel=0.0;
-            else;
+            if (powerLevel > 1.0) powerLevel = 1.0;
+            else if (powerLevel < 0.0) powerLevel = 0.0;
+            else ;
 
             dimmerlight.setPowerLevel(powerLevel);
         }
@@ -207,6 +241,7 @@ public class DimmerFollowMeApplication implements DeviceListener{
 
     /**
      * Method which allows to light off a list of dimmerLight
+     *
      * @param dimmer
      */
     public void setDimmerOff(List<DimmerLight> dimmer) {
@@ -241,7 +276,6 @@ public class DimmerFollowMeApplication implements DeviceListener{
                     if (dimmerInLocation.isEmpty() != true && photometerInLocation.isEmpty() != true && flag == true) {
                         meanPhotometerValue = 0.0;
                         meanPhotometerValue = meanPhotometer(photometerInLocation);
-                        System.out.println("[INFO] Moyenne photo : " + meanPhotometerValue);
                         setDimmerPowerLevelOnValue(dimmerInLocation, meanPhotometerValue, 2, surface);
                     }
                 }
@@ -269,7 +303,6 @@ public class DimmerFollowMeApplication implements DeviceListener{
                     }
                     if (dimmerInLocation.isEmpty() != true && photometerInLocation.isEmpty() != true && (Boolean) oldValue == false) {
                         meanPhotometer = meanPhotometer(photometerInLocation);
-                        System.out.println("[INFO] Moyenne photo : " + meanPhotometer);
                         setDimmerPowerLevelOnValue(dimmerInLocation, meanPhotometer, 2, surface);
                         flag = true;
                     }

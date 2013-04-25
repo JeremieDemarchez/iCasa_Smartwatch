@@ -17,7 +17,7 @@
 
 -->
 <ipojo xmlns="org.apache.felix.ipojo">
-<component classname="fr.liglab.adele.icasa.dimmer.light.follow.me.DimmerFollowMeApplication" name="DimmerFollowMeApplication">
+<component classname="fr.liglab.adele.icasa.dimmer.light.follow.me.DimmerFollowMeApplication" name="DimmerLightFollowMeApplication">
     <requires aggregate="true" optional="true" specification="fr.liglab.adele.icasa.device.light.DimmerLight" field="dimmerLights">
         <callback method="bindDimmerLight" type="bind"/>
         <callback method="unbindDimmerLight" type="unbind"/>

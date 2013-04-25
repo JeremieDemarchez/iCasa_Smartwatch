@@ -19,16 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
-public class LightFollowMeApplication implements DeviceListener {
-
-    public static String LOCATION_PROPERTY_NAME = "Location";
-    public static String LOCATION_UNKNOWN = "unknown";
+public class LightFollowMeApplication extends AbstractDeviceListener {
 
     /** Field for binaryLights dependency */
     private BinaryLight[] binaryLights;
