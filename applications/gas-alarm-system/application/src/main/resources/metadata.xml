@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ipojo xmlns="org.apache.felix.ipojo">
+  <component classname="fr.liglab.adele.icasa.gas.alarm.sys.GasAlarmSystemApplication" name="GasAlarmSystem">
+    <callback method="start" transition="validate"/>
+    <callback method="stop" transition="invalidate"/>
+    <requires aggregate="true" optional="true" specification="fr.liglab.adele.icasa.device.light.BinaryLight" field="binaryLights">
+      <callback method="bindBinaryLight" type="bind"/>
+      <callback method="unbindBinaryLight" type="unbind"/>
+    </requires>
+    <properties/>
+    <requires aggregate="true" optional="true" specification="fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor" field="carbonDioxydeSensors">
+      <callback method="bindCarbonDioxydeSensor" type="bind"/>
+      <callback method="unbindCarbonDioxydeSensor" type="unbind"/>
+    </requires>
+  </component>
+  <instance component="GasAlarmSystem" name="GasAlarmSystem-1">
+  </instance>
+</ipojo>
