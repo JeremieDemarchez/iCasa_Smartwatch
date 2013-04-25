@@ -18,21 +18,6 @@
 <ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="org.apache.felix.ipojo http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd"
   xmlns:ipojo="org.apache.felix.ipojo" xmlns:cilia="fr.liglab.adele.cilia">
 
-  <collector classname="fr.liglab.adele.habits.monitoring.measure.generator.MeasureCollector" name="MeasureCollector" architecture="true">
-    <requires aggregate="true" optional="true">
-      <callback type="bind" method="bindProxy" />
-      <callback type="unbind" method="unbindProxy" />
-    </requires>
-  </collector>
-
-  <adapter name="PresenceDetectorAdapter" pattern="in-only">
-    <collector type="MeasureCollector" />
-    <ports>
-       <out-port name="out" type="*" />
-    </ports>
-  </adapter>
-
-
   <sender classname="fr.liglab.adele.habits.monitoring.measure.generator.MeasureSender" name="MeasureSender" architecture="true">
     <requires field="eventService" proxy="false"/>
   </sender>

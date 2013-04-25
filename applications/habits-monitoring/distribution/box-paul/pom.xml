@@ -63,6 +63,12 @@ limitations under the License.
                <type>deployment-package</type>
                <version>${project.version}</version>
             </dependency>
+            <dependency>
+               <groupId>${project.groupId}</groupId>
+               <artifactId>presence.sensor.adapter.dp</artifactId>
+               <type>deployment-package</type>
+               <version>${project.version}</version>
+            </dependency>
             
          </dependencies>
          <build>

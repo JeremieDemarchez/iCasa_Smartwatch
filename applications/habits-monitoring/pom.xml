@@ -33,6 +33,7 @@
 		<module>event-webservice-mock-impl</module>
 		<module>event-webservice-impl</module>
 		<module>measure-generator</module>
+		<module>measure-generator-adapters</module>
         <module>packages</module>
         <module>distribution</module>
         <module>tests</module>
