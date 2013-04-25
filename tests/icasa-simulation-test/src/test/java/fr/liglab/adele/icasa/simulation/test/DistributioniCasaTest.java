@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-package fr.liglab.adele.icasa.distribution.test;
+package fr.liglab.adele.icasa.simulation.test;
 
 import static org.junit.Assert.fail;
 
