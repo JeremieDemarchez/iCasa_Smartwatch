@@ -62,7 +62,7 @@ Detectors
 <li><code>getCOConcentration()</code>: Get the current gaz (CO) concentration of the sensor in µg/m^3</li>
 </ul>
 
-<a href="./datasheets/Datasheet_GazSensor.pdf">Full datasheet here</a>
+<a href="./datasheets/Datasheet_GasSensor.pdf">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
@@ -119,7 +119,7 @@ Detectors
 <li><code>getCO2Concentration()</code>: Get the current gaz (CO2) concentration of the sensor in µg/m^3</li>
 </ul>
 
-<a href="./datasheets/Datasheet_GazSensor.pdf">Full datasheet here</a>
+<a href="./datasheets/Datasheet_GasSensor.pdf">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
