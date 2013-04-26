@@ -21,7 +21,8 @@
 
 @main("iCasa Simulator") {
 <!--ko ifnot: sameVersion == true-->
-<div id="compatibilityWarn"  class="hidden alert alert-block">
+<div id="compatibilityWarn" class="hidden alert alert-block" xmlns="http://www.w3.org/1999/html"
+     xmlns="http://www.w3.org/1999/html">
     <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) and frontend(<span data-bind="text: frontendVersion"></span>) are not the same version, somme functionality could not work.
     </p>
 </div>
@@ -51,6 +52,12 @@
                         </div>
                     </div>
                     <div class="deviceWidgetHalo"></div>
+                    <div class="visibleProperty" id="deviceProperties">
+                        <!-- ko foreach: filtered_properties -->
+                        <span  data-bind="text: $data.value"></span></br>
+                        <!-- /ko -->
+                    </div>
+
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.zones() -->

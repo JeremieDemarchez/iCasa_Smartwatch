@@ -28,12 +28,20 @@
             <input type="text" id="inputName" disabled="disabled" data-bind="value: name, attr: { alt: name}" />
         </div>
     </div>
-    <!--ko foreach: properties_name -->
+    <!--ko foreach: collectionProperties -->
     <div class="control-group">
-      <label class="control-label" for="inputLocation" data-bind="text: $data">Location</label>
+      <label class="control-label" for="inputLocation" data-bind="text: name">Location</label>
       <div class="controls">
-          <input type="text" id="inputLocation" disabled="disabled" data-bind="value: $parent.getPropertyValue($data)" />
+          <input type="text" id="inputLocation" disabled="disabled" data-bind="value: value" />
+          <label class="checkbox">
+          <input type="checkbox"  data-bind="checked: visible" />Show in map
+          </label>
       </div>
+        <!--
+        <label class="checkbox">
+            <input type="checkbox" id="showInMap" data-bind="checked: $parent.isPropertyChecked($data)">Show
+        </label>
+        -->
     </div>
     <!-- /ko -->
     <div class="input-prepend hidden">
