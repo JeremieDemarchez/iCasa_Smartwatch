@@ -26,6 +26,9 @@
         <label class="control-label" for="inputName">Name</label>
         <div class="controls">
             <input type="text" id="inputName" disabled="disabled" data-bind="value: name, attr: { alt: name}" />
+            <label class="checkbox">
+                <input type="checkbox"  data-bind="checked: showNameInMap" />Show in map
+            </label>
         </div>
     </div>
     <!--ko foreach: collectionProperties -->

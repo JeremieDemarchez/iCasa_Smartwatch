@@ -570,6 +570,7 @@ define(['jquery',
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @services = kb.observable(model, 'services');
+           @showNameInMap = ko.observable(false);
            @hasService = (service) =>
             curServices = @.services();
             if (!curServices)
@@ -584,7 +585,6 @@ define(['jquery',
            @collectionProperties = kb.collectionObservable(@propertiesModel, {view_model: DevicePropertyViewModel});
            @properties = kb.observable(model,'properties');
 
-           @filtered_properties = ko.observableArray([]);
            @filterFunction = (model)=>
                 return !model.get('visible');
 
@@ -754,8 +754,6 @@ define(['jquery',
            @updateWidgetImg();
            @popoverdata = ()=>
              pop = "Name : "+@.name()
-             #for property in @properties_name()
-             #  pop+= "<br/>"+property+" : "+@getPropertyValue(property);
              return pop;
 
         getPropertyValue:(property)->
