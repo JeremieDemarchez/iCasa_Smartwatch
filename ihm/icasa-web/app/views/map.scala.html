@@ -51,6 +51,17 @@
                         </div>
                     </div>
                     <div class="deviceWidgetHalo"></div>
+                    <!-- ko if: showNameInMap -->
+                    <div class="visibleProperty" id="deviceName">
+                        <span  data-bind="text: name"></span></br>
+                    </div>
+                    <!-- /ko -->
+                    <div class="visibleProperty" id="deviceProperties">
+                        <!-- ko foreach: filtered_properties -->
+                        <span  data-bind="text: $data.value"></span></br>
+                        <!-- /ko -->
+                    </div>
+
                 </div>
             <!-- /ko -->
             <!-- ko foreach: $root.zones() -->

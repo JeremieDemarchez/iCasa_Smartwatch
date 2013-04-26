@@ -556,15 +556,21 @@ define(['jquery',
         b = Math.floor(Math.random() * 256);
         return "rgba("+r+","+g+","+b+", 0.4)";
 
-    
+
+    class DevicePropertyViewModel extends kb.ViewModel
+        constructor: (model) ->
+            @name = kb.observable(model,'name');
+            @value = kb.observable(model,'value');
+            @visible = kb.observable(model,'visible');
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
            super(model);
-
+           @propertiesModel = new DataModel.Models.Device.Properties(model.get('properties'));
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @services = kb.observable(model, 'services');
+           @showNameInMap = ko.observable(false);
            @hasService = (service) =>
             curServices = @.services();
             if (!curServices)
@@ -576,16 +582,15 @@ define(['jquery',
               return true;
             else
               return false;
-           @properties=kb.observable(model, 'properties');
-           @properties_name = ko.computed({
-            read: () =>
-              if (@.properties() instanceof Object)
-                return Object.keys(@.properties());
-              else
-                return [];
-            owner: @
-           }
-           , @);
+           @collectionProperties = kb.collectionObservable(@propertiesModel, {view_model: DevicePropertyViewModel});
+           @properties = kb.observable(model,'properties');
+
+           @filterFunction = (model)=>
+                return !model.get('visible');
+
+           @filtered_properties = kb.collectionObservable(@propertiesModel,{filters:@filterFunction });
+
+
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
            @isDesactivated = ko.computed({
               read: () =>
@@ -647,6 +652,14 @@ define(['jquery',
 
            # init
            @updateProperties= (newValue) =>
+                newProperties =  @model().get('properties');
+                ko.utils.arrayForEach(newProperties, (property)=>
+                    storedProperty = @.propertiesModel.get(property.name);
+                    if storedProperty?
+                        storedProperty.set('value',property.value );
+                    else
+                        @.propertiesModel.add(property);
+                );
                 if (@type() == "iCASA.BathroomScale" )
                   presence = @properties()["presence_detected"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
@@ -741,10 +754,8 @@ define(['jquery',
            @updateWidgetImg();
            @popoverdata = ()=>
              pop = "Name : "+@.name()
-             for property in @properties_name()
-               pop+= "<br/>"+property+" : "+@getPropertyValue(property);
              return pop;
-        
+
         getPropertyValue:(property)->
           return @.properties()[property]+""
         getImage:(imgName)->
@@ -766,9 +777,9 @@ define(['jquery',
               imgName = "heater";
             if ((@type() == "iCASA.Photometer") || @hasService("fr.liglab.adele.icasa.device.light.Photometer"))
               imgName = "photometer";
-            if ((@type() == "iCASA.COGasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonMonoxydeSensor"))
+            if ((@type() == "iCASA.COGazSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonMonoxydeSensor"))
               imgName = "COGazSensor";
-            if ((@type() == "iCASA.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor"))
+            if ((@type() == "iCASA.CO2GazSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor"))
               imgName = "CO2GazSensor";
             if ((@type() == "iCASA.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
               imgName = "movementDetector";
@@ -1028,7 +1039,7 @@ define(['jquery',
 
            @createDevice = () =>
               generatedId = @.createRandomId(DataModel.collections.devices, @newDeviceType().name());
-              newDevice = new DataModel.Models.Device({ deviceId: generatedId, name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: {}});
+              newDevice = new DataModel.Models.Device({ deviceId: generatedId, name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: []});
               newDevice.save();
               newDevice.set(id: generatedId)
               DataModel.collections.devices.push(newDevice);
