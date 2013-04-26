@@ -564,6 +564,18 @@ define(['jquery',
 
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
+           @services = kb.observable(model, 'services');
+           @hasService = (service) =>
+            curServices = @.services();
+            if (!curServices)
+              return false;
+            foundService = ko.utils.arrayFirst(curServices, (curService) ->
+              return ko.utils.stringStartsWith(curService, service);
+            );
+            if (foundService)
+              return true;
+            else
+              return false;
            @properties=kb.observable(model, 'properties');
            @properties_name = ko.computed({
             read: () =>
@@ -630,7 +642,7 @@ define(['jquery',
            # location change saving
            @saveLocation= ko.observable(false);
            @saveLocationChanges= (data, event) =>
-                @location('bedroom');
+                @location('bedroom'); #TODO manage location property change
                 @saveChanges();
 
            # init
@@ -648,25 +660,25 @@ define(['jquery',
                        if (presence == true)
                          decorator.show(presence == true);
                   );
-                if (@type() == "iCASA.PresenceSensor" )
+                if ((@type() == "iCASA.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
                   presence = @properties()["presenceSensor.sensedPresence"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "presence")
                        decorator.show(presence == true);
                   );
-                if (@type() == "iCASA.BinaryLight")
+                if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
                   powerLevel = @properties()["binaryLight.powerStatus"]
                   if (powerLevel)
                     @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
-                if (@type() == "iCASA.COGasSensor" )
+                if ((@type() == "iCASA.COGasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonMonoxydeSensor"))
                   concentration = @properties()["carbonMonoxydeSensor.currentConcentration"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);
                   );
-                if (@type() == "iCASA.CO2GasSensor" )
+                if ((@type() == "iCASA.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor"))
                   concentration = @properties()["carbonDioxydeSensor.currentConcentration"];
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
@@ -738,39 +750,39 @@ define(['jquery',
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
-            if (@type() == "iCASA.Cooler")
+            if ((@type() == "iCASA.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
               imgName = "cooler";
-            if (@type() == "iCASA.AudioSource")
+            if ((@type() == "iCASA.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
               imgName = "musicPlayer";
-            if (@type() == "iCASA.DimmerLight")
-              imgName = "dimmerLight";
-            if (@type() == "iCASA.Thermometer")
-              imgName = "thermometer";
-            if (@type() == "iCASA.MedicalThermometer")
-              imgName = "medicalThermometer";
-            if (@type() == "iCASA.Heater")
-              imgName = "heater";
-            if (@type() == "iCASA.Photometer")
-              imgName = "photometer";
-            if (@type() == "iCASA.BinaryLight")
+            if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
               imgName = "binaryLight_off";
-            if (@type() == "iCASA.COGasSensor")
+            if ((@type() == "iCASA.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))
+              imgName = "dimmerLight";
+            if ((@type() == "iCASA.Thermometer") || @hasService("fr.liglab.adele.icasa.device.temperature.Thermometer"))
+              imgName = "thermometer";
+            if ((@type() == "iCASA.MedicalThermometer") || @hasService("fr.liglab.adele.icasa.device.bathroomscale.MedicalThermometer"))
+              imgName = "medicalThermometer";
+            if ((@type() == "iCASA.Heater") || @hasService("fr.liglab.adele.icasa.device.temperature.Heater"))
+              imgName = "heater";
+            if ((@type() == "iCASA.Photometer") || @hasService("fr.liglab.adele.icasa.device.light.Photometer"))
+              imgName = "photometer";
+            if ((@type() == "iCASA.COGasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonMonoxydeSensor"))
               imgName = "COGazSensor";
-            if (@type() == "iCASA.CO2GasSensor")
+            if ((@type() == "iCASA.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor"))
               imgName = "CO2GazSensor";
-            if (@type() == "iCASA.PresenceSensor")
+            if ((@type() == "iCASA.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
               imgName = "movementDetector";
-            if (@type() == "iCASA.Speaker")
+            if ((@type() == "iCASA.Speaker") || @hasService("fr.liglab.adele.icasa.device.sound.Speaker"))
               imgName = "speaker";
             if (@type() == "iCASA.Power")
               imgName = "power";
-            if (@type() == "iCASA.BathroomScale")
+            if ((@type() == "iCASA.BathroomScale") || @hasService("fr.liglab.adele.icasa.device.bathroomscale.BathroomScale"))
               imgName = "bathroomScale";
             if (@type() == "iCASA.Tablet")
               imgName = "tablet";
             if (@type() == "iCASA.Desktop")
               imgName = "desktop";
-            if (@type() == "iCASA.SettopBox")
+            if ((@type() == "iCASA.SettopBox") || @hasService("fr.liglab.adele.icasa.device.settopbox.SetTopBox"))
               imgName = "liveBox";
             if (@type() == "iCASA.RollingShutter")
               imgName = "rollingShutter";
@@ -784,13 +796,13 @@ define(['jquery',
               imgName = "rfidReader";
             if (@type() == "iCASA.Accelerometer")
               imgName = "accelerometer";
-            if (@type() == "iCASA.ToggleSwitch")
+            if ((@type() == "iCASA.ToggleSwitch") || @hasService("fr.liglab.adele.icasa.device.power.PowerSwitch"))
               imgName = "toggleSwitch";
             if (@type() == "iCASA.DoorDetector")
               imgName = "doorDetector";
             if (@type() == "iCASA.SettopBox")
-              imgName = "liveBox";
-            if (@type() == "iCASA.Sphygmometer")
+              imgName = "liveBox"; #override settopbox icon
+            if ((@type() == "iCASA.Sphygmometer") || @hasService("fr.liglab.adele.icasa.device.bathroomscale.Sphygmometer"))
               imgName = "sphygmometer";
           return "/assets/images/devices/" + imgName + ".png"; 
 
