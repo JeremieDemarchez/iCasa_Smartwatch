@@ -2,8 +2,12 @@ package fr.liglab.adele.habits.monitoring.autonomic.manager;
 
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Created with IntelliJ IDEA.
@@ -16,14 +20,28 @@ public class GenericDeviceListener implements DeviceListener {
 
     private static final Logger logger = LoggerFactory.getLogger(GenericDeviceListener.class);
 
+    private Map<String, GenericDevice> devices;
+
+    // DP installer
+    // voir classe dans store/dp-rest-installer
+
     @Override
     public void deviceAdded(GenericDevice genericDevice) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+        if (devices == null){
+            devices = new HashMap<String, GenericDevice>();
+        }
+        devices.put(genericDevice.getSerialNumber(), genericDevice);
+
+        if (genericDevice instanceof PresenceSensor){
+
+        }
     }
 
     @Override
     public void deviceRemoved(GenericDevice genericDevice) {
-        //To change body of implemented methods use File | Settings | File Templates.
+
+
     }
 
     @Override
