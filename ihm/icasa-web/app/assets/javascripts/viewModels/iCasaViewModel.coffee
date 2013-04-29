@@ -661,38 +661,38 @@ define(['jquery',
                         @.propertiesModel.add(property);
                 );
                 if (@type() == "iCASA.BathroomScale" )
-                  presence = @properties()["presence_detected"];
+                  presence = @.getPropertyValue("presence_detected");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "foots")
                           decorator.show(presence == true);
                   );
                 if (@type() == "iCASA.Sphygmometer" )
-                  presence = @properties()["presence_detected"];
+                  presence = @.getPropertyValue("presence_detected");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "sphygmometer_measure")
                        if (presence == true)
                          decorator.show(presence == true);
                   );
                 if ((@type() == "iCASA.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
-                  presence = @properties()["presenceSensor.sensedPresence"];
+                  presence = @.getPropertyValue("presenceSensor.sensedPresence");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "presence")
                        decorator.show(presence == true);
                   );
                 if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
-                  powerLevel = @properties()["binaryLight.powerStatus"]
+                  powerLevel = @.getPropertyValue("binaryLight.powerStatus");
                   if (powerLevel)
                     @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
                 if ((@type() == "iCASA.COGasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonMonoxydeSensor"))
-                  concentration = @properties()["carbonMonoxydeSensor.currentConcentration"];
+                  concentration = @.getPropertyValue("carbonMonoxydeSensor.currentConcentration");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);
                   );
                 if ((@type() == "iCASA.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor"))
-                  concentration = @properties()["carbonDioxydeSensor.currentConcentration"];
+                  concentration = @.getPropertyValue("carbonDioxydeSensor.currentConcentration");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);
@@ -756,8 +756,12 @@ define(['jquery',
              pop = "Name : "+@.name()
              return pop;
 
-        getPropertyValue:(property)->
-          return @.properties()[property]+""
+        getPropertyValue:(property)=>
+          value = _.find(@propertiesModel.models, (propertyModel) ->
+            if propertyModel.get('name') == property
+              return propertyModel;
+          );
+          return value.get('value');
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
