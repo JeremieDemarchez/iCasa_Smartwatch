@@ -34,9 +34,9 @@ public interface Person extends LocatedObject {
 
     public void setName(String name);
 
-    public String getPersonType();
+    public PersonType getPersonType();
 
-    public void setPersonType(String personType);
+    public void setPersonType(PersonType personType);
     
     public String getLocation();
 

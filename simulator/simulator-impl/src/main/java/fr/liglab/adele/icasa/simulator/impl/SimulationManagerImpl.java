@@ -27,7 +27,7 @@ import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.simulator.PhysicalModel;
+import fr.liglab.adele.icasa.simulator.*;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -47,9 +47,6 @@ import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 
@@ -77,7 +74,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private List<PersonTypeListener> personTypeListeners = new ArrayList<PersonTypeListener>();
 
-	private List<String> personTypes = new ArrayList<String>();
+	private Map<String, PersonType> personTypes = new HashMap<String, PersonType>();
 
     private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
@@ -212,7 +209,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Person addPerson(String userName, String personType) {
-		String aPersonType = getPersonType(personType);
+		PersonType aPersonType = getPersonType(personType);
 		if (aPersonType == null)
 		    throw new IllegalArgumentException("Person type " + personType + " is not defined");
 
@@ -287,7 +284,9 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
 		LocatedDevice device = getDevice(deviceId);
-
+        if (device == null){
+            throw new NullPointerException("Device do not exist: " + deviceId);
+        }
 		if (value) {
 			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
 		} else {
@@ -326,7 +325,9 @@ public class SimulationManagerImpl implements SimulationManager {
 			} catch (ConfigurationException e) {
 				e.printStackTrace();
 			}
-		}
+		} else {
+            throw new IllegalStateException("Unknown device type: " + factoryName);
+        }
         while (count++ < 500 && (device == null)){
             device = getDevice(deviceId);
             try {
@@ -569,32 +570,34 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void addPersonType(String personType) {
+	public PersonType addPersonType(String personType) {
         boolean existsPerson = false;
         List<PersonTypeListener> listenerSnapshot;
+        PersonType type = new PersonType(personType);
         lock.writeLock().lock();
         try{
-            existsPerson = personTypes.contains(personType);
+            existsPerson = personTypes.containsKey(type);
             listenerSnapshot = getPersonTypeListeners();
             if (!existsPerson) {
-                personTypes.add(personType);
+                personTypes.put(personType,type);
             }
         }finally {
             lock.writeLock().unlock();
         }
         if (!existsPerson){
 			for (PersonTypeListener listener : listenerSnapshot){
-				listener.personTypeAdded(personType);
+				listener.personTypeAdded(type);
 	    	}
         }
+        return type;
 	}
 
 	@Override
-	public String getPersonType(String personType) {
+	public PersonType getPersonType(String personType) {
         lock.readLock().lock();
         try{
-            if (personTypes.contains(personType)) {
-                return personType;
+            if (personTypes.containsKey(personType)) {
+                return personTypes.get(personType);
             }
             return null;
         }finally {
@@ -606,22 +609,38 @@ public class SimulationManagerImpl implements SimulationManager {
 	public void removePersonType(String personType) {
 		if (personType.contains(personType)) {
             lock.writeLock().lock();
+            PersonType removed ;
+            List<Person> localPersons = getPersons();
             List<PersonTypeListener> listenerSnapshot = getPersonTypeListeners();
             try{
-			    personTypes.remove(personType);
+			    removed = personTypes.remove(personType);
+
             }finally {
                 lock.writeLock().unlock();
             }
-			for (PersonTypeListener listener : listenerSnapshot)
-				listener.personTypeRemoved(personType);
+            if (removed == null){
+                return;
+            }
+            removePersons(localPersons, removed);//remove the persons that are of the removed type.
+			for (PersonTypeListener listener : listenerSnapshot){
+				listener.personTypeRemoved(removed);
+            }
 		}
 	}
 
+    private void removePersons(List<Person> localPersons, PersonType type){
+        for (Person person: localPersons){
+            if (person.getPersonType().equals(type)){
+                removePerson(person.getName());
+            }
+        }
+    }
+
 	@Override
-	public List<String> getPersonTypes() {
+	public List<PersonType> getPersonTypes() {
         lock.readLock().lock();
         try{
-		    return Collections.unmodifiableList(personTypes);
+            return Collections.unmodifiableList(new ArrayList<PersonType>(personTypes.values()));
         }finally {
             lock.readLock().unlock();
         }

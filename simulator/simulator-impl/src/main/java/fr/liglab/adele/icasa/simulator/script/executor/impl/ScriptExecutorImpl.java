@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import fr.liglab.adele.icasa.simulator.PersonType;
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -394,9 +395,9 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 			for (Person person : simulationManager.getPersons()) {
 				String id = person.getName();
-				String type = person.getPersonType();
+				PersonType type = person.getPersonType();
 
-				out.println("\t<create-person id=\"" + id + "\" type=\"" + type + "\" />");
+				out.println("\t<create-person id=\"" + id + "\" type=\"" + type.getName() + "\" />");
 
 				Zone zone = simulationManager.getZoneFromPosition(person.getCenterAbsolutePosition());
 

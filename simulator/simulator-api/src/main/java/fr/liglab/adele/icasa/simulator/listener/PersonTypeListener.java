@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.listener;
 
 import fr.liglab.adele.icasa.listener.IcasaListener;
+import fr.liglab.adele.icasa.simulator.PersonType;
 
 
 /**
@@ -23,7 +24,7 @@ import fr.liglab.adele.icasa.listener.IcasaListener;
  */
 public interface PersonTypeListener extends IcasaListener {
 
-   public void personTypeAdded(String personType);
+   public void personTypeAdded(PersonType personType);
 
-   public void personTypeRemoved(String personType);
+   public void personTypeRemoved(PersonType personType);
 }

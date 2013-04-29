@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.util;
 
+import fr.liglab.adele.icasa.simulator.PersonType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -48,12 +49,12 @@ public class IcasaSimulatorJSONUtil extends IcasaJSONUtil{
 		return personJSON;
 	}
 
-	public static JSONObject getPersonTypeJSON(String personTypeStr) {
+	public static JSONObject getPersonTypeJSON(PersonType personTypeStr) {
 		JSONObject personTypeJSON = null;
 		try {
 			personTypeJSON = new JSONObject();
-			personTypeJSON.putOnce("id", personTypeStr);
-			personTypeJSON.putOnce("name", personTypeStr);
+			personTypeJSON.putOnce("id", personTypeStr.getName());
+			personTypeJSON.putOnce("name", personTypeStr.getName());
 		} catch (JSONException e) {
 			e.printStackTrace();
 			personTypeJSON = null;

@@ -25,6 +25,7 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.impl.LocatedObjectImpl;
 import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.PersonType;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
@@ -37,7 +38,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 
 	private String m_name;
 	
-	private String personType;
+	private PersonType personType;
 
     private List<PersonListener> listeners = new ArrayList<PersonListener>();
 
@@ -46,7 +47,9 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 	private SimulationManager manager;
 
 
-    public PersonImpl(String name, Position position, String personType, SimulationManager manager) {
+
+
+    public PersonImpl(String name, Position position, PersonType personType, SimulationManager manager) {
 		super(position);
 		m_name = name;
 		this.personType = personType;
@@ -153,7 +156,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
 	}
 
 	@Override
-   public String getPersonType() {
+   public PersonType getPersonType() {
         lock.readLock().lock();
         try {
 	        return personType;
@@ -163,7 +166,7 @@ public class PersonImpl  extends LocatedObjectImpl implements Person {
    }
 
 	@Override
-   public void setPersonType(String personType) {
+   public void setPersonType(PersonType personType) {
         lock.writeLock().lock();
 		this.personType = personType;
         lock.writeLock().unlock();
