@@ -29,9 +29,21 @@ import fr.liglab.adele.icasa.location.Position;
  * @author Gabriel Pedraza Ferreira
  */
 public interface SimulationManager extends ContextManager {
-	
+
+    /**
+     * Simulates a fail/reparation in a device.
+     * @param deviceId The device to manipulate.
+     * @param value <code>true</code> to simulate a fail. <code>false</code>to repair.
+     */
 	public void setDeviceFault(String deviceId, boolean value);
 
+    /**
+     * Creates an instance of a simulated device.
+     * @param deviceType The device type
+     * @param deviceId  The new device identifier.
+     * @param properties The properties for the new simulated device.
+     * @return The device wrapper object.
+     */
 	public LocatedDevice createDevice(String deviceType, String deviceId, Map<String, Object> properties);
 
 	public void removeDevice(String deviceId);
