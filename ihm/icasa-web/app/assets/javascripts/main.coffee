@@ -17,15 +17,15 @@ require.config({
         'comp' : 'components',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
-        'hubu' : 'frameworks/hubu/hubu-all',
+        'hubu' : 'frameworks/hubu/hubu-all-min',
         'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         # TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
         'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
-        'knockback' : 'frameworks/knockback/knockback', # AMD module
-        'knockout' : 'frameworks/knockout/knockout-2.1.0.debug', # AMD module
+        'knockback' : 'frameworks/knockback/knockback.min', # AMD module
+        'knockout' : 'frameworks/knockout/knockout-2.1.0', # AMD module
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
