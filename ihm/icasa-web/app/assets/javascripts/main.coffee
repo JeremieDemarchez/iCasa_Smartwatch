@@ -17,7 +17,7 @@ require.config({
         'comp' : 'components',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
-        'hubu' : 'frameworks/hubu/hubu-all-min',
+        'hubu' : 'frameworks/hubu/h-ubu-1.0.0-min',
         'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         # TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
