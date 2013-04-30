@@ -46,6 +46,8 @@ public interface SimulationManager extends ContextManager {
      * @param properties The properties for the new simulated device.
      * @return The device wrapper object.
      * @see fr.liglab.adele.icasa.location.LocatedDevice
+     * @throws IllegalArgumentException if a device instance exists with the same identifier.
+     * @throws  IllegalStateException if there no exists a factory matching the <code>deviceType</code> argument.
      */
     public LocatedDevice createDevice(String deviceType, String deviceId, Map<String, Object> properties);
 
@@ -101,6 +103,7 @@ public interface SimulationManager extends ContextManager {
      * @param personType the person type
      * @return the created person.
      * @see SimulationManager#addPersonType(String)
+     * @throws IllegalArgumentException when a person with the same name exists or if no exist the <code>personType</code>.
      */
     public Person addPerson(String personName, String personType);
 
@@ -163,28 +166,65 @@ public interface SimulationManager extends ContextManager {
      * Attach a zone to a device. When moving the device, the zone will be also moved.
      * @param zoneId the identifier of the zone.
      * @param deviceId the identifier of the device.
+     * @see #detachZoneFromDevice(String, String)
      */
     public void attachZoneToDevice(String zoneId, String deviceId);
 
     /**
      * Detach a zone from the device.
      * @param zoneId the zone identifier.
-     * @param deviceId
+     * @param deviceId the device identifier.
+     * @see #attachZoneToDevice(String, String)
      */
     public void detachZoneFromDevice(String zoneId, String deviceId);
 
+    /**
+     * Attach a device to a person, When moving the person, the device will be also moved
+     * @param deviceId the device identifier.
+     * @param personId the person name.
+     * @see #detachDeviceFromPerson(String, String)
+     */
     public void attachDeviceToPerson(String deviceId, String personId);
 
+    /**
+     * Detach a device from a person.
+     * @param deviceId the device identifier.
+     * @param personId the person name.
+     * @see #attachDeviceToPerson(String, String)
+     */
     public void detachDeviceFromPerson(String deviceId, String personId);
 
+    /**
+     * Attach a person to a zone. When moving the zone, the person will be also moved.
+     * @param personId the person name.
+     * @param zoneId the zone identifier.
+     * @see #detachPersonFromZone(String, String)
+     */
     public void attachPersonToZone(String personId, String zoneId);
 
+    /**
+     * Detach a person from a zone.
+     * @param personId the person name.
+     * @param zoneId the zone identifier.
+     * @see #attachPersonToZone(String, String)
+     */
     public void detachPersonFromZone(String personId, String zoneId);
 
+    /**
+     * Attach a device to a zone. When moving the zone, the device will be also moved.
+     * @param deviceId the device identifier.
+     * @param zoneId the zone identifier.
+     * @see #detachDeviceFromZone(String, String)
+     */
     public void attachDeviceToZone(String deviceId, String zoneId);
 
+    /**
+     * Detach a device from a zone.
+     * @param deviceId the device identifier.
+     * @param zoneId the zone identifier.
+     * @see #attachDeviceToZone(String, String) (String, String)
+     */
     public void detachDeviceFromZone(String deviceId, String zoneId);
 
-    //public void saveSimulationState(String fileName);
 
 }

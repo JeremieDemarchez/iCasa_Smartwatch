@@ -209,10 +209,13 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Person addPerson(String userName, String personType) {
-		PersonType aPersonType = getPersonType(personType);
-		if (aPersonType == null)
-		    throw new IllegalArgumentException("Person type " + personType + " is not defined");
-
+        if (getPerson(userName) != null){
+            throw new IllegalArgumentException("Person "+userName + "already exists");
+        }
+        PersonType aPersonType = getPersonType(personType);
+        if (aPersonType == null) {
+            throw new IllegalArgumentException("Person type " + personType + " is not defined");
+        }
 		Person person = new PersonImpl(userName, new Position(-1, -1), aPersonType, this);
         List<PersonListener> snapshotListener;
         lock.writeLock().lock();
@@ -302,32 +305,37 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public LocatedDevice createDevice(String factoryName, String deviceId, Map<String, Object> properties) {
-		Factory factory = getFactory(factoryName);
-        LocatedDevice device =  null;
-        int count = 0;
-        if (factory != null) {
-			// Create the device
-			Dictionary<String, String> configProperties = new Hashtable<String, String>();
-			configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-			// configProperties.put(GenericDevice.STATE_PROPERTY_NAME,
-			// GenericDevice.STATE_ACTIVATED);
-			// configProperties.put(GenericDevice.FAULT_PROPERTY_NAME,
-			// GenericDevice.FAULT_NO);
-			if (properties.get("description") != null)
-				configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
-			configProperties.put("instance.name", factoryName + "-" + deviceId);
-			try {
-				factory.createComponentInstance(configProperties);
-			} catch (UnacceptableConfiguration e) {
-				e.printStackTrace();
-			} catch (MissingHandlerException e) {
-				e.printStackTrace();
-			} catch (ConfigurationException e) {
-				e.printStackTrace();
-			}
-		} else {
+        if (getDevice(deviceId) != null){
+            throw new IllegalArgumentException("Device " + deviceId + " already exists");
+        }
+        Factory factory = getFactory(factoryName);
+        if (factory == null){
             throw new IllegalStateException("Unknown device type: " + factoryName);
         }
+
+        LocatedDevice device =  null;
+
+		// Create the device
+		Dictionary<String, String> configProperties = new Hashtable<String, String>();
+		configProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
+		// configProperties.put(GenericDevice.STATE_PROPERTY_NAME,
+		// GenericDevice.STATE_ACTIVATED);
+		// configProperties.put(GenericDevice.FAULT_PROPERTY_NAME,
+		// GenericDevice.FAULT_NO);
+		if (properties.get("description") != null)
+			configProperties.put(Constants.SERVICE_DESCRIPTION, properties.get("description").toString());
+		configProperties.put("instance.name", factoryName + "-" + deviceId);
+		try {
+			factory.createComponentInstance(configProperties);
+		} catch (UnacceptableConfiguration e) {
+			e.printStackTrace();
+		} catch (MissingHandlerException e) {
+			e.printStackTrace();
+		} catch (ConfigurationException e) {
+			e.printStackTrace();
+		}
+
+        int count = 0;
         while (count++ < 500 && (device == null)){
             device = getDevice(deviceId);
             try {
