@@ -20,6 +20,8 @@
 @import helper._
 
 @main("iCasa Simulator") {
+<div id="icasa-extensions" icasa-plugins="fake,fake1" icasa-widgets="fake1,fake2" class="hidden">
+</div>
 <!--ko ifnot: sameVersion == true-->
 <div id="compatibilityWarn"  class="hidden alert alert-block">
     <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) and frontend(<span data-bind="text: frontendVersion"></span>) are not the same version, some functionality may not work.

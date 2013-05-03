@@ -1,9 +1,9 @@
 
 define(function () {
     //Do setup work here
-    console.log("fake1 module loaded !!!");
+    console.log("fake2 module loaded !!!");
 
     return {
-        moduleId: "fake1"
+        moduleId: "fake2"
     }
 });

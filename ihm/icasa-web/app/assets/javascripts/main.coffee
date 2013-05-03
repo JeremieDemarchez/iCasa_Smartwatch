@@ -216,11 +216,30 @@ require([
           );
         );
 
-        require(["/plugins/fake/fake.js"], () ->
-          console.log("module 1 loaded !!!");
-        );
-        require(["/plugins/fake1/fake1.js"], () ->
-          console.log("module 2 loaded !!!");
-        );
+        # plugin loading
+        extensionsElt = $("#icasa-extensions");
+        pluginsElt = extensionsElt.attr("icasa-plugins");
+        if (pluginsElt)
+          plugins = pluginsElt.split(",");
+          for pluginStr in plugins
+            do (pluginStr) ->
+              pluginName = pluginStr.replace /^\s+|\s+$/g, "";
+              if (pluginName != "")
+                require(["/plugins/" + pluginName + "/" + pluginName + ".js"], () ->
+                  console.log("plugin " + pluginName + " loaded !!!");
+                );
+
+
+        # widget loading
+        widgetsElt = extensionsElt.attr("icasa-widgets");
+        if (widgetsElt)
+          widgets = widgetsElt.split(",");
+          for widgetStr in widgets
+            do (widgetStr) ->
+              widgetName = widgetStr.replace /^\s+|\s+$/g, "";
+              if (widgetName != "")
+                require(["/widgets/" + widgetName + "/" + widgetName + ".js"], () ->
+                  console.log("widget " + widgetName + " loaded !!!");
+                );
 );
 
