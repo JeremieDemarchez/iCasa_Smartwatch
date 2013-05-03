@@ -15,34 +15,40 @@
  */
 package fr.liglab.adele.icasa.simulator;
 
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.simulator.listener.PersonListener;
-
-
 /**
- *
- * @author Thomas Leveque
- *         Date: 10/11/12
+ * User: torito
+ * Date: 4/29/13
+ * Time: 4:48 PM
  */
-public interface Person extends LocatedObject {
+public class PersonType {
 
-    public static final int DEFAULT_WIDTH = 50;
+    private String name;
 
-    public static final int DEFAULT_HEIGHT = 50;
+    public String getName() {
+        return name;
+    }
 
-    public String getName();
+    public PersonType(String name) {
+        this.name = name;
+    }
 
-    public void setName(String name);
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
 
-    public PersonType getPersonType();
+        PersonType that = (PersonType) o;
 
-    public void setPersonType(PersonType personType);
-    
-    public String getLocation();
+        if (!name.equals(that.name)) return false;
 
-    public void addListener(final PersonListener listener);
+        return true;
+    }
 
-    public void removeListener(final PersonListener listener);
-    
-   
+    @Override
+    public int hashCode() {
+        return name.hashCode();
+    }
+
+
+
 }

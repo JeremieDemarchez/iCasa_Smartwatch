@@ -62,7 +62,7 @@ public class PersonTest extends AbstractDistributionBaseTest {
         Person person = simulationMgr.addPerson(personName, personType);
         Assert.assertNotNull(person);
         Assert.assertEquals(personName, person.getName());
-        Assert.assertEquals(personType, person.getPersonType());
+        Assert.assertEquals(personType, person.getPersonType().getName());
 
         try {
             simulationMgr.resetContext();

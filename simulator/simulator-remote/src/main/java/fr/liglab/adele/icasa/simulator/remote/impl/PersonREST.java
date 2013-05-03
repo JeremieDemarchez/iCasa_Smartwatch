@@ -27,6 +27,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.liglab.adele.icasa.simulator.PersonType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -85,7 +86,7 @@ public class PersonREST extends AbstractREST {
     public String getPersonTypes() {
         //boolean atLeastOne = false;
         JSONArray currentPersonTypes = new JSONArray();
-        for (String personTypeStr : _simulationMgr.getPersonTypes()) {
+        for (PersonType personTypeStr : _simulationMgr.getPersonTypes()) {
             JSONObject personType = IcasaSimulatorJSONUtil.getPersonTypeJSON(personTypeStr);
             if (personType == null)
                 continue;

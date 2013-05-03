@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.impl;
 
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.simulator.PersonType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -202,7 +202,7 @@ public class SimulationEventBroadcast  {
 
 
 		@Override
-		public void personTypeAdded(String personType) {
+		public void personTypeAdded(PersonType personType) {
 			JSONObject json = new JSONObject();
 			try {
 				json.put("personTypeId", personType);
@@ -213,7 +213,7 @@ public class SimulationEventBroadcast  {
 		}
 
 		@Override
-		public void personTypeRemoved(String personType) {
+		public void personTypeRemoved(PersonType personType) {
 			JSONObject json = new JSONObject();
 			try {
 				json.put("personTypeId", personType);
