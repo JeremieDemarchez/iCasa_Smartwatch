@@ -216,8 +216,11 @@ require([
           );
         );
 
-        #require(["/plugins/fake/fake.js"], () ->
-        #  console.log("module loaded !!!");
-        #);
+        require(["/plugins/fake/fake.js"], () ->
+          console.log("module 1 loaded !!!");
+        );
+        require(["/plugins/fake1/fake1.js"], () ->
+          console.log("module 2 loaded !!!");
+        );
 );
 
