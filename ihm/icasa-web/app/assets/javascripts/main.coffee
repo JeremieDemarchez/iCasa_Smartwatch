@@ -25,7 +25,7 @@ require.config({
         'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
         'knockback' : 'frameworks/knockback/knockback', # AMD module
-        'knockout' : 'frameworks/knockout/knockout-2.1.0', # AMD module
+        'knockout' : 'frameworks/knockout/knockout-2.1.0.debug', # AMD module
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
