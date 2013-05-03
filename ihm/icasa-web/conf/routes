@@ -17,6 +17,7 @@ GET     /frontend                   controllers.Application.frontendInfo
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
 
-# static resources directory used for extensions
-GET     /extensions/*file           controllers.SecuredExternalAssets.at(path="extensions", file)
+# static resources directory used for plugins and widgets
+GET     /widgets/*file           controllers.SecuredExternalAssets.at(path="widgets", file)
+GET     /plugins/*file           controllers.SecuredExternalAssets.at(path="plugins", file)
 

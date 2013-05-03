@@ -16,6 +16,28 @@ import com.typesafe.config.ConfigFactory
 
 object Application extends Controller {
 
+ /*
+  * Library management methods.
+  */
+
+  val LIBS_DIRECTORY: String = "libs";
+
+  /*
+   * Plugin management methods.
+   */
+
+  val PLUGINS_DIRECTORY: String = "plugins";
+
+  /*
+  * Widget management methods.
+  */
+
+  val WIDGETS_DIRECTORY: String = "widgets";
+
+  /*
+   * Map management methods.
+   */
+
   def fromXML(node: scala.xml.Node): HouseMap =
         new HouseMap {
             var id = (node \ "@id").text
@@ -23,6 +45,7 @@ object Application extends Controller {
             var description = (node \ "@description").text
             var gatewayURL = (node \ "@gatewayURL").text
             var imgFile = (node \ "@imgFile").text
+            var libs = (node \ "@libs").text
         }
 
   var maps = mutable.Map.empty[String, HouseMap];
@@ -100,13 +123,14 @@ object Application extends Controller {
         "mapId" -> text,
         "mapName" -> text,
         "mapDescription" -> text,
-        "gatewayURL" -> text
+        "gatewayURL" -> text,
+        "libs" -> text
       )
   )
 
   def uploadMap = Action(parse.multipartFormData) { implicit request =>
     val body = request.body;
-    val (mapId, mapName, mapDescription, gatewayURLToSet) = mapForm.bindFromRequest.get;
+    val (mapId, mapName, mapDescription, gatewayURLToSet, libs) = mapForm.bindFromRequest.get;
 
     body.file("picture").map { picture =>
       import java.io.File
@@ -120,6 +144,7 @@ object Application extends Controller {
           var description = mapDescription;
           var gatewayURL = gatewayURLToSet;
           var imgFile = fileName;
+          var libs = ""; //TODO manage libraries
       }
 
       mapsLock.synchronized {
@@ -158,6 +183,7 @@ object Application extends Controller {
               var description = newMap("mapDescription");
               var gatewayURL = newMap("gatewayURL");
               var imgFile = fileName;
+              var libs = "" //TODO manage libs
           }
 
           mapsLock.synchronized {
@@ -174,7 +200,8 @@ object Application extends Controller {
                   var name = newMap("mapName");
                   var description = newMap("mapDescription");
                   var gatewayURL = newMap("gatewayURL");
-                  var imgFile = oldMap.imgFile; //We didn't modify the image
+                  var imgFile = oldMap.imgFile; //We do not modify the image
+                  var libs = oldMap.libs //We do not modify libraries
              }
              mapsLock.synchronized {
                 maps(map.id) = map; //replace the map
@@ -194,6 +221,9 @@ object Application extends Controller {
     Redirect(routes.Application.index);
   }
 
+  /**
+   * Used to check version compatibility betwen gateways and web application.
+   */
   def frontendInfo() = Action {  implicit request =>
     var version = "0.0.0";
     try {

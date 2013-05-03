@@ -24,7 +24,7 @@ require.config({
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
         'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
-        'knockback' : 'frameworks/knockback/knockback.min', # AMD module
+        'knockback' : 'frameworks/knockback/knockback', # AMD module
         'knockout' : 'frameworks/knockout/knockout-2.1.0', # AMD module
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
@@ -215,4 +215,9 @@ require([
             SizeUtil.computeAreaSizes(null);
           );
         );
+
+        #require(["/plugins/fake/fake.js"], () ->
+        #  console.log("module loaded !!!");
+        #);
 );
+
