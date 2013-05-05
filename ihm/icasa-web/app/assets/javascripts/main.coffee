@@ -151,13 +151,14 @@ require([
     'jquery',
     'jquery.ui',
     'knockout',
+    'hubu',
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
     'bootstrap',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
+    ($, ui, ko, hubu, ICasaViewModel, iCasaNotifSocket) ->
 
         #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
         $("#map").resizable({
