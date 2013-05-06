@@ -1,13 +1,9 @@
 package models
 
-abstract class Library {
-    var id: String
-    var name: String
-    var description: String
-    var gatewayURL: String
-    var imgFile: String
-    var libs: String
+import collection.mutable.Set
 
-    def toXML =
-      <Map id="{id}" name="{name}" description="{description}" gatewayURL="{gatewayURL}" imgFile="{imgFile}" libs="{libs}"/>
+class Library(id: String) {
+    var name = id;
+    val widgets = Set[String]();
+    val plugins = Set[String]();
 }
