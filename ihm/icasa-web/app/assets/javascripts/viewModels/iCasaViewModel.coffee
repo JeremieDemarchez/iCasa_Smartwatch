@@ -761,7 +761,10 @@ define(['jquery',
             if propertyModel.get('name') == property
               return propertyModel;
           );
-          return value.get('value');
+          if ((value == undefined) || (value == null))
+            return null;
+          else
+            return value.get('value');
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
