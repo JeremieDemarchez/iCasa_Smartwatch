@@ -15,12 +15,13 @@ require.config({
         'bootstrap.dir' : 'frameworks/bootstrap',
         'bootstrap' : 'frameworks/bootstrap/js/bootstrap.min',
         'comp' : 'components',
+        'contracts' : 'contracts',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
         'hubu' : 'frameworks/hubu/h-ubu-1.0.0-min',
         'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
-        # TODO remove ui.touch when move to jquery.ui 1.9 (will manage touch events)
+        # TODO remove ui.touch when moving to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
         'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
@@ -29,7 +30,8 @@ require.config({
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
-        'underscore' : 'frameworks/underscore/underscore-min'
+        'underscore' : 'frameworks/underscore/underscore-min',
+        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract'
     },
 
     # Require.js plugins to handle other types of dependencies
@@ -151,13 +153,14 @@ require([
     'jquery',
     'jquery.ui',
     'knockout',
+    'hubu',
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
     'bootstrap',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, ICasaViewModel, iCasaNotifSocket) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket) ->
 
         #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
         $("#map").resizable({
@@ -215,6 +218,9 @@ require([
             SizeUtil.computeAreaSizes(null);
           );
         );
+
+        # start extensions mechanism using H-UBU
+        hub.start();
 
         # plugin loading
         extensionsElt = $("#icasa-extensions");
