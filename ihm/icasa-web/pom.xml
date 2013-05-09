@@ -105,6 +105,17 @@
                </configuration>
             </plugin>
 
+          <plugin>
+              <groupId>org.nanoko.coffee-mill</groupId>
+              <artifactId>coffee-mill-maven-plugin</artifactId>
+              <version>1.0.0</version>
+              <extensions>true</extensions>
+              <configuration>
+                  <coffeeScriptDir>widgets</coffeeScriptDir>
+                  <workDir>widgets</workDir>
+              </configuration>
+          </plugin>
+
       </plugins>
       <resources>
          <resource>

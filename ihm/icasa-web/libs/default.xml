@@ -17,9 +17,8 @@
 
 -->
 <library id="default" name="Default widgets for iCasa predefined devices">
-    <widget id="w1" />
+    <widget id="presenceSensor" />
+    <plugin id="fake" />
+    <widget id="fake2" />
     <plugin id="fake1" />
-    <widget id="w2" />
-    <widget id="w3" />
-    <plugin id="fake2" />
 </library>

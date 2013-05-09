@@ -11,10 +11,23 @@ import play.api.data._
 import play.api.data.Forms._
 import scala.collection.mutable
 import models.HouseMap
+import models.Library
 import utils.RichFile.enrichFile
 import com.typesafe.config.ConfigFactory
 
 object Application extends Controller {
+
+ /*
+   * Plugin management methods.
+   */
+
+  val PLUGINS_DIRECTORY: String = "plugins";
+
+ /*
+  * Widget management methods.
+  */
+
+  val WIDGETS_DIRECTORY: String = "widgets";
 
  /*
   * Library management methods.
@@ -22,17 +35,39 @@ object Application extends Controller {
 
   val LIBS_DIRECTORY: String = "libs";
 
-  /*
-   * Plugin management methods.
-   */
+  var libs = mutable.Map.empty[String, Library];
 
-  val PLUGINS_DIRECTORY: String = "plugins";
+  val libsLock = new java.lang.Object;
 
-  /*
-  * Widget management methods.
-  */
+  def loadLib(libId : String): Library = {
+    var lib : Library = null;
+    libsLock.synchronized {
+      val libFile = new java.io.File(Play.application.getFile(LIBS_DIRECTORY), libId + ".xml");
+      if (libFile.exists()) {
+        if (libs.contains(libId)) {
+          lib = libs(libId);
+        } else {
+          lib = new Library(libId);
+          libs(libId) = lib;
+        }
 
-  val WIDGETS_DIRECTORY: String = "widgets";
+        // parse xml file
+        val libRootNode = xml.XML.loadFile(libFile);
+        lib.plugins.clear();
+        for (pluginNode <- (libRootNode \\ "plugin")) {
+          val plugin = fromXML(pluginNode);
+          lib.plugins += plugin.id;
+        }
+        lib.widgets.clear();
+        for (widgetNode <- (libRootNode \\ "widget")) {
+          val widget = fromXML(widgetNode);
+          lib.widgets += widget.id;
+        }
+      }
+    }
+    return lib;
+  }
+
 
   /*
    * Map management methods.
@@ -50,7 +85,7 @@ object Application extends Controller {
 
   var maps = mutable.Map.empty[String, HouseMap];
 
-  val mapsLock = new Object;
+  val mapsLock = new java.lang.Object;
 
   def getMaps(): Seq[HouseMap] = {
     var mapsSeq = mutable.Seq.empty[HouseMap]
@@ -65,12 +100,12 @@ object Application extends Controller {
   def loadMaps() = {
      mapsLock.synchronized {
        var newMaps = mutable.Map.empty[String, HouseMap];
-       val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
+       val mapsFile = new java.io.File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
        if (mapsFile.exists()) {
            val mapsRootNode = xml.XML.loadFile(mapsFile);
            for (mapNode <- (mapsRootNode \\ "map")) {
               val map = fromXML(mapNode);
-             newMaps(map.id) = map;
+              newMaps(map.id) = map;
            }
        }
        maps = newMaps;
@@ -78,7 +113,7 @@ object Application extends Controller {
   }
 
   def saveMaps() = {
-    val mapsFile = new File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
+    val mapsFile = new java.io.File(Play.application.getFile(MAP_DIRECTORY), "maps.xml");
 
     mapsLock.synchronized {
       if (mapsFile.exists())
@@ -88,7 +123,7 @@ object Application extends Controller {
       for ((houseMapId, houseMap) <- maps) {
          xmlStr += "<map id=\"" + houseMap.id + "\" name=\"" + houseMap.name +
           "\" description=\"" + houseMap.description + "\" gatewayURL=\"" +
-          houseMap.gatewayURL + "\" imgFile=\"" + houseMap.imgFile + "\"/>\n";
+          houseMap.gatewayURL + "\" imgFile=\"" + houseMap.imgFile + "\" libs=\"" + houseMap.libs + "\"/>\n";
       }
       xmlStr += "</maps>";
 
@@ -105,15 +140,35 @@ object Application extends Controller {
     loadMaps();
     val map = maps(mapId);
     if (map == null)
-      NotFound("");
-    else
-      Ok(views.html.map(mapId, "/maps/" + map.imgFile, map.gatewayURL)).withHeaders(
+      NotFound("Map with id " + mapId + " not found.");
+    else  {
+      var widgetIds = "";
+      var pluginIds = "";
+      for (libId <- map.getLibIds()) {
+        val lib = loadLib(libId);
+        if (lib != null) {
+          for (widgetId <- lib.widgets) {
+            if (!widgetIds.isEmpty())
+              widgetIds += ",";
+            widgetIds += widgetId;
+          }
+          for (pluginId <- lib.plugins) {
+            if (!pluginIds.isEmpty())
+              pluginIds += ",";
+            pluginIds += pluginId;
+          }
+        }
+      }
+
+      Ok(views.html.map(mapId, "/maps/" + map.imgFile, map.gatewayURL, pluginIds, widgetIds
+      )).withHeaders(
         "Access-Control-Allow-Origin" -> "*",
         "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
         "Access-Control-Expose-Headers" -> "X-Cache-Date, X-Atmosphere-tracking-id",
         "Access-Control-Allow-Headers" ->"Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport",
         "Access-Control-Max-Age"-> "-1"
       )
+    }
   }
 
   val MAP_DIRECTORY: String = "maps";
@@ -163,7 +218,7 @@ object Application extends Controller {
   }
 
   def getMap(file: String) = Action {
-    val fileToServe = new File(Play.application.getFile(MAP_DIRECTORY), file);
+    val fileToServe = new java.io.File(Play.application.getFile(MAP_DIRECTORY), file);
     val defaultCache = Play.configuration.getString("assets.defaultCache").getOrElse("max-age=3600")
     Ok.sendFile(fileToServe, inline = true).withHeaders(CACHE_CONTROL -> defaultCache);
   }
