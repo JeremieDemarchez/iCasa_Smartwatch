@@ -1103,7 +1103,7 @@ define(['jquery',
                 filter = new RegExp("", "i")
               return ko.utils.arrayFilter( @[list+"s"](), (element) ->
                 try
-                  if attr == "name" or attr == "state" or attr == "location" or attr == "falt" or attr == "id"
+                  if attr == "name" or attr == "state" or attr == "location" or attr == "fault" or attr == "id"
                     return filter.test( element[attr]() )
                   else
                     return filter.test( element.getPropertyValue(attr) )
@@ -1158,7 +1158,7 @@ define(['jquery',
                   return;
 
                 if (person.isSelected())
-                  toRemoveModels.push person.model()
+                  toRemoveModels.push person.model();
               );
               for toRemoveModel in toRemoveModels
                 toRemoveModel.destroy()
