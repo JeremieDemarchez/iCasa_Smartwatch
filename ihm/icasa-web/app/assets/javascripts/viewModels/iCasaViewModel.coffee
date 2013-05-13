@@ -14,6 +14,7 @@ define(['jquery',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
+        'bootstrap',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
@@ -294,6 +295,13 @@ define(['jquery',
         update: (element, valueAccessor) ->
             valueProgress = ko.toJS(valueAccessor())
             $(element).progressbar("value", valueProgress.value);
+    }
+
+    ko.bindingHandlers.popOver = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+          $(element).popover({trigger:'hover'});
     }
 
     # View models

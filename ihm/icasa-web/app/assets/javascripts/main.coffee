@@ -161,7 +161,6 @@ require([
     'hubu',
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
-    'bootstrap',
     'domReady',
     'jquery.resize'
     ],
