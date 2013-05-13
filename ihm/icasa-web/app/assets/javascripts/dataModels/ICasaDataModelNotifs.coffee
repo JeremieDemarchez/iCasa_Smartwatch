@@ -1,7 +1,7 @@
 # @author Thomas Leveque
 define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, ko, kb, atmosphere, DataModel) ->
   # serverUrl = "http://" + window.location.hostname + ":8080"
-  serverUrl = $("#map").attr("gatewayURL");
+  serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
 
   socket = atmosphere
   transport = "sse"

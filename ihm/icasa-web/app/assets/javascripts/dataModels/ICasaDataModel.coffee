@@ -2,7 +2,9 @@
 define(['backbone', 'underscore', 'domReady'],
      (Backbone, _) ->
 
-         serverUrl = $("#map").attr("gatewayURL") + "/icasa";
+         gatewayURL = $("#map").attr("gatewayURL").replace(/\/$/, "");
+
+         serverUrl = gatewayURL + "/icasa";
 
          DataModel =
             Models : {}
@@ -12,11 +14,11 @@ define(['backbone', 'underscore', 'domReady'],
             resetState : ()->
                 $.ajax(
                     type: 'DELETE',
-                    url: $("#map").attr("gatewayURL") + "/icasa/simulation",
+                    url: gatewayURL + "/icasa/simulation",
                     success: () =>
                         DataModel.collections.zones.reset();
                         DataModel.collections.persons.reset();
-                        DataModel.collections.devices.reset();
+                        DataModel.collections.devices.reset(); #TODO potential bug if there is real devices
                     error :() =>
                         console.log "Unable to reset simulation in backend";
                 );

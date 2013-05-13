@@ -176,7 +176,7 @@ require([
             SizeUtil.computeAreaSizes("map");
         });
 
-        mapName = $("#map").attr("gatewayURL");
+        mapName = $("#map").attr("mapId");
         mapImgUrl = $("#map").attr("mapImgSrc");
 
         iCasaViewModel = new ICasaViewModel( {
