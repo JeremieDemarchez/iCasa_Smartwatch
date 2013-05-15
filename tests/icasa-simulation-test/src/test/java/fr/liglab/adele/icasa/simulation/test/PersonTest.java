@@ -131,8 +131,6 @@ public class PersonTest extends AbstractDistributionBaseTest {
        Assert.assertEquals(personName, person.getName());
        Assert.assertEquals(personType, person.getPersonType().getName());
     }
-    
-    
-    
+      
 
 }

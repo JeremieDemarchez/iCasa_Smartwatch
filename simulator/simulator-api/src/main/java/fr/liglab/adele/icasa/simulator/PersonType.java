@@ -16,9 +16,10 @@
 package fr.liglab.adele.icasa.simulator;
 
 /**
- * User: torito
- * Date: 4/29/13
- * Time: 4:48 PM
+ * RThis interface represents a person type
+ * 
+ * @author Gabriel Pedraza Ferreira
+ *
  */
 public class PersonType {
 
