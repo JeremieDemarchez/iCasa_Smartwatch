@@ -20,6 +20,11 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
 
+/**
+ * Empty implementation of a zone listener. This is class is intended to ease implementation of Zone Listeners.
+ * @author Gabriel Pedraza Ferreira
+ *
+ */
 public class BaseZoneListener implements ZoneListener {
 
 	@Override

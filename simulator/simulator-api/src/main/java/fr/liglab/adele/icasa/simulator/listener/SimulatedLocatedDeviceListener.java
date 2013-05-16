@@ -20,12 +20,27 @@ import fr.liglab.adele.icasa.location.LocatedDeviceListener;
 import fr.liglab.adele.icasa.simulator.Person;
 
 /**
- * @author <a href="mailto:cilia-devel@lists.ligforge.imag.fr">Cilia Project
- *         Team</a>
+ * Interface extending {@link fr.liglab.adele.icasa.location.LocatedDeviceListener} to add simulated device related
+ * methods
+ * 
+ * @author Gabriel Pedraza Ferreira
+ * 
  */
-public interface SimulatedLocatedDeviceListener extends LocatedDeviceListener{
+public interface SimulatedLocatedDeviceListener extends LocatedDeviceListener {
 
-    public void personDeviceAttached(Person person, LocatedDevice device);
+	/**
+	 * Invoked when a device has been attached to a person
+	 * 
+	 * @param person the person
+	 * @param device the attached device
+	 */
+	public void personDeviceAttached(Person person, LocatedDevice device);
 
-    public void personDeviceDetached(Person person, LocatedDevice device);
+	/**
+	 * Invoked when a device has been detached from a person
+	 * 
+	 * @param person the person
+	 * @param device the detached device
+	 */
+	public void personDeviceDetached(Person person, LocatedDevice device);
 }

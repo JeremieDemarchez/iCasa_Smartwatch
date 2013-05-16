@@ -15,14 +15,11 @@
  */
 package fr.liglab.adele.icasa.simulation.test;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import javax.inject.Inject;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -32,7 +29,10 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
-import javax.inject.Inject;
+import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 
 @RunWith(PaxExam.class)
@@ -40,7 +40,7 @@ import javax.inject.Inject;
 public class PersonTest extends AbstractDistributionBaseTest {
 	
 	@Inject
-	public static BundleContext context;
+	public BundleContext context;
 	
 	@Inject
 	public SimulationManager simulationMgr;

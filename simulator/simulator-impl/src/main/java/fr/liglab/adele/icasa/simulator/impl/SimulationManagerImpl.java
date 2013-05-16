@@ -213,7 +213,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Person addPerson(String userName, String personType) {
-		
+				
 		if (userName==null || personType==null) {		
 			System.out.println("Arguments (userName, personType) are null");
 			throw new IllegalArgumentException("Arguments (userName, personType) are null");

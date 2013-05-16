@@ -19,13 +19,19 @@ import java.util.Date;
 import java.util.List;
 
 /**
- * Executes behavior scripts
+ * Interface of service responsible for script execution into the platform
  * 
- * @author Gabriel
+ * @author Gabriel Pedraza Ferreira
  * 
  */
 public interface ScriptExecutor {
-	
+
+	/**
+	 * Enumeration representing the state of scripts
+	 * 
+	 * @author Gabriel Pedraza Ferreira
+	 * 
+	 */
 	public enum State {
 		STARTED("started"), STOPPED("stopped"), PAUSED("paused");
 
@@ -54,10 +60,20 @@ public interface ScriptExecutor {
 		}
 	}
 
+	/**
+	 * Adds a listener to the script executor.
+	 * 
+	 * @param listener the listener to be added.
+	 */
 	public void addListener(ScriptExecutorListener listener);
-	
+
+	/**
+	 * Removes a listener to the script executor.
+	 * 
+	 * @param listener the listener to be removed.
+	 */
 	public void removeListener(ScriptExecutorListener listener);
-	
+
 	/**
 	 * Gets a lists of scripts in the platform
 	 * 
@@ -117,64 +133,52 @@ public interface ScriptExecutor {
 	 * @return percentage of completed instructions of current script.
 	 */
 	public float getExecutedPercentage();
-	
+
+	/**
+	 * Saves the current state into a script having the name use as argument
+	 * 
+	 * @param fileName the name of the script file
+	 */
 	void saveSimulationScript(String fileName);
-	
+
+	/**
+	 * Gets the factor defined in the script file
+	 * 
+	 * @param scriptName the script file name
+	 * @return the factor
+	 */
 	public int getFactor(String scriptName);
-	
+
+	/**
+	 * Gets the start date defined in the script file
+	 * 
+	 * @param scriptName the script file name
+	 * @return the start date
+	 */
 	public long getStartDate(String scriptName);
-	
+
+	/**
+	 * Get the number of actions contained into the script
+	 * 
+	 * @param scriptName the script file name
+	 * @return the number of actions
+	 */
 	public int getActionsNumber(String scriptName);
-	
+
+	/**
+	 * Gets the execution time in (virtual) minutes of the script file
+	 * 
+	 * @param scriptName the script file name
+	 * @return the execution time in (virtual) minutes
+	 */
 	public int getExecutionTime(String scriptName);
-	
+
+	/**
+	 * Gets the current state of the script file
+	 * 
+	 * @param scriptName the script file name
+	 * @return the state
+	 */
 	public State getState(String scriptName);
-
-
-		
-	
-	
-
-	/**
-	 * Wrapper for clock function
-	 * 
-	 * @return
-	 */
-	//public long currentTimeMillis();
-
-	/**
-	 * Wrapper for clock function
-	 * 
-	 * @param startDate
-	 */
-	//public void setStartDate(long startDate);
-
-	/**
-	 * Wrapper for clock function
-	 * 
-	 * @param factor
-	 */
-	//public void setFactor(int factor);
-
-	/**
-	 * Wrapper for clock function
-	 * 
-	 * @return
-	 */
-	//public long getElapsedTime();
-
-	/**
-	 * Wrapper for clock function
-	 * 
-	 * @return
-	 */
-	//public int getFactor();
-
-	/**
-	 * Wrapper for clock function
-	 * 
-	 * @return
-	 */
-	//public long getStartDate();
 
 }

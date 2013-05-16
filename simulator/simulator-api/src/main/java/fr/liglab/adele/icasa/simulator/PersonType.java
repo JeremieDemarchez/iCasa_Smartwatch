@@ -16,40 +16,50 @@
 package fr.liglab.adele.icasa.simulator;
 
 /**
- * RThis interface represents a person type
+ * This class represents a person type
  * 
  * @author Gabriel Pedraza Ferreira
- *
+ * 
  */
 public class PersonType {
 
-    private String name;
+	private String name;
 
-    public String getName() {
-        return name;
-    }
+	/**
+	 * Default constructor
+	 * @param name person type name
+	 */
+	public PersonType(String name) {
+		this.name = name;
+	}
 
-    public PersonType(String name) {
-        this.name = name;
-    }
+	/**
+	 * Gets the person type name (id)
+	 * 
+	 * @return person type name
+	 */
+	public String getName() {
+		return name;
+	}
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
 
-        PersonType that = (PersonType) o;
+		PersonType that = (PersonType) o;
 
-        if (!name.equals(that.name)) return false;
+		if (!name.equals(that.name))
+			return false;
 
-        return true;
-    }
+		return true;
+	}
 
-    @Override
-    public int hashCode() {
-        return name.hashCode();
-    }
-
-
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
 
 }
