@@ -1,4 +1,4 @@
-iCasa
+iCasa-Simulator
 =====
 
 This project aims at providing a simulator to do functional testing of digital home application based on iCasa runtime.

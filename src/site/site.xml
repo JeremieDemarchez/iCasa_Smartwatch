@@ -90,7 +90,8 @@
             <item name="REST API" href="rest-api.html"/>
             <item name="Gogo commands" href="gogo-commands.html"/>
             <item name="Device Building Tutorial" href="building-device.html"/>
-            <item name="Javadoc" href="apidocs/index.html"/>
+            <item name="Javadoc" href="api.html"/>
+            <item name="FAQ" href="faq.html"/>
 		</menu>		
 		
         <menu name="Simulated Devices">
