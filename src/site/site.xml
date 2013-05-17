@@ -77,7 +77,7 @@
             <item name="Overview" href="overview.html"/>
             <item name="Download" href="download.html"/>
             <item name="Install" href="install.html"/>
-
+            <item name="FAQ" href="faq.html"/>
         </menu>
 
 		<menu name="User Guide">
@@ -91,7 +91,6 @@
             <item name="Gogo commands" href="gogo-commands.html"/>
             <item name="Device Building Tutorial" href="building-device.html"/>
             <item name="Javadoc" href="api.html"/>
-            <item name="FAQ" href="faq.html"/>
 		</menu>		
 		
         <menu name="Simulated Devices">
