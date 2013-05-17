@@ -65,7 +65,7 @@ import fr.liglab.adele.icasa.iCasaCommand;
 public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
-    private static final String SCRIPTS_DIRECTORY = "scripts";
+	private static final String SCRIPTS_DIRECTORY = "scripts";
 	/**
 	 * The clock use for simulation
 	 */
@@ -120,7 +120,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	private void internalExecute(String scriptName, long startDate, int factor, boolean useInternal) {
 		if (scriptInExecution())
 			return;
-		
+
 		ScriptSAXHandler handler = scriptMap.get(scriptName);
 		if (handler != null) {
 			if (useInternal)
@@ -128,7 +128,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			else
 				startExecutionThread(handler.getActionList(), startDate, factor);
 			currentScript = scriptName;
-			
+
 			for (ScriptExecutorListener listener : getListenersCopy()) {
 				listener.scriptStarted(getCurrentScript());
 			}
@@ -140,13 +140,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	public void stop() {
 		if (!scriptInExecution())
 			return;
-		
-		
+
 		String stoppedScript = currentScript;
-		
+
 		currentScript = null;
 		stopExecutionThread();
-		
+
 		for (ScriptExecutorListener listener : getListenersCopy()) {
 			listener.scriptStopped(stoppedScript);
 		}
@@ -156,11 +155,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	public void pause() {
 		if (!scriptInExecution())
 			return;
-		
+
 		synchronized (clock) {
 			clock.pause();
 		}
-		
+
 		for (ScriptExecutorListener listener : getListenersCopy()) {
 			listener.scriptPaused(getCurrentScript());
 		}
@@ -170,11 +169,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	public void resume() {
 		if (!scriptInExecution())
 			return;
-		
+
 		synchronized (clock) {
 			clock.resume();
 		}
-		
+
 		for (ScriptExecutorListener listener : getListenersCopy()) {
 			listener.scriptResumed(getCurrentScript());
 		}
@@ -194,7 +193,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	private void startExecutionThread(List<ActionDescription> actions, final long startDate, final int factor) {
 		if (actions.isEmpty()) // Nothing to execute
 			return;
-		
+
 		executorThread = new Thread(new CommandExecutorRunnable(actions));
 		clock.reset();
 		clock.setStartDate(startDate);
@@ -225,7 +224,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Unbind(id = "commands")
 	public void unbindCommand(iCasaCommand commandService) {
-		String name =  commandService.getName();
+		String name = commandService.getName();
 		commands.remove(name);
 	}
 
@@ -246,12 +245,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			String scriptName = artifact.getName();
 			scriptMap.put(scriptName, handler);
 			for (ScriptExecutorListener listener : getListenersCopy()) {
-                try {
-                    listener.scriptAdded(scriptName);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+				try {
+					listener.scriptAdded(scriptName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -262,12 +261,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			String scriptName = artifact.getName();
 			scriptMap.put(scriptName, handler);
 			for (ScriptExecutorListener listener : getListenersCopy()) {
-                try {
-                    listener.scriptUpdated(scriptName);
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
-            }
+				try {
+					listener.scriptUpdated(scriptName);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
 	}
 
@@ -276,12 +275,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		String scriptName = artifact.getName();
 		scriptMap.remove(scriptName);
 		for (ScriptExecutorListener listener : getListenersCopy()) {
-            try {
-                listener.scriptRemoved(scriptName);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+			try {
+				listener.scriptRemoved(scriptName);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -336,14 +335,14 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		try {
 
 			String dateStr = DateTextUtil.getTextDate(System.currentTimeMillis());
-            File scriptsDir = new File(SCRIPTS_DIRECTORY);
-            if (!scriptsDir.exists()) {
-                logger.info("creating directory: " + SCRIPTS_DIRECTORY);
-                boolean result = scriptsDir.mkdir();
-                if(!result){
-                    logger.error("Unable to create directory: " + SCRIPTS_DIRECTORY);
-                }
-            }
+			File scriptsDir = new File(SCRIPTS_DIRECTORY);
+			if (!scriptsDir.exists()) {
+				logger.info("creating directory: " + SCRIPTS_DIRECTORY);
+				boolean result = scriptsDir.mkdir();
+				if (!result) {
+					logger.error("Unable to create directory: " + SCRIPTS_DIRECTORY);
+				}
+			}
 			outFile = new FileWriter(SCRIPTS_DIRECTORY + System.getProperty("file.separator") + fileName);
 			out = new PrintWriter(outFile);
 
@@ -522,12 +521,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			throw new NullPointerException("listener");
 		}
 		synchronized (listeners) {
-            try {
-                listeners.add(listener);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+			try {
+				listeners.add(listener);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -536,12 +535,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			throw new NullPointerException("listener");
 		}
 		synchronized (listeners) {
-            try {
-                listeners.remove(listener);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+			try {
+				listeners.remove(listener);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	}
 
 	private List<ScriptExecutorListener> getListenersCopy() {
