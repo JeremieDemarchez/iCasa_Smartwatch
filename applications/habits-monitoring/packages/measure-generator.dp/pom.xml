@@ -41,6 +41,7 @@
 				<artifactId>maven-dp-plugin</artifactId>
 				<extensions>true</extensions>
 				<configuration>
+
 					<writeExtraData>true</writeExtraData>
 					<deploymentPackage>
 					</deploymentPackage>
