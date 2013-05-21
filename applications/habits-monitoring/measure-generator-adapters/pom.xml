@@ -30,6 +30,7 @@
 
 	<modules>
 		<module>presence-sensor-adapter</module>
+		<module>db-adapter-fileinstall</module>
 	</modules>
    <build>
       <plugins>

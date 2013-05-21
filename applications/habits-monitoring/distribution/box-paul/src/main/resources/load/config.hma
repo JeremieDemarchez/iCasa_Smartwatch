@@ -1,0 +1,8 @@
+<db>
+<id name="presence-sensor-adapter" url="http://repository-icasa.forge.cloudbees.com/snapshot/fr/liglab/adele/icasa/apps/presence.sensor.adapter.dp/1.0.1-SNAPSHOT/presence.sensor.adapter.dp-1.0.1-20130505.045149-3.dp">
+	<interface>fr.liglab.adele.icasa.device.presence.PresenceSensor</interface>
+</id>
+<id name="dimming-light" url="http://www.light.com">
+	<interface>fr.liglab.adele.icasa.simulator.SimulatedDevice</interface>
+</id>
+</db>
