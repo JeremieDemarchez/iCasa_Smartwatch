@@ -1,6 +1,6 @@
 # @author Thomas Leveque
-define ["jquery", "knockout", "knockback", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, ko, kb, atmosphere, DataModel) ->
-  # serverUrl = "http://" + window.location.hostname + ":8080"
+define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, atmosphere, DataModel) ->
+
   serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
 
   socket = atmosphere

@@ -1,6 +1,6 @@
 
-define(['backbone', 'underscore', 'domReady'],
-     (Backbone, _) ->
+define(['jquery', 'backbone', 'underscore', 'domReady'],
+     ($, Backbone, _) ->
 
          gatewayURL = $("#map").attr("gatewayURL").replace(/\/$/, "");
 
