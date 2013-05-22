@@ -14,6 +14,7 @@ define(['jquery',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
+        'bootstrap',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
@@ -294,6 +295,13 @@ define(['jquery',
         update: (element, valueAccessor) ->
             valueProgress = ko.toJS(valueAccessor())
             $(element).progressbar("value", valueProgress.value);
+    }
+
+    ko.bindingHandlers.popOver = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+
+          $(element).popover({trigger:'hover'});
     }
 
     # View models
@@ -761,7 +769,10 @@ define(['jquery',
             if propertyModel.get('name') == property
               return propertyModel;
           );
-          return value.get('value');
+          if ((value == undefined) || (value == null))
+            return null;
+          else
+            return value.get('value');
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
@@ -1100,7 +1111,7 @@ define(['jquery',
                 filter = new RegExp("", "i")
               return ko.utils.arrayFilter( @[list+"s"](), (element) ->
                 try
-                  if attr == "name" or attr == "state" or attr == "location" or attr == "falt" or attr == "id"
+                  if attr == "name" or attr == "state" or attr == "location" or attr == "fault" or attr == "id"
                     return filter.test( element[attr]() )
                   else
                     return filter.test( element.getPropertyValue(attr) )
@@ -1155,7 +1166,7 @@ define(['jquery',
                   return;
 
                 if (person.isSelected())
-                  toRemoveModels.push person.model()
+                  toRemoveModels.push person.model();
               );
               for toRemoveModel in toRemoveModels
                 toRemoveModel.destroy()

@@ -26,8 +26,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.simulator.*;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.MissingHandlerException;
@@ -42,11 +40,17 @@ import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.PersonType;
+import fr.liglab.adele.icasa.simulator.PhysicalModel;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 
@@ -55,14 +59,14 @@ import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 @Instantiate(name = "SimulationManager-1")
 public class SimulationManagerImpl implements SimulationManager {
 
-    /*
-     * WARNING : UPDATE following filter if you change the component instance name !!!
-     */
+	/*
+	 * WARNING : UPDATE following filter if you change the component instance name !!!
+	 */
 	@Requires(filter = "(!(instance.name=SimulationManager-1))")
 	private ContextManager manager;
 
-    @Requires(optional = true)
-    private PhysicalModel[] _physicalModels;
+	@Requires(optional = true)
+	private PhysicalModel[] _physicalModels;
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
@@ -76,7 +80,7 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	private Map<String, PersonType> personTypes = new HashMap<String, PersonType>();
 
-    private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
+	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public SimulationManagerImpl() {
 		addPersonType("Grandfather");
@@ -209,22 +213,32 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public Person addPerson(String userName, String personType) {
-        if (getPerson(userName) != null){
-            throw new IllegalArgumentException("Person "+userName + "already exists");
-        }
-        PersonType aPersonType = getPersonType(personType);
-        if (aPersonType == null) {
-            throw new IllegalArgumentException("Person type " + personType + " is not defined");
-        }
+				
+		if (userName==null || personType==null) {		
+			System.out.println("Arguments (userName, personType) are null");
+			throw new IllegalArgumentException("Arguments (userName, personType) are null");
+		}
+		if (userName.trim().equals("") || personType.trim().equals("")) {	
+			System.out.println("Arguments (userName, personType) are empty");
+			throw new IllegalArgumentException("Arguments (userName, personType) are empty");
+		}
+		
+		if (getPerson(userName) != null) {
+			throw new IllegalArgumentException("Person " + userName + " already exists");
+		}
+		PersonType aPersonType = getPersonType(personType);
+		if (aPersonType == null) {
+			throw new IllegalArgumentException("Person type " + personType + " is not defined");
+		}
 		Person person = new PersonImpl(userName, new Position(-1, -1), aPersonType, this);
-        List<PersonListener> snapshotListener;
-        lock.writeLock().lock();
-        try {
-            snapshotListener = getPersonListeners();
-            persons.put(userName, person);
-        }finally {
-            lock.writeLock().unlock();
-        }
+		List<PersonListener> snapshotListener;
+		lock.writeLock().lock();
+		try {
+			snapshotListener = getPersonListeners();
+			persons.put(userName, person);
+		} finally {
+			lock.writeLock().unlock();
+		}
 
 		// Listeners notification
 		for (PersonListener listener : snapshotListener) {
@@ -236,22 +250,22 @@ public class SimulationManagerImpl implements SimulationManager {
 			}
 		}
 
-        return person;
+		return person;
 	}
 
 	@Override
 	public void removePerson(String userName) {
-        Person person;
-        List<PersonListener> snapshotListener;
-        lock.writeLock().lock();
-        try{
-		    person = persons.remove(userName);
-            snapshotListener = getPersonListeners();
-		    if (person == null)
-			    return;
-        }finally {
-            lock.writeLock().unlock();
-        }
+		Person person;
+		List<PersonListener> snapshotListener;
+		lock.writeLock().lock();
+		try {
+			person = persons.remove(userName);
+			snapshotListener = getPersonListeners();
+			if (person == null)
+				return;
+		} finally {
+			lock.writeLock().unlock();
+		}
 
 		// Listeners notification
 		for (PersonListener listener : snapshotListener) {
@@ -267,29 +281,29 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public List<Person> getPersons() {
 		lock.readLock().lock();
-        try {
+		try {
 			return Collections.unmodifiableList(new ArrayList<Person>(persons.values()));
-		}finally {
-            lock.readLock().unlock();
-        }
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public Person getPerson(String personName) {
-        lock.readLock().lock();
+		lock.readLock().lock();
 		try {
 			return persons.get(personName);
 		} finally {
-            lock.readLock().unlock();
-        }
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public void setDeviceFault(String deviceId, boolean value) {
 		LocatedDevice device = getDevice(deviceId);
-        if (device == null){
-            throw new NullPointerException("Device do not exist: " + deviceId);
-        }
+		if (device == null) {
+			throw new NullPointerException("Device do not exist: " + deviceId);
+		}
 		if (value) {
 			device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, GenericDevice.FAULT_YES);
 		} else {
@@ -305,15 +319,15 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public LocatedDevice createDevice(String factoryName, String deviceId, Map<String, Object> properties) {
-        if (getDevice(deviceId) != null){
-            throw new IllegalArgumentException("Device " + deviceId + " already exists");
-        }
-        Factory factory = getFactory(factoryName);
-        if (factory == null){
-            throw new IllegalStateException("Unknown device type: " + factoryName);
-        }
+		if (getDevice(deviceId) != null) {
+			throw new IllegalArgumentException("Device " + deviceId + " already exists");
+		}
+		Factory factory = getFactory(factoryName);
+		if (factory == null) {
+			throw new IllegalStateException("Unknown device type: " + factoryName);
+		}
 
-        LocatedDevice device =  null;
+		LocatedDevice device = null;
 
 		// Create the device
 		Dictionary<String, String> configProperties = new Hashtable<String, String>();
@@ -335,19 +349,20 @@ public class SimulationManagerImpl implements SimulationManager {
 			e.printStackTrace();
 		}
 
-        int count = 0;
-        while (count++ < 500 && (device == null)){
-            device = getDevice(deviceId);
-            try {
-                Thread.sleep(50);
-            } catch (InterruptedException e) {}
-            device = getDevice(deviceId);
-        }
-        if (device == null){
-            throw new IllegalStateException("Unable to obtain device (" + deviceId + ") after 500 tries ");
-        }
+		int count = 0;
+		while (count++ < 500 && (device == null)) {
+			device = getDevice(deviceId);
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+			}
+			device = getDevice(deviceId);
+		}
+		if (device == null) {
+			throw new IllegalStateException("Unable to obtain device (" + deviceId + ") after 500 tries ");
+		}
 
-        return device;
+		return device;
 	}
 
 	@Override
@@ -355,12 +370,12 @@ public class SimulationManagerImpl implements SimulationManager {
 		return manager.getDevice(deviceId);
 	}
 
-    @Override
-    public GenericDevice getGenericDevice(String sn) {
-        return manager.getGenericDevice(sn);
-    }
+	@Override
+	public GenericDevice getGenericDevice(String sn) {
+		return manager.getGenericDevice(sn);
+	}
 
-    @Override
+	@Override
 	public void removeDevice(String deviceId) {
 		GenericDevice device = getSimulatedDevice(deviceId);
 
@@ -376,46 +391,46 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Bind(id = "devices", aggregate = true, optional = true)
 	public void bindDevice(SimulatedDevice simDev) {
 		String sn = simDev.getSerialNumber();
-        lock.writeLock().lock();
-        try{
-		    simulatedDeviceMap.put(sn, simDev);
-        }finally {
-            lock.writeLock().unlock();
-        }
+		lock.writeLock().lock();
+		try {
+			simulatedDeviceMap.put(sn, simDev);
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	@Unbind(id = "devices")
 	public void unbindDevice(SimulatedDevice simDev) {
 		String sn = simDev.getSerialNumber();
-        lock.writeLock().lock();
-        try{
-		    simulatedDeviceMap.remove(sn);
-        }finally {
-            lock.writeLock().unlock();
-        }
+		lock.writeLock().lock();
+		try {
+			simulatedDeviceMap.remove(sn);
+		} finally {
+			lock.writeLock().unlock();
+		}
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.simulator.SimulatedDevice)")
 	public void bindFactory(Factory factory) {
 		String deviceType = factory.getName();
-        lock.writeLock().lock();
-        try{
-		    m_factories.put(deviceType, factory);
-        }finally {
-            lock.writeLock().unlock();
-        }
+		lock.writeLock().lock();
+		try {
+			m_factories.put(deviceType, factory);
+		} finally {
+			lock.writeLock().unlock();
+		}
 
 	}
 
 	@Unbind(id = "factories")
 	public void unbindFactory(Factory factory) {
 		String deviceType = factory.getName();
-        lock.writeLock().lock();
-        try{
-		    m_factories.remove(deviceType);
-        }finally {
-            lock.writeLock().unlock();
-        }
+		lock.writeLock().lock();
+		try {
+			m_factories.remove(deviceType);
+		} finally {
+			lock.writeLock().unlock();
+		}
 
 	}
 
@@ -424,24 +439,24 @@ public class SimulationManagerImpl implements SimulationManager {
 
 		if (listener instanceof PersonListener) {
 			PersonListener personListener = (PersonListener) listener;
-            List<Person> snapshotPersons;
-            lock.writeLock().lock();
-            try{
-			    personListeners.add(personListener);
-                snapshotPersons = getPersons();
-            }finally {
-                lock.writeLock().unlock();
-            }
-			for (Person person : snapshotPersons){
+			List<Person> snapshotPersons;
+			lock.writeLock().lock();
+			try {
+				personListeners.add(personListener);
+				snapshotPersons = getPersons();
+			} finally {
+				lock.writeLock().unlock();
+			}
+			for (Person person : snapshotPersons) {
 				person.addListener(personListener);
-            }
+			}
 		}
 
 		if (listener instanceof PersonTypeListener) {
 			PersonTypeListener personTypeListener = (PersonTypeListener) listener;
-            lock.writeLock().lock();
-    		personTypeListeners.add(personTypeListener);
-            lock.writeLock().unlock();
+			lock.writeLock().lock();
+			personTypeListeners.add(personTypeListener);
+			lock.writeLock().unlock();
 		}
 		manager.addListener(listener);
 
@@ -452,28 +467,28 @@ public class SimulationManagerImpl implements SimulationManager {
 
 		if (listener instanceof PersonListener) {
 			PersonListener personListener = (PersonListener) listener;
-            List<Person> snapshotPersons;
-            lock.writeLock().lock();
+			List<Person> snapshotPersons;
+			lock.writeLock().lock();
 			try {
-                snapshotPersons = getPersons();
+				snapshotPersons = getPersons();
 				personListeners.remove(personListener);
-            }finally {
-                lock.writeLock().unlock();
-            }
-		    for (Person person : snapshotPersons){
+			} finally {
+				lock.writeLock().unlock();
+			}
+			for (Person person : snapshotPersons) {
 				person.removeListener(personListener);
-            }
+			}
 
 		}
 
 		if (listener instanceof PersonTypeListener) {
 			PersonTypeListener personTypeListener = (PersonTypeListener) listener;
-            lock.writeLock().lock();
+			lock.writeLock().lock();
 			try {
 				personTypeListeners.remove(personTypeListener);
-			}finally {
-                lock.writeLock().unlock();
-            }
+			} finally {
+				lock.writeLock().unlock();
+			}
 		}
 		manager.removeListener(listener);
 	}
@@ -541,7 +556,7 @@ public class SimulationManagerImpl implements SimulationManager {
 	@Override
 	public void attachPersonToZone(String personId, String zoneId) {
 		Zone zone = getZone(zoneId);
-		Person person = getPerson(personId) ;
+		Person person = getPerson(personId);
 		if (zone == null || person == null)
 			return;
 
@@ -579,79 +594,79 @@ public class SimulationManagerImpl implements SimulationManager {
 
 	@Override
 	public PersonType addPersonType(String personType) {
-        boolean existsPerson = false;
-        List<PersonTypeListener> listenerSnapshot;
-        PersonType type = new PersonType(personType);
-        lock.writeLock().lock();
-        try{
-            existsPerson = personTypes.containsKey(type);
-            listenerSnapshot = getPersonTypeListeners();
-            if (!existsPerson) {
-                personTypes.put(personType,type);
-            }
-        }finally {
-            lock.writeLock().unlock();
-        }
-        if (!existsPerson){
-			for (PersonTypeListener listener : listenerSnapshot){
+		boolean existsPerson = false;
+		List<PersonTypeListener> listenerSnapshot;
+		PersonType type = new PersonType(personType);
+		lock.writeLock().lock();
+		try {
+			existsPerson = personTypes.containsKey(type);
+			listenerSnapshot = getPersonTypeListeners();
+			if (!existsPerson) {
+				personTypes.put(personType, type);
+			}
+		} finally {
+			lock.writeLock().unlock();
+		}
+		if (!existsPerson) {
+			for (PersonTypeListener listener : listenerSnapshot) {
 				listener.personTypeAdded(type);
-	    	}
-        }
-        return type;
+			}
+		}
+		return type;
 	}
 
 	@Override
 	public PersonType getPersonType(String personType) {
-        lock.readLock().lock();
-        try{
-            if (personTypes.containsKey(personType)) {
-                return personTypes.get(personType);
-            }
-            return null;
-        }finally {
-            lock.readLock().unlock();
-        }
+		lock.readLock().lock();
+		try {
+			if (personTypes.containsKey(personType)) {
+				return personTypes.get(personType);
+			}
+			return null;
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
 	public void removePersonType(String personType) {
 		if (personType.contains(personType)) {
-            lock.writeLock().lock();
-            PersonType removed ;
-            List<Person> localPersons = getPersons();
-            List<PersonTypeListener> listenerSnapshot = getPersonTypeListeners();
-            try{
-			    removed = personTypes.remove(personType);
+			lock.writeLock().lock();
+			PersonType removed;
+			List<Person> localPersons = getPersons();
+			List<PersonTypeListener> listenerSnapshot = getPersonTypeListeners();
+			try {
+				removed = personTypes.remove(personType);
 
-            }finally {
-                lock.writeLock().unlock();
-            }
-            if (removed == null){
-                return;
-            }
-            removePersons(localPersons, removed);//remove the persons that are of the removed type.
-			for (PersonTypeListener listener : listenerSnapshot){
+			} finally {
+				lock.writeLock().unlock();
+			}
+			if (removed == null) {
+				return;
+			}
+			removePersons(localPersons, removed);// remove the persons that are of the removed type.
+			for (PersonTypeListener listener : listenerSnapshot) {
 				listener.personTypeRemoved(removed);
-            }
+			}
 		}
 	}
 
-    private void removePersons(List<Person> localPersons, PersonType type){
-        for (Person person: localPersons){
-            if (person.getPersonType().equals(type)){
-                removePerson(person.getName());
-            }
-        }
-    }
+	private void removePersons(List<Person> localPersons, PersonType type) {
+		for (Person person : localPersons) {
+			if (person.getPersonType().equals(type)) {
+				removePerson(person.getName());
+			}
+		}
+	}
 
 	@Override
 	public List<PersonType> getPersonTypes() {
-        lock.readLock().lock();
-        try{
-            return Collections.unmodifiableList(new ArrayList<PersonType>(personTypes.values()));
-        }finally {
-            lock.readLock().unlock();
-        }
+		lock.readLock().lock();
+		try {
+			return Collections.unmodifiableList(new ArrayList<PersonType>(personTypes.values()));
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
@@ -659,46 +674,44 @@ public class SimulationManagerImpl implements SimulationManager {
 		return manager.getDeviceTypes();
 	}
 
-    @Override
-    public Set<String> getProvidedServices(String deviceType) {
-        return manager.getProvidedServices(deviceType);
-    }
+	@Override
+	public Set<String> getProvidedServices(String deviceType) {
+		return manager.getProvidedServices(deviceType);
+	}
 
-    @Override
-    public Set<Variable> getGlobalVariables() {
-        return manager.getGlobalVariables();
-    }
+	@Override
+	public Set<Variable> getGlobalVariables() {
+		return manager.getGlobalVariables();
+	}
 
-    @Override
-    public Object getGlobalVariableValue(String varName) {
-        return getGlobalVariableValue(varName);
-    }
+	@Override
+	public Object getGlobalVariableValue(String varName) {
+		return getGlobalVariableValue(varName);
+	}
 
-    @Override
-    public void addGlobalVariable(String varName) {
-        manager.addGlobalVariable(varName);
-    }
+	@Override
+	public void addGlobalVariable(String varName) {
+		manager.addGlobalVariable(varName);
+	}
 
-    @Override
-    public void setGlobalVariable(String varName, Object value) {
-        manager.setGlobalVariable(varName, value);
-    }
+	@Override
+	public void setGlobalVariable(String varName, Object value) {
+		manager.setGlobalVariable(varName, value);
+	}
 
-    /*
-     * (non-Javadoc)
-     *
-     * @see
-     * fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes
-     * ()
-     */
+	/*
+	 * (non-Javadoc)
+	 * 
+	 * @see fr.liglab.adele.icasa.simulator.SimulationManager#getSimulatedDeviceTypes ()
+	 */
 	@Override
 	public Set<String> getSimulatedDeviceTypes() {
-        lock.readLock().lock();
-        try{
-		    return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
-        }finally {
-            lock.readLock().unlock();
-        }
+		lock.readLock().lock();
+		try {
+			return Collections.unmodifiableSet(new HashSet<String>(m_factories.keySet()));
+		} finally {
+			lock.readLock().unlock();
+		}
 	}
 
 	@Override
@@ -710,11 +723,11 @@ public class SimulationManagerImpl implements SimulationManager {
 	public void removeAllDevices() {
 		List<SimulatedDevice> tempDevices;
 		lock.readLock().lock();
-        try{
+		try {
 			tempDevices = Collections.unmodifiableList(new ArrayList<SimulatedDevice>(simulatedDeviceMap.values()));
-		}finally {
-            lock.readLock().unlock();
-        }
+		} finally {
+			lock.readLock().unlock();
+		}
 
 		for (SimulatedDevice simulatedDevice : tempDevices) {
 			removeDevice(simulatedDevice.getSerialNumber());
@@ -728,39 +741,39 @@ public class SimulationManagerImpl implements SimulationManager {
 		removeAllDevices();
 	}
 
-    private List<PersonListener> getPersonListeners() {
-        lock.readLock().lock();
-        try{
-            return new ArrayList<PersonListener>(personListeners);
-        }finally {
-            lock.readLock().unlock();
-        }
-    }
+	private List<PersonListener> getPersonListeners() {
+		lock.readLock().lock();
+		try {
+			return new ArrayList<PersonListener>(personListeners);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
 
-    private List<PersonTypeListener> getPersonTypeListeners() {
-        lock.readLock().lock();
-        try{
-            return new ArrayList<PersonTypeListener>(personTypeListeners);
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
+	private List<PersonTypeListener> getPersonTypeListeners() {
+		lock.readLock().lock();
+		try {
+			return new ArrayList<PersonTypeListener>(personTypeListeners);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
 
-    private Factory getFactory(String name){
-      lock.readLock().lock();
-        try{
-            return m_factories.get(name);
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
+	private Factory getFactory(String name) {
+		lock.readLock().lock();
+		try {
+			return m_factories.get(name);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
 
-    private SimulatedDevice getSimulatedDevice(String name){
-        lock.readLock().lock();
-        try{
-            return simulatedDeviceMap.get(name);
-        } finally {
-            lock.readLock().unlock();
-        }
-    }
+	private SimulatedDevice getSimulatedDevice(String name) {
+		lock.readLock().lock();
+		try {
+			return simulatedDeviceMap.get(name);
+		} finally {
+			lock.readLock().unlock();
+		}
+	}
 }

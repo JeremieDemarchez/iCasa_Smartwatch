@@ -18,31 +18,64 @@ package fr.liglab.adele.icasa.simulator;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
-
 /**
- *
+ * This interface represents a person in the icasa simulated Environment
+ * 
  * @author Thomas Leveque
- *         Date: 10/11/12
  */
 public interface Person extends LocatedObject {
 
-    public static final int DEFAULT_WIDTH = 50;
+	public static final int DEFAULT_WIDTH = 50;
 
-    public static final int DEFAULT_HEIGHT = 50;
+	public static final int DEFAULT_HEIGHT = 50;
 
-    public String getName();
+	/**
+	 * Gets the person name.
+	 * 
+	 * @return The person name.
+	 */
+	public String getName();
 
-    public void setName(String name);
+	/**
+	 * Sets the person name.
+	 * 
+	 * @param name the person new name.
+	 */
+	public void setName(String name);
 
-    public PersonType getPersonType();
+	/**
+	 * Gets the person type.
+	 * 
+	 * @return The person type.
+	 */
+	public PersonType getPersonType();
 
-    public void setPersonType(PersonType personType);
-    
-    public String getLocation();
+	/**
+	 * Sets the person type.
+	 * 
+	 * @param personType the new person type.
+	 */
+	public void setPersonType(PersonType personType);
 
-    public void addListener(final PersonListener listener);
+	/**
+	 * Gets the person logical location.
+	 * 
+	 * @return the person location (zone name) or null.
+	 */
+	public String getLocation();
 
-    public void removeListener(final PersonListener listener);
-    
-   
+	/**
+	 * Adds a listener to the person.
+	 * 
+	 * @param listener the listener to be added.
+	 */
+	public void addListener(final PersonListener listener);
+
+	/**
+	 * Removes a listener from the person.
+	 * 
+	 * @param listener the listener to be removed.
+	 */
+	public void removeListener(final PersonListener listener);
+
 }

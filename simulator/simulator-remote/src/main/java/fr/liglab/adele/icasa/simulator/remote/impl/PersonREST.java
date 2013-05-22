@@ -235,7 +235,7 @@ public class PersonREST extends AbstractREST {
         }
 
         
-        JSONObject newPersonJSON = IcasaSimulatorJSONUtil.getPersonJSON(foundPerson);
+        JSONObject newPersonJSON = IcasaSimulatorJSONUtil.getPersonJSON(findPerson(personId));
 
         return makeCORS(Response.ok(newPersonJSON.toString()));
     }

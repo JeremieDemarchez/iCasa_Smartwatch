@@ -18,8 +18,10 @@ package fr.liglab.adele.icasa.simulator.listener;
 import fr.liglab.adele.icasa.listener.MultiEventListener;
 
 /**
- * @author <a href="mailto:cilia-devel@lists.ligforge.imag.fr">Cilia Project
- *         Team</a>
+ * Interface grouping several (platform + simulator) listeners 
+ * 
+ * @author Gabriel Pedraza Ferreira
+ *
  */
 public interface SimulationMultiEventListener extends MultiEventListener, PersonListener,PersonTypeListener{
 

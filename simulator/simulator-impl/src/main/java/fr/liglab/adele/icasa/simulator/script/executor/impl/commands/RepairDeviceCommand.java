@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
-
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -30,50 +29,47 @@ import org.json.JSONObject;
  * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
- *
+ * 
  */
 @Component(name = "RepairDeviceCommand")
 @Provides
-@Instantiate(name="repair-device-command")
+@Instantiate(name = "repair-device-command")
 public class RepairDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    private static final String[] PARAMS =  new String[]{ScriptLanguage.DEVICE_ID};
 
-    private static final String NAME= "repair-device";
+	/**
+	 * Get the name of the Script and command gogo.
+	 * 
+	 * @return The command name.
+	 */
+	@Override
+	public String getName() {
+		return "repair-device";
+	}
 
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return PARAMS;
-    }
+	/**
+	 * Get the list of parameters.
+	 * 
+	 * @return
+	 */
+	@Override
+	public String[] getParameters() {
+		return new String[] { ScriptLanguage.DEVICE_ID };
+	}
 
 	@Override
-   public Object execute(JSONObject param) throws Exception {
-        String deviceId = param.getString(PARAMS[0]);
-        simulationManager.setDeviceFault(deviceId, false);
+	public Object execute(JSONObject param) throws Exception {
+		String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
+		simulationManager.setDeviceFault(deviceId, false);
 		return null;
-   }
+	}
 
-    @Override
-    public String getDescription(){
-        return "Simulates the device reparation.\n\t" + super.getDescription();
-    }
+	@Override
+	public String getDescription() {
+		return "Simulates the device reparation.\n\t" + super.getDescription();
+	}
 
 }

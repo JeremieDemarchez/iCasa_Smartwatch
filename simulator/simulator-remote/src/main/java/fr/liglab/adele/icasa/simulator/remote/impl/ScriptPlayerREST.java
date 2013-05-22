@@ -197,8 +197,8 @@ public class ScriptPlayerREST extends AbstractREST {
 			if (currentScriptState == State.STOPPED)
 				if (State.STARTED == newState)
 					_scriptExecutor.execute(scriptId);
-			else
-				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
+			// else
+			//	return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
 		}
 
 		JSONObject scriptJSON = IcasaSimulatorJSONUtil.getScriptJSON(scriptId, _scriptExecutor);

@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
-
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -30,46 +29,45 @@ import org.json.JSONObject;
  * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
- *
+ * 
  */
 @Component(name = "FaultDeviceCommand")
 @Provides
-@Instantiate(name="fault-device-command")
+@Instantiate(name = "fault-device-command")
 public class FaultDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-
 	@Override
-   public Object execute(JSONObject obj) throws Exception {
-        String deviceId = obj.getString(ScriptLanguage.DEVICE_ID);
+	public Object execute(JSONObject obj) throws Exception {
+		String deviceId = obj.getString(ScriptLanguage.DEVICE_ID);
 		simulationManager.setDeviceFault(deviceId, true);
 		return null;
-   }
+	}
 
+	/**
+	 * Get the name of the Script and command gogo.
+	 * 
+	 * @return The command name.
+	 */
+	@Override
+	public String getName() {
+		return "fault-device";
+	}
 
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return "fault-device";
-    }
+	/**
+	 * Get the list of parameters.
+	 * 
+	 * @return
+	 */
+	@Override
+	public String[] getParameters() {
+		return new String[] { ScriptLanguage.DEVICE_ID };
+	}
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.DEVICE_ID};
-    }
-    @Override
-    public String getDescription(){
-        return "Simulate a fail in a device.\n\t" + super.getDescription();
-    }
+	@Override
+	public String getDescription() {
+		return "Simulate a fail in a device.\n\t" + super.getDescription();
+	}
 }

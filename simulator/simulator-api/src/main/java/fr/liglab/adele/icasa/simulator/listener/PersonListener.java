@@ -21,44 +21,47 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.Person;
 
 /**
- * Created with IntelliJ IDEA.
- * User: thomas
- * Date: 30/11/12
- * Time: 15:20
- * The listener interface for receiving person events.
+ * The listener interface for receiving person {@link fr.liglab.adele.icasa.simulator.Person} events.
+ * 
+ * @author Gabriel Pedraza Ferreira
  */
 public interface PersonListener extends IcasaListener {
-    /**
-     * Invoked when a person has been added to the iCasa Simulator.
-     * @param person The added person.
-     */
-    void personAdded(Person person);
+	/**
+	 * Invoked when a person has been added to the iCasa Simulator.
+	 * 
+	 * @param person The added person.
+	 */
+	void personAdded(Person person);
 
-    /**
-     * Invoked when a person has been removed to the iCasa Simulator.
-     * @param person The removed peron.
-     */
-    void personRemoved(Person person);
+	/**
+	 * Invoked when a person has been removed to the iCasa Simulator.
+	 * 
+	 * @param person The removed person.
+	 */
+	void personRemoved(Person person);
 
-    /**
-     * Invoked when a person has been moved, to see the new position invoke the
-     * <code>getCenterAbsolutePosition()</code> method.
-     * @param person The moved person.
-     * @param oldPosition The last position center absolute position.
-     */
-    void personMoved(Person person, Position oldPosition);
+	/**
+	 * Invoked when a person has been moved, to see the new position invoke the <code>getCenterAbsolutePosition()</code>
+	 * method.
+	 * 
+	 * @param person The moved person.
+	 * @param oldPosition The last position center absolute position.
+	 */
+	void personMoved(Person person, Position oldPosition);
 
-    /**
-     * Invoked when a person has been attached to a
-     * @param person
-     * @param device
-     */
-    void personDeviceAttached(Person person, LocatedDevice device);
+	/**
+	 * Invoked when a device has been attached to a person
+	 * 
+	 * @param person the person
+	 * @param device the attached device
+	 */
+	void personDeviceAttached(Person person, LocatedDevice device);
 
-    /**
-     *
-     * @param person
-     * @param device
-     */
-    void personDeviceDetached(Person person, LocatedDevice device);
+	/**
+	 * Invoked when a device has been detached from a person
+	 * 
+	 * @param person the person
+	 * @param device the detached device
+	 */
+	void personDeviceDetached(Person person, LocatedDevice device);
 }

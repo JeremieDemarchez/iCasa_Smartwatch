@@ -110,31 +110,41 @@
 		</contributor>
 	</contributors>
 
-	<!-- Project repositories -->
-	<repositories>
-		<repository>
-			<id>icasa-snapshot-repository</id>
-			<name>iCASA Snapshot repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-			<releases>
-				<enabled>false</enabled>
-			</releases>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-		</repository>
-		<repository>
-			<id>icasa-release-repository</id>
-			<name>iCASA Release repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-			<releases>
-				<enabled>true</enabled>
-			</releases>
-			<snapshots>
-				<enabled>false</enabled>
-			</snapshots>
-		</repository>
-	</repositories>
+    <!-- Project repositories -->
+    <repositories>
+
+        <!-- ADELE repositories -->
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>adele-central-snapshot</id>
+            <name>adele-repos</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </repository>
+        <repository>
+            <snapshots />
+            <id>snapshots</id>
+            <name>adele-central-release</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>adele-repos</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </pluginRepository>
+        <pluginRepository>
+            <snapshots />
+            <id>snapshots</id>
+            <name>adele-central-release</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </pluginRepository>
+    </pluginRepositories>
 
 	<scm>
 		<connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</connection>
