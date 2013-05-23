@@ -32,8 +32,8 @@
         <module>binary-light-follow-me</module>
         <module>dimmer-light-follow-me</module>
         <module>gas-alarm-system</module>
-        <module>habits-monitoring</module>
-        <!--<module>habits-monitoring-autonomic</module>-->
+        <!--<module>habits-monitoring</module>
+        <module>habits-monitoring-autonomic</module>-->
 	</modules>
 
 	<build>
