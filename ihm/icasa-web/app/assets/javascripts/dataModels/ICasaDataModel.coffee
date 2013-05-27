@@ -1,6 +1,6 @@
 
-define(['jquery', 'backbone', 'underscore', 'domReady'],
-     ($, Backbone, _) ->
+define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnectionMgr', 'domReady'],
+     ($, Backbone, _, hub, DataModelConnectionMgr) ->
 
          gatewayURL = $("#map").attr("gatewayURL").replace(/\/$/, "");
 
@@ -86,6 +86,7 @@ define(['jquery', 'backbone', 'underscore', 'domReady'],
          class DataModel.Collections.Scripts extends Backbone.Collection
            url: "#server#/scriptPlayer/scripts".replace /#server#/, serverUrl
            model: DataModel.Models.Script
+
          #initial backend and frontend information
          DataModel.models.backend = new DataModel.Models.Backend();
          DataModel.models.backend.fetch();
@@ -135,6 +136,28 @@ define(['jquery', 'backbone', 'underscore', 'domReady'],
             error : (err) -> throw err;
          });
 
+         # component that will manage remote Data model connections
+         class DataModelMgrImpl extends DataModelConnectionMgr
+           @hub : null;
+           @isConnected : false;
+
+           @getComponentName: () ->
+             return 'DataModelMgrImpl';
+
+           @configure: (theHub, configuration) =>
+             @hub = theHub;
+             @isConnected = false;
+
+             @hub.provideService({
+               component: @,
+               contract: DataModelConnectionMgr
+             });
+
+           @start : () =>
+
+           @stop : () =>
+
+         hub.registerComponent(DataModelMgrImpl);
 
          return DataModel;
 );

@@ -16,7 +16,7 @@
 /**
  * Frontend component
  */
-define(['./UserServiceContract', 'hubu'], function (contract) {
+define(['hubu'], function (contract) {
     return {
 
         hub: null,
