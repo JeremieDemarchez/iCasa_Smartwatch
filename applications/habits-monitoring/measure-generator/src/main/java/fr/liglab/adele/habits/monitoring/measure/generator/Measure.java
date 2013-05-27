@@ -87,7 +87,7 @@ public class Measure implements Serializable{
    /**
     * @return the realibility
     */
-   public float getRealibility() {
+   public float getReliability() {
       return reliability;
    }
    /**

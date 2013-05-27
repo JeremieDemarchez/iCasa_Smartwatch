@@ -31,13 +31,13 @@ public class MeasureFilter {
    public Data process(Data data) {
       if (data != null) {
          Measure measure = (Measure) data.getContent();
-         if (measure.getRealibility()>50) {
-            logger.info("realibility superior to 50%");
+         if (measure.getReliability()>50) {
+            logger.info("reliability superior to 50%");
             return data;
          }
             
       }
-      logger.info("realibility inferior to 50%");
+      logger.info("reliability inferior to 50%");
       return null;
    } 
 }

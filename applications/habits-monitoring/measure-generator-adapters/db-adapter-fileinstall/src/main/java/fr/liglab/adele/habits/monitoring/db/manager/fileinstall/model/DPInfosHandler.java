@@ -87,7 +87,7 @@ public class DPInfosHandler extends DefaultHandler {
 	}
 
 	public void startDocument() throws SAXException {
-		logger.info("Début du parsing");
+		logger.info("Debut du parsing");
 	}
 
 	public void endDocument() throws SAXException {

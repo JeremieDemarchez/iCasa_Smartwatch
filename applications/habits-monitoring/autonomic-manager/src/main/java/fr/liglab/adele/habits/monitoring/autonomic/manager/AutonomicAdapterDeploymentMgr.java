@@ -1,8 +1,5 @@
 package fr.liglab.adele.habits.monitoring.autonomic.manager;
 
-import java.net.HttpURLConnection;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -90,24 +87,31 @@ public class AutonomicAdapterDeploymentMgr implements DeviceListener {
 									.getDeploymentPackage(dpId);
 							if (dp != null) {
 								// dp is already installed : do nothing
+								logger.info("dp " + dpId
+										+ " is already installed.");
 							} else {
 								// dp is not installed, we should install it
 								logger.info(dpId + " is not installed");
 								// get url related to this id
-								String dpUrl = (String) dbAdapter.getDeviceAdapterUrl(dpId);
+								String dpUrl = (String) dbAdapter
+										.getDeviceAdapterUrl(dpId);
 								logger.info("location of this dp : " + dpUrl);
-								Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress("p-goodway", 3128));
-								HttpURLConnection connection =(HttpURLConnection)new URL(dpUrl).openConnection(proxy);
-//								URL dpAsUrl = new URL(dpUrl);
-								dadmin.installDeploymentPackage(connection.getInputStream());
+								URL url = new URL(dpUrl);
+//								Proxy proxy = new Proxy(
+//										Proxy.Type.HTTP,
+//										new InetSocketAddress("p-goodway", 3128));
+//								HttpURLConnection connection = (HttpURLConnection) new URL(
+//										dpUrl).openConnection(proxy);
+								dadmin.installDeploymentPackage(url.openStream());
 							}
 						} else {
-							logger.warn("Could not find any dp to handle " + cl.getName());
+							logger.warn("Could not find any dp to handle "
+									+ cl.getName());
 						}
 					}
 
 				} catch (Exception e) {
-					logger.error("",e);
+					logger.error("", e);
 				}
 
 			}
@@ -162,18 +166,18 @@ public class AutonomicAdapterDeploymentMgr implements DeviceListener {
 	 *            A new GenericDevice (proxy)
 	 * @throws ClassNotFoundException
 	 */
-	@Bind(id = "GenericDeviceDep", specification = "fr.liglab.adele.icasa.device.GenericDevice")
+	@Bind(id = "GenericDeviceDep", specification = "fr.liglab.adele.icasa.device.GenericDevice", aggregate = true)
 	public void bindDevice(ServiceReference detectorRef)
 			throws ClassNotFoundException {
 
 		String[] classNames = (String[]) detectorRef
 				.getProperty(Constants.OBJECTCLASS);
 
-//		if (classNames != null && classNames.length > 0) {
-//			for (String className : classNames) {
-//				System.out.println(className);
-//			}
-//		}
+		// if (classNames != null && classNames.length > 0) {
+		// for (String className : classNames) {
+		// System.out.println(className);
+		// }
+		// }
 
 		GenericDevice detectorService = (GenericDevice) context
 				.getService(detectorRef);

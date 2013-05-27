@@ -178,7 +178,7 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		Measure measure = (Measure) lastData.getContent();
 		Assert.assertEquals(measure.getLocalisation(), simulationManager.getPerson("Paul").getLocation());
 		assertThat(devices, hasItem(measure.getDeviceId()));
-		assertThat(true, equalTo(measure.getRealibility() >  (float)50));
+		assertThat(true, equalTo(measure.getReliability() >  (float)50));
 		assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < 1000));
 	}
 

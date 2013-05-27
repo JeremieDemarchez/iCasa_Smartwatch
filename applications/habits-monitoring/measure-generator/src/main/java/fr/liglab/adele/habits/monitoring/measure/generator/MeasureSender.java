@@ -36,7 +36,7 @@ public class MeasureSender implements ISender {
 			
 			Date date = new Date(measure.getTimestamp());
 			try {
-	         eventService.processEventData("shake", measure.getPatientId(), "location", date, measure.getRealibility(), measure.getLocalisation());
+	         eventService.processEventData("shake", measure.getPatientId(), "location", date, measure.getReliability(), measure.getLocalisation());
          } catch (ProcessEventException e) {
 	         e.printStackTrace();
          }
