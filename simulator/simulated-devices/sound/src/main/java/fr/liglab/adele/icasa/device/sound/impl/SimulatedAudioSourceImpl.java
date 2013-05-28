@@ -66,14 +66,14 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     public synchronized void play() {
         Object oldValue = m_isPlaying;
         m_isPlaying = true;
-        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue));
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue, m_isPlaying));
     }
 
     @Override
     public synchronized void pause() {
         Object oldValue = m_isPlaying;
         m_isPlaying = false;
-        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue));
+        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue, m_isPlaying));
     }
     
     @Override

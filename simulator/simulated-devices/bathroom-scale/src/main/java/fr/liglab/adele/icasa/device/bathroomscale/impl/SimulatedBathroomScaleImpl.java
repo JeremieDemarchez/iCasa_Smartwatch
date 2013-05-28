@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.device.bathroomscale.impl;
 
-import fr.liglab.adele.icasa.location.LocatedDevice;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;

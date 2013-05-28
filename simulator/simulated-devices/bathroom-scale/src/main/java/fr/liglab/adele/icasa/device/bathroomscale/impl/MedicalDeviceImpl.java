@@ -121,13 +121,13 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
    }
 
 	@Override
-   public void deviceMoved(LocatedDevice device, Position oldPosition) {
+   public void deviceMoved(LocatedDevice device, Position oldPosition, Position newPosition) {
 	   // TODO Auto-generated method stub
 	   
    }
 
 	@Override
-   public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
+   public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue, Object newValue) {
 	   // TODO Auto-generated method stub
 	   
    }

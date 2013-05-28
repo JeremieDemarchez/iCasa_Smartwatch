@@ -15,19 +15,29 @@
  */
 package fr.liglab.adele.icasa.simulator.illuminance.impl;
 
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Validate;
+
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.location.*;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedDeviceListener;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.ZoneListener;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
-import org.apache.felix.ipojo.annotations.*;
-
-import java.util.*;
-import java.util.concurrent.ConcurrentMap;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component(name = "illuminance-model")
 @Instantiate(name = "illuminance-model-1")
@@ -97,7 +107,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
     @Override
-    public void devicePropertyModified(LocatedDevice locatedDevice, String propName, Object value) {
+    public void devicePropertyModified(LocatedDevice locatedDevice, String propName, Object oldValue, Object newValue) {
         updateZonesIfPropChanged(locatedDevice, propName);
     }
 
@@ -122,7 +132,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
     @Override
-    public void deviceMoved(LocatedDevice locatedDevice, Position oldPosition) {
+    public void deviceMoved(LocatedDevice locatedDevice, Position oldPosition, Position newPosition) {
         updateZones(oldPosition);
         updateZones(locatedDevice);
     }

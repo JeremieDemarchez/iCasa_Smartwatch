@@ -101,7 +101,7 @@ public class SimulationEventBroadcast  {
 
 
 		@Override
-		public void deviceMoved(LocatedDevice device, Position position) {
+		public void deviceMoved(LocatedDevice device, Position oldPosition, Position newPosition) {
 			//Handled by EventBroadcast in icasa.remote
 		}
 
@@ -116,7 +116,7 @@ public class SimulationEventBroadcast  {
 		}
 
 		@Override
-		public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue) {
+		public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue, Object newValue) {
 			//Handled by EventBroadcast in icasa.remote
 		}
 
