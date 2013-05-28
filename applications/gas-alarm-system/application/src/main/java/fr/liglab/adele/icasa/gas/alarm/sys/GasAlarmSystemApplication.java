@@ -1,15 +1,15 @@
 package fr.liglab.adele.icasa.gas.alarm.sys;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GasAlarmSystemApplication extends AbstractDeviceListener {
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
+
+public class GasAlarmSystemApplication extends EmptyDeviceListener {
 
 	/**
 	 * @author jeremy
@@ -51,17 +51,16 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 						e.printStackTrace();
 					}
 
-                    for (BinaryLight binaryLight : lightsToPilot) {
-                        binaryLight.setPowerStatus(true);
-                    }
+					for (BinaryLight binaryLight : lightsToPilot) {
+						binaryLight.setPowerStatus(true);
+					}
 
-                    try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException e) {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace();
-                    }
-
+					try {
+						Thread.sleep(1000);
+					} catch (InterruptedException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
 
 				}
 
@@ -92,23 +91,21 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 
 	/** Bind Method for null dependency */
 	public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-		//do nothing
+		// do nothing
 	}
 
 	/** Unbind Method for null dependency */
 	public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-        //do nothing
+		// do nothing
 	}
 
 	/** Bind Method for null dependency */
-	public void bindCarbonDioxydeSensor(
-			CarbonDioxydeSensor carbonDioxydeSensor, Map properties) {
+	public void bindCarbonDioxydeSensor(CarbonDioxydeSensor carbonDioxydeSensor, Map properties) {
 		carbonDioxydeSensor.addListener(this);
 	}
 
 	/** Unbind Method for null dependency */
-	public void unbindCarbonDioxydeSensor(
-			CarbonDioxydeSensor carbonDioxydeSensor, Map properties) {
+	public void unbindCarbonDioxydeSensor(CarbonDioxydeSensor carbonDioxydeSensor, Map properties) {
 		carbonDioxydeSensor.removeListener(this);
 	}
 
@@ -123,23 +120,20 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 	}
 
 	@Override
-	public void devicePropertyModified(GenericDevice device,
-			String propertyName, Object oldValue) {
+	public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
 
 		if (device instanceof CarbonDioxydeSensor) {
 
 			CarbonDioxydeSensor activCO2Sensor = (CarbonDioxydeSensor) device;
 			if (activCO2Sensor != null
-					&& CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION
-					.equals(propertyName)) {
+			      && CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION.equals(propertyName)) {
 
 				Double co2Contration;
 
-				if (activCO2Sensor
-						.getPropertyValue(CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION) != null) {
+				if (activCO2Sensor.getPropertyValue(CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION) != null) {
 					// Get the current temp
 					co2Contration = (Double) activCO2Sensor
-							.getPropertyValue(CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION);
+					      .getPropertyValue(CarbonDioxydeSensor.CARBON_DIOXYDE_SENSOR_CURRENT_CONCENTRATION);
 				} else
 					co2Contration = 0.0;
 
@@ -171,23 +165,20 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 		alarmThread.stopAlarm();
 		alarmThread = null;
 
-        /*
-           * It is extremely important to unregister the device listener.
-           * Otherwise, iCASA will continue to send notifications to the
-           * unpredictable and invalid component instance.
-           * This will also causes problem when the bundle is stopped as iCASA
-           * will still hold a reference on the device listener object.
-           * Consequently, it (and its bundle) won't be garbage collected
-           * causing a memory issue known as stale reference.
-           */
-        for (CarbonDioxydeSensor sensor : carbonDioxydeSensors) {
-            sensor.removeListener(this);
-        }
+		/*
+		 * It is extremely important to unregister the device listener. Otherwise, iCASA will continue to send
+		 * notifications to the unpredictable and invalid component instance. This will also causes problem when the
+		 * bundle is stopped as iCASA will still hold a reference on the device listener object. Consequently, it (and its
+		 * bundle) won't be garbage collected causing a memory issue known as stale reference.
+		 */
+		for (CarbonDioxydeSensor sensor : carbonDioxydeSensors) {
+			sensor.removeListener(this);
+		}
 	}
 
 	/** Component Lifecycle Method */
 	public void start() {
-		alarmThread = new AlarmThread("CO2GazAlarmThread"); 
+		alarmThread = new AlarmThread("CO2GazAlarmThread");
 		alarmThread.start();
 	}
 }

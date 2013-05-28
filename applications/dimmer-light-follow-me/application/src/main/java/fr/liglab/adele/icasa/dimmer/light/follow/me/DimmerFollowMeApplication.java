@@ -15,18 +15,18 @@
  */
 package fr.liglab.adele.icasa.dimmer.light.follow.me;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.device.light.Photometer;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
-public class DimmerFollowMeApplication extends AbstractDeviceListener {
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.light.Photometer;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
+
+public class DimmerFollowMeApplication extends EmptyDeviceListener {
 
     /**
      * Field for dimmerLight dependency
@@ -251,7 +251,7 @@ public class DimmerFollowMeApplication extends AbstractDeviceListener {
     }
 
     @Override
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue) {
+    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
         if (device instanceof Photometer) {
             Photometer photometerActiv = (Photometer) device;
             if (photometerActiv != null && propertyName.equals(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)) {
