@@ -93,7 +93,7 @@ public class SimulatedCarbonDioxydeSensorImpl extends AbstractDevice implements 
     class GasSensorZoneListener extends BaseZoneListener {
 
         @Override
-        public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+        public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
 
             if (m_zone == zone) {
                 if (!(getFault().equalsIgnoreCase("yes")))

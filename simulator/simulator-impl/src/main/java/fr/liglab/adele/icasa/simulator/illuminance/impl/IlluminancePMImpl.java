@@ -324,7 +324,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
     @Override
-    public void zoneVariableModified(Zone zone, String s, Object o) {
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
         //do nothing //TODO if manage external illuminance, may have impact
     }
 }

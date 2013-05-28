@@ -40,7 +40,7 @@ public class BaseZoneListener implements ZoneListener {
 	}
 
 	@Override
-	public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+	public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
 		// TODO Auto-generated method stub
 
 	}

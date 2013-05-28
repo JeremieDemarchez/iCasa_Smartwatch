@@ -98,7 +98,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	class PhotometerZoneListener extends BaseZoneListener {
 
 		@Override
-		public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+		public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
 			if (m_zone == zone)
 				if (!(getFault().equalsIgnoreCase("yes")))
 					if (variableName.equals("Illuminance"))
