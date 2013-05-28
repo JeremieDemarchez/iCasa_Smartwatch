@@ -25,14 +25,13 @@ import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
 import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 /**
  * @author Gabriel Pedraza Ferreira
  * 
  */
-public class MeasureCollector extends AbstractCollector implements DeviceListener {
+public class MeasureCollector extends AbstractCollector implements DeviceListener<PresenceSensor> {
 
 	private Map<String, PresenceSensor> detectors;
 
@@ -77,7 +76,7 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 	 */
 	public void notifyDeviceEvent(String deviceSerialNumber) {
 
-		PresenceSensor detector = (PresenceSensor) detectors.get(deviceSerialNumber);
+		PresenceSensor detector = detectors.get(deviceSerialNumber);
 
 		if (detector != null) {
 			if (detector.getSensedPresence()) {
@@ -99,23 +98,23 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 
 	}
 
-    public void deviceAdded(GenericDevice device) {
+    public void deviceAdded(PresenceSensor device) {
         //do nothing
     }
 
-    public void deviceRemoved(GenericDevice device) {
+    public void deviceRemoved(PresenceSensor device) {
         //do nothing
     }
 
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue) {
+    public void devicePropertyModified(PresenceSensor device, String propertyName, Object oldValue, Object newValue) {
         notifyDeviceEvent(device.getSerialNumber());
     }
 
-    public void devicePropertyAdded(GenericDevice device, String propertyName) {
+    public void devicePropertyAdded(PresenceSensor device, String propertyName) {
         notifyDeviceEvent(device.getSerialNumber());
     }
 
-    public void devicePropertyRemoved(GenericDevice device, String propertyName) {
+    public void devicePropertyRemoved(PresenceSensor device, String propertyName) {
         notifyDeviceEvent(device.getSerialNumber());
     }
 

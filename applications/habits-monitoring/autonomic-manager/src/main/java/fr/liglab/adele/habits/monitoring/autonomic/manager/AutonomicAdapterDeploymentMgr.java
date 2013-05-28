@@ -141,7 +141,7 @@ public class AutonomicAdapterDeploymentMgr implements DeviceListener {
 
 	@Override
 	public void devicePropertyModified(GenericDevice genericDevice, String s,
-			Object o) {
+			Object oldValue, Object newValue) {
 		// To change body of implemented methods use File | Settings | File
 		// Templates.
 	}
