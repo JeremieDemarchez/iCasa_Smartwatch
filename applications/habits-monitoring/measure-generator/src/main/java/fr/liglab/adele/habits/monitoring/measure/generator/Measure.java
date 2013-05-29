@@ -91,10 +91,10 @@ public class Measure implements Serializable{
       return reliability;
    }
    /**
-    * @param realibility the realibility to set
+    * @param reliability the reliability to set
     */
-   public void setRealibility(float realibility) {
-      this.reliability = realibility;
+   public void setReliability(float reliability) {
+      this.reliability = reliability;
    }
    /**
     * @return the timestamp

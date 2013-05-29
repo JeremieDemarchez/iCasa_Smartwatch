@@ -88,9 +88,9 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 				// simulation reliability
 				int res = counter % 4;
 				if (res != 0)
-					measure.setRealibility(100);
+					measure.setReliability(100);
 				else
-					measure.setRealibility(60);
+					measure.setReliability(60);
 				counter++;
 								
 				notifyDataArrival(data);
