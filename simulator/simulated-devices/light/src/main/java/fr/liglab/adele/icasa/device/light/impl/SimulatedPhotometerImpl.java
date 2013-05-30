@@ -51,7 +51,7 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	public SimulatedPhotometerImpl() {
         super();
         super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, 0.0d);
+        super.setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, -1.0d);
 	}
 
 	@Override
