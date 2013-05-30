@@ -26,7 +26,7 @@ iCasa framework provides a device model that must be used to create new devices.
 
 To integrate a new device into the iCasa framework the device has to implement the ___fr.liglab.adele.icasa.device.GenericDevice___ interface. The GenericDevice interface defines methods to get the device unique identifier (___getSerialNumber()___), to access its state (___getState()___) and its fault situation (___getFault()___), and also a method to interrogate device to obtain its properties values (___getPropertyValue(String propertyName)___).
 
-In addition, each device has the possibility of notify clients about changes in its state (when its properties' values have been changed) using the listener pattern. The device sends events to its listeners using a callback method (___devicePropertyModified(GenericDevice device, String propertyName, Object oldValue)___). Events sent must implement the Java interface ___fr.liglab.adele.icasa.device.DeviceEvent___ and listeners must implement ___fr.liglab.adele.icasa.device.DeviceListener___ interface.
+In addition, each device has the possibility of notify clients about changes in its state (when its properties' values have been changed) using the listener pattern. The device sends events to its listeners using a callback method (___devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue)___). Events sent must implement the Java interface ___fr.liglab.adele.icasa.device.DeviceEvent___ and listeners must implement ___fr.liglab.adele.icasa.device.DeviceListener___ interface.
 
 iCasa framework provides an abstract implementation class for _GenericDevice_ interface: ___fr.liglab.adele.icasa.device.util.AbstractDevice___. This abstract class eases the development of new devices implementation by inheriting from it. There exists mainly two types of devices in iCasa: devices using a scope zone and localization (thermometer gets the temperature of a room by example) and devices that are independent of their localization i.e. a bathroom scale.
 
@@ -194,6 +194,25 @@ ___Simulation API - Simulated Device interface___
     <artifactId>simulator.api</artifactId>
     <version>1.0.0-SNAPSHOT</version>
 
+Repositories :	
+
+	<repositories>
+	  <repository>
+		<snapshots>
+		  <enabled>false</enabled>
+		</snapshots>
+		<id>adele-central-snapshot</id>
+		<name>adele-repos</name>
+		<url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+	  </repository>
+	  <repository>
+		<snapshots />
+		<id>snapshots</id>
+		<name>adele-central-release</name>
+		<url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+	  </repository>
+	</repositories>
+
 <a name="POM"></a>	
 ### Thermometer Pom Model File
 
@@ -209,6 +228,23 @@ The pom file used in iCasa simulator module to build the simulated Thermometer i
        <packaging>bundle</packaging>
        <version>1.0.0-SNAPSHOT</version>
        
+	   <!-- Project repositories -->
+	   <repositories>
+	     <repository>
+		   <snapshots>
+		    <enabled>false</enabled>
+		   </snapshots>
+		   <id>adele-central-snapshot</id>
+		   <name>adele-repos</name>
+		   <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+	     </repository>
+	    <repository>
+		  <snapshots />
+		  <id>snapshots</id>
+		  <name>adele-central-release</name>
+		  <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+	     </repository>
+	   </repositories>
   
        <!-- Project dependencies -->
        <dependencies>
