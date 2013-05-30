@@ -17,8 +17,10 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.Photometer;
 
 /**
- * @author Kettani Mehdi
+ * Collector adapter for the photometer devices events. this adapter is
+ * triggered when a photometer device illuminance property change.
  * 
+ * @author Kettani Mehdi
  */
 public class PhotometerCollector extends AbstractCollector implements
 		DeviceListener {
@@ -26,7 +28,7 @@ public class PhotometerCollector extends AbstractCollector implements
 	private static final Logger logger = LoggerFactory
 			.getLogger(PhotometerCollector.class);
 
-	private Map<String, Photometer> detectors;
+	private Map<String, Photometer> detectors = new HashMap<String, Photometer>();
 
 	private int counter = 1;
 
@@ -39,7 +41,11 @@ public class PhotometerCollector extends AbstractCollector implements
 	 */
 	public void notifyDeviceEvent(String deviceSerialNumber) {
 
-		Photometer detector = (Photometer) detectors.get(deviceSerialNumber);
+		Photometer detector = null;
+
+		synchronized (detectors) {
+			detector = (Photometer) detectors.get(deviceSerialNumber);
+		}
 
 		if (detector != null) {
 			Measure measure = new Measure();
@@ -57,27 +63,30 @@ public class PhotometerCollector extends AbstractCollector implements
 			notifyDataArrival(data);
 		}
 	}
-	
+
 	/**
-	 * It is called when a new service of type Photometer is registered
-	 * into the gateway. (callback method, see metadata.xml).
+	 * It is called when a new service of type Photometer is registered into the
+	 * gateway. (callback method, see metadata.xml).
 	 * 
 	 * @param detector
-	 *           A new PresenceDetector (proxy)
+	 *            A new PresenceDetector (proxy)
 	 */
 	public void bindProxy(Photometer detector) {
-		logger.info("A new proxy has been found, id " + detector.getSerialNumber());
-		if (detectors == null)
-			detectors = new HashMap<String, Photometer>();
-		detectors.put(detector.getSerialNumber(), detector);
+		logger.info("A new proxy has been found, id "
+				+ detector.getSerialNumber());
+		synchronized (detectors) {
+			detectors.put(detector.getSerialNumber(), detector);
+		}
 		detector.addListener(this);
 	}
-	
+
 	public void unbindProxy(Photometer detector) {
-		logger.info("A proxy is now outside from the zone, id " + detector.getSerialNumber());
-		if (detectors!=null)
+		logger.info("A proxy is now outside from the zone, id "
+				+ detector.getSerialNumber());
+		synchronized (detectors) {
 			detectors.remove(detector.getSerialNumber());
-		detector.removeListener(this);			
+		}
+		detector.removeListener(this);
 	}
 
 	@Override
@@ -87,12 +96,16 @@ public class PhotometerCollector extends AbstractCollector implements
 
 	@Override
 	public void devicePropertyAdded(GenericDevice device, String propertyName) {
-//		notifyDeviceEvent(device.getSerialNumber());
+		// notifyDeviceEvent(device.getSerialNumber());
 	}
 
 	@Override
 	public void devicePropertyModified(GenericDevice device,
 			String propertyName, Object oldValue) {
+		logger.debug("property that changed : " + propertyName);
+		logger.debug("property old value : " + oldValue);
+		logger.debug("property new  value : "
+				+ device.getPropertyValue(propertyName));
 		if (Photometer.PHOTOMETER_CURRENT_ILLUMINANCE.equals(propertyName)) {
 			notifyDeviceEvent(device.getSerialNumber());
 		}
@@ -100,7 +113,7 @@ public class PhotometerCollector extends AbstractCollector implements
 
 	@Override
 	public void devicePropertyRemoved(GenericDevice device, String propertyName) {
-//		notifyDeviceEvent(device.getSerialNumber());
+		// notifyDeviceEvent(device.getSerialNumber());
 	}
 
 	@Override
