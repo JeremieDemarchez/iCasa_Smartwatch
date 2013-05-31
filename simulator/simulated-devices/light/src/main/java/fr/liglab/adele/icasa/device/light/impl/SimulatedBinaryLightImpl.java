@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.icasa.device.light.impl;
 
-import java.util.List;
-
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -25,7 +23,6 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
 /**
@@ -40,15 +37,9 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	@ServiceProperty(name = BinaryLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	/**
-	 * Influence zone corresponding to the zone with highest level where the
-	 * device is located
-	 */
-	private Zone m_zone;
-
 	public SimulatedBinaryLightImpl() {
 		super();
-        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 		super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
 		super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 100.0d);
 	}
@@ -72,14 +63,24 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 		setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, (Boolean) status);
 		return status;
 	}
-	
+
 	@Override
 	public double getMaxPowerLevel() {
 		Double maxLevel = (Double) getPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL);
-		if (maxLevel==null)
+		if (maxLevel == null)
 			return 0;
 
 		return maxLevel;
+	}
+
+	@Override
+	public void turnOn() {
+		setPowerStatus(true);
+	}
+
+	@Override
+	public void turnOff() {
+		setPowerStatus(false);
 	}
 
 }
