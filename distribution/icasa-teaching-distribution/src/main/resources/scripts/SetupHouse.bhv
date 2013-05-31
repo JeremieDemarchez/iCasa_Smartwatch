@@ -17,7 +17,7 @@
 	<move-device-zone deviceId="Phot-A4894S-S" zoneId="kitchen" />
 	<move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
 
-	<create-zone id="livingroom" leftX="410" topY="28" width="245" height="350" />
+	<create-zone id="livingroom" leftX="410" topY="20" width="245" height="350" />
 	
 	<add-zone-variable zoneId="livingroom" variable="Temperature" />
 	<add-zone-variable zoneId="livingroom" variable="Illuminance" />
