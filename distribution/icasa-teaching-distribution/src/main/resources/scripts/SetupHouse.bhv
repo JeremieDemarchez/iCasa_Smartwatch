@@ -59,6 +59,5 @@
 	<create-device id="Bili-C1012S-Q" type="iCASA.BinaryLight" />		
 	<move-device-zone deviceId="Ther-C1012S-V" zoneId="bathroom" />	
 	<move-device-zone deviceId="Bili-C1012S-Q" zoneId="bathroom" />	
-
 	
 </behavior>
