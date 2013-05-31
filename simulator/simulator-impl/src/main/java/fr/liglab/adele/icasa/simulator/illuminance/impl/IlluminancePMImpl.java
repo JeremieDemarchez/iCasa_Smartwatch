@@ -289,7 +289,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
     @Override
-    public void zoneMoved(Zone zone, Position position) {
+    public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
         updateIlluminance(zone);
     }
 
@@ -299,7 +299,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
     @Override
-    public void zoneParentModified(Zone zone, Zone zone1) {
+    public void zoneParentModified(Zone zone, Zone oldZone, Zone newZone) {
         //do nothing
     }
 

@@ -58,7 +58,7 @@ public class BaseZoneListener implements ZoneListener {
 	}
 
 	@Override
-	public void zoneMoved(Zone zone, Position oldPosition) {
+	public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
 		// TODO Auto-generated method stub
 
 	}
@@ -70,7 +70,7 @@ public class BaseZoneListener implements ZoneListener {
 	}
 
 	@Override
-	public void zoneParentModified(Zone zone, Zone oldParentZone) {
+	public void zoneParentModified(Zone zone, Zone oldParentZone, Zone newParentZone) {
 		// TODO Auto-generated method stub
 
 	}
