@@ -668,6 +668,13 @@ define(['jquery',
                     else
                         @.propertiesModel.add(property);
                 );
+                if ((@type() == "iCASA.Heater") || @hasService("fr.liglab.adele.icasa.device.temperature.Heater"))
+                  powerLevel = @.getPropertyValue("heater.powerLevel");
+                  isHot = (powerLevel != null) && (powerLevel > 0.0);
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                     if (decorator.name() == "hot")
+                       decorator.show(isHot == true);
+                  );
                 if (@type() == "iCASA.BathroomScale" )
                   presence = @.getPropertyValue("presence_detected");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
@@ -707,6 +714,16 @@ define(['jquery',
                   );
           
            @initDeviceImages= () =>
+                if ((@type() == "iCASA.Heater") || @hasService("fr.liglab.adele.icasa.device.temperature.Heater"))
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "hot",
+                       imgSrc: '/assets/images/devices/decorators/heater-hot-decorator-top.png',
+                       width: 28,
+                       height: 13,
+                       positionX: 2,
+                       positionY: 3,
+                       show: false
+                     });
                 if (@type() == "iCASA.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",

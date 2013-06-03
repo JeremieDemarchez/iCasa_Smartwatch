@@ -157,7 +157,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
 
            @stop : () =>
 
-         hub.registerComponent(DataModelMgrImpl);
+         #hub.registerComponent(DataModelMgrImpl);
 
          return DataModel;
 );
