@@ -694,6 +694,20 @@ define(['jquery',
                      if (decorator.name() == "presence")
                        decorator.show(presence == true);
                   );
+                if ((@type() == "iCASA.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))
+                  powerLevel = @.getPropertyValue("dimmerLight.powerLevel");
+                  if (powerLevel == null)
+                    @imgSrc(@.getImage());
+                  else if (powerLevel >= 0.75)
+                    @imgSrc(@getImage("dimmerLight_full"));
+                  else if (powerLevel >= 0.50)
+                    @imgSrc(@getImage("dimmerLight_high"));
+                  else if (powerLevel >= 0.25)
+                    @imgSrc(@getImage("dimmerLight_medium"));
+                  else if (powerLevel > 0.0)
+                    @imgSrc(@getImage("dimmerLight_low"));
+                  else
+                    @imgSrc(@.getImage());
                 if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
                   powerLevel = @.getPropertyValue("binaryLight.powerStatus");
                   if (powerLevel)
@@ -800,7 +814,7 @@ define(['jquery',
             if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
               imgName = "binaryLight_off";
             if ((@type() == "iCASA.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))
-              imgName = "dimmerLight";
+              imgName = "dimmerLight_off";
             if ((@type() == "iCASA.Thermometer") || @hasService("fr.liglab.adele.icasa.device.temperature.Thermometer"))
               imgName = "thermometer";
             if ((@type() == "iCASA.MedicalThermometer") || @hasService("fr.liglab.adele.icasa.device.bathroomscale.MedicalThermometer"))
