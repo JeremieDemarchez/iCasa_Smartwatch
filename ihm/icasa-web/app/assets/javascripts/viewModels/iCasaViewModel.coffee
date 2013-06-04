@@ -675,6 +675,13 @@ define(['jquery',
                      if (decorator.name() == "hot")
                        decorator.show(isHot == true);
                   );
+                if ((@type() == "iCASA.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
+                  powerLevel = @.getPropertyValue("cooler.powerLevel");
+                  isCold = (powerLevel != null) && (powerLevel > 0.0);
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    if (decorator.name() == "cold")
+                      decorator.show(isCold == true);
+                  );
                 if (@type() == "iCASA.BathroomScale" )
                   presence = @.getPropertyValue("presence_detected");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
@@ -732,6 +739,16 @@ define(['jquery',
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "hot",
                        imgSrc: '/assets/images/devices/decorators/heater-hot-decorator-top.png',
+                       width: 28,
+                       height: 13,
+                       positionX: 2,
+                       positionY: 3,
+                       show: false
+                     });
+                 if ((@type() == "iCASA.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "cold",
+                       imgSrc: '/assets/images/devices/decorators/cooler-cold-decorator-top.png',
                        width: 28,
                        height: 13,
                        positionX: 2,
@@ -808,7 +825,7 @@ define(['jquery',
           if not imgName?
             imgName = "genericDevice";
             if ((@type() == "iCASA.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
-              imgName = "cooler";
+              imgName = "cooler-off";
             if ((@type() == "iCASA.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
               imgName = "musicPlayer";
             if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
