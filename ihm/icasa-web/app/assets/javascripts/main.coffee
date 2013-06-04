@@ -161,10 +161,11 @@ require([
     'hubu',
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
+    'components/ConnectionWidget',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget) ->
 
         #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
         $("#map").resizable({
@@ -224,7 +225,9 @@ require([
         );
 
         # start extensions mechanism using H-UBU
-        hub.start();
+        connectionWidgetInst = new ConnectionWidget();
+        hub.registerComponent(connectionWidgetInst, {buttonId : "connection-status-button"})
+           .start();
 
         # plugin loading
         extensionsElt = $("#icasa-extensions");

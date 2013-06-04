@@ -89,75 +89,84 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
 
          #initial backend and frontend information
          DataModel.models.backend = new DataModel.Models.Backend();
-         DataModel.models.backend.fetch();
+
          DataModel.models.frontend = new DataModel.Models.Frontend();
-         DataModel.models.frontend.fetch();
 
          # initial import of data model
          DataModel.models.clock = new DataModel.Models.Clock({id: "default"});
-         DataModel.models.clock.fetch({
-           success : (data) -> console.log(data);
-           error : (err) -> throw err;
-         });
 
          DataModel.collections.scripts = new DataModel.Collections.Scripts();
-         DataModel.collections.scripts.fetch({
-            success : (data) -> console.log(data);
-            error : (err) -> throw err;
-         });
 
          DataModel.collections.zones = new DataModel.Collections.Zones();
-         DataModel.collections.zones.fetch({
-            success : (data) -> console.log(data);
-            error : (err) -> throw err;
-         });
 
          DataModel.collections.persons = new DataModel.Collections.Persons();
-         DataModel.collections.persons.fetch({
-            success : (data) -> console.log(data);
-            error : (err) -> throw err;
-         });
 
          DataModel.collections.personTypes = new DataModel.Collections.PersonTypes();
-         DataModel.collections.personTypes.fetch({
-            success : (data) -> console.log(data);
-            error : (err) -> throw err;
-         });
 
          DataModel.collections.devices = new DataModel.Collections.Devices();
-         DataModel.collections.devices.fetch({
-            success : (data) -> console.log(data);
-            error : (err) -> throw err;
-         });
 
          DataModel.collections.deviceTypes = new DataModel.Collections.SimulatedDeviceTypes();
-         DataModel.collections.deviceTypes.fetch({
-            success : (data) -> console.log(data);
-            error : (err) -> throw err;
-         });
 
          # component that will manage remote Data model connections
          class DataModelMgrImpl extends DataModelConnectionMgr
-           @hub : null;
-           @isConnected : false;
+           hub : null;
+           connected : false;
+           url : null;
 
-           @getComponentName: () ->
+           getComponentName: () ->
              return 'DataModelMgrImpl';
 
-           @configure: (theHub, configuration) =>
+           configure: (theHub, configuration) =>
              @hub = theHub;
-             @isConnected = false;
+             @connected = false;
+             if (config?.url?) then @url = config.url;
 
              @hub.provideService({
                component: @,
                contract: DataModelConnectionMgr
              });
 
-           @start : () =>
+           setURL : (usedURL) =>
+             @url = usedURL;
 
-           @stop : () =>
+           setConnected : (connectedFlag) =>
+             @connected = connectedFlag;
 
-         #hub.registerComponent(DataModelMgrImpl);
+           isConnected : () =>
+             @connected;
+
+           reconnect : () =>
+             initialConnection = false;
+             connectionCallback = {
+               success : (data) =>
+                 if (!initialConnection)
+                   initialConnection = true;
+                   @setConnected(true);
+                 console.log(data);
+
+               error : (err) =>
+                 @setConnected(false);
+                 throw err;
+             };
+
+             DataModel.models.backend.fetch(connectionCallback);
+             DataModel.models.frontend.fetch();
+             DataModel.models.clock.fetch(connectionCallback);
+             DataModel.collections.scripts.fetch(connectionCallback);
+             DataModel.collections.zones.fetch(connectionCallback);
+             DataModel.collections.persons.fetch(connectionCallback);
+             DataModel.collections.personTypes.fetch(connectionCallback);
+             DataModel.collections.devices.fetch(connectionCallback);
+             DataModel.collections.deviceTypes.fetch(connectionCallback);
+
+           start : () =>
+             @reconnect();
+
+           stop : () =>
+
+
+         dataModelMgrInst = new DataModelMgrImpl();
+         hub.registerComponent(dataModelMgrInst, {url : serverUrl});
 
          return DataModel;
 );
