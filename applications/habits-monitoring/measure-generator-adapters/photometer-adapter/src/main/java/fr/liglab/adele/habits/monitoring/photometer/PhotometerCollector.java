@@ -13,7 +13,6 @@ import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
 import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.Photometer;
 
 /**
@@ -23,14 +22,14 @@ import fr.liglab.adele.icasa.device.light.Photometer;
  * @author Kettani Mehdi
  */
 public class PhotometerCollector extends AbstractCollector implements
-		DeviceListener {
+		DeviceListener<Photometer> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(PhotometerCollector.class);
 
 	private Map<String, Photometer> detectors = new HashMap<String, Photometer>();
 
-	private int counter = 1;
+	private int counter = 1; 
 
 	/*
 	 * (non-Javadoc)
@@ -89,19 +88,16 @@ public class PhotometerCollector extends AbstractCollector implements
 		detector.removeListener(this);
 	}
 
-	@Override
-	public void deviceAdded(GenericDevice device) {
+	public void deviceAdded(Photometer device) {
 		// do nothing
 	}
 
-	@Override
-	public void devicePropertyAdded(GenericDevice device, String propertyName) {
+	public void devicePropertyAdded(Photometer device, String propertyName) {
 		// notifyDeviceEvent(device.getSerialNumber());
 	}
 
-	@Override
-	public void devicePropertyModified(GenericDevice device,
-			String propertyName, Object oldValue) {
+	public void devicePropertyModified(Photometer device,
+			String propertyName, Object oldValue, Object newValue) {
 		logger.debug("property that changed : " + propertyName);
 		logger.debug("property old value : " + oldValue);
 		logger.debug("property new  value : "
@@ -111,13 +107,11 @@ public class PhotometerCollector extends AbstractCollector implements
 		}
 	}
 
-	@Override
-	public void devicePropertyRemoved(GenericDevice device, String propertyName) {
+	public void devicePropertyRemoved(Photometer device, String propertyName) {
 		// notifyDeviceEvent(device.getSerialNumber());
 	}
 
-	@Override
-	public void deviceRemoved(GenericDevice device) {
+	public void deviceRemoved(Photometer device) {
 		// do nothing
 	}
 

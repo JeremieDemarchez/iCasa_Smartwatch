@@ -25,7 +25,6 @@ import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
 import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 /**
@@ -35,7 +34,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
  * 
  */
 public class MeasureCollector extends AbstractCollector implements
-		DeviceListener {
+		DeviceListener<PresenceSensor> {
 
 	private Map<String, PresenceSensor> detectors = new HashMap<String, PresenceSensor>();
 
@@ -86,7 +85,7 @@ public class MeasureCollector extends AbstractCollector implements
 
 		PresenceSensor detector = null;
 		synchronized (detectors) {
-			detector = (PresenceSensor) detectors.get(deviceSerialNumber);
+			detector = detectors.get(deviceSerialNumber);
 		}
 
 		if (detector != null) {
@@ -109,24 +108,24 @@ public class MeasureCollector extends AbstractCollector implements
 
 	}
 
-	public void deviceAdded(GenericDevice device) {
+	public void deviceAdded(PresenceSensor device) {
 		// do nothing
 	}
 
-	public void deviceRemoved(GenericDevice device) {
+	public void deviceRemoved(PresenceSensor device) {
 		// do nothing
 	}
 
-	public void devicePropertyModified(GenericDevice device,
-			String propertyName, Object oldValue) {
+	public void devicePropertyModified(PresenceSensor device,
+			String propertyName, Object oldValue, Object newValue) {
 		notifyDeviceEvent(device.getSerialNumber());
 	}
 
-	public void devicePropertyAdded(GenericDevice device, String propertyName) {
+	public void devicePropertyAdded(PresenceSensor device, String propertyName) {
 		notifyDeviceEvent(device.getSerialNumber());
 	}
 
-	public void devicePropertyRemoved(GenericDevice device, String propertyName) {
+	public void devicePropertyRemoved(PresenceSensor device, String propertyName) {
 		notifyDeviceEvent(device.getSerialNumber());
 	}
 
