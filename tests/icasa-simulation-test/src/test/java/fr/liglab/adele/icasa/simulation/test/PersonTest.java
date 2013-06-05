@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.simulation.test;
 
 import javax.inject.Inject;
 
+import fr.liglab.adele.icasa.location.Zone;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -109,7 +110,7 @@ public class PersonTest extends AbstractDistributionBaseTest {
        String personName = "Patrick";
        String personType = "Grandfather";
 
-       simulationMgr.createZone("livingroom", 410, 28, 245, 350);
+       simulationMgr.createZone("livingroom", 410, 28, Zone.DEFAULT_Z_BOTTOM, 245, 350, Zone.DEFAULT_Z_LENGTH);
        Person person = simulationMgr.addPerson(personName, personType);       
        simulationMgr.setPersonZone("Patrick", "livingroom");
        
