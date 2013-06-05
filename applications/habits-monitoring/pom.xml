@@ -34,10 +34,11 @@
 		<module>event-webservice-impl</module>
 		<module>measure-generator</module>
 		<module>measure-generator-adapters</module>
+        <module>autonomic-manager</module>
         <module>packages</module>
         <module>distribution</module>
         <module>tests</module>
-		<module>autonomic-manager</module>
+
 	</modules>
    <build>
       <plugins>
