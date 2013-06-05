@@ -92,8 +92,8 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public Zone createZone(String id, int leftX, int topY, int width, int height) {
-		return manager.createZone(id, leftX, topY, width, height);
+	public Zone createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {
+		return manager.createZone(id, leftX, topY,bottomZ, width, height, depth);
 	}
 
 	@Override
@@ -107,13 +107,13 @@ public class SimulationManagerImpl implements SimulationManager {
 	}
 
 	@Override
-	public void moveZone(String id, int leftX, int topY) throws Exception {
-		manager.moveZone(id, leftX, topY);
+	public void moveZone(String id, int leftX, int topY, int bottomZ) throws Exception {
+		manager.moveZone(id, leftX, topY, bottomZ);
 	}
 
 	@Override
-	public void resizeZone(String id, int width, int height) throws Exception {
-		manager.resizeZone(id, width, height);
+	public void resizeZone(String id, int width, int height, int depth) throws Exception {
+		manager.resizeZone(id, width, height, depth);
 	}
 
 	@Override
@@ -587,8 +587,8 @@ public class SimulationManagerImpl implements SimulationManager {
 			return null;
 		int minX = zone.getLeftTopAbsolutePosition().x;
 		int minY = zone.getLeftTopAbsolutePosition().y;
-		int newX = random(minX, minX + zone.getWidth());
-		int newY = random(minY, minY + zone.getHeight());
+		int newX = random(minX, minX + zone.getXLength());
+		int newY = random(minY, minY + zone.getYLength());
 		return new Position(newX, newY);
 	}
 

@@ -247,8 +247,8 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         synchronized (_zoneLock) {
             double returnedIlluminance = 0.0; //TODO manage external illuminance
             int activeLightSize = 0;
-            int height = zone.getHeight();
-            int width = zone.getWidth();
+            int height = zone.getYLength();
+            int width = zone.getXLength();
             double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
             double powerLevelTotal = 0.0d;
 

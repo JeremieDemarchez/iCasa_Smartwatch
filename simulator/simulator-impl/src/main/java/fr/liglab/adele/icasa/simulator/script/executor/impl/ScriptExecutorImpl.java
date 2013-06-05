@@ -355,11 +355,22 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				String id = zone.getId();
 				int leftX = zone.getLeftTopAbsolutePosition().x;
 				int topY = zone.getLeftTopAbsolutePosition().y;
-				int width = zone.getWidth();
-				int height = zone.getHeight();
-				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\""
-				      + width + "\" height=\"" + height + "\" />");
-				out.println();
+                int bottomZ = zone.getLeftTopAbsolutePosition().z;
+				int width = zone.getXLength();
+				int height = zone.getYLength();
+                int depth = zone.getZLength();
+                StringBuilder instruction = new StringBuilder();
+                instruction.append("\t<create-zone ").
+                        append(" id=\"").append(id).append("\"").
+                        append(" leftX=\"").append(leftX).append("\"").
+                        append(" topY=\"").append(topY).append("\"").
+                        append(" bottomZ=\"").append(bottomZ).append("\"").
+                        append(" width=\"").append(width).append("\"").
+                        append(" height=\"").append(height).append("\"").
+                        append(" depth=\"").append(depth).append("\"");
+                instruction.append("/>");
+
+				out.println(instruction.toString());
 
 				for (String variable : zone.getVariableNames()) {
 					Object value = zone.getVariableValue(variable);
