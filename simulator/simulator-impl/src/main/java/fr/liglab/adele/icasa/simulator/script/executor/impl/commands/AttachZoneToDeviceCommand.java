@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import org.apache.felix.ipojo.annotations.Component;
@@ -24,7 +25,11 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;import java.lang.Exception;import java.lang.Object;import java.lang.Override;import java.lang.String;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+
+import java.io.InputStream;
+import java.io.PrintStream;
+import java.lang.Exception;import java.lang.Object;import java.lang.Override;import java.lang.String;
 
 /**
  * 
@@ -41,8 +46,12 @@ public class AttachZoneToDeviceCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
+    public AttachZoneToDeviceCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
+    }
+
     @Override
-	public Object execute(JSONObject param) throws Exception {
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
 
         String device = param.getString(ScriptLanguage.DEVICE);
         String zone = param.getString(ScriptLanguage.ZONE);
@@ -63,15 +72,6 @@ public class AttachZoneToDeviceCommand extends AbstractCommand {
         return "attach-zone-device";
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH};
-    }
 
     @Override
     public String getDescription(){

@@ -514,7 +514,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 						iCasaCommand command = commands.get(actionDescription.getCommandName());
 						if (command != null) {
 							try {
-								command.execute(null, null, actionDescription.getConfiguration());
+								command.execute(System.in, System.out, actionDescription.getConfiguration());
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

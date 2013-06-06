@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -24,6 +25,9 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -40,6 +44,9 @@ public class ActivateDeviceCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
+    public ActivateDeviceCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
+    }
 
     /**
      * Get the name of the  Script and command gogo.
@@ -51,23 +58,9 @@ public class ActivateDeviceCommand extends AbstractCommand {
         return "activate-device";
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.DEVICE_ID};
-    }
 
     @Override
-    public boolean validate(JSONObject param) throws Exception {
-        return param.has(ScriptLanguage.DEVICE_ID);
-    }
-
-    @Override
-    public Object execute(JSONObject param) throws Exception {
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         simulationManager.setDeviceState(param.getString(ScriptLanguage.DEVICE_ID), true);
         return null;
     }

@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -24,6 +25,9 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -41,9 +45,11 @@ public class ResetContextCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
 
-    private static final String[] PARAMS =  new String[0];
-
     private static final String NAME= "reset-context";
+
+    public ResetContextCommand(){
+        setSignature(EMPTY_SIGNATURE);
+    }
 
     /**
      * Get the name of the  Script and command gogo.
@@ -55,29 +61,14 @@ public class ResetContextCommand extends AbstractCommand {
         return NAME;
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return PARAMS;
-    }
 
 
     @Override
-	public Object execute(JSONObject param) throws Exception {
-		//System.out.println("Trying to reset context ... " + simulationManager);
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
 		simulationManager.resetContext();
 		return null;
 	}
-	
-	
-	@Override
-	public boolean validate(JSONObject param) throws Exception {
-        return true;
-	}
+
     @Override
     public String getDescription(){
         return "Remove all the zones, persons and devices from the iCasa Context.\n\t" + super.getDescription();

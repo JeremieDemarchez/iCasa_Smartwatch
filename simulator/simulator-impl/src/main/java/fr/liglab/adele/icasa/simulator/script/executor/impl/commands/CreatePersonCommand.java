@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -24,6 +25,9 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -41,8 +45,12 @@ public class CreatePersonCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
+    public CreatePersonCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
+    }
+
 	@Override
-	public Object execute(JSONObject param) throws Exception {
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String id = param.getString(ScriptLanguage.ID);
         String type = param.getString(ScriptLanguage.TYPE);
 		simulationManager.addPerson(id, type);
@@ -59,15 +67,6 @@ public class CreatePersonCommand extends AbstractCommand {
         return "create-person";
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE};
-    }
 
 
     @Override

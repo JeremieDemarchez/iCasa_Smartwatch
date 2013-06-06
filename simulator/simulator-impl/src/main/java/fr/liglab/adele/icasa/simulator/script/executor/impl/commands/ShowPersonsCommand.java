@@ -19,6 +19,7 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -37,9 +38,11 @@ public class ShowPersonsCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager manager;
 
-    private static final String[] PARAMS =  new String[]{};
-
     private static final String NAME= "show-persons";
+
+    public ShowPersonsCommand(){
+        setSignature(EMPTY_SIGNATURE);
+    }
 
     /**
      * Get the name of the  Script and command gogo.
@@ -51,18 +54,9 @@ public class ShowPersonsCommand extends AbstractCommand {
         return NAME;
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return PARAMS;
-    }
 
     @Override
-    public Object execute(InputStream in, PrintStream out, JSONObject param) throws Exception {
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         out.println("Persons: ");
         List<Person> persons = manager.getPersons();
         for (Person person : persons) {
@@ -71,10 +65,6 @@ public class ShowPersonsCommand extends AbstractCommand {
         return null;  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    @Override
-    public Object execute(JSONObject param) throws Exception {
-        return execute(System.in, System.out, param);
-    }
 
     @Override
     public String getDescription(){

@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
@@ -23,6 +24,9 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -39,8 +43,12 @@ public class ExecuteScriptCommand extends AbstractCommand {
 	@Requires
 	private ScriptExecutor executor;
 
+    public ExecuteScriptCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.SCRIPT_NAME}));
+    }
+
 	@Override
-	public Object execute(JSONObject param) throws Exception {
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String scriptName = param.getString(ScriptLanguage.SCRIPT_NAME);
         System.out.println("Executing script ... " + scriptName);
 		executor.execute(scriptName);
@@ -56,16 +64,6 @@ public class ExecuteScriptCommand extends AbstractCommand {
     @Override
     public String getName() {
         return "execute-script";
-    }
-
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.SCRIPT_NAME};
     }
 
     @Override

@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -24,6 +25,9 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -40,6 +44,10 @@ public class AttachDeviceToPersonCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
+    public AttachDeviceToPersonCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH}));
+    }
+
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -50,18 +58,8 @@ public class AttachDeviceToPersonCommand extends AbstractCommand {
         return "attach-device-person";  //To change body of implemented methods use File | Settings | File Templates.
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
     @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH};  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    @Override
-    public Object execute(JSONObject param) throws Exception {
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String person = param.getString(ScriptLanguage.PERSON);
         String device = param.getString(ScriptLanguage.DEVICE);
         boolean attach = param.getBoolean(ScriptLanguage.ATTACH);

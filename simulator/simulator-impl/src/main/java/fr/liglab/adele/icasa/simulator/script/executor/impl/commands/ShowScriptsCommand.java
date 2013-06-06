@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.annotations.Component;
@@ -45,6 +46,10 @@ public class ShowScriptsCommand extends AbstractCommand {
 
     private static final String NAME= "show-scripts";
 
+    public ShowScriptsCommand(){
+        setSignature(EMPTY_SIGNATURE);
+    }
+
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -55,18 +60,9 @@ public class ShowScriptsCommand extends AbstractCommand {
         return NAME;
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return PARAMS;
-    }
 
     @Override
-    public Object execute(InputStream in, PrintStream out, JSONObject param) throws Exception {
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         out.println("Scripts: ");
         List<String> scripts = executor.getScriptList();
         for (String script : scripts) {
@@ -75,10 +71,6 @@ public class ShowScriptsCommand extends AbstractCommand {
         return null;
     }
 
-    @Override
-    public Object execute(JSONObject param) throws Exception {
-        return execute(System.in, System.out, param);
-    }
 
     @Override
     public String getDescription(){

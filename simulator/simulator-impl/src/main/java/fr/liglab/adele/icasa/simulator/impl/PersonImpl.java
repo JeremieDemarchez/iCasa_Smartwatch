@@ -145,7 +145,7 @@ public class PersonImpl extends LocatedObjectImpl implements Person {
 	public String toString() {
 		lock.readLock().lock();
 		try {
-			return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType();
+			return "Person: " + m_name + " - Position: " + getCenterAbsolutePosition() + " - Type: " + getPersonType().getName();
 		} finally {
 			lock.readLock().unlock();
 		}
