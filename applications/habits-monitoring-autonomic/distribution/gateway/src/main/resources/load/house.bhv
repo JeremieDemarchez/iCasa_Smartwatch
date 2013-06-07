@@ -2,16 +2,16 @@
 
 	<!-- Zone Section -->
 
-	<create-zone id="salon" leftX="500" topY="211" width="207" height="307" />
+	<create-zone id="salon" leftX="500" topY="211" X-Length="207" Y-Length="307" />
 
 
-	<create-zone id="chambre" leftX="186" topY="523" width="210" height="168" />
+	<create-zone id="chambre" leftX="186" topY="523" X-Length="210" Y-Length="168" />
 
 
-	<create-zone id="cuisine" leftX="505" topY="526" width="209" height="177" />
+	<create-zone id="cuisine" leftX="505" topY="526" X-Length="209" Y-Length="177" />
 
 
-	<create-zone id="salle-de-bain" leftX="188" topY="209" width="216" height="308" />
+	<create-zone id="salle-de-bain" leftX="188" topY="209" X-Length="216" Y-Length="308" />
 
 
 	<!-- Device Section -->
