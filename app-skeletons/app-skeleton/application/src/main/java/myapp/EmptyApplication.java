@@ -16,10 +16,9 @@
 package myapp;
 
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Validate;
+import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import org.apache.felix.ipojo.annotations.*;
 
 
 @Component(name="empty-app")

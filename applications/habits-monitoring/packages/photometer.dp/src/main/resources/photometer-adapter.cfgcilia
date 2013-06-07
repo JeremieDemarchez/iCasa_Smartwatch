@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cilia>
+    <chain id="generator-mesures" extension="true">
+        <adapters>
+			<adapter-instance id="photometer-collector" type="PhotometerAdapter" >
+			</adapter-instance>
+
+		</adapters>
+		<bindings>
+			<binding from="photometer-collector:out" to="loc-enricher:in" />
+		</bindings>
+    </chain>
+</cilia>

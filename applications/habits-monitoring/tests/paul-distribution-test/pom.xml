@@ -24,17 +24,20 @@
 	</properties>
 
 	<repositories>
-		<!-- iCASA repositories -->
-		<repository>
-			<id>icasa-snapshot-repository</id>
-			<name>iCASA Snapshot repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-		</repository>
-		<repository>
-			<id>icasa-release-repository</id>
-			<name>iCASA Release repository</name>
-			<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-		</repository>
+    <repository>
+      <snapshots>
+        <enabled>false</enabled>
+      </snapshots>
+      <id>adele-central-snapshot</id>
+      <name>adele-repos</name>
+      <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </repository>
+    <repository>
+      <snapshots />
+      <id>snapshots</id>
+      <name>adele-central-release</name>
+      <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </repository>
 	</repositories>
 
 	<dependencies>

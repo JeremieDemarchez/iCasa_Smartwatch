@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
 
-public class LightFollowMeApplication extends EmptyDeviceListener {
+public class LightFollowMeApplication extends AbstractDeviceListener {
 
     /** Field for binaryLights dependency */
     private BinaryLight[] binaryLights;
@@ -110,7 +110,7 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
     }
 
     @Override
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
+    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue) {
 
         if (device instanceof PowerSwitch) {
 

@@ -28,16 +28,20 @@ import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 /**
- * @author Gabriel Pedraza Ferreira
+ * Measure Collector for presence sensor devices.
+ * 
+ * @author Gabriel Pedraza Ferreira, Mehdi Kettani
  * 
  */
-public class MeasureCollector extends AbstractCollector implements DeviceListener<PresenceSensor> {
+public class MeasureCollector extends AbstractCollector implements
+		DeviceListener<PresenceSensor> {
 
-	private Map<String, PresenceSensor> detectors;
+	private Map<String, PresenceSensor> detectors = new HashMap<String, PresenceSensor>();
 
 	private int counter = 1;
 
-	private static final Logger logger = LoggerFactory.getLogger(MeasureCollector.class);
+	private static final Logger logger = LoggerFactory
+			.getLogger(MeasureCollector.class);
 
 	/*
 	 * (non-Javadoc)
@@ -50,21 +54,24 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 	 * into the gateway. (callback method, see metadata.xml).
 	 * 
 	 * @param detector
-	 *           A new PresenceDetector (proxy)
+	 *            A new PresenceDetector (proxy)
 	 */
 	public void bindProxy(PresenceSensor detector) {
-		logger.info("A new proxy has been found, id " + detector.getSerialNumber());
-		if (detectors == null)
-			detectors = new HashMap<String, PresenceSensor>();
-		detectors.put(detector.getSerialNumber(), detector);
+		logger.info("A new proxy has been found, id "
+				+ detector.getSerialNumber());
+		synchronized (detectors) {
+			detectors.put(detector.getSerialNumber(), detector);
+		}
 		detector.addListener(this);
 	}
-	
+
 	public void unbindProxy(PresenceSensor detector) {
-		logger.info("A proxy is now outside from the zone, id " + detector.getSerialNumber());
-		if (detectors!=null)
+		logger.info("A proxy is now outside from the zone, id "
+				+ detector.getSerialNumber());
+		synchronized (detectors) {
 			detectors.remove(detector.getSerialNumber());
-		detector.removeListener(this);			
+		}
+		detector.removeListener(this);
 	}
 
 	/*
@@ -76,7 +83,10 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 	 */
 	public void notifyDeviceEvent(String deviceSerialNumber) {
 
-		PresenceSensor detector = detectors.get(deviceSerialNumber);
+		PresenceSensor detector = null;
+		synchronized (detectors) {
+			detector = detectors.get(deviceSerialNumber);
+		}
 
 		if (detector != null) {
 			if (detector.getSensedPresence()) {
@@ -87,35 +97,36 @@ public class MeasureCollector extends AbstractCollector implements DeviceListene
 				// simulation reliability
 				int res = counter % 4;
 				if (res != 0)
-					measure.setRealibility(100);
+					measure.setReliability(100);
 				else
-					measure.setRealibility(60);
+					measure.setReliability(60);
 				counter++;
-								
+
 				notifyDataArrival(data);
 			}
 		}
 
 	}
 
-    public void deviceAdded(PresenceSensor device) {
-        //do nothing
-    }
+	public void deviceAdded(PresenceSensor device) {
+		// do nothing
+	}
 
-    public void deviceRemoved(PresenceSensor device) {
-        //do nothing
-    }
+	public void deviceRemoved(PresenceSensor device) {
+		// do nothing
+	}
 
-    public void devicePropertyModified(PresenceSensor device, String propertyName, Object oldValue, Object newValue) {
-        notifyDeviceEvent(device.getSerialNumber());
-    }
+	public void devicePropertyModified(PresenceSensor device,
+			String propertyName, Object oldValue, Object newValue) {
+		notifyDeviceEvent(device.getSerialNumber());
+	}
 
-    public void devicePropertyAdded(PresenceSensor device, String propertyName) {
-        notifyDeviceEvent(device.getSerialNumber());
-    }
+	public void devicePropertyAdded(PresenceSensor device, String propertyName) {
+		notifyDeviceEvent(device.getSerialNumber());
+	}
 
-    public void devicePropertyRemoved(PresenceSensor device, String propertyName) {
-        notifyDeviceEvent(device.getSerialNumber());
-    }
+	public void devicePropertyRemoved(PresenceSensor device, String propertyName) {
+		notifyDeviceEvent(device.getSerialNumber());
+	}
 
 }

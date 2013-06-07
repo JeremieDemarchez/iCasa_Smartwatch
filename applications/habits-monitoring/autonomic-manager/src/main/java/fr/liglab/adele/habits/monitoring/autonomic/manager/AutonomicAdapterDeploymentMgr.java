@@ -31,12 +31,12 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
  */
 @Component(name = "AutonomicAdapterDeploymentMgr")
 @Instantiate(name = "AutonomicAdapterDeploymentMgr-1")
-public class AutonomicAdapterDeploymentMgr implements DeviceListener {
+public class AutonomicAdapterDeploymentMgr implements DeviceListener<GenericDevice> {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AutonomicAdapterDeploymentMgr.class);
 
-	private Map<String, GenericDevice> devices;
+	private Map<String, GenericDevice> devices = new HashMap<String, GenericDevice>();
 
 	// DP installer
 	@Requires
