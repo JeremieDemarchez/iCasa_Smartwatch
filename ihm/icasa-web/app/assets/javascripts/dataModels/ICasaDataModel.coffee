@@ -110,16 +110,23 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
          # component that will manage remote Data model connections
          class DataModelMgrImpl extends DataModelConnectionMgr
            hub : null;
+           name : null;
            connected : false;
            url : null;
 
+           constructor: (name) ->
+             @name = name;
+
            getComponentName: () ->
-             return 'DataModelMgrImpl';
+             return @name;
 
            configure: (theHub, configuration) =>
              @hub = theHub;
              @connected = false;
-             if (config?.url?) then @url = config.url;
+             if (config?.name?)
+               @name = config.name;
+             if (config?.url?)
+               @url = config.url;
 
              @hub.provideService({
                component: @,
@@ -165,8 +172,8 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
            stop : () =>
 
 
-         dataModelMgrInst = new DataModelMgrImpl();
-         hub.registerComponent(dataModelMgrInst, {url : serverUrl});
+         dataModelMgrInst = new DataModelMgrImpl("DataModelMgrImpl");
+         hub.registerComponent(dataModelMgrInst, {name : "DataModelMgrImpl", url : serverUrl});
 
          return DataModel;
 );
