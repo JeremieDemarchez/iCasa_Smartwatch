@@ -30,6 +30,7 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
+import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.PersonType;
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -355,11 +356,29 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				String id = zone.getId();
 				int leftX = zone.getLeftTopAbsolutePosition().x;
 				int topY = zone.getLeftTopAbsolutePosition().y;
-				int width = zone.getWidth();
-				int height = zone.getHeight();
-				out.println("\t<create-zone id=\"" + id + "\" leftX=\"" + leftX + "\" topY=\"" + topY + "\" width=\""
-				      + width + "\" height=\"" + height + "\" />");
-				out.println();
+                int bottomZ = zone.getLeftTopAbsolutePosition().z;
+				int width = zone.getXLength();
+				int height = zone.getYLength();
+                int depth = zone.getZLength();
+                StringBuilder instruction = new StringBuilder();
+                instruction.append("\t<create-zone ").
+                        append(' ').
+                        append(ScriptLanguage.ID).append(" =\"").append(id).append("\"").
+                        append(' ').
+                        append(ScriptLanguage.LEFT_X).append(" =\"").append(leftX).append("\"").
+                        append(' ').
+                        append(ScriptLanguage.TOP_Y).append(" =\"").append(topY).append("\"").
+                        append(' ').
+                        append(ScriptLanguage.BOTTOM_Z).append(" =\"").append(bottomZ).append("\"").
+                        append(' ').
+                        append(ScriptLanguage.X_LENGTH).append(" =\"").append(width).append("\"").
+                        append(' ').
+                        append(ScriptLanguage.Y_LENGTH).append(" =\"").append(height).append("\"").
+                        append(' ').
+                        append(ScriptLanguage.Z_LENGTH).append(" =\"").append(depth).append("\"");
+                instruction.append("/>");
+
+				out.println(instruction.toString());
 
 				for (String variable : zone.getVariableNames()) {
 					Object value = zone.getVariableValue(variable);
@@ -503,7 +522,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 						iCasaCommand command = commands.get(actionDescription.getCommandName());
 						if (command != null) {
 							try {
-								command.execute(null, null, actionDescription.getConfiguration());
+								command.execute(System.in, System.out, actionDescription.getConfiguration());
 							} catch (Exception e) {
 								e.printStackTrace();
 							}

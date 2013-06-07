@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.location.Zone;
@@ -44,6 +45,10 @@ public class ShowPersonZonesCommand extends AbstractCommand {
 
     private static final String NAME= "show-person-zones";
 
+    public ShowPersonZonesCommand(){
+        setSignature(new Signature(PARAMS));
+    }
+
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -54,22 +59,9 @@ public class ShowPersonZonesCommand extends AbstractCommand {
         return NAME;
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
     @Override
-    public String[] getParameters() {
-        return PARAMS;
-    }
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
 
-    @Override
-    public Object execute(InputStream in, PrintStream out, JSONObject param) throws Exception {
-        if (!validate(param)){
-            out.println(getDescription());
-            throw new Exception("Invalid parameters");
-        }
         String personName = param.getString(PARAMS[0]);
         Person person = manager.getPerson(personName);
 
@@ -84,11 +76,6 @@ public class ShowPersonZonesCommand extends AbstractCommand {
             }
         }
         return null;
-    }
-
-    @Override
-    public Object execute(JSONObject param) throws Exception {
-        return execute(System.in, System.out, param);
     }
 
     @Override

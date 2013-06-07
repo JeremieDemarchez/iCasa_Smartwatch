@@ -16,15 +16,20 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -41,12 +46,29 @@ public class MovePersonCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
+    private static Signature MOVE = new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.NEW_X, ScriptLanguage.NEW_Y});
+
+    private static Signature MOVE_WZ = new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.NEW_X, ScriptLanguage.NEW_Y, ScriptLanguage.NEW_Z});
+
+    public MovePersonCommand(){
+        setSignature(MOVE);
+        setSignature(MOVE_WZ);
+    }
+
 	@Override
-	public Object execute(JSONObject param) throws Exception {
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String personId = param.getString(ScriptLanguage.PERSON_ID);
+        Person person = simulationManager.getPerson(personId);
+        if (person == null){
+            throw new IllegalArgumentException("Person ("+ personId +") does not exist");
+        }
         int newX = param.getInt(ScriptLanguage.NEW_X);
         int newY = param.getInt(ScriptLanguage.NEW_Y);
-        simulationManager.setPersonPosition(personId, new Position(newX, newY));
+        int newZ = person.getCenterAbsolutePosition().z;
+        if (signature.equals(MOVE_WZ)){
+            newZ = param.getInt(ScriptLanguage.NEW_Y);
+        }
+        simulationManager.setPersonPosition(personId, new Position(newX, newY, newZ));
 		return null;
 	}
 
@@ -60,15 +82,6 @@ public class MovePersonCommand extends AbstractCommand {
         return "move-person";
     }
 
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.NEW_X, ScriptLanguage.NEW_Y};
-    }
     @Override
     public String getDescription(){
         return "Move a person to a new X,Y position.\n\t" + super.getDescription();

@@ -1,7 +1,7 @@
 <behavior startdate="27/10/2011-00:00:00" factor="1440">
 	 
 	 
-	<create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
+	<create-zone id="kitchen"  leftX="410" topY="370" X-Length="245" Y-Length="210" />	 
 	
 	<add-zone-variable zoneId="kitchen" variable="Temperature" />
 	<add-zone-variable zoneId="kitchen" variable="Illuminance" />
@@ -17,7 +17,7 @@
 	<move-device-zone deviceId="Phot-A4894S-S" zoneId="kitchen" />
 	<move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
 
-	<create-zone id="livingroom" leftX="410" topY="20" width="245" height="350" />
+	<create-zone id="livingroom" leftX="410" topY="20" X-Length="245" Y-Length="350" />
 	
 	<add-zone-variable zoneId="livingroom" variable="Temperature" />
 	<add-zone-variable zoneId="livingroom" variable="Illuminance" />
@@ -37,7 +37,7 @@
 	<move-device-zone deviceId="Ther-V3258B-G" zoneId="livingroom" />
 	<move-device-zone deviceId="Heat-F2145T-M" zoneId="livingroom" />
 	
-	<create-zone id="bedroom"  leftX="55" topY="370" width="259" height="210" />		
+	<create-zone id="bedroom"  leftX="55" topY="370" X-Length="259" Y-Length="210" />		
 	
 	<add-zone-variable zoneId="bedroom" variable="Temperature" />
 	<modify-zone-variable zoneId="bedroom" variable="Temperature" value="294.15"/>
@@ -47,7 +47,7 @@
 	<move-device-zone deviceId="Ther-V9687T-X" zoneId="bedroom" />	
 	<move-device-zone deviceId="Dimi-C9781S-V" zoneId="bedroom" />
 
-	<create-zone id="bathroom"  leftX="55" topY="20" width="260" height="350" />	
+	<create-zone id="bathroom"  leftX="55" topY="20" X-Length="260" Y-Length="350" />	
 	<add-zone-variable zoneId="bathroom" variable="Temperature" />
 	<add-zone-variable zoneId="bathroom" variable="Illuminance" />
 	<add-zone-variable zoneId="bathroom" variable="Volume" />

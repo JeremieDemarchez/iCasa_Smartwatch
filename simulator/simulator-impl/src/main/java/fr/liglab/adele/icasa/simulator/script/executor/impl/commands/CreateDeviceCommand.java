@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -25,6 +26,8 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.HashMap;
 
 /**
@@ -42,8 +45,12 @@ public class CreateDeviceCommand extends AbstractCommand {
 	@Requires	
 	private SimulationManager simulationManager;
 
+    public CreateDeviceCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
+    }
+
 	@Override
-   public Object execute(JSONObject param) throws Exception {
+   public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String deviceId = param.getString(ScriptLanguage.ID);
         String deviceType = param.getString(ScriptLanguage.TYPE);
 		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
@@ -57,16 +64,6 @@ public class CreateDeviceCommand extends AbstractCommand {
     @Override
     public String getName() {
         return "create-device";
-    }
-
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE};
     }
 
     @Override

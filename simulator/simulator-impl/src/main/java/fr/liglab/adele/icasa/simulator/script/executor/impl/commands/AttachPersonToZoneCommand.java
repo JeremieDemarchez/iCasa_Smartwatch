@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
 
+import fr.liglab.adele.icasa.Signature;
 import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
 import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
@@ -24,6 +25,9 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import java.io.InputStream;
+import java.io.PrintStream;
 
 /**
  * 
@@ -40,25 +44,21 @@ public class AttachPersonToZoneCommand extends AbstractCommand {
 	@Requires
 	private SimulationManager simulationManager;
 
+    public AttachPersonToZoneCommand(){
+        setSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
+    }
+
 	@Override
-	public Object execute(JSONObject obj) throws Exception {
-        String person = obj.getString(ScriptLanguage.PERSON);
-        String zone = obj.getString(ScriptLanguage.ZONE);
-        boolean attach = obj.getBoolean(ScriptLanguage.ATTACH);
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        String person = param.getString(ScriptLanguage.PERSON);
+        String zone = param.getString(ScriptLanguage.ZONE);
+        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
 		if (attach)
 			simulationManager.attachPersonToZone(zone, person);
 		else
 			simulationManager.detachPersonFromZone(zone, person);
 		return null;
 	}
-	
-	
-	@Override
-	public boolean validate(JSONObject param) throws Exception {
-        return param.has(ScriptLanguage.PERSON) && param.has(ScriptLanguage.ZONE) && param.has(ScriptLanguage.ATTACH);
-
-    }
-
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -67,16 +67,6 @@ public class AttachPersonToZoneCommand extends AbstractCommand {
     @Override
     public String getName() {
         return "attach-person-zone";  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * Get the list of parameters.
-     *
-     * @return
-     */
-    @Override
-    public String[] getParameters() {
-        return new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH};  //To change body of implemented methods use File | Settings | File Templates.
     }
 
 
