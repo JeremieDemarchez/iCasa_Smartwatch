@@ -5,36 +5,51 @@
 # @author Thomas Leveque
 ###
 define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMgr) ->
-  return ConnectionWidget =
-    class ConnectionWidget extends HUBU.AbstractComponent
+  return class ConnectionWidget extends HUBU.AbstractComponent
 
-      hub : null;
-      gatewayUrl : null;
-      buttonId : "connection-status-button";
+      hub: null;
+      name: null;
+      gatewayUrl: null;
+      buttonId: "connection-status-button";
 
-      dataModelMgr : null;
+      dataModelMgr: null;
+
+      constructor: (name) ->
+        @name = name;
 
       getComponentName: () ->
-        return 'ConnectionWidget';
+        return @name;
 
-      configure: (theHub, config) =>
+      start: () ->
+        $("#" + @buttonId).removeClass("hidden");
+
+
+      stop: () ->
+        $("#" + @buttonId).addClass("hidden");
+
+      configure: (theHub, config) ->
         @hub = theHub;
         @connected = false;
-        if (config?.buttonId?) then @buttonId = config.buttonId;
+        if (config?.buttonId?)
+          @buttonId = config.buttonId;
 
         @hub.requireService({
           component: @,
-          contract: DataModelConnectionMgr,
-          field: "dataModelMgr"
+          contract:  DataModelConnectionMgr,
+          bind:      @bindDataModelMgr
         });
 
-      setGatewayURL : (usedURL) =>
+      bindDataModelMgr: (svc) ->
+        @dataModelMgr = svc;
+        @updateButton();
+
+      setGatewayURL: (usedURL) ->
         @gatewayUrl = usedURL;
 
-      updateButton : () =>
+      updateButton: () ->
         connected = false;
-        if (@dataModelMgr.isConnected()?)
-          connected = @dataModelMgr.isConnected();
+        #if (@dataModelMgr?.isConnected()?)
+        connected = @dataModelMgr.isConnected();
 
         buttonElt = $("#" + @buttonId);
         buttonElt.removeClass("btn-success btn-danger");
@@ -45,14 +60,9 @@ define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMg
           buttonElt.text("Not Connected");
           buttonElt.addClass("btn-danger");
 
-      reconnect : () =>
+      reconnect: () ->
         @dataModelMgr.reconnect();
 
-      start : () =>
-        $("#" + @buttonId).removeClass("hidden");
-        #@updateButton();
 
-      stop : () =>
-        $("#" + @buttonId).addClass("hidden");
-
-);
+)
+;

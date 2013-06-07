@@ -5,7 +5,6 @@
 # @author Thomas Leveque
 ###
 define(() ->
-  return DataModelConnectionMgr =
     class DataModelConnectionMgr
 
       ###*
@@ -19,4 +18,6 @@ define(() ->
       ###
       reconnect : () ->
         # keep it empty
+
+    return new DataModelConnectionMgr();
 );

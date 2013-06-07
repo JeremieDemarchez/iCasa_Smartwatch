@@ -18,7 +18,7 @@ require.config({
         'contracts' : 'contracts',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
-        'hubu' : 'frameworks/hubu/h-ubu-1.0.0-min',
+        'hubu' : 'frameworks/hubu/h-ubu-1.0.0',
         'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         # TODO remove ui.touch when moving to jquery.ui 1.9 (will manage touch events)
@@ -162,10 +162,11 @@ require([
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
     'components/ConnectionWidget',
+    'contracts/DataModelConnectionMgr',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, DataModelConnectionMgr) ->
 
         #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
         $("#map").resizable({
@@ -225,9 +226,10 @@ require([
         );
 
         # start extensions mechanism using H-UBU
-        connectionWidgetInst = new ConnectionWidget();
-        hub.registerComponent(connectionWidgetInst, {buttonId : "connection-status-button"})
-           .start();
+        hub.registerComponent(new ConnectionWidget("GatewayConnectionWidget-1"), {
+          name : "GatewayConnectionWidget-1",
+          buttonId : "connection-status-button"
+        }).start();
 
         # plugin loading
         extensionsElt = $("#icasa-extensions");
