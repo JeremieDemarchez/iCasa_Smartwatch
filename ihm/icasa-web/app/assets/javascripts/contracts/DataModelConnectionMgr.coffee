@@ -19,5 +19,8 @@ define(() ->
       reconnect : () ->
         # keep it empty
 
+      getConnectionEventTopic: () ->
+        return "/icasa/data/model/connection";
+
     return new DataModelConnectionMgr();
 );

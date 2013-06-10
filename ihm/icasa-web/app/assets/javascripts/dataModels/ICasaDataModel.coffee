@@ -108,14 +108,11 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
          DataModel.collections.deviceTypes = new DataModel.Collections.SimulatedDeviceTypes();
 
          # component that will manage remote Data model connections
-         class DataModelMgrImpl extends DataModelConnectionMgr
+         class DataModelMgrImpl
            hub : null;
            name : null;
            connected : false;
            url : null;
-
-           constructor: (name) ->
-             @name = name;
 
            getComponentName: () ->
              return @name;
@@ -136,8 +133,13 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
            setURL : (usedURL) =>
              @url = usedURL;
 
+           getConnectionEventTopic : () ->
+             return DataModelConnectionMgr.getConnectionEventTopic();
+
            setConnected : (connectedFlag) =>
-             @connected = connectedFlag;
+             if (@connected != connectedFlag)
+               @connected = connectedFlag;
+               hub.publish(@, @getConnectionEventTopic(), {connected : connectedFlag});
 
            isConnected : () =>
              @connected;
@@ -171,9 +173,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
 
            stop : () =>
 
-
-         dataModelMgrInst = new DataModelMgrImpl("DataModelMgrImpl");
-         hub.registerComponent(dataModelMgrInst, {name : "DataModelMgrImpl", url : serverUrl});
+         hub.createInstance(DataModelMgrImpl, {name : "DataModelMgrImpl-1", url : serverUrl});
 
          return DataModel;
 );
