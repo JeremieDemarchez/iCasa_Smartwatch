@@ -73,7 +73,11 @@ _Example:_
 
 _Example:_
 
-    <create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	
+    <create-zone id="kitchen"  leftX="410" topY="370" X-Length="245" Y-Length="210" />	
+
+or
+
+    <create-zone id="kitchen"  leftX="410" topY="370" bottomZ="0" X-Length="245" Y-Length="210" Z-Length="300" />	
 
 <table cellpadding="2" cellspacing="0" border="1">
 <tr>
@@ -94,12 +98,20 @@ _Example:_
   <td>Top Y coordinate value</td>
 </tr>
 <tr>
-  <td>width</td>
-  <td>Zone width</td>
+  <td>bottomZ</td>
+  <td>Bottmo Z coordinate value</td>
 </tr>
 <tr>
-  <td>height</td>
-  <td>Zone height</td>
+  <td>X-Length</td>
+  <td>Zone X-Length</td>
+</tr>
+<tr>
+  <td>Y-Length</td>
+  <td>Zone X-Length</td>
+</tr>
+<tr>
+  <td>Z-Length</td>
+  <td>Zone Z-Length</td>
 </tr>
 </table>
    
@@ -137,7 +149,11 @@ Resize a zone in application context
 
 _Example:_
 
-    <resize-zone id="kitchen"  width="245" height="210" />	
+    <resize-zone id="kitchen"  X-Length="245" Y-Length="210" />	
+
+or
+
+    <resize-zone id="kitchen"  X-Length="245" Y-Length="210" Z-Length="210" />	
 
 <table cellpadding="2" cellspacing="0" border="1">
 <tr>
@@ -150,12 +166,16 @@ _Example:_
   <td>Zone's Identifier</td>
 </tr>
 <tr>
-  <td>width</td>
-  <td>New zone width</td>
+  <td>X-Length</td>
+  <td>New zone X-Length</td>
 </tr>
 <tr>
-  <td>height</td>
-  <td>New zone height</td>
+  <td>Y-Length</td>
+  <td>New zone Y-Length</td>
+</tr>
+<tr>
+  <td>Z-Length</td>
+  <td>New zone Z-Length</td>
 </tr>
 </table>
     
@@ -464,7 +484,7 @@ _Example:_
     <behavior startdate="27/10/2011-00:00:00" factor="1440">
 	   
        <!-- Creation of kitchen zone -->   
-	   <create-zone id="kitchen"  leftX="410" topY="370" width="245" height="210" />	 
+	   <create-zone id="kitchen"  leftX="410" topY="370" X-Length="245" Z-Length="210" />	 
 	
 	   <!-- Adding and setting variables in kitchen zone -->
 	   <add-zone-variable zoneId="kitchen" variable="Temperature" />
@@ -483,7 +503,7 @@ _Example:_
 	   <move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
 
 	   <!-- Creation of livingroom zone --> 
-       <create-zone id="livingroom" leftX="410" topY="28" width="245" height="350" />
+       <create-zone id="livingroom" leftX="410" topY="28" X-Length="245" Y-Length="350" />
 	   <!-- Adding and setting variables in kitchen zone -->
 	   
 	   <add-zone-variable zoneId="livingroom" variable="Temperature" />
