@@ -74,6 +74,10 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         // workaround of ipojo bug of object member initialization
         _zoneLock = new Object();
         _deviceLock = new Object();
+        _computedVariables = new HashSet<Variable>();
+        _computedVariables.add(new Variable(ILLUMINANCE_PROP_NAME, Double.class, "in lux"));
+        _requiredZoneVariables = new HashSet<Variable>();
+        _requiredZoneVariables.add(new Variable("Surface", Double.class, "surface in square meters"));
     }
 
     @Override
@@ -171,14 +175,6 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     private Set<Zone> getZones(LocatedDevice locatedDevice) {
         Position devicePosition = locatedDevice.getCenterAbsolutePosition();
         return getZones(devicePosition);
-    }
-
-    public IlluminancePMImpl(Set<Variable> _computedVariables) {
-        this._computedVariables = new HashSet<Variable>();
-        _computedVariables.add(new Variable(ILLUMINANCE_PROP_NAME, Double.class, "in lux"));
-
-        _requiredZoneVariables = new HashSet<Variable>();
-        _requiredZoneVariables.add(new Variable("Surface", Double.class, "surface in square meters"));
     }
 
     @Override
