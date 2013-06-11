@@ -14,9 +14,6 @@ define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMg
 
       dataModelMgr: null;
 
-      constructor: (name) ->
-        @name = name;
-
       getComponentName: () ->
         return @name;
 
@@ -36,11 +33,14 @@ define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMg
         @hub.requireService({
           component: @,
           contract:  DataModelConnectionMgr,
-          bind:      @bindDataModelMgr
+          bind:      "bindDataModelMgr"
         });
 
       bindDataModelMgr: (svc) ->
         @dataModelMgr = svc;
+        @hub.subscribe(@, @dataModelMgr.getConnectionEventTopic(), (event) ->
+          @updateButton();
+        );
         @updateButton();
 
       setGatewayURL: (usedURL) ->

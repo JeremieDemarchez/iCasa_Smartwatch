@@ -226,7 +226,7 @@ require([
         );
 
         # start extensions mechanism using H-UBU
-        hub.registerComponent(new ConnectionWidget("GatewayConnectionWidget-1"), {
+        hub.createInstance(ConnectionWidget, {
           name : "GatewayConnectionWidget-1",
           buttonId : "connection-status-button"
         }).start();
