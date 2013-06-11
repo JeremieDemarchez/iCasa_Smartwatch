@@ -141,6 +141,11 @@ public class SimulationEventBroadcast  {
         }
 
         @Override
+        public void deviceEvent(LocatedDevice locatedDevice, Object o) {
+            //Handled by EventBroadcast in icasa.remote
+        }
+
+        @Override
 		public void personMoved(Person person, Position position) {
 			JSONObject json = new JSONObject();
 			try {

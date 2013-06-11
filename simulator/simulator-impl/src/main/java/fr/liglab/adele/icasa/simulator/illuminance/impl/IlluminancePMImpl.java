@@ -151,6 +151,11 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         //do nothing
     }
 
+    @Override
+    public void deviceEvent(LocatedDevice locatedDevice, Object o) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
     private void updateZones(LocatedDevice locatedDevice) {
         updateZones(locatedDevice.getCenterAbsolutePosition());
     }
