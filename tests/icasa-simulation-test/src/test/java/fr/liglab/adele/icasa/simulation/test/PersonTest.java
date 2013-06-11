@@ -35,103 +35,124 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
-
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
 public class PersonTest extends AbstractDistributionBaseTest {
-	
+
 	@Inject
 	public BundleContext context;
-	
-	@Inject
-	public SimulationManager simulationMgr;
-	
+
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
-		
+	private SimulationManager simulationMgr;
+
 	@Before
 	public void setUp() {
-		waitForStability(context);		
+		waitForStability(context);	
 	}
 
 	@After
 	public void tearDown() {
-      try {
-         simulationMgr.resetContext();
-     } catch (Exception e) {
-         e.printStackTrace();
-     }
+		try {
+			simulationMgr.resetContext();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
-    /**
-     * Test the creation of a new person.
-     */
-    @Test
-    public void creationPersonWithPredefinedTypeTest(){
-        String personName = "Patrick";
-        String personType = "Grandfather";
+	
+	@Test
+	public void creationPersonWithoutNameTest() {
+		
+		initializeSimulationManager();
+		
+		String personName = "";
+		String personType = "Grandfather";
 
-        Person person = simulationMgr.addPerson(personName, personType);
-        Assert.assertNotNull(person);
-        Assert.assertEquals(personName, person.getName());
-        Assert.assertEquals(personType, person.getPersonType().getName());
-    }
-    
-    @Test
-    public void creationPersonWithNotExistingTypeTest() {
-       String personName = "Patrick";
-       String personType = "Aunt";
+		expectedException.expect(IllegalArgumentException.class);
+		simulationMgr.addPerson(personName, personType);
+	}
 
-       expectedException.expect(IllegalArgumentException.class);
-       simulationMgr.addPerson(personName, personType);       
-    }
-    
-    @Test
-    public void creationPersonWithoutNameTest() {
-       String personName = "";
-       String personType = "Grandfather";
+	/**
+	 * Test the creation of a new person.
+	 */
+	@Test
+	public void creationPersonWithPredefinedTypeTest() {
+		
+		initializeSimulationManager();	
+		
+		String personName = "Patrick";
+		String personType = "Grandfather";
 
-       expectedException.expect(IllegalArgumentException.class);
-       simulationMgr.addPerson(personName, personType);       
-    }    
-    
-    @Test
-    public void creationPersonWithoutTypeTest() {
-       String personName = "Patrick";
-       String personType = "";
+		Person person = simulationMgr.addPerson(personName, personType);
+		Assert.assertNotNull(person);
+		Assert.assertEquals(personName, person.getName());
+		Assert.assertEquals(personType, person.getPersonType().getName());
+	}
+		
 
-       expectedException.expect(IllegalArgumentException.class);
-       simulationMgr.addPerson(personName, personType);       
-    }  
-    
-    @Test
-    public void movePersonToExistingZoneTest() {
-       String personName = "Patrick";
-       String personType = "Grandfather";
+	@Test
+	public void creationPersonWithNotExistingTypeTest() {
+		
+		initializeSimulationManager();
+		
+		String personName = "Patrick";
+		String personType = "Aunt";
 
-       simulationMgr.createZone("livingroom", 410, 28, Zone.DEFAULT_Z_BOTTOM, 245, 350, Zone.DEFAULT_Z_LENGTH);
-       Person person = simulationMgr.addPerson(personName, personType);       
-       simulationMgr.setPersonZone("Patrick", "livingroom");
-       
-       Assert.assertEquals(person.getLocation(), "livingroom");
-       Assert.assertEquals(personName, person.getName());
-       Assert.assertEquals(personType, person.getPersonType().getName());       
-    }
-    
-    @Test
-    public void movePersonToPositionTest() {
-       String personName = "Patrick";
-       String personType = "Grandfather";
+		expectedException.expect(IllegalArgumentException.class);
+		simulationMgr.addPerson(personName, personType);
+	}
 
-       Person person = simulationMgr.addPerson(personName, personType);             
-       Position position = new Position(20, 20);       
-       person.setCenterAbsolutePosition(position);
-                    
-       Assert.assertEquals(person.getCenterAbsolutePosition(), position);    
-       Assert.assertEquals(personName, person.getName());
-       Assert.assertEquals(personType, person.getPersonType().getName());
-    }
-      
+
+	@Test
+	public void creationPersonWithoutTypeTest() {
+		initializeSimulationManager();
+		
+		String personName = "Patrick";
+		String personType = "";
+
+		expectedException.expect(IllegalArgumentException.class);
+		simulationMgr.addPerson(personName, personType);
+	}
+
+	@Test
+	public void movePersonToExistingZoneTest() {
+		
+		initializeSimulationManager();
+		
+		String personName = "Patrick";
+		String personType = "Grandfather";
+
+		simulationMgr.createZone("livingroom", 410, 28, Zone.DEFAULT_Z_BOTTOM, 245, 350, Zone.DEFAULT_Z_LENGTH);
+		Person person = simulationMgr.addPerson(personName, personType);
+		simulationMgr.setPersonZone("Patrick", "livingroom");
+
+		Assert.assertEquals(person.getLocation(), "livingroom");
+		Assert.assertEquals(personName, person.getName());
+		Assert.assertEquals(personType, person.getPersonType().getName());
+	}
+
+	@Test
+	public void movePersonToPositionTest() {
+		
+		initializeSimulationManager();
+		
+		String personName = "Patrick";
+		String personType = "Grandfather";
+
+		Person person = simulationMgr.addPerson(personName, personType);
+		Position position = new Position(20, 20);
+		person.setCenterAbsolutePosition(position);
+
+		Assert.assertEquals(person.getCenterAbsolutePosition(), position);
+		Assert.assertEquals(personName, person.getName());
+		Assert.assertEquals(personType, person.getPersonType().getName());
+	}
+	
+	private void initializeSimulationManager() {
+		simulationMgr = (SimulationManager) getService(context, SimulationManager.class);
+		Assert.assertNotNull(simulationMgr);	
+	}
 
 }
