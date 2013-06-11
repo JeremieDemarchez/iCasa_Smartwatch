@@ -165,7 +165,12 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	   // TODO Auto-generated method stub
 	   
    }
-	
+
+    @Override
+    public void deviceEvent(LocatedDevice locatedDevice, Object o) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 	public void enterInZones(List<Zone> zones) {
 		
 	}

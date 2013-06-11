@@ -21,6 +21,7 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 
+import fr.liglab.adele.icasa.device.DevicePropertyEvent;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -66,14 +67,14 @@ public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSou
     public synchronized void play() {
         Object oldValue = m_isPlaying;
         m_isPlaying = true;
-        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue, m_isPlaying));
+        notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue, m_isPlaying));
     }
 
     @Override
     public synchronized void pause() {
         Object oldValue = m_isPlaying;
         m_isPlaying = false;
-        notifyListeners(new DeviceEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue, m_isPlaying));
+        notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_MODIFIED, AudioSource.AUDIO_SOURCE_IS_PLAYING, oldValue, m_isPlaying));
     }
     
     @Override
