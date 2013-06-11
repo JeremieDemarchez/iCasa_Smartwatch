@@ -3,13 +3,13 @@ package fr.liglab.adele.icasa.gas.alarm.sys;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
+import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GasAlarmSystemApplication extends AbstractDeviceListener {
+public class GasAlarmSystemApplication extends EmptyDeviceListener {
 
 	/**
 	 * @author jeremy
@@ -124,7 +124,7 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 
 	@Override
 	public void devicePropertyModified(GenericDevice device,
-			String propertyName, Object oldValue) {
+			String propertyName, Object oldValue, Object newValue) {
 
 		if (device instanceof CarbonDioxydeSensor) {
 
