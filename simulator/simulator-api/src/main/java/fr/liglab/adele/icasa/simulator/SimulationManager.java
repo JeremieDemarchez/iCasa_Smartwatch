@@ -22,6 +22,7 @@ import java.util.Set;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 
 /**
  * The simulation Mananger deals with operations associated to simulation
@@ -161,7 +162,14 @@ public interface SimulationManager extends ContextManager {
 	 * @return
 	 */
 	public List<PersonType> getPersonTypes();
-
+	
+	/**
+	 * Gets a set with person in the specified zone
+	 * @param zone the zone
+	 * @return the person set
+	 */
+	public Set<Person> getPersonsIntoZone(Zone zone);
+	
 	// -- Attachements methods -- //
 
 	/**
