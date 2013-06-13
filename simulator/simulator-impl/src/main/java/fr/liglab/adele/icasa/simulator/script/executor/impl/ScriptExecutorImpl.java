@@ -53,7 +53,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
-import fr.liglab.adele.icasa.iCasaCommand;
+import fr.liglab.adele.icasa.ICasaCommand;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -79,7 +79,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	/**
 	 * Simulator commands added to the platorm
 	 */
-	private Map<String, iCasaCommand> commands;
+	private Map<String, ICasaCommand> commands;
 
 	/**
 	 * Scripts added to the platform
@@ -216,15 +216,15 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	// -- Component bind methods -- //
 	@Bind(id = "commands", aggregate = true, optional = true)
-	public void bindCommand(iCasaCommand commandService) {
+	public void bindCommand(ICasaCommand commandService) {
 		String name = commandService.getName();
 		if (commands == null)
-			commands = new HashMap<String, iCasaCommand>();
+			commands = new HashMap<String, ICasaCommand>();
 		commands.put(name, commandService);
 	}
 
 	@Unbind(id = "commands")
-	public void unbindCommand(iCasaCommand commandService) {
+	public void unbindCommand(ICasaCommand commandService) {
 		String name = commandService.getName();
 		commands.remove(name);
 	}
@@ -519,7 +519,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 				synchronized (clock) {
 					clock.pause();
 					for (ActionDescription actionDescription : toExecute) {
-						iCasaCommand command = commands.get(actionDescription.getCommandName());
+						ICasaCommand command = commands.get(actionDescription.getCommandName());
 						if (command != null) {
 							try {
 								command.execute(System.in, System.out, actionDescription.getConfiguration());

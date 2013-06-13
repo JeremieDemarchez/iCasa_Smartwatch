@@ -15,15 +15,15 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
 
-import fr.liglab.adele.icasa.iCasaCommand;
+import fr.liglab.adele.icasa.ICasaCommand;
 import org.json.JSONObject;
 
 public class RunnableCommandAdapter implements Runnable {
 
-	private iCasaCommand commandService;
+	private ICasaCommand commandService;
 	private JSONObject param;
 	
-	public RunnableCommandAdapter(iCasaCommand commandService, JSONObject param) {
+	public RunnableCommandAdapter(ICasaCommand commandService, JSONObject param) {
 		this.commandService = commandService;
 		this.param = param;
 	}
