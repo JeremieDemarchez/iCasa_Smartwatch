@@ -7,6 +7,7 @@ iCasa provides a set of functional <a href="http://felix.apache.org/site/apache-
 - <a href="#Zone">Manipulating zones</a>
 - <a href="#Persons">Manipulating persons</a>
 - <a href="#General">Manipulating Simulation</a>
+- <a href="#Configuration">Configuration Commands</a>
 
 <a name="Device"></a>
 ## Manipulating Devices
@@ -539,3 +540,94 @@ Parameters->
 
 #### Example:
     > g! icasa:execute-script SetupHouseWithLights.bhv
+
+<a name="Configuration"></a>
+## Configuration Commands
+
+### Set a global configuration property
+Scope -> __icasa__
+
+Name-> __set-global-property__
+
+Parameters-> 
+
+- __${name}__ the property name.
+- __${value}__ the property value.
+- __${type}__ the property type. The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
+
+#### Example:
+    > g! icasa:set-global-property period 80.0 Float
+	
+### Set a user configuration property
+Scope -> __icasa__
+
+Name-> __set-user-property__
+
+Parameters-> 
+
+- __${user}__ the user name.
+- __${name}__ the property name.
+- __${value}__ the property value.
+- __${type}__ the property type. The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
+
+#### Example:
+    > g! icasa:set-user-property john period 80.0 Float
+	
+### Set a application configuration property
+Scope -> __icasa__
+
+Name-> __set-app-property__
+
+Parameters-> 
+
+- __${app}__ the application id.
+- __${name}__ the property name.
+- __${value}__ the property value.
+- __${type}__ the property type. The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
+
+#### Example:
+    > g! icasa:set-app-property LightFollowMe period 80.0 Float
+	
+### Get a global configuration property value
+Scope -> __icasa__
+
+Name-> __get-global-property__
+
+Parameters-> 
+
+- __${name}__ the property name.
+
+#### Example:
+    > g! icasa:get-global-property period
+	  Property: period - Value: 80.0
+	  80
+	  
+### Get a user configuration property value
+Scope -> __icasa__
+
+Name-> __get-user-property__
+
+Parameters-> 
+
+- __${user}__ the user name.
+- __${name}__ the property name.
+
+#### Example:
+    > g! icasa:get-user-property jhon period
+	  Property: period - Value: 80.0
+	  80
+
+### Get a application configuration property value
+Scope -> __icasa__
+
+Name-> __get-app-property__
+
+Parameters-> 
+
+- __${app}__ the application id.
+- __${name}__ the property name.
+
+#### Example:
+    > g! icasa:get-app-property LightFollowMe period
+	  Property: period - Value: 80.0
+	  80
