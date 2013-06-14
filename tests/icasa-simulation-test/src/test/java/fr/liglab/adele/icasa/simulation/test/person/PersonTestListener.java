@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.simulation.test.person;
 
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
@@ -27,58 +26,58 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
  */
 public class PersonTestListener implements PersonListener {
 
-	private Person listenPerson = null;
-	
-	private String listenVariable = null;
-
-	private Object listenOldValue = null;
 
 	private Position listenOldPosition = null;
 
-    /**
-     * Invoked when a person has been added to the iCasa Simulator.
-     *
-     * @param person The added person.
-     */
-    public void personAdded(Person person) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+	/**
+	 * Invoked when a person has been added to the iCasa Simulator.
+	 * 
+	 * @param person The added person.
+	 */
+	public void personAdded(Person person) {
+		// To change body of implemented methods use File | Settings | File Templates.
+	}
 
-    /**
-     * Invoked when a person has been removed to the iCasa Simulator.
-     *
-     * @param person The removed peron.
-     */
-    public void personRemoved(Person person) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+	/**
+	 * Invoked when a person has been removed to the iCasa Simulator.
+	 * 
+	 * @param person The removed peron.
+	 */
+	public void personRemoved(Person person) {
+		// To change body of implemented methods use File | Settings | File Templates.
+	}
 
-    /**
-     * Invoked when a person has been moved, to see the new position invoke the
-     * <code>getCenterAbsolutePosition()</code> method.
-     *
-     * @param person      The moved person.
-     * @param oldPosition The last position center absolute position.
-     */
-    public void personMoved(Person person, Position oldPosition) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+	/**
+	 * Invoked when a person has been moved, to see the new position invoke the <code>getCenterAbsolutePosition()</code>
+	 * method.
+	 * 
+	 * @param person The moved person.
+	 * @param oldPosition The last position center absolute position.
+	 */
+	public void personMoved(Person person, Position oldPosition) {
+		listenOldPosition = oldPosition;
+	}
 
-    /**
-     * Invoked when a person has been attached to a
-     *
-     * @param person
-     * @param device
-     */
-    public void personDeviceAttached(Person person, LocatedDevice device) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+	/**
+	 * Invoked when a person has been attached to a
+	 * 
+	 * @param person
+	 * @param device
+	 */
+	public void personDeviceAttached(Person person, LocatedDevice device) {
+		// To change body of implemented methods use File | Settings | File Templates.
+	}
 
-    /**
-     * @param person
-     * @param device
-     */
-    public void personDeviceDetached(Person person, LocatedDevice device) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+	/**
+	 * @param person
+	 * @param device
+	 */
+	public void personDeviceDetached(Person person, LocatedDevice device) {
+		// To change body of implemented methods use File | Settings | File Templates.
+	}
+
+	public Position getOldPosition() {
+		return listenOldPosition;
+	}
+
 }
