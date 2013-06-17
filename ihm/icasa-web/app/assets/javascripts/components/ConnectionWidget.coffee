@@ -53,15 +53,22 @@ define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) -
         @gatewayUrl = usedURL;
 
       updateButton: () ->
-        connected = false;
+        modelConnected = false;
         if (@gatewayConnectionMgr?)
-          connected = @gatewayConnectionMgr.isConnected();
+          modelConnected = @gatewayConnectionMgr.isConnected();
+
+        notifConnected = false;
+        if (@gatewayConnectionMgr?)
+          notifConnected = @gatewayConnectionMgr.isRemoteNotifsManaged();
 
         buttonElt = $("#" + @buttonId);
-        buttonElt.removeClass("btn-success btn-danger");
-        if (connected)
+        buttonElt.removeClass("btn-success btn-danger btn-warning");
+        if (modelConnected && notifConnected)
           buttonElt.text("Connected");
           buttonElt.addClass("btn-success");
+        else if (modelConnected)
+          buttonElt.text("Connected Without Notifications");
+          buttonElt.addClass("btn-warning");
         else
           buttonElt.text("Not Connected");
           buttonElt.addClass("btn-danger");
