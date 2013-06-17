@@ -4,22 +4,21 @@
 #
 # @author Thomas Leveque
 ###
-define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMgr) ->
+define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) ->
   return class ConnectionWidget extends HUBU.AbstractComponent
 
       hub: null;
       name: null;
       gatewayUrl: null;
       buttonId: "connection-status-button";
-
-      dataModelMgr: null;
+      connected : false;
+      gatewayConnectionMgr: null;
 
       getComponentName: () ->
         return @name;
 
       start: () ->
         $("#" + @buttonId).removeClass("hidden");
-
 
       stop: () ->
         $("#" + @buttonId).addClass("hidden");
@@ -32,24 +31,31 @@ define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMg
 
         @hub.requireService({
           component: @,
-          contract:  DataModelConnectionMgr,
-          bind:      "bindDataModelMgr"
+          contract:  GatewayConnectionMgr,
+          bind:      "bindGatewayConnectionMgr",
+          unbind:    "unbindGatewayConnectionMgr"
         });
 
-      bindDataModelMgr: (svc) ->
-        @dataModelMgr = svc;
-        @hub.subscribe(@, @dataModelMgr.getConnectionEventTopic(), (event) ->
-          @updateButton();
-        );
+      notifyConnectionEvent : (event) ->
         @updateButton();
+
+      bindGatewayConnectionMgr: (svc) ->
+        @gatewayConnectionMgr = svc;
+        @hub.subscribe(@, @gatewayConnectionMgr.getConnectionEventTopic(), @notifyConnectionEvent);
+        @updateButton();
+
+      unbindGatewayConnectionMgr: (svc) ->
+        @hub.unsubscribe(@, @notifyConnectionEvent);
+        @connected = false;
+        @gatewayConnectionMgr = null;
 
       setGatewayURL: (usedURL) ->
         @gatewayUrl = usedURL;
 
       updateButton: () ->
         connected = false;
-        #if (@dataModelMgr?.isConnected()?)
-        connected = @dataModelMgr.isConnected();
+        if (@gatewayConnectionMgr?)
+          connected = @gatewayConnectionMgr.isConnected();
 
         buttonElt = $("#" + @buttonId);
         buttonElt.removeClass("btn-success btn-danger");
@@ -61,7 +67,7 @@ define(['hubu', 'contracts/DataModelConnectionMgr'], (hub, DataModelConnectionMg
           buttonElt.addClass("btn-danger");
 
       reconnect: () ->
-        @dataModelMgr.reconnect();
+        @gatewayConnectionMgr.reconnect();
 
 
 )
