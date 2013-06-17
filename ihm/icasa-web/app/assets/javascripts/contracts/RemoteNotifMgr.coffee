@@ -5,36 +5,33 @@
 # @author Thomas Leveque
 ###
 define(() ->
-  return {
+  class RemoteNotifMgr
 
-  ###*
-  # Returns the base url of the gateway.
-  # Returned URL does not contain trailing slash.
-  # e.g. http://localhost:8080
-  ###
-  getGatewayBaseURL : () ->
-    # keep it empty
+    ###*
+    # Returns the base url of the gateway.
+    # Returned URL does not contain trailing slash.
+    # e.g. http://localhost:8080
+    ###
+    getGatewayBaseURL : () ->
+      # keep it empty
 
     ###*
     # Returns the root url of the gateway remote access.
     # Returned URL does not contain trailing slash.
     # e.g. http://localhost:8080/icasa
     ###
-  getGatewayRemoteRootURL : () ->
-    # keep it empty
+    getGatewayRemoteRootURL : () ->
+      # keep it empty
 
     ###*
-    # Returns true if access from web app to gateway works.
+    # Returns true if access from gateway to webapp works.
+    # In other words, returne true if remote notifications are currently managed.
     ###
-  isConnected : () ->
-    # keep it empty
+    isConnected : () ->
+      # keep it empty
 
-    ###*
-    # Returns true if remote notifications are currently managed.
-    # In other words, that communication from gateway to web application works.
-    ###
-  isRemoteNotifsManaged : () ->
-    # keep it empty
+    getConnectionEventTopic: () ->
+      return "/icasa/remote/notif/connection";
 
-  }
+  return new RemoteNotifMgr();
 );

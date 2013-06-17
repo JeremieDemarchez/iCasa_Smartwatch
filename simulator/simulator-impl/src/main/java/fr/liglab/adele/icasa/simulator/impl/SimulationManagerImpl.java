@@ -627,6 +627,25 @@ public class SimulationManagerImpl implements SimulationManager {
 			lock.readLock().unlock();
 		}
 	}
+	
+	@Override
+   public Set<Person> getPersonsIntoZone(Zone zone) { 
+		Set<Person> contained = new HashSet<Person>();
+		List<Person> tempPersons = null;
+		lock.readLock().lock();
+		try {
+			tempPersons = Collections.unmodifiableList(new ArrayList<Person>(persons.values()));
+		} finally {
+			lock.readLock().unlock();
+		}		
+		
+		for (Person person : tempPersons) {
+         if (zone.contains(person)) {
+         	contained.add(person);
+         }
+      }
+	   return contained;
+   }
 
 	@Override
 	public void removePersonType(String personType) {
@@ -776,4 +795,6 @@ public class SimulationManagerImpl implements SimulationManager {
 			lock.readLock().unlock();
 		}
 	}
+
+
 }

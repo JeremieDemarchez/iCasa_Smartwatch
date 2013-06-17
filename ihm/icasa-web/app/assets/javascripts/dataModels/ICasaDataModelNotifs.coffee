@@ -137,4 +137,5 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, at
   request.onError = (response) ->
     return console.log "Connection error"
 
-  subSocket = socket.subscribe(request)
+  subSocket = socket.subscribe(request);
+

@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.simulation.test;
 
 import javax.inject.Inject;
 
-import fr.liglab.adele.icasa.location.Zone;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -32,8 +31,11 @@ import org.osgi.framework.BundleContext;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.simulation.test.person.PersonTestListener;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
@@ -45,6 +47,7 @@ public class PersonTest extends AbstractDistributionBaseTest {
 	@Rule
 	public ExpectedException expectedException = ExpectedException.none();
 
+	@Inject
 	private SimulationManager simulationMgr;
 
 	@Before
@@ -64,9 +67,7 @@ public class PersonTest extends AbstractDistributionBaseTest {
 	
 	@Test
 	public void creationPersonWithoutNameTest() {
-		
-		initializeSimulationManager();
-		
+				
 		String personName = "";
 		String personType = "Grandfather";
 
@@ -80,7 +81,6 @@ public class PersonTest extends AbstractDistributionBaseTest {
 	@Test
 	public void creationPersonWithPredefinedTypeTest() {
 		
-		initializeSimulationManager();	
 		
 		String personName = "Patrick";
 		String personType = "Grandfather";
@@ -94,9 +94,7 @@ public class PersonTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void creationPersonWithNotExistingTypeTest() {
-		
-		initializeSimulationManager();
-		
+				
 		String personName = "Patrick";
 		String personType = "Aunt";
 
@@ -107,7 +105,6 @@ public class PersonTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void creationPersonWithoutTypeTest() {
-		initializeSimulationManager();
 		
 		String personName = "Patrick";
 		String personType = "";
@@ -118,9 +115,7 @@ public class PersonTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void movePersonToExistingZoneTest() {
-		
-		initializeSimulationManager();
-		
+				
 		String personName = "Patrick";
 		String personType = "Grandfather";
 
@@ -135,24 +130,41 @@ public class PersonTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void movePersonToPositionTest() {
-		
-		initializeSimulationManager();
-		
+				
 		String personName = "Patrick";
 		String personType = "Grandfather";
 
 		Person person = simulationMgr.addPerson(personName, personType);
+		
+		
 		Position position = new Position(20, 20);
 		person.setCenterAbsolutePosition(position);
 
 		Assert.assertEquals(person.getCenterAbsolutePosition(), position);
 		Assert.assertEquals(personName, person.getName());
 		Assert.assertEquals(personType, person.getPersonType().getName());
+		
+
+		
 	}
 	
-	private void initializeSimulationManager() {
-		simulationMgr = (SimulationManager) getService(context, SimulationManager.class);
-		Assert.assertNotNull(simulationMgr);	
+	@Test
+	public void testPersonListener() {
+		String personName = "Patrick";
+		String personType = "Grandfather";
+
+		Person person = simulationMgr.addPerson(personName, personType);
+		
+		Position position = new Position(20, 20);
+		person.setCenterAbsolutePosition(position);
+		
+		PersonTestListener listener = new PersonTestListener();
+		person.addListener(listener);
+		person.setCenterAbsolutePosition(new Position(40, 40));
+		Assert.assertEquals(position, listener.getOldPosition());
 	}
+	
+	
+	
 
 }

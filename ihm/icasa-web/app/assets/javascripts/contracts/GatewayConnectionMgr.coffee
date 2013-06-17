@@ -5,7 +5,7 @@
 # @author Thomas Leveque
 ###
 define(() ->
-  return {
+  class GatewayConnectionMgr
 
     ###*
     # Returns the base url of the gateway.
@@ -30,11 +30,20 @@ define(() ->
       # keep it empty
 
     ###*
+    # Try to reconnect the web app to the gateway to retrieve data model.
+    ###
+    reconnect : () ->
+      # keep it empty
+
+    ###*
     # Returns true if remote notifications are currently managed.
     # In other words, that communication from gateway to web application works.
     ###
     isRemoteNotifsManaged : () ->
      # keep it empty
 
-  }
+    getConnectionEventTopic: () ->
+      return "/icasa/gateway/connection";
+
+  return new GatewayConnectionMgr();
 );

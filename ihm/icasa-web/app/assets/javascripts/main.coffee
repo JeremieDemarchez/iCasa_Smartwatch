@@ -162,11 +162,11 @@ require([
     'viewModels/iCasaViewModel',
     'dataModels/ICasaDataModelNotifs',
     'components/ConnectionWidget',
-    'contracts/DataModelConnectionMgr',
+    'components/GatewayConnectionMgrImpl',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, DataModelConnectionMgr) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl) ->
 
         #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
         $("#map").resizable({
@@ -229,6 +229,8 @@ require([
         hub.createInstance(ConnectionWidget, {
           name : "GatewayConnectionWidget-1",
           buttonId : "connection-status-button"
+        }).createInstance(GatewayConnectionMgrImpl, {
+          name : "GatewayConnectionMgr-1",
         }).start();
 
         # plugin loading
