@@ -15,14 +15,28 @@
  */
 package fr.liglab.adele.icasa.simulation.test.context;
 
+import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
-public class ConsumerTestDeviceImpl implements ConsumerTestDevice {
 
-	private TestDevice m_device;
+public class SimpleDeviceImpl extends AbstractDevice implements SimulatedDevice, SimpleDevice {
+
+
+	private String m_serialNumber;
 	
-	@Override
-	public String getDeviceLocation() {
-		return m_device.getLocation();
+
+	private String m_location;
+	
+	@Override	
+	public String getSerialNumber() {
+		return m_serialNumber;
 	}
+
+
+	@Override
+	public String getLocation() {
+	   return m_location;
+   }
+
 
 }

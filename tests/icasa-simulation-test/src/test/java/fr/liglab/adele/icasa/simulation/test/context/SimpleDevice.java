@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.simulation.test.context;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-public interface TestDevice extends GenericDevice {
+public interface SimpleDevice extends GenericDevice {
 
 	String getLocation();
 	
