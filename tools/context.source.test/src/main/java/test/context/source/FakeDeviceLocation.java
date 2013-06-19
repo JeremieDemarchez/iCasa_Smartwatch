@@ -15,27 +15,40 @@
  */
 package test.context.source;
 
+import java.util.Random;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
+import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
 @Component(name="FakeDeviceComponent")
 @Provides
-public class FakeDeviceComponent extends AbstractDevice {
+public class FakeDeviceLocation extends AbstractDevice implements SimulatedDevice, FakeDevice {
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 	
-	@ServiceProperty(name = "location", mandatory = true)
+	@ServiceProperty(name = "location", mandatory = true, value="bathroom")
 	private String m_location;
+	
+	@ServiceProperty(name = "rank", mandatory = true, value="100")
+	private int rank = 100;
 	
 	
 	@Override
 	public String getSerialNumber() {
 		return m_serialNumber;
 	}
+
+	@Validate
+	private void star() {
+		rank = (new Random()).nextInt(100);
+   }
+
 
 }

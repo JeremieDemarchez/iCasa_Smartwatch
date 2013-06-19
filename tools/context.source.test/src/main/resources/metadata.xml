@@ -6,6 +6,8 @@
   governing permissions and limitations under the License. -->
 <ipojo xmlns="org.apache.felix.ipojo">
 
+
+<!-- 
   <instance component="FakeDeviceComponent" name="FakeDeviceComponent-1">
     <property name="device.serialNumber" value="1234-kitchen" />
     <property name="location" value="kitchen" />
@@ -25,6 +27,8 @@
     <property name="device.serialNumber" value="1234-bedroom" />
     <property name="location" value="bedroom" />
   </instance>
+ -->
+
 
   <instance name="ConsumerFakeDevice-1" component="ConsumerFakeDevice">
     <property name="requires.filters">
@@ -37,6 +41,12 @@
       <property name="dev" value="(location=kitchen)" />
     </property>
   </instance>
+  
+  <instance name="ConsumerFakeDevice-3" component="ConsumerFakeDevice">
+    <property name="requires.filters">
+      <property name="dev" value="(location=bathroom)" />
+    </property>
+  </instance>  
 
   <!-- <instance component="ConsumerFakeDevice" name="ConsumerFakeDevice-0" /> -->
 

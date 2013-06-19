@@ -24,41 +24,39 @@ import org.apache.felix.ipojo.dependency.interceptors.TransformedServiceReferenc
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
-@Component(name="ICasaInterceptor")
-@Provides(properties={@StaticServiceProperty(name="target", value="(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type="java.lang.String")})
+@Component(name = "ICasaTrackingInterceptor")
+@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
 @Instantiate
-public class ICasaInterceptor implements ServiceTrackingInterceptor {
+public class ICasaTrackingInterceptor implements ServiceTrackingInterceptor {
 
-	
-	
 	@Override
-   public void close(DependencyModel model) {
+	public void close(DependencyModel model) {
 		System.out.println("Closing Interceptor :: " + getInstanceName(model));
-   }
+	}
 
 	@Override
-   public void open(DependencyModel model) {
-		System.out.println("Opening Interceptor :: " + getInstanceName(model));	   
-   }
+	public void open(DependencyModel model) {
+		System.out.println("Opening Interceptor :: " + getInstanceName(model));
+	}
 
 	@Override
-   public <S> TransformedServiceReference<S> accept(DependencyModel model, BundleContext context,
-         TransformedServiceReference<S> serviceReference) {
-		System.out.println("Interceptor - Component Instance :: " + getInstanceName(model));
-	   System.out.println("Interceptor - Dependency Filter :: " + model.getFilter());
-	   System.out.println("Interceptor - Service Property :: " + serviceReference.getProperty("location"));
-	   if (getInstanceName(model).equals("ConsumerFakeDevice-2")) {
-	   	 System.out.println("Interceptor - Adding Location Property :: ");
-	   	serviceReference.addProperty("location", "kitchen");
-	   }
-	   
-	   return serviceReference;
-   }
-	
-	
+	public <S> TransformedServiceReference<S> accept(DependencyModel model, BundleContext context,
+	      TransformedServiceReference<S> serviceReference) {
+		System.out.println("-----------------------------------------------------------------------");
+		System.out.println("Tracking Interceptor - Component Instance :: " + getInstanceName(model));
+		System.out.println("Tracking Interceptor - Dependency Filter :: " + model.getFilter());
+		System.out.println("Tracking Interceptor - Service Property :: " + serviceReference.getProperty("location"));		
+		if (getInstanceName(model).equals("ConsumerFakeDevice-2")) {
+			System.out.println("Tracking Interceptor - Adding Location Property ");
+			serviceReference.addProperty("location", "kitchen");
+			return null;
+		}
+		System.out.println("-----------------------------------------------------------------------");
+		return serviceReference;
+	}
+
 	private String getInstanceName(DependencyModel model) {
 		return model.getComponentInstance().getInstanceName();
 	}
-	
 
 }

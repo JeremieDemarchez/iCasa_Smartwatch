@@ -15,22 +15,9 @@
  */
 package test.context.source;
 
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Unbind;
+import fr.liglab.adele.icasa.device.GenericDevice;
 
-@Component(name = "ConsumerFakeDevice")
-public class ConsumerFakeDevice {
+public interface FakeDevice extends GenericDevice {
 
 	
-	@Bind(id = "dev", policy="dynamic-priority")
-	public void bindFakeDevice(FakeDevice device) {
-		System.out.println("--------------> Device Binded ----- " + device.getSerialNumber());
-	}
-
-	@Unbind(id = "dev")
-	public void unbindFakeDevice(FakeDevice device) {
-		System.out.println("--------------> Device Unbinded ----- " + device.getSerialNumber());
-	}
-
 }
