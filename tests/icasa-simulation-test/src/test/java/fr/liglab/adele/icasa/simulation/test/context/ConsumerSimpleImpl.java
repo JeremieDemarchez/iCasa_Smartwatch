@@ -15,31 +15,17 @@
  */
 package fr.liglab.adele.icasa.simulation.test.context;
 
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
-//@Component(name="TestDeviceComponent")
-//@Provides
-public class TestDeviceImpl extends AbstractDevice implements SimulatedDevice, TestDevice {
+public class ConsumerSimpleImpl implements ConsumerSimple {
 
-	//@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
-	private String m_serialNumber;
-	
-	//@ServiceProperty(name = "location", mandatory = true, value="bathroom")
-	private String m_location;
-	
-	//@ServiceProperty(name = "rank", mandatory = true, value="100")
-	private int rank = 100;
-	
-	
-	public String getSerialNumber() {
-		return m_serialNumber;
-	}
+	private SimpleDevice m_device;
 
-
-	public String getLocation() {
-	   return m_location;
+	@Override
+	public String getDeviceLocation() {
+		  return m_device.getLocation();
    }
 
+
+	
 
 }

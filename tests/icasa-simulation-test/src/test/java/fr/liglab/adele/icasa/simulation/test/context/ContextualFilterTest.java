@@ -62,7 +62,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 	@Inject
 	private SimulationManager simulationMgr;
 	
-	private ConsumerTestDevice consumerApp;
+	private ConsumerSimple consumerApp;
 	
 	
 
@@ -85,10 +85,10 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		try {
 			PrimitiveComponentType deviceCT = new PrimitiveComponentType()
 			      .setBundleContext(context)
-			      .setClassName(TestDeviceImpl.class.getName())
+			      .setClassName(SimpleDeviceImpl.class.getName())
 			      .addService(
 			            new Service()
-			                  .setSpecification(TestDevice.class.getName())
+			                  .setSpecification(SimpleDevice.class.getName())
 			                  .addProperty(new ServiceProperty().setName("location").setField("m_location"))
 			                  .addProperty(new ServiceProperty().setName("device.serialNumber").setField("m_serialNumber")));
 
@@ -114,7 +114,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 			
 
 			PrimitiveComponentType appCT = new PrimitiveComponentType().setBundleContext(context)
-			      .setClassName(ConsumerTestDeviceImpl.class.getName())
+			      .setClassName(ConsumerSimpleImpl.class.getName())
 			      .addDependency(new Dependency().setField("m_device").setFilter("(location=${person.paul.location})"))
 			      .addService(new Service());
 
@@ -154,7 +154,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		simulationMgr.addPerson("paul", "Boy");
 		simulationMgr.setPersonZone("paul", "kitchen");
 
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);
 		
 		Assert.assertNotNull(consumerApp);
 		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
@@ -170,7 +170,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 
 		simulationMgr.setPersonZone("paul", "livingroom");
 
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 
 		Assert.assertNull(consumerApp);		
 	}
@@ -183,12 +183,12 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		simulationMgr.addPerson("paul", "Boy");
 
 		simulationMgr.setPersonZone("paul", "kitchen");
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 		Assert.assertNotNull(consumerApp);		
 		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
 		
 		simulationMgr.setPersonZone("paul", "bathroom");
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 		Assert.assertNotNull(consumerApp);
 		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
 				
@@ -202,12 +202,12 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		simulationMgr.addPerson("paul", "Boy");
 
 		simulationMgr.setPersonZone("paul", "kitchen");
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 		Assert.assertNotNull(consumerApp);		
 		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
 		
 		simulationMgr.setPersonZone("paul", "livingroom");
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 		Assert.assertNull(consumerApp);
 				
 	}	
@@ -224,7 +224,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		simulationMgr.setPersonZone("paul", "kitchen");
 		simulationMgr.setPersonZone("amelie", "kitchen");
 
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 
 		Assert.assertNotNull(consumerApp);			
 		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
@@ -238,7 +238,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		simulationMgr.addPerson("amelie", "Girl");
 		simulationMgr.setPersonZone("amelie", "livingroom");
 
-		consumerApp = (ConsumerTestDevice) getService(context, ConsumerTestDevice.class);		
+		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
 		Assert.assertNull(consumerApp);						
 	}	
 	
