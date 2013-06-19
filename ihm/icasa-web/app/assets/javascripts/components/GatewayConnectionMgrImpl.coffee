@@ -37,12 +37,12 @@ define(['hubu', 'contracts/GatewayConnectionMgr', 'contracts/DataModelConnection
         bind:      "bindDataModelConnectionMgr",
         unbind:    "unbindDataModelConnectionMgr"
       });
-#      @hub.requireService({
-#        component: @,
-#        contract:  RemoteNotifMgr,
-#        bind:      "bindRemoteNotifMgr",
-#        unbind:    "unbindRemoteNotifMgr"
-#      });
+      @hub.requireService({
+        component: @,
+        contract:  RemoteNotifMgr,
+        bind:      "bindRemoteNotifMgr",
+        unbind:    "unbindRemoteNotifMgr"
+      });
       @hub.provideService({
         component: @,
         contract: GatewayConnectionMgr
@@ -117,6 +117,7 @@ define(['hubu', 'contracts/GatewayConnectionMgr', 'contracts/DataModelConnection
 
     reconnect: () ->
       @gatewayConnectionMgr.reconnect();
+      @remoteNotifConnectionMgr.reconnect();
 
 
 )

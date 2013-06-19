@@ -1,5 +1,5 @@
 # @author Thomas Leveque
-define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, atmosphere, DataModel) ->
+define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/RemoteNotifMgr", 'domReady'], ($, atmosphere, DataModel, hub, RemoteNotifMgr) ->
 
   serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
 
@@ -22,13 +22,6 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, at
     fallbackTransport: "long-polling"
     dropAtmosphereHeaders: true
     attachHeadersAsQueryString: true
-
-  request.onOpen = (response) ->
-    transport = response.transport
-    console.log("Connection opened using " + transport)
-
-  request.onReconnect = (request, response) ->
-    socket.info "Reconnecting"
 
   locateModel = (collection, requiredId, customId)->
       returnedModel = undefined;
@@ -131,11 +124,78 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'domReady'], ($, at
       if ((script != null) && (script != undefined))
         DataModel.collections.scripts.remove(script);
 
-  request.onClose = (response) ->
-    return console.log "Connection closed"
 
-  request.onError = (response) ->
-    return console.log "Connection error"
+  # component that will manage remote notification connections
+  class RemoteNotifMgrImpl
+    hub : null;
+    name : null;
+    connected : false;
+    url : null;
+    subSocket : null;
 
-  subSocket = socket.subscribe(request);
+    getComponentName: () ->
+      return @name;
+
+    configure: (theHub, configuration) =>
+      @hub = theHub;
+      @connected = false;
+      if (config?.name?)
+        @name = config.name;
+      if (config?.url?)
+        @url = config.url;
+
+      @hub.provideService({
+      component: @,
+      contract: RemoteNotifMgr
+      });
+
+    setURL : (usedURL) =>
+      @url = usedURL;
+
+    getConnectionEventTopic : () ->
+      return RemoteNotifMgr.getConnectionEventTopic();
+
+    setConnected : (connectedFlag) =>
+      if (@connected != connectedFlag)
+        @connected = connectedFlag;
+        hub.publish(@, @getConnectionEventTopic(), {connected : connectedFlag});
+
+    isConnected : () =>
+      @connected;
+
+    reconnect : () =>
+      #cleanup state
+      if (@subSocket?)
+        @subSocket.unsubscribe();
+      @setConnected(false);
+
+      request.onOpen = (response) =>
+        @setConnected(true);
+        transport = response.transport
+        console.log("Connection opened using " + transport)
+
+      request.onReconnect = (request, response) =>
+        @setConnected(true);
+        socket.info "Reconnecting"
+
+      request.onClose = (response) =>
+        @setConnected(false);
+        return console.log "Connection closed"
+
+      request.onError = (response) =>
+        @setConnected(false);
+        return console.log "Connection error"
+
+      subSocket = socket.subscribe(request);
+
+    start : () =>
+      @reconnect();
+
+    stop : () =>
+      if (@subSocket?)
+        @subSocket.unsubscribe();
+      @connected = false;
+
+
+  return hub.createInstance(RemoteNotifMgrImpl, {name : "RemoteNotifMgrImpl-1", url : requestUrl});
 

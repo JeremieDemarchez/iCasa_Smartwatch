@@ -172,6 +172,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
              @reconnect();
 
            stop : () =>
+             @connected = false;
 
          hub.createInstance(DataModelMgrImpl, {name : "DataModelMgrImpl-1", url : serverUrl});
 
