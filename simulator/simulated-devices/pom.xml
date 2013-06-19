@@ -32,6 +32,7 @@
 		<module>light</module>
 		<module>power</module>
 		<module>presence</module>
+      <module>motion</module>
 		<module>sound</module>
 		<module>temperature</module>
 		<module>gasSensor</module>
