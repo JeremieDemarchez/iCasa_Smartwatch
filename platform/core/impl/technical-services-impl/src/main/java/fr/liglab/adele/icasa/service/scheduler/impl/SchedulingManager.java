@@ -40,7 +40,6 @@ public class SchedulingManager {
 
     @Bind(aggregate = true, optional = true)
     public void bindRunnable(ScheduledRunnable runnable) {
-        System.out.println("Register scheduled runnable" + runnable.getGroup());
         synchronized (this) {
             Group group = groups.get(runnable.getGroup());
             if (group == null) {
@@ -70,7 +69,6 @@ public class SchedulingManager {
 
     @Bind(aggregate = true, optional = true)
     public void bindPeriodicRunnable(PeriodicRunnable runnable) {
-        System.out.println("Register periodic runnable" + runnable.getGroup());
         synchronized (this) {
             Group group = groups.get(runnable.getGroup());
             if (group == null) {
@@ -100,11 +98,9 @@ public class SchedulingManager {
 
     @Validate
     public void start(){
-        System.out.println("********Starting scheduler manager" );
     }
     @Invalidate
     public void stop() {
-        logger.info("Stopping");
         for (Group group : groups.values()) {
             group.close();
         }

@@ -61,8 +61,6 @@ public class Group  {
     public synchronized boolean submit(ScheduledRunnable runnable) {
         TaskReferenceImpl taskRef = new OneShotTaskImpl(clock, runnable, new Long(runnable.getExecutionDate()));
         executor.addTask(taskRef);
-        System.out.println("Expected time: " + new Date(runnable.getExecutionDate()));
-        System.out.println("Registration at: " + new Date(taskRef.getRegistrationTime()));
         jobs.put(runnable, taskRef);
         return true;
     }
@@ -75,8 +73,6 @@ public class Group  {
      */
     public synchronized boolean submit(PeriodicRunnable runnable) {
         TaskReferenceImpl taskRef = new PeriodicTaskImpl(clock, runnable, new Long(runnable.getPeriod()));
-        System.out.println("Expected time at: " + new Date(taskRef.getNextExecutionTime()));
-        System.out.println("Registration at: " + new Date(taskRef.getRegistrationTime()));
         executor.addTask(taskRef);
         jobs.put(runnable, taskRef);
         return true;
