@@ -78,7 +78,7 @@ public class ZoneJSON {
             if (json.has(POSITION_BOTTOMZ_PROP)){
                 zone.setBottomZ(json.getInt(POSITION_BOTTOMZ_PROP));
             } else {
-                zone.setBottomY(Zone.DEFAULT_Z_BOTTOM);
+                zone.setBottomZ(Zone.DEFAULT_Z_BOTTOM);
             }
             if (json.has(POSITION_TOPZ_PROP)){
                 zone.setTopZ(json.getInt(POSITION_TOPZ_PROP));
