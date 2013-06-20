@@ -30,7 +30,7 @@ import org.osgi.framework.ServiceReference;
 
 @Component(name = "ICasaRankingInterceptor")
 @Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
-@Instantiate
+//@Instantiate
 public class ICasaRankingInterceptor implements ServiceRankingInterceptor {
 
 	@Override

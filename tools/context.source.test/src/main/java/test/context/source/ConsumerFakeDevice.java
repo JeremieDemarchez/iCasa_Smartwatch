@@ -19,17 +19,19 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Unbind;
 
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+
 @Component(name = "ConsumerFakeDevice")
 public class ConsumerFakeDevice {
 
-	
-	@Bind(id = "dev", policy="dynamic-priority")
-	public void bindFakeDevice(FakeDevice device) {
+	//policy="dynamic-priority"
+	@Bind(id = "dev", aggregate=true)
+	public void bindFakeDevice(BinaryLight device) {
 		System.out.println("--------------> Device Binded ----- " + device.getSerialNumber());
 	}
 
 	@Unbind(id = "dev")
-	public void unbindFakeDevice(FakeDevice device) {
+	public void unbindFakeDevice(BinaryLight device) {
 		System.out.println("--------------> Device Unbinded ----- " + device.getSerialNumber());
 	}
 
