@@ -50,6 +50,8 @@ define(['hubu', 'contracts/GatewayConnectionMgr', 'contracts/DataModelConnection
 
     setModelConnected : (connectedFlag) =>
       if (@modelConnected != connectedFlag)
+        if (connectedFlag)
+            @remoteNotifConnectionMgr.reconnect()
         @modelConnected = connectedFlag;
         @hub.publish(@, @getConnectionEventTopic(), {"modelConnected" : connectedFlag, "notifsConnected" : @notifsConnected});
 
