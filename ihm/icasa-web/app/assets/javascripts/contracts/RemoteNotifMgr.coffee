@@ -12,8 +12,12 @@ define(() ->
     # In other words, returne true if remote notifications are currently managed.
     ###
     isConnected : () ->
-      # keep it empty
-
+    # keep it empty
+    ###*
+    # Try to reconnect the web app to the gateway to retrieve events.
+    ###
+    reconnect : () ->
+    # keep it empty
     getConnectionEventTopic: () ->
       return "/icasa/remote/notif/connection";
 

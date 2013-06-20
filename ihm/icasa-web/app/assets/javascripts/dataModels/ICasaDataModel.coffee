@@ -1,6 +1,6 @@
 
-define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnectionMgr', 'domReady'],
-     ($, Backbone, _, hub, DataModelConnectionMgr) ->
+define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnectionMgr','contracts/RemoteNotifMgr', 'domReady'],
+     ($, Backbone, _, hub, DataModelConnectionMgr, RemoteNotifMgr) ->
 
          gatewayURL = $("#map").attr("gatewayURL").replace(/\/$/, "");
 
@@ -89,7 +89,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
 
          #initial backend and frontend information
          DataModel.models.backend = new DataModel.Models.Backend();
-
+         DataModel.models.backend.lastConnection = new Date();#get initial Date
          DataModel.models.frontend = new DataModel.Models.Frontend();
 
          # initial import of data model
@@ -106,7 +106,11 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
          DataModel.collections.devices = new DataModel.Collections.Devices();
 
          DataModel.collections.deviceTypes = new DataModel.Collections.SimulatedDeviceTypes();
-
+         #Override Backbone sync to get last call time
+         oldSync = Backbone.sync;
+         Backbone.sync = (method, model, options) ->
+           DataModel.models.backend.lastConnection = new Date();
+           oldSync(method, model,options);
          # component that will manage remote Data model connections
          class DataModelMgrImpl
            hub : null;
@@ -168,8 +172,20 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
              DataModel.collections.devices.fetch(connectionCallback);
              DataModel.collections.deviceTypes.fetch(connectionCallback);
 
+           checkBackendConnection :()=>
+             now = new Date().getTime();
+             lastConnection = DataModel.models.backend.lastConnection.getTime();
+             if (now > lastConnection + 5000)
+                DataModel.models.backend.fetch
+                    success: (data) =>
+                        @setConnected(true);
+                    error: (err) =>
+                        @setConnected(false);
+                        throw err;
+
            start : () =>
              @reconnect();
+             setInterval(@checkBackendConnection, 5000);
 
            stop : () =>
              @connected = false;
