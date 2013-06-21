@@ -26,7 +26,7 @@
 
     <!-- Project Descrkiption -->
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>root</artifactId>
+    <artifactId>platform.root</artifactId>
     <packaging>pom</packaging>
     <name>${productName} :: ${projectName}</name>
 
