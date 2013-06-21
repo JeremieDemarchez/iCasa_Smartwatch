@@ -18,8 +18,6 @@ package fr.liglab.adele.m2mappbuilder.upnp.photometer.proxy;
 import java.util.Dictionary;
 import java.util.Properties;
 
-import fr.liglab.adele.icasa.device.DevicePropertyEvent;
-import fr.liglab.adele.icasa.location.LocatedDevice;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceRegistration;
@@ -29,13 +27,10 @@ import org.osgi.service.upnp.UPnPEventListener;
 import org.osgi.service.upnp.UPnPService;
 import org.osgi.service.upnp.UPnPStateVariable;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.device.DevicePropertyEvent;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.ZoneListener;
 
 public class UPnPPhotometerProxyImpl extends AbstractDevice implements Photometer {
 
