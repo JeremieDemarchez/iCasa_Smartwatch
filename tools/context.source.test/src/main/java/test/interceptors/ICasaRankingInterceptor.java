@@ -28,8 +28,8 @@ import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 
-@Component(name = "ICasaRankingInterceptor")
-@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
+//@Component(name = "ICasaRankingInterceptor")
+//@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
 //@Instantiate
 public class ICasaRankingInterceptor implements ServiceRankingInterceptor {
 

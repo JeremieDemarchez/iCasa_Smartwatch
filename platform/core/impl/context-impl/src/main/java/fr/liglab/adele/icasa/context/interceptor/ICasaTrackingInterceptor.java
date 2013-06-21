@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package test.interceptors;
+package fr.liglab.adele.icasa.context.interceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,9 +37,16 @@ import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 
-// @Component(name = "ICasaTrackingInterceptor")
-// @Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
-// @Instantiate
+
+/**
+ * This interceptor adds context (location) to iCasa devices.
+ * 
+ * @author Gabriel Pedraza Ferreira
+ *
+ */
+@Component(name = "ICasaTrackingInterceptor")
+@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
+@Instantiate
 public class ICasaTrackingInterceptor extends AbstractLocatedDeviceListener implements ServiceTrackingInterceptor {
 
 	/**
