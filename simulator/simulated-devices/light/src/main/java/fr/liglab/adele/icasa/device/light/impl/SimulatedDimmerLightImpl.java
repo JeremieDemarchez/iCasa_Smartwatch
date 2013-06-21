@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.icasa.device.light.impl;
 
-import java.util.List;
-
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
@@ -25,7 +23,6 @@ import org.osgi.framework.Constants;
 
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
 /**
@@ -40,17 +37,12 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	@ServiceProperty(name = DimmerLight.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	/**
-	 * Influence zone corresponding to the zone with highest level where the device is located
-	 */
-	private Zone m_zone;
-
 	public SimulatedDimmerLightImpl() {
 		super();
-        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 100.0d);
 		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
-		
+
 	}
 
 	@Override
@@ -68,18 +60,18 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 
 	@Override
 	public synchronized double setPowerLevel(double level) {
-		if (level < 0.0d || level > 1.0d || Double.isNaN(level)) 
+		if (level < 0.0d || level > 1.0d || Double.isNaN(level))
 			throw new IllegalArgumentException("Invalid power level : " + level);
-		//Add by jeremy
+		// Add by jeremy
 		setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, level);
 
 		return level;
 	}
-	
+
 	@Override
 	public double getMaxPowerLevel() {
 		Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
-		if (maxLevel==null)
+		if (maxLevel == null)
 			return 0;
 		return maxLevel;
 	}

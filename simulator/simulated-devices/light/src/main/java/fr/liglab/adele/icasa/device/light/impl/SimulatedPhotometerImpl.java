@@ -41,9 +41,6 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 	@ServiceProperty(name = Photometer.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	// @LogConfig
-	// private ComponentLogger m_logger;
-
 	private Zone m_zone;
 
 	private PhotometerZoneListener listener = new PhotometerZoneListener();
