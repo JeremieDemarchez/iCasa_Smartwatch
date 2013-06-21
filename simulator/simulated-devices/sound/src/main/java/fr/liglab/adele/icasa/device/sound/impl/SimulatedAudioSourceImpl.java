@@ -21,15 +21,14 @@ import java.security.SecureRandom;
 import java.util.List;
 import java.util.Random;
 
-import fr.liglab.adele.icasa.device.DevicePropertyEvent;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
 
-import fr.liglab.adele.icasa.device.DeviceEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.device.DevicePropertyEvent;
 import fr.liglab.adele.icasa.device.sound.AudioSource;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.location.Zone;
