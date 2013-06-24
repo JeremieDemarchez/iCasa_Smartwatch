@@ -13,18 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulation.test.context;
+package fr.liglab.adele.icasa.simulation.test.interceptor;
+
+import fr.liglab.adele.icasa.device.light.BinaryLight;
 
 
-public class ConsumerSimpleImpl implements ConsumerSimple {
+public class BinaryLightConsumerImpl implements BinaryLightConsumer {
 
-	private SimpleDevice m_device;
+	private BinaryLight m_device;
 
-	@Override
-	public String getDeviceLocation() {
-		  return m_device.getLocation();
+	public String getDeviceId() {
+		if (m_device!=null)
+			return m_device.getSerialNumber();
+	   return null;
    }
-
 
 	
 

@@ -15,21 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulation.test.context;
 
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-
 import javax.inject.Inject;
 
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
-import org.apache.felix.ipojo.api.Dependency;
-import org.apache.felix.ipojo.api.PrimitiveComponentType;
-import org.apache.felix.ipojo.api.Service;
-import org.apache.felix.ipojo.api.ServiceProperty;
+import org.apache.felix.ipojo.ContextSource;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -37,16 +25,14 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.CompositeOption;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 @RunWith(PaxExam.class)
@@ -61,27 +47,17 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 
 	@Inject
 	private SimulationManager simulationMgr;
-	
-	private ConsumerSimple consumerApp;
-	
-	
 
-	@Override
-	public List<Option> config() {
-		List<Option> options = super.config();
-		options.add(ipojoApiBundles());
-		return options;
-	}
+	private ContextSource contextSource;
 
-	protected CompositeOption ipojoApiBundles() {
-		CompositeOption apamCoreConfig = new DefaultCompositeOption(mavenBundle().groupId("org.apache.felix")
-		      .artifactId("org.apache.felix.ipojo.api").versionAsInProject());
-		return apamCoreConfig;
-	}
+	//private ConsumerSimple consumerApp;
+
+	// private PrimitiveComponentType appCT;
 
 	@Before
 	public void setUp() {
 		waitForStability(context);
+		/*
 		try {
 			PrimitiveComponentType deviceCT = new PrimitiveComponentType()
 			      .setBundleContext(context)
@@ -93,7 +69,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 			                  .addProperty(new ServiceProperty().setName("device.serialNumber").setField("m_serialNumber")));
 
 			Dictionary<String, String> conf = new Hashtable<String, String>();
-			
+
 			// Creation of device in kitchen
 			conf.put("location", "kitchen");
 			conf.put("device.serialNumber", "kitchen-1234");
@@ -105,36 +81,26 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 			conf.put("device.serialNumber", "bathroom-1234");
 			conf.put("instance.name", "TestDevice-bathroom-1234");
 			deviceCT.createInstance(conf);
-			
+
 			// Creation of device in bedroom
 			conf.put("location", "bedroom");
 			conf.put("device.serialNumber", "bedroom-1234");
 			conf.put("instance.name", "TestDevice-bedroom-1234");
 			deviceCT.createInstance(conf);
-			
 
-			PrimitiveComponentType appCT = new PrimitiveComponentType().setBundleContext(context)
+			appCT = new PrimitiveComponentType().setBundleContext(context)
 			      .setClassName(ConsumerSimpleImpl.class.getName())
 			      .addDependency(new Dependency().setField("m_device").setFilter("(location=${person.paul.location})"))
 			      .addService(new Service());
 
-
-			
-			appCT.createInstance("Test-Consumer");
-			
-
-			
-
 		} catch (UnacceptableConfiguration e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (MissingHandlerException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (ConfigurationException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
+		*/
 	}
 
 	@After
@@ -147,107 +113,57 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 	}
 
 	@Test
-	public void personInExistingDeviceRoomTest() {
-
-		prepareSimulationEnvironment();
-
-		simulationMgr.addPerson("paul", "Boy");
-		simulationMgr.setPersonZone("paul", "kitchen");
-
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);
-		
-		Assert.assertNotNull(consumerApp);
-		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
-		
+	public void filterInPlatformTest() {
+		contextSource = getContextSource();
+		Assert.assertNotNull(contextSource);
 	}
-	
-	@Test
-	public void personInNotExistingDeviceRoomTest() {
 
+	@Test
+	public void personContextModifiedTest() {
 		prepareSimulationEnvironment();
 
-		simulationMgr.addPerson("paul", "Boy");
-
-		simulationMgr.setPersonZone("paul", "livingroom");
-
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-
-		Assert.assertNull(consumerApp);		
+		Person person = simulationMgr.addPerson("paul", "Boy");
+		simulationMgr.setPersonZone("paul", "kitchen");
+		contextSource = getContextSource();
+		Assert.assertNotNull(contextSource);
+		Assert.assertEquals(person.getLocation(), contextSource.getProperty("person.paul.location"));
 	}
-	
-	@Test
-	public void personMovingInTwoExistingDeviceRoomTest() {
 
+	@Test
+	public void personContextModifiedTwiceTest() {
 		prepareSimulationEnvironment();
 
-		simulationMgr.addPerson("paul", "Boy");
-
+		Person person = simulationMgr.addPerson("paul", "Boy");
 		simulationMgr.setPersonZone("paul", "kitchen");
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-		Assert.assertNotNull(consumerApp);		
-		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
-		
-		simulationMgr.setPersonZone("paul", "bathroom");
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-		Assert.assertNotNull(consumerApp);
-		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
-				
-	}	
-	
-	@Test
-	public void personMovingInTwoNotExistingDeviceRoomTest() {
-
-		prepareSimulationEnvironment();
-
-		simulationMgr.addPerson("paul", "Boy");
-
-		simulationMgr.setPersonZone("paul", "kitchen");
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-		Assert.assertNotNull(consumerApp);		
-		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
-		
+		contextSource = getContextSource();
+		Assert.assertNotNull(contextSource);
+		Assert.assertEquals(person.getLocation(), contextSource.getProperty("person.paul.location"));
 		simulationMgr.setPersonZone("paul", "livingroom");
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-		Assert.assertNull(consumerApp);
-				
-	}	
+		Assert.assertEquals(person.getLocation(), contextSource.getProperty("person.paul.location"));
+	}
 
-	
 	@Test
-	public void twoPersonInDeviceRoomTest() {
-
+	public void otherPersonContextModifiedTest() {
 		prepareSimulationEnvironment();
 
-		simulationMgr.addPerson("paul", "Boy");
-		simulationMgr.addPerson("amelie", "Girl");
+		simulationMgr.addPerson("pierre", "Boy");
+		simulationMgr.setPersonZone("pierre", "kitchen");
+		contextSource = getContextSource();
+		Assert.assertNotNull(contextSource);
+		Assert.assertNull(contextSource.getProperty("person.paul.location"));
+	}
 
-		simulationMgr.setPersonZone("paul", "kitchen");
-		simulationMgr.setPersonZone("amelie", "kitchen");
+	private ContextSource getContextSource() {
+		ContextSource contextSource = (ContextSource) getService(context, ContextSource.class,
+		      "(factory.name=ICasaContextSourceBuilder)");
+		return contextSource;
+	}
 
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-
-		Assert.assertNotNull(consumerApp);			
-		Assert.assertEquals(simulationMgr.getPerson("paul").getLocation(), consumerApp.getDeviceLocation());
-	}	
-	
-	
-	@Test
-	public void wrongPersonInDeviceRoomTest() {
-		prepareSimulationEnvironment();
-		
-		simulationMgr.addPerson("amelie", "Girl");
-		simulationMgr.setPersonZone("amelie", "livingroom");
-
-		consumerApp = (ConsumerSimple) getService(context, ConsumerSimple.class);		
-		Assert.assertNull(consumerApp);						
-	}	
-	
 	private void prepareSimulationEnvironment() {
 		simulationMgr.createZone("kitchen", new Position(0, 0), 50);
 		simulationMgr.createZone("bathroom", new Position(0, 100), 50);
 		simulationMgr.createZone("livingroom", new Position(0, 200), 50);
 		simulationMgr.createZone("bedroom", new Position(0, 300), 50);
 	}
-	
-	
+
 }

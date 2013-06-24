@@ -13,11 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulation.test.context;
+package fr.liglab.adele.icasa.simulation.test.interceptor;
 
-public interface ConsumerSimple {
 
+
+public interface BinaryLightConsumer {
+
+	public String getDeviceId();
 	
-	public String getDeviceLocation();
-	
+
 }

@@ -48,7 +48,7 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
  * @author Gabriel Pedraza Ferreira
  * 
  */
-@Component(name = "IcasaContextSourceBuilder")
+@Component(name = "ICasaContextSourceBuilder")
 @Provides
 @Instantiate
 public class ICasaContextSourceBuilder implements ContextSource {
