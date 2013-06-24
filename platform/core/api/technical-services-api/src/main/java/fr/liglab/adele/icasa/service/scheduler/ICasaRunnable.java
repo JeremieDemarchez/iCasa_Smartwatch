@@ -16,15 +16,14 @@
 package fr.liglab.adele.icasa.service.scheduler;
 
 /**
- * User: torito
- * Date: 6/14/13
- * Time: 4:36 PM
+ * This Interface is the parent interface allowing to schedule tasks using the
+ * iCasa Clock {@link fr.liglab.adele.icasa.clock.Clock}
  */
 public interface ICasaRunnable extends Runnable{
     /**
      * Gets the job's group.
      * Jobs sharing a group use the same thread pool.
-     * @return the job's group
+     * @return the job's group name.
      */
     public String getGroup();
 }
