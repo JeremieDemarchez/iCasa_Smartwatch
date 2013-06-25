@@ -105,11 +105,14 @@ public class InterceptorTest extends IPojoApiBaseTest {
 		
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "livingroom");
 		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);
-		Assert.assertNull(consumerApp);
-		
+		Assert.assertNull(consumerApp);		
 	}
 	
 
+	/**
+	 * Creates a component type and instance of class BinaryLightConsumerImpl
+	 * @param filter
+	 */
 	private void createInstanceConsumer(String filter) {
 		PrimitiveComponentType appCT = new PrimitiveComponentType().setBundleContext(context)
 		      .setClassName(BinaryLightConsumerImpl.class.getName())
@@ -125,6 +128,9 @@ public class InterceptorTest extends IPojoApiBaseTest {
 		}
 	}
 
+	/**
+	 * Creates a basic simulation environment
+	 */
 	private void prepareSimulationEnvironment() {
 		simulationMgr.createZone("kitchen", new Position(0, 0), 50);
 		simulationMgr.createZone("bathroom", new Position(0, 100), 50);
