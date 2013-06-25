@@ -90,9 +90,13 @@
             <item name="REST API" href="rest-api.html"/>
             <item name="Gogo commands" href="gogo-commands.html"/>
             <item name="Device Building Tutorial" href="building-device.html"/>
+            <item name="Command Building Tutorial" href="building-device.html"/>
             <item name="Javadoc" href="api.html"/>
 		</menu>		
-		
+      <menu name="Advanced tutorials">
+         <item name="Building iCasa Commands" href="building-command.html"/>
+       </menu>
+      
         <menu name="Simulated Devices">
            <item name="Lights" href="lights.html"/>
            <item name="Heater/Cooler" href="heater.html"/>
