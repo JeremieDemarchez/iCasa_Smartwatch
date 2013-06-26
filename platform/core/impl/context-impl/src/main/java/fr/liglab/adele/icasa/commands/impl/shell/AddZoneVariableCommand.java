@@ -38,7 +38,7 @@ public class AddZoneVariableCommand extends AbstractCommand {
     private ContextManager contextManager;
 
     public AddZoneVariableCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE}));
+        addSignature(new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE}));
     }
     @Override
     public Object execute(InputStream in, PrintStream out,JSONObject param, Signature signature) throws Exception {

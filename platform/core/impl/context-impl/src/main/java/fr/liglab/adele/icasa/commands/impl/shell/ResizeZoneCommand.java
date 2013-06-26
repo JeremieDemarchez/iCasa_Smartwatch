@@ -49,8 +49,8 @@ public class ResizeZoneCommand extends AbstractCommand {
     private static final String NAME= "resize-zone";
 
     public ResizeZoneCommand(){
-        setSignature(RESIZE);
-        setSignature(RESIZE_WZ);
+        addSignature(RESIZE);
+        addSignature(RESIZE_WZ);
     }
 
     /**

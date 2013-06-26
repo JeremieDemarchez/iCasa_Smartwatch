@@ -46,7 +46,7 @@ public class ShowDeviceInfoCommand extends AbstractCommand {
     private static final String NAME= "show-device";
 
     public ShowDeviceInfoCommand(){
-        setSignature(new Signature(PARAMS));
+        addSignature(new Signature(PARAMS));
     }
 
     /**

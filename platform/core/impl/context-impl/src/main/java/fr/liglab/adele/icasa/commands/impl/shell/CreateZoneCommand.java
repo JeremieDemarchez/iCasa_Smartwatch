@@ -50,8 +50,8 @@ public class CreateZoneCommand extends AbstractCommand {
             ScriptLanguage.X_LENGTH, ScriptLanguage.Z_LENGTH} );
 
     public CreateZoneCommand(){
-        setSignature(CREATE_ZONE);
-        setSignature(CREATE_ZONE_WZ);
+        addSignature(CREATE_ZONE);
+        addSignature(CREATE_ZONE_WZ);
     }
 
 	@Override

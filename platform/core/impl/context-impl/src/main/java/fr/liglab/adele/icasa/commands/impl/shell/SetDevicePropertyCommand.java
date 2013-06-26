@@ -41,7 +41,7 @@ public class SetDevicePropertyCommand extends AbstractCommand {
 
 
     public SetDevicePropertyCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.PROPERTY,
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.PROPERTY,
                 ScriptLanguage.VALUE}));
     }
 

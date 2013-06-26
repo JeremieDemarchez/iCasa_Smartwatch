@@ -37,7 +37,7 @@ public class ModifyZoneVariableCommand extends AbstractCommand {
 	private ContextManager simulationManager;
 
     public ModifyZoneVariableCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE, ScriptLanguage.VALUE}));
+        addSignature(new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE, ScriptLanguage.VALUE}));
     }
 
 	@Override

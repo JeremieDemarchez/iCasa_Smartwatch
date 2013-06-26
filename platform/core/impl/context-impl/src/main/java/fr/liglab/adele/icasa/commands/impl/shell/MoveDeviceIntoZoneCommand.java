@@ -46,7 +46,7 @@ public class MoveDeviceIntoZoneCommand extends AbstractCommand {
 	private ContextManager contextManager;
 
     public MoveDeviceIntoZoneCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.ZONE_ID}));
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.ZONE_ID}));
     }
 
 	@Override

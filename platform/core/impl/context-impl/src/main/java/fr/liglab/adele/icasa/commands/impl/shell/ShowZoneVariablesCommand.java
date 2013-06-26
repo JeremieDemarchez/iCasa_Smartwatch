@@ -48,7 +48,7 @@ public class ShowZoneVariablesCommand extends AbstractCommand {
     private static final String NAME= "show-zone";
 
     public ShowZoneVariablesCommand(){
-        setSignature(new Signature(PARAMS));
+        addSignature(new Signature(PARAMS));
     }
 
     /**

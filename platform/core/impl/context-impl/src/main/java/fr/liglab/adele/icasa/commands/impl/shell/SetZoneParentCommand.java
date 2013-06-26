@@ -50,7 +50,7 @@ public class SetZoneParentCommand extends AbstractCommand {
     private static final String NAME= "set-zone-parent";
 
     public SetZoneParentCommand(){
-        setSignature(new Signature(PARAMS));
+        addSignature(new Signature(PARAMS));
     }
 
     /**

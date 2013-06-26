@@ -89,6 +89,6 @@ public interface ICasaCommand {
 	 * 
 	 * @return
 	 */
-	Signature getSignature(int arguments);
+	Signature getSignature(int size);
 
 }

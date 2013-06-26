@@ -47,7 +47,7 @@ public abstract class AbstractCommand implements ICasaCommand {
         }
 	}
 
-    protected void setSignature(Signature signature){
+    protected void addSignature(Signature signature){
         for(Signature sign: signatureList){
             if(sign.getParameters().length == signature.getParameters().length){
                 throw new InstantiationError("Unable to add two signature with the same number of parameters");

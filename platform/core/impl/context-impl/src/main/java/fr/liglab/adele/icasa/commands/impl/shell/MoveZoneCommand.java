@@ -51,8 +51,8 @@ public class MoveZoneCommand extends AbstractCommand {
     private static Signature MOVE_WZ = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y, ScriptLanguage.BOTTOM_Z});
 
     public MoveZoneCommand(){
-        setSignature(MOVE);
-        setSignature(MOVE_WZ);
+        addSignature(MOVE);
+        addSignature(MOVE_WZ);
     }
 
 	@Override

@@ -38,7 +38,7 @@ public class GetGlobalPropertyCommand extends AbstractCommand {
 	private Preferences preferenceService;
 
 	public GetGlobalPropertyCommand() {
-		setSignature(new Signature(new String[] {ScriptLanguage.NAME}));
+		addSignature(new Signature(new String[] {ScriptLanguage.NAME}));
 	}
 
 	@Override

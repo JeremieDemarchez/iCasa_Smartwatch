@@ -56,7 +56,7 @@ public class ShowDevicesCommand extends AbstractCommand {
     }
 
     public ShowDevicesCommand(){
-        setSignature(EMPTY_SIGNATURE);
+        addSignature(EMPTY_SIGNATURE);
     }
 
     @Override
