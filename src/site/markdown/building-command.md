@@ -2,10 +2,11 @@
 
 - [Tutorial Requirements](#Requirements)
 - [iCasa Command Model](#Model)
-- [iCasa Command Interface](#Interface)
+    - [iCasa Command Interface](#Interface)
     - [Command Signature](#Signature)
 - [iCasa Command Implementation](#Implementation)
-    - [Command Parameters](#Parameters)
+    - [Command without parameters](#Implementation_No_Parameters)
+	- [Command with parameters](#Implementation_Parameters)
 - [iCasa Command Usage](#Usage)
 - [Project Packaging](#Packaging)
     - [POM](#POM)
@@ -15,28 +16,28 @@
 
 - OSGi & iPOJO : iCasa is built on top of [OSGi](http://www.osgi.org) platform and [iPOJO](http://felix.apache.org/site/apache-felix-ipojo.html) component model. This tutorial is made using [iPOJO annotations](http://felix.apache.org/site/how-to-use-ipojo-annotations.html). 
 - Maven (Optional) : [Maven](http://maven.apache.org/) tool can be used to build new iCasa commands.
-- JSON: The [JSON](http://www.json.org/) format is used to passed parameters
+- JSON: The [JSON](http://www.json.org/) format is used to passed parameters to iCasa commands
 
 <a name="Model"></a>
 ## iCasa Command Model
 
-iCasa provides an useful architecture, based on the whiteboard pattern, allowing the use of third party commands. This benefits the platform in two main ways:
+iCasa platform provides a command architecture allowing extension by third party commands implementations. This architecture is based on the [OSGi whiteboard pattern](http://www.osgi.org/wiki/uploads/Links/whiteboard.pdf). In this tutorial we show how to add new commands to the iCasa platform.
 
-* first, commands permits to introspect the information of the current simulation.
-* second, commands permits to modify the state of any element in the simulation.
+iCasa Commands could be used two different ways:
 
-Commands could be used by iCasa in two different situations:
+* Using the gogo shell. Interacting with the shell it is possible to call [iCasa commands](./gogo-commands.html).
+* Using iCasa scripts. It is possible to use the commands from an [iCasa script file](./script.html) .
 
-* Using the shell. Interacting with the shell it is possible to call iCasa commands.
-* Using iCasa scripts. It is possible to call the commands from an iCasa script file.
+This benefits the platform in two main ways:
 
-
+* commands allow to introspect the information of the current simulation (usually in the shell mode).
+* commands allow to modify the state of elements in current simulation.
 
 
 <a name="Interface"></a>
-## iCasa Command Interface
+### iCasa Command Interface
 
-iCasa commands must be OSGi services implementing the following ICasaCommand interface. 
+In order to add a new command to the iCasa platform, an OSGi service must be provided by the developer. This service has to implement the _fr.liglab.adele.icasaICasaCommand_ interface, the interface is show below
 
     /**
      * An ICommandService is a service that can be executed with a set of arguments. It can execute a block of code and then
@@ -84,111 +85,149 @@ iCasa commands must be OSGi services implementing the following ICasaCommand int
     	 * 
     	 * @return
     	 */
-    	Signature getSignature(int arguments);
+    	Signature getSignature(int size);
     
     }
 
-
-The most important method is `execute`, which will execute the set of instructions defining the iCasa command.
+* The  _getName()_ method provides the command name (word used in the shell as command).
+* The _getDescription()_ method is called by the platform when users are looking for help of this command. 
+* The _validate(JSONObject param, Signature signature)_ method is invoked to validate parameters provided to the command. The validation is realized against a command signature.
+* The _getSignature(int size)_ must return a command signature of the provided size .
+* The _execute(InputStream in, PrintStream out, JSONObject param)_ will execute the set of instructions defining the iCasa command. This method is called by the platform after invocation of _validate_ method and only if it returned true. The _in_ and _out_ parameter correspond to the standard input stream and output stream. The JSON object _param_ contains the values of command parameters and finally the _signature_ indicates which signature (if several exists) was used.
 
 
 <a name="Signature"></a>
 ### Command Signature
 
-Commands could have more than one signature. That is, it is possible that a command behaves different based on the parameters used when called. However, the signature is based only on the parameters number, since using the shell, the parameters are anonymous.
+An iCasa command __signature__ defines number and order of its parameters. When a command is used in the shell arguments are anonymous, iCasa platform determines the parameter correspondence only based in order. On the other hand, if the command is used in a script file, parameters are determined based on their names.
 
-In the command constructor, the setSignature(...) method should be called in order to register each signature. Even if the command does not receive parameters, an empty signature should be added.
-For example:
+Commands could have more than one signature, however signatures cannot contain the same number of parameters. _fr.liglab.adele.icasa.Signature_ class is presented in the next code snipped. To create a Signature only is necessary to provide an array of string corresponding to the name of parameters in the expected order.
 
-    public MyCommand(){
-        Signature empty = new Signature(new String[0]));//Empty signature
-        Signature oneParam = new Signature(new String[]{"device-id"});//A signature with one parameter.
-        setSignature(empty); 
-        setSignature(oneParam);
-    }
+	public class Signature {
 
-Signatures are used calling commands using the shell and also using the iCasa script files.
+		/**
+		 * The list of parameters for a given iCasaCommand signature.
+		 */
+		private final String[] parameters;
 
-* Using the shell the parameters are anonymous, so the order of the parameters should be respected.
-* Using the scrips, the order is not important, but the parameter name should be respected.
+		public Signature(String[] params) {
+			this.parameters = params;
+		}
+
+		/**
+		 * Get the list of parameters of this signature.
+		 * 
+		 * @return the list of parameters.
+		 */
+		public String[] getParameters() {
+			return parameters;
+		}
+		
+		...
+	}
 
 
 <a name="Implementation"></a>
-## Implementation using an abstract class.
-In order to facilitates the creation of iCasa Commands, an abstract implementation has been made. This facilitates for example the validation of each call. So, it is hardly recommended to extends such abstract class called `fr.liglab.adele.icasa.commands.impl.AbstractCommand`. This abstract class implements the _ICasaCommand_ interface.
+## iCasa Command Implementation
+In order to facilitate the creation of iCasa Commands, the abstract class _fr.liglab.adele.icasa.commands.impl.AbstractCommand_  is provided by the iCasa platform. This class implements the _ICasaCommand_ interface, it implements the _validate_ and _getSignature_ methods.
 
+A command implementation should extend the AbstractCommand and implements the _getName_, _getDescription_ and _execute_ methods. In addition, in the constructor of the implementation class must be defined the signatures of the command using the method _addSignature_. Finally, the implementation class must be annotated with the iPOJO annotations to expose itself as OSGi a service, this service will implement the right interface _ICasaCommand_. 
 
-Using the abstract class, a command should be as follow:
+In order to illustrate how to create iCasa commands will show to different examples, the first one using no parameters, and other using parameters.
 
+<a name="Implementation_No_Parameters"></a>
+### Command without parameters
 
-    package fr.liglab.adele.icasa.zones.command.impl;
+The following command displays the list of current devices in the iCasa platform. It does not take any parameter.
 
-    //Imports section omitted.
-    
-    /**
-    *Prints in the console the list of zones.
-    */
-    @Component(name = "ShowZonesCommand")
-    @Provides
-    @Instantiate(name="show-zones-command")
-    public class ShowZonesCommand extends AbstractCommand {
-    
-    
-        @Requires
-        private ContextManager manager;
-    
-        /**
-        *The command name.
-        */
-        private static final String NAME= "show-zones";
-    
-        public ShowZonesCommand(){
-            setSignature(EMPTY_SIGNATURE); //Signature with empty parameters.
-        }
-    
-        /**
-         * Get the name of the  Script and command gogo.
-         *
-         * @return The command name.
-         */
-        @Override
-        public String getName() {
-            return NAME;
-        }
-    
-        /**
-        * The execution of the command.
-        */
-        @Override
-        public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-            out.println("Zones: ");
-            List<Zone> zones = manager.getZones();
-            for (Zone zone : zones) {
-                out.println("Zone " + zone.getId() + " : " + zone);
-            }
-            return null;
-        }
-        /**
-        * This method should be overrided to be used when displaying the command help.
-        */  
-        @Override
-        public String getDescription(){
-            return "Shows the list of zones.\n\t" + super.getDescription();
-        }
-    }
+		@Component(name = "ShowDevicesCommand")
+		@Provides
+		@Instantiate(name="show-devices-command")
+		public class ShowDevicesCommand extends AbstractCommand {
 
-     
-<a name="Parameters"></a>
-### Command parameters
+			@Requires
+			private ContextManager manager;
 
-The method to implement is `execute`. This method receives four parameters:
+			/**
+			 * Get the name of the  Script and command gogo.
+			 *
+			 * @return The command name.
+			 */
+			@Override
+			public String getName() {
+				return "show-devices";
+			}
 
-* InputStream in: Usually it is the standard input stream.
-* OutputStream out: Usually it is the standard ouptut stream, to print in the console for example the result, or the execution progress.
-* JSONObject param: It is the parameters in a JSON format.
-* Signature signature: It is the signature used when calling the execute.
+			public ShowDevicesCommand(){
+				addSignature(new Signature(new String[0])); // Adding an empty signature, without parameters
+			}
 
-The abstract class has validated that the passed parameters is conformed with the given signature.
+			@Override
+			public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+				out.println("Devices: ");
+				List<LocatedDevice> devices = manager.getDevices();
+				for (LocatedDevice locatedDevice : devices) {
+					out.println("Device " + locatedDevice);
+				}
+				return null;
+			}
+
+			@Override
+			public String getDescription(){
+				return "Shows the list of devices.\n\t" + super.getDescription();
+			}
+
+		}
+
+<a name="Implementation_Parameters"></a>
+### Command with parameters
+
+The following command displays the details of a particular device. 
+
+		@Component(name = "ShowDeviceCommand")
+		@Provides
+		@Instantiate(name = "show-device-command")
+		public class ShowDeviceInfoCommand extends AbstractCommand {
+
+			@Requires
+			private ContextManager simulationManager;
+
+			public ShowDeviceInfoCommand(){
+				addSignature(new Signature(new String[]{"deviceId"})); // Adding a signatue with one parameter named deviceId
+			}
+
+			/**
+			 * Get the name of the  Script and command gogo.
+			 *
+			 * @return The command name.
+			 */
+			@Override
+			public String getName() {
+				return "show-device";
+			}
+
+			@Override
+			public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+				String[] params = signature.getParameters();
+				String deviceId = param.getString(params[0]);
+				out.println("Properties: ");
+				LocatedDevice device = simulationManager.getDevice(deviceId);
+				if (device==null) {
+					throw new IllegalArgumentException("Device ("+ deviceId +") does not exist");
+				}
+				Set<String> properties = device.getProperties();
+				for (String property : properties) {
+					out.println("Property: " + property + " - Value: " +device.getPropertyValue(property));
+				}
+				return null;
+			}
+
+			@Override
+			public String getDescription(){
+				return "Shows the information of a device.\n\t" + super.getDescription();
+			}
+
+		}
 
 <a name="Usage"></a>
 ## iCasa Command Usage
@@ -196,9 +235,8 @@ The abstract class has validated that the passed parameters is conformed with th
 As said before, iCasa Commands has two usages, the first one to be called from the shell, and the other one to be used from an iCasa Script.
 
 ###OSGi Shell
-The `getName()` method returns the command method. This is the name of the command to be called from the shell. The parameters are annonymous, but they must respect the parameter order as described for each signature.
 
-To see the parameter order, we can call the icasa:help command, which will show the command description, as well as the parameters.
+To see the parameter order in the shell, we can call the icasa:help command, which will show the commands description, as well as the parameters list.
 
     g!icasa:help
     

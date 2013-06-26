@@ -136,7 +136,7 @@ Once the device interface defined a implementation class to this device must be 
 	    class ThermometerZoneListener extends BaseZoneListener {
 
 		    @Override
-		    public void zoneVariableModified(Zone zone, String variableName, Object oldValue) {
+		    public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
 
 			    if (m_zone == zone) {
 				    if (!(getFault().equalsIgnoreCase("yes")))
