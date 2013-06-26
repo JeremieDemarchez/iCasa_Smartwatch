@@ -44,7 +44,7 @@ public class RepairDeviceCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public RepairDeviceCommand(){
-        setSignature(new Signature(new String[] { ScriptLanguage.DEVICE_ID }));
+        addSignature(new Signature(new String[] { ScriptLanguage.DEVICE_ID }));
     }
 
 	/**

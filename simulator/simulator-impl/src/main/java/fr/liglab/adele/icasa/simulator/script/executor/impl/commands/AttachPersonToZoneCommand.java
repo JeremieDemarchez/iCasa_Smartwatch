@@ -45,7 +45,7 @@ public class AttachPersonToZoneCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public AttachPersonToZoneCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
+        addSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
     }
 
 	@Override

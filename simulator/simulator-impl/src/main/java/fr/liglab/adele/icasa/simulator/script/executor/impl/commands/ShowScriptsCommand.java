@@ -47,7 +47,7 @@ public class ShowScriptsCommand extends AbstractCommand {
     private static final String NAME= "show-scripts";
 
     public ShowScriptsCommand(){
-        setSignature(EMPTY_SIGNATURE);
+        addSignature(EMPTY_SIGNATURE);
     }
 
     /**

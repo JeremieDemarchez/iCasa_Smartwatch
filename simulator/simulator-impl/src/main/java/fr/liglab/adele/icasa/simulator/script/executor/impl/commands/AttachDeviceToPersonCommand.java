@@ -45,7 +45,7 @@ public class AttachDeviceToPersonCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public AttachDeviceToPersonCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH}));
+        addSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH}));
     }
 
     /**

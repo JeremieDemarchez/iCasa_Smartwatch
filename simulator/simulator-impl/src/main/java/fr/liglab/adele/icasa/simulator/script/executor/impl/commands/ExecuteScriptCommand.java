@@ -44,7 +44,7 @@ public class ExecuteScriptCommand extends AbstractCommand {
 	private ScriptExecutor executor;
 
     public ExecuteScriptCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.SCRIPT_NAME}));
+        addSignature(new Signature(new String[]{ScriptLanguage.SCRIPT_NAME}));
     }
 
 	@Override

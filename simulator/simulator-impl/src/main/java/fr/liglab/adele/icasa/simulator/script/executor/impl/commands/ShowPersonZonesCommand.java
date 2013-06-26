@@ -46,7 +46,7 @@ public class ShowPersonZonesCommand extends AbstractCommand {
     private static final String NAME= "show-person-zones";
 
     public ShowPersonZonesCommand(){
-        setSignature(new Signature(PARAMS));
+        addSignature(new Signature(PARAMS));
     }
 
     /**

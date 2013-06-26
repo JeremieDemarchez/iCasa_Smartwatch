@@ -41,7 +41,7 @@ public class ShowPersonsCommand extends AbstractCommand {
     private static final String NAME= "show-persons";
 
     public ShowPersonsCommand(){
-        setSignature(EMPTY_SIGNATURE);
+        addSignature(EMPTY_SIGNATURE);
     }
 
     /**

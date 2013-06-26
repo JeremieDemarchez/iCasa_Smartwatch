@@ -46,7 +46,7 @@ public class CreatePersonCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public CreatePersonCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
+        addSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
     }
 
 	@Override

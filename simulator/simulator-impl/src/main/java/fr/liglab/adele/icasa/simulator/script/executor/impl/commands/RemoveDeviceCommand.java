@@ -48,7 +48,7 @@ public class RemoveDeviceCommand extends AbstractCommand {
     private static final String NAME= "remove-device";
 
     public RemoveDeviceCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
     }
 
     /**

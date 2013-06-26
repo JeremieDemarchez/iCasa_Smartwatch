@@ -48,7 +48,7 @@ public class ResetContextCommand extends AbstractCommand {
     private static final String NAME= "reset-context";
 
     public ResetContextCommand(){
-        setSignature(EMPTY_SIGNATURE);
+        addSignature(EMPTY_SIGNATURE);
     }
 
     /**

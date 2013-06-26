@@ -45,7 +45,7 @@ public class MovePersonIntoZoneCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public MovePersonIntoZoneCommand() {
-        setSignature(new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.ZONE_ID}));
+        addSignature(new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.ZONE_ID}));
     }
 
 

@@ -51,8 +51,8 @@ public class MovePersonCommand extends AbstractCommand {
     private static Signature MOVE_WZ = new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.NEW_X, ScriptLanguage.NEW_Y, ScriptLanguage.NEW_Z});
 
     public MovePersonCommand(){
-        setSignature(MOVE);
-        setSignature(MOVE_WZ);
+        addSignature(MOVE);
+        addSignature(MOVE_WZ);
     }
 
 	@Override

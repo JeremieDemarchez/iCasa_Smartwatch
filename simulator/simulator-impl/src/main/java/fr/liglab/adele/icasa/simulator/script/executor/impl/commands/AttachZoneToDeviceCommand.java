@@ -47,7 +47,7 @@ public class AttachZoneToDeviceCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public AttachZoneToDeviceCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
     }
 
     @Override

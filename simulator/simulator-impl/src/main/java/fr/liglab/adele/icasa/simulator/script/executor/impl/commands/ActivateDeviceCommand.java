@@ -45,7 +45,7 @@ public class ActivateDeviceCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public ActivateDeviceCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
     }
 
     /**

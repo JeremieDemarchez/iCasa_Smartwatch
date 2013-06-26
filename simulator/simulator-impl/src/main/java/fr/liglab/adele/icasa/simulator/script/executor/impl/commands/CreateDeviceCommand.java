@@ -46,7 +46,7 @@ public class CreateDeviceCommand extends AbstractCommand {
 	private SimulationManager simulationManager;
 
     public CreateDeviceCommand(){
-        setSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
+        addSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
     }
 
 	@Override
