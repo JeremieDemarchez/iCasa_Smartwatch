@@ -21,7 +21,7 @@
 <a name="Model"></a>
 ## iCasa Command Model
 
-iCasa platform provides a command architecture allowing extension by third party commands implementations. This architecture is based on the [OSGi whiteboard pattern](http://www.osgi.org/wiki/uploads/Links/whiteboard.pdf). In this tutorial we show how to add new commands to the iCasa platform.
+iCasa platform provides a command architecture allowing extension by third party developers. This architecture is based on the [OSGi whiteboard pattern](http://www.osgi.org/wiki/uploads/Links/whiteboard.pdf). In this tutorial we will show how to add new commands to the iCasa platform.
 
 iCasa Commands could be used two different ways:
 
@@ -37,7 +37,7 @@ This benefits the platform in two main ways:
 <a name="Interface"></a>
 ### iCasa Command Interface
 
-In order to add a new command to the iCasa platform, an OSGi service must be provided by the developer. This service has to implement the _fr.liglab.adele.icasaICasaCommand_ interface, the interface is show below
+In order to add a new command to the iCasa platform, an OSGi service must be provided by the developer. This service has to implement the _fr.liglab.adele.icasaICasaCommand_ interface, it is show below
 
     /**
      * An ICommandService is a service that can be executed with a set of arguments. It can execute a block of code and then
@@ -89,19 +89,19 @@ In order to add a new command to the iCasa platform, an OSGi service must be pro
     
     }
 
-* The  _getName()_ method provides the command name (word used in the shell as command).
+* The  _getName()_ method provides the command name (used in the shell as command).
 * The _getDescription()_ method is called by the platform when users are looking for help of this command. 
 * The _validate(JSONObject param, Signature signature)_ method is invoked to validate parameters provided to the command. The validation is realized against a command signature.
-* The _getSignature(int size)_ must return a command signature of the provided size .
-* The _execute(InputStream in, PrintStream out, JSONObject param)_ will execute the set of instructions defining the iCasa command. This method is called by the platform after invocation of _validate_ method and only if it returned true. The _in_ and _out_ parameter correspond to the standard input stream and output stream. The JSON object _param_ contains the values of command parameters and finally the _signature_ indicates which signature (if several exists) was used.
+* The _getSignature(int size)_ must return a command signature of the provided size.
+* The _execute(InputStream in, PrintStream out, JSONObject param)_ will execute the set of instructions defining the iCasa command. This method is called by the platform after invocation of _validate_ method and only if it returned true. The _in_ and _out_ parameter correspond to the standard input stream and output stream. Finally, the JSON object _param_ contains the values of command parameters.
 
 
 <a name="Signature"></a>
 ### Command Signature
 
-An iCasa command __signature__ defines number and order of its parameters. When a command is used in the shell arguments are anonymous, iCasa platform determines the parameter correspondence only based in order. On the other hand, if the command is used in a script file, parameters are determined based on their names.
+A command __signature__ defines number and order of its parameters. When a command is used in the shell arguments are anonymous, iCasa platform determines the parameter correspondence only based in order. On the other hand, if the command is used in a script file, parameters are determined based on their names.
 
-Commands could have more than one signature, however signatures cannot contain the same number of parameters. _fr.liglab.adele.icasa.Signature_ class is presented in the next code snipped. To create a Signature only is necessary to provide an array of string corresponding to the name of parameters in the expected order.
+Commands could have more than one signature, however signatures cannot contain the same number of parameters. The _fr.liglab.adele.icasa.Signature_ class is presented in the next code snipped, to create a Signature only is necessary to provide an array of string corresponding to the name of parameters in the expected order (see constructor).
 
 	public class Signature {
 
