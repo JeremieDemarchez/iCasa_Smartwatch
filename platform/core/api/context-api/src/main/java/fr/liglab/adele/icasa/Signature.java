@@ -22,14 +22,25 @@ import java.util.Arrays;
  */
 public class Signature {
 
+
+
+    private final String methodName;
+
+    private static final String DEFAULT_METHOD ="execute";
 	/**
 	 * The list of parameters for a given iCasaCommand signature.
 	 */
 	private final String[] parameters;
 
 	public Signature(String[] params) {
-		this.parameters = params;
+		this(DEFAULT_METHOD, params);
 	}
+
+    public Signature(String name, String[] params) {
+        this.parameters = params;
+        this.methodName = name;
+    }
+
 
 	/**
 	 * Get the list of parameters of this signature.
@@ -52,6 +63,10 @@ public class Signature {
 		}
 		return false;
 	}
+
+    public String getMethodName() {
+        return methodName;
+    }
 
 	@Override
 	public boolean equals(Object o) {

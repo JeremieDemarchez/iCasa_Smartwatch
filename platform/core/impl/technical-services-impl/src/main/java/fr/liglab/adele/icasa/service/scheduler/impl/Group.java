@@ -35,23 +35,28 @@ public class Group  {
     private final String name;
     Map<ICasaRunnable, TaskReferenceImpl> jobs = new HashMap<ICasaRunnable, TaskReferenceImpl>();
     private SchedulerThreadPoolImpl executor;
+    private int poolSize;
     private Logger logger;
     private Clock clock;
 
 
-    public int DEFAULT_POOL_SIZE = 5;
-
-    public Group(String groupName, Clock clock) {
-        this.name = groupName;
+    public Group(SchedulingManagerImpl.GroupConfiguration config, Clock clock) {
+        this.name = config.getName();
         this.clock = clock;
+        this.poolSize = config.getMaxThread();
         this.logger = LoggerFactory.getLogger(Group.class.getName() + "-" + this.name);
-        executor = new SchedulerThreadPoolImpl(this.name, clock, DEFAULT_POOL_SIZE);
+        executor = new SchedulerThreadPoolImpl(this.name, clock, poolSize);
         new Thread(executor).start();
     }
 
     public String getName() {
         return name;
     }
+
+    public int getPoolSize(){
+        return poolSize;
+    }
+
 
     /**
      * Add a runnable  to the group set.
@@ -98,6 +103,7 @@ public class Group  {
             future.cancel(true);
         }
         jobs.clear();
+        executor.interrupt();
     }
 
 }

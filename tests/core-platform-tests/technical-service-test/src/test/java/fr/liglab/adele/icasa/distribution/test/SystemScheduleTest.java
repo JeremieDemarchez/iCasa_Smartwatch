@@ -15,29 +15,29 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
+import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
+import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
-import org.junit.After;
-import org.junit.Assert;
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
-import org.osgi.framework.BundleContext;
-
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import org.osgi.framework.ServiceReference;
-import org.osgi.framework.ServiceRegistration;
+import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 
 @RunWith(PaxExam.class)
@@ -61,7 +61,25 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
 	public void tearDown() {
 
 	}
-	
+
+    public static Option helpBundles() {
+
+        return new DefaultCompositeOption(
+                systemProperty( "iCasa.ThreadPool.default.maxThread" ).value( "10" ),
+                systemProperty( "iCasa.ThreadPool.group1.maxThread" ).value( "3" ),
+                systemProperty( "iCasa.ThreadPool.group2.maxThread" ).value( "5" )
+        );
+    }
+
+    @org.ops4j.pax.exam.Configuration
+    public Option[] configuration() {
+
+        List<Option> lst = super.config();
+        lst.add(helpBundles());
+        Option conf[] = lst.toArray(new Option[0]);
+        return conf;
+    }
+
 	/**
 	 * Test the creation of a new zone.
 	 */
@@ -89,7 +107,7 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
         Date now = new Date();
         Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
 
-        ScheduledTestTask runnable = new ScheduledTestTask(clock, scheduledTime, "group1");
+        ScheduledTestTask runnable = new ScheduledTestTask(clock, scheduledTime, "group2");
         ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), runnable, new Hashtable());
 
         try {
@@ -100,6 +118,18 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
 
         register.unregister();
 
+    }
+
+    public void testGroupConfiguration(){
+        //TODO: use a service to introspect configurations and reports.
+        PeriodicRunnable runnable = new PeriodicScheduledTestTask(clock);
+        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), runnable, new Hashtable());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
     }
 
 }

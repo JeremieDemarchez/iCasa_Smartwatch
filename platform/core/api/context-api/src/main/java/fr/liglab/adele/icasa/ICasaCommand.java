@@ -21,16 +21,9 @@ import java.io.PrintStream;
 import org.json.JSONObject;
 
 /**
- * An ICommandService is a service that can be executed with a set of arguments. It can execute a block of code and then
- * returns the result object of executing this code.
- */
+ * An ICasaCommand defines the interface of service providing iCasa commands that can be executed with a set of arguments.
+  */
 public interface ICasaCommand {
-	/**
-	 * @serviceproperty Namespace is the command namespace (same as xml namespace or gogo shell scope)
-	 * @mandatory
-	 */
-	public static final String PROP_NAMESPACE = "icasa.namespace";
-
 	/**
 	 * Default value for PROP_COMMAND_NAMESPACE
 	 */
@@ -52,7 +45,7 @@ public interface ICasaCommand {
 	 * Execute a block of code and then returns the result from execution. This method should use {@code in} and
 	 * {@code out} stream to print result instead of the direct use of {@code System.in} and {@code System.out}
 	 * 
-	 * @param in : the input steam.
+	 * @param in : the input stream.
 	 * @param out : the output stream.
 	 * @param param a json object of parameters
 	 * 

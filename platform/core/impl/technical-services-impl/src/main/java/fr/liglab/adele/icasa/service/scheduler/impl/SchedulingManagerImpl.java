@@ -18,7 +18,9 @@ package fr.liglab.adele.icasa.service.scheduler.impl;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
+import fr.liglab.adele.icasa.service.scheduler.SchedulingManager;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,11 +31,17 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 @Component(immediate = true)
 @Instantiate
-// TODO provide an introspection API
-public class SchedulingManager {
+@Provides(specifications = {SchedulingManager.class})
+public class SchedulingManagerImpl implements SchedulingManager {
 
     private ConcurrentHashMap<String, Group> groups = new ConcurrentHashMap<String, Group>();
-    private Logger logger = LoggerFactory.getLogger(SchedulingManager.class);
+    private Logger logger = LoggerFactory.getLogger(SchedulingManagerImpl.class);
+
+    private BundleContext context;
+
+    public SchedulingManagerImpl(BundleContext ctx){
+        context = ctx;
+    }
 
     @Requires
     private Clock clock;
@@ -43,7 +51,7 @@ public class SchedulingManager {
         synchronized (this) {
             Group group = groups.get(runnable.getGroup());
             if (group == null) {
-                group = new Group(runnable.getGroup(), clock);
+                group = new Group(new GroupConfiguration(runnable.getGroup()), clock);
                 groups.put(group.getName(), group);
                 logger.info("New group created : " + runnable.getGroup());
             }
@@ -72,7 +80,7 @@ public class SchedulingManager {
         synchronized (this) {
             Group group = groups.get(runnable.getGroup());
             if (group == null) {
-                group = new Group(runnable.getGroup(), clock);
+                group = new Group(new GroupConfiguration(runnable.getGroup()), clock);
                 groups.put(group.getName(), group);
                 logger.info("New group created : " + runnable.getGroup());
             }
@@ -104,6 +112,59 @@ public class SchedulingManager {
         for (Group group : groups.values()) {
             group.close();
         }
+    }
+
+    public class GroupConfiguration {
+
+        private final static String DEFAULT_NAME="default";
+        private final static String NAME="name";
+        private final static String MAX_THREAD="maxThread";
+        private final static String PREFIX_PROPERTY="iCasa.ThreadPool";
+        private final static int DEFAULT_MAX_THREAD=5;
+
+
+        private int maxThread;
+        private final String name;
+
+        GroupConfiguration (String groupName) {
+            if (groupName == null){
+                name = DEFAULT_NAME;
+            } else{
+                name = groupName;
+            }
+            //get group configuration.
+            maxThread = getMaxThread(PREFIX_PROPERTY + "." + name + "." + MAX_THREAD);
+            if (maxThread <= -1){ //if failed, get default configuration.
+                maxThread = getMaxThread(PREFIX_PROPERTY + "." + DEFAULT_NAME + "." + MAX_THREAD);
+            }
+            if (maxThread <= -1) { // If failed, get assign default configuration.
+                System.err.println("Unable to assign maxThread to : " + name);
+                maxThread = DEFAULT_MAX_THREAD;
+            }
+        }
+
+        int getMaxThread(String property){
+            String maxThreadStr = context.getProperty(property);
+            int max = -1;
+            if (maxThreadStr != null){
+                try{
+                    max = Integer.parseInt(maxThreadStr);
+                }catch (Exception ex){
+                    max = -1;
+                }
+            }
+            return max;
+        }
+
+
+        public int getMaxThread() {
+            return maxThread;
+        }
+
+        public String getName() {
+            return name;
+        }
+
     }
 
 }
