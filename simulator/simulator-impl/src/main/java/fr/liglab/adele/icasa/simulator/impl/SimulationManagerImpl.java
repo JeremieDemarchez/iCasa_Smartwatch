@@ -53,11 +53,12 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
+import fr.liglab.adele.icasa.simulator.services.PersonLocationService;
 
 @Component
 @Provides
 @Instantiate(name = "SimulationManager-1")
-public class SimulationManagerImpl implements SimulationManager {
+public class SimulationManagerImpl implements SimulationManager, PersonLocationService {
 
 	/*
 	 * WARNING : UPDATE following filter if you change the component instance name !!!
@@ -646,6 +647,18 @@ public class SimulationManagerImpl implements SimulationManager {
       }
 	   return contained;
    }
+	
+	@Override
+   public Set<String> getPersonInZone(String zoneId) {
+	   Set<String> personsId = new HashSet<String>();
+	   
+	   Zone zone = getZone(zoneId);
+	   Set<Person> persons = getPersonsIntoZone(zone);
+	   for (Person person : persons) {
+	      personsId.add(person.getName());
+      }
+	   return personsId;
+   }
 
 	@Override
 	public void removePersonType(String personType) {
@@ -795,6 +808,8 @@ public class SimulationManagerImpl implements SimulationManager {
 			lock.readLock().unlock();
 		}
 	}
+
+
 
 
 }

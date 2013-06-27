@@ -34,7 +34,6 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
@@ -162,7 +161,6 @@ public class PersonTest extends AbstractDistributionBaseTest {
 		person.setCenterAbsolutePosition(new Position(40, 40));
 		Assert.assertEquals(position, listener.getOldPosition());
 	}
-	
 	
 	
 
