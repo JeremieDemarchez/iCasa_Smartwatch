@@ -196,7 +196,7 @@ You need to create and generate the skeleton of the unique class of your applica
 7. Manage the light(s) if a presence is sensed in a location. In the method `devicePropertyModified`, there is the core of the application: if the device is an instance of `PresenceSensor`, the device is identified by its serial number. According to its location, all the lights in the same location are turn on or off. 
 
    <pre><code>@Override
-   public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue) {
+   public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
 		if(device instanceof PresenceSensor) {
 			PresenceSensor activSensor = mapPresenceSensors.get(device.getSerialNumber());
 		    if(activSensor != null && propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {

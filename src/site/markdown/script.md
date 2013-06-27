@@ -19,7 +19,7 @@ Scenarios in iCASA simulation module are specified in a XML file using the tag _
 
 _Example:_
 
-    <behavior startdate="27/10/2011-00:00:00" factor="1440">
+    <behavior startdate="03/10/2011-00:00:00" factor="1440">
        <!-- Scenario instructions -->
     </behavior>
 
@@ -44,7 +44,7 @@ _Example:_
    
 ### Delay
    
-Introduces a delay (in minutes) between the previous instruction and the next one
+Introduces a delay in (virtual) minutes between the previous instruction and the next one.
 
 _Example:_
 
@@ -69,7 +69,7 @@ _Example:_
    
 ### Create Zone
 
->  Creates a zone in application context
+Creates a zone in application context
 
 _Example:_
 
@@ -99,7 +99,7 @@ or
 </tr>
 <tr>
   <td>bottomZ</td>
-  <td>Bottmo Z coordinate value</td>
+  <td>Bottom Z coordinate value</td>
 </tr>
 <tr>
   <td>X-Length</td>
@@ -107,7 +107,7 @@ or
 </tr>
 <tr>
   <td>Y-Length</td>
-  <td>Zone X-Length</td>
+  <td>Zone Y-Length</td>
 </tr>
 <tr>
   <td>Z-Length</td>
@@ -532,5 +532,5 @@ _Example:_
 <a name="Deployment"></a>
 ## Script Deployment
 
-New scripts have to be deployed to the directory __ICASA_HOME/load__ in the gateway. All scripts files must have the .bhv extensions to be recognized by the iCasa platform.
+New scripts have to be deployed to the directory __ICASA_HOME/scripts__ in the gateway. All scripts files must have the .bhv extensions to be recognized by the iCasa platform.
 	

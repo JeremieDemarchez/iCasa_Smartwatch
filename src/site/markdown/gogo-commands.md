@@ -236,8 +236,8 @@ Parameters-
 - __${zoneId}__ the new zone ID.
 - __${leftX}__ The topX value.
 - __${topY}__ The topY value.
-- __${width}__ The width of the new zone.
-- __${height}__ The height of the new zone.
+- __${X-Length}__ The X-Length of the new zone.
+- __${Y-Length}__ The Y-Length of the new zone.
 
 
 #### Example:
@@ -257,11 +257,12 @@ Parameters-
 
 #### Example:
     > g! icasa:show-zones
-    Zones: 
-    Zone livingroom des Zone: livingroom X: 410 Y: 28 -- Width: 245 Height: 350 - Parent: Unset - Use parent: false
-    Zone kitchen des Zone: kitchen X: 410 Y: 370 -- Width: 245 Height: 210 - Parent: Unset - Use parent: false
-    Zone bathroom des Zone: bathroom X: 55 Y: 20 -- Width: 260 Height: 350 - Parent: Unset - Use parent: false
-    Zone bedroom des Zone: bedroom X: 55 Y: 370 -- Width: 259 Height: 210 - Parent: Unset - Use parent: false
+	Zones:
+	Zone livingroom : Zone: livingroom X: 410 Y: 20 Z: 0 X-Length: 245 Y-Length: 350 Z-Length: 100 Parent:Unset Use Parent: false
+	Zone kitchen : Zone: kitchen X: 410 Y: 370 Z: 0 X-Length: 245 Y-Length: 210 Z-Length: 100 Parent:Unset Use Parent: false
+	Zone bathroom : Zone: bathroom X: 55 Y: 20 Z: 0 X-Length: 260 Y-Length: 350 Z-Length: 100 Parent:Unset Use Parent: false
+	Zone bedroom : Zone: bedroom X: 55 Y: 370 Z: 0 X-Length: 259 Y-Length: 210 Z-Length: 100 Parent:Unset Use Parent: false
+
 
 
 ### Move zone
@@ -291,8 +292,8 @@ Name-> __resize-zone__
 Parameters-
 
 - __${zoneId}__ the new zone ID.
-- __${width}__ The new width value.
-- __${height}__ The new height value.
+- __${X-Length}__ The new X-Length value.
+- __${Y-Length}__ The new Y-Length value.
 
 
 #### Example:
