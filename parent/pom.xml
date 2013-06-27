@@ -13,7 +13,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.common</groupId>
 		<artifactId>base</artifactId>
-		<version>1.0.5-SNAPSHOT</version>
+		<version>1.1.0</version>
 		<relativePath />
 	</parent>
 
@@ -34,13 +34,13 @@
 		<productVersion>${project.version}</productVersion>
 		<projectName>${project.artifactId}</projectName>
 		<iCasaPlatformVersion>1.0.1-SNAPSHOT</iCasaPlatformVersion>
-        <DistributionTestVersion>1.0.5-SNAPSHOT</DistributionTestVersion>
+        <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
 
         <!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
+        <AdeleBaseVersion>1.1.0</AdeleBaseVersion>
 	</properties>
 
 	<developers>
