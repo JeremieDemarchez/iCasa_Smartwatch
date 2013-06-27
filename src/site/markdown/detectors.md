@@ -7,6 +7,7 @@ Detectors
 * <a href="#CO2SensorCard">Carbon Dioxyde Sensor</a>
 * <a href="#PhotometerCard">Photometer</a>
 * <a href="#PresenceSensorCard">Presence Sensor</a>
+* <a href="#MotionSensorCard">Motion Sensor</a>
 * <a href="#PowerSwitchCard">Power Switch</a>
 * <a href="#ThermometerCard">Thermometer</a>
 
@@ -240,6 +241,51 @@ The photometer returns the value of the current illuminance. This value is expre
 </ul>
 
 <a href="./datasheets/Datasheet_PresenceSensor.pdf">Full datasheet here</a>
+</div>
+<div class="separator"></div>
+</div>
+
+<div class="idCard">
+
+<div class="titleCard"><a name="MotionSensorCard">Motion Sensor</a></div>
+
+<div class="photo"><img src="./devices/T456/detecteurMouvements.png" width="100"/></div>
+
+<div class="description">
+<div class="hCard">Overview</div> 
+ 
+<p>MotionSensor can supply only one model of motion detection which is a standard
+transformation of a movement, into a signal or event.
+The motion sensor can be used to detect if someone is moving in a room. We
+describe in section MotionSensor device Outline methods linked to this device.
+</p>
+ 
+        
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.motion.MotionSensor</code>
+
+<ul>
+<li><code>getSerialNumber()</code>: Get the device ID</li>
+<li><code>addListener(DeviceListener listener)</code>: Subscribe to motion events</li>
+</ul>
+
+<p>Hereafter we explain methods that can be useful for the user to retrieve motion detection events.</p>
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.DeviceListener</code>
+
+<ul>
+<li><code>deviceEvent(MotionSensor device, Object value)</code>: Event triggered when the motion
+sensor detects a movement:
+<ul>
+<li>device: the motion sensor object</li>
+<li>value: always Boolean.TRUE</li>
+</ul>
+</li>
+</ul>
+
+<a href="./datasheets/Datasheet_MotionSensor.pdf">Full datasheet here</a>
 </div>
 <div class="separator"></div>
 </div>
