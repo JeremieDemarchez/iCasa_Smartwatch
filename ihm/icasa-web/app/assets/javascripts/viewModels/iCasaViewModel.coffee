@@ -846,6 +846,8 @@ define(['jquery',
               imgName = "CO2GazSensor";
             if ((@type() == "iCASA.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
               imgName = "movementDetector";
+            if ((@type() == "iCASA.MotionSensor") || @hasService("fr.liglab.adele.icasa.device.motion.MotionSensor"))
+              imgName = "movementDetector";              
             if ((@type() == "iCASA.Speaker") || @hasService("fr.liglab.adele.icasa.device.sound.Speaker"))
               imgName = "speaker";
             if (@type() == "iCASA.Power")
