@@ -344,7 +344,7 @@
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <releaseProfiles>release</releaseProfiles>
                         <useReleaseProfile>true</useReleaseProfile>
-                        <goals>deploy site-deploy</goals>
+                        <goals>deploy</goals>
                     </configuration>
                 </plugin>
             </plugins>
