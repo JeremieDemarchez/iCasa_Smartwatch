@@ -19,6 +19,11 @@ import java.util.Set;
 
 public interface PersonLocationService {
 
+	/**
+	 * get return the names of the persons in a given zone
+	 * @param zoneId the zoneId
+	 * @return a set with persons' names
+	 */
 	Set<String> getPersonInZone(String zoneId);
 	
 }
