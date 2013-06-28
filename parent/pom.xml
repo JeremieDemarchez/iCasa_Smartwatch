@@ -7,21 +7,20 @@
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
-        <relativePath/>
+        <version>1.1.0</version>
+        <relativePath />
     </parent>
 
     <!-- Project coordinates -->
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>platform.parent</artifactId>
-    <version>1.0.1-SNAPSHOT</version>
+    <version>1.1.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <!-- Project description -->
@@ -33,8 +32,8 @@
     <properties>
         <productName>iCasa Platform</productName>
         <productVersion>${project.version}</productVersion>
-        <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
-        <DistributionTestVersion>1.0.5-SNAPSHOT</DistributionTestVersion>
+        <AdeleBaseVersion>1.1.0</AdeleBaseVersion>
+        <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
         <cxfVersion>2.3.2</cxfVersion>
 
         <!--UPNP -->
@@ -228,7 +227,7 @@
             <dependency>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>org.apache.felix.usb.basedriver</artifactId>
-                <version>1.0.1-SNAPSHOT</version>
+                <version>1.1.1-SNAPSHOT</version>
             </dependency>
 
             <!-- iCasa -->
