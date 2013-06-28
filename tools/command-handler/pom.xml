@@ -1,0 +1,55 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+    <!-- Project parent -->
+    <parent>
+        <groupId>fr.liglab.adele.icasa</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.0.1-SNAPSHOT</version>
+        <relativePath>../../parent</relativePath>
+    </parent>
+
+    <!-- Project Description -->
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>command.handler</artifactId>
+    <packaging>bundle</packaging>
+    <name>${productName} :: ${projectName}</name>
+    <description>Provide annotations to expose commands to the felix shell.</description>
+
+    <!-- Project dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Export-Package>
+                            fr.liglab.adele.icasa.command.handler
+                        </Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

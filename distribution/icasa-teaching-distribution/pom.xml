@@ -72,6 +72,12 @@
            <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>command.handler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
 
         <!-- Play 2 applications-->
         <dependency>
