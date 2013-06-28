@@ -17,6 +17,9 @@ package fr.liglab.adele.icasa.simulator.services;
 
 import java.util.Set;
 
+/**
+ The PersonLocationService interface allows to introspect a given zone and obtain information about its occupants.
+ */
 public interface PersonLocationService {
 
 	/**
