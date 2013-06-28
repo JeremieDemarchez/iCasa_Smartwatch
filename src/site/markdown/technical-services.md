@@ -1,12 +1,13 @@
 # Technical Service Usage
 - [Technical Services](#Technical)
-- [Preference Service](#Preference)
+- [Configuration Service](#Configuration)
+- [Person Location Service](#PersonLocation)
 - [Scheduling Service](#Scheduling)
   
 
 
 <a name="Technical"></a>
-## iCasa Technical Services
+## iCasa technical services
 
 iCasa provides a set of technical services. In order to use them, it is needed to add the following maven dependency:
 
@@ -15,13 +16,165 @@ iCasa provides a set of technical services. In order to use them, it is needed t
     <version>1.1.0</version>
 
 
-<a name="Preference"></a>
-## iCasa Configuration Service
+<a name="Configuration"></a>
+## iCasa configuration service
 
+The iCasa configuration service allows to persist configuration that could be exploited by applications. There are three groups of configuration:
+
+* Global configuration.
+* Per-application configuration.
+* Per-user configuration.
+
+Any configuration could be retrieved and exploited by any running application. 
+
+### Configuration service interface
+
+The service providing such functionality provides the following interface:
+
+
+    /**
+     * The Preferences interface provides a service to store preferences of:
+     * <li>Global Preferences</li>
+     * <li>Application Preferences</li>
+     * <li>User Preferences</li>
+     * 
+     * @author Gabriel Pedraza Ferreira
+     *
+     */
+    public interface Preferences {
+    
+    	/**
+    	 * Gets the value of a property for a global preference
+    	 * @param name the preference name
+    	 * @return the value associated to the preference
+    	 */
+    	Object getGlobalPropertyValue(String name);
+    	
+    	/**
+    	 * Gets the value of a property for a user preference
+    	 * @param user the user name
+    	 * @param name the preference name
+    	 * @return the value associated to the preference
+    	 */
+    	Object getUserPropertyValue(String user, String name);
+    	
+    	/**
+    	 * Gets the value of a property for a application preference
+    	 * @param applicationId the application Id
+    	 * @param name the preference name
+    	 * @return the value associated to the preference
+    	 */
+    	Object getApplicationPropertyValue(String applicationId, String name);
+    	
+    	/**
+    	 * Sets the value of a property for a global preference
+    	 * @param name the preference name
+    	 * @param value the new value associated to the preference
+    	 */
+    	void setGlobalPropertyValue(String name, Object value);
+    	
+    	/**
+    	 * Sets the value of a property for a user preference
+    	 * @param user the user name
+    	 * @param name the preference name
+    	 * @return the new value associated to the preference
+    	 */
+    	void setUserPropertyValue(String user, String name, Object value);
+    	
+    	/**
+    	 * Sets the value of a property for a application preference
+    	 * @param applicationId the application Id
+    	 * @param name the preference name
+    	 * @return the new value associated to the preference
+    	 */
+    	void setApplicationPropertyValue(String applicationId, String name, Object value);
+    	
+    	/**
+    	 * Gets a set of global properties' names
+    	 * @return set of properties' name
+    	 */
+    	Set<String> getGlobalProperties();
+    	
+    	/**
+    	 * Gets a set of user properties' names
+    	 * @param user the user name
+    	 * @return set of properties' name
+    	 */
+    	Set<String> getUserProperties(String user);
+    	
+    	/**
+    	 * Gets a set of application properties' names
+    	 * @param applicationId the application Id
+    	 * @return set of properties' name
+    	 */
+    	Set<String> getApplicationProperties(String applicationId);
+    }
+    
+
+###Using the configuration service
+There are three ways to use this service.
+####Using the OSGi service
+
+Using iPOJ0 it is as simple as adding a service dependency.
+
+	@Requires
+	private Preferences preferenceService;
+
+####Using Gogo commands
 To see how to use the configuration service, please visit the [Configuration Section](gogo-commands.html#Configuration) in iCasa Gogo Commands.
 
+####Using the iCasa scripts
+There are the following instructions that can be used into the iCasa scripts:
+
+* set a global configuration property
+
+        </set-global-property name="period" value="80.8" type="Float">
+        
+        The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
+        
+* set an user property
+
+        </set-user-property user="Paul" name="period" value="80.8" type="Float">
+        
+        The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
+        
+        
+* set an application property
+
+        </set-application app="LightFollowMe" name="period" value="80.8" type="Float">
+        
+        The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
+  
+
+<a name="PersonLocation"></a>
+## iCasa person location lervice  
+
+In order to retrieve the occupants in a given zone, iCasa provides the following service interface: `fr.liglab.adele.icasa.simulator.services.PersonLocationService`
+
+    /**
+     The PersonLocationService interface allows to introspect a given zone and obtain information about its occupants.
+     */
+    public interface PersonLocationService {
+    
+    	/**
+    	 * get return the names of the persons in a given zone
+    	 * @param zoneId the zoneId
+    	 * @return a set with persons' names
+    	 */
+    	Set<String> getPersonInZone(String zoneId);
+    	
+    }
+    
+###Using person location service    
+
+Using iPOJ0 it is as simple as adding a service dependency.
+
+	@Requires
+	private PersonLocationService personLocationService;   
+           
+
 <a name="Scheduling"></a>
-## iCasa Scheduling Service
+## iCasa scheduling service
 
 iCasa provides an scheduling service that provides the execution of tasks. This service allows two different tasks:
 
@@ -71,7 +224,7 @@ In order to build periodic tasks, an OSGi service must provide the `fr.liglab.ad
     
     }
     
-#### Implementing Periodic Tasks
+#### Implementing periodic tasks
 
 As said before, in order to register a periodic tasks it is needed to provide the `fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable` interface.
 
@@ -123,7 +276,7 @@ In order to build scheduled tasks, an OSGi service must provide the `fr.liglab.a
     }
 
     
-#### Implementing Periodic Tasks
+#### Implementing periodic tasks
 
 As said before, in order to register a periodic tasks it is needed to provide the `fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable` interface.
 
