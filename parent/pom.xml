@@ -15,7 +15,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.0.5-SNAPSHOT</version>
+        <version>1.1.0</version>
         <relativePath>
         </relativePath>
     </parent>
@@ -36,11 +36,11 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
         <projectName>${project.artifactId}</projectName>
 
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.0.5-SNAPSHOT</AdeleBaseVersion>
-        <ciliaVersion>1.6.4-SNAPSHOT</ciliaVersion>
-        <iCasaPlatformVersion>1.0.1-SNAPSHOT</iCasaPlatformVersion>
-        <iCasaSimulatorVersion>1.0.1-SNAPSHOT</iCasaSimulatorVersion>
-        <DistributionTestVersion>${parent.version}</DistributionTestVersion>
+        <AdeleBaseVersion>1.1.0</AdeleBaseVersion>
+        <ciliaVersion>1.7.1</ciliaVersion>
+        <iCasaPlatformVersion>1.1.0</iCasaPlatformVersion>
+        <iCasaSimulatorVersion>1.1.0</iCasaSimulatorVersion>
+        <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
 
     </properties>
 
