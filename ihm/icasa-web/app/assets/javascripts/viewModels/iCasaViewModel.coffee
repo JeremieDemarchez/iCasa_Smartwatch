@@ -721,6 +721,12 @@ define(['jquery',
                     @imgSrc(@getImage("binaryLight_on"));
                   else
                     @imgSrc(@.getImage());
+                if ((@type() == "iCASA.Sprinkler") || @hasService("fr.liglab.adele.icasa.device.sprinkler.Sprinkler"))
+                  powerStatus = @.getPropertyValue("sprinkler.powerStatus");
+                  if (powerStatus)
+                    @imgSrc(@getImage("sprinkler"));
+                  else
+                    @imgSrc(@.getImage());
                 if ((@type() == "iCASA.COGasSensor") || @hasService("fr.liglab.adele.icasa.device.gasSensor.CarbonMonoxydeSensor"))
                   concentration = @.getPropertyValue("carbonMonoxydeSensor.currentConcentration");
                   ko.utils.arrayForEach(@decorators(), (decorator) ->
@@ -828,6 +834,8 @@ define(['jquery',
               imgName = "cooler-off";
             if ((@type() == "iCASA.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
               imgName = "musicPlayer";
+            if ((@type() == "iCASA.Sprinkler") || @hasService("fr.liglab.adele.icasa.device.sprinkler.Sprinkler"))
+              imgName = "sprinkler_off";
             if ((@type() == "iCASA.BinaryLight") || @hasService("fr.liglab.adele.icasa.device.light.BinaryLight"))
               imgName = "binaryLight_off";
             if ((@type() == "iCASA.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))

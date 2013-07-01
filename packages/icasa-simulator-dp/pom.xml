@@ -24,14 +24,19 @@
 		<dependency>
          <groupId>${project.groupId}</groupId>
 			<artifactId>simulator.impl</artifactId>
-         <version>${project.version}</version>
-      </dependency>
+		 <version>${project.version}</version>
+	  </dependency>
 		<dependency>
          <groupId>${project.groupId}</groupId>
 			<artifactId>device.light</artifactId>
          <version>${project.version}</version>
       </dependency>
 		<dependency>
+         <groupId>${project.groupId}</groupId>
+			<artifactId>device.sprinkler</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+	  <dependency>
          <groupId>${project.groupId}</groupId>
 			<artifactId>device.sound</artifactId>
          <version>${project.version}</version>
