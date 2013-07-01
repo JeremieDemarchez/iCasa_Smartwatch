@@ -4,7 +4,7 @@
    <parent>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>parent</artifactId>
-      <version>1.0.1-SNAPSHOT</version>
+      <version>1.1.0</version>
       <relativePath>../../parent</relativePath>
    </parent>
 
@@ -63,8 +63,7 @@
                   <phase>compile</phase>
                   <configuration>
                      <tasks>
-                        <copy file="${project.build.outputDirectory}/version.txt"
-                           toFile="${project.build.directory}/../conf/version.conf" overwrite="true" />
+                        <copy file="${project.build.outputDirectory}/version.txt" toFile="${project.build.directory}/../conf/version.conf" overwrite="true" />
                         </tasks>
                      </configuration>
                      <goals>
