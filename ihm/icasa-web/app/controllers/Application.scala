@@ -277,7 +277,7 @@ object Application extends Controller {
   }
 
   /**
-   * Used to check version compatibility betwen gateways and web application.
+   * Used to check version compatibility between gateways and web application.
    */
   def frontendInfo() = Action {  implicit request =>
     var version = "0.0.0";
