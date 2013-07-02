@@ -30,7 +30,6 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
-import org.apache.felix.ipojo.extender.Extender;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.deploymentadmin.BundleInfo;
@@ -67,21 +66,23 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	private List<ApplicationCategory> _categories = new ArrayList<ApplicationCategory>();
 
+	/**
+	 * Platform application list
+	 */
 	private List<Application> _apps = new ArrayList<Application>();
 
+	/**
+	 * List of application trackers
+	 */
 	private List<ApplicationTracker> _listeners = new ArrayList<ApplicationTracker>();
 
+	
 	private Map<String /* application id */, ApplicationImpl> _appPerId = new HashMap<String, ApplicationImpl>();
 
 	private Map<Application, Set<String> /* bundle symbolic names */> _bundlesPerAppId = new HashMap<Application, Set<String>>();
 
 	private Map<String /* Deployment package symbolic name */, ApplicationImpl> _appPerDeploymentPackage = new HashMap<String, ApplicationImpl>();
 
-	// private Map<String /* bundle symbolic name */, Boolean> _isAppPerBundle = new ConcurrentHashMap<String, Boolean>();
-	
-	// private Map<String /* bundle symbolic name */, ApplicationImpl> _appPerBundle = new HashMap<String, ApplicationImpl>();
-	
-	
 	private Map<String, DeploymentPackage> _uninstalledDeploymentPackages = new HashMap<String, DeploymentPackage>();
 
 	private ApplicationCategoryImpl _undefinedCateg;
@@ -203,9 +204,9 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	private void onDeploymePackageArrival(DeploymentPackage deploymentPackage) {
 		String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
-		boolean isApp = (appId != null);
-		if (!isApp)
-			return; // not an application bundle
+		if (appId==null) // not an application deployment package
+			return;
+
 		String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER);
 		String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
 		if (appVersion == null) { // version is mandatory
@@ -257,7 +258,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		synchronized (_appPerDeploymentPackage) {
 			final String symbolicName = deploymentPackage.getName();
 			ApplicationImpl app = _appPerDeploymentPackage.get(symbolicName);
-			if (app == null)
+			if (app == null) // The deployment package is not in the app registry
 				return;
 
 			_appPerDeploymentPackage.remove(symbolicName);
@@ -353,7 +354,6 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 			bundleIds = new HashSet<String>();
 			_bundlesPerAppId.put(app, bundleIds);
 		}
-
 		return bundleIds;
 	}
 
