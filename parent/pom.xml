@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Copyright 2010-2011 Université Joseph Fourier Licensed under the Apache 
-	License, Version 2.0 (the "License"); you may not use this file except in 
-	compliance with the License. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0 
-	Unless required by applicable law or agreed to in writing, software distributed 
-	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
-	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
-	the specific language governing permissions and limitations under the License. -->
+<!-- Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
+Licensed under a specific end user license agreement;
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+   limitations under the License. -->
 
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -292,7 +297,42 @@
     <build>
         <pluginManagement>
             <plugins>
-
+                  <plugin>
+                     <groupId>org.jasig.maven</groupId>
+                     <artifactId>maven-notice-plugin</artifactId>
+                     <version>1.0.4</version>
+                     <configuration>
+                           <noticeTemplate>https://raw.github.com/AdeleResearchGroup/ADELE-Common/master/notice/NOTICE.template</noticeTemplate>
+                           <licenseMapping>
+                              <param>https://raw.github.com/AdeleResearchGroup/ADELE-Common/master/notice/license-mappings.xml</param>
+                           </licenseMapping>
+                        </configuration>
+                     </plugin>
+                     <plugin>
+                        <groupId>org.apache.felix</groupId>
+                        <artifactId>maven-bundle-plugin</artifactId>
+                        <version>${bundlePluginVersion}</version>
+                        <extensions>true</extensions>
+                        <configuration>
+                           <instructions>
+                              <Include-Resource>
+                                 {maven-resources},
+                                 META-INF/LICENSE = ${project.parent.basedir}/LICENSE,
+                                 META-INF/NOTICE = NOTICE
+                              </Include-Resource>
+                              <!-- Default bundle headers -->
+                              <Bundle-Name>${project.name}</Bundle-Name>
+                              <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
+                              <Bundle-Version>${project.version}</Bundle-Version>
+                              <Bundle-Vendor>${project.organization.name}</Bundle-Vendor>
+                              <Bundle-DocURL>https://github.com/AdeleResearchGroup/</Bundle-DocURL>
+                              <Bundle-RequiredExecutionEnvironment>J2SE-1.5</Bundle-RequiredExecutionEnvironment>
+                              <Bundle-Copyright>Copyright 2011-2012 Joseph Fourier University</Bundle-Copyright>
+                              <Bundle-License> iCasa-Simulator User License Agreement;
+                                 link= http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html</Bundle-License>
+                           </instructions>
+                        </configuration>
+                     </plugin>
                 <!-- License plugin -->
                 <plugin>
                     <groupId>com.google.code.maven-license-plugin</groupId>
@@ -350,6 +390,5 @@
             </plugins>
         </pluginManagement>
     </build>
-
 </project>
       
