@@ -1,6 +1,6 @@
-# iCasa Script Language
+# ICasa Script Language
 
-iCASA Simulation module provides a script language that can be used to create scenarios in order to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
+ICasa Simulation module provides a script language that can be used to create scenarios in order to test pervasive applications. In the next section we show the instructions set supported by the language and their (XML) syntax.
 
 ___Outline___
 
@@ -15,7 +15,7 @@ ___Outline___
 <a name="Syntax"></a>
 ## Script File Syntax
 
-Scenarios in iCASA simulation module are specified in a XML file using the tag __behavior__. 
+Scenarios in iCasa simulation module are specified in a XML file using the tag __behavior__. 
 
 _Example:_
 

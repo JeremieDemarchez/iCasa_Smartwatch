@@ -26,7 +26,7 @@ Installation Procedure
 
 The ICASA_HOME directory should have this structure
 
-![Icasa Structure](install/icasa-home.png "Icasa Structure")
+![ICasa Structure](install/icasa-home.png "ICasa Structure")
    
 In addition four launch scripts are in the root directory: startGateway.bat, startGateway, startGUI.bat and startGUI.
 

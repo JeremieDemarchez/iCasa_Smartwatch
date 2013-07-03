@@ -225,4 +225,4 @@ You need to create and generate the skeleton of the unique class of your applica
    
    ![Deploy action](tutorial/fig13-deploy.png "Deploy action")
    
-2. Test your application with iCASA Simulator.
+2. Test your application with iCasa Simulator.
