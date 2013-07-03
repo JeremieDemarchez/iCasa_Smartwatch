@@ -1,0 +1,32 @@
+
+  Copyright 2011-2013 Universite Joseph Fourier, LIG, ADELE team
+  Licensed under a specific end user license agreement;
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+
+This project includes:
+  ADELE-Common under Apache License - Version 2.0
+  iCasa Platform  under Apache License - Version 2.0
+  iCasa Simulator Licensed under a specific end user license agreement.
+  Apache Felix File Install under The Apache Software License, Version 2.0
+  Apache Felix iPOJO under The Apache Software License, Version 2.0
+  Apache Felix iPOJO Annotations under The Apache Software License, Version 2.0
+  Apache Felix iPOJO Metadata under The Apache Software License, Version 2.0
+  jersey-client under CDDL 1.1 or GPL2 w/ CPE
+  jersey-core under CDDL 1.1 or GPL2 w/ CPE
+  JSON (JavaScript Object Notation) under provided without support or warranty
+  org.osgi.compendium under Apache License, Version 2.0
+  org.osgi.core under Apache License, Version 2.0
+  OW2 Chameleon - JSON Bundle (from org.json) under JSON License
+  OW2 Chameleon - JSON-Service under The Apache Software License, Version 2.0
+  OW2 Chameleon - json.org JSON Service Implementation under The Apache Software License, Version 2.0
+
