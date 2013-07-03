@@ -848,9 +848,9 @@ define(['jquery',
               imgName = "heater";
             if ((@type() == "iCASA.Photometer") || @hasService("fr.liglab.adele.icasa.device.light.Photometer"))
               imgName = "photometer";
-            if ((@type() == "iCASA.COGazSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonMonoxydeSensor"))
+            if ((@type() == "iCASA.COGasSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonMonoxydeSensor"))
               imgName = "COGazSensor";
-            if ((@type() == "iCASA.CO2GazSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor"))
+            if ((@type() == "iCASA.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor"))
               imgName = "CO2GazSensor";
             if ((@type() == "iCASA.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
               imgName = "movementDetector";
