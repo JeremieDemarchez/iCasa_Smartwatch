@@ -19,6 +19,7 @@ import java.util.List;
 
 import fr.liglab.adele.icasa.device.DeviceDataEvent;
 import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -49,7 +50,7 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 public class SimulatedMotionSensorImpl extends AbstractDevice implements MotionSensor, SimulatedDevice,
       PersonListener {
 
-	@ServiceProperty(name = PresenceSensor.DEVICE_SERIAL_NUMBER, mandatory = true)
+	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
 	@Requires
