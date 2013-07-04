@@ -477,8 +477,8 @@ define(['jquery',
           @isSelected(model, 'isSelected');
         @width(@rightX() - @leftX());
         @height(@bottomY() - @topY());
-        @positionX((@leftX() + @rightX()) / 2);
-        @positionY((@bottomY() + @topY()) / 2);
+        #@positionX((@leftX() + @rightX()) / 2);
+        #@positionY((@bottomY() + @topY()) / 2);
         @variables_name = ko.computed({
           read: () =>
             if (@.variables() instanceof Object)
@@ -497,25 +497,20 @@ define(['jquery',
             return ;
           }, @);
 
-        # @updateWidth = (newValue)=>
-        #   @width(@rightX() - @leftX());
-        # @updateHeight = (newValue)=>
-        #   @height(@bottomY() - @topY());
-
-        # @rightX.subscribe(@updateWidth);
-        # @leftX.subscribe(@updateWidth);
-        # @bottomY.subscribe(@updateHeight);
-        # @topY.subscribe(@updateHeight);
-
-        @positionX.subscribe((value)=>
-            @rightX(value + @width()/2);
-            @leftX(value - @width()/2);
-          )
-
-        @positionY.subscribe((value)=>
-            @topY(value - @height()/2);
-            @bottomY(value + @height()/2);
-          )
+        @positionX = ko.computed({
+           read:()=>
+             return (@leftX() + @rightX()) / 2;
+           write:(value)=>
+             @rightX(value + @width()/2);
+             @leftX(value - @width()/2);
+        },@);
+        @positionY = ko.computed({
+           read:()=>
+             return (@bottomY() + @topY()) / 2;
+           write:(value)=>
+             @topY(value - @height()/2);
+             @bottomY(value + @height()/2);
+        },@);
 
         @visibility = ko.computed({
           read:()=>
