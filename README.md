@@ -15,9 +15,9 @@ This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENS
 Contributors
 =====
 
-This project has been created by the LIG laboratory Adele team of Grenoble University.
+This project has been created by the LIG laboratory ADELE Reseach Group of Grenoble University.
 The main contributors are 
-- _Adele team_
+- _ADELE Reseach Group_
 - _Orange Labs_
 
 Source Organization

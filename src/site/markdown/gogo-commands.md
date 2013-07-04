@@ -26,7 +26,7 @@ Parameters:
 
 
 #### Example:
-    > g! icasa:create-device iCASA.Thermometer therm-1
+    > g! icasa:create-device iCasa.Thermometer therm-1
    
 ### List of devices
 

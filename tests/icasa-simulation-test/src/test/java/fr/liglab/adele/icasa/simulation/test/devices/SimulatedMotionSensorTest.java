@@ -1,7 +1,7 @@
 /**
  *
- *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
- *   Licensed under a specific end user license agreement;
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research
+ *   Group Licensed under a specific end user license agreement;
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
  *
@@ -65,13 +65,13 @@ public class SimulatedMotionSensorTest extends AbstractDistributionBaseTest {
 
     @Test
     public void validMotionSensorTest(){
-        LocatedDevice device = simulationMgr.createDevice("iCASA.MotionSensor", "device1", new Hashtable());
+        LocatedDevice device = simulationMgr.createDevice("iCasa.MotionSensor", "device1", new Hashtable());
         Assert.assertNotNull(device);
     }
     @Test
     public void motionSensorTest(){
         //Create new device
-        LocatedDevice device = simulationMgr.createDevice("iCASA.MotionSensor", "device1", new Hashtable());
+        LocatedDevice device = simulationMgr.createDevice("iCasa.MotionSensor", "device1", new Hashtable());
         //Mock listener.
         DeviceListener listener = mock(DeviceListener.class);
         GenericDevice realDevice = (GenericDevice)device.getDeviceObject();

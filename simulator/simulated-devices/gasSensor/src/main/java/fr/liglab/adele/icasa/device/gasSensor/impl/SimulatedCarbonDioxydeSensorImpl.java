@@ -1,7 +1,7 @@
 /**
  *
- *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
- *   Licensed under a specific end user license agreement;
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research
+ *   Group Licensed under a specific end user license agreement;
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
  *
@@ -34,7 +34,7 @@ import java.util.List;
  *
  * @author jeremy
  */
-@Component(name = "iCASA.CO2GasSensor")
+@Component(name = "iCasa.CO2GasSensor")
 @Provides(properties = {@StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION)})
 public class SimulatedCarbonDioxydeSensorImpl extends AbstractDevice implements CarbonDioxydeSensor, SimulatedDevice {
 

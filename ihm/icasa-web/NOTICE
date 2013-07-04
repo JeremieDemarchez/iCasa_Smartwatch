@@ -1,0 +1,102 @@
+
+  Copyright 2011-2013 Universite Joseph Fourier, LIG, ADELE Research Group
+  Licensed under a specific end user license agreement;
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+    http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+
+
+This project includes:
+  ADELE-Common under Apache License - Version 2.0
+  iCasa Platform  under Apache License - Version 2.0
+  iCasa Simulator Licensed under a specific end user license agreement.
+  akka-actor under Apache License, Version 2.0
+  akka-slf4j under Apache License, Version 2.0
+  Anorm under Apache License, Version 2.0
+  Asynchronous Http Client under Apache License 2.0
+  Bean Validation API under Apache License, Version 2.0
+  BoneCP :: Core Library under Apache v2
+  cglib under Apache License, Version 2.0
+  Codec under The Apache Software License, Version 2.0
+  Commons Collections under The Apache Software License, Version 2.0
+  Commons Exec under The Apache Software License, Version 2.0
+  Commons IO under The Apache Software License, Version 2.0
+  Commons Lang under The Apache Software License, Version 2.0
+  Commons Logging under The Apache Software License, Version 2.0
+  Copyright (c) 2009-2012 Stanford University under BSD license
+  CSS Parser under GNU Lesser General Public License
+  Data Mapper for Jackson under The Apache Software License, Version 2.0
+  dom4j under BSD License
+  Ebean under LGPL version 2.1 or later
+  Ehcache Core under The Apache Software License, Version 2.0
+  FEST Fluent Assertions under Apache License, Version 2.0
+  FEST Util under Apache License, Version 2.0
+  Fluent Lenium Core under Apache 2
+  FluentLenium Fest Assert under Apache 2
+  Guava: Google Core Libraries for Java under The Apache Software License, Version 2.0
+  H2 Database Engine under The H2 License, Version 1.0
+  Hibernate Validator under Apache License, Version 2.0
+  HtmlUnit under Apache License, Version 2.0
+  HtmlUnit Core JS under Mozilla Public License version 1.1
+  HttpClient under Apache License
+  HttpCore under Apache License
+  HttpMime under Apache License
+  Jackson under The Apache Software License, Version 2.0
+  Java Native Access under LGPL, version 2.1
+  Java Native Access Platform under LGPL, version 2.1
+  Java Servlet API under CDDL + GPLv2 with classpath exception
+  Java Transaction API under Commons Development and Distribution License, Version 1.0
+  Javassist under MPL 1.1 or LGPL 2.1
+  Jaxen is a universal Java XPath engine. under The Werken Company License
+  JCL 1.1.1 implemented over SLF4J under MIT License
+  Jerkson for Scala 2.9.1 under MIT License
+  Joda convert under Apache 2
+  Joda time under Apache 2
+  JPA 2.0 API under Sun Binary Code License
+  JSON (JavaScript Object Notation) under provided without support or warranty
+  JUL to SLF4J bridge under MIT License
+  JUnit under Common Public License Version 1.0
+  JUnitInterface under Two-clause BSD-style license
+  Logback Classic Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  Logback Core Module under Eclipse Public License - v 1.0 or GNU Lesser General Public License
+  Neko HTML under The Apache Software License, Version 2.0
+  Play under Apache License, Version 2.0
+  Play-Test under Apache License, Version 2.0
+  Reflections under WTFPL
+  scala-io-file_2.9.1 under Scala License
+  scala-library under BSD-like
+  selenium-android-driver under The Apache Software License, Version 2.0
+  selenium-api under The Apache Software License, Version 2.0
+  selenium-chrome-driver under The Apache Software License, Version 2.0
+  selenium-firefox-driver under The Apache Software License, Version 2.0
+  selenium-htmlunit-driver under The Apache Software License, Version 2.0
+  selenium-ie-driver under The Apache Software License, Version 2.0
+  selenium-iphone-driver under The Apache Software License, Version 2.0
+  selenium-java under The Apache Software License, Version 2.0
+  selenium-remote-driver under The Apache Software License, Version 2.0
+  selenium-support under The Apache Software License, Version 2.0
+  signpost-core under The Apache Software License, Version 2.0
+  Simple API for CSS under The W3C Software License
+  SLF4J API Module under MIT License
+  SnakeYAML under Apache License Version 2.0
+  specs2 under MIT License
+  specs2-scalaz-core_2.9.1 under MIT License
+  spring-beans under Apache License, Version 2.0
+  spring-context under Apache License, Version 2.0
+  spring-core under Apache License, Version 2.0
+  Templates under Apache License, Version 2.0
+  test-interface under MIT License
+  The Netty Project under Apache License, Version 2.0
+  tyrex under BSD Style License
+  Xalan Java under The Apache Software License, Version 2.0
+  Xalan Java Serializer under The Apache Software License, Version 2.0
+  Xerces2 Java Parser under The Apache Software License, Version 2.0
+  XML Commons External Components XML APIs under The Apache Software License, Version 2.0
+
