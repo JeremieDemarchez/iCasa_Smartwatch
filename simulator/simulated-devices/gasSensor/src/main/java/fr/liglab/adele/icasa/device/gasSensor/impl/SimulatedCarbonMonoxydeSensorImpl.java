@@ -31,7 +31,7 @@ import java.util.List;
  *
  * @author jeremy
  */
-@Component(name = "iCASA.COGasSensor")
+@Component(name = "iCasa.COGasSensor")
 @Provides(properties = {@StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION)})
 public class SimulatedCarbonMonoxydeSensorImpl extends AbstractDevice implements CarbonMonoxydeSensor, SimulatedDevice {
 

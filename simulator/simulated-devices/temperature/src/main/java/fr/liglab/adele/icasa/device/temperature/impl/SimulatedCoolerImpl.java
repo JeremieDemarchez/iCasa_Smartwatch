@@ -35,7 +35,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name = "iCASA.Cooler")
+@Component(name = "iCasa.Cooler")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, SimulatedDevice {
 

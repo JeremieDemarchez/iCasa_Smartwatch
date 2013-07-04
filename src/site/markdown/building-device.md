@@ -72,7 +72,7 @@ Once the device interface defined a implementation class to this device must be 
 
 	// Imports section omitted
 	
-    @Component(name = "iCASA.Thermometer")
+    @Component(name = "iCasa.Thermometer")
     @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
     public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice {
 
@@ -172,7 +172,7 @@ This listener has to be subscribed to zone events as is done in enterInZones met
 ## Device Component
 
 The iCasa platform has been built on top of the OSGi and iPOJO technologies. Each device to be incorporated to iCasa framework has to be built as an iPOJO component and deployed in the runtime as an OSGi Bundle.
-Some iPOJO annotations are defined in the previous implementation class, these annotations (_@Component_, _@Provides_) indicates the iPOJO manipulator tool and iPOJO runtime how to deal with the component. In our example we are indicating that the component is called "iCASA.Thermometer" and that it is providing all implemented interfaces (GenericDevice, SimulatedDevice and Thermometer) as OSGi services.
+Some iPOJO annotations are defined in the previous implementation class, these annotations (_@Component_, _@Provides_) indicates the iPOJO manipulator tool and iPOJO runtime how to deal with the component. In our example we are indicating that the component is called "iCasa.Thermometer" and that it is providing all implemented interfaces (GenericDevice, SimulatedDevice and Thermometer) as OSGi services.
 To know more about the iPOJO compoenent model see <a href="http://felix.apache.org/site/apache-felix-ipojo.html">this</a> and for OSGI <a href="http://www.osgi.org">this</a>.
    
 <a name="Packaging"></a>

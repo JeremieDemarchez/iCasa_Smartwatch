@@ -35,7 +35,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  */
 
 /*
- * @Component(name="iCASA.PowerSwitchMeter")
+ * @Component(name="iCasa.PowerSwitchMeter")
  * 
  * @Provides(properties = {
  * 

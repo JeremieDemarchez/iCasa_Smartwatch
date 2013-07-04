@@ -28,7 +28,7 @@ import java.util.List;
 /**
  * @author Thomas Leveque
  */
-@Component(name = "iCASA.ToggleSwitch")
+@Component(name = "iCasa.ToggleSwitch")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwitch, SimulatedDevice {
 

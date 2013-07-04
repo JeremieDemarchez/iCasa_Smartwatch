@@ -30,7 +30,7 @@ import fr.liglab.adele.icasa.device.bathroomscale.rest.api.BathroomScaleRestAPI;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
-@Component(name = "iCASA.BathroomScale")
+@Component(name = "iCasa.BathroomScale")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements BathroomScale {
 

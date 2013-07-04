@@ -34,7 +34,7 @@ import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name = "iCASA.Photometer")
+@Component(name = "iCasa.Photometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPhotometerImpl extends AbstractDevice implements Photometer, SimulatedDevice {
 

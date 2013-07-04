@@ -241,7 +241,7 @@ It creates a device instance in the application context
 
 _Example:_
 
-    <create-device id="Pres-A1255D-D" type="iCASA.PresenceSensor" />
+    <create-device id="Pres-A1255D-D" type="iCasa.PresenceSensor" />
 
 <table cellpadding="2" cellspacing="0" border="1">
 <tr>
@@ -493,10 +493,10 @@ _Example:_
 	   <modify-zone-variable zoneId="kitchen" variable="Illuminance" value="0"/>
 	
 	   <!-- Creating and placing devices in kitchen zone -->
-	   <create-device id="Pres-A1255D-D" type="iCASA.PresenceSensor" />
-	   <create-device id="Ther-A3654Q-S" type="iCASA.Thermometer" />
-	   <create-device id="Phot-A4894S-S" type="iCASA.Photometer" />
-	   <create-device id="BiLi-A7496W-S" type="iCASA.BinaryLight" />	
+	   <create-device id="Pres-A1255D-D" type="iCasa.PresenceSensor" />
+	   <create-device id="Ther-A3654Q-S" type="iCasa.Thermometer" />
+	   <create-device id="Phot-A4894S-S" type="iCasa.Photometer" />
+	   <create-device id="BiLi-A7496W-S" type="iCasa.BinaryLight" />	
 	   <move-device-zone deviceId="Pres-A1255D-D" zoneId="kitchen" />
 	   <move-device-zone deviceId="Ther-A3654Q-S" zoneId="kitchen" />
 	   <move-device-zone deviceId="Phot-A4894S-S" zoneId="kitchen" />

@@ -215,7 +215,7 @@ Result:
              "max_illuminance": 0,
              "fault": "no"
           },
-          "type": "iCASA.DimmerLight",
+          "type": "iCasa.DimmerLight",
           "services":["fr.liglab.adele.icasa.device.light.DimmerLight",
                     "fr.liglab.adele.icasa.simulator.SimulatedDevice",
                     "fr.liglab.adele.icasa.device.GenericDevice"],
@@ -234,7 +234,7 @@ Result:
              "current_temperature": 296.15,
              "fault": "no"
           },
-          "type": "iCASA.Thermometer",
+          "type": "iCasa.Thermometer",
           "services":["fr.liglab.adele.icasa.device.light.Photometer",
                     "fr.liglab.adele.icasa.simulator.SimulatedDevice",
                     "fr.liglab.adele.icasa.device.GenericDevice"],
@@ -273,7 +273,7 @@ Result:
              "current_temperature": 296.15,
              "fault": "no"
           },
-          "type": "iCASA.Thermometer",
+          "type": "iCasa.Thermometer",
           "services":["fr.liglab.adele.icasa.device.light.Photometer",
                     "fr.liglab.adele.icasa.simulator.SimulatedDevice",
                     "fr.liglab.adele.icasa.device.GenericDevice"],
@@ -295,7 +295,7 @@ Data parameter -> the JSON data associated with the new device
 
 #### Example:  
 
-    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCASA.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:8080/icasa/devices/device
+    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCasa.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:8080/icasa/devices/device
 
 Result:
 
@@ -310,7 +310,7 @@ Result:
         "state":"activated",
         "fault":"no"
       },
-      "type":"iCASA.Heater",
+      "type":"iCasa.Heater",
         "services":["fr.liglab.adele.icasa.device.temperature.Heater",
                     "fr.liglab.adele.icasa.simulator.SimulatedDevice",
                     "fr.liglab.adele.icasa.device.GenericDevice"],
@@ -331,7 +331,7 @@ Data parameter -> the JSON data associated with the device
 
 #### Example:  
 
-    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCASA.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:8080/icasa/zones/zone/hall
+    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCasa.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:8080/icasa/zones/zone/hall
 
 Result:
 
@@ -347,7 +347,7 @@ Result:
          "state":"activated",
          "Location":"bedroom",
          "fault":"no"},
-      "type":"iCASA.Heater",
+      "type":"iCasa.Heater",
         "services":["fr.liglab.adele.icasa.device.temperature.Heater",
                 "fr.liglab.adele.icasa.simulator.SimulatedDevice",
                 "fr.liglab.adele.icasa.device.GenericDevice"],

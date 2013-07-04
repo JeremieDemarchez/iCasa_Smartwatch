@@ -41,7 +41,7 @@ import fr.liglab.adele.icasa.simulator.listener.PersonListener;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name = "iCASA.PresenceSensor")
+@Component(name = "iCasa.PresenceSensor")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedPresenceSensorImpl extends AbstractDevice implements PresenceSensor, SimulatedDevice,
       PersonListener {

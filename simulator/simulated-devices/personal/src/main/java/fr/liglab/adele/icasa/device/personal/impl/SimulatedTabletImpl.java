@@ -33,7 +33,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  * 
  * @author Thomas Leveque
  */
-@Component(name = "iCASA.Tablet")
+@Component(name = "iCasa.Tablet")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedTabletImpl extends AbstractDevice implements SimulatedDevice {
 

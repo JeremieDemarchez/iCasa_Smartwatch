@@ -30,7 +30,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name = "iCASA.Sprinkler")
+@Component(name = "iCasa.Sprinkler")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedSprinklerImpl extends AbstractDevice implements Sprinkler, SimulatedDevice {
 

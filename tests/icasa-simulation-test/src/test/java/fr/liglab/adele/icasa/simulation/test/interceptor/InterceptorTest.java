@@ -70,7 +70,7 @@ public class InterceptorTest extends IPojoApiBaseTest {
 	public void contextAddedToServiceReference() {
 		createInstanceConsumer("(location=kitchen)");
 		prepareSimulationEnvironment();
-		LocatedDevice lDevice = simulationMgr.createDevice("iCASA.BinaryLight", "12345", new Hashtable<String, Object>());
+		LocatedDevice lDevice = simulationMgr.createDevice("iCasa.BinaryLight", "12345", new Hashtable<String, Object>());
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "kitchen");
 		
 		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);
@@ -83,7 +83,7 @@ public class InterceptorTest extends IPojoApiBaseTest {
 	public void serviceReferenceWithOtherContext() {
 		createInstanceConsumer("(location=kitchen)");
 		prepareSimulationEnvironment();
-		LocatedDevice lDevice = simulationMgr.createDevice("iCASA.BinaryLight", "12345", new Hashtable<String, Object>());
+		LocatedDevice lDevice = simulationMgr.createDevice("iCasa.BinaryLight", "12345", new Hashtable<String, Object>());
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "livingroom");
 		
 		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);				
@@ -95,7 +95,7 @@ public class InterceptorTest extends IPojoApiBaseTest {
 	public void contextChangedToServiceReference() {
 		createInstanceConsumer("(location=kitchen)");
 		prepareSimulationEnvironment();
-		LocatedDevice lDevice = simulationMgr.createDevice("iCASA.BinaryLight", "12345", new Hashtable<String, Object>());
+		LocatedDevice lDevice = simulationMgr.createDevice("iCasa.BinaryLight", "12345", new Hashtable<String, Object>());
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "kitchen");
 		
 		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);

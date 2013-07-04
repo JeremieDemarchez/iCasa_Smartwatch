@@ -29,7 +29,7 @@ import fr.liglab.adele.icasa.device.bathroomscale.MedicalThermometer;
 import fr.liglab.adele.icasa.device.bathroomscale.rest.api.MedicalThermometerRestAPI;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
-@Component(name = "iCASA.MedicalThermometer")
+@Component(name = "iCasa.MedicalThermometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedThermometerImpl extends MedicalDeviceImpl implements MedicalThermometer {
 

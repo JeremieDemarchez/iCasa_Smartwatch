@@ -29,7 +29,7 @@ import fr.liglab.adele.icasa.device.bathroomscale.Sphygmometer;
 import fr.liglab.adele.icasa.device.bathroomscale.rest.api.SphygmometerRestAPI;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
-@Component(name = "iCASA.Sphygmometer")
+@Component(name = "iCasa.Sphygmometer")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedSphygmometerImpl extends MedicalDeviceImpl implements Sphygmometer {
 

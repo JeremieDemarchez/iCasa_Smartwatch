@@ -39,7 +39,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name="iCASA.AudioSource")
+@Component(name="iCasa.AudioSource")
 @Provides(properties = {
         @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedAudioSourceImpl extends AbstractDevice implements AudioSource, SimulatedDevice {

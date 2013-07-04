@@ -30,7 +30,7 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  * 
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name = "iCASA.DimmerLight")
+@Component(name = "iCasa.DimmerLight")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLight, SimulatedDevice {
 
