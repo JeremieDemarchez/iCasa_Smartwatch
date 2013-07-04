@@ -556,8 +556,19 @@ define(['jquery',
         @background = @.generateBackgroundColor();
         @borderColor = @background;
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
-      getVariableValue:(variable)->
-        return @.variables()[variable]+"";
+      getInputEltId:(variableName)->
+        return @.id() + "#zoneprop#" + variableName+"";
+      getVariableValue:(variableName)->
+        return @.variables()[variableName]+"";
+      getVariableUnit:(variableName)->
+        unti = "";
+        if (variableName == "zone.area")
+          unit = 'm2';
+        if (variableName == "zone.volume")
+            unit = 'm3';
+        if (variableName == "Illuminance")
+            unit = "lux";
+        return unit;
       generateBackgroundColor:()->
         r = Math.floor(Math.random() * 256);
         g = Math.floor(Math.random() * 256);

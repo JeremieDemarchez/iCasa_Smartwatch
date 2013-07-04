@@ -24,9 +24,18 @@
     </div>
     <!--ko foreach: variables_name -->
     <div class="control-group">
-      <label class="control-label" data-bind="text: $data">variable</label>
-      <div class="controls">
-          <input type="text" disabled="disabled" data-bind="value: $parent.getVariableValue($data)" />
+      <label class="control-label" data-bind="text: $data, attr: { for: $parent.getInputEltId($data)}">variable</label>
+      <div style="display: inherit;" class="controls input-append">
+          <input type="text" disabled="disabled" data-bind="value: $parent.getVariableValue($data), attr: { id: $parent.getInputEltId($data)}" />
+          <!--ko if: $parent.getVariableUnit($data) == "m2" -->
+          <span class="add-on">m<span class="sup">2</span></span>
+          <!--/ko-->
+          <!--ko if: $parent.getVariableUnit($data) == "m3" -->
+          <span class="add-on">m<span class="sup">3</span></span>
+          <!--/ko-->
+          <!--ko if: (($parent.getVariableUnit($data) != "") && ($parent.getVariableUnit($data) != "m2") && ($parent.getVariableUnit($data) != "m3")) -->
+          <span class="add-on" data-bind="text: $parent.getVariableUnit($data)"></span>
+          <!--/ko-->
       </div>
     </div>
     <!-- /ko -->
