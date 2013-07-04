@@ -18,7 +18,7 @@
 
     <div class="span6">
         <h1>&nbsp; iCasa Platform</h1>
-        <p>ICasa Platform is an execution platform on top of OSGi for digital home applications. It has been developed in the context of the Medical project by the Adele team and the Orange Labs. </p>
+        <p>ICasa Platform is an execution platform on top of OSGi for digital home applications. It has been developed in the context of the Medical project by the ADELE Research Group and the Orange Labs. </p>
 
 <p>Specifically, iCASA-Platform provides:</p>
 
@@ -38,5 +38,5 @@
 <div class="span11 page-header">
     <h1>License</h1>
     iCasa Platform is licensed under Apache V2 <a href="license.html">license</a>. This project is maintained by
-    <a href="http://www-adele.imag.fr/">LIG ADELE team</a>.
+    <a href="http://www-adele.imag.fr/">LIG ADELE Research Group</a>.
 </div>
