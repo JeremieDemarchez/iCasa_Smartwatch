@@ -38,8 +38,8 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.1.0</AdeleBaseVersion>
         <ciliaVersion>1.7.1</ciliaVersion>
-        <iCasaPlatformVersion>1.1.0</iCasaPlatformVersion>
-        <iCasaSimulatorVersion>1.1.0</iCasaSimulatorVersion>
+        <iCasaPlatformVersion>1.1.1-SNAPSHOT</iCasaPlatformVersion>
+        <iCasaSimulatorVersion>1.1.1-SNAPSHOT</iCasaSimulatorVersion>
         <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
 
     </properties>

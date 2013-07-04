@@ -173,9 +173,9 @@ public class GasAlarmSystemApplication extends EmptyDeviceListener {
 
         /*
            * It is extremely important to unregister the device listener.
-           * Otherwise, iCASA will continue to send notifications to the
+           * Otherwise, iCasa will continue to send notifications to the
            * unpredictable and invalid component instance.
-           * This will also causes problem when the bundle is stopped as iCASA
+           * This will also causes problem when the bundle is stopped as iCasa
            * will still hold a reference on the device listener object.
            * Consequently, it (and its bundle) won't be garbage collected
            * causing a memory issue known as stale reference.
