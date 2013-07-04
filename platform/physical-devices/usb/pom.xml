@@ -27,13 +27,26 @@
 	<artifactId>usb.physical.devices</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
+    <profiles>
+        <profile>
+            <id>all</id>
+            <modules>
+                <module>usb-discovery</module>
+                <module>usb-discovery-rose</module>
+                <module>rfid-reader</module>
+                <module>usb-rfid-reader-importer</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>usb-discovery-rose</module>
+                <module>rfid-reader</module>
+                <module>usb-rfid-reader-importer</module>
+            </modules>
+        </profile>
+    </profiles>
 
-	<modules>
-		<module>usb-discovery</module>
-		<module>usb-discovery-rose</module>
-		<module>rfid-reader</module>
-		<module>usb-rfid-reader-importer</module>
-	</modules>
    <build>
       <plugins>
          <plugin>
