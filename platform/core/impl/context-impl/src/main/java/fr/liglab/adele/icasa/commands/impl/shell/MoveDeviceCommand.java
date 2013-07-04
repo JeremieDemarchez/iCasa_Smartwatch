@@ -47,8 +47,8 @@ public class MoveDeviceCommand extends AbstractCommand {
 	@Requires
 	private ContextManager contextManager;
 
-    private static Signature MOVE = new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y} );
-    private static Signature MOVE_WZ = new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y, ScriptLanguage.BOTTOM_Z } );
+    private static Signature MOVE = new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y} );
+    private static Signature MOVE_WZ = new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y, ScriptLanguage.BOTTOM_Z } );
 
     public MoveDeviceCommand(){
        addSignature(MOVE);

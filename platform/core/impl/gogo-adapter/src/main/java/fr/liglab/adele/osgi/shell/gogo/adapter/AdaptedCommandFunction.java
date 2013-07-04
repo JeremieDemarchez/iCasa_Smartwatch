@@ -52,13 +52,14 @@ public class AdaptedCommandFunction implements Function {
 		JSONObject params = new JSONObject();
         int argumentsSize = (arguments == null)?0:arguments.size();
 		Signature signature =  m_command.getSignature(argumentsSize);
-        String paramsNames[] = signature.getParameters();
-		if (arguments != null) {
-			for (int i = 0; i < paramsNames.length && argumentsSize > i; i++) {
-				params.put(paramsNames[i], arguments.get(i));
-			}
-		}
-
+        if (signature != null){
+            String paramsNames[] = signature.getParameters();
+            if (arguments != null) {
+                for (int i = 0; i < paramsNames.length && argumentsSize > i; i++) {
+                    params.put(paramsNames[i], arguments.get(i));
+                }
+            }
+        }
 		return m_command.execute(session.getKeyboard(), session.getConsole(), params);
 	}
 }
