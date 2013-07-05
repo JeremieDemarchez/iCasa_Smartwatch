@@ -90,9 +90,13 @@ define(['jquery',
                 start: (event, eventUI) ->
                   viewModel.isSizeHighlightEnabled(false);
                 stop: (event, eventUI) ->
-                  #TODO add positionX and positionY for zones
-                  viewModel.positionX((eventUI.position.left / viewModel.containerWidthRatio()) + (viewModel.widgetWidth() / 2));
-                  viewModel.positionY((eventUI.position.top / viewModel.containerHeightRatio())  + (viewModel.widgetHeight() / 2));
+                  #Zones does not utilise widgetWidth
+                  if (viewModel instanceof ZoneViewModel)
+                      viewModel.positionX((eventUI.position.left / viewModel.containerWidthRatio()) + (viewModel.width() / 2));
+                      viewModel.positionY((eventUI.position.top / viewModel.containerHeightRatio())  + (viewModel.height() / 2));
+                  else
+                      viewModel.positionX((eventUI.position.left / viewModel.containerWidthRatio()) + (viewModel.widgetWidth() / 2));
+                      viewModel.positionY((eventUI.position.top / viewModel.containerHeightRatio())  + (viewModel.widgetHeight() / 2));
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
@@ -475,10 +479,6 @@ define(['jquery',
         @variables = kb.observable(model, 'variables');
         if model.get('isSelected')?
           @isSelected(model, 'isSelected');
-        @width(@rightX() - @leftX());
-        @height(@bottomY() - @topY());
-        #@positionX((@leftX() + @rightX()) / 2);
-        #@positionY((@bottomY() + @topY()) / 2);
         @variables_name = ko.computed({
           read: () =>
             if (@.variables() instanceof Object)
@@ -496,20 +496,35 @@ define(['jquery',
           write: (newValue)=>
             return ;
           }, @);
-
+        @width = ko.computed({
+           read:()=>
+             return (@rightX() - @leftX());
+           write:(value)=>
+             @rightX(@leftX() + value);
+        },@);
+        @height = ko.computed({
+           read:()=>
+             return (@bottomY() - @topY());
+           write:(value)=>
+             @bottomY(@topY() + value);
+        },@);
         @positionX = ko.computed({
            read:()=>
              return (@leftX() + @rightX()) / 2;
            write:(value)=>
-             @rightX(value + @width()/2);
-             @leftX(value - @width()/2);
+             _rightX = value + @width()/2;
+             _leftX = value - @width()/2;
+             @rightX(_rightX);
+             @leftX(_leftX);
         },@);
         @positionY = ko.computed({
            read:()=>
              return (@bottomY() + @topY()) / 2;
            write:(value)=>
-             @topY(value - @height()/2);
-             @bottomY(value + @height()/2);
+             _topY = value - @height()/2;
+             _bottomY = value + @height()/2;
+             @topY(_topY);
+             @bottomY(_bottomY);
         },@);
 
         @visibility = ko.computed({
