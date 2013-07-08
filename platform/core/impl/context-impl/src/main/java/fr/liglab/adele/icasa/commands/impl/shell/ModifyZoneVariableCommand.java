@@ -44,9 +44,13 @@ public class ModifyZoneVariableCommand extends AbstractCommand {
 	public Object execute(InputStream in, PrintStream out,JSONObject param, Signature signature) throws Exception {
         String zoneId = param.getString(ScriptLanguage.ZONE_ID);
         String variableName = param.getString(ScriptLanguage.VARIABLE);
-        Double newValue = param.getDouble(ScriptLanguage.VALUE);
-		System.out.println("Modifying variable: " + variableName + " value: " + newValue + " - in Zone: " + zoneId);
-		simulationManager.setZoneVariable(zoneId, variableName, newValue);
+        Object value;
+        try{
+            value = param.getDouble(ScriptLanguage.VALUE);//See if is a number.
+        }catch (Exception ex){
+            value = param.getString(ScriptLanguage.VALUE);//If not, it will be treated as a string.
+        }
+		simulationManager.setZoneVariable(zoneId, variableName, value);
 		return null;
 	}
 
