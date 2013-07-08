@@ -36,11 +36,11 @@
 						<headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
-								<value>test.light.follow.me</value>
+								<value>dimmer.light.follow.me</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Name</name>
-								<value>Light Follow Me App</value>
+								<value>Dimmer Follow Me App</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Version</name>
