@@ -36,20 +36,53 @@ public class ModifyZoneVariableCommand extends AbstractCommand {
 	@Requires
 	private ContextManager simulationManager;
 
+    private final Signature typedSignature;
+    private final Signature unTypedSignature;
+
     public ModifyZoneVariableCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE, ScriptLanguage.VALUE}));
+        unTypedSignature = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE, ScriptLanguage.VALUE});
+        typedSignature =  new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.VARIABLE, ScriptLanguage.VALUE, ScriptLanguage.TYPE});
+        addSignature(unTypedSignature);
+        addSignature(typedSignature);
     }
 
 	@Override
 	public Object execute(InputStream in, PrintStream out,JSONObject param, Signature signature) throws Exception {
         String zoneId = param.getString(ScriptLanguage.ZONE_ID);
         String variableName = param.getString(ScriptLanguage.VARIABLE);
-        Double newValue = param.getDouble(ScriptLanguage.VALUE);
-		System.out.println("Modifying variable: " + variableName + " value: " + newValue + " - in Zone: " + zoneId);
-		simulationManager.setZoneVariable(zoneId, variableName, newValue);
+        Object value = getValue(param,signature);
+		simulationManager.setZoneVariable(zoneId, variableName, value);
 		return null;
 	}
 
+    private Object getValue(JSONObject param, Signature signature) throws Exception{
+        Object value = null;
+        if (signature.equals(typedSignature)){
+            String type = param.getString(ScriptLanguage.TYPE);
+            if (type.equalsIgnoreCase("int") || type.equalsIgnoreCase("Integer") || type.equalsIgnoreCase("i")){
+                value = Integer.valueOf(param.getString(ScriptLanguage.VALUE));
+            } else if (type.equalsIgnoreCase("float") || type.equalsIgnoreCase("f")){
+                value = Float.valueOf(param.getString(ScriptLanguage.VALUE));
+            } else if (type.equalsIgnoreCase("double") || type.equalsIgnoreCase("d")){
+                value = Double.valueOf(param.getString(ScriptLanguage.VALUE));
+            } else if (type.equalsIgnoreCase("boolean") || type.equalsIgnoreCase("b")){
+                value = Boolean.valueOf(param.getString(ScriptLanguage.VALUE));
+            } else if (type.equalsIgnoreCase("String") || type.equalsIgnoreCase("s")){
+                value = param.getString(ScriptLanguage.VALUE);
+            } else {
+                throw new Exception("Unknown Data type for zone variable " + type);
+            }
+            return value;
+        }
+        //If type is not given, it will try to see if it is Double or String
+        try{
+            value = param.getDouble(ScriptLanguage.VALUE);//See if is a number.
+        }catch (Exception ex){
+            value = param.getString(ScriptLanguage.VALUE);//If not, it will be treated as a string.
+        }
+        return value;
+
+    }
 
     /**
      * Get the name of the  Script and command gogo.
@@ -63,6 +96,6 @@ public class ModifyZoneVariableCommand extends AbstractCommand {
 
     @Override
     public String getDescription(){
-        return "Modify the value of a variable in a given zone.\n\t" + super.getDescription();
+        return "Modify the value of a variable in a given zone \n\tAccepted types [int, float, double, boolean, string].\n\t" + super.getDescription();
     }
 }

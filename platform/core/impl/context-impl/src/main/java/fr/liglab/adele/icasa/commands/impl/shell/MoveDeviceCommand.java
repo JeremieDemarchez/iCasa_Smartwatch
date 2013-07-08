@@ -62,11 +62,11 @@ public class MoveDeviceCommand extends AbstractCommand {
         if (device == null) {
             throw new IllegalArgumentException("Device ("+ deviceId +") does not exist");
         }
-        int newX = param.getInt(ScriptLanguage.NEW_X);
-        int newY = param.getInt(ScriptLanguage.NEW_Y);
+        int newX = param.getInt( ScriptLanguage.LEFT_X);
+        int newY = param.getInt(ScriptLanguage.TOP_Y);
         int newZ = device.getCenterAbsolutePosition().z;
         if (signature.equals(MOVE_WZ)){
-            newZ = param.getInt(ScriptLanguage.NEW_Z);
+            newZ = param.getInt( ScriptLanguage.BOTTOM_Z);
         }
 		contextManager.setDevicePosition(deviceId, new Position(newX, newY, newZ));
 		return null;

@@ -32,7 +32,7 @@
     <properties>
         <productName>iCasa Platform</productName>
         <productVersion>${project.version}</productVersion>
-        <AdeleBaseVersion>1.1.0</AdeleBaseVersion>
+        <AdeleBaseVersion>1.1.1-SNAPSHOT</AdeleBaseVersion>
         <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
         <cxfVersion>2.3.2</cxfVersion>
 
