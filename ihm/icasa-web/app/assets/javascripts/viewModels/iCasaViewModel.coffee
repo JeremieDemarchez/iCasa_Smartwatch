@@ -307,6 +307,24 @@ define(['jquery',
 
           $(element).popover({trigger:'hover'});
     }
+    #Knockout Extender to round numbers
+    ko.extenders.numeric = (target, precision) =>
+        result = ko.computed({
+            read: target;
+            write: (newValue) =>
+                current = target()
+                if !isNaN(newValue)
+                    console.log "is a number" + newValue
+                    roundingMultiplier = Math.pow(10, precision)
+                    valueToWrite = Math.round(newValue * roundingMultiplier) / roundingMultiplier
+                else
+                    console.log "not a number" + newValue
+                    valueToWrite = newValue;
+                target(valueToWrite);
+                target.notifySubscribers(valueToWrite);
+        });
+        result(target());
+        return result;
 
     # View models
 
@@ -569,7 +587,11 @@ define(['jquery',
       getInputEltId:(variableName)->
         return @.id() + "#zoneprop#" + variableName+"";
       getVariableValue:(variableName)->
-        return @.variables()[variableName]+"";
+        variableValue = @.variables()[variableName]+"";
+        if (!isNaN(variableValue))
+          roundingMultiplier = Math.pow(10, 2);
+          return Math.round(variableValue * roundingMultiplier) / roundingMultiplier;
+        return variableValue;
       getVariableUnit:(variableName)->
         unti = "";
         if (variableName == "zone.area")
@@ -589,7 +611,7 @@ define(['jquery',
     class DevicePropertyViewModel extends kb.ViewModel
         constructor: (model) ->
             @name = kb.observable(model,'name');
-            @value = kb.observable(model,'value');
+            @value = kb.observable(model,'value').extend({ numeric: 2 });
             @visible = kb.observable(model,'visible');
 
     class DeviceViewModel extends DraggableStateWidgetViewModel
@@ -617,7 +639,7 @@ define(['jquery',
            @filterFunction = (model)=>
                 return !model.get('visible');
 
-           @filtered_properties = kb.collectionObservable(@propertiesModel,{filters:@filterFunction });
+           @filtered_properties = kb.collectionObservable(@propertiesModel,{filters:@filterFunction,view_model:DevicePropertyViewModel  });
 
 
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
@@ -684,8 +706,12 @@ define(['jquery',
                 newProperties =  @model().get('properties');
                 ko.utils.arrayForEach(newProperties, (property)=>
                     storedProperty = @.propertiesModel.get(property.name);
+                    #This is done cause when modifying model, extend function is not well handled by kb :(
                     if storedProperty?
-                        storedProperty.set('value',property.value );
+                        if !isNaN(property.value)
+                            roundingMultiplier = Math.pow(10, 2)
+                            valueToWrite = Math.round(property.value * roundingMultiplier) / roundingMultiplier
+                        storedProperty.set('value',valueToWrite );
                     else
                         @.propertiesModel.add(property);
                 );
@@ -782,6 +808,11 @@ define(['jquery',
                        positionY: 3,
                        show: false
                      });
+                     ko.utils.arrayForEach(@decorators(), (decorator) ->
+                        if ((decorator.name() == "activated") || (decorator.name() == "fault"))
+                           decorator.positionY(1);
+                           decorator.positionX(0);
+                     );
                 if (@type() == "iCasa.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
