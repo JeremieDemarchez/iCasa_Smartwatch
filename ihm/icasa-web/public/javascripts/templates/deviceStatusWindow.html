@@ -25,20 +25,24 @@
     <div class="control-group">
         <label class="control-label" for="inputName">Name</label>
         <div class="controls">
-            <input type="text" id="inputName" disabled="disabled" data-bind="value: name, attr: { alt: name}" />
-            <label class="checkbox">
-                <input type="checkbox"  data-bind="checked: showNameInMap" />Show in map
-            </label>
+            <div class="input-append">
+                <input type="text" id="inputName" disabled="disabled" data-bind="value: name, attr: { alt: name}" />
+                <span class="add-on">
+                    <input type="checkbox"  data-toggle="tooltip" title="Show in Map" data-bind="checked: showNameInMap" />
+                </span>
+            </div>
         </div>
     </div>
     <!--ko foreach: collectionProperties -->
     <div class="control-group">
-      <label class="control-label" for="inputLocation" data-bind="text: name">Location</label>
+      <label class="control-label" data-bind="text: name, attr:{for: name()+'input'}">thermometer.currentTemperature</label>
       <div class="controls">
-          <input type="text" id="inputLocation" disabled="disabled" data-bind="value: value" />
-          <label class="checkbox">
-          <input type="checkbox"  data-bind="checked: visible" />Show in map
-          </label>
+          <div class="input-append">
+              <input class="span2" type="text" disabled="disabled" data-bind="value: value , attr:{id: name()+'input'}">
+                <span class="add-on">
+                  <input type="checkbox" data-toggle="tooltip" title="Show in Map" data-bind="checked: visible" />
+                </span>
+          </div>
       </div>
     </div>
     <!-- /ko -->
