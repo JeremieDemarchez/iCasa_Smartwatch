@@ -119,9 +119,12 @@ public class IcasaJSONUtil {
 			zoneJSON.put(ZoneJSON.POSITION_BOTTOMY_PROP, zone.getRightBottomAbsolutePosition().y);
 			zoneJSON.put(ZoneJSON.IS_ROOM_PROP, true); // TODO change it when Zone API will be improved
 
-			JSONObject propObject = new JSONObject();
+			JSONArray propObject = new JSONArray();
 			for (String variable : zone.getVariableNames()) {
-				propObject.put(variable, zone.getVariableValue(variable));
+                JSONObject property = new JSONObject();
+                property.put("name", variable);
+                property.put("value", zone.getVariableValue(variable));
+				propObject.put(property);
 			}
 			zoneJSON.put(ZoneJSON.VARIABLE_PROP, propObject);
 
