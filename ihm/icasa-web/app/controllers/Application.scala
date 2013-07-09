@@ -194,8 +194,8 @@ object Application extends Controller {
       picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + fileName))
 
       def map = new HouseMap {
-          var id = mapId;
           var name = mapName;
+          var id = generateMapId(mapName);
           var description = mapDescription;
           var gatewayURL = gatewayURLToSet;
           var imgFile = fileName;
@@ -215,6 +215,14 @@ object Application extends Controller {
         "error" -> "Missing file"
       )
     }
+  }
+
+  def generateMapId(name: String):  String = {
+    var mapId = name.replaceAll("[^A-Za-z0-9]", "");//remove non-alphanumeric char
+    while (maps.contains(mapId)){
+      mapId = mapId + scala.util.Random.alphanumeric.take(4).mkString; //get an alphanumeric character
+    }
+    return mapId;
   }
 
   def getMap(file: String) = Action {
