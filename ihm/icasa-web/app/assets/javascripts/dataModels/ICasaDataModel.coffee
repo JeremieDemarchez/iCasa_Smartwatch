@@ -33,13 +33,13 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/devices/device".replace /#server#/, serverUrl
 
-         class DataModel.Models.Device.Property extends Backbone.Model
+         class DataModel.Models.Property extends Backbone.Model
           idAttribute: "name"
           defaults:
               visible: false
 
-         class DataModel.Models.Device.Properties extends Backbone.Collection
-              model: DataModel.Models.Device.Property
+         class DataModel.Models.Properties extends Backbone.Collection
+              model: DataModel.Models.Property
 
          class DataModel.Collections.Devices extends Backbone.Collection
             url: "#server#/devices/devices".replace /#server#/, serverUrl

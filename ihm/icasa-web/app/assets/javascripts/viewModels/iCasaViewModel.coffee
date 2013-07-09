@@ -325,6 +325,11 @@ define(['jquery',
         return result;
 
     # View models
+    class PropertyViewModel extends kb.ViewModel
+        constructor: (model) ->
+            @name = kb.observable(model,'name');
+            @value = kb.observable(model,'value').extend({ numeric: 2 });
+            @visible = kb.observable(model,'visible');
 
     class NamedViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -492,7 +497,32 @@ define(['jquery',
         @rightX = kb.observable(model, 'rightX');
         @bottomY = kb.observable(model, 'bottomY');
         @topY = kb.observable(model, 'topY');
+        #Handle variables
         @variables = kb.observable(model, 'variables');
+        @variablesModel = new DataModel.Models.Properties(model.get('variables'));
+        @collectionVariables = kb.collectionObservable(@variablesModel, {view_model: PropertyViewModel});
+
+        @filterFunction = (model)=>
+          return !model.get('visible');
+        #Filtered properties
+        @filtered_variables = kb.collectionObservable(@variablesModel,{filters:@filterFunction,view_model:PropertyViewModel  });
+        @updateVariables = (newValue) =>
+            newVariables =  @model().get('variables');
+            ko.utils.arrayForEach(newVariables, (variable)=>
+                storedVariable = @.variablesModel.get(variable.name);
+                #This is done cause when modifying model, extend function is not well handled by kb :(
+                if storedVariable?
+                    if !isNaN(variable.value)
+                        roundingMultiplier = Math.pow(10, 2)
+                        valueToWrite = Math.round(variable.value * roundingMultiplier) / roundingMultiplier
+                    else
+                        valueToWrite = variable.value
+                    storedVariable.set('value',valueToWrite );
+                else
+                    @.variablesModel.add(variable);
+            );
+        @variables.subscribe(@updateVariables);
+        @updateVariables();
         if model.get('isSelected')?
           @isSelected(model, 'isSelected');
         @variables_name = ko.computed({
@@ -606,16 +636,10 @@ define(['jquery',
         return "rgba("+r+","+g+","+b+", 0.4)";
 
 
-    class DevicePropertyViewModel extends kb.ViewModel
-        constructor: (model) ->
-            @name = kb.observable(model,'name');
-            @value = kb.observable(model,'value').extend({ numeric: 2 });
-            @visible = kb.observable(model,'visible');
-
     class DeviceViewModel extends DraggableStateWidgetViewModel
         constructor: (model) ->
            super(model);
-           @propertiesModel = new DataModel.Models.Device.Properties(model.get('properties'));
+           @propertiesModel = new DataModel.Models.Properties(model.get('properties'));
            @type = kb.observable(model, 'type');
            @location = kb.observable(model, 'location');
            @services = kb.observable(model, 'services');
@@ -631,13 +655,13 @@ define(['jquery',
               return true;
             else
               return false;
-           @collectionProperties = kb.collectionObservable(@propertiesModel, {view_model: DevicePropertyViewModel});
+           @collectionProperties = kb.collectionObservable(@propertiesModel, {view_model: PropertyViewModel});
            @properties = kb.observable(model,'properties');
 
            @filterFunction = (model)=>
                 return !model.get('visible');
 
-           @filtered_properties = kb.collectionObservable(@propertiesModel,{filters:@filterFunction,view_model:DevicePropertyViewModel  });
+           @filtered_properties = kb.collectionObservable(@propertiesModel,{filters:@filterFunction,view_model:PropertyViewModel  });
 
 
            @state = kb.defaultObservable(kb.observable(model, 'state'), 'activated');
