@@ -711,6 +711,8 @@ define(['jquery',
                         if !isNaN(property.value)
                             roundingMultiplier = Math.pow(10, 2)
                             valueToWrite = Math.round(property.value * roundingMultiplier) / roundingMultiplier
+                        else
+                            valueToWrite = property.value
                         storedProperty.set('value',valueToWrite );
                     else
                         @.propertiesModel.add(property);
