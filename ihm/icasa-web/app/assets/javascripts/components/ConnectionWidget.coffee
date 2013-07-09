@@ -28,6 +28,8 @@ define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) -
         @connected = false;
         if (config?.buttonId?)
           @buttonId = config.buttonId;
+          $('#' + @buttonId).on('click', @reconnect); #Reconnect event
+          $('#' + @buttonId).on('hover', @changeButtonTitle);#Change title to connect/reconnect
 
         @hub.requireService({
           component: @,
@@ -35,6 +37,20 @@ define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) -
           bind:      "bindGatewayConnectionMgr",
           unbind:    "unbindGatewayConnectionMgr"
         });
+
+
+      changeButtonTitle:(e)=>
+        button =  $("#" + @buttonId);
+        if e.handleObj.type == "mouseover"
+          button.removeClass("btn-success btn-danger btn-warning");
+          button.addClass("btn-primary")
+          if @gatewayConnectionMgr.isConnected()
+            button.text("Reconnect");
+          else
+            button.text("Connect");
+        else
+          button.removeClass("btn-primary")
+          @updateButton();#revert button original behaviour.
 
       notifyConnectionEvent : (event) ->
         @updateButton();
@@ -73,7 +89,7 @@ define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) -
           buttonElt.text("Not Connected");
           buttonElt.addClass("btn-danger");
 
-      reconnect: () ->
+      reconnect: () =>
         @gatewayConnectionMgr.reconnect();
 
 

@@ -314,11 +314,9 @@ define(['jquery',
             write: (newValue) =>
                 current = target()
                 if !isNaN(newValue)
-                    console.log "is a number" + newValue
                     roundingMultiplier = Math.pow(10, precision)
                     valueToWrite = Math.round(newValue * roundingMultiplier) / roundingMultiplier
                 else
-                    console.log "not a number" + newValue
                     valueToWrite = newValue;
                 target(valueToWrite);
                 target.notifySubscribers(valueToWrite);

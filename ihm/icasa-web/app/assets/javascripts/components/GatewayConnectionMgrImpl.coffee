@@ -118,7 +118,7 @@ define(['hubu', 'contracts/GatewayConnectionMgr', 'contracts/DataModelConnection
       return GatewayConnectionMgr.getConnectionEventTopic();
 
     reconnect: () ->
-      @gatewayConnectionMgr.reconnect();
+      @dataModelConnectionMgr.reconnect();
       @remoteNotifConnectionMgr.reconnect();
 
 
