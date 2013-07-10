@@ -24,11 +24,11 @@ import fr.liglab.adele.icasa.Variable;
 public interface ZoneDimension {
 
 	/** The Variable ZONE_VOLUME_VAR is used to store the zone volume. */
-	public final static Variable ZONE_VOLUME_VAR = new Variable("zone.volume", Double.class,
+	public final static Variable ZONE_VOLUME_VAR = new Variable("Volume", Double.class,
 	        "the volume in m3");
 
 	/** The Variable ZONE_AREA_VAR is used to store the zone area. */
-	public final static Variable ZONE_AREA_VAR = new Variable("zone.area", Double.class,
+	public final static Variable ZONE_AREA_VAR = new Variable("Area", Double.class,
 	        "the volume in m2");
 
 	/**
