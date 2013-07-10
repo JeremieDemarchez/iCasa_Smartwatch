@@ -436,9 +436,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 					onDeploymePackageArrival(deploymentPackage);
 			} else { // unInstallation Confirmation
 				synchronized (_uninstalledDeploymentPackages) {
-					// System.out.println("Uninstall -------------------> " + dpName);
 					DeploymentPackage uninstalledDeploymentPackage = _uninstalledDeploymentPackages.remove(dpName);
-					// System.out.println("Uninstall -------------------> " + uninstalledDeploymentPackage.getName());
 					if (uninstalledDeploymentPackage != null) {
 						onDeploymePackageDeparture(uninstalledDeploymentPackage);
 					}
