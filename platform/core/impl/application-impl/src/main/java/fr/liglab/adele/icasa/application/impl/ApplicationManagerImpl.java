@@ -190,28 +190,16 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	@Override
 	public Application getApplicationOfBundle(String bundleSymbolicName) {
-
-		/*
-		synchronized (_bundlesPerAppId) {
-			Set<Application> apps = _bundlesPerAppId.keySet();
-			for (Application application : apps) {
-				Set<String> bundles = _bundlesPerAppId.get(application);
-				if (bundles.contains(bundleSymbolicName))
-					return application;
-			}
-			return null;
-		}
-		*/
-		List<Application> apps = getApplications();
-
-		// TODO: Synchronization code
-		for (Application app : apps) {
-	      ApplicationImpl tempApp = (ApplicationImpl) app;
-	      if (tempApp.constainsBundle(bundleSymbolicName))
-	      	return tempApp;
+		Application resultApp = null;
+		readLock.lock();
+		for (ApplicationImpl app : _appPerId.values()) {	      
+	      if (app.constainsBundle(bundleSymbolicName)) {
+	      	resultApp = app;
+	      	break;
+	      }	      	
       }
-		return null;
-		
+		readLock.unlock();
+		return resultApp;		
 	}
 
 	private void onDeploymePackageArrival(DeploymentPackage deploymentPackage) {
