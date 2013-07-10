@@ -36,6 +36,9 @@
           <!--ko if: (($parent.getVariableUnit(name()) != "") && ($parent.getVariableUnit(name()) != "m2") && ($parent.getVariableUnit(name()) != "m3")) -->
           <span class="add-on" data-bind="text: $parent.getVariableUnit(name())"></span>
           <!--/ko-->
+          <span class="add-on">
+            <input type="checkbox" data-toggle="tooltip" title="Show in Map" data-bind="checked: visible" />
+          </span>
       </div>
     </div>
     <!-- /ko -->
