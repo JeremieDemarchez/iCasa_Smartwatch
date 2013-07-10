@@ -1329,7 +1329,7 @@ define(['jquery',
            @newZoneName = ko.observable("");
 
            @createZone = () =>
-              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 50, bottomY: 50 , isSelected: true});
+              newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 50, bottomY: 50 , isSelected: true, variables: []});
               newZone.save();
               newZone.set(id: @newZoneName());
               DataModel.collections.zones.push(newZone);
