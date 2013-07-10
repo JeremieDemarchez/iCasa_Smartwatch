@@ -113,7 +113,7 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 	 * @return the temperature currently produced by this heater
 	 * @author jeremy savonet
 	 */
-	private double computeTemperature() {
+	private Double computeTemperature() {
 		long time = System.currentTimeMillis();
 		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
 		m_lastUpdateTime = time;
@@ -134,8 +134,11 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 				currentTemperature = (Double) m_zone.getVariableValue("Temperature");
 				roomVolume = (Double) m_zone.getVariableValue("Volume");				
 				heaterPowerLevel = getPowerLevel()*getMaxPowerLevel();
-
-				if (roomVolume>0) {
+                if (currentTemperature == null || roomVolume == null){
+                    System.err.println("Unable to calculate temperature in zone without the Volume and/or Temperature variables");
+                    return null;
+                }
+                if (roomVolume>0) {
 					thermalCapacity = airMass * roomVolume * airMassCapacity;
 					returnedTemperature = ((heaterPowerLevel*timeDiff)/thermalCapacity)+currentTemperature;
 					//clippinp function
@@ -166,8 +169,10 @@ public class SimulatedHeaterImpl extends AbstractDevice implements Heater, Simul
 					Thread.sleep(sleepTime);
 					synchronized (SimulatedHeaterImpl.this) {
 						if (m_zone != null) {
-
-							m_zone.setVariableValue("Temperature", computeTemperature());	
+                            Double temperature = computeTemperature();
+                            if (temperature != null){
+							    m_zone.setVariableValue("Temperature", temperature);
+                            }
 						}
 					}
 				} catch (InterruptedException e) {
