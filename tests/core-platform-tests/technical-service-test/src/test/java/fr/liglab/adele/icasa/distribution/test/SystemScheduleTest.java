@@ -36,8 +36,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.mockito.Mockito.*;
 import static org.ops4j.pax.exam.CoreOptions.systemProperty;
+
 
 
 @RunWith(PaxExam.class)
@@ -84,17 +85,19 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
 	 * Test the creation of a new zone.
 	 */
 	@Test
-	public void scheduleAPeriodictaskTest(){
+	public void scheduleAPeriodicTaskTest(){
 
-        PeriodicRunnable runnable = new PeriodicScheduledTestTask(clock);
-        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), runnable, new Hashtable());
+        PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
+        when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
+        when(mockPeriodic.getGroup()).thenReturn("group1");
+        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         register.unregister();
-
+        verify(mockPeriodic, atLeast(8)).run();
     }
 
 
@@ -107,29 +110,55 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
         Date now = new Date();
         Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
 
-        ScheduledTestTask runnable = new ScheduledTestTask(clock, scheduledTime, "group2");
-        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), runnable, new Hashtable());
+        ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
+        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
+        when(spyTask.getGroup()).thenReturn("group1");
+        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
 
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
         register.unregister();
-
+        verify(spyTask,atLeast(1)).run();//at least one run.
+    }
+    @Test
+    public void taskWithNullGroupTest(){
+        PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
+        when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
+        when(mockPeriodic.getGroup()).thenReturn(null);
+        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
+        verify(mockPeriodic, atLeast(8)).run();
     }
 
-    public void testGroupConfiguration(){
-        //TODO: use a service to introspect configurations and reports.
-        PeriodicRunnable runnable = new PeriodicScheduledTestTask(clock);
-        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), runnable, new Hashtable());
+    /**
+     * Test the creation of a new zone.
+     */
+    @Test
+    public void scheduleTaskWithNullGroupTest(){
+
+        Date now = new Date();
+        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
+
+        ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
+        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
+        when(spyTask.getGroup()).thenReturn(null);
+        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
+
         try {
             Thread.sleep(10000);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
         register.unregister();
+        verify(spyTask,atLeast(1)).run();//at least one run.
     }
 
 }

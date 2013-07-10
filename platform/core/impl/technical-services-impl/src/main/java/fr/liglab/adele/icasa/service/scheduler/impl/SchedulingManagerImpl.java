@@ -49,11 +49,15 @@ public class SchedulingManagerImpl implements SchedulingManager {
     @Bind(aggregate = true, optional = true)
     public void bindRunnable(ScheduledRunnable runnable) {
         synchronized (this) {
-            Group group = groups.get(runnable.getGroup());
+            Group group = null;
+            String groupName = runnable.getGroup();
+            if (groupName != null){
+                group = groups.get(groupName);
+            }
             if (group == null) {
-                group = new Group(new GroupConfiguration(runnable.getGroup()), clock);
+                group = new Group(new GroupConfiguration(groupName), clock);
                 groups.put(group.getName(), group);
-                logger.info("New group created : " + runnable.getGroup());
+                logger.info("New group created : " + group.getName());
             }
             group.submit(runnable);
         }
@@ -62,7 +66,12 @@ public class SchedulingManagerImpl implements SchedulingManager {
     @Unbind
     public void unbindRunnable(ScheduledRunnable runnable) {
         synchronized (this) {
-            Group group = groups.get(runnable.getGroup());
+            String groupName = runnable.getGroup();
+            if (groupName == null){
+                groupName = GroupConfiguration.DEFAULT_NAME;
+            }
+
+            Group group = groups.get(groupName);
             if (group != null) {
                 group.withdraw(runnable);
             }
@@ -78,11 +87,15 @@ public class SchedulingManagerImpl implements SchedulingManager {
     @Bind(aggregate = true, optional = true)
     public void bindPeriodicRunnable(PeriodicRunnable runnable) {
         synchronized (this) {
-            Group group = groups.get(runnable.getGroup());
+            Group group = null;
+            String groupName = runnable.getGroup();
+            if (groupName != null){
+                group = groups.get(groupName);
+            }
             if (group == null) {
-                group = new Group(new GroupConfiguration(runnable.getGroup()), clock);
+                group = new Group(new GroupConfiguration(groupName), clock);
                 groups.put(group.getName(), group);
-                logger.info("New group created : " + runnable.getGroup());
+                logger.info("New group created : " + groupName);
             }
             group.submit(runnable);
         }
@@ -91,7 +104,11 @@ public class SchedulingManagerImpl implements SchedulingManager {
     @Unbind
     public void unbindPeriodicRunnable(PeriodicRunnable runnable) {
         synchronized (this) {
-            Group group = groups.get(runnable.getGroup());
+            String groupName = runnable.getGroup();
+            if (groupName == null){
+                groupName = GroupConfiguration.DEFAULT_NAME;
+            }
+            Group group = groups.get(groupName);
             if (group != null) {
                 group.withdraw(runnable);
             }
