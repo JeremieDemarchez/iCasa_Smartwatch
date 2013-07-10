@@ -622,9 +622,9 @@ define(['jquery',
         return variableValue;
       getVariableUnit:(variableName)->
         unti = "";
-        if (variableName == "zone.area")
+        if (variableName == "Area")
           unit = 'm2';
-        if (variableName == "zone.volume")
+        if (variableName == "Volume")
             unit = 'm3';
         if (variableName == "Illuminance")
             unit = "lux";
