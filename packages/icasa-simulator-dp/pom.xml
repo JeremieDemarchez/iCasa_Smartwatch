@@ -126,7 +126,16 @@ xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/ma
           <writeExtraData>true</writeExtraData>
           <includeDependencies>true</includeDependencies>
           <deploymentPackage>
-            <resources></resources>
+            <resources>
+               <processedResource>
+                  <filePath>NOTICE</filePath>
+                  <targetPath>META-INF</targetPath>
+               </processedResource>
+               <processedResource>
+                  <filePath>LICENSE</filePath>
+                  <targetPath>META-INF</targetPath>
+               </processedResource>               
+            </resources>
           </deploymentPackage>
         </configuration>
       </plugin>
