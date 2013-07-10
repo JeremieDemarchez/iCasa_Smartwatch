@@ -129,7 +129,11 @@
                         <filePath>NOTICE</filePath>
                         <targetPath>META-INF</targetPath>
                      </processedResource>
-						</resources>
+                     <processedResource>
+                        <filePath>LICENSE</filePath>
+                        <targetPath>META-INF</targetPath>
+                     </processedResource>
+                     </resources>
 					</deploymentPackage>
 				</configuration>
 			</plugin>
