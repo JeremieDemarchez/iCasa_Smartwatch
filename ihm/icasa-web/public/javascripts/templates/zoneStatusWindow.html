@@ -27,14 +27,14 @@
       <label class="control-label" data-bind="text: name, attr: { for: $parent.getInputEltId(name())}">variable</label>
       <div style="display: inherit;" class="controls input-append">
           <input type="text" disabled="disabled" data-bind="value: value, attr: { id: $parent.getInputEltId(name())}" />
-          <!--ko if: $parent.getVariableUnit(name()) == "m2" -->
+          <!--ko if: unit() == "m2" -->
           <span class="add-on">m<span class="sup">2</span></span>
           <!--/ko-->
-          <!--ko if: $parent.getVariableUnit(name()) == "m3" -->
+          <!--ko if: unit() == "m3" -->
           <span class="add-on">m<span class="sup">3</span></span>
           <!--/ko-->
-          <!--ko if: (($parent.getVariableUnit(name()) != "") && ($parent.getVariableUnit(name()) != "m2") && ($parent.getVariableUnit(name()) != "m3")) -->
-          <span class="add-on" data-bind="text: $parent.getVariableUnit(name())"></span>
+          <!--ko if: ((unit() != "") && (unit() != "m2") && (unit() != "m3")) -->
+          <span class="add-on" data-bind="text: unit"></span>
           <!--/ko-->
           <span class="add-on">
             <input type="checkbox" data-toggle="tooltip" title="Show in Map" data-bind="checked: visible" />

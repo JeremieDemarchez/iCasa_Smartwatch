@@ -330,6 +330,7 @@ define(['jquery',
             @name = kb.observable(model,'name');
             @value = kb.observable(model,'value').extend({ numeric: 2 });
             @visible = kb.observable(model,'visible');
+            @unit = kb.observable(model,'unit');
 
     class NamedViewModel extends kb.ViewModel
         constructor: (model) ->
@@ -614,21 +615,21 @@ define(['jquery',
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
       getInputEltId:(variableName)->
         return @.id() + "#zoneprop#" + variableName+"";
-      getVariableValue:(variableName)->
-        variableValue = @.variables()[variableName]+"";
-        if (!isNaN(variableValue))
-          roundingMultiplier = Math.pow(10, 2);
-          return Math.round(variableValue * roundingMultiplier) / roundingMultiplier;
-        return variableValue;
-      getVariableUnit:(variableName)->
-        unti = "";
-        if (variableName == "Area")
-          unit = 'm2';
-        if (variableName == "Volume")
-            unit = 'm3';
-        if (variableName == "Illuminance")
-            unit = "lux";
-        return unit;
+#      getVariableValue:(variableName)->
+#        variableValue = @.variables()[variableName]+"";
+#        if (!isNaN(variableValue))
+#          roundingMultiplier = Math.pow(10, 2);
+#          return Math.round(variableValue * roundingMultiplier) / roundingMultiplier;
+#        return variableValue;
+#      getVariableUnit:(variableName)->
+#        unti = "";
+#        if (variableName == "Area")
+#          unit = 'm2';
+#        if (variableName == "Volume")
+#            unit = 'm3';
+#        if (variableName == "Illuminance")
+#            unit = "lux";
+#        return unit;
       generateBackgroundColor:()->
         r = Math.floor(Math.random() * 256);
         g = Math.floor(Math.random() * 256);
