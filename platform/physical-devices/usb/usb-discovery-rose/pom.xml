@@ -35,6 +35,7 @@
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.usb.basedriver</artifactId>
+      <version>${project.version}</version>
 	  <scope>provided</scope>
     </dependency>
   </dependencies>

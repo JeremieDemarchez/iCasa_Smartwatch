@@ -13,7 +13,7 @@
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.1</version>
         <relativePath />
     </parent>
 
@@ -32,8 +32,8 @@
     <properties>
         <productName>iCasa Platform</productName>
         <productVersion>${project.version}</productVersion>
-        <AdeleBaseVersion>1.1.1-SNAPSHOT</AdeleBaseVersion>
-        <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
+        <AdeleBaseVersion>1.1.1</AdeleBaseVersion>
+        <DistributionTestVersion>1.1.2-SNAPSHOT</DistributionTestVersion>
         <cxfVersion>2.3.2</cxfVersion>
 
         <!--UPNP -->
@@ -129,14 +129,6 @@
             <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
         </repository>
 
-        <!-- For android apps-->
-        <!--repository>
-            <id>teleal-repo</id>
-            <url>http://teleal.org/m2</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository-->
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -220,37 +212,9 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.7</version>
+                <version>1.9.5</version>
             </dependency>
 
-
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.usb.basedriver</artifactId>
-                <version>1.1.1-SNAPSHOT</version>
-            </dependency>
-
-            <!-- iCasa -->
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>device.manager.api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>application.api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>application.impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
         </dependencies>
     </dependencyManagement>

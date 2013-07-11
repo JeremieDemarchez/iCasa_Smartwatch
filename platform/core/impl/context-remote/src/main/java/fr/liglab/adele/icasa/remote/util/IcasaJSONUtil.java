@@ -63,6 +63,7 @@ public class IcasaJSONUtil {
                 JSONObject prop = new JSONObject();
                 prop.put("name", property);
                 prop.put("value", device.getPropertyValue(property));
+                prop.put("unit", "N/A");
 				propObject.put(prop);
 			}
 			deviceJSON.put(DeviceJSON.PROPERTIES_PROP, propObject);
@@ -124,6 +125,15 @@ public class IcasaJSONUtil {
                 JSONObject property = new JSONObject();
                 property.put("name", variable);
                 property.put("value", zone.getVariableValue(variable));
+                String unit = "N/A";
+                if (variable.equalsIgnoreCase("Volume")){
+                    unit = "m3";
+                } else if (variable.equalsIgnoreCase("Area")){
+                    unit = "m2";
+                } else if (variable.equalsIgnoreCase("Illuminance")){
+                    unit = "lux";
+                }
+                property.put("unit", unit);
 				propObject.put(property);
 			}
 			zoneJSON.put(ZoneJSON.VARIABLE_PROP, propObject);
