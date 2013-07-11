@@ -28,12 +28,27 @@
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
-	<modules>
-		<module>core</module>
-		<module>physical-devices</module>
-		<module>packages</module>
-	</modules>
 
+    <profiles>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>core</module>
+                <module>physical-devices</module>
+                <module>packages</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>core</module>
+                <module>packages</module>
+            </modules>
+        </profile>
+    </profiles>
 	<build>
 		<plugins>
 			<plugin>
