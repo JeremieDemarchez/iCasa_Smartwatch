@@ -615,21 +615,7 @@ define(['jquery',
         @statusWindowTemplate(zoneStatusWindowTemplateHtml);
       getInputEltId:(variableName)->
         return @.id() + "#zoneprop#" + variableName+"";
-#      getVariableValue:(variableName)->
-#        variableValue = @.variables()[variableName]+"";
-#        if (!isNaN(variableValue))
-#          roundingMultiplier = Math.pow(10, 2);
-#          return Math.round(variableValue * roundingMultiplier) / roundingMultiplier;
-#        return variableValue;
-#      getVariableUnit:(variableName)->
-#        unti = "";
-#        if (variableName == "Area")
-#          unit = 'm2';
-#        if (variableName == "Volume")
-#            unit = 'm3';
-#        if (variableName == "Illuminance")
-#            unit = "lux";
-#        return unit;
+
       generateBackgroundColor:()->
         r = Math.floor(Math.random() * 256);
         g = Math.floor(Math.random() * 256);
