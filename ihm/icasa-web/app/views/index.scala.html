@@ -70,7 +70,7 @@
                         <div class="control-group">
                             <label class="control-label" for="gatewayURL@map.id">Box URL</label>
                             <div class="controls">
-                                <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL" required/>
+                                <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" required/>
                             </div>
                         </div>
                         <div class="control-group hidden">
@@ -82,7 +82,7 @@
                         <div class="control-group">
                             <label class="control-label" for="picture">Picture</label>
                             <div class="controls">
-                                <input type="file" name="picture" id="picture@map.id"/>
+                                <input type="file" name="picture" id="picture@map.id" />
                             </div>
                             <img src="/maps/@map.imgFile" class="img-rounded"/>
                         </div>
@@ -119,7 +119,7 @@
                     <div class="control-group">
                         <label class="control-label" for="mapName">Name</label>
                         <div class="controls">
-                            <input type="text" name="mapName" id="mapName" />
+                            <input type="text" name="mapName" required="required" id="mapName" />
                         </div>
                     </div>
                     <div class="control-group">
@@ -131,7 +131,7 @@
                     <div class="control-group">
                         <label class="control-label" for="gatewayURL">Box URL</label>
                         <div class="controls">
-                            <input type="text" name="gatewayURL" id="gatewayURL" placeholder="http://localhost:8080"/>
+                            <input type="text" name="gatewayURL" id="gatewayURL" required="required" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080"/>
                         </div>
                     </div>
                     <div class="control-group hidden">
@@ -143,7 +143,7 @@
                     <div class="control-group">
                         <label class="control-label" for="picture">Picture</label>
                         <div class="controls">
-                            <input type="file" name="picture" id="picture" />
+                            <input type="file" name="picture" required="required" id="picture" />
                         </div>
                     </div>
                 </div>
