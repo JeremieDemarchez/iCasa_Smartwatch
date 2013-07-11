@@ -115,7 +115,7 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	 * @return the temperature currently produced by this heater
 	 * @author jeremy savonet
 	 */
-	private double computeTemperature() {
+	private Double computeTemperature() {
 		long time = System.currentTimeMillis();
 		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
 		m_lastUpdateTime = time;
@@ -127,7 +127,7 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 		double thermalCapacity = 0.0; //Thermal capacity used to compute the temperature. Expressed in J/K.
 
 		Double currentTemperature = 0.0;
-		double returnedTemperature = 0.0;
+		Double returnedTemperature = 0.0;
 		double coolerPowerLevel = 0.0; 		
 
 		if (m_zone != null) {
@@ -136,7 +136,10 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 				currentTemperature = (Double) m_zone.getVariableValue("Temperature");
 				roomVolume = (Double) m_zone.getVariableValue("Volume");				
 				coolerPowerLevel = getPowerLevel()*getMaxPowerLevel();
-
+                if (currentTemperature == null || roomVolume == null){
+                    System.err.println("Unable to calculate temperature in zone without the Volume and/or Temperature variables");
+                    return null;
+                }
 				if (roomVolume>0) {
 					thermalCapacity = airMass * roomVolume * airMassCapacity;
 					returnedTemperature = ((-coolerPowerLevel*timeDiff)/thermalCapacity)+currentTemperature;
@@ -165,9 +168,10 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 				try {
 					int sleepTime = (Integer) getPropertyValue(Cooler.COOLER_UPDATE_PERIOD);
 					Thread.sleep(sleepTime);
+                    Double temperature = computeTemperature();
 					synchronized (SimulatedCoolerImpl.this) {
-						if (m_zone != null) {
-							m_zone.setVariableValue("Temperature", computeTemperature());	
+						if (m_zone != null && temperature!= null) {
+							m_zone.setVariableValue("Temperature", temperature);
 						}
 					}
 				} catch (InterruptedException e) {
