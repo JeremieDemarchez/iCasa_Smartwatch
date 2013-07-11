@@ -18,6 +18,7 @@
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.usb.basedriver</artifactId>
+            <version>${project.version}</version><!--It is in physical-devices-->
 		</dependency>
 		<dependency>
          <groupId>${project.groupId}</groupId>

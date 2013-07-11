@@ -129,14 +129,6 @@
             <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
         </repository>
 
-        <!-- For android apps-->
-        <!--repository>
-            <id>teleal-repo</id>
-            <url>http://teleal.org/m2</url>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository-->
     </repositories>
     <pluginRepositories>
         <pluginRepository>
@@ -223,34 +215,6 @@
                 <version>1.7</version>
             </dependency>
 
-
-            <dependency>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>org.apache.felix.usb.basedriver</artifactId>
-                <version>1.1.1-SNAPSHOT</version>
-            </dependency>
-
-            <!-- iCasa -->
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>device.manager.api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>application.api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>application.impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>fr.liglab.adele.icasa</groupId>
-                <artifactId>common</artifactId>
-                <version>${project.version}</version>
-            </dependency>
 
         </dependencies>
     </dependencyManagement>
