@@ -13,7 +13,7 @@
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.1.1-SNAPSHOT</version>
+        <version>1.1.1</version>
         <relativePath />
     </parent>
 
@@ -32,8 +32,8 @@
     <properties>
         <productName>iCasa Platform</productName>
         <productVersion>${project.version}</productVersion>
-        <AdeleBaseVersion>1.1.1-SNAPSHOT</AdeleBaseVersion>
-        <DistributionTestVersion>1.1.1-SNAPSHOT</DistributionTestVersion>
+        <AdeleBaseVersion>1.1.1</AdeleBaseVersion>
+        <DistributionTestVersion>1.1.2-SNAPSHOT</DistributionTestVersion>
         <cxfVersion>2.3.2</cxfVersion>
 
         <!--UPNP -->
@@ -212,7 +212,7 @@
             <dependency>
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
-                <version>1.7</version>
+                <version>1.9.5</version>
             </dependency>
 
 
