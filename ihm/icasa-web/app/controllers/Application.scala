@@ -191,24 +191,25 @@ object Application extends Controller {
       import java.io.File
       val fileName = picture.filename
       val contentType = picture.contentType
-      picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + fileName))
-
-      def map = new HouseMap {
-          var name = mapName;
-          var id = generateMapId(mapName);
-          var description = mapDescription;
-          var gatewayURL = gatewayURLToSet;
-          var imgFile = fileName;
-          var libs = ""; //TODO manage libraries
-      }
-
+      var newFileName = ""
       mapsLock.synchronized {
+        val newId = generateMapId(mapName);
+        newFileName = newId + ".png";
+        def map = new HouseMap {
+            var name = mapName;
+            var id = newId;
+            var description = mapDescription;
+            var gatewayURL = gatewayURLToSet;
+            var imgFile = newFileName;
+            var libs = ""; //TODO manage libraries
+        }
         if (maps.isEmpty)
           loadMaps();
 
         maps(map.id) = map;
         saveMaps();
       }
+      picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + newFileName))
       Redirect(routes.Application.index)
     }.getOrElse {
       Redirect(routes.Application.index).flashing(
@@ -219,9 +220,9 @@ object Application extends Controller {
 
   def generateMapId(name: String):  String = {
     var mapId = name.replaceAll("[^A-Za-z0-9]", "");//remove non-alphanumeric char
-    while (maps.contains(mapId)){
-      mapId = mapId + scala.util.Random.alphanumeric.take(4).mkString; //get an alphanumeric character
-    }
+      while (maps.contains(mapId)){
+        mapId = mapId + scala.util.Random.alphanumeric.take(2).mkString; //get an alphanumeric character
+      }
     return mapId;
   }
 
@@ -238,16 +239,16 @@ object Application extends Controller {
           import java.io.File
           val fileName = picture.filename
           val contentType = picture.contentType
-          picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + fileName))
 
           def map = new HouseMap {
               var id = newMap("mapId");
               var name = newMap("mapName");
               var description = newMap("mapDescription");
               var gatewayURL = newMap("gatewayURL");
-              var imgFile = fileName;
+              var imgFile = id + ".png";
               var libs = "" //TODO manage libs
           }
+          picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + map.imgFile), true)
 
           mapsLock.synchronized {
             if (maps.isEmpty)
