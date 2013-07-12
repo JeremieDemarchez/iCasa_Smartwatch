@@ -38,7 +38,7 @@ See the License for the specific language governing permissions and
 		<productName>iCasa Simulator</productName>
 		<productVersion>${project.version}</productVersion>
 		<projectName>${project.artifactId}</projectName>
-		<iCasaPlatformVersion>1.1.1-SNAPSHOT</iCasaPlatformVersion>
+		<iCasaPlatformVersion>1.1.1</iCasaPlatformVersion>
       <DistributionTestVersion>1.1.2-SNAPSHOT</DistributionTestVersion>
 
         <!-- By default, all sources are UTF-8-encoded. -->
