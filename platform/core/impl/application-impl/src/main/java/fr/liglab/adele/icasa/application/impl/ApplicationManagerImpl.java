@@ -58,7 +58,7 @@ import fr.liglab.adele.icasa.application.impl.internal.DeploymentPackageRepresen
  */
 @Component(name = "Application-Manager-Impl")
 @Instantiate(name = "Application-Manager-Impl-1")
-@Provides(specifications = { ApplicationManager.class, EventHandler.class }, properties = { @StaticServiceProperty(name = EventConstants.EVENT_TOPIC, type = "java.lang.String[]", value = "{org/osgi/service/deployment/INSTALL, org/osgi/service/deployment/UNINSTALL, org/osgi/service/deployment/COMPLETE}") })
+@Provides(specifications = { ApplicationManager.class, EventHandler.class }, properties = { @StaticServiceProperty(name = EventConstants.EVENT_TOPIC, type = "java.lang.String[]", value = "{org/osgi/service/deployment/COMPLETE}") })
 public class ApplicationManagerImpl implements ApplicationManager, EventHandler {
 
 	@Requires
@@ -85,17 +85,17 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 	/**
 	 * Map having the application as key and its bundles (set of symbolic names)
 	 */
-	//private Map<Application, Set<String>> _bundlesPerAppId = new HashMap<Application, Set<String>>();
+	// private Map<Application, Set<String>> _bundlesPerAppId = new HashMap<Application, Set<String>>();
 
 	/**
 	 * Maps having as key the Deployment Package Symbolic name and as value the application
 	 */
-	//private Map<String, Application> _appPerDeploymentPackage = new HashMap<String, Application>();
+	// private Map<String, Application> _appPerDeploymentPackage = new HashMap<String, Application>();
 
 	/**
 	 * Map keeping temporally Deployment Packages to be uninstall
 	 */
-	private Map<String, DeploymentPackage> _uninstalledDeploymentPackages = new HashMap<String, DeploymentPackage>();
+	private Map<String, DeploymentPackage> _uninstalledDeploymentPackages;
 
 	private ApplicationCategoryImpl _undefinedCateg;
 
@@ -119,6 +119,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		_categories.add(new ApplicationCategoryImpl("Material Durability"));
 		_undefinedCateg = new ApplicationCategoryImpl("Undefined");
 		_categories.add(_undefinedCateg);
+		_uninstalledDeploymentPackages = new HashMap<String, DeploymentPackage>();
 	}
 
 	@Override
@@ -136,7 +137,10 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	@Override
 	public Application getApplication(String appId) {
-		return _appPerId.get(appId);
+		readLock.lock();
+		Application app = _appPerId.get(appId);
+		readLock.unlock();
+		return app;
 	}
 
 	@Override
@@ -178,8 +182,8 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 			}
 		}
 		_appPerId.clear();
-		//_bundlesPerAppId.clear();
-		//_appPerDeploymentPackage.clear();
+		// _bundlesPerAppId.clear();
+		// _appPerDeploymentPackage.clear();
 	}
 
 	private void notifyStop(ApplicationTracker listener) {
@@ -192,14 +196,27 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 	public Application getApplicationOfBundle(String bundleSymbolicName) {
 		Application resultApp = null;
 		readLock.lock();
-		for (ApplicationImpl app : _appPerId.values()) {	      
-	      if (app.constainsBundle(bundleSymbolicName)) {
-	      	resultApp = app;
-	      	break;
-	      }	      	
-      }
+		for (ApplicationImpl app : _appPerId.values()) {
+			if (app.constainsBundle(bundleSymbolicName)) {
+				resultApp = app;
+				break;
+			}
+		}
 		readLock.unlock();
-		return resultApp;		
+		return resultApp;
+	}
+
+	private Application getApplicationOfDeploymentPackage(String dpSymbolicName) {
+		Application resultApp = null;
+		readLock.lock();
+		for (ApplicationImpl app : _appPerId.values()) {
+			if (app.containsDeploymentPackageRepresentation(dpSymbolicName)) {
+				resultApp = app;
+				break;
+			}
+		}
+		readLock.unlock();
+		return resultApp;
 	}
 
 	private void onDeploymePackageArrival(DeploymentPackage deploymentPackage) {
@@ -218,24 +235,22 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 		writeLock.lock();
 
-		Application app = _appPerId.get(appId);
+		ApplicationImpl app = _appPerId.get(appId);
 		boolean isNewApp = (app == null);
 
 		if (isNewApp) {
-			ApplicationImpl tempApp = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
-			tempApp.setVersion(appVersion);
-			tempApp.setState(ApplicationState.STOPED);
-
-			tempApp.addDeploymentPackageRepresentation(DeploymentPackageRepresentation
-			      .builFromDeploymentPackage(deploymentPackage));
-
-			_appPerId.put(tempApp.getId(), tempApp);
-
-			app = tempApp;
+			app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
+			app.setVersion(appVersion);
+			app.setState(ApplicationState.STOPED);
 		}
 
+		app.addDeploymentPackageRepresentation(DeploymentPackageRepresentation
+		      .builFromDeploymentPackage(deploymentPackage));
+
+		_appPerId.put(app.getId(), app);
+
 		writeLock.unlock();
-		
+
 		// Notifies listeners if is a new app
 		if (isNewApp) {
 			readLock.lock();
@@ -246,23 +261,14 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		}
 	}
 
-	private void onDeploymePackageDeparture(DeploymentPackage deploymentPackage) {
-		final String symbolicName = deploymentPackage.getName();
-		ApplicationImpl tempApp = null;
-				
-		List<Application> apps = getApplications();
-		for (Application application : apps) {
-	      if (((ApplicationImpl)application).containsDeploymentPackageRepresentation(symbolicName)) {
-	      	tempApp = (ApplicationImpl) application;
-	      	break;
-	      }
-      }
-		
-		if (tempApp==null) // The deployment package is not in the app registry
+	private void onDeploymePackageDeparture(String dpSymbolicName) {
+		ApplicationImpl tempApp = (ApplicationImpl) getApplicationOfDeploymentPackage(dpSymbolicName);
+
+		if (tempApp == null) // The deployment package is not in the application registry
 			return;
-		
+
 		writeLock.lock();
-		tempApp.removeDeploymentPackageRepresentation(symbolicName);
+		tempApp.removeDeploymentPackageRepresentation(dpSymbolicName);
 		if (tempApp.isEmptyApplication()) {
 			_appPerId.remove(tempApp.getId());
 			for (ApplicationTracker listener : _listeners) {
@@ -271,95 +277,59 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		}
 		writeLock.unlock();
 	}
-	
+
 	/*
-	private void onDeploymePackageArrival2(DeploymentPackage deploymentPackage) {
-		String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
-		if (appId == null) // not an application deployment package
-			return;
-
-		// String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER);
-		String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
-		if (appVersion == null) { // version is mandatory
-			// ignore if version is not provided
-			_logger.log(LogService.LOG_ERROR, "Deployment Package " + deploymentPackage.getName()
-			      + " must specify an application version.");
-			return;
-		}
-
-		writeLock.lock();
-
-		Application app = _appPerId.get(appId);
-		boolean isNewApp = (app == null);
-
-		if (isNewApp) {
-			ApplicationImpl tempApp = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
-			tempApp.setVersion(appVersion);
-			tempApp.setState(ApplicationState.STOPED);
-			_appPerId.put(tempApp.getId(), tempApp);
-
-			app = tempApp;
-		}
-
-		// cannot have multiple versions of the same app
-		final String symbolicName = deploymentPackage.getName();
-		_appPerDeploymentPackage.put(symbolicName, app);
-
-		// Adding the bundles contained in the deployment packaged to application
-		Set<String> bundleIds = _bundlesPerAppId.get(app);
-		if (bundleIds == null) {
-			bundleIds = new HashSet<String>();
-			_bundlesPerAppId.put(app, bundleIds);
-		}
-		bundleIds.addAll(getBundlesNamesFromDeploymentPackage(deploymentPackage));
-
-		writeLock.unlock();
-
-		// Notifies listeners if is a new app
-		if (isNewApp) {
-			readLock.lock();
-			for (ApplicationTracker listener : _listeners) {
-				listener.addApplication(app);
-			}
-			readLock.unlock();
-		}
-	}
-
-	private void onDeploymePackageDeparture2(DeploymentPackage deploymentPackage) {
-		synchronized (_appPerDeploymentPackage) {
-			final String symbolicName = deploymentPackage.getName();
-			Application app = _appPerDeploymentPackage.remove(symbolicName);
-
-			if (app == null) // The deployment package is not in the app registry
-				return;
-
-			Set<String> bundleIds = _bundlesPerAppId.get(app);
-			if (bundleIds != null)
-				bundleIds.removeAll(getBundlesNamesFromDeploymentPackage(deploymentPackage));
-
-			_appPerId.remove(app.getId());
-
-			// Listeners notification
-			synchronized (_listeners) {
-				for (ApplicationTracker listener : _listeners) {
-					listener.removeApplication(app);
-				}
-			}
-		}
-	}
-	
-	
-	private Set<String> getBundlesNamesFromDeploymentPackage(DeploymentPackage deploymentPackage) {
-		Set<String> bundles = new HashSet<String>();
-		if (deploymentPackage != null) {
-			BundleInfo[] bundleInfos = deploymentPackage.getBundleInfos();
-			for (BundleInfo bundleInfo : bundleInfos) {
-				bundles.add(bundleInfo.getSymbolicName());
-			}
-		}
-		return bundles;
-	}
-	*/
+	 * private void onDeploymePackageArrival2(DeploymentPackage deploymentPackage) { String appId = (String)
+	 * deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER); if (appId == null) // not an application deployment
+	 * package return;
+	 * 
+	 * // String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER); String appVersion =
+	 * (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER); if (appVersion == null) { // version
+	 * is mandatory // ignore if version is not provided _logger.log(LogService.LOG_ERROR, "Deployment Package " +
+	 * deploymentPackage.getName() + " must specify an application version."); return; }
+	 * 
+	 * writeLock.lock();
+	 * 
+	 * Application app = _appPerId.get(appId); boolean isNewApp = (app == null);
+	 * 
+	 * if (isNewApp) { ApplicationImpl tempApp = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
+	 * tempApp.setVersion(appVersion); tempApp.setState(ApplicationState.STOPED); _appPerId.put(tempApp.getId(),
+	 * tempApp);
+	 * 
+	 * app = tempApp; }
+	 * 
+	 * // cannot have multiple versions of the same app final String symbolicName = deploymentPackage.getName();
+	 * _appPerDeploymentPackage.put(symbolicName, app);
+	 * 
+	 * // Adding the bundles contained in the deployment packaged to application Set<String> bundleIds =
+	 * _bundlesPerAppId.get(app); if (bundleIds == null) { bundleIds = new HashSet<String>(); _bundlesPerAppId.put(app,
+	 * bundleIds); } bundleIds.addAll(getBundlesNamesFromDeploymentPackage(deploymentPackage));
+	 * 
+	 * writeLock.unlock();
+	 * 
+	 * // Notifies listeners if is a new app if (isNewApp) { readLock.lock(); for (ApplicationTracker listener :
+	 * _listeners) { listener.addApplication(app); } readLock.unlock(); } }
+	 * 
+	 * private void onDeploymePackageDeparture2(DeploymentPackage deploymentPackage) { synchronized
+	 * (_appPerDeploymentPackage) { final String symbolicName = deploymentPackage.getName(); Application app =
+	 * _appPerDeploymentPackage.remove(symbolicName);
+	 * 
+	 * if (app == null) // The deployment package is not in the app registry return;
+	 * 
+	 * Set<String> bundleIds = _bundlesPerAppId.get(app); if (bundleIds != null)
+	 * bundleIds.removeAll(getBundlesNamesFromDeploymentPackage(deploymentPackage));
+	 * 
+	 * _appPerId.remove(app.getId());
+	 * 
+	 * // Listeners notification synchronized (_listeners) { for (ApplicationTracker listener : _listeners) {
+	 * listener.removeApplication(app); } } } }
+	 * 
+	 * 
+	 * private Set<String> getBundlesNamesFromDeploymentPackage(DeploymentPackage deploymentPackage) { Set<String>
+	 * bundles = new HashSet<String>(); if (deploymentPackage != null) { BundleInfo[] bundleInfos =
+	 * deploymentPackage.getBundleInfos(); for (BundleInfo bundleInfo : bundleInfos) {
+	 * bundles.add(bundleInfo.getSymbolicName()); } } return bundles; }
+	 */
 
 	public Set<Bundle> getBundles(String appId) {
 		Application app = getApplication(appId);
@@ -398,37 +368,20 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 	public void handleEvent(Event event) {
 		String topic = event.getTopic();
 
-		String dpName = (String) event.getProperty(DeploymentPackage.EVENT_DEPLOYMENTPACKAGE_NAME);
-		DeploymentPackage deploymentPackage = deploymentAdmin.getDeploymentPackage(dpName);
-
-		if (topic.equals("org/osgi/service/deployment/UNINSTALL")) {
-			String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
-			String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
-			if (deploymentPackage != null && appId != null && appVersion != null) {
-				synchronized (_uninstalledDeploymentPackages) {
-					_uninstalledDeploymentPackages.put(dpName, deploymentPackage);
-				}
-			}
-		}
-
 		// Notification confirming the installation or uninstallation of a Deployment Package
 		if (topic.equals("org/osgi/service/deployment/COMPLETE")) {
 			boolean sucessfull = (Boolean) event.getProperty("successful");
 			if (!sucessfull)
 				return;
-
+			String dpSymbolicName = (String) event.getProperty(DeploymentPackage.EVENT_DEPLOYMENTPACKAGE_NAME);
+			DeploymentPackage deploymentPackage = deploymentAdmin.getDeploymentPackage(dpSymbolicName);
 			if (deploymentPackage != null) { // Installation Confirmation
 				String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
 				String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
 				if (appId != null && appVersion != null) // iCasa App Deployment Package
 					onDeploymePackageArrival(deploymentPackage);
 			} else { // unInstallation Confirmation
-				synchronized (_uninstalledDeploymentPackages) {
-					DeploymentPackage uninstalledDeploymentPackage = _uninstalledDeploymentPackages.remove(dpName);
-					if (uninstalledDeploymentPackage != null) {
-						onDeploymePackageDeparture(uninstalledDeploymentPackage);
-					}
-				}
+				onDeploymePackageDeparture(dpSymbolicName);
 			}
 		}
 	}
