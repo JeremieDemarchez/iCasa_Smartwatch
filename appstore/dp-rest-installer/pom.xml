@@ -11,7 +11,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>platform.parent</artifactId>
-		<version>1.1.1</version>
+		<version>1.1.2-SNAPSHOT</version>
 		<relativePath>../../parent</relativePath>
 	</parent>
 	<artifactId>dp-rest-installer</artifactId>
