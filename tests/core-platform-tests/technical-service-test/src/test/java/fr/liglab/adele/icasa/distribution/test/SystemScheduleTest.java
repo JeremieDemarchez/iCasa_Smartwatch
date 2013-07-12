@@ -97,7 +97,7 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
             e.printStackTrace();
         }
         register.unregister();
-        verify(mockPeriodic, atLeast(4)).run();
+        verify(mockPeriodic, atLeast(2)).run();
     }
 
 
@@ -135,7 +135,7 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
             e.printStackTrace();
         }
         register.unregister();
-        verify(mockPeriodic, atLeast(4)).run();
+        verify(mockPeriodic, atLeast(2)).run();
     }
 
     /**
