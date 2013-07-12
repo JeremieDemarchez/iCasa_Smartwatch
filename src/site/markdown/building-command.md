@@ -285,13 +285,13 @@ ___Context API - iCasa Command interfaces___
 
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>context.api</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
 
 ___Context Impl - iCasa Command abstract class___
 
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>context.impl</artifactId>
-    <version>1.1.1-SNAPSHOT</version>
+    <version>1.1.2-SNAPSHOT</version>
 
 Repositories :	
 
