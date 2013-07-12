@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>platform.parent</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.2-SNAPSHOT</version>
       <relativePath>../../parent</relativePath>
 	</parent>
 
@@ -28,14 +28,28 @@
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
-	<modules>
-		<module>icasa-platform-dp</module>
-		<module>upnp-settopbox-core-dp</module>
-      <!--
-      <module>x10-presence-sensor-core-dp</module>
-      -->
-		<module>tikitag-core-dp</module>
-	</modules>
+    <profiles>
+        <profile>
+            <id>all</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <modules>
+                <module>icasa-platform-dp</module>
+                <module>upnp-settopbox-core-dp</module>
+                <!--
+                <module>x10-presence-sensor-core-dp</module>
+                -->
+                <module>tikitag-core-dp</module>
+            </modules>
+        </profile>
+        <profile>
+            <id>release</id>
+            <modules>
+                <module>icasa-platform-dp</module>
+            </modules>
+        </profile>
+    </profiles>
    <build>
       <plugins>
          <plugin>

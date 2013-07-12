@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>platform.parent</artifactId>
-      <version>1.1.1-SNAPSHOT</version>
+      <version>1.1.2-SNAPSHOT</version>
       <relativePath>../../../parent</relativePath>
 	</parent>
 
@@ -30,6 +30,9 @@
     <profiles>
         <profile>
             <id>all</id>
+            <activation>
+               <activeByDefault>true</activeByDefault>
+            </activation>
             <modules>
                 <module>usb-discovery</module>
                 <module>usb-discovery-rose</module>
