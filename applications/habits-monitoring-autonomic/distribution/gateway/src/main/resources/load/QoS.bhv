@@ -16,16 +16,16 @@
 
 	<!-- Device Section -->
 
-	<create-device id="PresenceSensor-9010820069" type="iCASA.PresenceSensor" />
+	<create-device id="PresenceSensor-9010820069" type="iCasa.PresenceSensor" />
 	<move-device-zone deviceId="PresenceSensor-9010820069" zoneId="cuisine" />
 
-	<create-device id="PresenceSensor-2d0fb87fd0" type="iCASA.PresenceSensor" />
+	<create-device id="PresenceSensor-2d0fb87fd0" type="iCasa.PresenceSensor" />
 	<move-device-zone deviceId="PresenceSensor-2d0fb87fd0" zoneId="chambre" />
 
-	<create-device id="PresenceSensor-313b945379" type="iCASA.PresenceSensor" />
+	<create-device id="PresenceSensor-313b945379" type="iCasa.PresenceSensor" />
 	<move-device-zone deviceId="PresenceSensor-313b945379" zoneId="salon" />
 
-	<create-device id="PresenceSensor-e80e96969d" type="iCASA.PresenceSensor" />
+	<create-device id="PresenceSensor-e80e96969d" type="iCasa.PresenceSensor" />
 	<move-device-zone deviceId="PresenceSensor-e80e96969d" zoneId="salle-de-bain" />
 
 

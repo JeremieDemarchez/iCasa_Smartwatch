@@ -3,13 +3,13 @@ package fr.liglab.adele.icasa.gas.alarm.sys;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
+import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-public class GasAlarmSystemApplication extends AbstractDeviceListener {
+public class GasAlarmSystemApplication extends EmptyDeviceListener {
 
 	/**
 	 * @author jeremy
@@ -124,7 +124,7 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 
 	@Override
 	public void devicePropertyModified(GenericDevice device,
-			String propertyName, Object oldValue) {
+			String propertyName, Object oldValue, Object newValue) {
 
 		if (device instanceof CarbonDioxydeSensor) {
 
@@ -173,9 +173,9 @@ public class GasAlarmSystemApplication extends AbstractDeviceListener {
 
         /*
            * It is extremely important to unregister the device listener.
-           * Otherwise, iCASA will continue to send notifications to the
+           * Otherwise, iCasa will continue to send notifications to the
            * unpredictable and invalid component instance.
-           * This will also causes problem when the bundle is stopped as iCASA
+           * This will also causes problem when the bundle is stopped as iCasa
            * will still hold a reference on the device listener object.
            * Consequently, it (and its bundle) won't be garbage collected
            * causing a memory issue known as stale reference.

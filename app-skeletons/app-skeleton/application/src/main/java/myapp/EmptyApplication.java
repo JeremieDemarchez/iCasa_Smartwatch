@@ -16,7 +16,6 @@
 package myapp;
 
 
-import fr.liglab.adele.icasa.device.util.AbstractDeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.*;
 

@@ -19,8 +19,6 @@
 		<distrib.groupId>fr.liglab.adele.icasa.apps</distrib.groupId>
 		<distrib.artifactId>habits.monitoring.distribution.box.paul</distrib.artifactId>
 		<distrib.version>${project.version}</distrib.version>
-		<DistributionTestVersion>1.0.5-SNAPSHOT</DistributionTestVersion>
-
 	</properties>
 
 	<repositories>
