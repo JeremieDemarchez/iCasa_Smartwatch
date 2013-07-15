@@ -9,6 +9,8 @@ import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
+
 /**
  * XML handler for db config files.
  * @author tfqg0024

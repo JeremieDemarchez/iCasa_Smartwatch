@@ -47,7 +47,7 @@ limitations under the License.
 			</dependency>
             <!-- deployed packages -->
             <dependency>
-               <groupId>fr.liglab.adele.common</groupId>
+               <groupId>org.ow2.chameleon.rose</groupId>
                <artifactId>rose.dp</artifactId>
                <type>deployment-package</type>
             </dependency>

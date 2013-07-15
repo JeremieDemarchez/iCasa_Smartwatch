@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
+import javax.swing.event.EventListenerList;
+
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -16,7 +18,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter.IDBAdapter;
-import fr.liglab.adele.habits.monitoring.db.manager.fileinstall.model.DPInfos;
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfosListener;
 
 /**
  * Handler for .db files. 
@@ -31,6 +34,7 @@ public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
 			.getLogger(DBFileHandler.class);
 //	private DBFileParser parser;
 	private Set<DPInfos> infos = new HashSet<DPInfos>();
+	private final EventListenerList listeners = new EventListenerList();
 
 	@Override
 	public boolean canHandle(File dbFile) {
@@ -43,7 +47,26 @@ public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
 	@Override
 	public void install(File dbFile) throws Exception {
 		logger.info("DBFile handler got a new file : " + dbFile.getName());
-		this.infos = DBFileParser.parse(dbFile);
+		Set<DPInfos> parsedInfos = DBFileParser.parse(dbFile);
+		if(this.infos.size() > 0){
+			infos.addAll(parsedInfos);
+		} else {
+			this.infos = parsedInfos;
+		}
+		fireNewDPInfosAdded(parsedInfos);
+	}
+
+	/**
+	 * Fire a new event related to the arrival of new dps to dp infos listeners.
+	 * @param parsedInfos
+	 */
+	private void fireNewDPInfosAdded(Set<DPInfos> parsedInfos) {
+		
+		for (DPInfos infos : parsedInfos){
+			for (DPInfosListener listener : getDPInfosListeners()){
+				listener.DPInfosAdded(infos);
+			}
+		}
 	}
 
 	@Override
@@ -87,4 +110,18 @@ public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
 		}
 		return deviceAdapterUrl;
 	}
+	
+	public void addDPInfosListener(DPInfosListener listener){
+		logger.info("dp infos listener added");
+		this.listeners.add(DPInfosListener.class, listener);
+	}
+	
+	public void removeDPInfosListener(DPInfosListener listener){
+		logger.info("dp infos listener removed");
+		this.listeners.remove(DPInfosListener.class, listener);
+	}
+	
+	public DPInfosListener[] getDPInfosListeners() {
+        return listeners.getListeners(DPInfosListener.class);
+    }
 }

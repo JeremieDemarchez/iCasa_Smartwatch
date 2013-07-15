@@ -44,6 +44,12 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -54,8 +60,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<!--<Private-Package>fr.liglab.adele.habits.monitoring.presence.sensor</Private-Package> -->
-						<Export-Package>fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter</Export-Package>
+						<Export-Package>fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter;fr.liglab.adele.habits.monitoring.autonomic.manager.listeners</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
