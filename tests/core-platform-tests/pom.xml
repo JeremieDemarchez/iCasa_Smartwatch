@@ -32,6 +32,7 @@
 		<!--<module>test-common</module>
 		<module>device-manager-tests</module>
 		<module>icasa-bridge-tests</module>-->
+      <module>application-manager-test</module>
       <module>distributions-test</module>
       <module>technical-service-test</module>
 	</modules>
