@@ -82,21 +82,6 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 	 */
 	private Map<String, ApplicationImpl> _appPerId = new HashMap<String, ApplicationImpl>();
 
-	/**
-	 * Map having the application as key and its bundles (set of symbolic names)
-	 */
-	// private Map<Application, Set<String>> _bundlesPerAppId = new HashMap<Application, Set<String>>();
-
-	/**
-	 * Maps having as key the Deployment Package Symbolic name and as value the application
-	 */
-	// private Map<String, Application> _appPerDeploymentPackage = new HashMap<String, Application>();
-
-	/**
-	 * Map keeping temporally Deployment Packages to be uninstall
-	 */
-	private Map<String, DeploymentPackage> _uninstalledDeploymentPackages;
-
 	private ApplicationCategoryImpl _undefinedCateg;
 
 	private BundleContext _context;
@@ -119,7 +104,6 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		_categories.add(new ApplicationCategoryImpl("Material Durability"));
 		_undefinedCateg = new ApplicationCategoryImpl("Undefined");
 		_categories.add(_undefinedCateg);
-		_uninstalledDeploymentPackages = new HashMap<String, DeploymentPackage>();
 	}
 
 	@Override
