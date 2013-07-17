@@ -104,7 +104,6 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		_categories.add(new ApplicationCategoryImpl("Material Durability"));
 		_undefinedCateg = new ApplicationCategoryImpl("Undefined");
 		_categories.add(_undefinedCateg);
-		_uninstalledDeploymentPackages = new HashMap<String, DeploymentPackage>();
 	}
 
 	@Override
