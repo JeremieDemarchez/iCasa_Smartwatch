@@ -233,4 +233,10 @@ public class AutonomicAdapterDeploymentMgr implements
 		// nothing to do
 		logger.info("DP INFOS LISTENER : dp removed : " + removedDP.getName());
 	}
+
+	@Override
+	public void deviceEvent(GenericDevice arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
 }

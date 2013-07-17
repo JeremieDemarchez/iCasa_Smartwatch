@@ -115,4 +115,10 @@ public class PhotometerCollector extends AbstractCollector implements
 		// do nothing
 	}
 
+	@Override
+	public void deviceEvent(Photometer arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -129,4 +129,10 @@ public class MeasureCollector extends AbstractCollector implements
 		notifyDeviceEvent(device.getSerialNumber());
 	}
 
+	@Override
+	public void deviceEvent(PresenceSensor arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
