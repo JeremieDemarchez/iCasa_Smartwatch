@@ -101,6 +101,16 @@
          <groupId>org.ow2.chameleon.json</groupId>
          <artifactId>json-service-json.org</artifactId>
       </dependency>
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>access.manager.api</artifactId>
+         <version>${project.version}</version>
+      </dependency>      
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>access.manager.impl</artifactId>
+         <version>${project.version}</version>
+      </dependency>
 <!--		
 		<dependency>
          <groupId>${project.groupId}</groupId>

@@ -34,6 +34,7 @@
 		<module>icasa-bridge-tests</module>-->
       <module>distributions-test</module>
       <module>technical-service-test</module>
+      <module>access-manager-test</module>      
 	</modules>
    <build>
       <plugins>

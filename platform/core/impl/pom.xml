@@ -37,7 +37,8 @@
 		<module>device-manager-impl</module>
 		<module>application-impl</module>
 		<module>application-mock-impl</module>
-		<module>technical-services-impl</module>		
+		<module>technical-services-impl</module>
+        <module>access-manager-impl</module>
 	</modules>
    <build>
       <plugins>

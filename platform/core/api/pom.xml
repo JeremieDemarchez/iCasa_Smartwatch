@@ -33,6 +33,7 @@
       <module>context-api</module>
 		<module>application-api</module>
 		<module>device-manager-api</module>
+      <module>access-manager-api</module>
 		<module>technical-services-api</module>		
 	</modules>
    <build>
