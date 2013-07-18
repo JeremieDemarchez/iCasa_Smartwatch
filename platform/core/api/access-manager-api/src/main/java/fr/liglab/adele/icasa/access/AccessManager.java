@@ -49,7 +49,7 @@ public interface AccessManager {
      * @param methodName The method name to set the right access.
      * @param accessRight The right access.
      */
-    void updateAccess(String applicationId, String deviceId, String methodName, boolean accessRight);
+    void setMethodAccess(String applicationId, String deviceId, String methodName, boolean accessRight);
 
     /**
      * Set the right access for an application to use a given device.
@@ -58,7 +58,7 @@ public interface AccessManager {
      * @param method The method name to set the right access.
      * @param accessRight The right access.
      */
-    void updateAccess(String applicationId, String deviceId, Method method, boolean accessRight);
+    void setMethodAccess(String applicationId, String deviceId, Method method, boolean accessRight);
 
     /**
      * Set the right access for an application to use a device.
@@ -66,6 +66,6 @@ public interface AccessManager {
      * @param deviceId The device identifier.
      * @param right The right access.
      */
-    void updateAccess(String applicationId, String deviceId, boolean right);
+    void setDeviceAccess(String applicationId, String deviceId, boolean right);
 
 }

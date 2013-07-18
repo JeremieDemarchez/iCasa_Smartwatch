@@ -99,7 +99,7 @@ public class AccessManagerImpl implements AccessManager{
      * @param accessRight       The right access.
      */
     @Override
-    public void updateAccess(String applicationId, String deviceId, String methodName, boolean accessRight) {
+    public void setMethodAccess(String applicationId, String deviceId, String methodName, boolean accessRight) {
         if (methodName == null){
             throw new NullPointerException("Method must not be null");
         }
@@ -116,11 +116,11 @@ public class AccessManagerImpl implements AccessManager{
      * @param accessRight       The right access.
      */
     @Override
-    public void updateAccess(String applicationId, String deviceId, Method method, boolean accessRight) {
+    public void setMethodAccess(String applicationId, String deviceId, Method method, boolean accessRight) {
         if (method == null){
             throw new NullPointerException("Method must not be null");
         }
-        updateAccess(applicationId, deviceId, method.getName(), accessRight);
+        setMethodAccess(applicationId, deviceId, method.getName(), accessRight);
     }
 
     /**
@@ -131,7 +131,7 @@ public class AccessManagerImpl implements AccessManager{
      * @param right       The right access.
      */
     @Override
-    public void updateAccess(String applicationId, String deviceId, boolean right) {
+    public void setDeviceAccess(String applicationId, String deviceId, boolean right) {
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateAccessRight(right);
     }

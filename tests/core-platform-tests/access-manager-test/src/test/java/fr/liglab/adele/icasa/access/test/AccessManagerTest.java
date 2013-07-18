@@ -77,9 +77,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
-        Assert.assertFalse(right.hasAccess());
-        service.updateAccess(applicationID, deviceID, true);//It change right access.
-        Assert.assertTrue(right.hasAccess());
+        Assert.assertFalse(right.hasDeviceAccess());
+        service.setDeviceAccess(applicationID, deviceID, true);//It change right access.
+        Assert.assertTrue(right.hasDeviceAccess());
     }
 
     /**
@@ -94,11 +94,11 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
-        Assert.assertFalse(right.hasAccess());
-        service.updateAccess(applicationID, deviceID, true);//It change right access.
-        service.updateAccess(applicationID,deviceID,methodName,true);
-        Assert.assertTrue(right.hasAccess());//access to device
-        Assert.assertTrue(right.hasAccess(methodName));//access to method in device
+        Assert.assertFalse(right.hasDeviceAccess());
+        service.setDeviceAccess(applicationID, deviceID, true);//It change right access.
+        service.setMethodAccess(applicationID, deviceID, methodName, true);
+        Assert.assertTrue(right.hasDeviceAccess());//access to device
+        Assert.assertTrue(right.hasMethodAccess(methodName));//access to method in device
     }
 
     /**
@@ -113,12 +113,12 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
-        Assert.assertFalse(right.hasAccess());
+        Assert.assertFalse(right.hasDeviceAccess());
         //give access to the method.
-        service.updateAccess(applicationID,deviceID,methodName,true);
+        service.setMethodAccess(applicationID, deviceID, methodName, true);
 
-        Assert.assertFalse(right.hasAccess());
-        Assert.assertFalse(right.hasAccess(methodName));//It must be false since there is any access to device
+        Assert.assertFalse(right.hasDeviceAccess());
+        Assert.assertFalse(right.hasMethodAccess(methodName));//It must be false since there is any access to device
     }
 
     /**
@@ -134,7 +134,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
-        service.updateAccess(applicationID, deviceID, true);//must call the listeners
+        service.setDeviceAccess(applicationID, deviceID, true);//must call the listeners
         verify(mockListener, atLeast(1)).onAccessRightModified(right);
         verify(mockListener, never()).onMethodAccessRightModified(any(AccessRight.class), any(String.class));
     }
@@ -152,8 +152,8 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
-        service.updateAccess(applicationID, deviceID, true);//must call the listeners
-        service.updateAccess(applicationID, deviceID, methodName, true);//must call the listeners
+        service.setDeviceAccess(applicationID, deviceID, true);//must call the listeners
+        service.setMethodAccess(applicationID, deviceID, methodName, true);//must call the listeners
         verify(mockListener, atLeast(1)).onAccessRightModified(right);
         verify(mockListener, atLeast(1)).onMethodAccessRightModified(right, methodName);
     }

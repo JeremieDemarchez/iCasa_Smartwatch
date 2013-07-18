@@ -57,9 +57,9 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         if (signature.equals(UPDATE_RIGHT)){
-            manager.updateAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getBoolean(ScriptLanguage.VALUE));
+            manager.setDeviceAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getBoolean(ScriptLanguage.VALUE));
         } else {
-            manager.updateAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getString(ScriptLanguage.METHOD),param.getBoolean(ScriptLanguage.VALUE));
+            manager.setMethodAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getString(ScriptLanguage.METHOD), param.getBoolean(ScriptLanguage.VALUE));
         }
         return null;
     }

@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.access.impl;
 
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.AccessRightListener;
-import fr.liglab.adele.icasa.application.Application;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -58,7 +57,7 @@ public class AccessRightImpl implements AccessRight {
      * @return true when the application has the right to access the device. False if not.
      */
     @Override
-    public synchronized boolean hasAccess(){
+    public synchronized boolean hasDeviceAccess(){
         return rightToAccessDevice;
     }
 
@@ -68,14 +67,14 @@ public class AccessRightImpl implements AccessRight {
      * @return true when the application can call the method, false if not.
      */
     @Override
-    public boolean hasAccess(String methodName) throws NullPointerException{
+    public boolean hasMethodAccess(String methodName) throws NullPointerException{
         Boolean access = false;
         Boolean exists = false;
         if (methodName == null) {
             throw new NullPointerException("Method must not be null");
         }
         synchronized (this){
-            if(hasAccess() && rightMethodAccess.containsKey(methodName)){
+            if(hasDeviceAccess() && rightMethodAccess.containsKey(methodName)){
                 access = rightMethodAccess.get(methodName); //get the right access.
                 exists = true;
             }
@@ -104,11 +103,11 @@ public class AccessRightImpl implements AccessRight {
      * @return true when the application can call the method, false if not.
      */
     @Override
-    public boolean hasAccess(Method method) throws NullPointerException{
+    public boolean hasMethodAccess(Method method) throws NullPointerException{
         if (method == null){
             throw new NullPointerException("Method must not be null");
         }
-        return hasAccess(method.getName());
+        return hasMethodAccess(method.getName());
     }
 
 

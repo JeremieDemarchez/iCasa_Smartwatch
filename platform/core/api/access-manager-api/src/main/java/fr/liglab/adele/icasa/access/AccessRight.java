@@ -27,21 +27,21 @@ public interface AccessRight {
      * See if the application has the right to access the device.
      * @return true when the application has the right to access the device. False if not.
      */
-    boolean hasAccess();
+    boolean hasDeviceAccess();
 
     /**
      * See if the application has the right access to call the given method.
      * @param method the method to see the right access.
      * @return true when the application can call the method, false if not.
      */
-    boolean hasAccess(Method method) throws NullPointerException;
+    boolean hasMethodAccess(Method method) throws NullPointerException;
 
     /**
      * See if the application has the right access to call the given method.
      * @param method the method to see the right access.
      * @return true when the application can call the method, false if not.
      */
-    boolean hasAccess(String method) throws NullPointerException;
+    boolean hasMethodAccess(String method) throws NullPointerException;
 
     /**
      * Get the list of method whose access has been defined.
