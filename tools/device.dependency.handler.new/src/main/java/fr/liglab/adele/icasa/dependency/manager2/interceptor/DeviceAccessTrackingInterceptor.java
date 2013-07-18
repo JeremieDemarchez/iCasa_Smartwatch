@@ -15,18 +15,27 @@
  */
 package fr.liglab.adele.icasa.dependency.manager2.interceptor;
 
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.dependency.interceptors.ServiceTrackingInterceptor;
 import org.apache.felix.ipojo.dependency.interceptors.TransformedServiceReference;
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
+import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.dependency.manager2.DeviceDependency;
 
-//@Component(name = "DeviceAccessTrackingInterceptor")
-//@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
-//@Instantiate
+@Component(name = "DeviceAccessTrackingInterceptor")
+@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
+@Instantiate(name="DeviceAccessTrackingInterceptor-0")
 public class DeviceAccessTrackingInterceptor implements ServiceTrackingInterceptor {
 
+	@Requires
+	private AccessManager accessManager;
+	
 	@Override
 	public void open(DependencyModel dependency) {
 		// TODO Auto-generated method stub
@@ -47,6 +56,11 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		
 		if (dependency instanceof DeviceDependency) {
 	      DeviceDependency deviceDependency = (DeviceDependency) dependency;
+	      
+	      String bundleName = context.getBundle().getSymbolicName();
+	      
+	      System.out.println("Bundle Symbolic Name " + bundleName);
+	      
 	      System.out.println("Device Dependency " + deviceDependency.getSpecification().getName());
       }
 		
