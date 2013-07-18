@@ -13,11 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa;
+package fr.liglab.adele.icasa.commands;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import fr.liglab.adele.icasa.commands.Signature;
 import org.json.JSONObject;
 
 /**

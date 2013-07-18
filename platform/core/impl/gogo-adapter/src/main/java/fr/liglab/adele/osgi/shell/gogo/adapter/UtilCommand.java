@@ -20,7 +20,7 @@ import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-import fr.liglab.adele.icasa.ICasaCommand;
+import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;

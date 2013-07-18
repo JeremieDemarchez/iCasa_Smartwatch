@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl;
+package fr.liglab.adele.icasa.commands;
 
 /**
  * Utility class used to obtain common objects from a JSON object.
@@ -28,7 +28,7 @@ public class ScriptLanguage {
     
     public static final String USER = "user";
     
-    public static final String APPLICATION_ID = "application";
+    public static final String APPLICATION_ID = "applicationId";
 
     public static final String DEVICE_ID = "deviceId";
 
@@ -73,7 +73,8 @@ public class ScriptLanguage {
     public static final String NEW_Z = "newZ";
 
     public static final String BOTTOM_Z = "bottomZ";
-    
+
+    public static final String METHOD = "method";
 
   
 

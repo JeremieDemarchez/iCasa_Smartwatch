@@ -24,9 +24,9 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.service.preferences.Preferences;
 
 @Component(name = "GetApplicationPropertyCommand")

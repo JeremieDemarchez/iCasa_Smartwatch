@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl.shell;
+package fr.liglab.adele.icasa.commands.impl;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -25,9 +25,9 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.location.Zone;
 
 /**

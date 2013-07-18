@@ -26,46 +26,46 @@ public interface AccessManager {
      * Get the right access of an application to use a specified device.
      * The {@code returned} object will be synchronized by the Access Manager to
      * maintain updated the using rights.
-     * @param applicationIdentifier The identifier of the application.
+     * @param applicationId The identifier of the application.
      * @param deviceId The target device to use if it has the correct rights.
      * @return An {@link AccessRight} object which has the rights information
      * of the usage of the device.
      */
-    AccessRight getRightAccess(String applicationIdentifier, String deviceId);
+    AccessRight getRightAccess(String applicationId, String deviceId);
 
     /**
      * Get the right access of an application.
      * The returned object will be synchronized by the Access Manager to
      * maintain updated the access right.
-     * @param applicationIdentifier The identifier of the application.
+     * @param applicationId The identifier of the application.
      * @return An array of {@link AccessRight} objects which has the rights information for the application.
      */
-    AccessRight[] getRightAccess(String applicationIdentifier);
+    AccessRight[] getRightAccess(String applicationId);
 
     /**
      * Set the right access for an application to use a given device.
-     * @param application The application identifier.
-     * @param device The device identifier.
-     * @param method The method name to set the right access.
-     * @param right The right access.
+     * @param applicationId The application identifier.
+     * @param deviceId The device identifier.
+     * @param methodName The method name to set the right access.
+     * @param accessRight The right access.
      */
-    void updateAccess(String application, String device, String method, boolean right);
+    void updateAccess(String applicationId, String deviceId, String methodName, boolean accessRight);
 
     /**
      * Set the right access for an application to use a given device.
-     * @param application The application identifier.
-     * @param device The device identifier.
+     * @param applicationId The application identifier.
+     * @param deviceId The device identifier.
      * @param method The method name to set the right access.
-     * @param right The right access.
+     * @param accessRight The right access.
      */
-    void updateAccess(String application, String device, Method method, boolean right);
+    void updateAccess(String applicationId, String deviceId, Method method, boolean accessRight);
 
     /**
      * Set the right access for an application to use a device.
-     * @param application The application wanting to use the device.
-     * @param device The device identifier.
+     * @param applicationId The application wanting to use the device.
+     * @param deviceId The device identifier.
      * @param right The right access.
      */
-    void updateAccess(String application, String device, boolean right);
+    void updateAccess(String applicationId, String deviceId, boolean right);
 
 }

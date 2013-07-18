@@ -20,7 +20,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import fr.liglab.adele.icasa.ICasaCommand;
+import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;

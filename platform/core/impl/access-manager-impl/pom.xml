@@ -39,7 +39,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.icasa.access.impl</Private-Package>
+						<Private-Package>fr.liglab.adele.icasa.access.impl, fr.liglab.adele.icasa.access.command</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>

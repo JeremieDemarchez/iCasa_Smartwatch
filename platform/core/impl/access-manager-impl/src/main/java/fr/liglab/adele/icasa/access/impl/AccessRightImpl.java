@@ -20,10 +20,7 @@ import fr.liglab.adele.icasa.access.AccessRightListener;
 import fr.liglab.adele.icasa.application.Application;
 
 import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * User: garciai@imag.fr
@@ -48,7 +45,7 @@ public class AccessRightImpl implements AccessRight {
     /**
      * A map containing the right access to call methods.
      */
-    protected Map<String, Boolean> rightMethodAccess = new Hashtable<String, Boolean>();
+    protected Map<String, Boolean> rightMethodAccess = new HashMap<String, Boolean>();
 
     public AccessRightImpl(String application, String device){
         applicationId = application;
@@ -87,6 +84,18 @@ public class AccessRightImpl implements AccessRight {
             updateMethodAccessRight(methodName, false); //Added if access right does not exist.
         }
         return access; // Return false only when there is any access right configured for this method.
+    }
+
+    /**
+     * Get the list of method whose access has been defined.
+     * If an existent device method, does not appear in the list, the access to the method
+     * is denied.
+     *
+     * @return an array of the existent method access.
+     */
+    @Override
+    public synchronized String[] getMethodList() {
+        return rightMethodAccess.keySet().toArray(new String[0]);
     }
 
     /**

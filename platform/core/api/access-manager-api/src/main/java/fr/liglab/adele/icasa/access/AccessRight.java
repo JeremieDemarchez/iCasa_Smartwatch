@@ -43,6 +43,14 @@ public interface AccessRight {
      */
     boolean hasAccess(String method) throws NullPointerException;
 
+    /**
+     * Get the list of method whose access has been defined.
+     * If an existent device method, does not appear in the list, the access to the method
+     * is denied.
+     * @return an array of the existent method access.
+     */
+    String[] getMethodList();
+
 
     /**
      * Get the application wanting to access the device.
