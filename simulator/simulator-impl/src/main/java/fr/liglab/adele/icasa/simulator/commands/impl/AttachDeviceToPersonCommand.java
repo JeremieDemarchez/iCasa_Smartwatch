@@ -13,13 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.simulator.Person;
+
+
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -29,24 +29,24 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.List;
 
-@Component(name = "ShowPersonZonesCommand")
+/**
+ * 
+ * Moves a person between the simulated environments 
+ * 
+ * @author Gabriel
+ *
+ */
+@Component(name = "AttachDeviceToPersonCommand")
 @Provides
-@Instantiate(name="person-zones-command")
-public class ShowPersonZonesCommand extends AbstractCommand {
+@Instantiate(name = "attach-device-person-command")
+public class AttachDeviceToPersonCommand extends AbstractCommand {
 
+	@Requires
+	private SimulationManager simulationManager;
 
-    @Requires
-    private SimulationManager manager;
-
-
-    private static final String[] PARAMS =  new String[]{ScriptLanguage.PERSON};
-
-    private static final String NAME= "show-person-zones";
-
-    public ShowPersonZonesCommand(){
-        addSignature(new Signature(PARAMS));
+    public AttachDeviceToPersonCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH}));
     }
 
     /**
@@ -56,31 +56,24 @@ public class ShowPersonZonesCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return NAME;
+        return "attach-device-person";  //To change body of implemented methods use File | Settings | File Templates.
     }
 
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-
-        String personName = param.getString(PARAMS[0]);
-        Person person = manager.getPerson(personName);
-
-        if (person != null) {
-            List<Zone> zones = manager.getZones();
-
-            out.println("Zones: ");
-            for (Zone zone : zones) {
-                if (zone.contains(person)) {
-                    out.println("Zone : " + zone);
-                }
-            }
-        }
+        String person = param.getString(ScriptLanguage.PERSON);
+        String device = param.getString(ScriptLanguage.DEVICE);
+        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
+        if (attach)
+            simulationManager.attachDeviceToPerson(device, person);
+        else
+            simulationManager.detachDeviceFromPerson(device, person);
         return null;
     }
 
+
     @Override
     public String getDescription(){
-        return "Shows the zones containing a person.\n\t" + super.getDescription();
+        return "Attach or detach a device to a person.\n\t" + super.getDescription();
     }
-
 }

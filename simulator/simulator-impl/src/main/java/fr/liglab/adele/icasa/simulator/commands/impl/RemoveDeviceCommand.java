@@ -13,11 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -30,42 +31,48 @@ import java.io.PrintStream;
 
 /**
  * 
- * Sets the fault state of device to "Yes"
+ * Create a new device instance
  * 
  * @author Gabriel
- * 
+ *
  */
-@Component(name = "FaultDeviceCommand")
+@Component(name = "RemoveDeviceCommand")
 @Provides
-@Instantiate(name = "fault-device-command")
-public class FaultDeviceCommand extends AbstractCommand {
+@Instantiate(name="remove-device-command")
+public class RemoveDeviceCommand extends AbstractCommand {
 
-	@Requires
-	private SimulationManager simulationManager;
+    @Requires
+    private SimulationManager simulationManager;
 
-    public FaultDeviceCommand(){
+
+    private static final String NAME= "remove-device";
+
+    public RemoveDeviceCommand(){
         addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
     }
 
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return NAME;
+    }
+
 	@Override
-	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-		String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
-		simulationManager.setDeviceFault(deviceId, true);
+   public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
+		simulationManager.removeDevice(deviceId);
 		return null;
-	}
+   }
 
-	/**
-	 * Get the name of the Script and command gogo.
-	 * 
-	 * @return The command name.
-	 */
-	@Override
-	public String getName() {
-		return "fault-device";
-	}
+    @Override
+    public String getDescription(){
+        return "Remove a simulated device.\n\t" + super.getDescription();
+    }
 
-	@Override
-	public String getDescription() {
-		return "Simulate a fail in a device.\n\t" + super.getDescription();
-	}
+
+
 }

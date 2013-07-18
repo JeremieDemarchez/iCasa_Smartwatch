@@ -13,12 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -31,26 +31,33 @@ import java.io.PrintStream;
 
 /**
  * 
- * Create a new device instance
+ * Moves a person between the simulated environments 
  * 
  * @author Gabriel
  *
  */
-@Component(name = "RemoveDeviceCommand")
+@Component(name = "MovePersonIntoZoneCommand")
 @Provides
-@Instantiate(name="remove-device-command")
-public class RemoveDeviceCommand extends AbstractCommand {
+@Instantiate(name = "move-person-zone-command")
+public class MovePersonIntoZoneCommand extends AbstractCommand {
 
-    @Requires
-    private SimulationManager simulationManager;
+	@Requires
+	private SimulationManager simulationManager;
 
-
-    private static final String NAME= "remove-device";
-
-    public RemoveDeviceCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
+    public MovePersonIntoZoneCommand() {
+        addSignature(new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.ZONE_ID}));
     }
 
+
+	@Override
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        String personId = param.getString(ScriptLanguage.PERSON_ID);
+        String zoneId = param.getString(ScriptLanguage.ZONE_ID);
+        System.out.println("Moving " + personId + " to Zone " + zoneId);
+		simulationManager.setPersonZone(personId, zoneId);
+		return null;
+	}
+	
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -58,21 +65,11 @@ public class RemoveDeviceCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return NAME;
+        return "move-person-zone";
     }
-
-	@Override
-   public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
-		simulationManager.removeDevice(deviceId);
-		return null;
-   }
 
     @Override
     public String getDescription(){
-        return "Remove a simulated device.\n\t" + super.getDescription();
+        return "Move a person into a zone.\n\t" + super.getDescription();
     }
-
-
-
 }

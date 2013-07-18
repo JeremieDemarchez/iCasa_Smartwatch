@@ -13,11 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -30,43 +31,49 @@ import java.io.PrintStream;
 
 /**
  * 
- * Sets the fault state of device to "Yes"
+ * Moves a person between the simulated environments 
  * 
  * @author Gabriel
- * 
+ *
  */
-@Component(name = "RepairDeviceCommand")
+@Component(name = "AttachZoneToDeviceCommand")
 @Provides
-@Instantiate(name = "repair-device-command")
-public class RepairDeviceCommand extends AbstractCommand {
+@Instantiate(name = "attach-zone-device-command")
+public class AttachZoneToDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    public RepairDeviceCommand(){
-        addSignature(new Signature(new String[] { ScriptLanguage.DEVICE_ID }));
+    public AttachZoneToDeviceCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
     }
 
-	/**
-	 * Get the name of the Script and command gogo.
-	 * 
-	 * @return The command name.
-	 */
-	@Override
-	public String getName() {
-		return "repair-device";
-	}
-
-	@Override
+    @Override
 	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-		String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
-		simulationManager.setDeviceFault(deviceId, false);
+
+        String device = param.getString(ScriptLanguage.DEVICE);
+        String zone = param.getString(ScriptLanguage.ZONE);
+        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
+		if (attach)
+			simulationManager.attachZoneToDevice(zone, device);
+		else
+			simulationManager.detachZoneFromDevice(zone, device);
 		return null;
 	}
+    /**
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "attach-zone-device";
+    }
 
-	@Override
-	public String getDescription() {
-		return "Simulates the device reparation.\n\t" + super.getDescription();
-	}
+
+    @Override
+    public String getDescription(){
+        return "Attach/detach a zone to/from a device.\n\t" + super.getDescription();
+    }
 
 }

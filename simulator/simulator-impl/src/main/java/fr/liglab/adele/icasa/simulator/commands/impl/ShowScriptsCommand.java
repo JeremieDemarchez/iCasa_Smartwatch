@@ -13,13 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -28,24 +26,28 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 /**
- * 
- * Moves a person between the simulated environments 
- * 
- * @author Gabriel
- *
+ * User: torito
+ * Date: 4/23/13
+ * Time: 4:19 PM
  */
-@Component(name = "AttachDeviceToPersonCommand")
+@Component(name = "ShowScriptsCommand")
 @Provides
-@Instantiate(name = "attach-device-person-command")
-public class AttachDeviceToPersonCommand extends AbstractCommand {
+@Instantiate(name="show-scripts-command")
+public class ShowScriptsCommand extends AbstractCommand {
 
-	@Requires
-	private SimulationManager simulationManager;
+    @Requires
+    private ScriptExecutor executor;
 
-    public AttachDeviceToPersonCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.DEVICE, ScriptLanguage.ATTACH}));
+
+    private static final String[] PARAMS =  new String[]{};
+
+    private static final String NAME= "show-scripts";
+
+    public ShowScriptsCommand(){
+        addSignature(EMPTY_SIGNATURE);
     }
 
     /**
@@ -55,24 +57,23 @@ public class AttachDeviceToPersonCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "attach-device-person";  //To change body of implemented methods use File | Settings | File Templates.
+        return NAME;
     }
+
 
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String person = param.getString(ScriptLanguage.PERSON);
-        String device = param.getString(ScriptLanguage.DEVICE);
-        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
-        if (attach)
-            simulationManager.attachDeviceToPerson(device, person);
-        else
-            simulationManager.detachDeviceFromPerson(device, person);
+        out.println("Scripts: ");
+        List<String> scripts = executor.getScriptList();
+        for (String script : scripts) {
+            out.println(script);
+        }
         return null;
     }
 
 
     @Override
     public String getDescription(){
-        return "Attach or detach a device to a person.\n\t" + super.getDescription();
+        return "Shows the list of the available scripts.\n\t" + super.getDescription();
     }
 }

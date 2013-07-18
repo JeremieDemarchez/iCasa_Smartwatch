@@ -13,18 +13,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
+
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -36,29 +37,21 @@ import java.io.PrintStream;
  * @author Gabriel
  *
  */
-@Component(name = "AttachPersonZoneCommand")
+@Component(name = "ResetContextCommand")
 @Provides
-@Instantiate(name = "attach-person-zone-command")
-public class AttachPersonToZoneCommand extends AbstractCommand {
+@Instantiate(name = "reset-context-command")
+public class ResetContextCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    public AttachPersonToZoneCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
+
+    private static final String NAME= "reset-context";
+
+    public ResetContextCommand(){
+        addSignature(EMPTY_SIGNATURE);
     }
 
-	@Override
-	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String person = param.getString(ScriptLanguage.PERSON);
-        String zone = param.getString(ScriptLanguage.ZONE);
-        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
-		if (attach)
-			simulationManager.attachPersonToZone(zone, person);
-		else
-			simulationManager.detachPersonFromZone(zone, person);
-		return null;
-	}
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -66,13 +59,19 @@ public class AttachPersonToZoneCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "attach-person-zone";  //To change body of implemented methods use File | Settings | File Templates.
+        return NAME;
     }
+
 
 
     @Override
-    public String getDescription(){
-        return "Attach/detach a person to/from a zone.\n\t" + super.getDescription();
-    }
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+		simulationManager.resetContext();
+		return null;
+	}
 
+    @Override
+    public String getDescription(){
+        return "Remove all the zones, persons and devices from the iCasa Context.\n\t" + super.getDescription();
+    }
 }

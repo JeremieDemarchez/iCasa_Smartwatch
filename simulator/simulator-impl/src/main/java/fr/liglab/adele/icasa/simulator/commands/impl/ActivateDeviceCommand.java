@@ -13,42 +13,39 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
-
 import java.io.InputStream;
 import java.io.PrintStream;
 
 /**
  * 
- * Moves a person between the simulated environments 
+ * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
  *
  */
-@Component(name = "ResetContextCommand")
+@Component(name = "ActivateDeviceCommand")
 @Provides
-@Instantiate(name = "reset-context-command")
-public class ResetContextCommand extends AbstractCommand {
+@Instantiate(name="activate-device-command")
+public class ActivateDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-
-    private static final String NAME= "reset-context";
-
-    public ResetContextCommand(){
-        addSignature(EMPTY_SIGNATURE);
+    public ActivateDeviceCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
     }
 
     /**
@@ -58,19 +55,18 @@ public class ResetContextCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return NAME;
+        return "activate-device";
     }
 
 
-
     @Override
-	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-		simulationManager.resetContext();
-		return null;
-	}
-
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        simulationManager.setDeviceState(param.getString(ScriptLanguage.DEVICE_ID), true);
+        return null;
+    }
     @Override
     public String getDescription(){
-        return "Remove all the zones, persons and devices from the iCasa Context.\n\t" + super.getDescription();
+        return "Activates a device \n\t" + super.getDescription();
     }
+
 }

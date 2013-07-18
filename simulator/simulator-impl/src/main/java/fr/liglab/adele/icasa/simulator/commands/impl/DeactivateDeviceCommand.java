@@ -13,12 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
+
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -30,31 +31,29 @@ import java.io.PrintStream;
 
 /**
  * 
- * Executes an script
+ * Sets the fault state of device to "Yes"
  * 
- * @author Gabriel Pedraza Ferreira
- * 
+ * @author Gabriel
+ *
  */
-@Component(name = "ExecuteScriptCommand")
+@Component(name = "DeactivateDeviceCommand")
 @Provides
-@Instantiate(name = "execute-script-command")
-public class ExecuteScriptCommand extends AbstractCommand {
+@Instantiate(name="deactivate-device-command")
+public class DeactivateDeviceCommand extends AbstractCommand {
 
 	@Requires
-	private ScriptExecutor executor;
+	private SimulationManager simulationManager;
 
-    public ExecuteScriptCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.SCRIPT_NAME}));
+    public DeactivateDeviceCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
     }
 
 	@Override
-	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String scriptName = param.getString(ScriptLanguage.SCRIPT_NAME);
-        System.out.println("Executing script ... " + scriptName);
-		executor.execute(scriptName);
+   public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
+		simulationManager.setDeviceState(deviceId, false);
 		return null;
-	}
-
+   }
 
     /**
      * Get the name of the  Script and command gogo.
@@ -63,11 +62,11 @@ public class ExecuteScriptCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "execute-script";
+        return "deactivate-device";
     }
 
     @Override
     public String getDescription(){
-        return "Execute a script.\n\t" + super.getDescription();
+        return "Deactivate a device.\n\t" + super.getDescription();
     }
 }

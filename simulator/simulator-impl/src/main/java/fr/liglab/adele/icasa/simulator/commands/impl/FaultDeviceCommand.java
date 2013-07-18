@@ -13,12 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -34,39 +33,39 @@ import java.io.PrintStream;
  * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
- *
+ * 
  */
-@Component(name = "ActivateDeviceCommand")
+@Component(name = "FaultDeviceCommand")
 @Provides
-@Instantiate(name="activate-device-command")
-public class ActivateDeviceCommand extends AbstractCommand {
+@Instantiate(name = "fault-device-command")
+public class FaultDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    public ActivateDeviceCommand(){
+    public FaultDeviceCommand(){
         addSignature(new Signature(new String[]{ScriptLanguage.DEVICE_ID}));
     }
 
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return "activate-device";
-    }
+	@Override
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+		String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
+		simulationManager.setDeviceFault(deviceId, true);
+		return null;
+	}
 
+	/**
+	 * Get the name of the Script and command gogo.
+	 * 
+	 * @return The command name.
+	 */
+	@Override
+	public String getName() {
+		return "fault-device";
+	}
 
-    @Override
-    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        simulationManager.setDeviceState(param.getString(ScriptLanguage.DEVICE_ID), true);
-        return null;
-    }
-    @Override
-    public String getDescription(){
-        return "Activates a device \n\t" + super.getDescription();
-    }
-
+	@Override
+	public String getDescription() {
+		return "Simulate a fail in a device.\n\t" + super.getDescription();
+	}
 }

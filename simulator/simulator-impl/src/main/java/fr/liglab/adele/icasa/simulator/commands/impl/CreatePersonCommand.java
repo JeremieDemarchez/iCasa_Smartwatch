@@ -13,23 +13,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
-
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.lang.Exception;import java.lang.Object;import java.lang.Override;import java.lang.String;
 
 /**
  * 
@@ -38,30 +36,27 @@ import java.lang.Exception;import java.lang.Object;import java.lang.Override;imp
  * @author Gabriel
  *
  */
-@Component(name = "AttachZoneToDeviceCommand")
+@Component(name = "CreatePersonCommand")
 @Provides
-@Instantiate(name = "attach-zone-device-command")
-public class AttachZoneToDeviceCommand extends AbstractCommand {
+@Instantiate(name = "create-persone-command")
+public class CreatePersonCommand extends AbstractCommand {
+	
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    public AttachZoneToDeviceCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.DEVICE, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
+    public CreatePersonCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
     }
 
-    @Override
+	@Override
 	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-
-        String device = param.getString(ScriptLanguage.DEVICE);
-        String zone = param.getString(ScriptLanguage.ZONE);
-        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
-		if (attach)
-			simulationManager.attachZoneToDevice(zone, device);
-		else
-			simulationManager.detachZoneFromDevice(zone, device);
+        String id = param.getString(ScriptLanguage.ID);
+        String type = param.getString(ScriptLanguage.TYPE);
+		simulationManager.addPerson(id, type);
 		return null;
 	}
+
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -69,13 +64,13 @@ public class AttachZoneToDeviceCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "attach-zone-device";
+        return "create-person";
     }
+
 
 
     @Override
     public String getDescription(){
-        return "Attach/detach a zone to/from a device.\n\t" + super.getDescription();
+        return "Add a new simulated person.\n\t" + super.getDescription();
     }
-
 }

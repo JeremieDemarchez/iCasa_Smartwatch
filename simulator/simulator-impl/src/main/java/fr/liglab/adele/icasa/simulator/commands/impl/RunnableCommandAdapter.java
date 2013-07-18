@@ -13,9 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.ICasaCommand;
+import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.json.JSONObject;
 
 public class RunnableCommandAdapter implements Runnable {

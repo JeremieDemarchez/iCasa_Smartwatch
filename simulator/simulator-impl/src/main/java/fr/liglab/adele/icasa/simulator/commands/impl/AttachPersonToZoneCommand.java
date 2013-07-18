@@ -13,12 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -36,28 +37,29 @@ import java.io.PrintStream;
  * @author Gabriel
  *
  */
-@Component(name = "MovePersonIntoZoneCommand")
+@Component(name = "AttachPersonZoneCommand")
 @Provides
-@Instantiate(name = "move-person-zone-command")
-public class MovePersonIntoZoneCommand extends AbstractCommand {
+@Instantiate(name = "attach-person-zone-command")
+public class AttachPersonToZoneCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    public MovePersonIntoZoneCommand() {
-        addSignature(new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.ZONE_ID}));
+    public AttachPersonToZoneCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.PERSON, ScriptLanguage.ZONE, ScriptLanguage.ATTACH}));
     }
-
 
 	@Override
 	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String personId = param.getString(ScriptLanguage.PERSON_ID);
-        String zoneId = param.getString(ScriptLanguage.ZONE_ID);
-        System.out.println("Moving " + personId + " to Zone " + zoneId);
-		simulationManager.setPersonZone(personId, zoneId);
+        String person = param.getString(ScriptLanguage.PERSON);
+        String zone = param.getString(ScriptLanguage.ZONE);
+        boolean attach = param.getBoolean(ScriptLanguage.ATTACH);
+		if (attach)
+			simulationManager.attachPersonToZone(zone, person);
+		else
+			simulationManager.detachPersonFromZone(zone, person);
 		return null;
 	}
-	
     /**
      * Get the name of the  Script and command gogo.
      *
@@ -65,11 +67,13 @@ public class MovePersonIntoZoneCommand extends AbstractCommand {
      */
     @Override
     public String getName() {
-        return "move-person-zone";
+        return "attach-person-zone";  //To change body of implemented methods use File | Settings | File Templates.
     }
+
 
     @Override
     public String getDescription(){
-        return "Move a person into a zone.\n\t" + super.getDescription();
+        return "Attach/detach a person to/from a zone.\n\t" + super.getDescription();
     }
+
 }

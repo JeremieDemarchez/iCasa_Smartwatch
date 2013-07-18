@@ -13,11 +13,14 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -28,26 +31,22 @@ import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.List;
 
-/**
- * User: torito
- * Date: 4/23/13
- * Time: 4:19 PM
- */
-@Component(name = "ShowScriptsCommand")
+@Component(name = "ShowPersonZonesCommand")
 @Provides
-@Instantiate(name="show-scripts-command")
-public class ShowScriptsCommand extends AbstractCommand {
+@Instantiate(name="person-zones-command")
+public class ShowPersonZonesCommand extends AbstractCommand {
+
 
     @Requires
-    private ScriptExecutor executor;
+    private SimulationManager manager;
 
 
-    private static final String[] PARAMS =  new String[]{};
+    private static final String[] PARAMS =  new String[]{ScriptLanguage.PERSON};
 
-    private static final String NAME= "show-scripts";
+    private static final String NAME= "show-person-zones";
 
-    public ShowScriptsCommand(){
-        addSignature(EMPTY_SIGNATURE);
+    public ShowPersonZonesCommand(){
+        addSignature(new Signature(PARAMS));
     }
 
     /**
@@ -60,20 +59,28 @@ public class ShowScriptsCommand extends AbstractCommand {
         return NAME;
     }
 
-
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        out.println("Scripts: ");
-        List<String> scripts = executor.getScriptList();
-        for (String script : scripts) {
-            out.println(script);
+
+        String personName = param.getString(PARAMS[0]);
+        Person person = manager.getPerson(personName);
+
+        if (person != null) {
+            List<Zone> zones = manager.getZones();
+
+            out.println("Zones: ");
+            for (Zone zone : zones) {
+                if (zone.contains(person)) {
+                    out.println("Zone : " + zone);
+                }
+            }
         }
         return null;
     }
 
-
     @Override
     public String getDescription(){
-        return "Shows the list of the available scripts.\n\t" + super.getDescription();
+        return "Shows the zones containing a person.\n\t" + super.getDescription();
     }
+
 }

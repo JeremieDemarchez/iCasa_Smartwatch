@@ -13,12 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.script.executor.impl.commands;
+package fr.liglab.adele.icasa.simulator.commands.impl;
 
-
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -31,46 +30,43 @@ import java.io.PrintStream;
 
 /**
  * 
- * Moves a person between the simulated environments 
+ * Sets the fault state of device to "Yes"
  * 
  * @author Gabriel
- *
+ * 
  */
-@Component(name = "CreatePersonCommand")
+@Component(name = "RepairDeviceCommand")
 @Provides
-@Instantiate(name = "create-persone-command")
-public class CreatePersonCommand extends AbstractCommand {
-	
+@Instantiate(name = "repair-device-command")
+public class RepairDeviceCommand extends AbstractCommand {
 
 	@Requires
 	private SimulationManager simulationManager;
 
-    public CreatePersonCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
+    public RepairDeviceCommand(){
+        addSignature(new Signature(new String[] { ScriptLanguage.DEVICE_ID }));
     }
+
+	/**
+	 * Get the name of the Script and command gogo.
+	 * 
+	 * @return The command name.
+	 */
+	@Override
+	public String getName() {
+		return "repair-device";
+	}
 
 	@Override
 	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String id = param.getString(ScriptLanguage.ID);
-        String type = param.getString(ScriptLanguage.TYPE);
-		simulationManager.addPerson(id, type);
+		String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
+		simulationManager.setDeviceFault(deviceId, false);
 		return null;
 	}
 
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return "create-person";
-    }
+	@Override
+	public String getDescription() {
+		return "Simulates the device reparation.\n\t" + super.getDescription();
+	}
 
-
-
-    @Override
-    public String getDescription(){
-        return "Add a new simulated person.\n\t" + super.getDescription();
-    }
 }
