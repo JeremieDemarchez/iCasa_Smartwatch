@@ -67,7 +67,7 @@ public class AccessManagerPrintCommand extends AbstractCommand{
     public String seeAppRight(JSONObject param) throws Exception{
         StringBuffer info = new StringBuffer();
         info.append("Application: ").append(param.getString(ScriptLanguage.APPLICATION_ID)).append('\n');
-        AccessRight[]rights =  manager.getRightAccess(param.getString(ScriptLanguage.APPLICATION_ID));
+        AccessRight[]rights =  manager.getAccessRight(param.getString(ScriptLanguage.APPLICATION_ID));
         if (rights != null && rights.length > 0){
             info.append("Device List: ").append('\n');
         }
@@ -78,7 +78,7 @@ public class AccessManagerPrintCommand extends AbstractCommand{
     }
 
     public String seeAppDeviceRight(JSONObject param) throws Exception{
-        AccessRight accessRight = manager.getRightAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID));
+        AccessRight accessRight = manager.getAccessRight(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID));
         StringBuffer info = new StringBuffer();
         info.append("Application: ").append(param.getString(ScriptLanguage.APPLICATION_ID)).append('\n');
         info.append("Device: ").append(param.getString(ScriptLanguage.DEVICE_ID)).append('\n');

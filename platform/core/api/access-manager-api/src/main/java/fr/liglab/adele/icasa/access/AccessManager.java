@@ -31,7 +31,7 @@ public interface AccessManager {
      * @return An {@link AccessRight} object which has the rights information
      * of the usage of the device.
      */
-    AccessRight getRightAccess(String applicationId, String deviceId);
+    AccessRight getAccessRight(String applicationId, String deviceId);
 
     /**
      * Get the right access of an application.
@@ -40,7 +40,7 @@ public interface AccessManager {
      * @param applicationId The identifier of the application.
      * @return An array of {@link AccessRight} objects which has the rights information for the application.
      */
-    AccessRight[] getRightAccess(String applicationId);
+    AccessRight[] getAccessRight(String applicationId);
 
     /**
      * Set the right access for an application to use a given device.

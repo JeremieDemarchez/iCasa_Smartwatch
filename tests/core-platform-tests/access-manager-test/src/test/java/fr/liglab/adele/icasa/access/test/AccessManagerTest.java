@@ -25,17 +25,13 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
 import javax.inject.Inject;
-import java.util.List;
 
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 import static org.mockito.Mockito.*;
 
 
@@ -79,7 +75,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         String applicationID = "App1";
         String deviceID = "device1";
         Assert.assertNotNull(service);
-        AccessRight right = service.getRightAccess(applicationID, deviceID);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
         Assert.assertFalse(right.hasAccess());
         service.updateAccess(applicationID, deviceID, true);//It change right access.
@@ -96,7 +92,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         String deviceID = "device1";
         String methodName = "getLight";
         Assert.assertNotNull(service);
-        AccessRight right = service.getRightAccess(applicationID, deviceID);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
         Assert.assertFalse(right.hasAccess());
         service.updateAccess(applicationID, deviceID, true);//It change right access.
@@ -115,7 +111,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         String deviceID = "device1";
         String methodName = "getLight";
         Assert.assertNotNull(service);
-        AccessRight right = service.getRightAccess(applicationID, deviceID);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
         Assert.assertFalse(right.hasAccess());
         //give access to the method.
@@ -135,7 +131,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         String deviceID = "device1";
         String methodName = "getLight";
         Assert.assertNotNull(service);
-        AccessRight right = service.getRightAccess(applicationID, deviceID);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
         service.updateAccess(applicationID, deviceID, true);//must call the listeners
@@ -153,7 +149,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         String deviceID = "device1";
         String methodName = "getLight";
         Assert.assertNotNull(service);
-        AccessRight right = service.getRightAccess(applicationID, deviceID);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
         service.updateAccess(applicationID, deviceID, true);//must call the listeners

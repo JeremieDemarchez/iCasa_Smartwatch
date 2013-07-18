@@ -17,13 +17,10 @@ package fr.liglab.adele.icasa.access.impl;
 
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.application.Application;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.*;
 
 import java.lang.reflect.Method;
 import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 /**
  * User: garciai@imag.fr
@@ -51,7 +48,7 @@ public class AccessManagerImpl implements AccessManager{
      *
      */
     @Override
-    public AccessRightImpl getRightAccess(String applicationId, String deviceId) {
+    public AccessRightImpl getAccessRight(String applicationId, String deviceId) {
         AccessRightImpl right = null;
         Map<String, AccessRightImpl> applicationAccess = null;
         if (rightAccess.containsKey(applicationId)){
@@ -81,7 +78,7 @@ public class AccessManagerImpl implements AccessManager{
      * @return An array of {@link fr.liglab.adele.icasa.access.AccessRight} objects which has the rights information for the application.
      */
     @Override
-    public synchronized AccessRight[] getRightAccess(String applicationId) {
+    public synchronized AccessRight[] getAccessRight(String applicationId) {
         AccessRightImpl[] right = null;
         Map<String, AccessRightImpl> applicationAccess = null;
         if (rightAccess.containsKey(applicationId)){
@@ -106,7 +103,7 @@ public class AccessManagerImpl implements AccessManager{
         if (methodName == null){
             throw new NullPointerException("Method must not be null");
         }
-        AccessRightImpl rightAccess = getRightAccess(applicationId, deviceId);
+        AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateMethodAccessRight(methodName, accessRight);
     }
 
@@ -135,7 +132,7 @@ public class AccessManagerImpl implements AccessManager{
      */
     @Override
     public void updateAccess(String applicationId, String deviceId, boolean right) {
-        AccessRightImpl rightAccess = getRightAccess(applicationId, deviceId);
+        AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateAccessRight(right);
     }
 
