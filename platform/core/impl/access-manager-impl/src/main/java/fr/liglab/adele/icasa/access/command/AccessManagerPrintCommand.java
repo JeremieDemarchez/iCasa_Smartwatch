@@ -43,7 +43,7 @@ public class AccessManagerPrintCommand extends AbstractCommand{
 
     private static final Signature SEE_APP_RIGHT = new Signature(new String[]{ScriptLanguage.APPLICATION_ID});
 
-    private static final String NAME = "see-access";
+    private static final String NAME = "show-access-right";
 
     @Requires
     AccessManager manager;

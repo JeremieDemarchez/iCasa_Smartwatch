@@ -43,7 +43,7 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
 
     private static final Signature UPDATE_RIGHT_METHOD = new Signature(new String[]{ScriptLanguage.APPLICATION_ID, ScriptLanguage.DEVICE_ID, ScriptLanguage.METHOD, ScriptLanguage.VALUE});
 
-    private static final String NAME = "set-access";
+    private static final String NAME = "set-access-right";
 
 
     @Requires
