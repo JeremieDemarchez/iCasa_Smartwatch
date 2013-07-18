@@ -24,25 +24,26 @@ import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
-@Component(name="ComponentUsingDevice")
+@Component
 @Instantiate
-public class ComponentUsingDevice {
+public class ComponentTwoRequiresType {
 	
-	@RequiresDevice(mandatoryProps={"thermometer.currentTemperature", "surface"})
+	@RequiresDevice(id="thermometer", mandatoryProps={"thermometer.currentTemperature", "surface"})
 	private Thermometer thermometer;
 	
 	
-	@RequiresDevice(mandatoryProps={"heater.powerLevel"})
+	@RequiresDevice(id="heater" ,mandatoryProps={"heater.powerLevel"})
 	private Heater heater;
 
 	
-	@Requires
+	@Requires(id="otherHeater")
 	private Heater otherHeater;
 	
 	@Validate
 	public void start() {
-		System.out.println("Heater SN" + heater.getSerialNumber());
-		System.out.println("Thermometer SN" + thermometer.getSerialNumber());
+		System.out.println("Starting ComponentTwoRequiresTypes");
+		System.out.println("Heater: " + heater.getSerialNumber());
+		System.out.println("Thermometer: " + thermometer.getSerialNumber());
 	}
 	
 	
