@@ -26,7 +26,11 @@ import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
 import fr.liglab.adele.icasa.access.AccessManager;
+import fr.liglab.adele.icasa.access.AccessRight;
+import fr.liglab.adele.icasa.application.Application;
+import fr.liglab.adele.icasa.application.ApplicationManager;
 import fr.liglab.adele.icasa.dependency.manager2.DeviceDependency;
+import fr.liglab.adele.icasa.device.GenericDevice;
 
 @Component(name = "DeviceAccessTrackingInterceptor")
 @Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
@@ -35,6 +39,9 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
 	@Requires
 	private AccessManager accessManager;
+	
+	@Requires
+	private ApplicationManager applicationManager;
 	
 	@Override
 	public void open(DependencyModel dependency) {
@@ -57,11 +64,39 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		if (dependency instanceof DeviceDependency) {
 	      DeviceDependency deviceDependency = (DeviceDependency) dependency;
 	      
+	      
+	      
 	      String bundleName = context.getBundle().getSymbolicName();
 	      
-	      System.out.println("Bundle Symbolic Name " + bundleName);
+	      Application app = applicationManager.getApplicationOfBundle(bundleName);
 	      
-	      System.out.println("Device Dependency " + deviceDependency.getSpecification().getName());
+	      // No application associated neither Device Identifier
+	      if (app==null || !ref.contains(GenericDevice.DEVICE_SERIAL_NUMBER)) {
+	      	System.out.println("%ERROR% Application ref " + app + " --- Contains Serial Number: " + ref.contains(GenericDevice.DEVICE_SERIAL_NUMBER));
+	      	return null;
+	      }
+	      
+	      
+	      String deviceId= (String)ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
+	      
+	      AccessRight right = accessManager.getAccessRight(app.getId(), deviceId);
+	      
+	      System.out.println("========================================================");
+	      System.out.println("====> Dependency " + deviceDependency.getId());
+	      System.out.println("====> Component " + deviceDependency.getComponentInstance().getInstanceName());
+	      System.out.println("====> Application " + app.getId()); 
+	      System.out.println("====> Device ID: " + deviceId); 
+	      System.out.println("====> Access: " + right.hasDeviceAccess());
+	      System.out.println("========================================================");
+	      
+	      
+
+	      
+	      if (!right.hasDeviceAccess()) {
+	      	return null;
+	      }
+	      	
+	      	      	      
       }
 		
 		return ref;

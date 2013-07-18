@@ -428,7 +428,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 
      	  	 
      	  	 //getLogger().log(Logger.DEBUG, "---------------------------> " + mandatoryProps);
-     	  	 System.out.println( "---------------------------> " + mandatoryProps);
+     	  	 //System.out.println( "---------------------------> " + mandatoryProps);
      	  	 
            // Create the dependency metadata
            final Element dependencyElement = deps[i];
