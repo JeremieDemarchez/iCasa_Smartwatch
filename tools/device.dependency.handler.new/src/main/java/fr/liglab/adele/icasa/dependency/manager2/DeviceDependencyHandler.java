@@ -51,7 +51,7 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
-
+@org.apache.felix.ipojo.annotations.Handler(name="requiresdevice", namespace="fr.liglab.adele.icasa.dependency.handler.annotations")
 public class DeviceDependencyHandler extends DependencyHandler {
 
    /**
