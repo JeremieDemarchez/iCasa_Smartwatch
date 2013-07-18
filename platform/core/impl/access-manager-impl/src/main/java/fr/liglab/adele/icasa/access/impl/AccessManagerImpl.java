@@ -44,29 +44,29 @@ public class AccessManagerImpl implements AccessManager{
      * The {@code returned} object will be synchronized by the Access Manager to
      * maintain updated the using rights.
      *
-     * @param applicationIdentifier The identifier of the application.
+     * @param applicationId The identifier of the application.
      * @param deviceId              The target device to use if it has the correct rights.
      * @return An {@link fr.liglab.adele.icasa.access.AccessRight} object which has the rights information
      *         of the usage of the device.
      *
      */
     @Override
-    public AccessRightImpl getRightAccess(String applicationIdentifier, String deviceId) {
+    public AccessRightImpl getRightAccess(String applicationId, String deviceId) {
         AccessRightImpl right = null;
         Map<String, AccessRightImpl> applicationAccess = null;
-        if (rightAccess.containsKey(applicationIdentifier)){
-            applicationAccess = rightAccess.get(applicationIdentifier);
+        if (rightAccess.containsKey(applicationId)){
+            applicationAccess = rightAccess.get(applicationId);
             if (applicationAccess.containsKey(deviceId)){
                 right =  applicationAccess.get(deviceId);
             } else {
-                right = createAccessRight(applicationIdentifier, deviceId);
+                right = createAccessRight(applicationId, deviceId);
                 applicationAccess.put(deviceId, right);
             }
         } else {
             applicationAccess = new Hashtable<String, AccessRightImpl>();
-            right = createAccessRight(applicationIdentifier, deviceId);
+            right = createAccessRight(applicationId, deviceId);
             applicationAccess.put(deviceId, right);
-            rightAccess.put(applicationIdentifier,applicationAccess);
+            rightAccess.put(applicationId,applicationAccess);
         }
         return right;
     }
@@ -77,15 +77,15 @@ public class AccessManagerImpl implements AccessManager{
      * The returned object will be synchronized by the Access Manager to
      * maintain updated the access right.
      *
-     * @param applicationIdentifier The identifier of the application.
+     * @param applicationId The identifier of the application.
      * @return An array of {@link fr.liglab.adele.icasa.access.AccessRight} objects which has the rights information for the application.
      */
     @Override
-    public synchronized AccessRight[] getRightAccess(String applicationIdentifier) {
+    public synchronized AccessRight[] getRightAccess(String applicationId) {
         AccessRightImpl[] right = null;
         Map<String, AccessRightImpl> applicationAccess = null;
-        if (rightAccess.containsKey(applicationIdentifier)){
-            applicationAccess = rightAccess.get(applicationIdentifier);
+        if (rightAccess.containsKey(applicationId)){
+            applicationAccess = rightAccess.get(applicationId);
             right = applicationAccess.values().toArray(new AccessRightImpl[0]);
         } else {
             right = new AccessRightImpl[0];
@@ -96,46 +96,46 @@ public class AccessManagerImpl implements AccessManager{
     /**
      * Set the right access for an application to use a given device.
      *
-     * @param application The application identifier.
-     * @param device      The device identifier.
+     * @param applicationId The application identifier.
+     * @param deviceId      The device identifier.
      * @param methodName      The method name to set the right access.
-     * @param right       The right access.
+     * @param accessRight       The right access.
      */
     @Override
-    public void updateAccess(String application, String device, String methodName, boolean right) {
+    public void updateAccess(String applicationId, String deviceId, String methodName, boolean accessRight) {
         if (methodName == null){
             throw new NullPointerException("Method must not be null");
         }
-        AccessRightImpl rightAccess = getRightAccess(application, device);
-        rightAccess.updateMethodAccessRight(methodName, right);
+        AccessRightImpl rightAccess = getRightAccess(applicationId, deviceId);
+        rightAccess.updateMethodAccessRight(methodName, accessRight);
     }
 
     /**
      * Set the right access for an application to use a given device.
      *
-     * @param application The application identifier.
-     * @param device      The device identifier.
+     * @param applicationId The application identifier.
+     * @param deviceId      The device identifier.
      * @param method      The method name to set the right access.
-     * @param right       The right access.
+     * @param accessRight       The right access.
      */
     @Override
-    public void updateAccess(String application, String device, Method method, boolean right) {
+    public void updateAccess(String applicationId, String deviceId, Method method, boolean accessRight) {
         if (method == null){
             throw new NullPointerException("Method must not be null");
         }
-        updateAccess(application, device, method.getName(), right);
+        updateAccess(applicationId, deviceId, method.getName(), accessRight);
     }
 
     /**
      * Set the right access for an application to use a device.
      *
-     * @param application The application wanting to use the device.
-     * @param device      The device identifier.
+     * @param applicationId The application wanting to use the device.
+     * @param deviceId      The device identifier.
      * @param right       The right access.
      */
     @Override
-    public void updateAccess(String application, String device, boolean right) {
-        AccessRightImpl rightAccess = getRightAccess(application, device);
+    public void updateAccess(String applicationId, String deviceId, boolean right) {
+        AccessRightImpl rightAccess = getRightAccess(applicationId, deviceId);
         rightAccess.updateAccessRight(right);
     }
 
