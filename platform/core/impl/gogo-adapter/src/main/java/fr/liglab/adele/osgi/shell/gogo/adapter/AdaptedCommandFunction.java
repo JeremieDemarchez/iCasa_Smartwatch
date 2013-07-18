@@ -16,10 +16,9 @@
 package fr.liglab.adele.osgi.shell.gogo.adapter;
 
 import java.util.List;
-import java.util.Map;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.ICasaCommand;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Function;
 import org.json.JSONObject;

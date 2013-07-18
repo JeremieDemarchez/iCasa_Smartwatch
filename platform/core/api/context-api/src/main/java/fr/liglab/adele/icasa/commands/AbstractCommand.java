@@ -13,17 +13,14 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl;
+package fr.liglab.adele.icasa.commands;
 
 import java.io.InputStream;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
-import fr.liglab.adele.icasa.Signature;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.ICasaCommand;
 
 public abstract class AbstractCommand implements ICasaCommand {
 

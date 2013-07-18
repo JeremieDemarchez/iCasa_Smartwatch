@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl;
+package fr.liglab.adele.icasa.commands;
 
 /**
  * Utility class used to obtain common objects from a JSON object.

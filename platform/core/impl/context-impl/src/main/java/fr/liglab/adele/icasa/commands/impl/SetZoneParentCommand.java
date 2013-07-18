@@ -13,12 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl.shell;
+package fr.liglab.adele.icasa.commands.impl;
+
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -31,26 +32,25 @@ import java.io.PrintStream;
 
 /**
  * 
- * Command to Create a Zone
+ * Moves a person between the simulated environments 
  * 
  * @author Gabriel
- * 
+ *
  */
-@Component(name = "ResizeZoneCommand")
+@Component(name = "SetZoneParentCommand")
 @Provides
-@Instantiate(name="resize-zone-command")
-public class ResizeZoneCommand extends AbstractCommand {
+@Instantiate(name = "set-parent-zone-command")
+public class SetZoneParentCommand extends AbstractCommand {
+
 	@Requires
 	private ContextManager simulationManager;
 
-    private static final Signature RESIZE = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.X_LENGTH, ScriptLanguage.Y_LENGTH});
-    private static final Signature RESIZE_WZ = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.X_LENGTH, ScriptLanguage.Y_LENGTH, ScriptLanguage.Z_LENGTH});
+    private static final String[] PARAMS =  new String[]{ScriptLanguage.ZONE, ScriptLanguage.PARENT_ZONE, ScriptLanguage.USE_PARENT_VARIABLES};
 
-    private static final String NAME= "resize-zone";
+    private static final String NAME= "set-zone-parent";
 
-    public ResizeZoneCommand(){
-        addSignature(RESIZE);
-        addSignature(RESIZE_WZ);
+    public SetZoneParentCommand(){
+        addSignature(new Signature(PARAMS));
     }
 
     /**
@@ -64,25 +64,22 @@ public class ResizeZoneCommand extends AbstractCommand {
     }
 
 
+
 	@Override
 	public Object execute(InputStream in, PrintStream out,JSONObject param, Signature signature) throws Exception {
-        String zoneId = param.getString(signature.getParameters()[0]);
-        Zone zone = simulationManager.getZone(zoneId);
-        if (zone == null){
-            throw new IllegalArgumentException("Zone ("+ zoneId +") does not exist");
-        }
-        int width = param.getInt(signature.getParameters()[1]);
-        int height = param.getInt(signature.getParameters()[2]);
-        int depth = zone.getZLength();
-        if (signature.equals(RESIZE_WZ)){
-            depth = param.getInt(signature.getParameters()[3]);
-        }
-		simulationManager.resizeZone(zoneId, width, height, depth);
+        String zoneId = param.getString(PARAMS[0]);
+        String parentId = param.getString(PARAMS[1]);
+        boolean useParentVariables = param.getBoolean(PARAMS[2]);
+		simulationManager.setParentZone(zoneId, parentId);
+		Zone zone = simulationManager.getZone(zoneId);
+		if (zone!=null)
+			zone.setUseParentVariables(useParentVariables);
 		return null;
 	}
     @Override
     public String getDescription(){
-        return "Resize a zone.\n\t" + super.getDescription();
+        return "Set the parent of a zone.\n\t" + super.getDescription();
     }
+
 
 }

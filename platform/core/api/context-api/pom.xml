@@ -36,7 +36,8 @@
 					<instructions>
 						<Export-Package>fr.liglab.adele.icasa, fr.liglab.adele.icasa.device,
 							fr.liglab.adele.icasa.device.*, fr.liglab.adele.icasa.clock,
-							fr.liglab.adele.icasa.clock.util, fr.liglab.adele.icasa.location, fr.liglab.adele.icasa.listener</Export-Package>
+							fr.liglab.adele.icasa.clock.util, fr.liglab.adele.icasa.location, fr.liglab.adele.icasa.listener,
+                            fr.liglab.adele.icasa.commands</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

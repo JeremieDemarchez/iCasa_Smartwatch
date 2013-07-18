@@ -13,13 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl.shell;
+package fr.liglab.adele.icasa.commands.impl;
 
 import fr.liglab.adele.icasa.ContextManager;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;

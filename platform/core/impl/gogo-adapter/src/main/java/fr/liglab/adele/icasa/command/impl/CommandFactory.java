@@ -18,8 +18,8 @@ package fr.liglab.adele.icasa.command.impl;
 import java.io.InputStream;
 import java.io.PrintStream;
 
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.ICasaCommand;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;

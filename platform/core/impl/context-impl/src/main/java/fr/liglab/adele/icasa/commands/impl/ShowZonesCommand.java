@@ -13,13 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.commands.impl.shell;
+package fr.liglab.adele.icasa.commands.impl;
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.Signature;
-import fr.liglab.adele.icasa.commands.impl.AbstractCommand;
-import fr.liglab.adele.icasa.commands.impl.ScriptLanguage;
-import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -28,25 +27,27 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Set;
+import java.util.List;
 
 /**
- * Show the properties of a specific device
+ * User: torito
+ * Date: 4/23/13
+ * Time: 3:50 PM
  */
-@Component(name = "ShowDeviceCommand")
+@Component(name = "ShowZonesCommand")
 @Provides
-@Instantiate(name = "show-device-command")
-public class ShowDeviceInfoCommand extends AbstractCommand {
+@Instantiate(name="show-zones-command")
+public class ShowZonesCommand extends AbstractCommand {
+
 
     @Requires
-    private ContextManager simulationManager;
+    private ContextManager manager;
 
-    private static final String[] PARAMS =  new String[]{ScriptLanguage.DEVICE_ID};
 
-    private static final String NAME= "show-device";
+    private static final String NAME= "show-zones";
 
-    public ShowDeviceInfoCommand(){
-        addSignature(new Signature(PARAMS));
+    public ShowZonesCommand(){
+        addSignature(EMPTY_SIGNATURE);
     }
 
     /**
@@ -62,16 +63,10 @@ public class ShowDeviceInfoCommand extends AbstractCommand {
 
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String[] params = signature.getParameters();
-        String deviceId = param.getString(params[0]);
-        out.println("Properties: ");
-        LocatedDevice device = simulationManager.getDevice(deviceId);
-        if (device==null) {
-            throw new IllegalArgumentException("Device ("+ deviceId +") does not exist");
-        }
-        Set<String> properties = device.getProperties();
-        for (String property : properties) {
-            out.println("Property: " + property + " - Value: " +device.getPropertyValue(property));
+        out.println("Zones: ");
+        List<Zone> zones = manager.getZones();
+        for (Zone zone : zones) {
+            out.println("Zone " + zone.getId() + " : " + zone);
         }
         return null;
     }
@@ -79,7 +74,7 @@ public class ShowDeviceInfoCommand extends AbstractCommand {
 
     @Override
     public String getDescription(){
-        return "Shows the information of a device.\n\t" + super.getDescription();
+        return "Shows the list of zones.\n\t" + super.getDescription();
     }
 
 }
