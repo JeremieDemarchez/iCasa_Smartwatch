@@ -16,9 +16,7 @@
 package fr.liglab.adele.icasa.access.test;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.icasa.access.AccessManager;
-import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.access.AccessRightListener;
+import fr.liglab.adele.icasa.access.*;
 import fr.liglab.adele.icasa.clock.Clock;
 import junit.framework.Assert;
 import org.junit.After;
@@ -77,9 +75,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
-        Assert.assertFalse(right.hasDeviceAccess());
-        service.setDeviceAccess(applicationID, deviceID, true);//It change right access.
-        Assert.assertTrue(right.hasDeviceAccess());
+        Assert.assertFalse(right.isVisible());
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.TOTAL);//It change right access.
+        Assert.assertTrue(right.isVisible());
     }
 
     /**
@@ -94,10 +92,10 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
-        Assert.assertFalse(right.hasDeviceAccess());
-        service.setDeviceAccess(applicationID, deviceID, true);//It change right access.
-        service.setMethodAccess(applicationID, deviceID, methodName, true);
-        Assert.assertTrue(right.hasDeviceAccess());//access to device
+        Assert.assertFalse(right.isVisible());
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.TOTAL);//It change right access.
+        service.setMethodAccess(applicationID, deviceID, methodName, MemberAccessPolicy.READ_WRITE);
+        Assert.assertTrue(right.isVisible());//access to device
         Assert.assertTrue(right.hasMethodAccess(methodName));//access to method in device
     }
 
@@ -113,11 +111,11 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
-        Assert.assertFalse(right.hasDeviceAccess());
+        Assert.assertFalse(right.isVisible());
         //give access to the method.
-        service.setMethodAccess(applicationID, deviceID, methodName, true);
+        service.setMethodAccess(applicationID, deviceID, methodName, MemberAccessPolicy.READ_WRITE);
 
-        Assert.assertFalse(right.hasDeviceAccess());
+        Assert.assertFalse(right.isVisible());
         Assert.assertFalse(right.hasMethodAccess(methodName));//It must be false since there is any access to device
     }
 
@@ -134,7 +132,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
-        service.setDeviceAccess(applicationID, deviceID, true);//must call the listeners
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.TOTAL);//must call the listeners
         verify(mockListener, atLeast(1)).onAccessRightModified(right);
         verify(mockListener, never()).onMethodAccessRightModified(any(AccessRight.class), any(String.class));
     }
@@ -152,8 +150,8 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
-        service.setDeviceAccess(applicationID, deviceID, true);//must call the listeners
-        service.setMethodAccess(applicationID, deviceID, methodName, true);//must call the listeners
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.TOTAL);//must call the listeners
+        service.setMethodAccess(applicationID, deviceID, methodName, MemberAccessPolicy.READ_WRITE);//must call the listeners
         verify(mockListener, atLeast(1)).onAccessRightModified(right);
         verify(mockListener, atLeast(1)).onMethodAccessRightModified(right, methodName);
     }

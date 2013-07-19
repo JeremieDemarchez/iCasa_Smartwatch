@@ -43,13 +43,21 @@ public interface AccessManager {
     AccessRight[] getAccessRight(String applicationId);
 
     /**
+     * Get all the defined access right
+     * The returned object will be synchronized by the Access Manager to
+     * maintain updated the access right.
+     * @return An array of {@link AccessRight} objects which has the rights information for the application.
+     */
+    AccessRight[] getAllAccessRight();
+
+    /**
      * Set the right access for an application to use a given device.
      * @param applicationId The application identifier.
      * @param deviceId The device identifier.
      * @param methodName The method name to set the right access.
      * @param accessRight The right access.
      */
-    void setMethodAccess(String applicationId, String deviceId, String methodName, boolean accessRight);
+    AccessRight setMethodAccess(String applicationId, String deviceId, String methodName, MemberAccessPolicy accessRight);
 
     /**
      * Set the right access for an application to use a given device.
@@ -58,7 +66,7 @@ public interface AccessManager {
      * @param method The method name to set the right access.
      * @param accessRight The right access.
      */
-    void setMethodAccess(String applicationId, String deviceId, Method method, boolean accessRight);
+    AccessRight setMethodAccess(String applicationId, String deviceId, Method method, MemberAccessPolicy accessRight);
 
     /**
      * Set the right access for an application to use a device.
@@ -66,6 +74,19 @@ public interface AccessManager {
      * @param deviceId The device identifier.
      * @param right The right access.
      */
-    void setDeviceAccess(String applicationId, String deviceId, boolean right);
+    AccessRight setDeviceAccess(String applicationId, String deviceId, DeviceAccessPolicy right);
+
+
+    /**
+     * Add a listener to be notified when any access right has been changed.
+     * @param listener The listener to be called when any access right has changed.
+     */
+    void addListener(AccessRightManagerListener listener);
+
+    /**
+     * Remove a listener.
+     * @param listener The listener to be called when any access right has changed.
+     */
+    void removeListener(AccessRightManagerListener listener);
 
 }

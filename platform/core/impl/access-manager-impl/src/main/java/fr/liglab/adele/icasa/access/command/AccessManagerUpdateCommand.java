@@ -16,6 +16,8 @@
 package fr.liglab.adele.icasa.access.command;
 
 import fr.liglab.adele.icasa.access.AccessManager;
+import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
+import fr.liglab.adele.icasa.access.MemberAccessPolicy;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
@@ -57,9 +59,9 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         if (signature.equals(UPDATE_RIGHT)){
-            manager.setDeviceAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getBoolean(ScriptLanguage.VALUE));
+            manager.setDeviceAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), DeviceAccessPolicy.fromString(param.getString(ScriptLanguage.VALUE)));
         } else {
-            manager.setMethodAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getString(ScriptLanguage.METHOD), param.getBoolean(ScriptLanguage.VALUE));
+            manager.setMethodAccess(param.getString(ScriptLanguage.APPLICATION_ID), param.getString(ScriptLanguage.DEVICE_ID), param.getString(ScriptLanguage.METHOD), MemberAccessPolicy.fromString(param.getString(ScriptLanguage.VALUE)));
         }
         return null;
     }
@@ -74,6 +76,41 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
         return NAME;
     }
 
+    @Override
+    public String getDescription(){
+        StringBuilder description = new StringBuilder("Parameters: \n");
+        String[] params = UPDATE_RIGHT.getParameters();
+        description.append("\t(");
+        for (String param: params){
+            description.append(" ");
+            description.append(param);
+            description.append(" ");
+        }
+        description.append(")\n");
+        description.append("\tPossible Values: \n");
+        for (DeviceAccessPolicy b : DeviceAccessPolicy.values()) {
+            description.append(b.toString()).append(" ");
+        }
+
+        params = UPDATE_RIGHT_METHOD.getParameters();
+        description.append("\t(");
+        for (String param: params){
+            description.append(" ");
+            description.append(param);
+            description.append(" ");
+        }
+        description.append(")\n");
+        description.append("\tPossible Values: \n");
+        for (MemberAccessPolicy b : MemberAccessPolicy.values()) {
+            description.append(b.toString()).append(" ");
+        }
+
+
+
+        return description.toString();
+    }
+
+
     /**
      *
      * @param param The parameters in JSON format
@@ -84,9 +121,7 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
     @Override
     public boolean validate(JSONObject param, Signature signature) throws Exception {
         boolean validation = super.validate(param, signature);
-        try{
-            Boolean value = param.getBoolean(ScriptLanguage.VALUE);
-        } catch(Exception ex){
+        if (DeviceAccessPolicy.fromString(param.getString(ScriptLanguage.VALUE)) == null && MemberAccessPolicy.fromString(param.getString(ScriptLanguage.VALUE)) == null){
             return false;
         }
         return validation;

@@ -72,7 +72,7 @@ public class AccessManagerPrintCommand extends AbstractCommand{
             info.append("Device List: ").append('\n');
         }
         for (AccessRight right: rights){
-            info.append("\tDevice: ").append(right.getDeviceId()).append(" Access: ").append(right.hasDeviceAccess()).append('\n');
+            info.append("\tDevice: ").append(right.getDeviceId()).append(" Access: ").append(right.isVisible()).append('\n');
         }
         return info.toString();
     }
@@ -82,7 +82,7 @@ public class AccessManagerPrintCommand extends AbstractCommand{
         StringBuffer info = new StringBuffer();
         info.append("Application: ").append(param.getString(ScriptLanguage.APPLICATION_ID)).append('\n');
         info.append("Device: ").append(param.getString(ScriptLanguage.DEVICE_ID)).append('\n');
-        info.append("Right Access: ").append(accessRight.hasDeviceAccess()).append('\n');
+        info.append("Right Access: ").append(accessRight.isVisible()).append('\n');
         String[] methods = accessRight.getMethodList();
         if (methods != null && methods.length>0){
             info.append("Method Access: ").append('\n');

@@ -15,8 +15,7 @@
 
 package fr.liglab.adele.icasa.access.impl;
 
-import fr.liglab.adele.icasa.access.AccessManager;
-import fr.liglab.adele.icasa.access.AccessRight;
+import fr.liglab.adele.icasa.access.*;
 import org.apache.felix.ipojo.annotations.*;
 
 import java.lang.reflect.Method;
@@ -34,6 +33,8 @@ public class AccessManagerImpl implements AccessManager{
 
     private Map<String, Map<String, AccessRightImpl>> rightAccess = new HashMap<String, Map<String, AccessRightImpl>>();
 
+    protected List<AccessRightManagerListener> listeners = new ArrayList<AccessRightManagerListener>();
+
     private Set<AccessRequestImpl> requestSet = new HashSet<AccessRequestImpl>();
 
     /**
@@ -49,23 +50,44 @@ public class AccessManagerImpl implements AccessManager{
      */
     @Override
     public AccessRightImpl getAccessRight(String applicationId, String deviceId) {
+        boolean isNewAccessRight = false;
         AccessRightImpl right = null;
         Map<String, AccessRightImpl> applicationAccess = null;
-        if (rightAccess.containsKey(applicationId)){
-            applicationAccess = rightAccess.get(applicationId);
-            if (applicationAccess.containsKey(deviceId)){
-                right =  applicationAccess.get(deviceId);
+        List<AccessRightManagerListener> accessRightManagerListeners = null;
+        synchronized (this){
+            if (rightAccess.containsKey(applicationId)){
+                applicationAccess = rightAccess.get(applicationId);
+                if (applicationAccess.containsKey(deviceId)){
+                    right =  applicationAccess.get(deviceId);
+                } else {
+                    isNewAccessRight = true;
+                }
             } else {
+                applicationAccess = new HashMap<String, AccessRightImpl>();
+                rightAccess.put(applicationId,applicationAccess);
+                isNewAccessRight = true;
+            }
+            if(isNewAccessRight){
                 right = createAccessRight(applicationId, deviceId);
                 applicationAccess.put(deviceId, right);
+                accessRightManagerListeners = getListeners();//get listeners in the sync block
             }
-        } else {
-            applicationAccess = new Hashtable<String, AccessRightImpl>();
-            right = createAccessRight(applicationId, deviceId);
-            applicationAccess.put(deviceId, right);
-            rightAccess.put(applicationId,applicationAccess);
+        }
+        if(isNewAccessRight){//notify outside the sync block.
+            notifyAddAccessRight(accessRightManagerListeners,right);
         }
         return right;
+    }
+
+    /**
+     * Notify the new accessRight object.
+     * @param accessRightManagerListener
+     * @param right
+     */
+    private void notifyAddAccessRight(List<AccessRightManagerListener> accessRightManagerListener,AccessRightImpl right) {
+        for(AccessRightManagerListener listener: accessRightManagerListener){
+            listener.onAccessRightAdded(right);
+        }
     }
 
 
@@ -78,16 +100,36 @@ public class AccessManagerImpl implements AccessManager{
      * @return An array of {@link fr.liglab.adele.icasa.access.AccessRight} objects which has the rights information for the application.
      */
     @Override
-    public synchronized AccessRight[] getAccessRight(String applicationId) {
-        AccessRightImpl[] right = null;
+    public synchronized AccessRightImpl[] getAccessRight(String applicationId) {
+        AccessRightImpl[] rights = null;
         Map<String, AccessRightImpl> applicationAccess = null;
         if (rightAccess.containsKey(applicationId)){
             applicationAccess = rightAccess.get(applicationId);
-            right = applicationAccess.values().toArray(new AccessRightImpl[0]);
+            rights = applicationAccess.values().toArray(new AccessRightImpl[0]);
         } else {
-            right = new AccessRightImpl[0];
+            rights = new AccessRightImpl[0];
         }
-        return right;
+        return rights;
+    }
+
+    /**
+     * Get the all access right defined
+     * The returned object will be synchronized by the Access Manager to
+     * maintain updated the access right.
+     *
+     * @return An array of {@link fr.liglab.adele.icasa.access.AccessRight} objects which has the rights information for the application.
+     */
+    @Override
+    public synchronized AccessRightImpl[] getAllAccessRight() {
+        ArrayList<AccessRightImpl> rights = null;
+        Set<String> applications = rightAccess.keySet();
+        for(String application: applications){
+            AccessRightImpl[] rightAccess = getAccessRight(application);
+            for (AccessRightImpl right: rightAccess){
+                rights.add(right);
+            }
+        }
+        return rights.toArray(new AccessRightImpl[0]);
     }
 
     /**
@@ -99,12 +141,13 @@ public class AccessManagerImpl implements AccessManager{
      * @param accessRight       The right access.
      */
     @Override
-    public void setMethodAccess(String applicationId, String deviceId, String methodName, boolean accessRight) {
+    public AccessRightImpl setMethodAccess(String applicationId, String deviceId, String methodName, MemberAccessPolicy accessRight) {
         if (methodName == null){
             throw new NullPointerException("Method must not be null");
         }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateMethodAccessRight(methodName, accessRight);
+        return rightAccess;
     }
 
     /**
@@ -116,11 +159,11 @@ public class AccessManagerImpl implements AccessManager{
      * @param accessRight       The right access.
      */
     @Override
-    public void setMethodAccess(String applicationId, String deviceId, Method method, boolean accessRight) {
+    public AccessRightImpl setMethodAccess(String applicationId, String deviceId, Method method, MemberAccessPolicy accessRight) {
         if (method == null){
             throw new NullPointerException("Method must not be null");
         }
-        setMethodAccess(applicationId, deviceId, method.getName(), accessRight);
+        return setMethodAccess(applicationId, deviceId, method.getName(), accessRight);
     }
 
     /**
@@ -131,15 +174,48 @@ public class AccessManagerImpl implements AccessManager{
      * @param right       The right access.
      */
     @Override
-    public void setDeviceAccess(String applicationId, String deviceId, boolean right) {
+    public AccessRightImpl setDeviceAccess(String applicationId, String deviceId, DeviceAccessPolicy right) {
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateAccessRight(right);
+        return rightAccess;
     }
 
     private AccessRightImpl createAccessRight(String application, String device){
         AccessRightImpl right = new AccessRightImpl(application, device);
         AccessRequestImpl request = new AccessRequestImpl(right);
+        List<AccessRightManagerListener> listenerList = getListeners();
+        for(AccessRightListener listener: listenerList){
+            right.addListener(listener);
+        }
         requestSet.add(request);
         return right;
+    }
+
+    /**
+     * Remove a listener.
+     *
+     * @param listener The listener to be called when an access right has changed.
+     */
+    @Override
+    public synchronized void removeListener(AccessRightManagerListener listener) {
+        listeners.remove(listener);
+        AccessRight[] rights = getAllAccessRight();
+    }
+
+    private synchronized List<AccessRightManagerListener> getListeners(){
+        return new ArrayList<AccessRightManagerListener>(listeners);
+    }
+    /**
+     * Add a listener to be notified when the access right has been changed.
+     *
+     * @param listener The listener to be called when an access right has changed.
+     */
+    @Override
+    public synchronized void addListener(AccessRightManagerListener listener) {
+        AccessRightImpl[] rights = getAllAccessRight();
+        for(AccessRight right: rights){
+            right.addListener(listener);
+        }
+        listeners.add(listener);
     }
 }

@@ -15,8 +15,10 @@
 
 package fr.liglab.adele.icasa.access.impl;
 
+import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.AccessRightListener;
+import fr.liglab.adele.icasa.access.MemberAccessPolicy;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -28,12 +30,7 @@ import java.util.*;
  */
 public class AccessRightImpl implements AccessRight {
 
-
-
-    /**
-     * The right access to see the device.
-     */
-    protected volatile boolean rightToAccessDevice = false;
+    private volatile DeviceAccessPolicy policy = DeviceAccessPolicy.HIDDEN;
 
     protected List<AccessRightListener> listeners = new ArrayList<AccessRightListener>();
 
@@ -44,7 +41,7 @@ public class AccessRightImpl implements AccessRight {
     /**
      * A map containing the right access to call methods.
      */
-    protected Map<String, Boolean> rightMethodAccess = new HashMap<String, Boolean>();
+    protected Map<String, MemberAccessPolicy> rightMethodAccess = new HashMap<String, MemberAccessPolicy>();
 
     public AccessRightImpl(String application, String device){
         applicationId = application;
@@ -57,8 +54,8 @@ public class AccessRightImpl implements AccessRight {
      * @return true when the application has the right to access the device. False if not.
      */
     @Override
-    public synchronized boolean hasDeviceAccess(){
-        return rightToAccessDevice;
+    public synchronized boolean isVisible(){
+        return policy.compareTo(DeviceAccessPolicy.HIDDEN)>0;
     }
 
     /**
@@ -68,21 +65,25 @@ public class AccessRightImpl implements AccessRight {
      */
     @Override
     public boolean hasMethodAccess(String methodName) throws NullPointerException{
-        Boolean access = false;
-        Boolean exists = false;
         if (methodName == null) {
             throw new NullPointerException("Method must not be null");
         }
+        MemberAccessPolicy memberAccessPolicy = MemberAccessPolicy.READ_WRITE;
+        Boolean exists = false;
         synchronized (this){
-            if(hasDeviceAccess() && rightMethodAccess.containsKey(methodName)){
-                access = rightMethodAccess.get(methodName); //get the right access.
+            if(policy.compareTo(DeviceAccessPolicy.TOTAL)==0){ //If has total access, return true immediately
+                return true;
+            } else if(policy.compareTo(DeviceAccessPolicy.VISIBLE)<=0){ //If is visible or hidden, return false.
+                return false;
+            }else if(rightMethodAccess.containsKey(methodName)){ //If is partial
+                memberAccessPolicy = rightMethodAccess.get(methodName); //get the right access.
                 exists = true;
             }
         }
         if (!exists){
-            updateMethodAccessRight(methodName, false); //Added if access right does not exist.
+            updateMethodAccessRight(methodName, MemberAccessPolicy.READ_WRITE); //Added if access right does not exist.
         }
-        return access; // Return false only when there is any access right configured for this method.
+        return memberAccessPolicy.compareTo(MemberAccessPolicy.HIDDEN)>0;
     }
 
     /**
@@ -141,6 +142,16 @@ public class AccessRightImpl implements AccessRight {
         listeners.add(listener);
     }
 
+    /**
+     * Remove a listener.
+     *
+     * @param listener The listener to be called when an access right has changed.
+     */
+    @Override
+    public synchronized void removeListener(AccessRightListener listener) {
+        listeners.remove(listener);
+    }
+
     private synchronized List<AccessRightListener> getListeners(){
         return new ArrayList<AccessRightListener>(listeners);
     }
@@ -148,10 +159,10 @@ public class AccessRightImpl implements AccessRight {
      *
      * @param right
      */
-    protected void updateAccessRight(boolean right) {
+    protected void updateAccessRight(DeviceAccessPolicy right) {
         List<AccessRightListener> listenerList = null;
         synchronized (this){
-            rightToAccessDevice = right;
+            policy = right;
             listenerList = getListeners();
         }
         for(AccessRightListener listener: listenerList){
@@ -159,7 +170,7 @@ public class AccessRightImpl implements AccessRight {
         }
     }
 
-    protected void updateMethodAccessRight(String method, boolean right) throws NullPointerException{
+    protected void updateMethodAccessRight(String method, MemberAccessPolicy right) throws NullPointerException{
         List<AccessRightListener> listenerList = null;
         if (method == null){
             throw new NullPointerException("Method must not be null");
@@ -193,6 +204,8 @@ public class AccessRightImpl implements AccessRight {
         return result;
     }
 
-
+    public DeviceAccessPolicy getPolicy() {
+        return policy;
+    }
 
 }

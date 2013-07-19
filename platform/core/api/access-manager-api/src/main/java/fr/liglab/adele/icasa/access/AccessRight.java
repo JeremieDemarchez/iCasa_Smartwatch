@@ -27,7 +27,7 @@ public interface AccessRight {
      * See if the application has the right to access the device.
      * @return true when the application has the right to access the device. False if not.
      */
-    boolean hasDeviceAccess();
+    boolean isVisible();
 
     /**
      * See if the application has the right access to call the given method.
@@ -69,5 +69,13 @@ public interface AccessRight {
      * @param listener The listener to be called when an access right has changed.
      */
     void addListener(AccessRightListener listener);
+
+    /**
+     * Remove a listener.
+     * @param listener The listener to be called when an access right has changed.
+     */
+    void removeListener(AccessRightListener listener);
+
+    DeviceAccessPolicy getPolicy();
 
 }

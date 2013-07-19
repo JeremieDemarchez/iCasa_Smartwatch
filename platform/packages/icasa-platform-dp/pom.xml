@@ -111,6 +111,11 @@
          <artifactId>access.manager.impl</artifactId>
          <version>${project.version}</version>
       </dependency>
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>access.manager.remote</artifactId>
+         <version>${project.version}</version>
+      </dependency>      
 <!--		
 		<dependency>
          <groupId>${project.groupId}</groupId>
