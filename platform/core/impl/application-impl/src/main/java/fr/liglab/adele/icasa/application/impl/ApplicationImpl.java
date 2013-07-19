@@ -189,18 +189,36 @@ public class ApplicationImpl extends EntityImpl implements Application, ServiceT
 
 	
 	
+	/**
+	 * Adds a DP representation on this application
+	 * @param dpr
+	 */
 	public void addDeploymentPackageRepresentation(DeploymentPackageRepresentation dpr) {
 		deploymentPackageRepresentations.put(dpr.getName(), dpr);
 	}
 
+	/**
+	 * Removes a DP representation on this application
+	 * @param name
+	 */
 	public void removeDeploymentPackageRepresentation(String name) {
 		deploymentPackageRepresentations.remove(name);
 	}
 	
+	/**
+	 * Determines if this application contains a DP
+	 * @param name the DP name
+	 * @return true if app contains DP. False otherwise
+	 */
 	public boolean containsDeploymentPackageRepresentation(String name) {
 		return deploymentPackageRepresentations.keySet().contains(name);
 	}
 	
+	/**
+	 * Determines if this application contains a Bundle
+	 * @param bundleSymbolicName bundle name
+	 * @return true if app contains the bundle. False otherwise
+	 */
 	public boolean constainsBundle(String bundleSymbolicName) {
 		for (DeploymentPackageRepresentation dpr : deploymentPackageRepresentations.values()) {
 	      if (dpr.constainsBundle(bundleSymbolicName))
@@ -209,10 +227,18 @@ public class ApplicationImpl extends EntityImpl implements Application, ServiceT
 		return false;
 	}
 
+	/**
+	 * Determines if this application has at least one Deployment package
+	 * @return
+	 */
 	public boolean isEmptyApplication() {
 		return (deploymentPackageRepresentations.size() == 0);
 	}
 	
+	/**
+	 * Get a string set with bundles symbolic names in this App
+	 * @return
+	 */
 	public Set<String> getBundlesIds() {
 		Set<String> bundlesIds = new HashSet<String>();
 		for (DeploymentPackageRepresentation dpr : deploymentPackageRepresentations.values()) {

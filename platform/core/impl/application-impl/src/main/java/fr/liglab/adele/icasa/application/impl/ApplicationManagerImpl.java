@@ -151,6 +151,13 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	@Validate
 	public void start() {
+		
+		DeploymentPackage[] packages = deploymentAdmin.listDeploymentPackages();
+      // Installing the deployment packages presents in the platform
+		for (DeploymentPackage deploymentPackage : packages) {
+	      onDeploymePackageArrival(deploymentPackage);
+      }
+		
 		synchronized (_listeners) {
 			for (ApplicationTracker listener : _listeners) {
 				notifyCurrentApplicationSet(listener);
@@ -166,8 +173,6 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 			}
 		}
 		_appPerId.clear();
-		// _bundlesPerAppId.clear();
-		// _appPerDeploymentPackage.clear();
 	}
 
 	private void notifyStop(ApplicationTracker listener) {
