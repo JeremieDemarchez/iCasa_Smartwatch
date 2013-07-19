@@ -313,7 +313,7 @@ define(['jquery',
             read: target;
             write: (newValue) =>
                 current = target()
-                if !isNaN(newValue)
+                if typeof newValue == "number"
                     roundingMultiplier = Math.pow(10, precision)
                     valueToWrite = Math.round(newValue * roundingMultiplier) / roundingMultiplier
                 else
@@ -513,7 +513,7 @@ define(['jquery',
                 storedVariable = @.variablesModel.get(variable.name);
                 #This is done cause when modifying model, extend function is not well handled by kb :(
                 if storedVariable?
-                    if !isNaN(variable.value)
+                    if typeof variable.value == "number"
                         roundingMultiplier = Math.pow(10, 2)
                         valueToWrite = Math.round(variable.value * roundingMultiplier) / roundingMultiplier
                     else
@@ -717,7 +717,7 @@ define(['jquery',
                     storedProperty = @.propertiesModel.get(property.name);
                     #This is done cause when modifying model, extend function is not well handled by kb :(
                     if storedProperty?
-                        if !isNaN(property.value)
+                        if typeof property.value == "number"
                             roundingMultiplier = Math.pow(10, 2)
                             valueToWrite = Math.round(property.value * roundingMultiplier) / roundingMultiplier
                         else
