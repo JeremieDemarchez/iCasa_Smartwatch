@@ -12,34 +12,35 @@
  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  See the License for the specific language governing permissions and
  limitations under the License.
---><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
-	<!-- Project parent -->
-	<parent>
-		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>platform.parent</artifactId>
+   <!-- Project parent -->
+   <parent>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>platform.parent</artifactId>
       <version>1.1.2-SNAPSHOT</version>
       <relativePath>../../../parent</relativePath>
-	</parent>
+   </parent>
 
-	<!-- Project Descrkiption -->
-	<modelVersion>4.0.0</modelVersion>
-	<artifactId>platform.core.impl</artifactId>
-	<packaging>pom</packaging>
-	<name>${productName} :: ${projectName}</name>
+   <!-- Project Descrkiption -->
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>platform.core.impl</artifactId>
+   <packaging>pom</packaging>
+   <name>${productName} :: ${projectName}</name>
 
 
-	<modules>
-		<module>context-impl</module>
+   <modules>
+      <module>context-impl</module>
       <module>gogo-adapter</module>
-		<module>context-remote</module>
-		<module>clock-system-impl</module>
-		<module>device-manager-impl</module>
-		<module>application-impl</module>
-		<module>application-mock-impl</module>
-		<module>technical-services-impl</module>
-        <module>access-manager-impl</module>
-	</modules>
+      <module>context-remote</module>
+      <module>clock-system-impl</module>
+      <module>device-manager-impl</module>
+      <module>application-impl</module>
+      <module>application-remote</module>
+      <module>technical-services-impl</module>
+      <module>access-manager-impl</module>
+   </modules>
    <build>
       <plugins>
          <plugin>
