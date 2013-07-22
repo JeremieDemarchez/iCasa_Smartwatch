@@ -23,6 +23,7 @@ import java.util.Comparator;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.PrimitiveHandler;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.handlers.dependency.DependencyCallback;
 import org.apache.felix.ipojo.handlers.dependency.DependencyHandler;
@@ -30,22 +31,33 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 
+import fr.liglab.adele.icasa.access.AccessManager;
+import fr.liglab.adele.icasa.access.AccessRight;
+import fr.liglab.adele.icasa.application.Application;
+import fr.liglab.adele.icasa.application.ApplicationManager;
+import fr.liglab.adele.icasa.device.GenericDevice;
+
 public class DeviceDependency extends Dependency {
 
 	private ComponentInstance instance;
 
-	private PrimitiveHandler m_handler;
+	private DeviceDependencyHandler m_handler;
+	
+	private BundleContext m_context;
+	
+	private AccessManager accessManager;
+	
 
-	public DeviceDependency(DependencyHandler handler, String field, Class spec, Filter filter, boolean isOptional,
+
+	public DeviceDependency(DeviceDependencyHandler handler, String field, Class spec, Filter filter, boolean isOptional,
 	      boolean isAggregate, boolean nullable, boolean isProxy, String identity, BundleContext context, int policy,
 	      Comparator cmp, String defaultImplem) {
-		super(handler, field, spec, filter, isOptional, isAggregate, nullable, isProxy, identity, context, policy, cmp,
+		super(handler, field, spec, filter, isOptional, isAggregate, false, true, identity, context, policy, cmp,
 		      defaultImplem);
 		instance = handler.getInstanceManager();
 		m_handler = handler;
-
-		System.out.println("------------------------> Instance Name: " + instance.getInstanceName() + " Dependency: "
-		      + field);
+		m_context = context;
+		
 	}
 
 	protected DependencyCallback[] getCallbacks() {
@@ -68,18 +80,8 @@ public class DeviceDependency extends Dependency {
 		super.onObjectCreation(pojo);
 	}
 
-	@Override
-	public boolean match(ServiceReference ref) {
-		// Determines if service reference match the "filters"
-		// here we have to call the AccessManager Service
+	
 
-		System.out.println("--------------------------------------> " + instance.getInstanceName() + "Device Number: "
-		      + ref);
-
-		// String value = (String) ref.getProperty("device.serialNumber");
-
-		return super.match(ref);
-	}
 
 	@Override
 	public void start() {
@@ -121,6 +123,8 @@ public class DeviceDependency extends Dependency {
        * toStirng method.
        */
       private Method m_toStringMethod;
+      
+      
 
       /**
        * Creates a DynamicProxyFactory.
@@ -144,7 +148,7 @@ public class DeviceDependency extends Dependency {
        */
       public Object getProxy(Class spec) {
           return java.lang.reflect.Proxy.newProxyInstance(
-         		 	m_handler.getInstanceManager().getClazz().getClassLoader(),
+         		 	getHandler().getInstanceManager().getClazz().getClassLoader(),
                   new Class[] {spec},
                   this);
       }
@@ -174,8 +178,17 @@ public class DeviceDependency extends Dependency {
                           "Unexpected Object method dispatched: " + method);
               }
           }
-          System.out.println("================ Invoking iCasa Handler =============");
-          return method.invoke(svc, args);
+          
+          String deviceId = ((GenericDevice)svc).getSerialNumber();
+          AccessRight accessRight = m_handler.getAccessRight(m_context, deviceId);
+          
+          if (accessRight!=null && accessRight.hasMethodAccess(method)) {
+             System.out.println("================ Invoking iCasa Handler =============");
+             return method.invoke(svc, args);         	 
+          } else {
+         	 throw new RuntimeException("No access to method " + method.getName());
+          }
+          
       }
 
   }

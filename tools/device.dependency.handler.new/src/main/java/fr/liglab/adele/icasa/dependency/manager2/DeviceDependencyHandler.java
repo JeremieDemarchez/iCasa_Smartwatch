@@ -31,6 +31,7 @@ import org.apache.felix.ipojo.ContextSource;
 import org.apache.felix.ipojo.Handler;
 import org.apache.felix.ipojo.IPojoContext;
 import org.apache.felix.ipojo.PolicyServiceContext;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.handlers.dependency.DependencyCallback;
@@ -50,6 +51,11 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+
+import fr.liglab.adele.icasa.access.AccessManager;
+import fr.liglab.adele.icasa.access.AccessRight;
+import fr.liglab.adele.icasa.application.Application;
+import fr.liglab.adele.icasa.application.ApplicationManager;
 
 @org.apache.felix.ipojo.annotations.Handler(name="requiresdevice", namespace="fr.liglab.adele.icasa.dependency.handler.annotations")
 public class DeviceDependencyHandler extends DependencyHandler {
@@ -121,6 +127,14 @@ public class DeviceDependencyHandler extends DependencyHandler {
     * The instance configuration context source, updated once reconfiguration.
     */
    private InstanceConfigurationSource m_instanceConfigurationSource;
+   
+   
+	@Requires
+	private AccessManager accessManager;
+	
+	@Requires
+	private ApplicationManager applicationManager;
+	
 
    /**
     * Get the list of managed dependency.
@@ -756,4 +770,20 @@ public class DeviceDependencyHandler extends DependencyHandler {
        }
        super.stateChanged(state);
    }
+   
+   
+   //------------------------- Added methods --------------------------------//
+   
+	public AccessRight getAccessRight(BundleContext context, String deviceId) {
+		String bundleName = context.getBundle().getSymbolicName();
+		Application app = applicationManager.getApplicationOfBundle(bundleName);
+		if (app!=null) {
+			return accessManager.getAccessRight(app.getId(), deviceId);
+		}
+		return null;
+	}
+	
+
+   
+   
 }

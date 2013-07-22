@@ -21,8 +21,11 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+
+
 
 @Component
 @Instantiate
@@ -38,6 +41,9 @@ public class ComponentTwoRequiresType {
 	
 	@Requires(id="otherHeater")
 	private Heater otherHeater;
+	
+	// Field use only to force Maven Bundle Plugin (BND) to import the "fr.liglab.adele.icasa.device" package
+	private GenericDevice device;
 	
 	@Validate
 	public void start() {

@@ -83,10 +83,10 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 			System.out.println("====> Component " + deviceDependency.getComponentInstance().getInstanceName());
 			System.out.println("====> Application " + app.getId());
 			System.out.println("====> Device ID: " + deviceId);
-			System.out.println("====> Access: " + right.hasDeviceAccess());
+			System.out.println("====> Access: " + right.isVisible());
 			System.out.println("========================================================");
 
-			if (!right.hasDeviceAccess()) {
+			if (!right.isVisible()) {
 				return null;
 			}
 
