@@ -38,11 +38,10 @@
 		<module>device-manager-impl</module>
 		<module>application-impl</module>
 		<module>application-mock-impl</module>
-      <module>application-remote</module>s
+      <module>application-remote</module>
 		<module>technical-services-impl</module>
       <module>access-manager-impl</module>
       <module>access-manager-remote</module>
-
    </modules>
    <build>
       <plugins>
