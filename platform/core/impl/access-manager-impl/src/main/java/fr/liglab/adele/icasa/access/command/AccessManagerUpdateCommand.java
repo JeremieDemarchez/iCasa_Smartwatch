@@ -78,7 +78,7 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
 
     @Override
     public String getDescription(){
-        StringBuilder description = new StringBuilder("Parameters: \n");
+        StringBuilder description = new StringBuilder("Modify a device access right: ");
         String[] params = UPDATE_RIGHT.getParameters();
         description.append("\t(");
         for (String param: params){
@@ -87,12 +87,13 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
             description.append(" ");
         }
         description.append(")\n");
-        description.append("\tPossible Values: \n");
+        description.append("\t\tPossible Values: ");
         for (DeviceAccessPolicy b : DeviceAccessPolicy.values()) {
             description.append(b.toString()).append(" ");
         }
 
         params = UPDATE_RIGHT_METHOD.getParameters();
+        description.append("\n\tModify a method access right: ");
         description.append("\t(");
         for (String param: params){
             description.append(" ");
@@ -100,13 +101,10 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
             description.append(" ");
         }
         description.append(")\n");
-        description.append("\tPossible Values: \n");
+        description.append("\t\tPossible Values: ");
         for (MemberAccessPolicy b : MemberAccessPolicy.values()) {
             description.append(b.toString()).append(" ");
         }
-
-
-
         return description.toString();
     }
 
