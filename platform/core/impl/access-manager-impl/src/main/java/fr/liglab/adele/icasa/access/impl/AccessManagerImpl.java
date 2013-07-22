@@ -121,7 +121,7 @@ public class AccessManagerImpl implements AccessManager{
      */
     @Override
     public synchronized AccessRightImpl[] getAllAccessRight() {
-        ArrayList<AccessRightImpl> rights = null;
+        ArrayList<AccessRightImpl> rights = new ArrayList();
         Set<String> applications = rightAccess.keySet();
         for(String application: applications){
             AccessRightImpl[] rightAccess = getAccessRight(application);
