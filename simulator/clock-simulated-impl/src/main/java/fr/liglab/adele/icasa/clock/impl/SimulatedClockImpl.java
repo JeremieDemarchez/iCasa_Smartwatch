@@ -66,6 +66,10 @@ public class SimulatedClockImpl implements Clock {
 	 */
 	private Thread timeThread;
 
+    @Override
+    public String getId() {
+        return "simulatedClock";
+    }
 
 	/*
 	 * (non-Javadoc)
