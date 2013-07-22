@@ -37,7 +37,7 @@ public class SchedulerThreadPoolImpl extends Thread {
     private final ExecutorThreadImpl[] m_executors;
 
     // The tasks to execute, indexed by next wanted iteration time
-    private final SortedMap/* <Long, List<TaskReferenceImpl>> */m_tasks;
+    private final TreeMap/* <Long, List<TaskReferenceImpl>> */m_tasks;
 
     // TODO
     public SchedulerThreadPoolImpl(String groupName, Clock service, int poolSize) {
@@ -79,7 +79,7 @@ public class SchedulerThreadPoolImpl extends Thread {
         while (running) {
             Long now = new Long(clockService.currentTimeMillis());
             synchronized (m_lock) {
-                SortedMap toRun = m_tasks.headMap(now);
+                SortedMap toRun = m_tasks.headMap(now, true);
                 List<TaskReferenceImpl> toReschedule = new ArrayList<TaskReferenceImpl>();
                 Iterator i = toRun.entrySet().iterator();
                 while (i.hasNext()) {

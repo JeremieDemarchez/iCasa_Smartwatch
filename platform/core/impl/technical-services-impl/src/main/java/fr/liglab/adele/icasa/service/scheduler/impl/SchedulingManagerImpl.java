@@ -16,9 +16,7 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
-import fr.liglab.adele.icasa.service.scheduler.SchedulingManager;
+import fr.liglab.adele.icasa.service.scheduler.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -85,6 +83,44 @@ public class SchedulingManagerImpl implements SchedulingManager {
     }
 
     @Bind(aggregate = true, optional = true)
+    public void bindSpecificClockRunnable(SpecificClockScheduledRunnable runnable) {
+        synchronized (this) {
+            Group group = null;
+            String groupName = runnable.getGroup();
+            if (groupName != null){
+                group = groups.get(groupName);
+            }
+            if (group == null) {
+                group = new Group(new GroupConfiguration(groupName), runnable.getClock());
+                groups.put(group.getName(), group);
+                logger.info("New group created : " + group.getName());
+            }
+            group.submit(runnable);
+        }
+    }
+
+    @Unbind
+    public void unbindSpecificClockRunnable(SpecificClockScheduledRunnable runnable) {
+        synchronized (this) {
+            String groupName = runnable.getGroup();
+            if (groupName == null){
+                groupName = GroupConfiguration.DEFAULT_NAME;
+            }
+
+            Group group = groups.get(groupName);
+            if (group != null) {
+                group.withdraw(runnable);
+            }
+
+            // Is the group is empty, close it
+            if (group.isEmpty()) {
+                group.close();
+                groups.remove(group.getName());
+            }
+        }
+    }
+
+    @Bind(aggregate = true, optional = true)
     public void bindPeriodicRunnable(PeriodicRunnable runnable) {
         synchronized (this) {
             Group group = null;
@@ -103,6 +139,43 @@ public class SchedulingManagerImpl implements SchedulingManager {
 
     @Unbind
     public void unbindPeriodicRunnable(PeriodicRunnable runnable) {
+        synchronized (this) {
+            String groupName = runnable.getGroup();
+            if (groupName == null){
+                groupName = GroupConfiguration.DEFAULT_NAME;
+            }
+            Group group = groups.get(groupName);
+            if (group != null) {
+                group.withdraw(runnable);
+            }
+
+            // Is the group is empty, close it
+            if (group.isEmpty()) {
+                group.close();
+                groups.remove(group.getName());
+            }
+        }
+    }
+
+    @Bind(aggregate = true, optional = true)
+    public void bindSpecificClockPeriodicRunnable(SpecificClockPeriodicRunnable runnable) {
+        synchronized (this) {
+            Group group = null;
+            String groupName = runnable.getGroup();
+            if (groupName != null){
+                group = groups.get(groupName);
+            }
+            if (group == null) {
+                group = new Group(new GroupConfiguration(groupName), runnable.getClock());
+                groups.put(group.getName(), group);
+                logger.info("New group created : " + groupName);
+            }
+            group.submit(runnable);
+        }
+    }
+
+    @Unbind
+    public void unbindSpecificClockPeriodicRunnable(SpecificClockPeriodicRunnable runnable) {
         synchronized (this) {
             String groupName = runnable.getGroup();
             if (groupName == null){

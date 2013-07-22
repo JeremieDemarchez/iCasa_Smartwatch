@@ -16,9 +16,7 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.service.scheduler.ICasaRunnable;
-import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
+import fr.liglab.adele.icasa.service.scheduler.*;
 import fr.liglab.adele.icasa.service.scheduler.impl.task.OneShotTaskImpl;
 import fr.liglab.adele.icasa.service.scheduler.impl.task.PeriodicTaskImpl;
 import org.slf4j.Logger;
@@ -70,6 +68,18 @@ public class Group  {
         return true;
     }
 
+    /**
+     * Add a runnable  to the group set.
+     * @param runnable
+     * @return
+     */
+    public synchronized boolean submit(SpecificClockScheduledRunnable runnable) {
+        TaskReferenceImpl taskRef = new OneShotTaskImpl(runnable.getClock(), runnable, new Long(runnable.getExecutionDate()));
+        executor.addTask(taskRef);
+        jobs.put(runnable, taskRef);
+        return true;
+    }
+
 
     /**
      * Add a runnable  to the group set.
@@ -78,6 +88,18 @@ public class Group  {
      */
     public synchronized boolean submit(PeriodicRunnable runnable) {
         TaskReferenceImpl taskRef = new PeriodicTaskImpl(clock, runnable, new Long(runnable.getPeriod()));
+        executor.addTask(taskRef);
+        jobs.put(runnable, taskRef);
+        return true;
+    }
+
+    /**
+     * Add a runnable  to the group set.
+     * @param runnable
+     * @return
+     */
+    public synchronized boolean submit(SpecificClockPeriodicRunnable runnable) {
+        TaskReferenceImpl taskRef = new PeriodicTaskImpl(runnable.getClock(), runnable, new Long(runnable.getPeriod()));
         executor.addTask(taskRef);
         jobs.put(runnable, taskRef);
         return true;

@@ -24,6 +24,13 @@ package fr.liglab.adele.icasa.clock;
  */
 public interface Clock {
 
+    /**
+     * Returns the identifier of the clock.
+     *
+     * @return the identifier of the clock.
+     */
+    public String getId();
+
 	/**
 	 * Returns the current time in (virtual) milliseconds.
 	 * 

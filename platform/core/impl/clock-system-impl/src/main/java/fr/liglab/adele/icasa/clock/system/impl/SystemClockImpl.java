@@ -35,8 +35,13 @@ public class SystemClockImpl implements Clock {
    
 	
 	private long initDate;
-	
-   /* (non-Javadoc)
+
+    @Override
+    public String getId() {
+        return "systemClock";
+    }
+
+    /* (non-Javadoc)
     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#currentTimeMillis()
     */
    public long currentTimeMillis() {     

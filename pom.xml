@@ -73,6 +73,16 @@
             </modules>
         </profile>
         <profile>
+            <id>backendTests</id>
+            <modules>
+                <module>parent</module>
+                <module>platform</module>
+                <module>distribution</module>
+                <module>tools</module>
+                <module>tests</module>
+            </modules>
+        </profile>
+        <profile>
             <id>frontend</id>
             <modules>
                 <module>parent</module>

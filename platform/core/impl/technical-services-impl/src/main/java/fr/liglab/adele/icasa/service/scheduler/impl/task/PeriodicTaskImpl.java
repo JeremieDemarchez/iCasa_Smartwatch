@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.service.scheduler.impl.task;
 
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.service.scheduler.ICasaRunnable;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.impl.TaskReferenceImpl;
 
@@ -27,7 +28,7 @@ public class PeriodicTaskImpl extends TaskReferenceImpl {
     private Long executionTime;
 
     public PeriodicTaskImpl(Clock service,
-                           PeriodicRunnable task,  Long periodTime) {
+                           ICasaRunnable task,  Long periodTime) {
         super(service,  task) ;
 
         period = periodTime;
