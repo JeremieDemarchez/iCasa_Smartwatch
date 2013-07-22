@@ -78,4 +78,5 @@ public interface AccessRight {
 
     DeviceAccessPolicy getPolicy();
 
+    Long getIdentifier();
 }

@@ -30,9 +30,9 @@ public class AccessRequestImpl implements AccessRightListener{
 
 
     private final Date requestDate;
-    private AccessRight accessRight;
+    private AccessRightImpl accessRight;
 
-    public AccessRequestImpl(AccessRight accessRight ) {
+    public AccessRequestImpl(AccessRightImpl accessRight ) {
         this.accessRight = accessRight;
         this.requestDate = new Date();
         accessRight.addListener(this);
@@ -89,5 +89,9 @@ public class AccessRequestImpl implements AccessRightListener{
     @Override
     public void onMethodAccessRightModified(AccessRight accessRight, String methodName) {
         //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    public AccessRightImpl getAccessRight() {
+        return accessRight;
     }
 }

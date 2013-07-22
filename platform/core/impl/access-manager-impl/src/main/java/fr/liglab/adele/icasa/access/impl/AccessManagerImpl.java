@@ -20,6 +20,7 @@ import org.apache.felix.ipojo.annotations.*;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * User: garciai@imag.fr
@@ -31,11 +32,16 @@ import java.util.*;
 @Provides
 public class AccessManagerImpl implements AccessManager{
 
+
+
+    private AtomicLong nextIdentifier = new AtomicLong(0);
+
+
     private Map<String, Map<String, AccessRightImpl>> rightAccess = new HashMap<String, Map<String, AccessRightImpl>>();
 
     protected List<AccessRightManagerListener> listeners = new ArrayList<AccessRightManagerListener>();
 
-    private Set<AccessRequestImpl> requestSet = new HashSet<AccessRequestImpl>();
+    private Map<Long, AccessRequestImpl> requestSet = new HashMap<Long,AccessRequestImpl>();
 
     /**
      * Get the right access of an application to use a specified device.
@@ -113,6 +119,24 @@ public class AccessManagerImpl implements AccessManager{
     }
 
     /**
+     * Get an access right.
+     * The returned object will be synchronized by the Access Manager to
+     * maintain updated the access right.
+     *
+     * @param policyId The identifier of the application.
+     * @return the access right object
+     */
+    @Override
+    public AccessRight getAccessRightFromId(Long policyId) {
+        AccessRequestImpl request = requestSet.get(policyId);
+        AccessRightImpl right = null;
+        if (request != null){
+            right =  request.getAccessRight();
+        }
+        return right;
+    }
+
+    /**
      * Get the all access right defined
      * The returned object will be synchronized by the Access Manager to
      * maintain updated the access right.
@@ -142,8 +166,8 @@ public class AccessManagerImpl implements AccessManager{
      */
     @Override
     public AccessRightImpl setMethodAccess(String applicationId, String deviceId, String methodName, MemberAccessPolicy accessRight) {
-        if (methodName == null){
-            throw new NullPointerException("Method must not be null");
+        if (methodName == null || accessRight == null){
+            throw new NullPointerException("Method and accessRight must not be null");
         }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateMethodAccessRight(methodName, accessRight);
@@ -160,8 +184,8 @@ public class AccessManagerImpl implements AccessManager{
      */
     @Override
     public AccessRightImpl setMethodAccess(String applicationId, String deviceId, Method method, MemberAccessPolicy accessRight) {
-        if (method == null){
-            throw new NullPointerException("Method must not be null");
+        if (method == null || accessRight == null){
+            throw new NullPointerException("Method and accessRight must not be null");
         }
         return setMethodAccess(applicationId, deviceId, method.getName(), accessRight);
     }
@@ -175,19 +199,26 @@ public class AccessManagerImpl implements AccessManager{
      */
     @Override
     public AccessRightImpl setDeviceAccess(String applicationId, String deviceId, DeviceAccessPolicy right) {
+        if(right == null){
+            throw new NullPointerException("Policy must not be null");
+        }
+        if(applicationId == null || deviceId == null){
+            throw new NullPointerException("Application and device must not be null");
+        }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateAccessRight(right);
         return rightAccess;
     }
 
     private AccessRightImpl createAccessRight(String application, String device){
-        AccessRightImpl right = new AccessRightImpl(application, device);
+        Long identifier = getNextIdentifier();
+        AccessRightImpl right = new AccessRightImpl(identifier,application, device);
         AccessRequestImpl request = new AccessRequestImpl(right);
         List<AccessRightManagerListener> listenerList = getListeners();
         for(AccessRightListener listener: listenerList){
             right.addListener(listener);
         }
-        requestSet.add(request);
+        requestSet.put(identifier, request);
         return right;
     }
 
@@ -218,4 +249,9 @@ public class AccessManagerImpl implements AccessManager{
         }
         listeners.add(listener);
     }
+
+    private Long getNextIdentifier() {
+        return nextIdentifier.getAndIncrement();
+    }
+
 }

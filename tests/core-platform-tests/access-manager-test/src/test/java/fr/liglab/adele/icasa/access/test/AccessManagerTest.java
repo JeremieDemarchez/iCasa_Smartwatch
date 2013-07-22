@@ -81,6 +81,59 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     }
 
     /**
+     * Test the access right assignment
+     */
+    @Test
+    public void testPartialAccessRightAssignment(){
+        AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
+        String applicationID = "App1";
+        String deviceID = "device1";
+        Assert.assertNotNull(service);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
+        Assert.assertNotNull(right);
+        Assert.assertFalse(right.isVisible());
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.PARTIAL);//It change right access.
+        Assert.assertTrue(right.isVisible());
+        //This should be ok since is in the valid method list for visible.
+        Assert.assertTrue(right.hasMethodAccess("getSerialNumber"));
+        //It does not have right.
+        Assert.assertFalse(right.hasMethodAccess("pingPong"));
+        service.setMethodAccess(applicationID, deviceID, "pingPong", MemberAccessPolicy.READ_ONLY);
+        Assert.assertTrue(right.hasMethodAccess("pingPong"));
+    }
+
+    /**
+     * Test the access right assignment
+     */
+    @Test
+    public void testVisibleAccessRightAssignment(){
+        AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
+        String applicationID = "App1";
+        String deviceID = "device1";
+        Assert.assertNotNull(service);
+        AccessRight right = service.getAccessRight(applicationID, deviceID);
+        Assert.assertNotNull(right);
+        Assert.assertFalse(right.isVisible());
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.VISIBLE);//It change right access.
+        Assert.assertTrue(right.isVisible());
+        service.setMethodAccess(applicationID, deviceID, "pingPong", MemberAccessPolicy.READ_ONLY);
+        service.setMethodAccess(applicationID, deviceID, "pingPong2", MemberAccessPolicy.READ_ONLY);
+
+        //This should be ok since is in the valid method list for visible.
+        Assert.assertTrue(right.hasMethodAccess("getSerialNumber"));
+        //It does not have right since the device access is only visible.
+        Assert.assertFalse(right.hasMethodAccess("pingPong"));
+        Assert.assertFalse(right.hasMethodAccess("pingPong2"));
+        Assert.assertFalse(right.hasMethodAccess("pingPong3"));
+
+        //Change access right to partial,
+        service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.PARTIAL);//It change right access.
+        Assert.assertTrue(right.hasMethodAccess("pingPong"));
+        Assert.assertTrue(right.hasMethodAccess("pingPong2"));
+        Assert.assertFalse(right.hasMethodAccess("pingPong3"));
+    }
+
+    /**
      * Test the method access right assignment
      */
     @Test
@@ -133,7 +186,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         AccessRightListener mockListener = mock(AccessRightListener.class);
         right.addListener(mockListener);
         service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.TOTAL);//must call the listeners
-        verify(mockListener, atLeast(1)).onAccessRightModified(right);
+        verify(mockListener, times(1)).onAccessRightModified(right);
         verify(mockListener, never()).onMethodAccessRightModified(any(AccessRight.class), any(String.class));
     }
 
@@ -152,7 +205,7 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         right.addListener(mockListener);
         service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.TOTAL);//must call the listeners
         service.setMethodAccess(applicationID, deviceID, methodName, MemberAccessPolicy.READ_WRITE);//must call the listeners
-        verify(mockListener, atLeast(1)).onAccessRightModified(right);
-        verify(mockListener, atLeast(1)).onMethodAccessRightModified(right, methodName);
+        verify(mockListener, times(1)).onAccessRightModified(right);
+        verify(mockListener, times(1)).onMethodAccessRightModified(right, methodName);
     }
 }

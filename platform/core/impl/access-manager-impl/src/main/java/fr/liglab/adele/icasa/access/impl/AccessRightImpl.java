@@ -32,20 +32,25 @@ public class AccessRightImpl implements AccessRight {
 
     private volatile DeviceAccessPolicy policy = DeviceAccessPolicy.HIDDEN;
 
+    private final List VISIBLE_METHODS_LIST = Arrays.asList(new String[]{"getSerialNumber", "getState","getFault"});
+
     protected List<AccessRightListener> listeners = new ArrayList<AccessRightListener>();
 
     private final String applicationId;
 
     private final String deviceId;
 
+    private final Long identifier;
+
     /**
      * A map containing the right access to call methods.
      */
     protected Map<String, MemberAccessPolicy> rightMethodAccess = new HashMap<String, MemberAccessPolicy>();
 
-    public AccessRightImpl(String application, String device){
+    public AccessRightImpl(Long identifier, String application, String device){
         applicationId = application;
         deviceId = device;
+        this.identifier = identifier;
     }
 
 
@@ -68,22 +73,31 @@ public class AccessRightImpl implements AccessRight {
         if (methodName == null) {
             throw new NullPointerException("Method must not be null");
         }
-        MemberAccessPolicy memberAccessPolicy = MemberAccessPolicy.READ_WRITE;
+        MemberAccessPolicy memberAccessPolicy = MemberAccessPolicy.HIDDEN;
         Boolean exists = false;
         synchronized (this){
             if(policy.compareTo(DeviceAccessPolicy.TOTAL)==0){ //If has total access, return true immediately
                 return true;
-            } else if(policy.compareTo(DeviceAccessPolicy.VISIBLE)<=0){ //If is visible or hidden, return false.
+            } else if (policy.compareTo(DeviceAccessPolicy.VISIBLE)==0){ //If is visible see method name.
+                return hasMethodAccessWithVisible(methodName);
+            } else if(policy.compareTo(DeviceAccessPolicy.HIDDEN)==0){ //If is hidden, return false.
                 return false;
             }else if(rightMethodAccess.containsKey(methodName)){ //If is partial
                 memberAccessPolicy = rightMethodAccess.get(methodName); //get the right access.
                 exists = true;
             }
         }
-        if (!exists){
-            updateMethodAccessRight(methodName, MemberAccessPolicy.READ_WRITE); //Added if access right does not exist.
+        if (!exists){ //Added if access right does not exist. It only does in partial.
+            updateMethodAccessRight(methodName, MemberAccessPolicy.HIDDEN);
         }
-        return memberAccessPolicy.compareTo(MemberAccessPolicy.HIDDEN)>0;
+        return memberAccessPolicy.compareTo(MemberAccessPolicy.HIDDEN)>0 || hasMethodAccessWithVisible(methodName);
+    }
+
+    private boolean hasMethodAccessWithVisible(String methodName){
+        if (VISIBLE_METHODS_LIST.contains(methodName)){
+            return true;
+        }
+        return false;
     }
 
     /**
@@ -208,4 +222,8 @@ public class AccessRightImpl implements AccessRight {
         return policy;
     }
 
+    @Override
+    public Long getIdentifier() {
+        return identifier;
+    }
 }

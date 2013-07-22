@@ -32,6 +32,7 @@ public class AccessRightJSON  {
     public static JSONObject toJSON(AccessRight accessRight){
         JSONObject accessRightJSON = new JSONObject();
         try {
+            accessRightJSON.put("id", accessRight.getIdentifier());
             accessRightJSON.put("applicationId", accessRight.getApplicationId());
             accessRightJSON.put("deviceId", accessRight.getDeviceId());
             accessRightJSON.put("policy", accessRight.getPolicy());
@@ -49,7 +50,6 @@ public class AccessRightJSON  {
         if(!accessRightJSON.has("applicationId") || !accessRightJSON.has("deviceId") || !accessRightJSON.has("policy")  ){
             throw new JSONException("Malformed Access Right JSON object. It must contain applicationId, deviceId and policy");
         }
-        accessRightJSON.getBoolean("deviceAccessRight");//To test the boolean value.
         return accessRightJSON;
     }
 

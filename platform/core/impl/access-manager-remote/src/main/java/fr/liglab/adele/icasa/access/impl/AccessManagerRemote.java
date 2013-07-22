@@ -39,7 +39,7 @@ import java.util.Collections;
 @Component(name="iCasaAccessManagerRemote")
 @Instantiate(name="iCasaAccessManagerRemote-1")
 @Provides(specifications={AccessManagerRemote.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value="/access")
+@Path(value="/policies")
 public class AccessManagerRemote extends AbstractREST {
 
     @Requires
@@ -47,8 +47,14 @@ public class AccessManagerRemote extends AbstractREST {
 
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/policies")
     public Response getAccessRightOptions() {
+        return makeCORS(Response.ok());
+    }
+
+    @OPTIONS
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(value="/policy/{id}")
+    public Response getPolicyAccessRightOptions(@PathParam("id")String policyId) {
         return makeCORS(Response.ok());
     }
 
@@ -61,24 +67,14 @@ public class AccessManagerRemote extends AbstractREST {
 
     @OPTIONS
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/policies/{applicationId}")
+    @Path(value="/application/{applicationId}")
     public Response getApplicationAccessRightOptions(@PathParam("applicationId")String applicationId) {
         return makeCORS(Response.ok());
     }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/policies/{applicationId}/{deviceId}")
-    public Response getApplicationDeviceAccessRightOptions(@PathParam("applicationId")String applicationId, @PathParam("deviceId")String deviceId) {
-        return makeCORS(Response.ok());
-    }
-
-
-
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/policies")
     public Response getRightAccess() {
         return makeCORS(Response.ok(getAllRightAccess()));
     }
@@ -98,23 +94,29 @@ public class AccessManagerRemote extends AbstractREST {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/policies/{applicationId}")
+    @Path(value="application/{applicationId}")
     public Response getApplicationAccessRight(@PathParam("applicationId")String applicationId) {
         return makeCORS(Response.ok(getAllRightAccess(applicationId)));
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/policies/{applicationId}/{deviceId}")
-    public Response getApplicationAccessRight(@PathParam("applicationId")String applicationId, @PathParam("deviceId")String deviceId) {
-        return makeCORS(Response.ok(getAccessRight(applicationId, deviceId)));
+    @Path(value="/policy/{id}")
+    public Response getPolicyAccessRight(@PathParam("id")String policyId) {
+        String policy = getPolicy(policyId);
+        if (policy == null){
+            return makeCORS(Response.status(Response.Status.NOT_FOUND));
+        }
+        return makeCORS(Response.ok(getPolicy(policyId)));
     }
+
+
 
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/policies")
+    @Path(value="/policy")
     public Response setRightAccess(String content) {
         JSONObject jsonAccessRight = null;
         AccessRight right = null;
@@ -135,18 +137,16 @@ public class AccessManagerRemote extends AbstractREST {
             e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
             return makeCORS(Response.status(Response.Status.BAD_REQUEST));
         }
-        return makeCORS(Response.ok(AccessRightJSON.toJSON(right)));
+        return makeCORS(Response.ok(AccessRightJSON.toJSON(right).toString()));
     }
 
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/policies")
+    @Path(value="/policy")
     public Response updateApplicationAccess(String content){
         return setRightAccess(content);
     }
-
-
     private String getAllRightAccess() {
         JSONArray accessRights = new JSONArray();
         AccessRight[] rights = manager.getAllAccessRight();
@@ -168,6 +168,22 @@ public class AccessManagerRemote extends AbstractREST {
     private String getAccessRight(String applicationId, String deviceId) {
         AccessRight rights = manager.getAccessRight(applicationId, deviceId);
         return AccessRightJSON.toJSON(rights).toString();
+    }
+
+    private String getPolicy(String policyId) {
+        String stringfiedRight = null;
+        Long identifier = null;
+        try{
+            identifier = Long.decode(policyId);
+        }catch(Exception ex){
+            identifier = -1L;
+        }
+
+        AccessRight rights = manager.getAccessRightFromId(identifier);
+        if (rights != null){
+            stringfiedRight =  AccessRightJSON.toJSON(rights).toString();
+        }
+        return stringfiedRight;
     }
 
     private String getAllPoliciesTypes() throws JSONException{

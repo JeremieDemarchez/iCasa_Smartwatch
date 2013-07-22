@@ -43,6 +43,16 @@ public interface AccessManager {
     AccessRight[] getAccessRight(String applicationId);
 
     /**
+     * Get an access right.
+     * The returned object will be synchronized by the Access Manager to
+     * maintain updated the access right.
+     * @param policyId The identifier of the application.
+     * @return the access right object
+     */
+    AccessRight getAccessRightFromId(Long policyId);
+
+
+    /**
      * Get all the defined access right
      * The returned object will be synchronized by the Access Manager to
      * maintain updated the access right.
