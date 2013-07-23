@@ -774,11 +774,19 @@ public class DeviceDependencyHandler extends DependencyHandler {
    
    //------------------------- Added methods --------------------------------//
    
-	public AccessRight getAccessRight(BundleContext context, String deviceId) {
+	public AccessRight getAccessRight(BundleContext context, String deviceId) {		
+		String appId = getApplicationId(context);
+		if (appId!=null) {
+			return accessManager.getAccessRight(appId, deviceId);
+		}
+		return null;
+	}
+	
+	public String getApplicationId(BundleContext context) {
 		String bundleName = context.getBundle().getSymbolicName();
 		Application app = applicationManager.getApplicationOfBundle(bundleName);
 		if (app!=null) {
-			return accessManager.getAccessRight(app.getId(), deviceId);
+			return app.getId();
 		}
 		return null;
 	}

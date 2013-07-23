@@ -146,9 +146,9 @@ public class ICasaTrackingInterceptor extends AbstractLocatedDeviceListener impl
 		}
 
 		for (DependencyModel dep : list) {
-			Class[] classes = ldevice.getDeviceObject().getClass().getInterfaces();
-			for (Class clazz : classes) {
-				if (dep.getSpecification().equals(clazz)) { // Only dependencies using this kind of device
+			Class[] interfaces = ldevice.getDeviceObject().getClass().getInterfaces();
+			for (Class interfaze : interfaces) {
+				if (dep.getSpecification().equals(interfaze)) { // Only dependencies using this kind of device
 					dep.invalidateMatchingServices();
 				}
 			}

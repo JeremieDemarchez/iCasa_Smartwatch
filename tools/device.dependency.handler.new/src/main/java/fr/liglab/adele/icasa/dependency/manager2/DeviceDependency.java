@@ -19,34 +19,30 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.PrimitiveHandler;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.handlers.dependency.DependencyCallback;
-import org.apache.felix.ipojo.handlers.dependency.DependencyHandler;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
-import org.osgi.framework.ServiceReference;
 
-import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.application.Application;
-import fr.liglab.adele.icasa.application.ApplicationManager;
+import fr.liglab.adele.icasa.access.AccessRightListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-public class DeviceDependency extends Dependency {
+public class DeviceDependency extends Dependency implements AccessRightListener {
 
-	private ComponentInstance instance;
+	private ComponentInstance m_instance;
 
 	private DeviceDependencyHandler m_handler;
 	
 	private BundleContext m_context;
 	
-	private AccessManager accessManager;
-	
+	private Set<AccessRight> accessRights = new HashSet<AccessRight>();
+		
 
 
 	public DeviceDependency(DeviceDependencyHandler handler, String field, Class spec, Filter filter, boolean isOptional,
@@ -54,7 +50,9 @@ public class DeviceDependency extends Dependency {
 	      Comparator cmp, String defaultImplem) {
 		super(handler, field, spec, filter, isOptional, isAggregate, false, true, identity, context, policy, cmp,
 		      defaultImplem);
-		instance = handler.getInstanceManager();
+		
+		
+		m_instance = handler.getInstanceManager();
 		m_handler = handler;
 		m_context = context;
 		
@@ -81,11 +79,35 @@ public class DeviceDependency extends Dependency {
 	}
 
 	
+	// --------------------------- Added methods ------------------------------ //
+	
+	public String getApplicationId() {
+		return m_handler.getApplicationId(m_context);
+	}
 
+	public void addAccessRight(AccessRight accessRight) {
+		boolean added = false;
+		synchronized (accessRights) {
+			added = accessRights.add(accessRight);			
+      }
+		if (added)
+			accessRight.addListener(this);
+	}
+	
+	@Override
+   public void onAccessRightModified(AccessRight accessRight) {
+		this.invalidateMatchingServices();
+   }
+
+	@Override
+   public void onMethodAccessRightModified(AccessRight accessRight, String methodName) {
+	   // Nothing to be done here	   
+   }
 
 	@Override
 	public void start() {
 		super.start();
+		
 				
 		try {
 	      Field field = this.getClass().getSuperclass().getDeclaredField("m_proxyObject");
@@ -104,7 +126,22 @@ public class DeviceDependency extends Dependency {
       } catch (IllegalAccessException e) {
 	      e.printStackTrace();
       }
-
+	}
+	
+	@Override
+	public synchronized void stop() {
+	   super.stop();
+	   
+	   Set<AccessRight> copySet = new HashSet<AccessRight>();
+		synchronized (accessRights) {
+			copySet.addAll(accessRights);
+			accessRights.clear();
+      }
+		
+		for (AccessRight accessRight : copySet) {
+	      accessRight.removeListener(this);
+      }
+	   
 	}
 	
    private class DynamicProxyFactory implements InvocationHandler {
@@ -192,5 +229,7 @@ public class DeviceDependency extends Dependency {
       }
 
   }
+
+
 
 }
