@@ -7,15 +7,14 @@ under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES
 OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
    the specific language governing permissions and limitations under the License. -->
 
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <!-- Project coordinates -->
     <parent>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.1</version>
         <relativePath>parent</relativePath>
     </parent>
     <artifactId>applications-root-reactor</artifactId>
@@ -45,7 +44,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
         <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</connection>
         <url>https://github.com/AdeleResearchGroup/iCasa-Apps.git</url>
         <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>iCasa-Apps-1.1.1</tag>
     </scm>
 </project>
       
