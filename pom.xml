@@ -20,11 +20,27 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
     </parent>
     <artifactId>applications-root-reactor</artifactId>
     <packaging>pom</packaging>
-    <modules>
-        <module>parent</module>
-        <module>applications</module>
-        <module>app-skeletons</module>
-    </modules>
+    <profiles>
+       <profile>
+          <id>release</id>
+          <modules>
+            <module>parent</module>
+            <module>applications</module>
+          </modules>
+       </profile>
+       <profile>
+          <id>all</id>
+          <activation>
+             <activeByDefault>true</activeByDefault>
+          </activation>
+          <modules>
+             <module>parent</module>
+             <module>applications</module>
+             <module>app-skeletons</module>
+          </modules>
+       </profile>
+    </profiles>
+
     <scm>
         <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</connection>
         <url>https://github.com/AdeleResearchGroup/iCasa-Apps.git</url>
