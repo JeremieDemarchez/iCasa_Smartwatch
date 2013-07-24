@@ -33,6 +33,7 @@
       <!--<module>x10</module-->
 		<module>usb</module>
 		<!--module>bluetooth</module-->
+        <module>zigbee</module>
 	</modules>
    <build>
       <plugins>
