@@ -157,8 +157,11 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		
 		// execute script for zones and devices
 		scriptExecutor.execute(firstScript);
-		wait(10000);
-		
+        wait(10000);
+        if(!helper.waitToComponent("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve presence-collector component after 10sec");
+        }
+
 		Set<String> devices = icasa.getDeviceIds();
 		Set<String> zones = icasa.getZoneIds();
 		Assert.assertEquals(4, devices.size());
@@ -179,7 +182,9 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		Assert.assertEquals(measure.getLocalisation(), simulationManager.getPerson("Paul").getLocation());
 		assertThat(devices, hasItem(measure.getDeviceId()));
 		assertThat(true, equalTo(measure.getReliability() >  (float)50));
-		assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < 1000));
+        System.out.println("StartDate:" + new Date(scriptExecutor.getStartDate(secondScript)));
+        System.out.println("Measure Time:" + new Date(measure.getTimestamp()));
+		assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < (1000*scriptExecutor.getFactor(secondScript))));
 	}
 
 	/**

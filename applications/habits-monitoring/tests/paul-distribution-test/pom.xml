@@ -18,7 +18,7 @@
 		<exam.version>3.0.0</exam.version>
 		<url.version>1.5.2</url.version>
 		<distrib.groupId>fr.liglab.adele.icasa.apps</distrib.groupId>
-		<distrib.artifactId>habits.monitoring.distribution.box.paul</distrib.artifactId>
+		<distrib.artifactId>habits.monitoring.distribution.box.paul.autonomic</distrib.artifactId>
 		<distrib.version>${project.version}</distrib.version>
 	</properties>
 

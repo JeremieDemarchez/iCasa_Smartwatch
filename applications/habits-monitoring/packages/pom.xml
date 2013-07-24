@@ -32,6 +32,7 @@
       <module>measure-generator-mock.dp</module>
 		<module>measure-generator.dp</module>
 		<module>presence-sensor.dp</module>
+        <module>photometer.dp</module>
 	</modules>
    <build>
       <plugins>
