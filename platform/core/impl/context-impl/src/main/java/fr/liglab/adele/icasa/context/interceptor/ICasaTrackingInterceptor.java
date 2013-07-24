@@ -16,6 +16,8 @@
 package fr.liglab.adele.icasa.context.interceptor;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
@@ -78,13 +80,15 @@ public class ICasaTrackingInterceptor extends AbstractLocatedDeviceListener impl
 	@Override
 	public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context,
 	      TransformedServiceReference<S> serviceReference) {
-		if (isPlatformComponent(dependency))
+		
+		if (isPlatformComponent(dependency)) {
 			return serviceReference;
+		}
 
 		String deviceId = (String) serviceReference.getProperty(GenericDevice.DEVICE_SERIAL_NUMBER);
 		Position position = contextManager.getDevicePosition(deviceId);
 
-		if (position == null) { // The device has not an associated context
+		if (position == null) { // The device has not been associated to the context yet
 			return null;
 		}
 
@@ -145,8 +149,9 @@ public class ICasaTrackingInterceptor extends AbstractLocatedDeviceListener impl
 			list.addAll(dependencies);
 		}
 
-		for (DependencyModel dep : list) {
-			Class[] interfaces = ldevice.getDeviceObject().getClass().getInterfaces();
+		for (DependencyModel dep : list) {			
+			List<Class<?>> interfaces = getAllInterfaces(ldevice.getDeviceObject().getClass());
+					
 			for (Class interfaze : interfaces) {
 				if (dep.getSpecification().equals(interfaze)) { // Only dependencies using this kind of device
 					dep.invalidateMatchingServices();
@@ -167,4 +172,31 @@ public class ICasaTrackingInterceptor extends AbstractLocatedDeviceListener impl
 		invalidateMatchingServices(ldevice);
 	}
 
+	
+	
+   public static List<Class<?>> getAllInterfaces(final Class<?> cls) {
+      if (cls == null) {
+          return null;
+      }
+
+      final LinkedHashSet<Class<?>> interfacesFound = new LinkedHashSet<Class<?>>();
+      getAllInterfaces(cls, interfacesFound);
+
+      return new ArrayList<Class<?>>(interfacesFound);
+  }
+	
+	private static void getAllInterfaces(Class<?> cls, final HashSet<Class<?>> interfacesFound) {
+      while (cls != null) {
+          final Class<?>[] interfaces = cls.getInterfaces();
+
+          for (final Class<?> i : interfaces) {
+              if (interfacesFound.add(i)) {
+                  getAllInterfaces(i, interfacesFound);
+              }
+          }
+
+          cls = cls.getSuperclass();
+       }
+   }
+	
 }
