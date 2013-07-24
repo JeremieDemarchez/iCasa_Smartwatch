@@ -47,10 +47,48 @@ public class AccessRightImpl implements AccessRight {
      */
     protected Map<String, MemberAccessPolicy> rightMethodAccess = new HashMap<String, MemberAccessPolicy>();
 
+    private Map<String, Object> internalMap = new HashMap();
+    private Map<String, Object> internalMethods = new HashMap();
+
     public AccessRightImpl(Long identifier, String application, String device){
-        applicationId = application;
-        deviceId = device;
+        this.applicationId = application;
+        this.deviceId = device;
         this.identifier = identifier;
+        this.policy = DeviceAccessPolicy.HIDDEN;
+        this.internalMap.put("applicationId", applicationId);
+        this.internalMap.put("deviceId", deviceId);
+        this.internalMap.put("policy", policy.toString());
+    }
+
+    public AccessRightImpl(Long identifier,Map<String, Object> fromMap) throws UnknownFormatConversionException{
+        this.applicationId = String.valueOf(fromMap.get("applicationId"));
+        this.deviceId = String.valueOf(fromMap.get("deviceId"));
+        this.policy = DeviceAccessPolicy.fromString(String.valueOf(fromMap.get("policy")));
+        if(applicationId == null  || deviceId == null){
+            throw new NullPointerException("Unable to create AccessRight from map, missing values (applicationId, deviceId)");
+        }
+        if (policy == null){
+            throw new UnknownFormatConversionException("Unable to obtain DeviceAccessPolicy from: " + fromMap.get("policy"));
+        }
+        this.identifier = identifier;
+        internalMap.put("applicationId", applicationId);
+        internalMap.put("deviceId", deviceId);
+        internalMap.put("policy", policy.toString());
+        if(fromMap.containsKey("methods")){
+            methodAccessFromMap((Map)fromMap.get("methods"));
+        }
+    }
+
+    private void methodAccessFromMap(Map<String, String> methodAccess) throws UnknownFormatConversionException{
+        for(Map.Entry<String, String> entry: methodAccess.entrySet()){
+            MemberAccessPolicy methodPolicy = MemberAccessPolicy.fromString(entry.getValue());
+            if(methodPolicy == null) {
+                throw new UnknownFormatConversionException("Unable to obtain MemberAccessPolicy from:" + entry.getValue());
+            }
+            rightMethodAccess.put(entry.getKey(), MemberAccessPolicy.fromString(entry.getValue()));
+            internalMethods.put(entry.getKey(), entry.getValue());
+        }
+        internalMap.put("methods", internalMethods);
     }
 
 
@@ -119,7 +157,7 @@ public class AccessRightImpl implements AccessRight {
      */
     @Override
     public boolean hasMethodAccess(Method method) throws NullPointerException{
-        if (method == null){
+        if (method == null) {
             throw new NullPointerException("Method must not be null");
         }
         return hasMethodAccess(method.getName());
@@ -176,6 +214,9 @@ public class AccessRightImpl implements AccessRight {
     protected void updateAccessRight(DeviceAccessPolicy right) {
         List<AccessRightListener> listenerList = null;
         synchronized (this){
+            if(right.equals(policy)){ //If is the same, does not trigger callback.
+                return;
+            }
             policy = right;
             listenerList = getListeners();
         }
@@ -190,12 +231,19 @@ public class AccessRightImpl implements AccessRight {
             throw new NullPointerException("Method must not be null");
         }
         synchronized (this){
+            if(rightMethodAccess.containsKey(method)){
+                if(rightMethodAccess.get(method).equals(right)){
+                    return; //If is the same, do nothing.
+                }
+            }
             rightMethodAccess.put(method, right);
+            internalMethods.put(method, right.toString());
             listenerList = getListeners();
         }
         for(AccessRightListener listener: listenerList){
             listener.onMethodAccessRightModified(this, method);
         }
+        return;
     }
 
     @Override
@@ -226,4 +274,9 @@ public class AccessRightImpl implements AccessRight {
     public Long getIdentifier() {
         return identifier;
     }
+
+    public synchronized Map toMap(){
+        return new HashMap(internalMap);
+    }
+
 }
