@@ -21,7 +21,7 @@
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>platform.parent</artifactId>
       <version>1.1.2-SNAPSHOT</version>
-      <relativePath>../../../../../../parent</relativePath>
+      <relativePath>../../../../parent</relativePath>
    </parent>
 
    <!-- Project Description -->
