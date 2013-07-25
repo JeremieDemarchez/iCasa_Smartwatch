@@ -77,7 +77,7 @@
     <requires field="icasa" optional="false" nullable="false" />
   </processor>
   
-  <mediator-component name="LocationEnricherMediator" category="medical">
+  <mediator-component name="LocationEnricherMediator" category="medical" spec-name="LocationEnricherSpec" spec-namespace="fr.liglab.adele.cilia">
     <cilia:processor name="LocationEnricherProcessor" />
     <cilia:scheduler name="immediate-scheduler" />
     <cilia:dispatcher name="multicast-dispatcher" />
