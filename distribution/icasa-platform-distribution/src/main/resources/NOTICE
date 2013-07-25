@@ -226,3 +226,8 @@ Development and Distribution License, version 1.1.
 - MIME streaming extension
 - JavaMail
 - Jaxb-api
+
+
+This product includes software from http://kxml.sourceforge.net.
+Copyright (c) 2002,2003, Stefan Haustein, Oberhausen, Rhld., Germany.
+Licensed under BSD License.
