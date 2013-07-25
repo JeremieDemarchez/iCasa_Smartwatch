@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.access.impl;
 import fr.liglab.adele.icasa.access.*;
 import org.apache.felix.ipojo.annotations.*;
 
+import java.io.File;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -32,6 +33,10 @@ import java.util.concurrent.atomic.AtomicLong;
 @Provides
 public class AccessManagerImpl implements AccessManager{
 
+    @Property
+    private String location;
+
+    private File storageFile;
 
 
     private AtomicLong nextIdentifier = new AtomicLong(0);
@@ -42,6 +47,11 @@ public class AccessManagerImpl implements AccessManager{
     protected List<AccessRightManagerListener> listeners = new ArrayList<AccessRightManagerListener>();
 
     private Map<Long, AccessRequestImpl> requestSet = new HashMap<Long,AccessRequestImpl>();
+
+    @Validate
+    public void validate(){
+
+    }
 
     /**
      * Get the right access of an application to use a specified device.
@@ -252,6 +262,19 @@ public class AccessManagerImpl implements AccessManager{
 
     private Long getNextIdentifier() {
         return nextIdentifier.getAndIncrement();
+    }
+
+    private synchronized void save(){
+        List<Map> maps = getAccessRightsMaps();
+    }
+
+    private List<Map> getAccessRightsMaps(){
+        AccessRight[] rights = getAllAccessRight();
+        List<Map> rightsInMap = new ArrayList();
+        for(AccessRight right: rights){
+            rightsInMap.add(right.toMap());
+        }
+        return rightsInMap;
     }
 
 }
