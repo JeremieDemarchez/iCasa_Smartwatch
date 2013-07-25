@@ -324,10 +324,10 @@ public class AccessManagerImpl implements AccessManager{
     }
 
     private Map getAccessRightsMaps(){
-        AccessRight[] rights = getAllAccessRight();
+        AccessRightImpl[] rights = getAllAccessRight();
         Map accessRight = new HashMap();
         List<Map> rightsInMap = new ArrayList();
-        for(AccessRight right: rights){
+        for(AccessRightImpl right: rights){
             rightsInMap.add(right.toMap());
         }
         accessRight.put("access",rightsInMap);
@@ -408,6 +408,11 @@ public class AccessManagerImpl implements AccessManager{
         return str;
     }
 
+    /**
+     * Load the iCasa Access Right file and build a List of Maps.
+     * Each map contains the access right information.
+     * @return
+     */
     private List<Map> loadFile(){
         storageFile = new File(location,"iCasa_access_right.xml");
         backupFile = new File(location,"iCasa_access_right.bak");
