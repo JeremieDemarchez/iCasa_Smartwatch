@@ -18,7 +18,7 @@
     <parent>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
         <artifactId>parent</artifactId>
-        <version>1.0.1-SNAPSHOT</version>
+        <version>1.1.2-SNAPSHOT</version>
         <relativePath>../../../parent</relativePath>
     </parent>
 
@@ -29,6 +29,7 @@
     <name>${productName} :: ${projectName}</name>
 
     <modules>
+       <module>paul-distribution-to-test</module>
         <module>paul-distribution-test</module>
     </modules>
     <build>

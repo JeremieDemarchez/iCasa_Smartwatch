@@ -27,10 +27,10 @@ limitations under the License.
          </parent>
          
          <!-- Project coordinates -->
-         <artifactId>habits.monitoring.distribution.box.paul</artifactId>
+         <artifactId>habits.monitoring.distribution.box.paul.autonomic</artifactId>
          <packaging>osgi-distribution</packaging>
          <!-- Project description -->
-         <name>${productName} :: Habits Monitoring :: Distribution :: Box Paul</name>
+         <name>${productName} :: Habits Monitoring :: Distribution test :: Box Paul</name>
          
          <properties>
             <productName>iCasa Apps</productName>
@@ -39,42 +39,12 @@ limitations under the License.
          <!-- Project dependencies -->
          <dependencies>
             <dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>icasa.teaching.distribution</artifactId>
+				<groupId>fr.liglab.adele.icasa.apps</groupId>
+				<artifactId>habits.monitoring.distribution.box.paul</artifactId>
+                <version>${project.version}</version>
 				<type>osgi-distribution</type>
 			</dependency>
 
-            <!-- deployed packages -->
-            <dependency>
-               <groupId>fr.liglab.adele.cilia</groupId>
-               <artifactId>cilia.dp</artifactId>
-               <type>deployment-package</type>
-            </dependency>
-            <dependency>
-               <groupId>fr.liglab.adele.cilia</groupId>
-               <artifactId>cilia-remote.dp</artifactId>
-               <type>deployment-package</type>
-            </dependency>
-            
-            <!-- habits monitoring application -->
-            <dependency>
-               <groupId>${project.groupId}</groupId>
-               <artifactId>measure.generator.dp</artifactId>
-               <type>deployment-package</type>
-               <version>${project.version}</version>
-            </dependency>
-<!--             <dependency> -->
-<!--                <groupId>${project.groupId}</groupId> -->
-<!--                <artifactId>presence.sensor.adapter.dp</artifactId> -->
-<!--                <type>deployment-package</type> -->
-<!--                <version>${project.version}</version> -->
-<!--             </dependency> -->
-            <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>db.adapter.fileinstall</artifactId>
-                <type>bundle</type>
-                <version>${project.version}</version>
-            </dependency>
          </dependencies>
          <build>
             <plugins>
@@ -85,6 +55,27 @@ limitations under the License.
                        <flattenDP>true</flattenDP>
                    </configuration>
                </plugin>
+                <plugin>
+                    <artifactId>maven-resources-plugin</artifactId>
+                    <executions>
+                        <execution>
+                            <id>copy-resources</id>
+                            <phase>prepare-package</phase>
+                            <goals>
+                                <goal>copy-resources</goal>
+                            </goals>
+                            <configuration>
+                                <outputDirectory>${project.build.directory}/${project.artifactId}</outputDirectory>
+                                <resources>
+                                    <resource>
+                                        <directory>non-processed-resource</directory>
+                                        <filtering>true</filtering>
+                                    </resource>
+                                </resources>
+                            </configuration>
+                        </execution>
+                    </executions>
+                </plugin>
             </plugins>
          </build>
            

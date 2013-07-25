@@ -95,7 +95,7 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
                 mavenBundle("org.mockito", "mockito-core", "1.9.5"),
                 
                 // cilia helper
-                mavenBundle("fr.liglab.adele.cilia", "cilia-helper", "1.6.4-SNAPSHOT"),
+                mavenBundle().groupId("fr.liglab.adele.cilia").artifactId("cilia-helper").versionAsInProject(),//("1.6.4-SNAPSHOT"),
                 mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.ipojo.test.helpers").versionAsInProject(),
 
                 // Hamcrest with a version matching the range expected by Mockito
@@ -147,7 +147,7 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		
 		// instrument a cilia helper class
 		CiliaHelper helper = new CiliaHelper(context);
-		Assert.assertEquals(true, helper.waitToChain("generator-mesures", 2000));
+		Assert.assertEquals(true, helper.waitToChain("generator-mesures", 5000));
 		MediatorTestHelper transformer = helper.instrumentMediatorInstance("generator-mesures", "transformer", new String[]{"in"}, new String[]{"out"});
 		Assert.assertNotNull(transformer);
 		
@@ -157,8 +157,11 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		
 		// execute script for zones and devices
 		scriptExecutor.execute(firstScript);
-		wait(10000);
-		
+        wait(10000);
+        if(!helper.waitToComponent("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve presence-collector component after 10sec");
+        }
+
 		Set<String> devices = icasa.getDeviceIds();
 		Set<String> zones = icasa.getZoneIds();
 		Assert.assertEquals(4, devices.size());
@@ -168,9 +171,9 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		// execute second script to trigger events
 		scriptExecutor.execute(secondScript);
 		
-		wait(3000);
+		wait(5000);
 		scriptExecutor.stop();
-		
+		CiliaHelper.checkReceived(transformer,1,5000);
 		Assert.assertEquals(1, transformer.getAmountData());
 		Data lastData = transformer.getLastData();
 		assertThat(lastData.getContent(), instanceOf(Measure.class));
@@ -179,7 +182,9 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		Assert.assertEquals(measure.getLocalisation(), simulationManager.getPerson("Paul").getLocation());
 		assertThat(devices, hasItem(measure.getDeviceId()));
 		assertThat(true, equalTo(measure.getReliability() >  (float)50));
-		assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < 1000));
+        System.out.println("StartDate:" + new Date(scriptExecutor.getStartDate(secondScript)));
+        System.out.println("Measure Time:" + new Date(measure.getTimestamp()));
+		assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < (1000*scriptExecutor.getFactor(secondScript))));
 	}
 
 	/**

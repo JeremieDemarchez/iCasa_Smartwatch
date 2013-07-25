@@ -5,6 +5,8 @@ package fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter;
 
 import java.util.Set;
 
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfosListener;
+
 /**
  * Interface for the autonomic manager database adapter.
  * @author Kettani Mehdi.
@@ -25,4 +27,8 @@ public interface IDBAdapter {
 	 * @return url of dp as string.
 	 */
 	public Object getDeviceAdapterUrl(String dpId);
+	
+	public void addDPInfosListener(DPInfosListener listener);
+	
+	public void removeDPInfosListener(DPInfosListener listener);
 }

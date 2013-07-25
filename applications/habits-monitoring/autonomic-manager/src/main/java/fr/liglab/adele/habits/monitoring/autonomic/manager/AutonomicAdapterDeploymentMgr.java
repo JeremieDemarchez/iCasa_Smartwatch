@@ -1,9 +1,11 @@
 package fr.liglab.adele.habits.monitoring.autonomic.manager;
 
 import java.net.URL;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -21,9 +23,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter.IDBAdapter;
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfosListener;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 /**
  * Created with IntelliJ IDEA. User: Kettani Mehdi Date: 26/04/13 Time: 11:33 To
@@ -31,12 +34,14 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
  */
 @Component(name = "AutonomicAdapterDeploymentMgr")
 @Instantiate(name = "AutonomicAdapterDeploymentMgr-1")
-public class AutonomicAdapterDeploymentMgr implements DeviceListener<GenericDevice> {
+public class AutonomicAdapterDeploymentMgr implements
+		DeviceListener<GenericDevice>, DPInfosListener {
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(AutonomicAdapterDeploymentMgr.class);
 
 	private Map<String, GenericDevice> devices = new HashMap<String, GenericDevice>();
+	private Map<String, Set<String>> uninstalledDevices = new HashMap<String, Set<String>>();
 
 	// DP installer
 	@Requires
@@ -59,84 +64,77 @@ public class AutonomicAdapterDeploymentMgr implements DeviceListener<GenericDevi
 	 */
 	private AutonomicAdapterDeploymentMgr(BundleContext context) {
 		this.context = context;
+		dbAdapter.addDPInfosListener(this);
 	}
 
-	public void handleNewDevice(String[] classNames)
+	/**
+	 * Check if the array of interfaces can be handled by an
+	 * 
+	 * @param classNames
+	 * @return
+	 * @throws ClassNotFoundException
+	 */
+	public boolean handleNewDevice(Set<String> classNames)
 			throws ClassNotFoundException {
 
+		boolean successfulInstallation = false;
+
 		for (String className : classNames) {
-			if (!className.equals(GenericDevice.class.getName())) {
-				// get dp id related to this interface
-				Set<String> dpInfos = new HashSet<String>();
-				try {
-					Class<?> cl = padmin
-							.getExportedPackage(
-									className.substring(0,
-											className.lastIndexOf(".")))
-							.getExportingBundle().loadClass(className);
+			// get dp id related to this interface
+			Set<String> dpInfos = new HashSet<String>();
+			try {
+				Class<?> cl = padmin
+						.getExportedPackage(
+								className.substring(0,
+										className.lastIndexOf(".")))
+						.getExportingBundle().loadClass(className);
 
-					if (cl != null && GenericDevice.class.isAssignableFrom(cl)) {
-						logger.info(className + " extends GenericDevice");
-						dpInfos.add(className);
-						logger.info("getting dp id for class : " + className);
-						String dpId = dbAdapter.getDeviceAdapterId(dpInfos);
-						// check if this dp is already installed
-						if (dpId != null) {
-							logger.info("related dp id is : " + dpId);
-							DeploymentPackage dp = dadmin
-									.getDeploymentPackage(dpId);
-							if (dp != null) {
-								// dp is already installed : do nothing
-								logger.info("dp " + dpId
-										+ " is already installed.");
-							} else {
-								// dp is not installed, we should install it
-								logger.info(dpId + " is not installed");
-								// get url related to this id
-								String dpUrl = (String) dbAdapter
-										.getDeviceAdapterUrl(dpId);
-								logger.info("location of this dp : " + dpUrl);
-								URL url = new URL(dpUrl);
-//								Proxy proxy = new Proxy(
-//										Proxy.Type.HTTP,
-//										new InetSocketAddress("p-goodway", 3128));
-//								HttpURLConnection connection = (HttpURLConnection) new URL(
-//										dpUrl).openConnection(proxy);
-								dadmin.installDeploymentPackage(url.openStream());
-							}
+				if (cl != null && GenericDevice.class.isAssignableFrom(cl)) {
+					logger.info(className + " extends GenericDevice");
+					dpInfos.add(className);
+					logger.info("getting dp id for class : " + className);
+					String dpId = dbAdapter.getDeviceAdapterId(dpInfos);
+					// check if this dp is already installed
+					if (dpId != null) {
+						logger.info("related dp id is : " + dpId);
+						DeploymentPackage dp = dadmin
+								.getDeploymentPackage(dpId);
+						if (dp != null) {
+							// dp is already installed : do nothing
+							logger.info("dp " + dpId + " is already installed.");
 						} else {
-							logger.warn("Could not find any dp to handle "
-									+ cl.getName());
+							// dp is not installed, we should install it
+							logger.info(dpId + " is not installed");
+							// get url related to this id
+							String dpUrl = (String) dbAdapter
+									.getDeviceAdapterUrl(dpId);
+							logger.info("location of this dp : " + dpUrl);
+							URL url = new URL(dpUrl);
+							dadmin.installDeploymentPackage(url.openStream());
+							successfulInstallation = true;
 						}
+					} else {
+						logger.warn("Could not find any dp to handle "
+								+ cl.getName());
 					}
-
-				} catch (Exception e) {
-					logger.error("", e);
 				}
 
+			} catch (Exception e) {
+				logger.error("", e);
 			}
 		}
+		return successfulInstallation;
 	}
 
 	@Override
 	public void deviceAdded(GenericDevice genericDevice) {
-
-		if (devices == null) {
-			devices = new HashMap<String, GenericDevice>();
-		}
 		devices.put(genericDevice.getSerialNumber(), genericDevice);
 		logger.info("device added");
-
-		if (genericDevice instanceof PresenceSensor) {
-
-		}
 	}
 
 	@Override
 	public void deviceRemoved(GenericDevice genericDevice) {
-
 		logger.info("device removed");
-
 	}
 
 	@Override
@@ -173,19 +171,29 @@ public class AutonomicAdapterDeploymentMgr implements DeviceListener<GenericDevi
 		String[] classNames = (String[]) detectorRef
 				.getProperty(Constants.OBJECTCLASS);
 
-		// if (classNames != null && classNames.length > 0) {
-		// for (String className : classNames) {
-		// System.out.println(className);
-		// }
-		// }
+		// removed GenericDevice and SimulatedDevice from list of classes
+		// TODO c'est crade, faut remplacer la chaine SimulatedDevice par autre
+		// chose
+		Set<String> purifiedClassNames = new HashSet<String>();
+		if (classNames != null && classNames.length > 0) {
+			for (String className : classNames) {
+				if (!className.equals(GenericDevice.class.getName())
+						&& !className.contains("SimulatedDevice")) {
+					purifiedClassNames.add(className);
+				}
+			}
+		}
 
 		GenericDevice detectorService = (GenericDevice) context
 				.getService(detectorRef);
 		logger.info("A new device has been found, id "
 				+ detectorService.getSerialNumber());
 		detectorService.addListener(this);
-		this.handleNewDevice(classNames);
-		// this.deviceAdded(detectorService);
+		boolean success = this.handleNewDevice(purifiedClassNames);
+		if (!success) {
+			uninstalledDevices.put(detectorService.getSerialNumber(),
+					purifiedClassNames);
+		}
 	}
 
 	@Unbind(id = "GenericDeviceDep")
@@ -196,5 +204,39 @@ public class AutonomicAdapterDeploymentMgr implements DeviceListener<GenericDevi
 				+ detectorService.getSerialNumber());
 		detectorService.removeListener(this);
 		this.deviceRemoved(detectorService);
+	}
+
+	@Override
+	public void DPInfosAdded(DPInfos addedDP) {
+		logger.info("DP INFOS LISTENER : dp added : " + addedDP.getName());
+
+		logger.debug("addedDP classes : " + addedDP.getInterfaces());
+		for (Entry<String, Set<String>> entry : uninstalledDevices.entrySet()) {
+			logger.debug("uninstalledDevices classes : " + entry.getValue());
+			if (addedDP.getInterfaces().containsAll(entry.getValue())) {
+				logger.debug("the added dp " + addedDP.getName()
+						+ " can handle the device " + entry.getKey());
+				try {
+					URL url = new URL(addedDP.getUrl());
+					dadmin.installDeploymentPackage(url.openStream());
+				} catch (Exception e) {
+					logger.error("", e);
+				}
+				break;
+			}
+
+		}
+	}
+
+	@Override
+	public void DPInfosRemoved(DPInfos removedDP) {
+		// nothing to do
+		logger.info("DP INFOS LISTENER : dp removed : " + removedDP.getName());
+	}
+
+	@Override
+	public void deviceEvent(GenericDevice arg0, Object arg1) {
+		// TODO Auto-generated method stub
+		
 	}
 }

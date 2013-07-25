@@ -6,14 +6,13 @@
 	under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES 
 	OR CONDITIONS OF ANY KIND, either express or implied. See the License for 
 	the specific language governing permissions and limitations under the License. -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
 	<!-- Project parent -->
 	<parent>
 		<groupId>fr.liglab.adele.icasa.apps</groupId>
 		<artifactId>parent</artifactId>
-		<version>1.0.1-SNAPSHOT</version>
+		<version>1.1.2-SNAPSHOT</version>
 		<relativePath>../../../parent</relativePath>
 	</parent>
 
@@ -44,6 +43,12 @@
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<type>jar</type>
+			<scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -54,8 +59,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<!--<Private-Package>fr.liglab.adele.habits.monitoring.presence.sensor</Private-Package> -->
-						<Export-Package>fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter</Export-Package>
+						<Export-Package>fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter;fr.liglab.adele.habits.monitoring.autonomic.manager.listeners</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

@@ -16,8 +16,8 @@ import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.xml.sax.SAXException;
 
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
 import fr.liglab.adele.habits.monitoring.db.manager.fileinstall.DBFileParser;
-import fr.liglab.adele.habits.monitoring.db.manager.fileinstall.model.DPInfos;
 
 @RunWith(JUnit4.class)
 public class DBFileParserTest {

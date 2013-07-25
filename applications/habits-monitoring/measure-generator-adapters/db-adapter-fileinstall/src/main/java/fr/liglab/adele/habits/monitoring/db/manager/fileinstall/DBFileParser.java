@@ -10,7 +10,8 @@ import java.util.Set;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
-import fr.liglab.adele.habits.monitoring.db.manager.fileinstall.model.DPInfos;
+
+import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
 import fr.liglab.adele.habits.monitoring.db.manager.fileinstall.model.DPInfosHandler;
 import org.xml.sax.SAXException;
 

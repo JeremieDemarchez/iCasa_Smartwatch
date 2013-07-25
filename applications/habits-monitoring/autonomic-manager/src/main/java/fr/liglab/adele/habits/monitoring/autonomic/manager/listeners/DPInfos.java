@@ -1,7 +1,7 @@
 /**
  * 
  */
-package fr.liglab.adele.habits.monitoring.db.manager.fileinstall.model;
+package fr.liglab.adele.habits.monitoring.autonomic.manager.listeners;
 
 import java.util.HashSet;
 import java.util.Set;
