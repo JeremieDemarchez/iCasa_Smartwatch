@@ -24,17 +24,17 @@ import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
-@Component
-@Instantiate
+//@Component
+//@Instantiate
 public class ComponentOnlyRequireDevice {
 
-	@RequiresDevice(id="thermometer")
+	@RequiresDevice(id="thermometer", type="field")
 	private Thermometer thermometer;
 		
-	@RequiresDevice(id="heater")
+	@RequiresDevice(id="heater", type="field")
 	private Heater heater;
 	
-	@RequiresDevice(id="light")
+	@RequiresDevice(id="light", type="field")
 	private BinaryLight light;
 	
 	

@@ -27,15 +27,15 @@ import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
 
 
-@Component
-@Instantiate
+//@Component
+//@Instantiate
 public class ComponentTwoRequiresType {
 	
-	@RequiresDevice(id="thermometer", mandatoryProps={"thermometer.currentTemperature", "surface"})
+	@RequiresDevice(id="thermometer", type="field", mandatoryProps={"thermometer.currentTemperature", "surface"})
 	private Thermometer thermometer;
 	
 	
-	@RequiresDevice(id="heater" ,mandatoryProps={"heater.powerLevel"})
+	@RequiresDevice(id="heater", type="field", mandatoryProps={"heater.powerLevel"})
 	private Heater heater;
 
 	
