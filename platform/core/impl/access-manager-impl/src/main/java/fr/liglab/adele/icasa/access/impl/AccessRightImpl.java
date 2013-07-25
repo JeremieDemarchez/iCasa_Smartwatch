@@ -58,6 +58,7 @@ public class AccessRightImpl implements AccessRight {
         this.internalMap.put("applicationId", applicationId);
         this.internalMap.put("deviceId", deviceId);
         this.internalMap.put("policy", policy.toString());
+        this.internalMap.put("methods", internalMethods);
     }
 
     public AccessRightImpl(Long identifier,Map<String, Object> fromMap) throws UnknownFormatConversionException{
@@ -77,6 +78,7 @@ public class AccessRightImpl implements AccessRight {
         if(fromMap.containsKey("methods")){
             methodAccessFromMap((Map)fromMap.get("methods"));
         }
+        internalMap.put("methods", internalMethods);
     }
 
     private void methodAccessFromMap(Map<String, String> methodAccess) throws UnknownFormatConversionException{
@@ -88,7 +90,6 @@ public class AccessRightImpl implements AccessRight {
             rightMethodAccess.put(entry.getKey(), MemberAccessPolicy.fromString(entry.getValue()));
             internalMethods.put(entry.getKey(), entry.getValue());
         }
-        internalMap.put("methods", internalMethods);
     }
 
 
@@ -218,6 +219,7 @@ public class AccessRightImpl implements AccessRight {
                 return;
             }
             policy = right;
+            this.internalMap.put("policy", policy.toString());
             listenerList = getListeners();
         }
         for(AccessRightListener listener: listenerList){

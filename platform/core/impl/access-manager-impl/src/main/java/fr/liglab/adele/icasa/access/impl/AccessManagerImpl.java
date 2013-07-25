@@ -16,9 +16,11 @@
 package fr.liglab.adele.icasa.access.impl;
 
 import fr.liglab.adele.icasa.access.*;
+import fr.liglab.adele.icasa.access.utils.*;
 import org.apache.felix.ipojo.annotations.*;
+import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.File;
+import java.io.*;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicLong;
@@ -38,6 +40,9 @@ public class AccessManagerImpl implements AccessManager{
 
     private File storageFile;
 
+    private long timestamp;
+
+    private File backupFile;
 
     private AtomicLong nextIdentifier = new AtomicLong(0);
 
@@ -50,7 +55,27 @@ public class AccessManagerImpl implements AccessManager{
 
     @Validate
     public void validate(){
+        List<Map> rights = loadFile();
+        if(rights != null){
+            for(Map rightInMap: rights){
+                AccessRightImpl right = createAccessRight(rightInMap);
+                if(right != null){
+                    Map<String,AccessRightImpl> map = getAccessRightContainer(right.getApplicationId());
+                    map.put(right.getDeviceId(), right);
+                }
+            }
+        }
+    }
 
+    private Map<String, AccessRightImpl> getAccessRightContainer(String applicationId){
+        Map<String, AccessRightImpl> container = null;
+        if(rightAccess.containsKey(applicationId)){
+            container = rightAccess.get(applicationId);
+        } else {
+            container = new HashMap<String, AccessRightImpl>();
+            rightAccess.put(applicationId, container);
+        }
+        return container;
     }
 
     /**
@@ -71,16 +96,10 @@ public class AccessManagerImpl implements AccessManager{
         Map<String, AccessRightImpl> applicationAccess = null;
         List<AccessRightManagerListener> accessRightManagerListeners = null;
         synchronized (this){
-            if (rightAccess.containsKey(applicationId)){
-                applicationAccess = rightAccess.get(applicationId);
-                if (applicationAccess.containsKey(deviceId)){
-                    right =  applicationAccess.get(deviceId);
-                } else {
-                    isNewAccessRight = true;
-                }
+            applicationAccess = getAccessRightContainer(applicationId);
+            if(applicationAccess.containsKey(deviceId)){
+                right =  applicationAccess.get(deviceId);
             } else {
-                applicationAccess = new HashMap<String, AccessRightImpl>();
-                rightAccess.put(applicationId,applicationAccess);
                 isNewAccessRight = true;
             }
             if(isNewAccessRight){
@@ -181,6 +200,7 @@ public class AccessManagerImpl implements AccessManager{
         }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateMethodAccessRight(methodName, accessRight);
+        writeFile();
         return rightAccess;
     }
 
@@ -217,19 +237,58 @@ public class AccessManagerImpl implements AccessManager{
         }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         rightAccess.updateAccessRight(right);
+        writeFile();
         return rightAccess;
     }
 
     private AccessRightImpl createAccessRight(String application, String device){
         Long identifier = getNextIdentifier();
         AccessRightImpl right = new AccessRightImpl(identifier,application, device);
+        addListeners(right);
         AccessRequestImpl request = new AccessRequestImpl(right);
-        List<AccessRightManagerListener> listenerList = getListeners();
-        for(AccessRightListener listener: listenerList){
-            right.addListener(listener);
+        requestSet.put(identifier, request);
+        writeFile();
+        return right;
+    }
+
+    /**
+     * Used when loading access right from file.
+     * @param rightInfo The right info contained in a map.
+     * @return the new access right.
+     */
+    private AccessRightImpl createAccessRight(Map rightInfo){
+        if(!(rightInfo.containsKey("applicationId") && rightInfo.containsKey("deviceId")) && rightInfo.containsKey("policy")){
+            System.err.println("Access right from map is invalid, applicationId, deviceId and policy are mandatory");
+            return null;
         }
+        DeviceAccessPolicy policy = DeviceAccessPolicy.fromString((String)rightInfo.get("policy"));
+        if(policy == null){
+            System.err.println("Access right from map is invalid, policy is not well formed: " + rightInfo.get("policy"));
+            return null;
+        }
+        Long identifier = getNextIdentifier();
+        AccessRightImpl right = null;
+        try{
+            right = new AccessRightImpl(identifier, rightInfo);
+        } catch (Exception ex){
+            ex.printStackTrace();
+            return null;
+        }
+        addListeners(right);
+        AccessRequestImpl request = new AccessRequestImpl(right);
         requestSet.put(identifier, request);
         return right;
+    }
+
+    private void addListeners(AccessRightImpl accessRight){
+        List<AccessRightManagerListener> listenerList = getListeners();
+        for(AccessRightListener listener: listenerList){
+            accessRight.addListener(listener);
+        }
+    }
+
+    private void updateMethodRights(Map methodRights){
+
     }
 
     /**
@@ -264,17 +323,122 @@ public class AccessManagerImpl implements AccessManager{
         return nextIdentifier.getAndIncrement();
     }
 
-    private synchronized void save(){
-        List<Map> maps = getAccessRightsMaps();
-    }
-
-    private List<Map> getAccessRightsMaps(){
+    private Map getAccessRightsMaps(){
         AccessRight[] rights = getAllAccessRight();
+        Map accessRight = new HashMap();
         List<Map> rightsInMap = new ArrayList();
         for(AccessRight right: rights){
             rightsInMap.add(right.toMap());
         }
-        return rightsInMap;
+        accessRight.put("access",rightsInMap);
+        return accessRight;
+    }
+
+    private synchronized boolean writeFile() {
+        // Rename the current file so it may be used as a backup during the next
+        // read
+        if (storageFile.exists()) {
+            if (!backupFile.exists()) {
+                if (!storageFile.renameTo(backupFile)) {
+                    System.err.println("Couldn't rename file " + storageFile
+                            + " to backup file " + backupFile);
+                    return false;
+                }
+            }
+            else {
+                storageFile.delete();
+            }
+        }
+
+        // Attempt to write the file, delete the backup and return true as
+        // atomically as
+        // possible. If any exception occurs, delete the new file; next time we
+        // will restore
+        // from the backup.
+        try {
+            FileOutputStream str = createFileOutputStream(storageFile);
+            if (str == null) {
+                return false;
+            }
+            XMLUtils.writeMapXml(getAccessRightsMaps(), str);
+            str.close();
+            timestamp = storageFile.lastModified();
+
+            // Writing was successful, delete the backup file if there is one.
+            backupFile.delete();
+            return true;
+        }
+        catch (XmlPullParserException e) {
+            System.err.println("writeFileLocked: Got exception:");
+            e.printStackTrace();
+        }
+        catch (IOException e) {
+            System.err.println("writeFileLocked: Got exception:");
+            e.printStackTrace();
+        }
+        // Clean up an unsuccessfully written file
+        if (storageFile.exists()) {
+            if (!storageFile.delete()) {
+                System.err.println("Couldn't clean up partially-written file " + storageFile);
+            }
+        }
+        return false;
+    }
+    private FileOutputStream createFileOutputStream(File file) {
+        FileOutputStream str = null;
+        try {
+            str = new FileOutputStream(file);
+        }
+        catch (FileNotFoundException e) {
+            File parent = file.getParentFile();
+            if (!parent.mkdir()) {
+                System.err.println("Couldn't create directory for " +
+                        "Access Right file " + file);
+                return null;
+            }
+
+            try {
+                str = new FileOutputStream(file);
+            }
+            catch (FileNotFoundException e2) {
+                System.err.println("Couldn't create Access Right file " + file);
+                e2.printStackTrace();
+            }
+        }
+        return str;
+    }
+
+    private List<Map> loadFile(){
+        storageFile = new File(location,"iCasa_access_right.xml");
+        backupFile = new File(location,"iCasa_access_right.bak");
+        timestamp = storageFile.lastModified();
+        Map accessRightInFile = null;
+        List returningList = null;
+        if(storageFile.exists() && !storageFile.canRead()){
+            System.err.println("Unable to read Acces Right file: " + storageFile.getAbsolutePath());
+            return null;
+        }
+        if(!(storageFile.exists() && storageFile.canRead())){
+            return null;
+        }
+        FileInputStream str = null;
+        try {
+            str = new FileInputStream(storageFile);
+            accessRightInFile = XMLUtils.readMapXml(str);
+            str.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+        if(accessRightInFile != null && accessRightInFile.containsKey("access")) {
+            try{
+             returningList = (List) accessRightInFile.get("access");
+            }catch (Exception ex){
+                System.err.println("Unable to Retrieve Access Right info: " + storageFile.getAbsolutePath());
+                return null;
+            }
+        }
+        return returningList;
     }
 
 }
