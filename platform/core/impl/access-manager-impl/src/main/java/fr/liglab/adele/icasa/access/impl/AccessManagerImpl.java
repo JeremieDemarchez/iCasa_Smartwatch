@@ -33,7 +33,7 @@ import java.util.concurrent.atomic.AtomicLong;
 @Provides
 public class AccessManagerImpl implements AccessManager{
 
-    @Property
+    @Property(value = "conf")
     private String location;
 
     private File storageFile;
