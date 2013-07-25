@@ -24,7 +24,7 @@ import java.util.Comparator;
  * This annotation declares a service requirement.
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  */
-@Target({ ElementType.FIELD, ElementType.PARAMETER })
+@Target({ ElementType.FIELD, ElementType.PARAMETER, ElementType.METHOD, ElementType.ANNOTATION_TYPE })
 @Inherited
 public @interface RequiresDevice {
 
@@ -44,7 +44,7 @@ public @interface RequiresDevice {
      * Set the dependency id.
      * Default : empty
      */
-    String id() default "";
+    String id();
 
     /**
      * Enable / Disable nullable pattern.
@@ -93,4 +93,6 @@ public @interface RequiresDevice {
     
     
     String[] mandatoryProps() default {""};
+    
+    String type();
 }
