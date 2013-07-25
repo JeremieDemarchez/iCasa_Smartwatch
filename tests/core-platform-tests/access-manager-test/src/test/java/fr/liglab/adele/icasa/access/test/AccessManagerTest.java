@@ -30,6 +30,8 @@ import org.osgi.framework.BundleContext;
 
 import javax.inject.Inject;
 
+import java.util.UUID;
+
 import static org.mockito.Mockito.*;
 
 
@@ -70,8 +72,8 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testAccessRightAssignment(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
+        String applicationID = "AppT1" + generateId();
+        String deviceID = "deviceT11" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
@@ -86,8 +88,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testPartialAccessRightAssignment(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
+        String applicationID = "AppT2" + generateId();
+        String deviceID = "deviceT2"  + generateId();
+        String method = "pingPong" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
@@ -97,9 +100,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         //This should be ok since is in the valid method list for visible.
         Assert.assertTrue(right.hasMethodAccess("getSerialNumber"));
         //It does not have right.
-        Assert.assertFalse(right.hasMethodAccess("pingPong"));
-        service.setMethodAccess(applicationID, deviceID, "pingPong", MemberAccessPolicy.READ_ONLY);
-        Assert.assertTrue(right.hasMethodAccess("pingPong"));
+        Assert.assertFalse(right.hasMethodAccess(method));
+        service.setMethodAccess(applicationID, deviceID, method, MemberAccessPolicy.READ_ONLY);
+        Assert.assertTrue(right.hasMethodAccess(method));
     }
 
     /**
@@ -108,29 +111,32 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testVisibleAccessRightAssignment(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
+        String applicationID = "AppT3" + generateId();
+        String deviceID = "deviceT3" + generateId();
+        String method1 = "pingPongT3_1" + generateId();
+        String method2 = "pingPongT3_2" + generateId();
+        String method3 = "pingPongT3_3" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
         Assert.assertFalse(right.isVisible());
         service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.VISIBLE);//It change right access.
         Assert.assertTrue(right.isVisible());
-        service.setMethodAccess(applicationID, deviceID, "pingPong", MemberAccessPolicy.READ_ONLY);
-        service.setMethodAccess(applicationID, deviceID, "pingPong2", MemberAccessPolicy.READ_ONLY);
+        service.setMethodAccess(applicationID, deviceID, method1, MemberAccessPolicy.READ_ONLY);
+        service.setMethodAccess(applicationID, deviceID, method2, MemberAccessPolicy.READ_ONLY);
 
         //This should be ok since is in the valid method list for visible.
         Assert.assertTrue(right.hasMethodAccess("getSerialNumber"));
         //It does not have right since the device access is only visible.
-        Assert.assertFalse(right.hasMethodAccess("pingPong"));
-        Assert.assertFalse(right.hasMethodAccess("pingPong2"));
-        Assert.assertFalse(right.hasMethodAccess("pingPong3"));
+        Assert.assertFalse(right.hasMethodAccess(method1));
+        Assert.assertFalse(right.hasMethodAccess(method2));
+        Assert.assertFalse(right.hasMethodAccess(method3));
 
         //Change access right to partial,
         service.setDeviceAccess(applicationID, deviceID, DeviceAccessPolicy.PARTIAL);//It change right access.
-        Assert.assertTrue(right.hasMethodAccess("pingPong"));
-        Assert.assertTrue(right.hasMethodAccess("pingPong2"));
-        Assert.assertFalse(right.hasMethodAccess("pingPong3"));
+        Assert.assertTrue(right.hasMethodAccess(method1));
+        Assert.assertTrue(right.hasMethodAccess(method2));
+        Assert.assertFalse(right.hasMethodAccess(method3));
     }
 
     /**
@@ -139,9 +145,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testMethodAccessRightAssignment(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
-        String methodName = "getLight";
+        String applicationID = "AppT4" + generateId();
+        String deviceID = "deviceT4" + generateId();
+        String methodName = "getLightT4" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
@@ -158,9 +164,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testMethodAccessRight(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
-        String methodName = "getLight";
+        String applicationID = "AppT5" + generateId();
+        String deviceID = "device1" + generateId();
+        String methodName = "getLight" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         Assert.assertNotNull(right);
@@ -178,9 +184,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testListenerChangedRight(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
-        String methodName = "getLight";
+        String applicationID = "AppT6" + generateId();
+        String deviceID = "deviceT6" + generateId();
+        String methodName = "getLightT6" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
@@ -196,9 +202,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
     @Test
     public void testListenerChangedMethodRight(){
         AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
-        String applicationID = "App1";
-        String deviceID = "device1";
-        String methodName = "getLight";
+        String applicationID = "AppT7" + generateId();
+        String deviceID = "deviceT7" + generateId();
+        String methodName = "getLightT7" + generateId();
         Assert.assertNotNull(service);
         AccessRight right = service.getAccessRight(applicationID, deviceID);
         AccessRightListener mockListener = mock(AccessRightListener.class);
@@ -207,5 +213,9 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
         service.setMethodAccess(applicationID, deviceID, methodName, MemberAccessPolicy.READ_WRITE);//must call the listeners
         verify(mockListener, times(1)).onAccessRightModified(right);
         verify(mockListener, times(1)).onMethodAccessRightModified(right, methodName);
+    }
+
+    public String generateId(){
+        return  UUID.randomUUID().toString();
     }
 }
