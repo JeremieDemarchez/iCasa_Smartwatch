@@ -52,6 +52,11 @@
     </dependency>
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>technical.services.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>simulator.api</artifactId>
       <version>${project.version}</version>
     </dependency>
@@ -72,6 +77,7 @@
               fr.liglab.adele.icasa.simulator.impl,
               fr.liglab.adele.icasa.simulator.script.executor.impl,
               fr.liglab.adele.icasa.simulator.illuminance.impl,
+              fr.liglab.adele.icasa.simulator.temperature.impl,
               fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
             <Export-Package />
           </instructions>
