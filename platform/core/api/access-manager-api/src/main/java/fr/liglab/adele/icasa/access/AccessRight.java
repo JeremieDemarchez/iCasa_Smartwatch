@@ -77,10 +77,15 @@ public interface AccessRight {
      */
     void removeListener(AccessRightListener listener);
 
+    /**
+     * Get the device policy value.
+     * @return the device policy.
+     */
     DeviceAccessPolicy getPolicy();
 
+    /**
+     * Get an identifier of this AccessRight.
+     * @return
+     */
     Long getIdentifier();
-
-    Map toMap();
-
 }

@@ -15,44 +15,40 @@
  */
 package test.component.handler;
 
-import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Unbind;
 
-import fr.liglab.adele.icasa.dependency.handler.annotations.BindDevice;
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
 
-@Component
-@Instantiate
+//@Component
+//@Instantiate
 public class ComponentUsingBindMethods {
 
 	
-	@BindDevice
+	@RequiresDevice(id="lights", type="bind")
 	public void bindBinaryLight(BinaryLight light) {
-		System.out.println("ComponentUsingBindMethods ---------------> " + light.getSerialNumber());
-		System.out.println("ComponentUsingBindMethods ---------------> " + light.getPowerStatus());
+		try {
+			System.out.println("BIND METHOD");
+			System.out.println("ComponentUsingBindMethods ---------------> " + light.getSerialNumber());
+			System.out.println("ComponentUsingBindMethods ---------------> " + light.getPowerStatus());	      
+      } catch (Exception e) {
+	      e.printStackTrace();
+      }
 	}
 	
-	@Bind
-	public void bindBinaryLight2(BinaryLight light) {
-		System.out.println("ComponentUsingBindMethods ---------------> " + light.getSerialNumber());
-		System.out.println("ComponentUsingBindMethods ---------------> " + light.getPowerStatus());
-	}
+	@RequiresDevice(id="lights", type="unbind")
+	public void unbindBinaryLight(BinaryLight light) {
+		try {
+			System.out.println("UNBIND METHOD");
+			System.out.println("ComponentUsingBindMethods ---------------> " + light.getSerialNumber());
+			System.out.println("ComponentUsingBindMethods ---------------> " + light.getPowerStatus());		      
+      } catch (Exception e) {
+	      e.printStackTrace();
+      }
 	
-	@Unbind
-	public void unbindBinaryLight2(BinaryLight light) {
+	}
 		
-	}
-	
-	@Unbind
-	public void unbindBinaryLight3(BinaryLight light) {
-		
-	}
-	
-	
-
-	
 	
 }

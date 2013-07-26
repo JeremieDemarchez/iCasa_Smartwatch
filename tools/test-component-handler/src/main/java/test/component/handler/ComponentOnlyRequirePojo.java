@@ -13,12 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.dependency.handler.annotations;
+package test.component.handler;
 
-import org.apache.felix.ipojo.annotations.Stereotype;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.osgi.framework.ServiceReference;
 
+//@Component
+//@Instantiate
+public class ComponentOnlyRequirePojo {
 
-@Stereotype
-public @interface UnbindDevice {
-
+	@Bind(aggregate=true, specification="fr.liglab.adele.icasa.device.GenericDevice")
+	public void bindGenericDevice(ServiceReference reference) {
+		System.out.println("reference " + reference);
+	}
+	
 }

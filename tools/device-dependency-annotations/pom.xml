@@ -13,6 +13,14 @@
   <artifactId>device.dependency.annotations</artifactId>
   <name>${productName} :: ${projectName}</name>
 
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+    </dependency>
+  </dependencies>
+  
+  
   <build>
     <plugins>
       <plugin>

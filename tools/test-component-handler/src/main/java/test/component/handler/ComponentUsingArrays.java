@@ -15,15 +15,12 @@
  */
 package test.component.handler;
 
-import java.util.List;
-
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
 @Component
@@ -32,7 +29,7 @@ public class ComponentUsingArrays {
 
 	private Thread thread;
 	
-	@RequiresDevice
+	@RequiresDevice(id="thermometers", type="field")
 	private Thermometer[] thermometers;
 
 	@Validate
