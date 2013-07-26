@@ -438,14 +438,17 @@ public class DeviceDependencyHandler extends DependencyHandler {
        Dictionary fromConfiguration = (Dictionary) configuration.get("requires.from");
 
        for (int i = 0; deps != null && i < deps.length; i++) {
-     	  	 String mandatoryProps = deps[i].getAttribute("mandatoryprops");
+      	 
+          // Create the dependency metadata
+          final Element dependencyElement = deps[i];
+      	 
+     	  	 String mandatoryProps = dependencyElement.getAttribute("mandatoryprops");
+     	  	      	  	 
+     	  	 
+     	  	 
+     	  	 
+     	  	 
 
-     	  	 
-     	  	 //getLogger().log(Logger.DEBUG, "---------------------------> " + mandatoryProps);
-     	  	 //System.out.println( "---------------------------> " + mandatoryProps);
-     	  	 
-           // Create the dependency metadata
-           final Element dependencyElement = deps[i];
 
            String field = dependencyElement.getAttribute("field");
            String serviceSpecification = getServiceSpecificationAttribute(dependencyElement);
@@ -479,7 +482,10 @@ public class DeviceDependencyHandler extends DependencyHandler {
            DeviceDependency dep = new DeviceDependency(this, field, spec, fil, optional, aggregate, nullable, isProxy, identity, context, policy, cmp, defaultImpl);
 
            // Look for dependency callback :
-           addCallbacksToDependency(dependencyElement, dep);
+           // addCallbacksToDependency(dependencyElement, dep);
+           
+           // Look for dependency callback : icasa method 
+           addCallbacksToDependencyNew(dependencyElement, dep);
 
            // Add the constructor parameter if needed
            String paramIndex = dependencyElement.getAttribute("constructor-parameter");
@@ -511,6 +517,8 @@ public class DeviceDependencyHandler extends DependencyHandler {
 
        manageContextSources(configuration);
    }
+   
+
 
    /**
     * Add internal context source to all dependencies.
@@ -603,6 +611,33 @@ public class DeviceDependencyHandler extends DependencyHandler {
        return setting;
    }
 
+   
+	private void addCallbacksToDependencyNew(Element dependencyElement, DeviceDependency dep)
+	      throws ConfigurationException {
+
+		
+		if (!dependencyElement.containsAttribute("type")) {
+			throw new ConfigurationException("Device Dependency : a device dependency type (field, bind or unbind) attribute");			
+		}
+		
+		
+		
+
+		String method = dependencyElement.getAttribute("method");
+		String type = dependencyElement.getAttribute("type");
+
+		int methodType = DeviceDependency.BIND_ICASA;
+		if (type.equals("bind")) {
+			methodType = DeviceDependency.BIND_ICASA;
+		} else if (type.equals("unbind")) {
+			methodType = DeviceDependency.UNBIND_ICASA;
+		} else {
+			return; // No callbackas must be added
+		}
+		
+      dep.addDependencyCallback(createDependencyHandler(dep, method, methodType));
+	}
+   
    private void addCallbacksToDependency(Element dependencyElement, DeviceDependency dep) throws ConfigurationException {
        Element[] cbs = dependencyElement.getElements("Callback");
        for (int j = 0; cbs != null && j < cbs.length; j++) {
@@ -774,11 +809,19 @@ public class DeviceDependencyHandler extends DependencyHandler {
    
    //------------------------- Added methods --------------------------------//
    
-	public AccessRight getAccessRight(BundleContext context, String deviceId) {
+	public AccessRight getAccessRight(BundleContext context, String deviceId) {		
+		String appId = getApplicationId(context);
+		if (appId!=null) {
+			return accessManager.getAccessRight(appId, deviceId);
+		}
+		return null;
+	}
+	
+	public String getApplicationId(BundleContext context) {
 		String bundleName = context.getBundle().getSymbolicName();
 		Application app = applicationManager.getApplicationOfBundle(bundleName);
 		if (app!=null) {
-			return accessManager.getAccessRight(app.getId(), deviceId);
+			return app.getId();
 		}
 		return null;
 	}

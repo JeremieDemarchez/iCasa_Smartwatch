@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.access;
 
 
 import java.lang.reflect.Method;
+import java.util.Map;
 
 /**
  * The AccessRight interface allows to inspect the right access for an application to use a service.
@@ -76,7 +77,15 @@ public interface AccessRight {
      */
     void removeListener(AccessRightListener listener);
 
+    /**
+     * Get the device policy value.
+     * @return the device policy.
+     */
     DeviceAccessPolicy getPolicy();
 
+    /**
+     * Get an identifier of this AccessRight.
+     * @return
+     */
     Long getIdentifier();
 }

@@ -15,6 +15,9 @@
  */
 package fr.liglab.adele.icasa.dependency.manager2.interceptor;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -28,32 +31,45 @@ import org.osgi.framework.BundleContext;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.application.Application;
-import fr.liglab.adele.icasa.application.ApplicationManager;
 import fr.liglab.adele.icasa.dependency.manager2.DeviceDependency;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.location.LocatedDevice;
 
 @Component(name = "DeviceAccessTrackingInterceptor")
-@Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
+@Provides(specifications = { ServiceTrackingInterceptor.class }, properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
 @Instantiate(name = "DeviceAccessTrackingInterceptor-0")
 public class DeviceAccessTrackingInterceptor implements ServiceTrackingInterceptor {
 
 	@Requires
 	private AccessManager accessManager;
 
-	@Requires
-	private ApplicationManager applicationManager;
+	//@Requires
+	//private ApplicationManager applicationManager;
+
+	// @Requires
+	// private ContextManager contextManager;
+
+	/**
+	 * The set of managed dependencies. Access must be guarded by the monitor lock.
+	 */
+	protected final List<DeviceDependency> dependencies = new ArrayList<DeviceDependency>();
 
 	@Override
 	public void open(DependencyModel dependency) {
-		// TODO Auto-generated method stub
-
+		if (isPlatformComponent(dependency))
+			return;
+		if (dependency instanceof DeviceDependency) {
+			dependencies.add((DeviceDependency) dependency);
+		}
 	}
 
 	@Override
 	public void close(DependencyModel dependency) {
-		// TODO Auto-generated method stub
-
+		if (isPlatformComponent(dependency))
+			return;
+		synchronized (this) {
+			dependencies.remove(dependency);
+		}
 	}
 
 	@Override
@@ -63,30 +79,22 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		if (dependency instanceof DeviceDependency) {
 			DeviceDependency deviceDependency = (DeviceDependency) dependency;
 
-			String bundleName = context.getBundle().getSymbolicName();
+			//String bundleName = context.getBundle().getSymbolicName();
 
-			Application app = applicationManager.getApplicationOfBundle(bundleName);
+			//Application app = applicationManager.getApplicationOfBundle(bundleName);
 
-			// No application associated neither Device Identifier
-			if (app == null || !ref.contains(GenericDevice.DEVICE_SERIAL_NUMBER)) {
-				System.out.println("%ERROR% Application ref " + app + " --- Contains Serial Number: "
-				      + ref.contains(GenericDevice.DEVICE_SERIAL_NUMBER));
+			String appId = deviceDependency.getApplicationId();
+			String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
+
+			// No application associated or Device Id not Found
+			if (appId == null || deviceId == null) {
 				return null;
 			}
 
-			String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
+			AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
+			deviceDependency.addAccessRight(accessRight);
 
-			AccessRight right = accessManager.getAccessRight(app.getId(), deviceId);
-
-			System.out.println("========================================================");
-			System.out.println("====> Dependency " + deviceDependency.getId());
-			System.out.println("====> Component " + deviceDependency.getComponentInstance().getInstanceName());
-			System.out.println("====> Application " + app.getId());
-			System.out.println("====> Device ID: " + deviceId);
-			System.out.println("====> Access: " + right.isVisible());
-			System.out.println("========================================================");
-
-			if (!right.isVisible()) {
+			if (!accessRight.isVisible()) {
 				return null;
 			}
 
@@ -122,5 +130,44 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
 		return false;
 	}
+
+	
+	/*
+	 
+	private void invalidateMatchingServices(String appId, LocatedDevice locatedDevice) {
+		List<DeviceDependency> copyList = new ArrayList<DeviceDependency>();
+		synchronized (this) {
+			copyList.addAll(dependencies);
+		}
+		
+		for (DeviceDependency dependency : copyList) {
+			if (appId.equals(dependency.getApplicationId())) { // Only for dependecies of this application
+				Class[] interfaces = locatedDevice.getDeviceObject().getClass().getInterfaces();
+				for (Class interfaze : interfaces) {
+					if (dependency.getSpecification().equals(interfaze)) { // Only dependencies using this kind of device
+						dependency.invalidateMatchingServices();
+					}
+				}
+			}
+		}
+	}
+
+
+	@Override
+   public void onAccessRightModified(AccessRight accessRight) {
+	   String appId = accessRight.getApplicationId();
+	   String deviceId = accessRight.getDeviceId();
+	   
+	   LocatedDevice locatedDevice = contextManager.getDevice(deviceId);
+	   
+	   invalidateMatchingServices(appId, locatedDevice);
+	   
+   }
+
+	@Override
+   public void onMethodAccessRightModified(AccessRight accessRight, String methodName) {
+	   // Nothing to be done
+   }
+   */
 
 }
