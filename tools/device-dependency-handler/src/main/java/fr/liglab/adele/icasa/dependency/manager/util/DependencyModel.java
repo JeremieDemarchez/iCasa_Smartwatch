@@ -321,7 +321,7 @@ public abstract class DependencyModel implements TrackerCustomizer {
     }
 
     /**
-     * Service Tracker added service callback.
+     * Service LocatedDeviceTracker added service callback.
      * If the service matches (against the filter and the {@link DependencyModel#match(ServiceReference)},
      * manages the provider arrival.
      * @param ref : new references.

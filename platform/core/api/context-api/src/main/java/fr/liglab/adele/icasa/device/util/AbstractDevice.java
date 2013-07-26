@@ -69,6 +69,8 @@ public abstract class AbstractDevice implements GenericDevice {
 			throw new NullPointerException("Null property name");
 		}
 		boolean modified = false;
+        boolean added = false;
+        boolean removed = false;
 		Object oldValue = null;
 		synchronized (_properties) {
 			oldValue = _properties.get(propertyName);
@@ -77,17 +79,23 @@ public abstract class AbstractDevice implements GenericDevice {
 				if (!oldValue.equals(value)) {
 					_properties.put(propertyName, value);
 					modified = true;
+                    removed = true;
 				}
 			} else {
 				if (value != null) {
 					_properties.put(propertyName, value);
 					modified = true;
+                    added = true;
 				}
 			}
 		}
 
+        if (added)
+            notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_ADDED, propertyName, oldValue, value));
 		if (modified)
 			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue, value));
+        if (removed)
+            notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_REMOVED, propertyName, oldValue, value));
 	}
 
 
@@ -182,8 +190,7 @@ public abstract class AbstractDevice implements GenericDevice {
 	 */
 	@Override
 	public void enterInZones(List<Zone> zones) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
 	}
 
 	/* (non-Javadoc)
@@ -191,8 +198,25 @@ public abstract class AbstractDevice implements GenericDevice {
 	 */
 	@Override
 	public void leavingZones(List<Zone> zones) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
 	}
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || !(o instanceof GenericDevice)) return false;
+
+        GenericDevice otherDevice = (GenericDevice) o;
+        String otherSN = otherDevice.getSerialNumber();
+        if (otherSN == null)
+            return (getSerialNumber() == null);
+
+        return otherSN.equals(getSerialNumber());
+    }
+
+    @Override
+    public int hashCode() {
+        String serialNumber = getSerialNumber();
+        return serialNumber == null ? 0 : serialNumber.hashCode();
+    }
 }

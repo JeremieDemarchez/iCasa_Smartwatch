@@ -20,6 +20,9 @@ import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
+import fr.liglab.adele.icasa.distribution.test.device.DeviceTrackedNbCondition;
+import fr.liglab.adele.icasa.distribution.test.device.Type1Device;
 import fr.liglab.adele.icasa.location.*;
 import org.junit.After;
 import org.junit.Assert;
@@ -59,7 +62,7 @@ public class DeviceTest extends AbstractDistributionBaseTest {
 	}
 	
 	/**
-	 * Test the creation of a new zone.
+	 * Test that there is no device at stratup.
 	 */
 	@Test
 	public void getDevicesWithoutDevicesTest(){
@@ -72,6 +75,34 @@ public class DeviceTest extends AbstractDistributionBaseTest {
 		Assert.assertNotNull(devices);
 		Assert.assertEquals(0, devices.size());
 	}
+
+    @Test
+    public void testDeviceTrackerWithoutCustomizerAndFilter() {
+        ContextManager contextMgr = (ContextManager)getService(context,ContextManager.class);
+        Assert.assertNotNull(contextMgr);
+
+        LocatedDeviceTracker tracker = new LocatedDeviceTracker(context, Type1Device.class, null);
+        tracker.open();
+        Assert.assertEquals(0, tracker.size());
+
+        GenericDevice dev1 = mock(Type1Device.class);
+        String dev1SN = "dev1";
+        when(dev1.getSerialNumber()).thenReturn(dev1SN);
+        ServiceRegistration dev1SReg = registerDevice(dev1, GenericDevice.class, Type1Device.class);
+
+        waitForCondition(new DeviceTrackedNbCondition(tracker, 1));
+
+        GenericDevice dev2 = mock(Type1Device.class);
+        String dev2SN = "dev2";
+        when(dev2.getSerialNumber()).thenReturn(dev2SN);
+        ServiceRegistration dev2SReg = registerDevice(dev2, GenericDevice.class, Type1Device.class);
+
+        //waitForCondition(new DeviceTrackedNbCondition(tracker, 2));
+
+        //cleanup
+        dev1SReg.unregister();
+        dev2SReg.unregister();
+    }
 
     @Test
     public void testAttachDeviceEventTest(){
@@ -181,6 +212,41 @@ public class DeviceTest extends AbstractDistributionBaseTest {
         serviceProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER,serialNumber);//add serial number service prop
         ServiceRegistration registration = context.registerService(GenericDevice.class.getName(), deviceService, serviceProperties);
         return  registration;
+    }
+
+    private ServiceRegistration registerDevice(GenericDevice device, Class... servicesToRegister){
+        Dictionary serviceProperties = new Hashtable();
+        serviceProperties.put(GenericDevice.DEVICE_SERIAL_NUMBER, device.getSerialNumber());//add serial number service prop
+        String[] serviceIntfs = new String[servicesToRegister.length];
+        for (int i = 0; i < servicesToRegister.length; i++) {
+            serviceIntfs[i] = servicesToRegister[i].getName();
+        }
+        ServiceRegistration registration = context.registerService(serviceIntfs, device, serviceProperties);
+
+        return registration;
+    }
+
+    private void waitForCondition(Condition condition) {
+        int timeout = 1000; // 1 second timeout by default
+        int NB_TIMES = 5;
+        int period = timeout / NB_TIMES;
+        for (int i = 0; i < NB_TIMES; i++) {
+            if (condition.isChecked()) {
+                break;
+            }
+            if (i == NB_TIMES - 1)
+                waitForIt(period);
+        }
+        if (!condition.isChecked())
+            Assert.fail(condition.getDescription() + " failed.");
+    }
+
+    private void waitForIt(int ms) {
+        try {
+            Thread.sleep(ms);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 }

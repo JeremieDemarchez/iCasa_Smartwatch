@@ -18,38 +18,38 @@ package fr.liglab.adele.icasa.dependency.manager.util;
 import org.osgi.framework.ServiceReference;
 
 /**
- * Tracker Customizer.
+ * LocatedDeviceTracker Customizer.
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  */
 public interface TrackerCustomizer {
 
     /**
-     * A service is being added to the Tracker object.
-     * This method is called before a service which matched the search parameters of the Tracker object is added to it. This method should return the service object to be tracked for this ServiceReference object.
-     * The returned service object is stored in the Tracker object and is available from the getService and getServices methods.
-     * @param reference the Reference to service being added to the Tracker object.
+     * A service is being added to the LocatedDeviceTracker object.
+     * This method is called before a service which matched the search parameters of the LocatedDeviceTracker object is added to it. This method should return the service object to be tracked for this ServiceReference object.
+     * The returned service object is stored in the LocatedDeviceTracker object and is available from the getService and getServices methods.
+     * @param reference the Reference to service being added to the LocatedDeviceTracker object.
      * @return The service object to be tracked for the ServiceReference object or null if the ServiceReference object should not be tracked.
      */
     boolean addingService(ServiceReference reference);
     
     /**
-     * A service tracked by the Tracker object has been added in the list.
+     * A service tracked by the LocatedDeviceTracker object has been added in the list.
      * This method is called when a service has been added in the managed list (after addingService) and if the service has not disappeared before during the callback.
      * @param reference the added reference.
      */
     void addedService(ServiceReference reference);
 
     /**
-     * A service tracked by the Tracker object has been modified.
-     * This method is called when a service being tracked by the Tracker object has had it properties modified.
+     * A service tracked by the LocatedDeviceTracker object has been modified.
+     * This method is called when a service being tracked by the LocatedDeviceTracker object has had it properties modified.
      * @param reference the Reference to service that has been modified.
      * @param service The service object for the modified service.
      */
     void modifiedService(ServiceReference reference, Object service);
 
     /**
-     * A service tracked by the Tracker object has been removed.
-     * This method is called after a service is no longer being tracked by the Tracker object.
+     * A service tracked by the LocatedDeviceTracker object has been removed.
+     * This method is called after a service is no longer being tracked by the LocatedDeviceTracker object.
      * @param reference the Reference to service that has been removed.
      * @param service The service object for the removed service.
      */

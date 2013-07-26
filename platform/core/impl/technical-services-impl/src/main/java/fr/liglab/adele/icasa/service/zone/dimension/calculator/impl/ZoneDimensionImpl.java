@@ -249,6 +249,7 @@ class ZoneDimensionImpl implements TechnicalService, ZoneDimension {
 		L.info("The dimension service is stopping");
 
 		// remove the listener responsible for updating dimension.
-		m_contextManager.removeListener(m_zoneListener);
+        if (m_contextManager != null)
+		    m_contextManager.removeListener(m_zoneListener);
 	}
 }

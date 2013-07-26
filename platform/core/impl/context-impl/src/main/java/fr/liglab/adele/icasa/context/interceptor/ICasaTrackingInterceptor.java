@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.context.interceptor;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.liglab.adele.icasa.device.util.EmptyLocatedDeviceListener;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -32,7 +33,6 @@ import org.osgi.framework.BundleContext;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.util.AbstractLocatedDeviceListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
@@ -47,7 +47,7 @@ import fr.liglab.adele.icasa.location.Zone;
 @Component(name = "ICasaTrackingInterceptor")
 @Provides(properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
 @Instantiate
-public class ICasaTrackingInterceptor extends AbstractLocatedDeviceListener implements ServiceTrackingInterceptor {
+public class ICasaTrackingInterceptor extends EmptyLocatedDeviceListener implements ServiceTrackingInterceptor {
 
 	/**
 	 * The set of managed dependencies. Access must be guarded by the monitor lock.
