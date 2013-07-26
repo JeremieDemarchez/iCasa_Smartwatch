@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.dependency.manager2.interceptor;
+package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,9 +31,8 @@ import org.osgi.framework.BundleContext;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.dependency.manager2.DeviceDependency;
+import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.location.LocatedDevice;
 
 @Component(name = "DeviceAccessTrackingInterceptor")
 @Provides(specifications = { ServiceTrackingInterceptor.class }, properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
@@ -43,11 +42,6 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 	@Requires
 	private AccessManager accessManager;
 
-	//@Requires
-	//private ApplicationManager applicationManager;
-
-	// @Requires
-	// private ContextManager contextManager;
 
 	/**
 	 * The set of managed dependencies. Access must be guarded by the monitor lock.
@@ -79,9 +73,6 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		if (dependency instanceof DeviceDependency) {
 			DeviceDependency deviceDependency = (DeviceDependency) dependency;
 
-			//String bundleName = context.getBundle().getSymbolicName();
-
-			//Application app = applicationManager.getApplicationOfBundle(bundleName);
 
 			String appId = deviceDependency.getApplicationId();
 			String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
