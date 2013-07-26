@@ -22,6 +22,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import fr.liglab.adele.icasa.TechnicalService;
 import fr.liglab.adele.icasa.Variable;
+import fr.liglab.adele.icasa.device.DeviceListener;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.annotations.*;
@@ -58,7 +59,9 @@ public class ContextManagerImpl implements ContextManager {
 
 	private List<DeviceTypeListener> deviceTypeListeners = new ArrayList<DeviceTypeListener>();
 
-	private List<LocatedDeviceListener> deviceListeners = new ArrayList<LocatedDeviceListener>();
+    private List<DeviceListener> deviceListeners = new ArrayList<DeviceListener>();
+
+	private List<LocatedDeviceListener> locatedDeviceListeners = new ArrayList<LocatedDeviceListener>();
 
 	private List<ZoneListener> zoneListeners = new ArrayList<ZoneListener>();
 
@@ -416,7 +419,8 @@ public class ContextManagerImpl implements ContextManager {
 		boolean contained = false;
 		String deviceType = null;
 		LocatedDevice device = null;
-		List<LocatedDeviceListener> snapshotListeners = null;
+		List<LocatedDeviceListener> snapshotLocatedDeviceListeners = null;
+        List<DeviceListener> snapshotDeviceListeners = null;
 		if (simDev instanceof Pojo) {
 			try {
 				deviceType = ((Pojo) simDev).getComponentInstance().getFactory().getFactoryName();
@@ -432,8 +436,9 @@ public class ContextManagerImpl implements ContextManager {
 			if (!contained) {
 				device = new LocatedDeviceImpl(sn, new Position(-1, -1), simDev, deviceType, this);
 				locatedDevices.put(sn, device);
-				snapshotListeners = getDeviceListeners();
-			}
+				snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
+                snapshotDeviceListeners = getDeviceListeners();
+            }
 
 		} finally {
 			lock.writeLock().unlock();
@@ -441,7 +446,15 @@ public class ContextManagerImpl implements ContextManager {
 		// notify only if not already added.
 		if (!contained) {
 			// Listeners notification
-			for (LocatedDeviceListener listener : snapshotListeners) {
+            for (DeviceListener listener : snapshotDeviceListeners) {
+                try {
+                    listener.deviceAdded(simDev);
+                    simDev.addListener(listener);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            for (LocatedDeviceListener listener : snapshotLocatedDeviceListeners) {
 				try {
 					listener.deviceAdded(device);
 					device.addListener(listener);
@@ -457,19 +470,29 @@ public class ContextManagerImpl implements ContextManager {
 	@Unbind(id = "devices")
 	public void unbindDevice(GenericDevice simDev) {
 		String sn = simDev.getSerialNumber();
-		List<LocatedDeviceListener> snapshotListeners = null;
+		List<LocatedDeviceListener> snapshotLocatedDeviceListeners = null;
+        List<DeviceListener> snapshotDeviceListeners = null;
 		LocatedDevice device;
 		lock.writeLock().lock();
 		try {
 			m_devices.remove(sn);
 			device = locatedDevices.remove(sn);
-			snapshotListeners = getDeviceListeners();
+			snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
+            snapshotDeviceListeners = getDeviceListeners();
 		} finally {
 			lock.writeLock().unlock();
 		}
 
 		// Listeners notification
-		for (LocatedDeviceListener listener : snapshotListeners) {
+        for (DeviceListener listener : snapshotDeviceListeners) {
+            try {
+                listener.deviceRemoved(simDev);
+                simDev.removeListener(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+		for (LocatedDeviceListener listener : snapshotLocatedDeviceListeners) {
 			try {
 				listener.deviceRemoved(device);
 				device.removeListener(listener);
@@ -542,12 +565,29 @@ public class ContextManagerImpl implements ContextManager {
 				zone.addListener(zoneListener);
 		}
 
+        if (listener instanceof DeviceListener) {
+            DeviceListener deviceListener = (DeviceListener) listener;
+            List<LocatedDevice> snapshotDevices;
+            writeLock.lock();
+            try {
+                deviceListeners.add(deviceListener);
+                snapshotDevices = getDevices();
+            } finally {
+                writeLock.unlock();
+            }
+            for (LocatedDevice device : snapshotDevices) {
+                GenericDevice deviceObj = device.getDeviceObject();
+                if (deviceObj != null)
+                    deviceObj.addListener(deviceListener);
+            }
+        }
+
 		if (listener instanceof LocatedDeviceListener) {
 			LocatedDeviceListener deviceListener = (LocatedDeviceListener) listener;
 			List<LocatedDevice> snapshotDevices;
 			writeLock.lock();
 			try {
-				deviceListeners.add(deviceListener);
+				locatedDeviceListeners.add(deviceListener);
 				snapshotDevices = getDevices();
 			} finally {
 				writeLock.unlock();
@@ -586,13 +626,30 @@ public class ContextManagerImpl implements ContextManager {
 			}
 		}
 
+        if (listener instanceof DeviceListener) {
+            DeviceListener deviceListener = (DeviceListener) listener;
+            List<LocatedDevice> locatedDeviceListSnapshot;
+            writeLock.lock();
+            try {
+                locatedDeviceListSnapshot = getDevices();
+                deviceListeners.remove(deviceListener);
+            } finally {
+                writeLock.unlock();
+            }
+            for (LocatedDevice device : locatedDeviceListSnapshot) {
+                GenericDevice deviceObj = device.getDeviceObject();
+                if (deviceObj != null)
+                    deviceObj.removeListener(deviceListener);
+            }
+        }
+
 		if (listener instanceof LocatedDeviceListener) {
 			LocatedDeviceListener deviceListener = (LocatedDeviceListener) listener;
 			List<LocatedDevice> locatedDeviceListSnapshot;
 			writeLock.lock();
 			try {
-				deviceListeners.remove(deviceListener);
-				locatedDeviceListSnapshot = getDevices();
+                locatedDeviceListSnapshot = getDevices();
+				locatedDeviceListeners.remove(deviceListener);
 			} finally {
 				writeLock.unlock();
 			}
@@ -657,13 +714,22 @@ public class ContextManagerImpl implements ContextManager {
 		}
 	}
 
-	private List<LocatedDeviceListener> getDeviceListeners() {
+	private List<LocatedDeviceListener> getLocatedDeviceListeners() {
 		readLock.lock();
 		try {
-			return new ArrayList<LocatedDeviceListener>(deviceListeners);
+			return new ArrayList<LocatedDeviceListener>(locatedDeviceListeners);
 		} finally {
 			readLock.unlock();
 		}
 	}
+
+    private List<DeviceListener> getDeviceListeners() {
+        readLock.lock();
+        try {
+            return new ArrayList<DeviceListener>(deviceListeners);
+        } finally {
+            readLock.unlock();
+        }
+    }
 
 }

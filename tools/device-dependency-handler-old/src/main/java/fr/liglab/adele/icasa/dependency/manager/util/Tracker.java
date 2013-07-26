@@ -33,14 +33,14 @@ import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 
 /**
- * Utility class close to the OSGi Service Tracker.
+ * Utility class close to the OSGi Service LocatedDeviceTracker.
  * This class is used when tracking dynamic services is required.
  * @author <a href="mailto:dev@felix.apache.org">Felix Project Team</a>
  */
 public class Tracker implements TrackerCustomizer {
 
     /**
-     * The bundle context against which this Tracker object is tracking.
+     * The bundle context against which this LocatedDeviceTracker object is tracking.
      */
     protected BundleContext m_context;
 
@@ -91,12 +91,12 @@ public class Tracker implements TrackerCustomizer {
     private volatile Object m_cachedService;
 
     /**
-     * Creates a Tracker object on the specified ServiceReference object.
-     * The service referenced by the specified ServiceReference object will be tracked by this Tracker.
+     * Creates a LocatedDeviceTracker object on the specified ServiceReference object.
+     * The service referenced by the specified ServiceReference object will be tracked by this LocatedDeviceTracker.
      * @param context The BundleContext object against which the tracking is done.
      * @param reference The ServiceReference object for the service to be tracked.
-     * @param customizer The customizer object to call when services are added, modified, or removed in this Tracker object. If customizer is null, then this Tracker object will be used as
-     *            the TrackerCustomizer object and the Tracker object will call the TrackerCustomizer methods on itself.
+     * @param customizer The customizer object to call when services are added, modified, or removed in this LocatedDeviceTracker object. If customizer is null, then this LocatedDeviceTracker object will be used as
+     *            the TrackerCustomizer object and the LocatedDeviceTracker object will call the TrackerCustomizer methods on itself.
      */
     public Tracker(BundleContext context, ServiceReference reference, TrackerCustomizer customizer) {
         m_context = context;
@@ -116,12 +116,12 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Creates a Tracker object on the specified class name.
-     * Services registered under the specified class name will be tracked by this Tracker object.
+     * Creates a LocatedDeviceTracker object on the specified class name.
+     * Services registered under the specified class name will be tracked by this LocatedDeviceTracker object.
      * @param context the BundleContext object against which the tracking is done.
      * @param clazz the Class name of the services to be tracked.
-     * @param customizer the customizer object to call when services are added, modified, or removed in this Tracker object. If customizer is null, then this Tracker object will be used as
-     *            the TrackerCustomizer object and the Tracker object will call the TrackerCustomizer methods on itself.
+     * @param customizer the customizer object to call when services are added, modified, or removed in this LocatedDeviceTracker object. If customizer is null, then this LocatedDeviceTracker object will be used as
+     *            the TrackerCustomizer object and the LocatedDeviceTracker object will call the TrackerCustomizer methods on itself.
      */
     public Tracker(BundleContext context, String clazz, TrackerCustomizer customizer) {
         // Security Check
@@ -149,13 +149,13 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Creates a Tracker object on the specified Filter object.
+     * Creates a LocatedDeviceTracker object on the specified Filter object.
      * <p>
-     * Services which match the specified Filter object will be tracked by this Tracker object.
+     * Services which match the specified Filter object will be tracked by this LocatedDeviceTracker object.
      * @param context the BundleContext object against which the tracking is done.
      * @param filter the Filter object to select the services to be tracked.
-     * @param customizer The customizer object to call when services are added, modified, or removed in this Tracker object. If customizer is null, then this Tracker object will be used as the
-     *            TrackerCustomizer object and the Tracker object will call the TrackerCustomizer methods on itself.
+     * @param customizer The customizer object to call when services are added, modified, or removed in this LocatedDeviceTracker object. If customizer is null, then this LocatedDeviceTracker object will be used as the
+     *            TrackerCustomizer object and the LocatedDeviceTracker object will call the TrackerCustomizer methods on itself.
      */
     public Tracker(BundleContext context, Filter filter, TrackerCustomizer customizer) {
         this.m_context = context;
@@ -174,9 +174,9 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Opens this Tracker object and begin tracking services.
+     * Opens this LocatedDeviceTracker object and begin tracking services.
      * <p>
-     * Services which match the search criteria specified when this Tracker object was created are now tracked by this Tracker object.
+     * Services which match the search criteria specified when this LocatedDeviceTracker object was created are now tracked by this LocatedDeviceTracker object.
      */
     public synchronized void open() {
         if (m_tracked != null) { return; }
@@ -208,7 +208,7 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Returns the list of initial ServiceReference objects that will be tracked by this Tracker object.
+     * Returns the list of initial ServiceReference objects that will be tracked by this LocatedDeviceTracker object.
      * @param trackClass the class name with which the service was registered, or null for all services.
      * @param filterString the filter criteria or null for all services.
      * @return the list of initial ServiceReference objects.
@@ -219,9 +219,9 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Closes this Tracker object.
+     * Closes this LocatedDeviceTracker object.
      * <p>
-     * This method should be called when this Tracker object should end the tracking of services.
+     * This method should be called when this LocatedDeviceTracker object should end the tracking of services.
      */
     public synchronized void close() {
         if (m_tracked == null) { return; }
@@ -247,12 +247,12 @@ public class Tracker implements TrackerCustomizer {
     /**
      * Default implementation of the TrackerCustomizer.addingService method.
      * <p>
-     * This method is only called when this Tracker object has been constructed with a null TrackerCustomizer argument. The default implementation returns the result of calling getService,
-     * on the BundleContext object with which this Tracker object was created, passing the specified ServiceReference object.
+     * This method is only called when this LocatedDeviceTracker object has been constructed with a null TrackerCustomizer argument. The default implementation returns the result of calling getService,
+     * on the BundleContext object with which this LocatedDeviceTracker object was created, passing the specified ServiceReference object.
      * <p>
      * This method can be overridden in a subclass to customize the service object to be tracked for the service being added. In that case, take care not to rely on the default implementation of removedService that will unget the service.
-     * @param reference the Reference to service being added to this Tracker object.
-     * @return The service object to be tracked for the service added to this Tracker object.
+     * @param reference the Reference to service being added to this LocatedDeviceTracker object.
+     * @return The service object to be tracked for the service added to this LocatedDeviceTracker object.
      * @see TrackerCustomizer
      */
     public boolean addingService(ServiceReference reference) {
@@ -271,7 +271,7 @@ public class Tracker implements TrackerCustomizer {
     /**
      * Default implementation of the TrackerCustomizer.modifiedService method.
      * <p>
-     * This method is only called when this Tracker object has been constructed with a null TrackerCustomizer argument. The default implementation does nothing.
+     * This method is only called when this LocatedDeviceTracker object has been constructed with a null TrackerCustomizer argument. The default implementation does nothing.
      * @param reference the Reference to modified service.
      * @param service The service object for the modified service.
      * @see TrackerCustomizer
@@ -283,8 +283,8 @@ public class Tracker implements TrackerCustomizer {
     /**
      * Default implementation of the TrackerCustomizer.removedService method.
      * <p>
-     * This method is only called when this Tracker object has been constructed with a null TrackerCustomizer argument. The default implementation calls ungetService, on the
-     * BundleContext object with which this Tracker object was created, passing the specified ServiceReference object.
+     * This method is only called when this LocatedDeviceTracker object has been constructed with a null TrackerCustomizer argument. The default implementation calls ungetService, on the
+     * BundleContext object with which this LocatedDeviceTracker object was created, passing the specified ServiceReference object.
      * <p>
      * This method can be overridden in a subclass. If the default implementation of addingService method was used, this method must unget the service.
      * @param reference the Reference to removed service.
@@ -296,7 +296,7 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Waits for at least one service to be tracked by this Tracker object.
+     * Waits for at least one service to be tracked by this LocatedDeviceTracker object.
      * <p>
      * It is strongly recommended that waitForService is not used during the calling of the BundleActivator methods. BundleActivator methods are expected to complete in a short period of time.
      * @param timeout the time interval in milliseconds to wait. If zero, the method will wait indefinately.
@@ -308,7 +308,7 @@ public class Tracker implements TrackerCustomizer {
         Object object = getService();
         while (object == null) {
             Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-            if (tracked == null) { /* if Tracker is not open */
+            if (tracked == null) { /* if LocatedDeviceTracker is not open */
                 return null;
             }
             synchronized (tracked) {
@@ -323,12 +323,12 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Returns an array of ServiceReference objects for all services being tracked by this Tracker object.
+     * Returns an array of ServiceReference objects for all services being tracked by this LocatedDeviceTracker object.
      * @return Array of ServiceReference objects or <code>null</code> if no service are being tracked.
      */
     public ServiceReference[] getServiceReferences() {
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null) { // if Tracker is not open
+        if (tracked == null) { // if LocatedDeviceTracker is not open
             return null;
         }
         synchronized (tracked) {
@@ -349,7 +349,7 @@ public class Tracker implements TrackerCustomizer {
      */
     public List/*<ServiceReference>*/getServiceReferencesList() {
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null) { // if Tracker is not open
+        if (tracked == null) { // if LocatedDeviceTracker is not open
             return null;
         }
         synchronized (tracked) {
@@ -373,7 +373,7 @@ public class Tracker implements TrackerCustomizer {
      */
     public List/*<ServiceReference>*/getUsedServiceReferences() {
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null || tracked.size() == 0) { // if Tracker is not open or empty
+        if (tracked == null || tracked.size() == 0) { // if LocatedDeviceTracker is not open or empty
             return null;
         }
         synchronized (tracked) {
@@ -392,7 +392,7 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Returns a ServiceReference object for one of the services being tracked by this Tracker object.
+     * Returns a ServiceReference object for one of the services being tracked by this LocatedDeviceTracker object.
      * If multiple services are being tracked, the service with the highest ranking (as specified in its service.ranking property) is returned.
      * If there is a tie in ranking, the service with the lowest service ID (as specified in its service.id property); that is, the service that was registered first is returned.
      * This is the same algorithm used by BundleContext.getServiceReference.
@@ -413,7 +413,7 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Returns the service object for the specified ServiceReference object if the referenced service is being tracked by this Tracker object.
+     * Returns the service object for the specified ServiceReference object if the referenced service is being tracked by this LocatedDeviceTracker object.
      * @param reference the Reference to the desired service.
      * @return the Service object. Try to get the service if not yet tracked.
      */
@@ -427,7 +427,7 @@ public class Tracker implements TrackerCustomizer {
         }
 
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null) { /* if Tracker is not open */
+        if (tracked == null) { /* if LocatedDeviceTracker is not open */
             return null;
         }
         Object object = null;
@@ -453,7 +453,7 @@ public class Tracker implements TrackerCustomizer {
      */
     public void ungetService(ServiceReference reference) {
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null) { /* if Tracker is not open */
+        if (tracked == null) { /* if LocatedDeviceTracker is not open */
             return;
         }
         Object object = null;
@@ -466,12 +466,12 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Returns an array of service objects for all services being tracked by this Tracker object.
+     * Returns an array of service objects for all services being tracked by this LocatedDeviceTracker object.
      * @return Array of service objects or <code>null</code> if no service are being tracked.
      */
     public Object[] getServices() {
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null) { /* if Tracker is not open */
+        if (tracked == null) { /* if LocatedDeviceTracker is not open */
             return null;
         }
         synchronized (tracked) {
@@ -491,7 +491,7 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Returns a service object for one of the services being tracked by this Tracker object.
+     * Returns a service object for one of the services being tracked by this LocatedDeviceTracker object.
      * <p>
      * If any services are being tracked, this method returns the result of calling getService(getServiceReference()).
      * @return Service object or <code>null</code> if no service is being tracked.
@@ -505,33 +505,33 @@ public class Tracker implements TrackerCustomizer {
     }
 
     /**
-     * Removes a service from this Tracker object. The specified service will be removed from this Tracker object. If the specified service was being tracked then the
+     * Removes a service from this LocatedDeviceTracker object. The specified service will be removed from this LocatedDeviceTracker object. If the specified service was being tracked then the
      * TrackerCustomizer.removedService method will be called for that service.
      * @param reference the Reference to the service to be removed.
      */
     public void remove(ServiceReference reference) {
         Tracked tracked = this.m_tracked; // use local var since we are not synchronized
-        if (tracked == null) { /* if Tracker is not open */
+        if (tracked == null) { /* if LocatedDeviceTracker is not open */
             return;
         }
         tracked.untrack(reference);
     }
 
     /**
-     * Returns the number of services being tracked by this Tracker object.
+     * Returns the number of services being tracked by this LocatedDeviceTracker object.
      * @return the Number of services being tracked.
      */
     public int size() {
         Tracked tracked = this.m_tracked; //use local var since we are not synchronized
-        if (tracked == null) { /* if Tracker is not open */
+        if (tracked == null) { /* if LocatedDeviceTracker is not open */
             return 0;
         }
         return tracked.size();
     }
 
     /**
-     * Inner class to track services. If a Tracker object is reused (closed then reopened), then a new Tracked object is used. This class is a hashtable mapping ServiceReference object -> customized Object. This
-     * class is the ServiceListener object for the tracker. This class is used to synchronize access to the tracked services. This is not a public class. It is only for use by the implementation of the Tracker
+     * Inner class to track services. If a LocatedDeviceTracker object is reused (closed then reopened), then a new Tracked object is used. This class is a hashtable mapping ServiceReference object -> customized Object. This
+     * class is the ServiceListener object for the tracker. This class is used to synchronize access to the tracked services. This is not a public class. It is only for use by the implementation of the LocatedDeviceTracker
      * class.
      */
     class Tracked extends HashMap implements ServiceListener {
@@ -570,7 +570,7 @@ public class Tracker implements TrackerCustomizer {
         }
 
         /**
-         * Sets initial list of services into tracker before ServiceEvents begin to be received. This method must be called from Tracker.open while synchronized on this object in the same synchronized block as the addServiceListener call.
+         * Sets initial list of services into tracker before ServiceEvents begin to be received. This method must be called from LocatedDeviceTracker.open while synchronized on this object in the same synchronized block as the addServiceListener call.
          * @param references The initial list of services to be tracked.
          */
         protected void setInitialServices(ServiceReference[] references) {
@@ -582,7 +582,7 @@ public class Tracker implements TrackerCustomizer {
         }
 
         /**
-         * Tracks the initial list of services. This is called after ServiceEvents can begin to be received. This method must be called from Tracker.open while not synchronized on this object after the addServiceListener call.
+         * Tracks the initial list of services. This is called after ServiceEvents can begin to be received. This method must be called from LocatedDeviceTracker.open while not synchronized on this object after the addServiceListener call.
          */
         protected void trackInitialServices() {
             while (true) {
@@ -609,14 +609,14 @@ public class Tracker implements TrackerCustomizer {
         }
 
         /**
-         * Called by the owning Tracker object when it is closed.
+         * Called by the owning LocatedDeviceTracker object when it is closed.
          */
         protected void close() {
             m_closed = true;
         }
 
         /**
-         * ServiceListener method for the Tracker class. This method must NOT be synchronized to avoid deadlock potential.
+         * ServiceListener method for the LocatedDeviceTracker class. This method must NOT be synchronized to avoid deadlock potential.
          * @param event the ServiceEvent object from the framework.
          */
         public void serviceChanged(ServiceEvent event) {

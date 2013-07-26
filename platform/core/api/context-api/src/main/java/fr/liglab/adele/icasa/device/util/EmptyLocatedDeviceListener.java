@@ -24,7 +24,7 @@ import fr.liglab.adele.icasa.location.Position;
  *
  * @author Thomas Leveque
  */
-public class AbstractLocatedDeviceListener implements LocatedDeviceListener {
+public class EmptyLocatedDeviceListener implements LocatedDeviceListener {
 
 
     @Override
@@ -75,6 +75,6 @@ public class AbstractLocatedDeviceListener implements LocatedDeviceListener {
      */
     @Override
     public void deviceEvent(LocatedDevice device, Object data) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        //do nothing
     }
 }

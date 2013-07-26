@@ -1,7 +1,7 @@
 /**
  *
- *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
- *   Licensed under the Apache License, Version 2.0 (the "License");
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research
+ *   Group Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
  *   You may obtain a copy of the License at
  *
@@ -13,12 +13,12 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.bridge.test;
+package fr.liglab.adele.icasa.distribution.test.device;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
-public interface PPDevice extends GenericDevice, PresenceSensor, BinaryLight {
-
+/**
+ * Fake type of device to test tracking of devices by type.
+ */
+public interface Type1Device extends GenericDevice {
 }
