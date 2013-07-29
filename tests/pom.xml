@@ -27,11 +27,24 @@
 	<artifactId>simulator.tests</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
-
-	<modules>
-		<module>icasa-simulation-test</module>
-      <module>icasa-ihm-test</module>
-	</modules>
+   <profiles>
+      <profile>
+         <id>no-ihm-tests</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>icasa-simulation-test</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>tests</id>
+         <modules>
+            <module>icasa-simulation-test</module>
+            <module>icasa-ihm-test</module>
+         </modules>
+      </profile>
+   </profiles>
    <build>
       <plugins>
           <plugin>
