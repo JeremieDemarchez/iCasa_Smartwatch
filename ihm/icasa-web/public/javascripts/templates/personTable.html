@@ -26,11 +26,11 @@
         <label class="span1">Type</label>
         <select class="span2" data-bind="options: $root.personTypes, value: $root.newPersonType, optionsText: 'name'"></select>
 
-        <button class="btn span1" style="font-size:15px" data-bind="click: $root.createPerson, enable: $root.newPersonName().length > 0">Create</button>
+        <button id="createPersobnButton" class="btn span1" style="font-size:15px" data-bind="click: $root.createPerson, enable: $root.newPersonName().length > 0">Create</button>
     </div>
 
     <div class="controls controls-row">
-        <button class="btn span3" data-bind="click: $root.removeSelectedPersons">Remove Selected Persons</button>
+        <button id="removeSelectedPersonsButton" class="btn span3" data-bind="click: $root.removeSelectedPersons">Remove Selected Persons</button>
     </div>
 
     <p></p>

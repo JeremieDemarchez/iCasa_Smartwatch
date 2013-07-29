@@ -32,12 +32,19 @@
 
     <!-- Project dependencies -->
     <dependencies>
-
+      
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.teaching.distribution</artifactId>
             <version>${project.version}</version>
             <type>osgi-distribution</type>
+        </dependency>
+        <!-- Play 2 applications-->
+        <dependency>
+           <groupId>fr.liglab.adele.icasa</groupId>
+           <artifactId>icasa.web</artifactId>
+           <version>${project.version}</version>
+           <type>play2</type>
         </dependency>
     </dependencies>
 

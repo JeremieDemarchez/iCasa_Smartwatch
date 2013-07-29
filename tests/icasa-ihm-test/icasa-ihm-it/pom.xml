@@ -223,7 +223,7 @@
                         </goals>
                     </execution>
                     <execution>
-                        <!-- Lunch Backend and FrontEnd Script-->
+                        <!-- Stop Backend and FrontEnd Script-->
                         <id>stop-third-parties</id>
                         <phase>test</phase>
                         <configuration>

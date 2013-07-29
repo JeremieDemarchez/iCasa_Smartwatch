@@ -14,7 +14,6 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-
 ICASA_COMMAND="play.core.server.NettyServer"
 output=`ps aux | grep "${ICASA_COMMAND}"`
 set -- ${output}
