@@ -226,7 +226,7 @@ require([
         );
 
         # start extensions mechanism using H-UBU
-        hub.createInstance(ConnectionWidget, {
+        hub.registerComponent(iCasaViewModel).createInstance(ConnectionWidget, {
           name : "GatewayConnectionWidget-1",
           buttonId : "connection-status-button"
         }).createInstance(GatewayConnectionMgrImpl, {

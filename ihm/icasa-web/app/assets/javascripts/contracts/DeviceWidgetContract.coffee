@@ -5,7 +5,7 @@
 # @author Thomas Leveque
 ###
 define(() ->
-  return {
+  class DeviceWidgetContract
 
     ###*
     # Returns the url to the base icon of this widget.
@@ -73,5 +73,5 @@ define(() ->
     init : (deviceViewModel) ->
       # keep it empty
 
-    }
+  return new DeviceWidgetContract();
 );

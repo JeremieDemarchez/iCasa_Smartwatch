@@ -1,5 +1,5 @@
 
-define(["hubu", "DeviceWidgetContract", "log4javascript"], (hub, DeviceWidgetContract, log4javascript) ->
+define(["hubu", "contracts/DeviceWidgetContract", "log4javascript"], (hub, DeviceWidgetContract, log4javascript) ->
 
     console.log("presenceSensor module loaded !!!");
 

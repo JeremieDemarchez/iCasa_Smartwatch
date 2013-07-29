@@ -5,6 +5,7 @@ define(['jquery',
         'knockout',
         'knockback',
         'handlebars',
+        'contracts/DeviceWidgetContract',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
@@ -16,7 +17,7 @@ define(['jquery',
         'text!templates/zoneStatusWindow.html',
         'bootstrap',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -1077,7 +1078,50 @@ define(['jquery',
 
 
     class ICasaViewModel extends kb.ViewModel
+
+        #
+        # HUBU component implementation
+        #
+        hub: null;
+        name: null;
+
+        getComponentName: ->
+          return "iCasaViewModel-" + @name;
+
+        configure: (theHub, config) ->
+          @hub = theHub;
+
+          @hub.requireService({
+             component: @,
+             contract:  DeviceWidgetContract,
+             bind:      "bindDeviceWidget",
+             unbind:    "unbindDeviceWidget",
+             aggregate : true,
+             optional : true
+          });
+
+        bindDeviceWidget: (svc) ->
+          console.log("bindDeviceWidget");
+          null; #TODO
+
+        unbindDeviceWidget: (svc) ->
+          console.log("unbindDeviceWidget");
+          null; #TODO
+
+        start: ->
+             console.log("start iCasaViewModel");
+             null;
+        stop: ->
+             console.log("stop iCasaViewModel");
+             null;
+
+        #
+        # ViewModel implementation
+        #
+
         constructor : (model) ->
+           @name = model.id;
+
            #backend and frontend information
            @backendVersion = kb.observable(DataModel.models.backend, 'version');
            @frontendVersion = kb.observable(DataModel.models.frontend, 'version');
