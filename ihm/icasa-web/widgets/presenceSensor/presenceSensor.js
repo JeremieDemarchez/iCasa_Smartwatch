@@ -2,7 +2,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["hubu", "contracts/DeviceWidgetContract", "log4javascript"], function(hub, DeviceWidgetContract, log4javascript) {
+  define(["require", "hubu", "contracts/DeviceWidgetContract", "log4javascript"], function(require, hub, DeviceWidgetContract, log4javascript) {
     var PresenceSensorWidget, instance;
     console.log("presenceSensor module loaded !!!");
     PresenceSensorWidget = (function(_super) {
@@ -13,11 +13,14 @@
 
       PresenceSensorWidget.prototype.logger = null;
 
+      PresenceSensorWidget.prototype.iconURL = null;
+
       function PresenceSensorWidget(name) {
         this.name = name;
         this.logger = log4javascript.getLogger("PresenceSensorWidget");
         this.logger.removeAllAppenders();
         this.logger.addAppender(new log4javascript.BrowserConsoleAppender());
+        this.iconURL = require.toUrl("./movementDetector.png");
       }
 
       PresenceSensorWidget.prototype.start = function() {
@@ -44,7 +47,7 @@
       };
 
       PresenceSensorWidget.prototype.getBaseIconURL = function() {
-        return null;
+        return this.iconURL;
       };
 
       PresenceSensorWidget.prototype.getCurrentIconURL = function() {
@@ -55,8 +58,8 @@
         return false;
       };
 
-      PresenceSensorWidget.prototype.manageDevice = function(deviceServices, deviceType) {
-        return false;
+      PresenceSensorWidget.prototype.manageDevice = function(device) {
+        return (this.type() === "iCasa.PresenceSensor") || this.hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor");
       };
 
       PresenceSensorWidget.prototype.getStatusWindowTemplateURL = function() {

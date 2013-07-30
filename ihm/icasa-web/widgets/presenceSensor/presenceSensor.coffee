@@ -1,17 +1,19 @@
 
-define(["hubu", "contracts/DeviceWidgetContract", "log4javascript"], (hub, DeviceWidgetContract, log4javascript) ->
+define(["require", "hubu", "contracts/DeviceWidgetContract", "log4javascript"], (require, hub, DeviceWidgetContract, log4javascript) ->
 
     console.log("presenceSensor module loaded !!!");
 
     class PresenceSensorWidget extends DeviceWidgetContract
         name : null
         logger : null
+        iconURL : null;
 
         constructor : (name) ->
             @name = name;
             @logger = log4javascript.getLogger("PresenceSensorWidget");
             @logger.removeAllAppenders();
             @logger.addAppender(new log4javascript.BrowserConsoleAppender());
+            @iconURL = require.toUrl("./movementDetector.png");
 
         start : -> @logger.info("PresenceSensorWidget starting...");
 
@@ -27,7 +29,7 @@ define(["hubu", "contracts/DeviceWidgetContract", "log4javascript"], (hub, Devic
 
         getComponentName: -> return @name;
 
-        getBaseIconURL : () -> null;
+        getBaseIconURL : () -> return @iconURL;
           # keep it empty
 
         getCurrentIconURL : () -> null;
@@ -36,7 +38,8 @@ define(["hubu", "contracts/DeviceWidgetContract", "log4javascript"], (hub, Devic
         manageDynamicIcon : () -> false;
           # keep it empty
 
-        manageDevice : (deviceServices, deviceType) -> false;
+        manageDevice : (device) ->
+          return ((@type() == "iCasa.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"));
 
         getStatusWindowTemplateURL : () -> null;
 

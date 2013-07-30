@@ -37,10 +37,9 @@ define(() ->
 
     ###*
     # Returns true if this widget supports specified device.
-    # @param {deviceServices} provided services by the device
-    # @param {deviceType} type of the device
+    # @param {deviceViewModel} knockout view model representing the device.
     ###
-    manageDevice : (deviceServices, deviceType) ->
+    manageDevice : (deviceViewModel) ->
       # keep it empty
 
     ###*

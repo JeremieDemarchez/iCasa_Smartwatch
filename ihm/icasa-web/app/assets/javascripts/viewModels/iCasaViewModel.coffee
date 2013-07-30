@@ -632,6 +632,7 @@ define(['jquery',
            @location = kb.observable(model, 'location');
            @services = kb.observable(model, 'services');
            @showNameInMap = ko.observable(false);
+           @deviceWidget = ko.observable();
            @hasService = (service) =>
             curServices = @.services();
             if (!curServices)
@@ -894,6 +895,8 @@ define(['jquery',
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
+            if ((@deviceWidget != null) && (@deviceWidget != undefined))
+              return @deviceWidget.getBaseIconURL();
             if ((@type() == "iCasa.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
               imgName = "cooler-off";
             if ((@type() == "iCasa.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
@@ -916,8 +919,6 @@ define(['jquery',
               imgName = "COGazSensor";
             if ((@type() == "iCasa.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor"))
               imgName = "CO2GazSensor";
-            if ((@type() == "iCasa.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
-              imgName = "movementDetector";
             if ((@type() == "iCasa.MotionSensor") || @hasService("fr.liglab.adele.icasa.device.motion.MotionSensor"))
               imgName = "movementDetector";              
             if ((@type() == "iCasa.Speaker") || @hasService("fr.liglab.adele.icasa.device.sound.Speaker"))
