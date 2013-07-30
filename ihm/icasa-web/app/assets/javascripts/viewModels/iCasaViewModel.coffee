@@ -895,7 +895,7 @@ define(['jquery',
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
-            if ((@deviceWidget != null) && (@deviceWidget != undefined))
+            if ((@deviceWidget() != null) && (@deviceWidget() != undefined))
               return @deviceWidget.getBaseIconURL();
             if ((@type() == "iCasa.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
               imgName = "cooler-off";
