@@ -91,6 +91,8 @@ public @interface RequiresDevice {
      */
     boolean proxy() default true;
     
+    boolean aggregate() default true;
+    
     
     String[] mandatoryProps() default {""};
     
