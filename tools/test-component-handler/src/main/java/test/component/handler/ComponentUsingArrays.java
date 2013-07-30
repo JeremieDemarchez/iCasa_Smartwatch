@@ -15,7 +15,7 @@
  */
 package test.component.handler;
 
-import java.awt.peer.LightweightPeer;
+
 import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
@@ -27,8 +27,8 @@ import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
-@Component
-@Instantiate
+//@Component
+//@Instantiate
 public class ComponentUsingArrays {
 
 	private Thread thread;
