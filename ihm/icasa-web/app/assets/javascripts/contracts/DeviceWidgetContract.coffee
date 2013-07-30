@@ -59,8 +59,19 @@ define(() ->
     #  {id} unique id of the decorator
     #  {url} is the icon URL (could be relative or absolute if starts with a slash).
     #  {show} optional, false by default. if equals to true, visible at startup.
+    #  {positionX}
+    #  {positionY}
+    #  {width} decorator image width
+    #  {height} decorator image height
     ###
     getDecorators : () ->
+      # keep it empty
+
+    ###*
+    # Called when a device prop value has been added, changed or removed.
+    # @param {deviceViewModel} knockout view model representing the modified device.
+    ###
+    propHasChanged : () ->
       # keep it empty
 
     ###*

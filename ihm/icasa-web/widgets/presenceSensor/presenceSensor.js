@@ -2,7 +2,7 @@
   var __hasProp = {}.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
-  define(["require", "hubu", "contracts/DeviceWidgetContract", "log4javascript"], function(require, hub, DeviceWidgetContract, log4javascript) {
+  define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4javascript"], function(require, hub, DeviceWidgetContract, ko, log4javascript) {
     var PresenceSensorWidget, instance;
     console.log("presenceSensor module loaded !!!");
     PresenceSensorWidget = (function(_super) {
@@ -59,7 +59,7 @@
       };
 
       PresenceSensorWidget.prototype.manageDevice = function(device) {
-        return (this.type() === "iCasa.PresenceSensor") || this.hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor");
+        return (device.type() === "iCasa.PresenceSensor") || device.hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor");
       };
 
       PresenceSensorWidget.prototype.getStatusWindowTemplateURL = function() {
@@ -67,7 +67,30 @@
       };
 
       PresenceSensorWidget.prototype.getDecorators = function() {
-        return null;
+        return [
+          {
+            name: "presence",
+            url: require.toUrl('./movementDetector_detected.png'),
+            width: 32,
+            height: 32,
+            positionX: 1,
+            positionY: 1,
+            show: false
+          }
+        ];
+      };
+
+      PresenceSensorWidget.prototype.propHasChanged = function(device) {
+        var presence;
+        presence = device.getPropertyValue("presenceSensor.sensedPresence");
+        return ko.utils.arrayForEach(device.decorators(), function(decorator) {
+          if (!(decorator != null)) {
+            return;
+          }
+          if (decorator.name() === "presence") {
+            return decorator.show(presence === true);
+          }
+        });
       };
 
       PresenceSensorWidget.prototype.init = function(deviceViewModel) {

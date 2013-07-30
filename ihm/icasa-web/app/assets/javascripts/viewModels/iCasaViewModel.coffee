@@ -633,6 +633,12 @@ define(['jquery',
            @services = kb.observable(model, 'services');
            @showNameInMap = ko.observable(false);
            @deviceWidget = ko.observable();
+           @hasWidget = ko.computed({
+             read: () =>
+               return (@deviceWidget() != null) && (@deviceWidget() != undefined);
+             owner: @
+           }
+           , @);
            @hasService = (service) =>
             curServices = @.services();
             if (!curServices)
@@ -705,6 +711,7 @@ define(['jquery',
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
                 );
+                @imgSrc(@.getImage());
 
            # location change saving
            @saveLocation= ko.observable(false);
@@ -755,12 +762,6 @@ define(['jquery',
                        if (presence == true)
                          decorator.show(presence == true);
                   );
-                if ((@type() == "iCasa.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
-                  presence = @.getPropertyValue("presenceSensor.sensedPresence");
-                  ko.utils.arrayForEach(@decorators(), (decorator) ->
-                     if (decorator.name() == "presence")
-                       decorator.show(presence == true);
-                  );
                 if ((@type() == "iCasa.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))
                   powerLevel = @.getPropertyValue("dimmerLight.powerLevel");
                   if (powerLevel == null)
@@ -799,6 +800,37 @@ define(['jquery',
                      if (decorator.name() == "redLed")
                        decorator.show(concentration >= 2.0);
                   );
+                if (@hasWidget())
+                  @deviceWidget().propHasChanged(@);
+
+           @recomputeDecorators = () =>
+             ko.utils.arrayForEach(@decorators(), (decorator) =>
+               #TODO better manage default decorators
+               if ((decorator.name() != "event") && (decorator.name() != "fault") && (decorator.name() != "activated"))
+                 @decorators.remove(decorator);
+             );
+             if (@hasWidget())
+               additionalDecorators = @deviceWidget().getDecorators();
+               if ((additionalDecorators != null) && (additionalDecorators != undefined))
+                 ko.utils.arrayForEach(additionalDecorators, (decoratorDef) =>
+                   decorator = new DecoratorViewModel new Backbone.Model {
+                     name: decoratorDef.name,
+                     show: false
+                   };
+                   if (decoratorDef.url?)
+                     decorator.imgSrc(decoratorDef.url);
+                   if (decoratorDef.show?)
+                     decorator.show(decoratorDef.show);
+                   if (decoratorDef.positionX?)
+                     decorator.positionX(decoratorDef.positionX);
+                   if (decoratorDef.positionY?)
+                     decorator.positionY(decoratorDef.positionY);
+                   if (decoratorDef.width?)
+                     decorator.width(decoratorDef.width);
+                   if (decoratorDef.height?)
+                     decorator.height(decoratorDef.height);
+                   @decorators.push(decorator);
+                 );
           
            @initDeviceImages= () =>
                 if ((@type() == "iCasa.Heater") || @hasService("fr.liglab.adele.icasa.device.temperature.Heater"))
@@ -861,18 +893,15 @@ define(['jquery',
                        positionY: 4,
                        show: false
                      });
-                if (@type() == "iCasa.PresenceSensor")
-                     @decorators.push(new DecoratorViewModel new Backbone.Model {
-                       name: "presence",
-                       imgSrc: '/assets/images/devices/decorators/movementDetector_detected.png',
-                       width: 32,
-                       height: 32,
-                       positionX: 1,
-                       positionY: 1,
-                       show: false
-                     });
+                if (@hasWidget())
+                  @recomputeDecorators();
                 @properties.subscribe(@updateProperties);
                 @updateProperties();
+
+           @updateWidgetDecorators = (newValue) =>
+             @recomputeDecorators();
+             if (@hasWidget())
+               @updateProperties();
 
            @initDeviceImages();
            
@@ -882,6 +911,9 @@ define(['jquery',
            @popoverdata = ()=>
              pop = "Name : "+@.name()
              return pop;
+
+           @deviceWidget.subscribe(@updateWidgetImg);
+           @deviceWidget.subscribe(@updateWidgetDecorators);
 
         getPropertyValue:(property)=>
           value = _.find(@propertiesModel.models, (propertyModel) ->
@@ -895,8 +927,8 @@ define(['jquery',
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
-            if ((@deviceWidget() != null) && (@deviceWidget() != undefined))
-              return @deviceWidget.getBaseIconURL();
+            if (@hasWidget())
+              return @deviceWidget().getBaseIconURL();
             if ((@type() == "iCasa.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
               imgName = "cooler-off";
             if ((@type() == "iCasa.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
@@ -1103,18 +1135,18 @@ define(['jquery',
 
         bindDeviceWidget: (svc) ->
           console.log("bindDeviceWidget");
-          null; #TODO
+          @deviceWidgets.push(svc);
 
         unbindDeviceWidget: (svc) ->
           console.log("unbindDeviceWidget");
-          null; #TODO
+          @deviceWidgets.remove(svc);
 
         start: ->
              console.log("start iCasaViewModel");
-             null;
+             null; #workaround for Coffeescript compilation issue
         stop: ->
              console.log("stop iCasaViewModel");
-             null;
+             null; #workaround for Coffeescript compilation issue
 
         #
         # ViewModel implementation
@@ -1122,6 +1154,8 @@ define(['jquery',
 
         constructor : (model) ->
            @name = model.id;
+
+           @deviceWidgets = ko.observableArray();
 
            #backend and frontend information
            @backendVersion = kb.observable(DataModel.models.backend, 'version');
@@ -1161,6 +1195,18 @@ define(['jquery',
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 
            @devices = kb.collectionObservable(DataModel.collections.devices, {view_model: DeviceViewModel} );
+           @updateDeviceWidgets= (newValue) =>
+             ko.utils.arrayForEach(@devices(), (device) =>
+               if (device == undefined)
+                 return;
+
+               if (!device.hasWidget())
+                 ko.utils.arrayForEach(@deviceWidgets(), (deviceWidget) =>
+                   if (deviceWidget.manageDevice(device))
+                     device.deviceWidget(deviceWidget);
+                 );
+             );
+           @.devices.subscribe(@.updateDeviceWidgets);
 
            @persons = kb.collectionObservable(DataModel.collections.persons, {view_model: PersonViewModel});
 

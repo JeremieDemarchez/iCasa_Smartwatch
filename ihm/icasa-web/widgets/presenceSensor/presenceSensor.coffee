@@ -1,5 +1,5 @@
 
-define(["require", "hubu", "contracts/DeviceWidgetContract", "log4javascript"], (require, hub, DeviceWidgetContract, log4javascript) ->
+define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4javascript"], (require, hub, DeviceWidgetContract, ko, log4javascript) ->
 
     console.log("presenceSensor module loaded !!!");
 
@@ -30,22 +30,38 @@ define(["require", "hubu", "contracts/DeviceWidgetContract", "log4javascript"], 
         getComponentName: -> return @name;
 
         getBaseIconURL : () -> return @iconURL;
-          # keep it empty
 
         getCurrentIconURL : () -> null;
-          # keep it empty
 
         manageDynamicIcon : () -> false;
-          # keep it empty
 
         manageDevice : (device) ->
-          return ((@type() == "iCasa.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"));
+          return ((device.type() == "iCasa.PresenceSensor") || device.hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"));
 
         getStatusWindowTemplateURL : () -> null;
 
-        getDecorators : () -> null;
+        getDecorators : () ->
+          return [ {
+            name: "presence",
+            url: require.toUrl('./movementDetector_detected.png'),
+            width: 32,
+            height: 32,
+            positionX: 1,
+            positionY: 1,
+            show: false
+          } ];
 
-        init : (deviceViewModel) -> null;
+        propHasChanged : (device) ->
+          presence = device.getPropertyValue("presenceSensor.sensedPresence");
+          ko.utils.arrayForEach(device.decorators(), (decorator) ->
+            if (!(decorator?))
+              return;
+            if (decorator.name() == "presence")
+              decorator.show(presence == true);
+          );
+
+        init : (deviceViewModel) ->
+          null;
 
     instance = hub.createInstance(PresenceSensorWidget, {name : "presenceSensorWidget-1"});
 
