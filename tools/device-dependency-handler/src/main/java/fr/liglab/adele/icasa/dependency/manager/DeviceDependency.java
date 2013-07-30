@@ -50,6 +50,7 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 
 	private BundleContext m_context;
 
+
 	/**
 	 * Access right set of dependency. An instance added by new matching service
 	 */
@@ -275,8 +276,10 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 	public Object onGet(Object pojo, String fieldName, Object value) {
 		Object currentValue = super.onGet(pojo, fieldName, value);
 
+		
+		
 		if (isAggregate()) {
-			int type = getType(); // Getting the type of aggregate dependency (list, set, array, vector)
+			int type = getObjectType(); // Getting the type of aggregate dependency (list, set, array, vector)
 			if (type == 0) { // Array case
 				Object[] currentArray = (Object[]) currentValue;
 				Object[] newArray = (Object[]) Array.newInstance(getSpecification(), currentArray.length);
@@ -308,11 +311,13 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 	}
 	*/
 
+	
 	/**
 	 * Method added to obtain the m_type field value of class Dependency.
+	 * This field is used to determine the type of object to inject (0: Array, 1:List, 2:Vector, 3:Set)
 	 * @return
 	 */
-	protected int getType() {
+	protected int getObjectType() {
 		Field field;
 		try {
 			field = this.getClass().getSuperclass().getDeclaredField("m_type");
