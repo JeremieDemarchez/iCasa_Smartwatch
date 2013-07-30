@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.dependency.manager.proxy;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 import org.osgi.framework.BundleContext;
 
@@ -88,18 +89,9 @@ public class ICasaProxyFactory implements InvocationHandler {
 
 		Class declaringClass = method.getDeclaringClass();
 		if (declaringClass == Object.class) {
-			if (method.equals(m_hashCodeMethod)) {
-				return new Integer(this.hashCode());
-			} else if (method.equals(m_equalsMethod)) {
-				return proxy == args[0] ? Boolean.TRUE : Boolean.FALSE;
-			} else if (method.equals(m_toStringMethod)) {
-				return this.toString();
-			} else {
-				throw new InternalError("Unexpected Object method dispatched: " + method);
-			}
+			return delegateObjectMethodsInvokation(method, args);			
 		}
-
-		return delegateInvokation(method, args);
+		return delegateServiceInvokation(method, args);
 	}
 	
 	protected AccessRight getAccessRight(String deviceId) {
@@ -108,7 +100,42 @@ public class ICasaProxyFactory implements InvocationHandler {
 		return handler.getAccessRight(context, deviceId);
 	}
 	
-	protected Object delegateInvokation(Method method, Object[] args) throws Exception {
+
+	private Object delegateObjectMethodsInvokation(Method method, Object[] args) throws Exception {		
+		if (method.equals(m_hashCodeMethod)) {
+			return getService().hashCode();
+		} else if (method.equals(m_equalsMethod)) {
+			try {
+				// if is a iCasaProxy return true if the tow services are the same
+				InvocationHandler invocationHandler = Proxy.getInvocationHandler(args[0]);
+				if (invocationHandler instanceof ICasaProxyFactory) {
+		         ICasaProxyFactory argumentProxyFactory = (ICasaProxyFactory) invocationHandler;
+		         return getService().equals(argumentProxyFactory.getService());
+	         }
+         } catch (IllegalArgumentException e) {
+	         // Nothing to do
+         }
+			return Boolean.FALSE;
+		} else if (method.equals(m_toStringMethod)) {
+			return this.toString();
+		} else {
+			throw new InternalError("Unexpected Object method dispatched: " + method);
+		}
+	}
+	
+	private Object delegateObjectMethodsInvokationOriginal(Object proxy, Method method, Object[] args) throws Exception {	
+		if (method.equals(m_hashCodeMethod)) {
+			return new Integer(this.hashCode());
+		} else if (method.equals(m_equalsMethod)) {
+			return proxy == args[0] ? Boolean.TRUE : Boolean.FALSE;
+		} else if (method.equals(m_toStringMethod)) {
+			return this.toString();
+		} else {
+			throw new InternalError("Unexpected Object method dispatched: " + method);
+		}
+	}
+	
+	protected Object delegateServiceInvokation(Method method, Object[] args) throws Exception {
 		Object service = getService();
 		String deviceId = ((GenericDevice) service).getSerialNumber();
 		AccessRight accessRight = getAccessRight(deviceId);
