@@ -174,7 +174,7 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		wait(5000);
 		scriptExecutor.stop();
 		CiliaHelper.checkReceived(transformer,1,5000);
-		Assert.assertEquals(1, transformer.getAmountData());
+		Assert.assertTrue(transformer.getAmountData()>0);
 		Data lastData = transformer.getLastData();
 		assertThat(lastData.getContent(), instanceOf(Measure.class));
 		
