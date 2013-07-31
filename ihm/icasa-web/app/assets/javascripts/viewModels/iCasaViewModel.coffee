@@ -965,8 +965,10 @@ define(['jquery',
            @location = kb.observable(model, 'location');
            @positionX = kb.defaultObservable(@positionX, 0);
            @positionY = kb.defaultObservable(@positionY, 0);
-           @width(50);
-           @height(50);
+           #width and height are in 48 instead of 50 to avoid weird bug in firefox-driver in selenium
+           #when selecting objects
+           @width(48);
+           @height(48);
            @zones = kb.collectionObservable(DataModel.collections.zones, {view_model: ZoneViewModel});
            @locationZone = ko.computed({
               read: () =>

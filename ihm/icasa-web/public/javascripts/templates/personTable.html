@@ -20,17 +20,17 @@
 
     <div class="controls controls-row">
         <label class="span1">Name</label>
-        <input type="text" class="span2" data-bind="value: $root.newPersonName, valueUpdate:'afterkeydown'" />
+        <input id="newPersonNameId" type="text" class="span2" data-bind="value: $root.newPersonName, valueUpdate:'afterkeydown'" />
     </div>
     <div class="controls controls-row">
         <label class="span1">Type</label>
-        <select class="span2" data-bind="options: $root.personTypes, value: $root.newPersonType, optionsText: 'name'"></select>
+        <select id="selectPersonTypeId" class="span2" data-bind="options: $root.personTypes, value: $root.newPersonType, optionsText: 'name'"></select>
 
-        <button id="createPersobnButton" class="btn span1" style="font-size:15px" data-bind="click: $root.createPerson, enable: $root.newPersonName().length > 0">Create</button>
+        <button id="createPersonButton" class="btn span1" style="font-size:15px" data-bind="click: $root.createPerson, enable: $root.newPersonName().length > 0">Create</button>
     </div>
 
     <div class="controls controls-row">
-        <button id="removeSelectedPersonsButton" class="btn span3" data-bind="click: $root.removeSelectedPersons">Remove Selected Persons</button>
+        <button id="removeSelectedPersonButtonId" class="btn span3" data-bind="click: $root.removeSelectedPersons">Remove Selected Persons</button>
     </div>
 
     <p></p>
@@ -38,7 +38,7 @@
     <thead>
         <tr>
             <th>
-                <input type="checkbox" data-bind="checked: checkAllPersons" />
+                <input id="checkAllPersonCheckboxId" type="checkbox" data-bind="checked: checkAllPersons" />
             </th>
             <th data-bind="sortable: {obj: 'person', column: 'type'}">
                 Type
@@ -48,7 +48,7 @@
             </th>
         </tr>
     </thead>
-    <tbody data-bind="foreach: $root.filteredPersons()">
+    <tbody id="filteredPersonsTable" data-bind="foreach: $root.filteredPersons()">
         <tr data-bind="css : { warning: isHighlighted }">
             <td><input type="checkbox" data-bind="checked: isSelected" /></td>
             <td><img class="personIcon" data-bind="attr: { src: imgSrc } " /></td>

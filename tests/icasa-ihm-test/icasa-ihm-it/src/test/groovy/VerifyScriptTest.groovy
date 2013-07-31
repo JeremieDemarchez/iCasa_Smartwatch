@@ -14,35 +14,36 @@
  *   limitations under the License.
  */
 import geb.spock.GebReportingSpec
-
+import org.openqa.selenium.interactions.Actions
 import spock.lang.*
 
 @Stepwise
-class VerifyIHMTest extends GebReportingSpec {
-    
-    def "go to Simulator"() {
-        when:
-        go() // uses base url system property
-        
-        then:
-        waitFor {title.startsWith("iCasa")}
-    }
+class VerifyScriptTest extends GebReportingSpec {
 
-
-    def "go to the default map"() {
+    def "Execute script"() {
         when:
         go(baseUrl+"/map/default")
 
         then:
         waitFor { title.startsWith("iCasa") }
 
-        then:
-        def button = $(id: "connection-status-button")
+        then://get elements.
+        def startButton = $(id: "startScriptButtonId")
+        def tab = $(id: "ui-id-4")//Generated id.
+        def table = $(id: "filteredDevicesTable")
 
-        then:
-        button.text() == "Connected"//Test connection.
 
+        then://move to tab
+        tab.click()
+        sleep(300)
+
+
+        then: // create device and check table to contain more than 1
+        startButton.click()
+        sleep(3000)
+
+        assert table.children().empty == false
+        table.children().size() > 1
     }
-
 
 }

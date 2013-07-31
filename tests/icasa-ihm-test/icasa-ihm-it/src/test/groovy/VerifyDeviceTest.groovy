@@ -14,19 +14,11 @@
  *   limitations under the License.
  */
 import geb.spock.GebReportingSpec
-
+import org.openqa.selenium.interactions.Actions
 import spock.lang.*
 
 @Stepwise
 class VerifyDeviceTest extends GebReportingSpec {
-
-    def "go to Simulator"() {
-        when:
-        go() // uses base url system property
-
-        then:
-        waitFor {title.startsWith("iCasa")}
-    }
 
     def "create device"() {
         when:
@@ -78,5 +70,44 @@ class VerifyDeviceTest extends GebReportingSpec {
         assert table.children().empty == true
         table.children().size() == 0
    }
+
+    def "Move Device"() {
+        when:
+        go(baseUrl+"/map/default")
+        def offset = 400
+        then:
+        waitFor { title.startsWith("iCasa") }
+        sleep(300)
+
+        then://get elements.
+        def createDeviceButton = $(id: "createDeviceButton")
+        def table = $(id: "filteredDevicesTable")
+
+        then://create one device.
+        createDeviceButton.click()
+        sleep(300)
+
+        then://Get device ID from the device table
+        def deviceId = table.find('a').text()
+        println (deviceId)
+
+        then://get coordinates
+        def device = $('#'+deviceId).firstElement()
+        def leftValue = device.getCssValue("left").minus("px").toFloat()
+        def topValue = device.getCssValue("top").minus("px").toFloat()
+
+        then://move device
+        sleep(300)
+        def actions = new Actions(driver)
+        actions.dragAndDropBy(device, offset,offset)
+        actions.perform()
+
+        then: //test new values
+        println("old left value " + leftValue)
+        println("new left value " + device.getCssValue("left").minus("px").toFloat())
+        assert leftValue < device.getCssValue("left").minus("px").toFloat()
+        assert topValue < device.getCssValue("top").minus("px").toFloat()
+    }
+
 
 }

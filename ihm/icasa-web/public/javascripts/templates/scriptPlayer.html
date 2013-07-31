@@ -68,13 +68,13 @@
     </div>
     <div class="controls controls-row">
         <div class="controls">
-            <button class="btn span" data-bind="click: startScript, visible: ($root.selectedScript() == undefined || $root.selectedScript().state() == 'stopped' || $root.selectedScript().state() == 'paused') "><i class='icon-play'></i>Start</button>
+            <button id="startScriptButtonId" class="btn span" data-bind="click: startScript, visible: ($root.selectedScript() == undefined || $root.selectedScript().state() == 'stopped' || $root.selectedScript().state() == 'paused') "><i class='icon-play'></i>Start</button>
             <button class="btn span" data-bind="click: pauseScript, visible: (($root.selectedScript() != undefined) && ($root.selectedScript().state() == 'started'))"><i class='icon-pause'></i>Pause</button>
             <button class="btn span" data-bind="click: stopScript, enable: (($root.selectedScript() != undefined) && (($root.selectedScript().state() == 'started') || ($root.selectedScript().state() == 'paused') ))"><i class='icon-stop'></i>Stop</button>
         </div>
     </div>
     <br/>
-    <div class="progress" data-bind="jqScriptProgress: {value: $root.scriptProgress}"></div>
+    <div id="progressScriptBarId" class="progress" data-bind="jqScriptProgress: {value: $root.scriptProgress}"></div>
 
     <input class="input-small pull-left" type="text" id="scriptStart" data-bind="value: $root.scriptStartDate"/>
     <input class="input-small pull-right" type="text" id="scriptEnd" data-bind="value: $root.scriptEndDate" readonly/>

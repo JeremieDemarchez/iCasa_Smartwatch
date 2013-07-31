@@ -96,7 +96,7 @@
 
             }
             <li class="span3">
-                <a href="#addForm" class="thumbnail" data-toggle="modal">
+                <a id="addFormLink" href="#addForm" class="thumbnail" data-toggle="modal">
                     <img src="@routes.Assets.at("images/buttons/blue-cross.png")" />
                     <p>Add</p>
                 </a>
@@ -149,7 +149,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                    <input class="btn btn-primary" type="submit" name="submit" value="Create"/>
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" value="Create"/>
                 </div>
             </form>
         </div>
