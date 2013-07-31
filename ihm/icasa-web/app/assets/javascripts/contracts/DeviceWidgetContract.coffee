@@ -5,7 +5,7 @@
 # @author Thomas Leveque
 ###
 define(() ->
-  return {
+  class DeviceWidgetContract
 
     ###*
     # Returns the url to the base icon of this widget.
@@ -37,10 +37,9 @@ define(() ->
 
     ###*
     # Returns true if this widget supports specified device.
-    # @param {deviceServices} provided services by the device
-    # @param {deviceType} type of the device
+    # @param {deviceViewModel} knockout view model representing the device.
     ###
-    manageDevice : (deviceServices, deviceType) ->
+    manageDevice : (deviceViewModel) ->
       # keep it empty
 
     ###*
@@ -60,8 +59,19 @@ define(() ->
     #  {id} unique id of the decorator
     #  {url} is the icon URL (could be relative or absolute if starts with a slash).
     #  {show} optional, false by default. if equals to true, visible at startup.
+    #  {positionX}
+    #  {positionY}
+    #  {width} decorator image width
+    #  {height} decorator image height
     ###
     getDecorators : () ->
+      # keep it empty
+
+    ###*
+    # Called when a device prop value has been added, changed or removed.
+    # @param {deviceViewModel} knockout view model representing the modified device.
+    ###
+    propHasChanged : () ->
       # keep it empty
 
     ###*
@@ -73,5 +83,5 @@ define(() ->
     init : (deviceViewModel) ->
       # keep it empty
 
-    }
+  return new DeviceWidgetContract();
 );
