@@ -11,13 +11,23 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
 
 
+/**
+ * Simple simulated Hob implementation.
+ */
 @Component(name = "iCasa.Hob")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class HobImpl extends AbstractDevice implements Hob, SimulatedDevice {
 
+    /**
+     * The device serial number.
+     */
     @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
     private String m_serialNumber;
 
+    /**
+     * Retrieve the hob serial number.
+     * @return the serial number.
+     */
     @Override
     public String getSerialNumber() {
         return m_serialNumber;

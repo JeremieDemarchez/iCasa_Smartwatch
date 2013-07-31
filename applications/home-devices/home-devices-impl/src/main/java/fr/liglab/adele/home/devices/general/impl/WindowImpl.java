@@ -14,6 +14,9 @@ import org.osgi.framework.Constants;
 
 import java.util.List;
 
+/**
+ * Simple implementation of a simulated window.
+ */
 @Component(name = "iCasa.Window")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class WindowImpl extends AbstractDevice implements Window, SimulatedDevice {
@@ -21,6 +24,9 @@ public class WindowImpl extends AbstractDevice implements Window, SimulatedDevic
     @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
     private String m_serialNumber;
 
+    /**
+     * The zone where the windows is located.
+     */
     private Zone zone;
 
     /**
@@ -33,11 +39,19 @@ public class WindowImpl extends AbstractDevice implements Window, SimulatedDevic
         return String.valueOf(getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
     }
 
+    /**
+     * Retrieve the window serial number
+     * @return the serial number.
+     */
     @Override
     public String getSerialNumber() {
         return m_serialNumber;
     }
 
+    /**
+     * Callback called when the window is moved into a zone.
+     * @param zones
+     */
     @Override
     public void enterInZones(List<Zone> zones) {
         if (!zones.isEmpty()) {
@@ -46,6 +60,10 @@ public class WindowImpl extends AbstractDevice implements Window, SimulatedDevic
         }
     }
 
+    /**
+     * Callback called when the window is leaving a set of zones.
+     * @param zones
+     */
     @Override
     public void leavingZones(List<Zone> zones) {
         zone = null;

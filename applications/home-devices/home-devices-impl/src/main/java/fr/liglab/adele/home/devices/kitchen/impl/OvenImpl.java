@@ -10,10 +10,16 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
 
+/**
+ * Simple implementation of a simulated oven.
+ */
 @Component(name = "iCasa.Oven")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class OvenImpl extends AbstractDevice implements SimulatedDevice, Oven {
 
+    /**
+     * The oven serial number as a service property.
+     */
     @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
     private String m_serialNumber;
 
@@ -32,6 +38,10 @@ public class OvenImpl extends AbstractDevice implements SimulatedDevice, Oven {
         return (Float) getPropertyValue(Oven.CURRENT_TEMPERATURE);
     }
 
+    /**
+     * Retrieve the device serial number.
+     * @return the serial number.
+     */
     @Override
     public String getSerialNumber() {
         return m_serialNumber;

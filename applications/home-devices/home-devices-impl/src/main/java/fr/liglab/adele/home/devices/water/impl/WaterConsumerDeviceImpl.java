@@ -5,9 +5,7 @@ import fr.liglab.adele.icasa.device.util.AbstractDevice;
 
 
 /**
- * User: garciai@imag.fr
- * Date: 7/31/13
- * Time: 4:02 PM
+ * Abstract class for water consumer devices..
  */
 public abstract class WaterConsumerDeviceImpl extends AbstractDevice implements WaterConsumerDevice {
 

@@ -10,6 +10,9 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.osgi.framework.Constants;
 
+/**
+ * Simple implementation of a simulated Faucet.
+ */
 @Component(name = "iCasa.Faucet")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class FaucetImpl extends WaterConsumerDeviceImpl implements SimulatedDevice, Faucet {

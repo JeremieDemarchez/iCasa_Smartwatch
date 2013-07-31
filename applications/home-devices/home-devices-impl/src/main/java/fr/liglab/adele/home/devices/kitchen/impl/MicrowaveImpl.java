@@ -8,20 +8,33 @@ import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.Constants;
 
 
-
+/**
+ * Simple implementation of a simulated microwave.
+ * NOTE: MICROWAVES DOES NOT HAVE TEMPERATURES!!
+ */
 @Component(name = "iCasa.Microwave")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class MicrowaveImpl extends AbstractDevice implements Microwave, SimulatedDevice {
 
+    /**
+     * The microwave serial number.
+     */
     @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
     private String m_serialNumber;
 
+    /**
+     * Constructor and set initial device properties.
+     */
     public MicrowaveImpl(){
         super();
         super.setPropertyValue(Microwave.CURRENT_TEMPERATURE, 30.0f);
         super.setPropertyValue(Microwave.CURRENT_POWER_LEVEL, 0.0f);
     }
 
+    /**
+     * Retrieves the microwave serial number.
+     * @return
+     */
     @Override
     public String getSerialNumber() {
         return m_serialNumber;
@@ -48,6 +61,11 @@ public class MicrowaveImpl extends AbstractDevice implements Microwave, Simulate
     }
 
 
+    /**
+     * Method called when setting new device properties.
+     * @param propertyName
+     * @param value
+     */
     @Override
     public void setPropertyValue(String propertyName, Object value) {
         if (propertyName.equals(Microwave.CURRENT_POWER_LEVEL)) {

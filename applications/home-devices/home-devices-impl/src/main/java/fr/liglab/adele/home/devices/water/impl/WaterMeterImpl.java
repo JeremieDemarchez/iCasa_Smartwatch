@@ -14,6 +14,10 @@ import org.osgi.framework.ServiceRegistration;
 
 import java.util.*;
 
+/**
+ * Simple implementation of a simulated water meter.
+ * It tracks all water consumer devices to calculate its current consumed water.
+ */
 @Component(name = "iCasa.WaterMeter")
 @Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
 public class WaterMeterImpl extends AbstractDevice implements WaterMeter, SimulatedDevice {
@@ -33,12 +37,18 @@ public class WaterMeterImpl extends AbstractDevice implements WaterMeter, Simula
         super.setPropertyValue(WaterMeter.CURRENT_CONSUMPTION, 0.0f);
     }
 
+    /**
+     * When device is valid, it register a task which will calculate the consumed of water each minute.
+     */
     @Validate
     private void validate(){
         PeriodicRunnable task = new WaterMeterCalculatorTask();
         registration = context.registerService(PeriodicRunnable.class.getName(), task, new Hashtable());
     }
 
+    /**
+     * When invalid, it will unregister the calculator task.
+     */
     @Invalidate
     private void invalidate(){
         if(registration != null){
@@ -47,16 +57,28 @@ public class WaterMeterImpl extends AbstractDevice implements WaterMeter, Simula
         }
     }
 
+    /**
+     * Retrieves the serial number
+     * @return
+     */
     @Override
     public String getSerialNumber() {
         return m_serialNumber;
     }
 
+    /**
+     * Callback to track all WaterConsumer devices.
+     * @param device
+     */
     @Bind(optional = true, aggregate = true)
     public void bindDevice(WaterConsumerDevice device){
         consumerDevices.put(device.getSerialNumber(), device);
     }
 
+    /**
+     * Callback when a water consumer device has disappear.
+     * @param device
+     */
     @Unbind
     public void unbindDevice(WaterConsumerDevice device){
         consumerDevices.remove(device.getSerialNumber());
@@ -91,6 +113,9 @@ public class WaterMeterImpl extends AbstractDevice implements WaterMeter, Simula
         return new ArrayList<WaterConsumerDevice>(consumerDevices.values());
     }
 
+    /**
+     * This class is a periodic task which will calculate the current consumed water.
+     */
     private class WaterMeterCalculatorTask implements PeriodicRunnable {
 
         @Override
