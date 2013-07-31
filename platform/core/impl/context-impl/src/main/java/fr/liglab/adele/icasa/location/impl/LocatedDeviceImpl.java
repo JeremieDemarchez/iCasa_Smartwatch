@@ -284,8 +284,8 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			return false;
 
 		LocatedDeviceImpl that = (LocatedDeviceImpl) o;
-
-		if (!_type.equals(that._type))
+		
+		if (!String.valueOf(_type).equals(String.valueOf(that._type)))
 			return false;
 		if (!m_serialNumber.equals(that.m_serialNumber))
 			return false;

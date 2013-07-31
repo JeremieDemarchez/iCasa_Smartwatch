@@ -45,7 +45,6 @@ import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.apache.felix.ipojo.util.DependencyMetadataHelper;
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.apache.felix.ipojo.util.InstanceConfigurationSource;
-import org.apache.felix.ipojo.util.Logger;
 import org.apache.felix.ipojo.util.SystemPropertiesSource;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;

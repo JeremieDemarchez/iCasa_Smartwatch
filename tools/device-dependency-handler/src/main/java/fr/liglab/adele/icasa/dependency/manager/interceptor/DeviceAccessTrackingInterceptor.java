@@ -42,7 +42,6 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 	@Requires
 	private AccessManager accessManager;
 
-
 	/**
 	 * The set of managed dependencies. Access must be guarded by the monitor lock.
 	 */
