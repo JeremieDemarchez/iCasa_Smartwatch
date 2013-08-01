@@ -33,7 +33,7 @@
         <module>dimmer-light-follow-me</module>
         <module>gas-alarm-system</module>
         <module>habits-monitoring</module>
-        <!--module>habits-monitoring-autonomic</module>-->
+        <module>home-devices</module>
 	</modules>
 
 	<build>

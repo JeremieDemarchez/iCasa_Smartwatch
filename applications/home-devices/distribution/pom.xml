@@ -64,6 +64,25 @@
                 <defaultOutputDirectory>applications</defaultOutputDirectory>
             </configuration>
         </plugin>
+         <plugin>
+             <groupId>org.nanoko.coffee-mill</groupId>
+             <artifactId>coffee-mill-maven-plugin</artifactId>
+             <version>1.0.0</version>
+             <extensions>true</extensions>
+             <executions>
+                 <execution>
+                     <id>bundle-manifest</id>
+                     <phase>generate-resources</phase>
+                     <goals>
+                         <goal>compile-coffeescript</goal>
+                     </goals>
+                     <configuration>
+                         <coffeeScriptDir>src/main/resources/widgets</coffeeScriptDir>
+                         <workDir>src/main/resources/widgets</workDir>
+                     </configuration>
+                 </execution>
+             </executions>
+         </plugin>
      </plugins>
   </build>
 </project>
