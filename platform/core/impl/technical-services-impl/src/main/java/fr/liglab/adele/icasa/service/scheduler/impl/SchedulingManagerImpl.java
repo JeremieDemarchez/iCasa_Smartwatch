@@ -224,11 +224,10 @@ public class SchedulingManagerImpl implements SchedulingManager {
             }
             //get group configuration.
             maxThread = getMaxThread(PREFIX_PROPERTY + "." + name + "." + MAX_THREAD);
-            if (maxThread <= -1){ //if failed, get default configuration.
+            if (maxThread <= -1){ //if failed, get default configuration from properties.
                 maxThread = getMaxThread(PREFIX_PROPERTY + "." + DEFAULT_NAME + "." + MAX_THREAD);
             }
-            if (maxThread <= -1) { // If failed, get assign default configuration.
-                System.err.println("Unable to assign maxThread to : " + name);
+            if (maxThread <= -1) { // If failed, assign default configuration.
                 maxThread = DEFAULT_MAX_THREAD;
             }
         }
