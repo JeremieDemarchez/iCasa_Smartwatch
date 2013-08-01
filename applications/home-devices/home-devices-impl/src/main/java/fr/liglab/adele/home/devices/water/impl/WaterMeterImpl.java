@@ -38,7 +38,7 @@ public class WaterMeterImpl extends AbstractDevice implements WaterMeter, Simula
     }
 
     /**
-     * When device is valid, it register a task which will calculate the consumed of water each minute.
+     * When device is valid, it register a task which will calculate the consumed of water each 10 sec.
      */
     @Validate
     private void validate(){
@@ -120,7 +120,7 @@ public class WaterMeterImpl extends AbstractDevice implements WaterMeter, Simula
 
         @Override
         public long getPeriod() {
-            return 60000;//calculates each minute
+            return 10000;//calculates each 10 seconds
         }
 
         @Override
@@ -133,7 +133,8 @@ public class WaterMeterImpl extends AbstractDevice implements WaterMeter, Simula
             float incrementalValue = getCurrentConsumption();
             List<WaterConsumerDevice> devices = getDevices();
             for(WaterConsumerDevice device: devices){
-                incrementalValue = device.getCurrentConsumption() + incrementalValue;
+                //current consumtion / 6 'cause the thread run each 10 secs. And current consumption is lt/min
+                incrementalValue = (device.getCurrentConsumption()/6) + incrementalValue;
             }
             setPropertyValue(WaterMeter.CURRENT_CONSUMPTION, incrementalValue);
         }

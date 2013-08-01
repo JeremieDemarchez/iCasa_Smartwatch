@@ -29,6 +29,10 @@ public class WindowImpl extends AbstractDevice implements Window, SimulatedDevic
      */
     private Zone zone;
 
+    public WindowImpl(){
+        super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+    }
+
     /**
      * Get the window location.
      *
