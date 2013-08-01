@@ -21,7 +21,8 @@ import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
-import fr.liglab.adele.icasa.distribution.test.device.DeviceTrackedNbCondition;
+import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
+import fr.liglab.adele.icasa.distribution.test.device.DeviceTrackedNumberCondition;
 import fr.liglab.adele.icasa.distribution.test.device.Type1Device;
 import fr.liglab.adele.icasa.distribution.test.device.Type1DeviceImpl;
 import fr.liglab.adele.icasa.location.*;
@@ -90,14 +91,14 @@ public class DeviceTest extends AbstractDistributionBaseTest {
 		
 		ServiceRegistration dev1SReg = registerDevice(dev1, GenericDevice.class, Type1Device.class);
 
-		waitForCondition(new DeviceTrackedNbCondition(tracker, 1));
+		waitForCondition(new DeviceTrackedNumberCondition(tracker, 1));
 
 		GenericDevice dev2 = mock(Type1Device.class);
 		String dev2SN = "dev2";
 		when(dev2.getSerialNumber()).thenReturn(dev2SN);
 		ServiceRegistration dev2SReg = registerDevice(dev2, GenericDevice.class, Type1Device.class);
 
-		waitForCondition(new DeviceTrackedNbCondition(tracker, 2));
+		waitForCondition(new DeviceTrackedNumberCondition(tracker, 2));
 
 		// cleanup
 		dev1SReg.unregister();
@@ -117,11 +118,11 @@ public class DeviceTest extends AbstractDistributionBaseTest {
 		
 		ServiceRegistration dev1SReg = registerDevice(dev1, GenericDevice.class, Type1Device.class);
 
-		waitForCondition(new DeviceTrackedNbCondition(tracker, 0));
+		waitForCondition(new DeviceTrackedNumberCondition(tracker, 0));
 		
 		dev1.setPropertyValue("property1", "property1");
 
-		waitForCondition(new DeviceTrackedNbCondition(tracker, 1));
+		waitForCondition(new DeviceTrackedNumberCondition(tracker, 1));
 		
 		
 		
@@ -137,6 +138,48 @@ public class DeviceTest extends AbstractDistributionBaseTest {
 		// cleanup
 		dev1SReg.unregister();
 		// dev2SReg.unregister();
+	}
+	
+	
+	@Test
+	public void testDeviceTrackerWithCustomizerAndFilter() {
+		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		Assert.assertNotNull(contextMgr);
+
+		
+		LocatedDeviceTrackerCustomizer customizer = mock(LocatedDeviceTrackerCustomizer.class);
+		
+		when(customizer.addingDevice(any(LocatedDevice.class))).thenReturn(true);
+		
+		LocatedDeviceTracker tracker = new LocatedDeviceTracker(context, Type1Device.class, customizer);
+		tracker.open();
+		Assert.assertEquals(0, tracker.size());
+
+		GenericDevice dev1 = mock(Type1Device.class);
+		String dev1SN = "dev1";
+		when(dev1.getSerialNumber()).thenReturn(dev1SN);
+		
+		ServiceRegistration dev1SReg = registerDevice(dev1, GenericDevice.class, Type1Device.class);
+
+		waitForCondition(new DeviceTrackedNumberCondition(tracker, 1));
+		
+		
+
+		verify(customizer, times(1)).addingDevice(contextMgr.getDevice(dev1SN));
+		
+		
+		GenericDevice dev2 = mock(Type1Device.class);
+		String dev2SN = "dev2";
+		when(dev2.getSerialNumber()).thenReturn(dev2SN);
+		ServiceRegistration dev2SReg = registerDevice(dev2, GenericDevice.class, Type1Device.class);
+
+		waitForCondition(new DeviceTrackedNumberCondition(tracker, 2));
+		
+		verify(customizer, times(1)).addingDevice(contextMgr.getDevice(dev2SN));
+
+		// cleanup
+		dev1SReg.unregister();
+		dev2SReg.unregister();
 	}
 	
 	@Test

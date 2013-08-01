@@ -25,12 +25,12 @@ import fr.liglab.adele.icasa.distribution.test.Condition;
  * Time: 10:12
  * To change this template use File | Settings | File Templates.
  */
-public class DeviceTrackedNbCondition implements Condition {
+public class DeviceTrackedNumberCondition implements Condition {
 
     private int _deviceNb;
     private LocatedDeviceTracker _tracker;
 
-    public DeviceTrackedNbCondition(LocatedDeviceTracker tracker, int deviceNb) {
+    public DeviceTrackedNumberCondition(LocatedDeviceTracker tracker, int deviceNb) {
         _deviceNb = deviceNb;
         _tracker = tracker;
     }
