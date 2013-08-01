@@ -354,7 +354,7 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 		while (count++ < 500 && (device == null)) {
 			device = getDevice(deviceId);
 			try {
-				Thread.sleep(50);
+				Thread.sleep(20);
 			} catch (InterruptedException e) {
 			}
 			device = getDevice(deviceId);
