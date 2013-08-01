@@ -43,8 +43,7 @@ public class Group  {
         this.clock = clock;
         this.poolSize = config.getMaxThread();
         this.logger = LoggerFactory.getLogger(Group.class.getName() + "-" + this.name);
-        executor = new SchedulerThreadPoolImpl(this.name, clock, poolSize);
-        new Thread(executor).start();
+        start();
     }
 
     public String getName() {
@@ -126,6 +125,12 @@ public class Group  {
         }
         jobs.clear();
         executor.interrupt();
+        executor = null;
+    }
+
+    public void start(){
+        executor = new SchedulerThreadPoolImpl(this.name, this.clock, poolSize);
+        new Thread(executor).start();
     }
 
 }
