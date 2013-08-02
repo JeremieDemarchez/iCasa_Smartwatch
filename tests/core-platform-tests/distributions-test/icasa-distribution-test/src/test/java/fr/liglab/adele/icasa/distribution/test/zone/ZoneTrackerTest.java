@@ -122,7 +122,7 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 
         zone.removeVariable(variableName);
         //now the tracker must have 0 zones
-        Assert.assertEquals(tracker.size(),0);//One tracked zone with the variable
+        Assert.assertEquals(tracker.size(),0);//0 tracked zones 'cause the needed variable has been removed.
     }
 
 }
