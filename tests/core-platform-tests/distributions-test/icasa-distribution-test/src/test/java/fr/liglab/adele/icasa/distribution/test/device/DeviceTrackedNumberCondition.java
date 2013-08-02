@@ -15,8 +15,9 @@
  */
 package fr.liglab.adele.icasa.distribution.test.device;
 
+import fr.liglab.adele.commons.test.utils.Condition;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
-import fr.liglab.adele.icasa.distribution.test.Condition;
+
 
 /**
  * Created with IntelliJ IDEA.
