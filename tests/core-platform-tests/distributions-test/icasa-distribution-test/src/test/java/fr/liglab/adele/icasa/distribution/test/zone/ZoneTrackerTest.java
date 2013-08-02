@@ -2,10 +2,6 @@ package fr.liglab.adele.icasa.distribution.test.zone;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
-import fr.liglab.adele.icasa.distribution.test.device.DeviceTrackedNumberCondition;
-import fr.liglab.adele.icasa.distribution.test.device.Type1Device;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.util.ZoneTracker;
 import org.junit.After;
@@ -17,12 +13,8 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 
 import javax.inject.Inject;
-
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 /**
  * User: garciai@imag.fr
