@@ -333,21 +333,21 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void addedDevice(LocatedDevice locatedDevice) {
-
+        //TODO implement it
     }
 
     @Override
     public void modifiedDevice(LocatedDevice locatedDevice, String s, Object o, Object o1) {
-
+        //TODO implement it
     }
 
     @Override
     public void movedDevice(LocatedDevice locatedDevice, Position position, Position position1) {
-
+        //TODO implement it
     }
 
     @Override
     public void removedDevice(LocatedDevice locatedDevice) {
-
+        //TODO implement it
     }
 }
