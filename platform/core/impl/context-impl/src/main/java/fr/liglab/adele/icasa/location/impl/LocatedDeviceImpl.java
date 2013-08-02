@@ -93,6 +93,28 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 		// TODO: Test which properties are readonly
 		deviceComponent.setPropertyValue(propertyName, value);
 	}
+	
+	@Override
+   public boolean constainsProperty(String propertyName) {
+		if (deviceComponent != null)
+			return deviceComponent.constainsProperty(propertyName);
+	   return false;
+   }
+
+	@Override
+   public boolean hasPropertyValue(String propertyName) {
+		if (deviceComponent != null)
+			return deviceComponent.hasPropertyValue(propertyName);
+	   return false;
+   }
+
+	@Override
+   public boolean removeProperty(String propertyName) {
+		if (deviceComponent != null)
+			return deviceComponent.removeProperty(propertyName);
+	   return false;
+   }
+	
 
 	@Override
 	public void addListener(final LocatedDeviceListener listener) {
@@ -313,5 +335,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			lock.readLock().unlock();
 		}
 	}
+
+
 
 }

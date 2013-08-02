@@ -414,27 +414,38 @@ public class ContextManagerImpl implements ContextManager {
 	}
 
 	@Bind(id = "devices", aggregate = true, optional = true)
-	public void bindDevice(GenericDevice simDev) {
+	public void bindDevice(GenericDevice genericDevice) {
+		
+		String sn = genericDevice.getSerialNumber();
+		if (m_devices.containsKey(sn)) {
+			try {
+				throw new IllegalArgumentException("A device with the same ID: " + sn + " was already registered");
+         } catch (Exception e) {
+         	e.printStackTrace();
+         }
+			return;
+		}
+		
 		boolean contained = false;
 		String deviceType = null;
-		LocatedDevice device = null;
+		LocatedDevice locatedDevice = null;
 		List<LocatedDeviceListener> snapshotLocatedDeviceListeners = null;
 		List<DeviceListener> snapshotDeviceListeners = null;
-		if (simDev instanceof Pojo) {
+		if (genericDevice instanceof Pojo) {
 			try {
-				deviceType = ((Pojo) simDev).getComponentInstance().getFactory().getFactoryName();
+				deviceType = ((Pojo) genericDevice).getComponentInstance().getFactory().getFactoryName();
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-		String sn = simDev.getSerialNumber();
+		
 		lock.writeLock().lock();
 		try {
-			m_devices.put(sn, simDev);
+			m_devices.put(sn, genericDevice);
 			contained = locatedDevices.containsKey(sn);
 			if (!contained) {
-				device = new LocatedDeviceImpl(sn, new Position(-1, -1), simDev, deviceType, this);
-				locatedDevices.put(sn, device);
+				locatedDevice = new LocatedDeviceImpl(sn, new Position(-1, -1), genericDevice, deviceType, this);
+				locatedDevices.put(sn, locatedDevice);
 				snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
 				snapshotDeviceListeners = getDeviceListeners();
 			}
@@ -447,35 +458,35 @@ public class ContextManagerImpl implements ContextManager {
 			// Listeners notification
 			for (DeviceListener listener : snapshotDeviceListeners) {
 				try {
-					listener.deviceAdded(simDev);
-					simDev.addListener(listener);
+					listener.deviceAdded(genericDevice);
+					genericDevice.addListener(listener);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			for (LocatedDeviceListener listener : snapshotLocatedDeviceListeners) {
 				try {
-					listener.deviceAdded(device);
-					device.addListener(listener);
+					listener.deviceAdded(locatedDevice);
+					locatedDevice.addListener(listener);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			// SimulatedDevice listener added
-			simDev.addListener((LocatedDeviceImpl) device);
+			genericDevice.addListener((LocatedDeviceImpl) locatedDevice);
 		}
 	}
 
 	@Unbind(id = "devices")
-	public void unbindDevice(GenericDevice simDev) {
-		String sn = simDev.getSerialNumber();
+	public void unbindDevice(GenericDevice genericDevice) {
+		String sn = genericDevice.getSerialNumber();
 		List<LocatedDeviceListener> snapshotLocatedDeviceListeners = null;
 		List<DeviceListener> snapshotDeviceListeners = null;
-		LocatedDevice device;
+		LocatedDevice locatedDevice;
 		lock.writeLock().lock();
 		try {
 			m_devices.remove(sn);
-			device = locatedDevices.remove(sn);
+			locatedDevice = locatedDevices.remove(sn);
 			snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
 			snapshotDeviceListeners = getDeviceListeners();
 		} finally {
@@ -485,23 +496,26 @@ public class ContextManagerImpl implements ContextManager {
 		// Listeners notification
 		for (DeviceListener listener : snapshotDeviceListeners) {
 			try {
-				listener.deviceRemoved(simDev);
-				simDev.removeListener(listener);
+				listener.deviceRemoved(genericDevice);
+				genericDevice.removeListener(listener);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		for (LocatedDeviceListener listener : snapshotLocatedDeviceListeners) {
 			try {
-				listener.deviceRemoved(device);
-				device.removeListener(listener);
+				// If two devices with the same ID where registered the locatedDevice can be null in one of unBinds callbacks
+				if (locatedDevice!=null) {
+					listener.deviceRemoved(locatedDevice);
+					locatedDevice.removeListener(listener);					
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
 		// SimulatedDevice listener removed
-		simDev.removeListener((LocatedDeviceImpl) device);
+		genericDevice.removeListener((LocatedDeviceImpl) locatedDevice);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.device.GenericDevice)")
