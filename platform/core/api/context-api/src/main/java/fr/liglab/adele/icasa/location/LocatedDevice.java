@@ -68,6 +68,31 @@ public interface LocatedDevice extends LocatedObject {
 	public void setPropertyValue(String propertyName, Object value);
 
 	/**
+	 * Determines if the device contains a property definition with this name
+	 * 
+	 * @param propertyName the property name
+	 * @return true if contains the property, false otherwise.
+	 */
+	public boolean constainsProperty(String propertyName);
+
+	/**
+	 * Determines if a property has been set.
+	 * 
+	 * @param propertyName the property name
+	 * @return true if property has a value. false if property has not been set (value null) or if property does not
+	 *         exist.
+	 */
+	public boolean hasPropertyValue(String propertyName);
+
+	/**
+	 * Removes a property on this device.
+	 * 
+	 * @param propertyName the property name
+	 * @return true if property was removed. false if property does not exist.
+	 */
+	public boolean removeProperty(String propertyName);
+
+	/**
 	 * Adds a listener to the Located device.
 	 * 
 	 * @param listener the listener to be added.

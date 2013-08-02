@@ -118,6 +118,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
                 synchronized (m_tracked) {
                     m_tracked.startTracking(contextMgr);
                 }
+                m_tracked.trackInitialDevices();
             }
 
             @Override
@@ -294,9 +295,10 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
                         // if this service is already in the process of being added.
                         continue; // skip this service
                     }
-                    m_adding.add(device);
+                    // m_adding.add(device);
                 }
-                trackAdding(device); // Begin tracking it. We call trackAdding since we have already put the reference in the adding list.
+                m_globalDeviceListener.deviceAdded(device);
+                // trackAdding(device); // Begin tracking it. We call trackAdding since we have already put the reference in the adding list.
             }
         }
 
@@ -377,7 +379,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
          * @param device the tracked device.
          */
         protected void untrack(LocatedDevice device, boolean onlyIfNotMatch) {
-            if (onlyIfNotMatch && !m_propFilter.match(device))
+            if (onlyIfNotMatch && m_propFilter.match(device))
                 return;
 
             synchronized (this) {
@@ -408,8 +410,8 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
             m_contextMgr.addListener(m_globalDeviceListener);
 
             List<LocatedDevice> devices = m_contextMgr.getDevices();
-            List<LocatedDevice> initialMatchingDevices = new ArrayList<LocatedDevice>();
-            setInitialDevices(initialMatchingDevices.toArray(new LocatedDevice[initialMatchingDevices.size()]));
+            List<LocatedDevice> initialMatchingDevices = new ArrayList<LocatedDevice>(devices);                       
+            setInitialDevices(initialMatchingDevices.toArray(new LocatedDevice[initialMatchingDevices.size()]));            
         }
 
         public synchronized void stopTracking() {
