@@ -6,6 +6,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
 import fr.liglab.adele.icasa.distribution.test.device.DeviceTrackedNumberCondition;
 import fr.liglab.adele.icasa.distribution.test.device.Type1Device;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.util.ZoneTracker;
 import org.junit.After;
 import org.junit.Assert;
@@ -96,6 +97,32 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
         contextMgr.addZoneVariable(zoneId, variableName);
         //now the tracker must have the zone
         Assert.assertEquals(tracker.size(),1);//One tracked zone with the variable
+    }
+
+    @Test
+    public void testZoneTrackerRemovingVariable() {
+        ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+        Assert.assertNotNull(contextMgr);
+        String zoneId = "toto";
+        String variableName = "needed-variable";
+
+        ZoneTracker tracker = new ZoneTracker(context, null, variableName);
+        tracker.open();
+        Assert.assertEquals(0, tracker.size());
+
+        //create zone.
+        Zone zone = contextMgr.createZone(zoneId, 10, 10, 10, 10, 10, 10);
+        //check size in context and in tracker.
+        Assert.assertEquals(contextMgr.getZones().size(), 1);//One zone in context.
+        Assert.assertEquals(tracker.size(),0);//zone does not have needed variable.
+        //add a variable
+        contextMgr.addZoneVariable(zoneId, variableName);
+        //now the tracker must have the zone
+        Assert.assertEquals(tracker.size(),1);//One tracked zone with the variable
+
+        zone.removeVariable(variableName);
+        //now the tracker must have 0 zones
+        Assert.assertEquals(tracker.size(),0);//One tracked zone with the variable
     }
 
 }
