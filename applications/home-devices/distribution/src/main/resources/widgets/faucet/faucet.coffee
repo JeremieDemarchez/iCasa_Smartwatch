@@ -1,23 +1,23 @@
 
 define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4javascript"], (require, hub, DeviceWidgetContract, ko, log4javascript) ->
 
-    console.log("door module loaded !!!");
+    console.log("faucet module loaded !!!");
 
-    class DoorSensorWidget extends DeviceWidgetContract
+    class FaucetWidget extends DeviceWidgetContract
         name : null
         logger : null
         iconURL : null;
 
         constructor : (name) ->
             @name = name;
-            @logger = log4javascript.getLogger("DoorSensorWidget");
+            @logger = log4javascript.getLogger("FaucetWidget");
             @logger.removeAllAppenders();
             @logger.addAppender(new log4javascript.BrowserConsoleAppender());
-            @iconURL = require.toUrl("./door_icon.jpg");
+            @iconURL = require.toUrl("./faucet.png");
 
-        start : -> @logger.info("DoorSensorWidget starting...");
+        start : -> @logger.info("FaucetWidget starting...");
 
-        stop : -> @logger.info("DoorSensorWidget stoping...");
+        stop : -> @logger.info("FaucetWidget stoping...");
 
         configure : (theHub, config) ->
           if (config?.name?) then @name = config.name;
@@ -36,7 +36,7 @@ define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4ja
         manageDynamicIcon : () -> false;
 
         manageDevice : (device) ->
-          return ((device.type() == "iCasa.Door") || device.hasService("fr.liglab.adele.home.devices.general.Door"));
+          return ((device.type() == "iCasa.Faucet") || device.hasService("fr.liglab.adele.home.devices.water.Faucet"));
 
         getStatusWindowTemplateURL : () -> null;
 
@@ -48,9 +48,9 @@ define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4ja
         init : (deviceViewModel) ->
           null;
 
-    instance = hub.createInstance(DoorSensorWidget, {name : "doorSensorWidget-1"});
+    instance = hub.createInstance(FaucetWidget, {name : "faucetWidget-1"});
 
-    console.log("doorSensor module end loaded !!!");
+    console.log("faucet module end loaded !!!");
 
     return instance;
 );

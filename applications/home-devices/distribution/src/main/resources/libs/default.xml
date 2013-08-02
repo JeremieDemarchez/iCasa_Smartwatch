@@ -19,5 +19,13 @@
 <library id="default" name="Default widgets for iCasa predefined devices + Home devices">
     <widget id="presenceSensor" />
     <widget id="door" />
+    <widget id="faucet" />
+    <widget id="flush-toilet" />
+    <widget id="hob" />
+    <widget id="microwave" />
+    <widget id="oven" />
+    <widget id="refrigerator" />
+    <widget id="water-meter" />
+    <widget id="window" />
     <plugin id="fake"/><!-- workaround of widgets loading without plugins -->
 </library>

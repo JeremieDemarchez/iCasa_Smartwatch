@@ -1,56 +1,58 @@
 
 define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4javascript"], (require, hub, DeviceWidgetContract, ko, log4javascript) ->
 
-    console.log("door module loaded !!!");
+  deviceTypeName = "Oven";
 
-    class DoorSensorWidget extends DeviceWidgetContract
-        name : null
-        logger : null
-        iconURL : null;
+  console.log(deviceTypeName + " module loaded !!!");
 
-        constructor : (name) ->
-            @name = name;
-            @logger = log4javascript.getLogger("DoorSensorWidget");
-            @logger.removeAllAppenders();
-            @logger.addAppender(new log4javascript.BrowserConsoleAppender());
-            @iconURL = require.toUrl("./door_icon.jpg");
+  class OvenWidget extends DeviceWidgetContract
+    name : null
+    logger : null
+    iconURL : null;
 
-        start : -> @logger.info("DoorSensorWidget starting...");
+    constructor : (name) ->
+      @name = name;
+      @logger = log4javascript.getLogger(deviceTypeName + "Widget");
+      @logger.removeAllAppenders();
+      @logger.addAppender(new log4javascript.BrowserConsoleAppender());
+      @iconURL = require.toUrl("./oven-icon.png");
 
-        stop : -> @logger.info("DoorSensorWidget stoping...");
+    start : -> @logger.info(deviceTypeName + "Widget starting...");
 
-        configure : (theHub, config) ->
-          if (config?.name?) then @name = config.name;
-          @hub = theHub;
-          @hub.provideService({
-            component: this,
-            contract: DeviceWidgetContract
-          });
+    stop : -> @logger.info(deviceTypeName + "Widget stoping...");
 
-        getComponentName: -> return @name;
+    configure : (theHub, config) ->
+      if (config?.name?) then @name = config.name;
+      @hub = theHub;
+      @hub.provideService({
+      component: this,
+      contract: DeviceWidgetContract
+      });
 
-        getBaseIconURL : () -> return @iconURL;
+    getComponentName: -> return @name;
 
-        getCurrentIconURL : () -> null;
+    getBaseIconURL : () -> return @iconURL;
 
-        manageDynamicIcon : () -> false;
+    getCurrentIconURL : () -> null;
 
-        manageDevice : (device) ->
-          return ((device.type() == "iCasa.Door") || device.hasService("fr.liglab.adele.home.devices.general.Door"));
+    manageDynamicIcon : () -> false;
 
-        getStatusWindowTemplateURL : () -> null;
+    manageDevice : (device) ->
+      return ((device.type() == "iCasa.Oven") || device.hasService("fr.liglab.adele.home.devices.kitchen.Oven"));
 
-        getDecorators : () -> null;
+    getStatusWindowTemplateURL : () -> null;
 
-        propHasChanged : (device) ->
-          null;
+    getDecorators : () -> null;
 
-        init : (deviceViewModel) ->
-          null;
+    propHasChanged : (device) ->
+      null;
 
-    instance = hub.createInstance(DoorSensorWidget, {name : "doorSensorWidget-1"});
+    init : (deviceViewModel) ->
+      null;
 
-    console.log("doorSensor module end loaded !!!");
+  instance = hub.createInstance(OvenWidget, {name : deviceTypeName + "Widget-1"});
 
-    return instance;
+  console.log(deviceTypeName + " module end loaded !!!");
+
+  return instance;
 );

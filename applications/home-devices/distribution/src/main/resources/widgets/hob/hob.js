@@ -3,35 +3,36 @@
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor(); child.__super__ = parent.prototype; return child; };
 
   define(["require", "hubu", "contracts/DeviceWidgetContract", "knockout", "log4javascript"], function(require, hub, DeviceWidgetContract, ko, log4javascript) {
-    var DoorSensorWidget, instance;
-    console.log("door module loaded !!!");
-    DoorSensorWidget = (function(_super) {
+    var HobWidget, deviceTypeName, instance;
+    deviceTypeName = "Hob";
+    console.log(deviceTypeName + " module loaded !!!");
+    HobWidget = (function(_super) {
 
-      __extends(DoorSensorWidget, _super);
+      __extends(HobWidget, _super);
 
-      DoorSensorWidget.prototype.name = null;
+      HobWidget.prototype.name = null;
 
-      DoorSensorWidget.prototype.logger = null;
+      HobWidget.prototype.logger = null;
 
-      DoorSensorWidget.prototype.iconURL = null;
+      HobWidget.prototype.iconURL = null;
 
-      function DoorSensorWidget(name) {
+      function HobWidget(name) {
         this.name = name;
-        this.logger = log4javascript.getLogger("DoorSensorWidget");
+        this.logger = log4javascript.getLogger(deviceTypeName + "Widget");
         this.logger.removeAllAppenders();
         this.logger.addAppender(new log4javascript.BrowserConsoleAppender());
-        this.iconURL = require.toUrl("./door_icon.jpg");
+        this.iconURL = require.toUrl("./hob.jpg");
       }
 
-      DoorSensorWidget.prototype.start = function() {
-        return this.logger.info("DoorSensorWidget starting...");
+      HobWidget.prototype.start = function() {
+        return this.logger.info(deviceTypeName + "Widget starting...");
       };
 
-      DoorSensorWidget.prototype.stop = function() {
-        return this.logger.info("DoorSensorWidget stoping...");
+      HobWidget.prototype.stop = function() {
+        return this.logger.info(deviceTypeName + "Widget stoping...");
       };
 
-      DoorSensorWidget.prototype.configure = function(theHub, config) {
+      HobWidget.prototype.configure = function(theHub, config) {
         if (((config != null ? config.name : void 0) != null)) {
           this.name = config.name;
         }
@@ -42,49 +43,49 @@
         });
       };
 
-      DoorSensorWidget.prototype.getComponentName = function() {
+      HobWidget.prototype.getComponentName = function() {
         return this.name;
       };
 
-      DoorSensorWidget.prototype.getBaseIconURL = function() {
+      HobWidget.prototype.getBaseIconURL = function() {
         return this.iconURL;
       };
 
-      DoorSensorWidget.prototype.getCurrentIconURL = function() {
+      HobWidget.prototype.getCurrentIconURL = function() {
         return null;
       };
 
-      DoorSensorWidget.prototype.manageDynamicIcon = function() {
+      HobWidget.prototype.manageDynamicIcon = function() {
         return false;
       };
 
-      DoorSensorWidget.prototype.manageDevice = function(device) {
-        return (device.type() === "iCasa.Door") || device.hasService("fr.liglab.adele.home.devices.general.Door");
+      HobWidget.prototype.manageDevice = function(device) {
+        return (device.type() === "iCasa.Hob") || device.hasService("fr.liglab.adele.home.devices.kitchen.Hob");
       };
 
-      DoorSensorWidget.prototype.getStatusWindowTemplateURL = function() {
+      HobWidget.prototype.getStatusWindowTemplateURL = function() {
         return null;
       };
 
-      DoorSensorWidget.prototype.getDecorators = function() {
+      HobWidget.prototype.getDecorators = function() {
         return null;
       };
 
-      DoorSensorWidget.prototype.propHasChanged = function(device) {
+      HobWidget.prototype.propHasChanged = function(device) {
         return null;
       };
 
-      DoorSensorWidget.prototype.init = function(deviceViewModel) {
+      HobWidget.prototype.init = function(deviceViewModel) {
         return null;
       };
 
-      return DoorSensorWidget;
+      return HobWidget;
 
     })(DeviceWidgetContract);
-    instance = hub.createInstance(DoorSensorWidget, {
-      name: "doorSensorWidget-1"
+    instance = hub.createInstance(HobWidget, {
+      name: deviceTypeName + "Widget-1"
     });
-    console.log("doorSensor module end loaded !!!");
+    console.log(deviceTypeName + " module end loaded !!!");
     return instance;
   });
 
