@@ -46,6 +46,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>fr.liglab.adele.common</groupId>
+      <artifactId>base.distribution.test</artifactId>
+      <version>${DistributionTestVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>common</artifactId>
       <version>${project.version}</version>
