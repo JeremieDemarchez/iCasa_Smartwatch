@@ -109,10 +109,30 @@
               <artifactId>coffee-mill-maven-plugin</artifactId>
               <version>1.0.0</version>
               <extensions>true</extensions>
-              <configuration>
-                  <coffeeScriptDir>widgets</coffeeScriptDir>
-                  <workDir>widgets</workDir>
-              </configuration>
+              <executions>
+                  <execution>
+                      <id>compile plugin coffeescript</id>
+                      <phase>generate-resources</phase>
+                      <goals>
+                          <goal>compile-coffeescript</goal>
+                      </goals>
+                      <configuration>
+                          <coffeeScriptDir>plugins</coffeeScriptDir>
+                          <workDir>plugins</workDir>
+                      </configuration>
+                  </execution>
+                  <execution>
+                      <id>compile widget coffeescript</id>
+                      <phase>generate-resources</phase>
+                      <goals>
+                          <goal>compile-coffeescript</goal>
+                      </goals>
+                      <configuration>
+                          <coffeeScriptDir>widgets</coffeeScriptDir>
+                          <workDir>widgets</workDir>
+                      </configuration>
+                  </execution>
+              </executions>
           </plugin>
 
       </plugins>

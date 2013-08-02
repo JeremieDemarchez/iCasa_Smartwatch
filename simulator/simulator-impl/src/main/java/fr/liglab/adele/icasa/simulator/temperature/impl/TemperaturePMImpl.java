@@ -37,25 +37,22 @@ import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
+import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
+import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
+import fr.liglab.adele.icasa.service.scheduler.SpecificClockPeriodicRunnable;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
 
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.device.temperature.Cooler;
-import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.location.*;
-import fr.liglab.adele.icasa.simulator.PhysicalModel;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 
 import java.util.*;
 
 @Component(name = "temperature-model")
 @Instantiate(name = "temperature-model-1")
 @Provides(specifications = PhysicalModel.class)
-public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
+public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCustomizer {
 
     public static final String TEMPERATURE_PROP_NAME = "Temperature";
 
@@ -87,53 +84,75 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     @Requires
     private Clock _clock;
 
+    private LocatedDeviceTracker _heaterTracker;
+    private LocatedDeviceTracker _coolerTracker;
+//    private ZoneTracker _zoneTracker;
+
     private static final Clock _systemClock = SystemClockImpl.SINGLETON;
 
-    public TemperaturePMImpl() {
+    private BundleContext _context;
+
+    private ServiceRegistration _computeTempTaskSRef;
+    private boolean _started;
+
+    public TemperaturePMImpl(BundleContext context) {
+        _context = context;
+        _started = false;
+
         // workaround of ipojo bug of object member initialization
         _zoneLock = new Object();
         _deviceLock = new Object();
+        _heaterTracker = new LocatedDeviceTracker(context, Heater.class, this);
+        _coolerTracker = new LocatedDeviceTracker(context, Cooler.class, this);
+//        _zoneTracker = new ZoneTracker(VOLUME_PROP_NAME, this);
     }
 
-    @Override
-    public void deviceAdded(LocatedDevice locatedDevice) {
-        GenericDevice device = locatedDevice.getDeviceObject();
-        if (!((device != null) &&
-                isTemperatureDevice(device)))
-            return; // ignore it
+    @Validate
+    private void start() {
+        _started = true;
+        _heaterTracker.open();
+        _coolerTracker.open();
+//        _zoneTracker.open();
 
-        synchronized (_deviceLock) {
-            _temperatureDevices.add(locatedDevice);
-        }
-        updateZones(locatedDevice);
+        SpecificClockPeriodicRunnable computeTempTask = new SpecificClockPeriodicRunnable() {
+            @Override
+            public long getPeriod() {
+                return 300;
+            }
+
+            @Override
+            public Clock getClock() {
+                return _systemClock;
+            }
+
+            @Override
+            public String getGroup() {
+                return "TempPM-group";
+            }
+
+            @Override
+            public void run() {
+                updateTemperatures();
+            }
+        };
+        _computeTempTaskSRef = _context.registerService(SpecificClockPeriodicRunnable.class.getName(), computeTempTask, new Hashtable());
     }
 
-    private boolean isTemperatureDevice(GenericDevice device) {
-        return ((device instanceof Heater) || (device instanceof Cooler));
+    private void updateTemperatures() {
+        //TODO
     }
 
-    @Override
-    public void deviceRemoved(LocatedDevice locatedDevice) {
-        GenericDevice device = locatedDevice.getDeviceObject();
-        if (!((device != null) &&
-                isTemperatureDevice(device)))
-            return; // ignore it
+    @Invalidate
+    private void stop() {
+        _started = false;
+       if (_computeTempTaskSRef != null) {
+           _computeTempTaskSRef.unregister();
+           _computeTempTaskSRef = null;
+       }
 
-        synchronized (_deviceLock) {
-            _temperatureDevices.remove(locatedDevice);
-        }
-        updateZones(locatedDevice);
-    }
-
-    @Override
-    public void deviceMoved(LocatedDevice locatedDevice, Position oldPosition, Position newPosition) {
-        updateZones(oldPosition);
-        updateZones(locatedDevice);
-    }
-
-    @Override
-    public void devicePropertyModified(LocatedDevice locatedDevice, String propName, Object oldValue, Object newValue) {
-        updateZonesIfPropChanged(locatedDevice, propName);
+//       _zoneTracker.close();
+       _heaterTracker.close();
+       _coolerTracker.close();
     }
 
     private void updateZonesIfPropChanged(LocatedDevice locatedDevice, String propName) {
@@ -142,43 +161,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
                 Cooler.COOLER_POWER_LEVEL.equals(propName) ||
                 Cooler.COOLER_MAX_POWER_LEVEL.equals(propName)) {
 
-            updateZones(locatedDevice);
-        }
-    }
-
-    @Override
-    public void devicePropertyAdded(LocatedDevice locatedDevice, String propName) {
-        updateZonesIfPropChanged(locatedDevice, propName);
-    }
-
-    @Override
-    public void devicePropertyRemoved(LocatedDevice locatedDevice, String propName) {
-        //do nothing
-    }
-
-    @Override
-    public void deviceAttached(LocatedDevice locatedDevice, LocatedDevice locatedDevice1) {
-        //do nothing
-    }
-
-    @Override
-    public void deviceDetached(LocatedDevice locatedDevice, LocatedDevice locatedDevice1) {
-        //do nothing
-    }
-
-    @Override
-    public void deviceEvent(LocatedDevice locatedDevice, Object event) {
-        // do nothing
-    }
-
-    private void updateZones(LocatedDevice locatedDevice) {
-        updateZones(locatedDevice.getCenterAbsolutePosition());
-    }
-
-    private void updateZones(Position devicePosition) {
-        Set<Zone> zonesToUpdate = getZones(devicePosition);
-        for (Zone zone : zonesToUpdate) {
-            updateTemperature(zone);
+            //TODO
         }
     }
 
@@ -271,7 +254,14 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      */
     private void updateTemperature(Zone zone) {
         synchronized (_zoneLock) {
-            double returnedTemperature = 0.0; //TODO manage external temperature
+            Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
+            double returnedTemperature = 20.0;
+            if (zoneTemperature != null)
+                try {
+                    returnedTemperature = (Double) zoneTemperature; //TODO manage external temperature
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             int activeTemperatureDeviceSize = 0;
             int height = zone.getZLength();
             int length = zone.getYLength();
@@ -326,57 +316,38 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         }
     }
 
-    @Override
-    public void zoneAdded(Zone zone) {
-        updateZoneModel(zone);
-    }
-
     private void updateZoneModel(Zone zone) {
         //TODO implement it
     }
 
+
+
+    /*
+     * LocateDeviceTracker
+     */
+
     @Override
-    public void zoneRemoved(Zone zone) {
-        updateZoneModel(zone);
+    public boolean addingDevice(LocatedDevice locatedDevice) {
+        return true;
     }
 
     @Override
-    public void zoneMoved(Zone zone, Position position, Position position1) {
-        updateZoneModel(zone);
+    public void addedDevice(LocatedDevice locatedDevice) {
+
     }
 
     @Override
-    public void zoneResized(Zone zone) {
-        updateZoneModel(zone);
+    public void modifiedDevice(LocatedDevice locatedDevice, String s, Object o, Object o1) {
+
     }
 
     @Override
-    public void zoneParentModified(Zone zone, Zone zone1, Zone zone2) {
-        //do nothing
+    public void movedDevice(LocatedDevice locatedDevice, Position position, Position position1) {
+
     }
 
     @Override
-    public void deviceAttached(Zone zone, LocatedDevice locatedDevice) {
-        //do nothing
-    }
+    public void removedDevice(LocatedDevice locatedDevice) {
 
-    @Override
-    public void deviceDetached(Zone zone, LocatedDevice locatedDevice) {
-        //do nothing
-    }
-
-    @Override
-    public void zoneVariableAdded(Zone zone, String s) {
-        updateZoneModel(zone);
-    }
-
-    @Override
-    public void zoneVariableRemoved(Zone zone, String s) {
-        updateZoneModel(zone);
-    }
-
-    @Override
-    public void zoneVariableModified(Zone zone, String s, Object o, Object o1) {
-        updateZoneModel(zone);
     }
 }
