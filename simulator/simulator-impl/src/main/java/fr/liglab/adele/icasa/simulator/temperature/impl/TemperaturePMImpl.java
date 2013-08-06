@@ -43,6 +43,7 @@ import fr.liglab.adele.icasa.service.scheduler.SpecificClockPeriodicRunnable;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
 
 import fr.liglab.adele.icasa.location.*;
+import fr.liglab.adele.icasa.location.util.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -52,7 +53,7 @@ import java.util.*;
 @Component(name = "temperature-model")
 @Instantiate(name = "temperature-model-1")
 @Provides(specifications = PhysicalModel.class)
-public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCustomizer {
+public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCustomizer, ZoneTrackerCustomizer {
 
     public static final String TEMPERATURE_PROP_NAME = "Temperature";
 
@@ -86,33 +87,39 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     private LocatedDeviceTracker _heaterTracker;
     private LocatedDeviceTracker _coolerTracker;
-//    private ZoneTracker _zoneTracker;
+    private ZoneTracker _zoneTracker;
 
     private static final Clock _systemClock = SystemClockImpl.SINGLETON;
 
     private BundleContext _context;
 
     private ServiceRegistration _computeTempTaskSRef;
-    private boolean _started;
+    private boolean _computationIsOn;
 
     public TemperaturePMImpl(BundleContext context) {
         _context = context;
-        _started = false;
+        _computationIsOn = false;
 
         // workaround of ipojo bug of object member initialization
         _zoneLock = new Object();
         _deviceLock = new Object();
         _heaterTracker = new LocatedDeviceTracker(context, Heater.class, this);
         _coolerTracker = new LocatedDeviceTracker(context, Cooler.class, this);
-//        _zoneTracker = new ZoneTracker(VOLUME_PROP_NAME, this);
+        _zoneTracker = new ZoneTracker(context, this, VOLUME_PROP_NAME);
+
+        _computedVariables = new HashSet<Variable>();
+        _computedVariables.add(new Variable(TEMPERATURE_PROP_NAME, Double.class, "in Kelvin"));
+
+        _requiredZoneVariables = new HashSet<Variable>();
+        _requiredZoneVariables.add(new Variable(VOLUME_PROP_NAME, Double.class, "volume in cubic meters"));
     }
 
     @Validate
     private void start() {
-        _started = true;
+        _computationIsOn = true;
         _heaterTracker.open();
         _coolerTracker.open();
-//        _zoneTracker.open();
+        _zoneTracker.open();
 
         SpecificClockPeriodicRunnable computeTempTask = new SpecificClockPeriodicRunnable() {
             @Override
@@ -139,37 +146,42 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     private void updateTemperatures() {
+        if (!_computationIsOn)
+            return;
+
+        //TODO manage synchronization
+        long previousUpdateTS = m_lastUpdateTime;
+        long newUpdateTS = _clock.currentTimeMillis(); // must use simulated time
         //TODO
+
+        m_lastUpdateTime = newUpdateTS;
     }
 
     @Invalidate
     private void stop() {
-        _started = false;
+       _computationIsOn = false;
        if (_computeTempTaskSRef != null) {
            _computeTempTaskSRef.unregister();
            _computeTempTaskSRef = null;
        }
 
-//       _zoneTracker.close();
+       _zoneTracker.close();
        _heaterTracker.close();
        _coolerTracker.close();
     }
 
-    private void updateZonesIfPropChanged(LocatedDevice locatedDevice, String propName) {
-        if (Heater.HEATER_POWER_LEVEL.equals(propName) ||
+    private boolean propChangeHasImpactOnPower(LocatedDevice locatedDevice, String propName) {
+        return (Heater.HEATER_POWER_LEVEL.equals(propName) ||
                 Heater.HEATER_MAX_POWER_LEVEL.equals(propName) ||
                 Cooler.COOLER_POWER_LEVEL.equals(propName) ||
-                Cooler.COOLER_MAX_POWER_LEVEL.equals(propName)) {
-
-            //TODO
-        }
+                Cooler.COOLER_MAX_POWER_LEVEL.equals(propName));
     }
 
-    private Set<Zone> getZones(Position devicePosition) {
+    private Set<Zone> getZones(Position position) {
         List<Zone> zones = _contextMgr.getZones();
         Set<Zone> zonesToUpdate = new HashSet<Zone>();
         for (Zone zone : zones) {
-            if (zone.contains(devicePosition))
+            if (zone.contains(position))
                 zonesToUpdate.add(zone);
         }
         return zonesToUpdate;
@@ -180,39 +192,20 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         return getZones(devicePosition);
     }
 
-    public TemperaturePMImpl(Set<Variable> _computedVariables) {
-        this._computedVariables = new HashSet<Variable>();
-        _computedVariables.add(new Variable(TEMPERATURE_PROP_NAME, Double.class, "in Kelvin"));
-
-        _requiredZoneVariables = new HashSet<Variable>();
-        _requiredZoneVariables.add(new Variable(VOLUME_PROP_NAME, Double.class, "volume in cubic meters"));
-    }
-
     @Override
     public Set<Variable> getComputedZoneVariables() {
-        return _computedVariables;
+        return Collections.unmodifiableSet(_computedVariables);
     }
 
     @Override
     public Set<Variable> getRequiredZoneVariables() {
-        return _requiredZoneVariables;
+        return Collections.unmodifiableSet(_requiredZoneVariables);
     }
 
     @Override
     public Set<LocatedDevice> getUsedDevices() {
         return Collections.unmodifiableSet(new HashSet<LocatedDevice>(_temperatureDevices));
     }
-
-//    @Validate
-//    private void start() {
-//        _contextMgr.addListener(this);
-//        m_lastUpdateTime = System.currentTimeMillis();
-//    }
-//
-//    @Invalidate
-//    private void stop() {
-//        _contextMgr.removeListener(this);
-//    }
 
     /**
      * Returns a new mutable set of all temperature devices for each call.
@@ -321,9 +314,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
 
-
     /*
-     * LocateDeviceTracker
+     * LocateDeviceTrackerCustomizer
      */
 
     @Override
@@ -348,6 +340,35 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void removedDevice(LocatedDevice locatedDevice) {
+        //TODO implement it
+    }
+
+    /*
+    * ZoneTrackerCustomizer
+    */
+
+    @Override
+    public boolean addingZone(Zone zone) {
+        return true;
+    }
+
+    @Override
+    public void addedZone(Zone zone) {
+        //TODO implement it
+    }
+
+    @Override
+    public void modifiedZone(Zone zone, String s, Object o, Object o1) {
+        //TODO implement it
+    }
+
+    @Override
+    public void movedZone(Zone zone, Position position, Position position1) {
+        //TODO implement it
+    }
+
+    @Override
+    public void removedZone(Zone zone) {
         //TODO implement it
     }
 }
