@@ -47,6 +47,17 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 	 */
 	protected final List<DeviceDependency> dependencies = new ArrayList<DeviceDependency>();
 
+	private Boolean disable = false;
+
+	public DeviceAccessTrackingInterceptor(BundleContext context) {
+		String disableStr = context.getProperty("disable.icasa.interceptor");
+
+		if (disableStr != null) {
+			disable = Boolean.valueOf(disableStr);
+		}
+
+	}
+
 	@Override
 	public void open(DependencyModel dependency) {
 		if (isPlatformComponent(dependency))
@@ -72,7 +83,6 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		if (dependency instanceof DeviceDependency) {
 			DeviceDependency deviceDependency = (DeviceDependency) dependency;
 
-
 			String appId = deviceDependency.getApplicationId();
 			String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
 
@@ -89,14 +99,13 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 			}
 
 		} else {
+			
 			// Only platform components has access to the device instances using iPOJO
 			if (!isPlatformComponent(dependency)) {
-				System.out.println("An application trying to get a device using a standard iPOJO Requires: "
-				      + dependency.getComponentInstance().getInstanceName());
-				return null;
-			} else {
-				System.out.println("A platform component accesing a device using a standard iPOJO Requires: "
-				      + dependency.getComponentInstance().getInstanceName());
+				// Interceptor is disable by the configuration
+				if (!disable) {
+					return null;
+				}					
 			}
 		}
 
@@ -121,43 +130,28 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		return false;
 	}
 
-	
 	/*
-	 
-	private void invalidateMatchingServices(String appId, LocatedDevice locatedDevice) {
-		List<DeviceDependency> copyList = new ArrayList<DeviceDependency>();
-		synchronized (this) {
-			copyList.addAll(dependencies);
-		}
-		
-		for (DeviceDependency dependency : copyList) {
-			if (appId.equals(dependency.getApplicationId())) { // Only for dependecies of this application
-				Class[] interfaces = locatedDevice.getDeviceObject().getClass().getInterfaces();
-				for (Class interfaze : interfaces) {
-					if (dependency.getSpecification().equals(interfaze)) { // Only dependencies using this kind of device
-						dependency.invalidateMatchingServices();
-					}
-				}
-			}
-		}
-	}
-
-
-	@Override
-   public void onAccessRightModified(AccessRight accessRight) {
-	   String appId = accessRight.getApplicationId();
-	   String deviceId = accessRight.getDeviceId();
-	   
-	   LocatedDevice locatedDevice = contextManager.getDevice(deviceId);
-	   
-	   invalidateMatchingServices(appId, locatedDevice);
-	   
-   }
-
-	@Override
-   public void onMethodAccessRightModified(AccessRight accessRight, String methodName) {
-	   // Nothing to be done
-   }
-   */
+	 * 
+	 * private void invalidateMatchingServices(String appId, LocatedDevice locatedDevice) { List<DeviceDependency>
+	 * copyList = new ArrayList<DeviceDependency>(); synchronized (this) { copyList.addAll(dependencies); }
+	 * 
+	 * for (DeviceDependency dependency : copyList) { if (appId.equals(dependency.getApplicationId())) { // Only for
+	 * dependecies of this application Class[] interfaces = locatedDevice.getDeviceObject().getClass().getInterfaces();
+	 * for (Class interfaze : interfaces) { if (dependency.getSpecification().equals(interfaze)) { // Only dependencies
+	 * using this kind of device dependency.invalidateMatchingServices(); } } } } }
+	 * 
+	 * 
+	 * @Override public void onAccessRightModified(AccessRight accessRight) { String appId =
+	 * accessRight.getApplicationId(); String deviceId = accessRight.getDeviceId();
+	 * 
+	 * LocatedDevice locatedDevice = contextManager.getDevice(deviceId);
+	 * 
+	 * invalidateMatchingServices(appId, locatedDevice);
+	 * 
+	 * }
+	 * 
+	 * @Override public void onMethodAccessRightModified(AccessRight accessRight, String methodName) { // Nothing to be
+	 * done }
+	 */
 
 }

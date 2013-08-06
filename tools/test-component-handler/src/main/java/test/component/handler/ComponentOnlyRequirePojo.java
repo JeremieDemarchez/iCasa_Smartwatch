@@ -15,23 +15,24 @@
  */
 package test.component.handler;
 
-import java.util.List;
-
-import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.osgi.framework.ServiceReference;
+import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
 @Component
+@Instantiate
 public class ComponentOnlyRequirePojo {
 
-	@Requires(proxy=true)
-	private BinaryLight[] lightsArray;
+	@Requires
+	private BinaryLight light;
 	
-	@Requires(proxy=true, specification="fr.liglab.adele.icasa.device.light.BinaryLight")
-	private List<BinaryLight> lightsList;
+	@Validate
+	private void start() {
+		System.out.println(light.getSerialNumber());
+   }
+	
 	
 }
