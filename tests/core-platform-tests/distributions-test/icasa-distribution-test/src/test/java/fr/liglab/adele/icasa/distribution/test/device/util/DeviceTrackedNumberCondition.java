@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.distribution.test.device;
+package fr.liglab.adele.icasa.distribution.test.device.util;
 
 import fr.liglab.adele.commons.test.utils.Condition;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;

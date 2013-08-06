@@ -1,5 +1,6 @@
-package fr.liglab.adele.icasa.distribution.test;
+package fr.liglab.adele.icasa.distribution.test.device;
 
+import static fr.liglab.adele.icasa.distribution.test.util.DeviceTestUtil.registerDevice;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -11,7 +12,6 @@ import javax.inject.Inject;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -26,14 +26,12 @@ import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
-import fr.liglab.adele.icasa.distribution.test.device.DeviceTrackedNumberCondition;
-import fr.liglab.adele.icasa.distribution.test.device.Type1Device;
-import fr.liglab.adele.icasa.distribution.test.device.Type1DeviceImpl;
+import fr.liglab.adele.icasa.distribution.test.device.util.DeviceTrackedNumberCondition;
+import fr.liglab.adele.icasa.distribution.test.device.util.Type1Device;
+import fr.liglab.adele.icasa.distribution.test.device.util.Type1DeviceImpl;
 import fr.liglab.adele.icasa.distribution.test.util.DeviceTestUtil;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
-
-import static fr.liglab.adele.icasa.distribution.test.util.DeviceTestUtil.registerDevice;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
@@ -74,11 +72,46 @@ public class DeviceTrackerTest extends AbstractDistributionBaseTest {
 
 		dev2SReg.unregister();
 
-		// TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
+	}
+	
+
+	@Test
+	public void testTrackerWithoutCustomizerAndFilter() {
+		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		Assert.assertNotNull(contextMgr);
+
+		LocatedDeviceTracker tracker = new LocatedDeviceTracker(context, Type1Device.class, null);
+		tracker.open();
+		Assert.assertEquals(0, tracker.size());
+
+		GenericDevice device1 = mock(Type1Device.class);
+		String dev1SN = "dev1";
+		when(device1.getSerialNumber()).thenReturn(dev1SN);
+		
+		ServiceRegistration dev1SReg = DeviceTestUtil.registerDevice(context, device1, GenericDevice.class, Type1Device.class);
+
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));
+
+		GenericDevice device2 = mock(Type1Device.class);
+		String dev2SN = "dev2";
+		when(device2.getSerialNumber()).thenReturn(dev2SN);
+		ServiceRegistration dev2SReg = DeviceTestUtil.registerDevice(context, device2, GenericDevice.class, Type1Device.class);
+
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 2));
+
+		// cleanup
+		dev1SReg.unregister();
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));
+		
+		dev2SReg.unregister();
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
 	}
 
-	// @Test
-	public void testDeviceTrackerWithCustomizerAndFilter() {
+	@Test
+	public void testTrackerWithCustomizerAndFilter() {
 		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
@@ -152,8 +185,66 @@ public class DeviceTrackerTest extends AbstractDistributionBaseTest {
 		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
 
 		// The removedDevice is invoked one time with lDevcie2 as argument
-		// verify(customizer, times(1)).removedDevice(lDevice2);
+		verify(customizer, times(1)).removedDevice(lDevice2);
 
+	}
+	
+
+	
+	@Test
+	public void testTrackerUsingProperties() {
+		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		Assert.assertNotNull(contextMgr);
+
+		LocatedDeviceTracker tracker = new LocatedDeviceTracker(context, Type1Device.class, null, "property1");
+		tracker.open();
+		Assert.assertEquals(0, tracker.size());
+
+		GenericDevice device1 = new Type1DeviceImpl("dev1");
+		
+		ServiceRegistration dev1SReg = DeviceTestUtil.registerDevice(context, device1, GenericDevice.class, Type1Device.class);
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
+				
+		device1.setPropertyValue("property1", "value1");
+
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));
+		
+		device1.removeProperty("property1");
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
+		
+		device1.setPropertyValue("property1", "value1");
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));		
+		
+		GenericDevice device2 = new Type1DeviceImpl("dev2");
+
+		ServiceRegistration dev2SReg = DeviceTestUtil.registerDevice(context, device2, GenericDevice.class, Type1Device.class);
+
+		device2.setPropertyValue("property2", "value2");
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));
+		
+		device2.setPropertyValue("property1", "value2");
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 2));
+		
+		device2.removeProperty("property1");
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));
+		
+		device2.setPropertyValue("property1", "value2");
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 2));
+
+		dev1SReg.unregister();
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 1));
+				
+		dev2SReg.unregister();
+		
+		TestUtils.testConditionWithTimeout(new DeviceTrackedNumberCondition(tracker, 0));
 	}
 
 }

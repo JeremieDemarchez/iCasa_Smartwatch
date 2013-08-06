@@ -13,13 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.distribution.test;
+package fr.liglab.adele.icasa.distribution.test.zone;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
 
 import javax.inject.Inject;
 
 import org.junit.After;
 import org.junit.Assert;
-import static org.junit.Assert.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,8 +32,6 @@ import org.osgi.framework.BundleContext;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.distribution.test.zone.ZoneTestListener;
-import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 
@@ -73,7 +73,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the creation of a new zone with an existent ID.
 	 */
 	@Test
-	public void creationZoneFailDueToExistentTest(){
+	public void creationZoneFailDueToExistentTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
@@ -92,7 +92,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the events for not available zones. 
 	 */
 	@Test
-	public void eventsForRemovedZoneFailTest(){
+	public void eventsForRemovedZoneFailTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
@@ -117,7 +117,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the the listener event is called when adding a zone.
 	 */
 	@Test
-	public void addZoneTest(){
+	public void addZoneTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
@@ -138,7 +138,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the remove zone and the associated listener.
 	 */
 	@Test
-	public void removeZoneTest(){
+	public void removeZoneTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
@@ -163,7 +163,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the correct behavior when moving zones.
 	 */
 	@Test
-	public void moveZoneTest(){
+	public void moveZoneTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
@@ -228,7 +228,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the fail when resizing zone when does not fit in parent zone
 	 */
 	@Test
-	public void addZoneParentTest(){
+	public void addZoneParentTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
@@ -253,7 +253,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the fail when resizing zone when does not fit in parent zone
 	 */
 	@Test
-	public void resizeZoneInParentFailTest(){
+	public void resizeZoneInParentFailTest() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		waitForStability(context);
@@ -292,7 +292,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 * Test the zone variables and its values.
 	 */
 	@Test
-	public void testZoneAddVariables(){
+	public void testZoneAddVariables() {
         ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";

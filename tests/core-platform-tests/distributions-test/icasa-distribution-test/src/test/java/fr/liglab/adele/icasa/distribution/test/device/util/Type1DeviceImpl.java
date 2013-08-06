@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.distribution.test.device;
+package fr.liglab.adele.icasa.distribution.test.device.util;
 
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 
