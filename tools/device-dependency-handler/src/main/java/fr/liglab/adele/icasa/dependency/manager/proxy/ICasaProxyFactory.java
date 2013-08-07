@@ -95,9 +95,12 @@ public class ICasaProxyFactory implements InvocationHandler {
 	}
 	
 	protected AccessRight getAccessRight(String deviceId) {
+		return m_dependency.getAccessRight(deviceId);
+		/*
 		DeviceDependencyHandler handler = (DeviceDependencyHandler) m_dependency.getHandler();
 		BundleContext context = m_dependency.getBundleContext();
 		return handler.getAccessRight(context, deviceId);
+		*/
 	}
 	
 
@@ -138,13 +141,17 @@ public class ICasaProxyFactory implements InvocationHandler {
 	protected Object delegateServiceInvokation(Method method, Object[] args) throws Exception {
 		Object service = getService();
 		String deviceId = ((GenericDevice) service).getSerialNumber();
-		AccessRight accessRight = getAccessRight(deviceId);
+		AccessRight accessRight = m_dependency.getAccessRight(deviceId);
 		
-		if (accessRight != null && accessRight.hasMethodAccess(method)) {
-			System.out.println("================ Invoking iCasa Handler =============");
-			return method.invoke(service, args);
+		if (accessRight != null) {
+			if (accessRight.hasMethodAccess(method)) {
+				System.out.println("================ Invoking iCasa Handler =============");
+				return method.invoke(service, args);				
+			} else {
+				throw new RuntimeException("Access Policy: No access to method " + method.getName());
+			}
 		} else {
-			throw new RuntimeException("No access to method " + method.getName());
+			throw new RuntimeException("Access Policy: No access right found to device " + deviceId);
 		}
 	}
 	

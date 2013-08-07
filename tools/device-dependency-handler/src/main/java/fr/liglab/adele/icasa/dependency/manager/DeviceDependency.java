@@ -20,7 +20,9 @@ import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
 
@@ -49,12 +51,17 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 	private DeviceDependencyHandler m_handler;
 
 	private BundleContext m_context;
+	
+	/**
+	 * The application Id associated to this dependency
+	 */
+	private String applicationId;
 
 
 	/**
 	 * Access right set of dependency. An instance added by new matching service
-	 */
-	private Set<AccessRight> accessRights = new HashSet<AccessRight>();
+	 */	
+	private Map<String, AccessRight> m_accessRights = new HashMap<String, AccessRight>();
 
 	public DeviceDependency(DeviceDependencyHandler handler, String field, Class spec, Filter filter,
 	      boolean isOptional, boolean isAggregate, boolean nullable, boolean isProxy, String identity,
@@ -94,25 +101,34 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 		// Nothing to be done here
 	}
 
+	
+	
 	public String getApplicationId() {
-		return m_handler.getApplicationId(m_context);
-	}
-
-	/**
-	 * Add an access right
-	 * 
-	 * @param accessRight
-	 */
-	public void addAccessRight(AccessRight accessRight) {
-		boolean added = false;
-		synchronized (accessRights) {
-			added = accessRights.add(accessRight);
+		if (applicationId==null) {
+			applicationId = m_handler.getApplicationId(m_context);
 		}
-		if (added) {
+		return applicationId;
+	}
+	
+	public void addAccessRight(String deviceId, AccessRight accessRight) {
+		boolean existingEntry = m_accessRights.containsKey(deviceId);
+		if (!existingEntry) {
+			synchronized (m_accessRights) {
+		      m_accessRights.put(deviceId, accessRight);
+	      }
 			accessRight.addListener(this);
 		}
+   }
+	
+	public AccessRight getAccessRight(String deviceId) {
+		AccessRight accessRight = null;
+		synchronized (m_accessRights) {
+			accessRight = m_accessRights.get(deviceId);
+      }	
+		return accessRight;
 	}
 
+	
 	@Override
 	protected void onObjectCreation(Object pojo) {
 
@@ -376,9 +392,9 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 		super.stop();
 
 		Set<AccessRight> copySet = new HashSet<AccessRight>();
-		synchronized (accessRights) {
-			copySet.addAll(accessRights);
-			accessRights.clear();
+		synchronized (m_accessRights) {
+			copySet.addAll(m_accessRights.values());
+			m_accessRights.clear();
 		}
 
 		for (AccessRight accessRight : copySet) {

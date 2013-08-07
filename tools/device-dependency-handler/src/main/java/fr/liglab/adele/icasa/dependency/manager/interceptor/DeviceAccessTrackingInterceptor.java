@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +29,7 @@ import org.apache.felix.ipojo.dependency.interceptors.TransformedServiceReferenc
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
@@ -47,13 +49,13 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 	 */
 	protected final List<DeviceDependency> dependencies = new ArrayList<DeviceDependency>();
 
-	private Boolean disable = false;
+	private Boolean disableInterceptor = false;
 
 	public DeviceAccessTrackingInterceptor(BundleContext context) {
-		String disableStr = context.getProperty("disable.icasa.interceptor");
+		String disableStr = context.getProperty(Constants.DISABLE_ACCESS_POLICY_PROPERTY);
 
 		if (disableStr != null) {
-			disable = Boolean.valueOf(disableStr);
+			disableInterceptor = Boolean.valueOf(disableStr);
 		}
 
 	}
@@ -80,6 +82,7 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 	public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context,
 	      TransformedServiceReference<S> ref) {
 
+		// Dependency obtained from iCasa Requires
 		if (dependency instanceof DeviceDependency) {
 			DeviceDependency deviceDependency = (DeviceDependency) dependency;
 
@@ -92,7 +95,8 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 			}
 
 			AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
-			deviceDependency.addAccessRight(accessRight);
+			//deviceDependency.addAccessRight(accessRight);
+			deviceDependency.addAccessRight(deviceId, accessRight);
 
 			if (!accessRight.isVisible()) {
 				return null;
@@ -103,7 +107,7 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 			// Only platform components has access to the device instances using iPOJO
 			if (!isPlatformComponent(dependency)) {
 				// Interceptor is disable by the configuration
-				if (!disable) {
+				if (!disableInterceptor) {
 					return null;
 				}					
 			}
@@ -129,29 +133,5 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
 		return false;
 	}
-
-	/*
-	 * 
-	 * private void invalidateMatchingServices(String appId, LocatedDevice locatedDevice) { List<DeviceDependency>
-	 * copyList = new ArrayList<DeviceDependency>(); synchronized (this) { copyList.addAll(dependencies); }
-	 * 
-	 * for (DeviceDependency dependency : copyList) { if (appId.equals(dependency.getApplicationId())) { // Only for
-	 * dependecies of this application Class[] interfaces = locatedDevice.getDeviceObject().getClass().getInterfaces();
-	 * for (Class interfaze : interfaces) { if (dependency.getSpecification().equals(interfaze)) { // Only dependencies
-	 * using this kind of device dependency.invalidateMatchingServices(); } } } } }
-	 * 
-	 * 
-	 * @Override public void onAccessRightModified(AccessRight accessRight) { String appId =
-	 * accessRight.getApplicationId(); String deviceId = accessRight.getDeviceId();
-	 * 
-	 * LocatedDevice locatedDevice = contextManager.getDevice(deviceId);
-	 * 
-	 * invalidateMatchingServices(appId, locatedDevice);
-	 * 
-	 * }
-	 * 
-	 * @Override public void onMethodAccessRightModified(AccessRight accessRight, String methodName) { // Nothing to be
-	 * done }
-	 */
 
 }

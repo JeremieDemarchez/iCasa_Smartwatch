@@ -901,6 +901,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 
 	// ------------------------- Added methods --------------------------------//
 
+	/*
 	public AccessRight getAccessRight(BundleContext context, String deviceId) {
 		String appId = getApplicationId(context);
 		if (appId != null) {
@@ -908,6 +909,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 		}
 		return null;
 	}
+	*/
 
 	public String getApplicationId(BundleContext context) {
 		String bundleName = context.getBundle().getSymbolicName();

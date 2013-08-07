@@ -67,8 +67,6 @@ public class ComponentUsingBindMethods {
 			lights.remove(light);
       }
       
-      
-		
 		
 		try {
 
