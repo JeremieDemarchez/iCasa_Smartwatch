@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.access;
 
 
 import java.lang.reflect.Method;
-import java.util.Map;
 
 /**
  * The AccessRight interface allows to inspect the right access for an application to use a service.
