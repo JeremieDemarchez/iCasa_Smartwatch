@@ -251,7 +251,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
      * @param zone a zone
      * @return the temperature currently produced by this heater
      */
-    private void updateTemperature(Zone zone) {
+    private void computeTemperature(Zone zone) {
         synchronized (_zoneModelLock) {
             Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
             double returnedTemperature = 20.0;
@@ -315,8 +315,21 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         }
     }
 
-    private void updateZoneModel(Zone zone) {
-        //TODO implement it
+    private void setThermalCapacity(Zone zone, Double zoneVolume) {
+
+        double newVolume = 1.0d; // use this value as default to avoid divide by zero
+        if ((zoneVolume != null) && (((Double) zoneVolume) > 0.0d))
+            newVolume = (Double) zoneVolume;
+
+        String zoneId = zone.getId();
+        double thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
+
+        synchronized (_zoneModelLock) {
+            ZoneModel zoneModel = _zoneModels.get(zoneId);
+            if (zoneModel != null) {
+                zoneModel.setThermalCapacity(newVolume);
+            }
+        }
     }
 
 
@@ -331,6 +344,10 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void addedDevice(LocatedDevice locatedDevice) {
+        synchronized (_deviceLock) {
+            _temperatureDevices.add(locatedDevice);
+        }
+
         //TODO implement it
     }
 
@@ -346,6 +363,10 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void removedDevice(LocatedDevice locatedDevice) {
+        synchronized (_deviceLock) {
+            _temperatureDevices.remove(locatedDevice);
+        }
+
         //TODO implement it
     }
 
@@ -372,7 +393,10 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void modifiedZone(Zone zone, String variableName, Object oldValue, Object newValue) {
-        //TODO implement it
+        if (!VOLUME_PROP_NAME.equals(variableName))
+            return;
+
+        setThermalCapacity(zone, (Double) newValue);
     }
 
     @Override
@@ -382,6 +406,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void resizedZone(Zone zone) {
+        // do not need to update thermal capacity done when volume changes
+
         //TODO implement it
     }
 
