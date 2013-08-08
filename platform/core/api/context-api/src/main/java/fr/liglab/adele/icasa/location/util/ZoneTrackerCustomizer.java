@@ -60,6 +60,13 @@ public interface ZoneTrackerCustomizer {
     void movedZone(Zone zone, Position oldPosition, Position newPosition);
 
     /**
+     * Called when a zone tracked by the Tracker object has been resized.
+     *
+     * @param zone the resized zone
+     */
+    void resizedZone(Zone zone);
+
+    /**
      * A zone tracked by the Tracker object has been removed.
      * This method is called after a zone is no longer being tracked by the Tracker object.
      * @param zone the removed zone.

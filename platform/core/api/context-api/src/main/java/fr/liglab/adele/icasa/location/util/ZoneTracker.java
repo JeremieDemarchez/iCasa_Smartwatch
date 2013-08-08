@@ -142,7 +142,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 */
 	@Override
 	public boolean addingZone(Zone zone) {
-		return true; // To change body of implemented methods use File | Settings | File Templates.
+		return true;
 	}
 
 	/**
@@ -153,7 +153,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 */
 	@Override
 	public void addedZone(Zone zone) {
-		// To change body of implemented methods use File | Settings | File Templates.
+        // do nothing
 	}
 
 	/**
@@ -167,7 +167,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 */
 	@Override
 	public void modifiedZone(Zone zone, String variableName, Object oldValue, Object newValue) {
-		// To change body of implemented methods use File | Settings | File Templates.
+        // do nothing
 	}
 
 	/**
@@ -177,10 +177,15 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 */
 	@Override
 	public void movedZone(Zone zone, Position oldPosition, Position newPosition) {
-		// To change body of implemented methods use File | Settings | File Templates.
+        // do nothing
 	}
 
-	/**
+    @Override
+    public void resizedZone(Zone zone) {
+        // do nothing
+    }
+
+    /**
 	 * A zone tracked by the Tracker object has been removed. This method is called after a zone is no longer being
 	 * tracked by the Tracker object.
 	 * 
@@ -188,7 +193,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 */
 	@Override
 	public void removedZone(Zone zone) {
-		// To change body of implemented methods use File | Settings | File Templates.
+        // do nothing
 	}
 
 	/**
@@ -474,6 +479,13 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 					trackerCustomizer.movedZone(zone, oldPosition, newPosition);
 				}
 			}
+
+            @Override
+            public void zoneResized(Zone zone) {
+                if (isTracked(zone)) {
+                    trackerCustomizer.resizedZone(zone);
+                }
+            }
 
 			@Override
 			public void zoneVariableModified(Zone zone, String propertyName, Object oldValue, Object newValue) {
