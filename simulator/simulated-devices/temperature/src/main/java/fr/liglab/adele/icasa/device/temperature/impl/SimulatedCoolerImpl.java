@@ -42,18 +42,11 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 	@ServiceProperty(name = Cooler.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	private Thread m_updaterThread;
-
-	private volatile long m_lastUpdateTime;
-
-	private Zone m_zone;
-
 	public SimulatedCoolerImpl() {
         super();
         super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
         super.setPropertyValue(Cooler.COOLER_POWER_LEVEL, 0.0d);
         super.setPropertyValue(Cooler.COOLER_MAX_POWER_LEVEL, 1000.0d);
-        super.setPropertyValue(Cooler.COOLER_UPDATE_PERIOD, 5000);
 	}
 
 	@Override
@@ -63,15 +56,12 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 
 	@Validate
 	public synchronized void start() {
-		m_updaterThread = new Thread(new UpdaterThread(), "CoolerUpdaterThread-" + m_serialNumber);
-		m_updaterThread.start();
-		m_lastUpdateTime = System.currentTimeMillis();
+		// do nothing
 	}
 
 	@Invalidate
 	public synchronized void stop() throws InterruptedException {
-		m_updaterThread.interrupt();
-		m_updaterThread.join();
+        // do nothing
 	}
 
 	@Override
@@ -104,94 +94,6 @@ public class SimulatedCoolerImpl extends AbstractDevice implements Cooler, Simul
 			}			
 		} else
 			super.setPropertyValue(propertyName, value);
-	}
-
-
-	/**
-	 * Return the current temperature produced by the heater, according to its
-	 * powerLevel.
-	 * The formula used to compute the temperature is :
-	 * CurrentTemperature [K]=(P[W]/C[J/K])*t[s]+T0[K]
-	 * @return the temperature currently produced by this heater
-	 * @author jeremy savonet
-	 */
-	private Double computeTemperature() {
-		long time = System.currentTimeMillis();
-		double timeDiff = ((double) (time - m_lastUpdateTime)) / 1000.0d;
-		m_lastUpdateTime = time;
-
-		//Define constant to compute the value of the thermal capacity
-		double airMassCapacity=1000; //mass capacity of the air in J/(Kg.K)
-		double airMass = 1.2; //mass of the air in Kg/m^3
-		Double roomVolume=0.0; //volume of the room in m^3
-		double thermalCapacity = 0.0; //Thermal capacity used to compute the temperature. Expressed in J/K.
-
-		Double currentTemperature = 0.0;
-		Double returnedTemperature = 0.0;
-		double coolerPowerLevel = 0.0; 		
-
-		if (m_zone != null) {
-
-			try {
-				currentTemperature = (Double) m_zone.getVariableValue("Temperature");
-				roomVolume = (Double) m_zone.getVariableValue("Volume");				
-				coolerPowerLevel = getPowerLevel()*getMaxPowerLevel();
-                if (currentTemperature == null || roomVolume == null){
-                    System.err.println("Unable to calculate temperature in zone without the Volume and/or Temperature variables");
-                    return null;
-                }
-				if (roomVolume>0) {
-					thermalCapacity = airMass * roomVolume * airMassCapacity;
-					returnedTemperature = ((-coolerPowerLevel*timeDiff)/thermalCapacity)+currentTemperature;
-					//clippinp function
-					if(returnedTemperature < 283.16) returnedTemperature = 283.16;
-				}								
-			} catch (Exception e) {
-				e.printStackTrace();
-			}				
-		}
-		return returnedTemperature;
-	}
-
-	/**
-	 * The updater thread that updates the current temperature and notify
-	 * listeners periodically.
-	 * 
-	 * @author Gabriel Pedraza Ferreira
-	 */
-	private class UpdaterThread implements Runnable {
-
-		@Override
-		public void run() {
-			boolean isInterrupted = false;
-			while (!isInterrupted) {
-				try {
-					int sleepTime = (Integer) getPropertyValue(Cooler.COOLER_UPDATE_PERIOD);
-					Thread.sleep(sleepTime);
-                    Double temperature = computeTemperature();
-					synchronized (SimulatedCoolerImpl.this) {
-						if (m_zone != null && temperature!= null) {
-							m_zone.setVariableValue("Temperature", temperature);
-						}
-					}
-				} catch (InterruptedException e) {
-					isInterrupted = true;
-				}
-			}
-		}
-	}
-
-
-	@Override
-	public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty()) {
-			m_zone = zones.get(0);
-		}
-	}
-
-	@Override
-	public void leavingZones(List<Zone> zones) {
-		m_zone = null;
 	}
 
 	@Override

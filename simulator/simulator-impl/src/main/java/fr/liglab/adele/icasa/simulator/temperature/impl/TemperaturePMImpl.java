@@ -56,6 +56,7 @@ import java.util.*;
 public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCustomizer, ZoneTrackerCustomizer {
 
     public static final String TEMPERATURE_PROP_NAME = "Temperature";
+    public static final String VOLUME_PROP_NAME = "Volume";
 
     /**
      * Define constants to compute the value of the thermal capacity
@@ -63,7 +64,6 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public static final double AIR_MASS_CAPACITY = 1000; //mass capacity of the air in J/(Kg.K)
     public static final double AIR_MASS = 1.2; //mass of the air in Kg/m^3
     public static final double K = 0.724; // 0.661 < k < 0.787
-    public static final String VOLUME_PROP_NAME = "Volume";
 
     private volatile long m_lastUpdateTime;
 
@@ -77,7 +77,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
      */
     private Set<LocatedDevice> _temperatureDevices = new HashSet<LocatedDevice>();
 
-    private Object _zoneLock = new Object();
+    private Object _zoneModelLock = new Object();
+
+    private Map<String /* zone id */, ZoneModel> _zoneModels = new HashMap<String, ZoneModel>();
 
     @Requires
     private ContextManager _contextMgr;
@@ -101,8 +103,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         _computationIsOn = false;
 
         // workaround of ipojo bug of object member initialization
-        _zoneLock = new Object();
+        _zoneModelLock = new Object();
         _deviceLock = new Object();
+
         _heaterTracker = new LocatedDeviceTracker(context, Heater.class, this);
         _coolerTracker = new LocatedDeviceTracker(context, Cooler.class, this);
         _zoneTracker = new ZoneTracker(context, this, VOLUME_PROP_NAME);
@@ -146,13 +149,16 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     private void updateTemperatures() {
+        //called by only one thread
+
         if (!_computationIsOn)
             return;
 
-        //TODO manage synchronization
         long previousUpdateTS = m_lastUpdateTime;
-        long newUpdateTS = _clock.currentTimeMillis(); // must use simulated time
-        //TODO
+        long newUpdateTS = _clock.currentTimeMillis();
+        synchronized (_zoneModelLock) {
+            //TODO
+        }
 
         m_lastUpdateTime = newUpdateTS;
     }
@@ -246,7 +252,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
      * @return the temperature currently produced by this heater
      */
     private void updateTemperature(Zone zone) {
-        synchronized (_zoneLock) {
+        synchronized (_zoneModelLock) {
             Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
             double returnedTemperature = 20.0;
             if (zoneTemperature != null)
@@ -354,11 +360,18 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void addedZone(Zone zone) {
-        //TODO implement it
+        String zoneId = zone.getId();
+        ZoneModel zoneModel = new ZoneModel(zone);
+
+        synchronized (_zoneModelLock) {
+            if (!_zoneModels.containsKey(zoneId))
+                _zoneModels.put(zoneId, zoneModel);
+            //TODO ?
+        }
     }
 
     @Override
-    public void modifiedZone(Zone zone, String s, Object o, Object o1) {
+    public void modifiedZone(Zone zone, String variableName, Object oldValue, Object newValue) {
         //TODO implement it
     }
 
@@ -368,7 +381,19 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     @Override
-    public void removedZone(Zone zone) {
+    public void resizedZone(Zone zone) {
         //TODO implement it
+    }
+
+    @Override
+    public void removedZone(Zone zone) {
+        String zoneId = zone.getId();
+
+        synchronized (_zoneModelLock) {
+            _zoneModels.remove(zone.getId());
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+               zoneModel.removeWallSurface(zoneId);
+            }
+        }
     }
 }
