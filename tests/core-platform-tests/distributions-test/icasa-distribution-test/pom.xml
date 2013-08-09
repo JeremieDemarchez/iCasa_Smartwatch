@@ -21,7 +21,6 @@
 		<distrib.groupId>${project.groupId}</distrib.groupId>
 		<distrib.artifactId>icasa.platform.distribution</distrib.artifactId>
 		<distrib.version>${project.version}</distrib.version>
-
 	</properties>
 
 	<dependencies>
