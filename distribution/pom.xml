@@ -30,6 +30,7 @@
 
 	<modules>
         <module>icasa-platform-distribution</module>
+        <module>icasa-platform-handler-distribution</module>        
 	</modules>
    <build>
       <plugins>
