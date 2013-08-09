@@ -57,6 +57,8 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 		if (disableStr != null) {
 			disableInterceptor = Boolean.valueOf(disableStr);
 		}
+		
+		System.out.println("DeviceAccessTrackingInterceptor -- Disable Access Policy " + disableInterceptor);
 
 	}
 
@@ -95,9 +97,10 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 			}
 
 			AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
-			//deviceDependency.addAccessRight(accessRight);
 			deviceDependency.addAccessRight(deviceId, accessRight);
 
+			System.out.println("DeviceAccessTrackingInterceptor -- App " + appId + " -- " + deviceId + " --  visible " + accessRight.getPolicy());
+			
 			if (!accessRight.isVisible()) {
 				return null;
 			}
