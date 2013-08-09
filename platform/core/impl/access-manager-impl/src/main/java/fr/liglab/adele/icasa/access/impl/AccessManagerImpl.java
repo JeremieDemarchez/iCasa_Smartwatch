@@ -61,6 +61,8 @@ public class AccessManagerImpl implements AccessManager {
 		if (disableStr != null) {
 			disableAccessPolicy = Boolean.valueOf(disableStr);
 		}
+		
+		System.out.println("iCasaAccessManager -- Disable Access Policy " + disableAccessPolicy);
 	}
 	
 	@Validate
