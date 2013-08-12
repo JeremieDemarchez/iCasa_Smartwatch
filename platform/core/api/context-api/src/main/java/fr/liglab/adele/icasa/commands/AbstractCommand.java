@@ -20,9 +20,14 @@ import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.liglab.adele.icasa.Constants;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCommand implements ICasaCommand {
+
+    private static Logger log = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
     protected static Signature EMPTY_SIGNATURE = new Signature(new String[0]);
 
@@ -40,14 +45,18 @@ public abstract class AbstractCommand implements ICasaCommand {
             return execute(in, out, param, signature);
         } else {
             out.println(getDescription());
-            throw new Exception("Invalid parameters: " + param);
+            Exception ex = new Exception("Invalid parameters: " + param);
+            log.error("Invalid parameters in command " +  getName(), ex);
+            throw ex;
         }
 	}
 
     protected void addSignature(Signature signature){
         for(Signature sign: signatureList){
             if(sign.getParameters().length == signature.getParameters().length){
-                throw new InstantiationError("Unable to add two signature with the same number of parameters");
+                InstantiationError ex =  new InstantiationError("Unable to add two signature with the same number of parameters");
+                log.error("Signature error in command " + getName(), ex);
+                throw ex;
             }
         }
         signatureList.add(signature);
@@ -88,7 +97,7 @@ public abstract class AbstractCommand implements ICasaCommand {
      *
      * @param param The parameters in JSON format
      * @return true if all parameters are in the JSON object, false if not. For optional
-     * parameters, this method should be override..
+     * parameters.
      * @throws Exception
      */
     @Override
@@ -99,6 +108,8 @@ public abstract class AbstractCommand implements ICasaCommand {
         String[] params = signature.getParameters();
         for (String name: params){
             if(!param.has(name)){
+                log.debug("Parameters values" + JSONObject.getNames(param));
+                log.debug("Command call is invalid with the given parameters" + getName());
                 return false;
             }
         }

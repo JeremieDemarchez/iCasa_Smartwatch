@@ -17,6 +17,22 @@ package fr.liglab.adele.icasa;
 
 public interface Constants {
 
-	public static final String DISABLE_ACCESS_POLICY_PROPERTY = "disable.access.policy";
+    /**
+     * Property name to disable access policy.
+     */
+	public static final String DISABLE_ACCESS_POLICY_PROPERTY = "icasa.disable.access.policy";
+
+    /**
+     * Logger name to trace general messages for icasa.
+     */
+    public static final String ICASA_LOG = "icasa.platform";
+    /**
+     * Logger name to trace messages for icasa when performing remote operations.
+     */
+    public static final String ICASA_LOG_REMOTE = "icasa.platform.remote";
+    /**
+     * Logger name to trace messages for icasa when performing device operations..
+     */
+    public static final String ICASA_LOG_DEVICE = "icasa.platform.devices";
 	
 }
