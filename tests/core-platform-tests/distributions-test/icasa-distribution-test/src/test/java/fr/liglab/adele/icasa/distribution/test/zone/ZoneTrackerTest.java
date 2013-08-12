@@ -130,11 +130,9 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 
 		contextMgr.removeZone("zone-1");
 		Assert.assertEquals(1, tracker.size());
-		
-		
 	}
 
-	// @Test
+	@Test
 	public void testZoneTrackerWithCustomizer() {
 		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
 		Assert.assertNotNull(contextMgr);
@@ -219,10 +217,12 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
       } catch (Exception e) {
 	      e.printStackTrace();
       }
-		
-		contextMgr.removeZone(zone1.getId());
-		Assert.assertEquals(0, tracker.size());
-		
+
+        // removing variable from zone
+        zone1.removeVariable(variableName);
+        // now the tracker must have 0 zones
+        Assert.assertEquals(tracker.size(), 0);// 0 tracked zones 'cause the needed variable has been removed.
+
 		verify(customizer, times(1)).removedZone(zone1);
 		
 	}
