@@ -34,7 +34,6 @@ package fr.liglab.adele.icasa.simulator.temperature.impl;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
@@ -64,6 +63,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public static final double AIR_MASS_CAPACITY = 1000; //mass capacity of the air in J/(Kg.K)
     public static final double AIR_MASS = 1.2; //mass of the air in Kg/m^3
     public static final double K = 0.724; // 0.661 < k < 0.787
+    public static final double HIGHEST_TEMP = 303.16;
+    public static final double LOWER_TEMP = 283.16;
 
     private volatile long m_lastUpdateTime;
 
@@ -156,8 +157,21 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
         long previousUpdateTS = m_lastUpdateTime;
         long newUpdateTS = _clock.currentTimeMillis();
+        long timeDiff = newUpdateTS - previousUpdateTS;
+        if (timeDiff <= 0)
+            return; // do not need to recompute
+
+        Map<String, Double> newTemps = new HashMap<String, Double>();
         synchronized (_zoneModelLock) {
-            //TODO
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                double newTemp = computeTemperature(zoneModel.getZone(), timeDiff);
+                newTemps.put(zoneModel.getZoneId(), newTemp);
+            }
+        }
+        for (String zoneId : newTemps.keySet()) {
+            Zone zone = _contextMgr.getZone(zoneId);
+            if (zone != null)
+                zone.setVariableValue(TEMPERATURE_PROP_NAME, newTemps.get(zoneId));
         }
 
         m_lastUpdateTime = newUpdateTS;
@@ -183,21 +197,6 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 Cooler.COOLER_MAX_POWER_LEVEL.equals(propName));
     }
 
-    private Set<Zone> getZones(Position position) {
-        List<Zone> zones = _contextMgr.getZones();
-        Set<Zone> zonesToUpdate = new HashSet<Zone>();
-        for (Zone zone : zones) {
-            if (zone.contains(position))
-                zonesToUpdate.add(zone);
-        }
-        return zonesToUpdate;
-    }
-
-    private Set<Zone> getZones(LocatedDevice locatedDevice) {
-        Position devicePosition = locatedDevice.getCenterAbsolutePosition();
-        return getZones(devicePosition);
-    }
-
     @Override
     public Set<Variable> getComputedZoneVariables() {
         return Collections.unmodifiableSet(_computedVariables);
@@ -213,105 +212,79 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         return Collections.unmodifiableSet(new HashSet<LocatedDevice>(_temperatureDevices));
     }
 
-    /**
-     * Returns a new mutable set of all temperature devices for each call.
-     *
-     * @return a new mutable set of all temperature devices for each call.
-     */
-    private Set<GenericDevice> getTemperatureDevices() {
-        Set<GenericDevice> devices = new HashSet<GenericDevice>();
-        synchronized (_deviceLock) {
-            for (LocatedDevice locatedDevice : _temperatureDevices) {
-                GenericDevice deviceObject = locatedDevice.getDeviceObject();
-                if (deviceObject != null)
-                    devices.add(deviceObject);
-            }
-        }
+    private Set<LocatedDevice> getTemperatureDevicesFromZone(Zone zone) {
+        Set<LocatedDevice> devices = new HashSet<LocatedDevice>();
+        //TODO implement it
+
         return devices;
     }
 
-    private Set<GenericDevice> getTemperatureDevicesFromZone(Zone zone) {
-        Set<GenericDevice> devices = getTemperatureDevices();
-        Set<GenericDevice> filteredDevices = new HashSet<GenericDevice>();
-        for (GenericDevice device : devices) {
-            Position devicePosition = _contextMgr.getDevicePosition(device.getSerialNumber());
-            if ((devicePosition != null) && (zone.contains(devicePosition))) {
-                filteredDevices.add(device);
-            }
-        }
-
-        return filteredDevices;
-    }
-
     /**
-     * Computes and updates the temperature property value of specified zone .
-     * The formula used to compute the temperature is :
-     * CurrentTemperature [K]=(P[W]/C[J/K])*t[s]+T0[K]
+     * Computes the temperature property value of specified zone according to time difference from the last computation.
      *
      * @param zone a zone
-     * @return the temperature currently produced by this heater
+     * @param timeDiff time difference in ms from the last computation
+     * @return the temperature computed for time t + dt
      */
-    private void computeTemperature(Zone zone) {
+    private double computeTemperature(Zone zone, long timeDiff) {
+        String zoneId = zone.getId();
+
+        double newTemperature = 20.0; // 20 degrees by default
         synchronized (_zoneModelLock) {
+            ZoneModel zoneModel = _zoneModels.get(zoneId);
+
+            double currentTemperature = 20.0; // 20 degrees by default
             Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
-            double returnedTemperature = 20.0;
-            if (zoneTemperature != null)
+            if (zoneTemperature != null) {
                 try {
-                    returnedTemperature = (Double) zoneTemperature; //TODO manage external temperature
+                    currentTemperature = (Double) zoneTemperature; //TODO manage external temperature
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-            int activeTemperatureDeviceSize = 0;
-            int height = zone.getZLength();
-            int length = zone.getYLength();
-            int width = zone.getXLength();
+            }
 
-            long time = System.currentTimeMillis();
-            double timeDiff = ((long) (time - m_lastUpdateTime)) / 1000.0d;
-            m_lastUpdateTime = time;
+            computeTotalPower(zoneModel); //TODO should be computed on the fly
+            double powerLevelTotal = zoneModel.getTotalPower();
 
-            double thermalCapacity = 0.0; //Thermal capacity used to compute the temperature. Expressed in J/K.
-            Double roomVolume = (Double) zone.getVariableValue(VOLUME_PROP_NAME); //TODO should be robust to casting errors
-            if (roomVolume == null)
-                return; // computation cannot be performed ; there is a missing information
-            double powerLevelTotal = 0.0d;
-            double currentTemperature = 0.0;
-
-            Set<GenericDevice> devices = getTemperatureDevicesFromZone(zone);
-            for (GenericDevice device : devices) {
-                if (device instanceof Heater) {
-                    Heater heater = (Heater) device;
-
-                    if (heater.getPowerLevel() != 0.0d) {
-                        activeTemperatureDeviceSize += 1;
-                        powerLevelTotal += heater.getPowerLevel() * heater.getMaxPowerLevel();
-                    }
-                } else if (device instanceof Cooler) {
-                    Cooler cooler = (Cooler) device;
-
-                    if (cooler.getPowerLevel() != 0.0d) {
-                        activeTemperatureDeviceSize += 1;
-                        powerLevelTotal -= cooler.getPowerLevel() * cooler.getMaxPowerLevel();
-                    }
+            newTemperature = currentTemperature + ((powerLevelTotal * timeDiff) / zoneModel.getThermalCapacity());
+            for (Map.Entry<String, Double> zoneWallSurfaceEntry : zoneModel.getWallSurfaces()) {
+                String otherZoneId = zoneWallSurfaceEntry.getKey();
+                double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
+                Zone otherZone = _contextMgr.getZone(otherZoneId);
+                if (otherZone != null) {
+                    Object otherZoneTemperature = _contextMgr.getZone(otherZoneId).getVariableValue(TEMPERATURE_PROP_NAME);
+                    if (otherZoneTemperature != null)
+                        newTemperature += (K * zoneWallSurface * (((Double) otherZoneTemperature) - currentTemperature)
+                                * timeDiff) / zoneModel.getThermalCapacity();
                 }
             }
 
-            if ((activeTemperatureDeviceSize != 0) && (roomVolume > 0)) {
-                currentTemperature = (Double) zone.getVariableValue(TEMPERATURE_PROP_NAME);
-                thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * roomVolume;
-                returnedTemperature += ((powerLevelTotal * timeDiff) / thermalCapacity) + currentTemperature;
+            /**
+             * Clipping function to saturate the temperature at a certain level
+             */
+            if (newTemperature > HIGHEST_TEMP)
+                newTemperature = HIGHEST_TEMP;
+            else if (newTemperature > LOWER_TEMP)
+                newTemperature = LOWER_TEMP;
+        }
 
-                /**
-                 * Clipping fonction to saturate the temperature at a certain level
-                 */
-                if (powerLevelTotal > 0) {
-                    if (returnedTemperature > 303.16) returnedTemperature = 303.16;
-                } else if (powerLevelTotal < 0) {
-                    if (returnedTemperature > 283.16) returnedTemperature = 283.16;
+        return newTemperature;
+    }
+
+    private void computeTotalPower(ZoneModel zoneModel) {
+        synchronized (_zoneModelLock) {
+            zoneModel.setTotalPower(0);
+
+            for (LocatedDevice device : zoneModel.getDevices()) {
+                Object deviceObj = device.getDeviceObject();
+                if (deviceObj instanceof Heater) {
+                    Heater heater = (Heater) deviceObj;
+                    zoneModel.addPower(heater.getPowerLevel() * heater.getMaxPowerLevel());
+                } else if (deviceObj instanceof Cooler) {
+                    Cooler cooler = (Cooler) deviceObj;
+                    zoneModel.reducePower(cooler.getPowerLevel() * cooler.getMaxPowerLevel());
                 }
             }
-
-            zone.setVariableValue(TEMPERATURE_PROP_NAME, returnedTemperature);
         }
     }
 
@@ -348,11 +321,19 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             _temperatureDevices.add(locatedDevice);
         }
 
-        //TODO implement it
+        synchronized(_zoneModelLock) {
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                if (zoneModel.getZone().contains(locatedDevice))
+                    zoneModel.addDevice(locatedDevice); // do not need to test if it is contained
+            }
+        }
     }
 
     @Override
-    public void modifiedDevice(LocatedDevice locatedDevice, String s, Object o, Object o1) {
+    public void modifiedDevice(LocatedDevice locatedDevice, String propName, Object oldValue, Object newValue) {
+        if (!propChangeHasImpactOnPower(locatedDevice, propName))
+            return;
+
         //TODO implement it
     }
 
@@ -367,7 +348,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             _temperatureDevices.remove(locatedDevice);
         }
 
-        //TODO implement it
+        synchronized(_zoneModelLock) {
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                zoneModel.removeDevice(locatedDevice); // do not need to test if it is contained
+            }
+        }
     }
 
     /*
@@ -387,7 +372,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         synchronized (_zoneModelLock) {
             if (!_zoneModels.containsKey(zoneId))
                 _zoneModels.put(zoneId, zoneModel);
-            //TODO ?
+
+            //TODO ? init zone model
         }
     }
 
@@ -401,6 +387,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void movedZone(Zone zone, Position position, Position position1) {
+        // do not need to update thermal capacity done when volume changes
+
         //TODO implement it
     }
 
