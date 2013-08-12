@@ -103,7 +103,7 @@ public class AccessRightImpl implements AccessRight {
 	 */
 	@Override
 	public synchronized boolean isVisible() {
-		return policy.compareTo(DeviceAccessPolicy.HIDDEN) > 0;
+		return policy.compareTo(DeviceAccessPolicy.TOHIDE) > 0;
 	}
 
 	/**
@@ -124,7 +124,9 @@ public class AccessRightImpl implements AccessRight {
 				return true;
 			} else if (policy.compareTo(DeviceAccessPolicy.VISIBLE) == 0) { // If is visible see method name.
 				return hasMethodAccessWithVisible(methodName);
-			} else if (policy.compareTo(DeviceAccessPolicy.HIDDEN) == 0) { // If is hidden, return false.
+			} else if(policy.compareTo(DeviceAccessPolicy.TOHIDE) == 0){ // If will be hidden.
+                return hasMethodAccessWithVisible(methodName);
+            } else if (policy.compareTo(DeviceAccessPolicy.HIDDEN) == 0) { // If is hidden, return false.
 				return false;
 			} else if (rightMethodAccess.containsKey(methodName)) { // If is partial
 				memberAccessPolicy = rightMethodAccess.get(methodName); // get the right access.
@@ -213,23 +215,38 @@ public class AccessRightImpl implements AccessRight {
 		return new ArrayList<AccessRightListener>(listeners);
 	}
 
+    private void updateAccessToHide(){
+        updateDeviceAccessRight(DeviceAccessPolicy.TOHIDE);
+        updateDeviceAccessRight(DeviceAccessPolicy.HIDDEN);
+    }
+
+    private void updateDeviceAccessRight(DeviceAccessPolicy right){
+        List<AccessRightListener> listenerList = null;
+        synchronized (this) {
+            if (right.equals(policy)) { // If is the same, does not trigger callback.
+                return;
+            }
+            policy = right;
+            this.internalMap.put("policy", policy.toString());
+            listenerList = getListeners();
+        }
+        for (AccessRightListener listener : listenerList) {
+            listener.onAccessRightModified(this);
+        }
+    }
+
 	/**
 	 * 
 	 * @param right
 	 */
 	protected void updateAccessRight(DeviceAccessPolicy right) {
-		List<AccessRightListener> listenerList = null;
-		synchronized (this) {
-			if (right.equals(policy)) { // If is the same, does not trigger callback.
-				return;
-			}
-			policy = right;
-			this.internalMap.put("policy", policy.toString());
-			listenerList = getListeners();
-		}
-		for (AccessRightListener listener : listenerList) {
-			listener.onAccessRightModified(this);
-		}
+        if(right.compareTo(DeviceAccessPolicy.HIDDEN) == 0){
+            updateAccessToHide();
+        } else if (right.compareTo(DeviceAccessPolicy.TOHIDE) == 0){
+            throw new SecurityException("Unable to set a transient device policy");
+        } else {
+            updateDeviceAccessRight(right);
+        }
 	}
 
 	protected void updateMethodAccessRight(String method, MemberAccessPolicy right) throws NullPointerException {
