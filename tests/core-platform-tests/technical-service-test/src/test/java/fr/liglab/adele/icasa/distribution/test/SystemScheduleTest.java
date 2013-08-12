@@ -65,7 +65,7 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
         // do nothing
 	}
 
-    public static Option helpBundles() {
+    public static Option addSystemProperties() {
 
         return new DefaultCompositeOption(
                 systemProperty( "iCasa.ThreadPool.default.maxThread" ).value( "10" ),
@@ -78,7 +78,7 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
     public Option[] configuration() {
 
         List<Option> lst = super.config();
-        lst.add(helpBundles());
+        lst.add(addSystemProperties());
         Option conf[] = lst.toArray(new Option[0]);
         return conf;
     }
