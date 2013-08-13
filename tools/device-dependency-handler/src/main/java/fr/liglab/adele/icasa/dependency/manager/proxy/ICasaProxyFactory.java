@@ -94,15 +94,6 @@ public class ICasaProxyFactory implements InvocationHandler {
 		return delegateServiceInvokation(method, args);
 	}
 	
-	protected AccessRight getAccessRight(String deviceId) {
-		return m_dependency.getAccessRight(deviceId);
-		/*
-		DeviceDependencyHandler handler = (DeviceDependencyHandler) m_dependency.getHandler();
-		BundleContext context = m_dependency.getBundleContext();
-		return handler.getAccessRight(context, deviceId);
-		*/
-	}
-	
 
 	private Object delegateObjectMethodsInvokation(Method method, Object[] args) throws Exception {		
 		if (method.equals(m_hashCodeMethod)) {
@@ -126,21 +117,16 @@ public class ICasaProxyFactory implements InvocationHandler {
 		}
 	}
 	
-	private Object delegateObjectMethodsInvokationOriginal(Object proxy, Method method, Object[] args) throws Exception {	
-		if (method.equals(m_hashCodeMethod)) {
-			return new Integer(this.hashCode());
-		} else if (method.equals(m_equalsMethod)) {
-			return proxy == args[0] ? Boolean.TRUE : Boolean.FALSE;
-		} else if (method.equals(m_toStringMethod)) {
-			return this.toString();
-		} else {
-			throw new InternalError("Unexpected Object method dispatched: " + method);
-		}
-	}
 	
 	protected Object delegateServiceInvokation(Method method, Object[] args) throws Exception {
 		Object service = getService();
+		
+		if (service==null) {
+		    throw new RuntimeException("No device injected yet");
+		}
+		
 		String deviceId = ((GenericDevice) service).getSerialNumber();
+		System.out.println("===============================> " + deviceId);
 		AccessRight accessRight = m_dependency.getAccessRight(deviceId);
 		
 		if (accessRight != null) {
