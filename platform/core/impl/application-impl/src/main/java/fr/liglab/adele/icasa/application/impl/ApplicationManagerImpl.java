@@ -27,6 +27,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Constants;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -49,6 +50,8 @@ import fr.liglab.adele.icasa.application.ApplicationManager;
 import fr.liglab.adele.icasa.application.ApplicationState;
 import fr.liglab.adele.icasa.application.ApplicationTracker;
 import fr.liglab.adele.icasa.application.impl.internal.DeploymentPackageRepresentation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implementation of an application manager.
@@ -61,11 +64,10 @@ import fr.liglab.adele.icasa.application.impl.internal.DeploymentPackageRepresen
 @Provides(specifications = { ApplicationManager.class, EventHandler.class }, properties = { @StaticServiceProperty(name = EventConstants.EVENT_TOPIC, type = "java.lang.String[]", value = "{org/osgi/service/deployment/COMPLETE}") })
 public class ApplicationManagerImpl implements ApplicationManager, EventHandler {
 
-	@Requires
-	DeploymentAdmin deploymentAdmin;
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG+".applications");
 
-	@Requires(optional = true, nullable = true)
-	private LogService _logger;
+    @Requires
+	DeploymentAdmin deploymentAdmin;
 
 	/**
 	 * Platform Categories list
@@ -151,7 +153,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	@Validate
 	public void start() {
-		
+		logger.debug("start");
 		DeploymentPackage[] packages = deploymentAdmin.listDeploymentPackages();
       // Installing the deployment packages presents in the platform
 		for (DeploymentPackage deploymentPackage : packages) {
@@ -167,6 +169,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
 	@Invalidate
 	public void stop() {
+        logger.debug("stop");
 		synchronized (_listeners) {
 			for (ApplicationTracker listener : _listeners) {
 				notifyStop(listener);
@@ -209,6 +212,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 	}
 
 	private void onDeploymePackageArrival(DeploymentPackage deploymentPackage) {
+        logger.debug("DP arrival " + deploymentPackage.getName());
 		String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
 		if (appId == null) // not an application deployment package
 			return;
@@ -217,7 +221,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
 		if (appVersion == null) { // version is mandatory
 			// ignore if version is not provided
-			_logger.log(LogService.LOG_ERROR, "Deployment Package " + deploymentPackage.getName()
+			logger.error("Deployment Package " + deploymentPackage.getName()
 			      + " must specify an application version.");
 			return;
 		}
@@ -228,6 +232,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		boolean isNewApp = (app == null);
 
 		if (isNewApp) {
+            logger.debug("New application detected" + appId);
 			app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
 			app.setVersion(appVersion);
 			app.setState(ApplicationState.STOPED);
@@ -251,7 +256,8 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 	}
 
 	private void onDeploymePackageDeparture(String dpSymbolicName) {
-		ApplicationImpl tempApp = (ApplicationImpl) getApplicationOfDeploymentPackage(dpSymbolicName);
+        logger.debug("DP is leaving: " + dpSymbolicName);
+        ApplicationImpl tempApp = (ApplicationImpl) getApplicationOfDeploymentPackage(dpSymbolicName);
 
 		if (tempApp == null) // The deployment package is not in the application registry
 			return;
@@ -259,6 +265,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		writeLock.lock();
 		tempApp.removeDeploymentPackageRepresentation(dpSymbolicName);
 		if (tempApp.isEmptyApplication()) {
+            logger.debug("Removing empty application: " + tempApp.getId());
 			_appPerId.remove(tempApp.getId());
 			for (ApplicationTracker listener : _listeners) {
 				listener.removeApplication(tempApp);
