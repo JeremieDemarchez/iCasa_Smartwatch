@@ -15,6 +15,7 @@
 
 package fr.liglab.adele.icasa.access.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
@@ -25,6 +26,8 @@ import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +44,7 @@ import java.util.Collections;
 @Provides(specifications={AccessManagerRemote.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value="/policies")
 public class AccessManagerRemote extends AbstractREST {
+
 
     @Requires
     AccessManager manager;
