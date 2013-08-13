@@ -24,6 +24,7 @@ import org.osgi.framework.BundleContext;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependencyHandler;
+import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 public class ICasaProxyFactory implements InvocationHandler {
@@ -122,7 +123,7 @@ public class ICasaProxyFactory implements InvocationHandler {
 		Object service = getService();
 		
 		if (service==null) {
-		    throw new RuntimeException("No device injected yet");
+		    throw new IllegalStateException("No device injected yet");
 		}
 		
 		String deviceId = ((GenericDevice) service).getSerialNumber();
@@ -134,10 +135,10 @@ public class ICasaProxyFactory implements InvocationHandler {
 				System.out.println("================ Invoking iCasa Handler =============");
 				return method.invoke(service, args);				
 			} else {
-				throw new RuntimeException("Access Policy: No access to method " + method.getName());
+				throw new AccessViolationException("Access Policy: No access to method " + method.getName());
 			}
 		} else {
-			throw new RuntimeException("Access Policy: No access right found to device " + deviceId);
+			throw new AccessViolationException("Access Policy: No access right found to device " + deviceId);
 		}
 	}
 	

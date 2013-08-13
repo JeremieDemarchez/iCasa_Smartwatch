@@ -272,7 +272,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 				if (dep.isProxy()) {
 					info("Arrays cannot be used for proxied dependencies - Disabling the proxy mode");
 					// TODO: in Icasa arrays can be proxied
-					// dep.setProxy(false);
+					dep.setProxy(false);
 				}
 				// Set the dependency to multiple
 				dep.setAggregate(true);
@@ -285,7 +285,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 				if (dep.isProxy()) {
 					warn("Vectors cannot be used for proxied dependencies - Disabling the proxy mode");
 					// TODO: in Icasa arrays can be proxied
-					// dep.setProxy(false);
+					dep.setProxy(false);
 				}
 				type = null;
 			} else if (type.equals(Set.class.getName())) {
@@ -480,8 +480,10 @@ public class DeviceDependencyHandler extends DependencyHandler {
 			String agg = dependencyElement.getAttribute("aggregate");
 			boolean aggregate = agg != null && agg.equalsIgnoreCase("true");
 
-			String nul = dependencyElement.getAttribute("nullable");
-			boolean nullable = nul == null || nul.equalsIgnoreCase("true");
+			// String nul = dependencyElement.getAttribute("nullable");
+			// boolean nullable = nul == null || nul.equalsIgnoreCase("true");
+			
+			boolean nullable = false;
 
 			boolean isProxy = isProxy(dependencyElement);
 
