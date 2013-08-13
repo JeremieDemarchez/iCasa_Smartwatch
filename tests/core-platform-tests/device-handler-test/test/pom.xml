@@ -42,6 +42,7 @@
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.ipojo</artifactId>
     </dependency>
+
     <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-container-native</artifactId>
@@ -106,13 +107,6 @@
       <scope>test</scope>
     </dependency>
 
-    <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>icasa.simulator.dp</artifactId>
-      <version>${project.version}</version>
-      <type>dp</type>
-      <scope>test</scope>
-    </dependency>
 
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -192,6 +186,16 @@
             </goals>
           </execution>
         </executions>
+      </plugin>
+      <plugin>
+        <artifactId>maven-clean-plugin</artifactId>
+        <configuration>
+          <filesets>
+            <fileset>
+              <directory>conf</directory>
+            </fileset>
+          </filesets>
+        </configuration>
       </plugin>
     </plugins>
   </build>

@@ -23,51 +23,46 @@ import org.apache.felix.ipojo.annotations.Component;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-
-@Component(name="ComponentUsingBindMethods")
+@Component(name = "ComponentUsingBindMethods")
 public class ComponentUsingBindMethods {
 
+    public List<BinaryLight> lights = new ArrayList<BinaryLight>();
 
-	private List<BinaryLight> lights = new ArrayList<BinaryLight>();
-	
-	@RequiresDevice(id="lights", type="bind", aggregate=true)
-	public void bindBinaryLight(BinaryLight light) {
-		
-		System.out.println("BIND METHOD");
-		System.out.println("==============================");
-		
-		synchronized (lights) {
-			lights.add(light);
-      }
-      		
-		
-		printInfo(light);
-      
-	}
-	
-	@RequiresDevice(id="lights", type="unbind", aggregate=true)
-	public void unbindBinaryLight(BinaryLight light) {
-		
-		System.out.println("UNBIND METHOD");
-		System.out.println("==============================");
-		
-		synchronized (lights) {
-			lights.remove(light);
-      }
-      		
-		printInfo(light);
-      
-	}
-		
-	
-	private void printInfo(BinaryLight light) {
-		try {
+    @RequiresDevice(id = "lights", type = "bind", aggregate = true)
+    public void bindBinaryLight(BinaryLight light) {
 
-			System.out.println("ComponentUsingBindMethods - Serial Number ---------------> " + light.getSerialNumber());
-			System.out.println("ComponentUsingBindMethods - Power Status ---------------> " + light.getPowerStatus());		      
-      } catch (Exception e) {
-	      e.printStackTrace();
-      }
-	}
-	
+        System.out.println("BIND METHOD");
+        System.out.println("==============================");
+
+        synchronized (lights) {
+            lights.add(light);
+        }
+
+        printInfo(light);
+
+    }
+
+    @RequiresDevice(id = "lights", type = "unbind", aggregate = true)
+    public void unbindBinaryLight(BinaryLight light) {
+
+        System.out.println("UNBIND METHOD");
+        System.out.println("==============================");
+
+        synchronized (lights) {
+            lights.remove(light);
+        }
+
+        printInfo(light);
+
+    }
+
+    private void printInfo(BinaryLight light) {
+        try {
+            System.out.println("ComponentUsingBindMethods - Serial Number ---------------> " + light.getSerialNumber());
+            System.out.println("ComponentUsingBindMethods - Power Status ---------------> " + light.getPowerStatus());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 }

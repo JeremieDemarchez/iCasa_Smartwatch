@@ -44,11 +44,6 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 	@Requires
 	private AccessManager accessManager;
 
-	/**
-	 * The set of managed dependencies. Access must be guarded by the monitor lock.
-	 */
-	protected final List<DeviceDependency> dependencies = new ArrayList<DeviceDependency>();
-
 	private Boolean disableInterceptor = false;
 
 	public DeviceAccessTrackingInterceptor(BundleContext context) {
@@ -64,20 +59,12 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
 	@Override
 	public void open(DependencyModel dependency) {
-		if (isPlatformComponent(dependency))
-			return;
-		if (dependency instanceof DeviceDependency) {
-			dependencies.add((DeviceDependency) dependency);
-		}
+
 	}
 
 	@Override
 	public void close(DependencyModel dependency) {
-		if (isPlatformComponent(dependency))
-			return;
-		synchronized (this) {
-			dependencies.remove(dependency);
-		}
+
 	}
 
 	@Override
@@ -98,8 +85,6 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
 			AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
 			deviceDependency.addAccessRight(deviceId, accessRight);
-
-			System.out.println("DeviceAccessTrackingInterceptor -- App " + appId + " -- " + deviceId + " --  visible " + accessRight.getPolicy());
 			
 			if (!accessRight.isVisible()) {
 				return null;
