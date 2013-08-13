@@ -15,13 +15,18 @@
  */
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clock.Clock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 import java.util.Map.Entry;
 
 
 public class SchedulerThreadPoolImpl extends Thread {
+
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
     // The access lock
     private final Object m_lock;
@@ -57,7 +62,7 @@ public class SchedulerThreadPoolImpl extends Thread {
 
     private void addTask(TaskReferenceImpl task, Long expectedTime){
         if (expectedTime == null) {
-            System.err.println("Ignoring task : Cannot determine first execution time");
+            logger.warn("Ignoring task : Cannot determine first execution time");
             return;
         }
         synchronized (m_lock) {

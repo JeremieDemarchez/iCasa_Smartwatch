@@ -20,6 +20,8 @@ import fr.liglab.adele.icasa.access.*;
 import fr.liglab.adele.icasa.access.utils.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.xmlpull.v1.XmlPullParserException;
 
 import java.io.*;
@@ -46,6 +48,8 @@ public class AccessManagerImpl implements AccessManager {
 
     private Boolean disableAccessPolicy = false;
 
+    private static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG+".access");
+
     private AtomicLong nextIdentifier = new AtomicLong(0);
 
     private Map<String, Map<String, AccessRightImpl>> rightAccess = new HashMap<String, Map<String, AccessRightImpl>>();
@@ -67,6 +71,7 @@ public class AccessManagerImpl implements AccessManager {
     public void validate() {
         List<Map> rights = loadFile();
         if (rights != null) {
+            logger.debug("Loading access rights: " + rights.size());
             for (Map rightInMap : rights) {
                 AccessRightImpl right = createAccessRight(rightInMap);
                 if (right != null) {
@@ -74,6 +79,8 @@ public class AccessManagerImpl implements AccessManager {
                     map.put(right.getDeviceId(), right);
                 }
             }
+        }else{
+            logger.debug("Loading access rights:  0");
         }
     }
 
@@ -129,6 +136,7 @@ public class AccessManagerImpl implements AccessManager {
      * @param right
      */
     private void notifyAddAccessRight(List<AccessRightManagerListener> accessRightManagerListener, AccessRightImpl right) {
+        logger.debug("Access right added");
         for (AccessRightManagerListener listener : accessRightManagerListener) {
             listener.onAccessRightAdded(right);
         }
@@ -203,14 +211,21 @@ public class AccessManagerImpl implements AccessManager {
     @Override
     public AccessRightImpl setMethodAccess(String applicationId, String deviceId, String methodName,
                                            MemberAccessPolicy accessRight) {
+        boolean modified = false;
         if (methodName == null || accessRight == null) {
+            logger.error("Method and accessRight must not be null");
             throw new NullPointerException("Method and accessRight must not be null");
         }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         if (!disableAccessPolicy) { //it update only if is enabled.
-            rightAccess.updateMethodAccessRight(methodName, accessRight);
+            logger.debug("updating method access right to " + applicationId+ " using " + deviceId + "method: " + methodName);
+            modified = rightAccess.updateMethodAccessRight(methodName, accessRight);
+        } else{
+            logger.debug("Unable to update access right. Access Right is disabled");
         }
-        writeFile();
+        if(modified){
+            writeFile();
+        }
         return rightAccess;
     }
 
@@ -240,18 +255,25 @@ public class AccessManagerImpl implements AccessManager {
      */
     @Override
     public AccessRightImpl setDeviceAccess(String applicationId, String deviceId, DeviceAccessPolicy right) {
+        boolean modified = false;
         if (right == null) {
+            logger.error("Invalid DeviceAccessPolicy");
             throw new NullPointerException("Policy must not be null");
         }
         if (applicationId == null || deviceId == null) {
+            logger.error("ApplicationId and deviceId must not be null");
             throw new NullPointerException("Application and device must not be null");
         }
         AccessRightImpl rightAccess = getAccessRight(applicationId, deviceId);
         if (!disableAccessPolicy) { //update only if is enabled.
-            rightAccess.updateAccessRight(right);
+            logger.debug("Updating access right to " + applicationId+ " using " + deviceId);
+            modified = rightAccess.updateAccessRight(right);
+        } else {
+            logger.debug("Unable to update access right. Access Right is disabled");
         }
-
-        writeFile();
+        if(modified){
+            writeFile();
+        }
         return rightAccess;
     }
 
@@ -262,8 +284,10 @@ public class AccessManagerImpl implements AccessManager {
         // if access policy is disable, the policy total is used for all rights
         if (disableAccessPolicy) {
             right = new AccessRightImpl(identifier, application, device, DeviceAccessPolicy.TOTAL);
+            logger.debug("Trying to create access right when is disabled. All access rights are granted.");
         } else {
             right = new AccessRightImpl(identifier, application, device);
+            logger.debug("Creating access right object");
         }
 
         addListeners(right);
@@ -282,12 +306,12 @@ public class AccessManagerImpl implements AccessManager {
     private AccessRightImpl createAccessRight(Map rightInfo) {
         if (!(rightInfo.containsKey("applicationId") && rightInfo.containsKey("deviceId"))
                 && rightInfo.containsKey("policy")) {
-            System.err.println("Access right from map is invalid, applicationId, deviceId and policy are mandatory");
+            logger.error("Access right from map is invalid, applicationId, deviceId and policy are mandatory");
             return null;
         }
         DeviceAccessPolicy policy = DeviceAccessPolicy.fromString((String) rightInfo.get("policy"));
         if (policy == null) {
-            System.err.println("Access right from map is invalid, policy is not well formed: " + rightInfo.get("policy"));
+            logger.error("Access right from map is invalid, policy is not well formed: " + rightInfo.get("policy"));
             return null;
         }
         Long identifier = getNextIdentifier();
@@ -359,6 +383,7 @@ public class AccessManagerImpl implements AccessManager {
 
         // if access policy is disable, policy is not saved to storage
         if (disableAccessPolicy) {
+            logger.debug("Persistence is not allowed when access right is disabled");
             return true;
         }
 
@@ -366,7 +391,7 @@ public class AccessManagerImpl implements AccessManager {
         if (storageFile.exists()) {
             if (!backupFile.exists()) {
                 if (!storageFile.renameTo(backupFile)) {
-                    System.err.println("Couldn't rename file " + storageFile + " to backup file " + backupFile);
+                    logger.error("Couldn't rename file " + storageFile + " to backup file " + backupFile);
                     return false;
                 }
             } else {
@@ -390,18 +415,19 @@ public class AccessManagerImpl implements AccessManager {
 
             // Writing was successful, delete the backup file if there is one.
             backupFile.delete();
+            logger.debug("Persistence is performed");
             return true;
         } catch (XmlPullParserException e) {
-            System.err.println("writeFileLocked: Got exception:");
+            logger.error("writeFileLocked: Got exception:");
             e.printStackTrace();
         } catch (IOException e) {
-            System.err.println("writeFileLocked: Got exception:");
+            logger.error("writeFileLocked: Got exception:");
             e.printStackTrace();
         }
         // Clean up an unsuccessfully written file
         if (storageFile.exists()) {
             if (!storageFile.delete()) {
-                System.err.println("Couldn't clean up partially-written file " + storageFile);
+                logger.error("Couldn't clean up partially-written file " + storageFile);
             }
         }
         return false;
@@ -414,14 +440,14 @@ public class AccessManagerImpl implements AccessManager {
         } catch (FileNotFoundException e) {
             File parent = file.getParentFile();
             if (!parent.mkdir()) {
-                System.err.println("Couldn't create directory for " + "Access Right file " + file);
+                logger.error("Couldn't create directory for " + "Access Right file " + file);
                 return null;
             }
 
             try {
                 str = new FileOutputStream(file);
             } catch (FileNotFoundException e2) {
-                System.err.println("Couldn't create Access Right file " + file);
+                logger.error("Couldn't create Access Right file " + file);
                 e2.printStackTrace();
             }
         }
@@ -446,7 +472,7 @@ public class AccessManagerImpl implements AccessManager {
         Map accessRightInFile = null;
         List returningList = null;
         if (storageFile.exists() && !storageFile.canRead()) {
-            System.err.println("Unable to read Acces Right file: " + storageFile.getAbsolutePath());
+            logger.error("Unable to read Acces Right file: " + storageFile.getAbsolutePath());
             return null;
         }
         if (!(storageFile.exists() && storageFile.canRead())) {
@@ -465,7 +491,7 @@ public class AccessManagerImpl implements AccessManager {
             try {
                 returningList = (List) accessRightInFile.get("access");
             } catch (Exception ex) {
-                System.err.println("Unable to Retrieve Access Right info: " + storageFile.getAbsolutePath());
+                logger.error("Unable to Retrieve Access Right info: " + storageFile.getAbsolutePath());
                 return null;
             }
         }

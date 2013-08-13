@@ -19,12 +19,17 @@ import java.util.*;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.location.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ZoneImpl extends LocatedObjectImpl implements Zone {
 
-	private String id;
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
+    private String id;
 	private int yLength;
 	private int xLength;
     private int zLength;
@@ -262,7 +267,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.deviceAttached(this, childDevice);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneVariableModified");
+				logger.error("Listener error in event zoneVariableModified");
 				ex.printStackTrace();
 			}
 		}
@@ -281,7 +286,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.deviceDetached(this, childDevice);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneVariableModified");
+				logger.error("Listener error in event zoneVariableModified");
 				ex.printStackTrace();
 			}
 		}
@@ -301,7 +306,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.zoneParentModified(this, oldParentZone, parent);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneVariableModified");
+				logger.error("Listener error in event zoneVariableModified");
 				ex.printStackTrace();
 			}
 		}
@@ -371,7 +376,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.zoneVariableModified(this, name, oldValue, newValue);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneVariableModified");
+				logger.error("Listener error in event zoneVariableModified");
 				ex.printStackTrace();
 			}
 
@@ -402,7 +407,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.zoneVariableAdded(this, name);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneVariableAdded");
+				logger.error("Listener error in event zoneVariableAdded");
 				ex.printStackTrace();
 			}
 		}
@@ -429,7 +434,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.zoneVariableRemoved(this, name);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneVariableRemoved");
+				logger.error("Listener error in event zoneVariableRemoved");
 				ex.printStackTrace();
 			}
 		}
@@ -514,7 +519,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.zoneMoved(this, oldPosition, leftTopPosition);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneMoved");
+				logger.error("Listener error in event zoneMoved");
 				ex.printStackTrace();
 			}
 		}
@@ -582,7 +587,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			try {
 				listener.zoneResized(this);
 			} catch (Exception ex) {
-				System.err.println("Listener error in event zoneResized");
+				logger.error("Listener error in event zoneResized");
 				ex.printStackTrace();
 			}
 		}

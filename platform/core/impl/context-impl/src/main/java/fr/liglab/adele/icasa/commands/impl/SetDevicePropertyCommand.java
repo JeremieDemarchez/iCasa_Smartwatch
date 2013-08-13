@@ -63,7 +63,6 @@ public class SetDevicePropertyCommand extends AbstractCommand {
 		String propertyId = param.getString(signature.getParameters()[1]);
 		Object value = param.get(signature.getParameters()[2]);
 		LocatedDevice device = contextManager.getDevice(deviceId);
-		System.out.println("Trying to modifiy " + propertyId + " property ");
 		if (device != null)
 			device.setPropertyValue(propertyId, value);
 		return null;

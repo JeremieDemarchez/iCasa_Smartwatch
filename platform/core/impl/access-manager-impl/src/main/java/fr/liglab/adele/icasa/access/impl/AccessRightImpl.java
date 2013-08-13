@@ -15,10 +15,13 @@
 
 package fr.liglab.adele.icasa.access.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.AccessRightListener;
 import fr.liglab.adele.icasa.access.MemberAccessPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Method;
 import java.util.*;
@@ -28,7 +31,9 @@ import java.util.*;
  */
 public class AccessRightImpl implements AccessRight {
 
-	private volatile DeviceAccessPolicy policy = DeviceAccessPolicy.HIDDEN;
+    private static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + ".access");
+
+    private volatile DeviceAccessPolicy policy = DeviceAccessPolicy.HIDDEN;
 
 	private final List VISIBLE_METHODS_LIST = Arrays.asList(new String[] { "getSerialNumber", "getState", "getFault" });
 
@@ -68,10 +73,12 @@ public class AccessRightImpl implements AccessRight {
 		this.deviceId = String.valueOf(fromMap.get("deviceId"));
 		this.policy = DeviceAccessPolicy.fromString(String.valueOf(fromMap.get("policy")));
 		if (applicationId == null || deviceId == null) {
-			throw new NullPointerException(
-			      "Unable to create AccessRight from map, missing values (applicationId, deviceId)");
+            logger.error("Unable to create AccessRight from map, missing values (applicationId, deviceId)");
+            throw new NullPointerException("Unable to obtain DeviceAccessPolicy from: "
+                    + fromMap.get("policy"));
 		}
 		if (policy == null) {
+            logger.error("Unable to create AccessRight from map, missing values (applicationId, deviceId)");
 			throw new UnknownFormatConversionException("Unable to obtain DeviceAccessPolicy from: "
 			      + fromMap.get("policy"));
 		}
@@ -89,6 +96,7 @@ public class AccessRightImpl implements AccessRight {
 		for (Map.Entry<String, String> entry : methodAccess.entrySet()) {
 			MemberAccessPolicy methodPolicy = MemberAccessPolicy.fromString(entry.getValue());
 			if (methodPolicy == null) {
+                logger.error("Unable to obtain MemberAccessPolicy from:" + entry.getValue());
 				throw new UnknownFormatConversionException("Unable to obtain MemberAccessPolicy from:" + entry.getValue());
 			}
 			rightMethodAccess.put(entry.getKey(), MemberAccessPolicy.fromString(entry.getValue()));
@@ -115,7 +123,8 @@ public class AccessRightImpl implements AccessRight {
 	@Override
 	public boolean hasMethodAccess(String methodName) throws NullPointerException {
 		if (methodName == null) {
-			throw new NullPointerException("Method must not be null");
+            logger.error("Method must not be null");
+            throw new NullPointerException("Method must not be null");
 		}
 		MemberAccessPolicy memberAccessPolicy = MemberAccessPolicy.HIDDEN;
 		Boolean exists = false;
@@ -230,6 +239,7 @@ public class AccessRightImpl implements AccessRight {
             this.internalMap.put("policy", policy.toString());
             listenerList = getListeners();
         }
+        logger.debug("Access Right updated: " + right);
         for (AccessRightListener listener : listenerList) {
             listener.onAccessRightModified(this);
         }
@@ -239,35 +249,43 @@ public class AccessRightImpl implements AccessRight {
 	 * 
 	 * @param right
 	 */
-	protected void updateAccessRight(DeviceAccessPolicy right) {
+	protected boolean updateAccessRight(DeviceAccessPolicy right) {
+        if(right == null){
+            logger.error("Unable to set invalid policy" + right);
+            throw new NullPointerException("Null policy");
+        }
         if(right.compareTo(DeviceAccessPolicy.HIDDEN) == 0){
             updateAccessToHide();
         } else if (right.compareTo(DeviceAccessPolicy.TOHIDE) == 0){
-            throw new SecurityException("Unable to set a transient device policy");
+            logger.error("Unable to set a transient device policy");
+            return false;
         } else {
             updateDeviceAccessRight(right);
         }
+        return true;
 	}
 
-	protected void updateMethodAccessRight(String method, MemberAccessPolicy right) throws NullPointerException {
+	protected boolean updateMethodAccessRight(String method, MemberAccessPolicy right) throws NullPointerException {
 		List<AccessRightListener> listenerList = null;
 		if (method == null) {
-			throw new NullPointerException("Method must not be null");
+            logger.error("Unable to set access right. Method must not be null");
+            throw new NullPointerException("Method must not be null");
 		}
 		synchronized (this) {
 			if (rightMethodAccess.containsKey(method)) {
 				if (rightMethodAccess.get(method).equals(right)) {
-					return; // If is the same, do nothing.
+					return false; // If is the same, do nothing.
 				}
 			}
 			rightMethodAccess.put(method, right);
 			internalMethods.put(method, right.toString());
 			listenerList = getListeners();
 		}
-		for (AccessRightListener listener : listenerList) {
+        logger.debug("Updating access right in method " + method + " right: " + right);
+        for (AccessRightListener listener : listenerList) {
 			listener.onMethodAccessRightModified(this, method);
 		}
-		return;
+		return true;
 	}
 
 	@Override

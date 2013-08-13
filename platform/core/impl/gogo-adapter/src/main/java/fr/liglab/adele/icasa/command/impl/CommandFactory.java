@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.command.impl;
 import java.io.InputStream;
 import java.io.PrintStream;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.apache.felix.ipojo.Factory;
@@ -26,7 +27,8 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 @Component
@@ -34,7 +36,10 @@ import org.json.JSONObject;
 @Instantiate
 public class CommandFactory implements ICasaCommand {
 
-	@Requires
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
+
+    @Requires
 	Factory[] m_factories;
     Signature empty = new Signature(new String[0]);
 
@@ -50,7 +55,7 @@ public class CommandFactory implements ICasaCommand {
 				return f;
 			}
 		}
-		System.out.println("Factory not found "+ factoryName);
+		logger.warn("Factory not found "+ factoryName);
 		return null;
 	}
 
