@@ -194,9 +194,9 @@ public class AccessManagerRemote extends AbstractREST {
         JSONArray policies = new JSONArray();
         //add the policies. It is not a for to void non-deterministic identifiers.
         policies.put(getJSONPolicyType(0,DeviceAccessPolicy.HIDDEN));
-        policies.put(getJSONPolicyType(1,DeviceAccessPolicy.VISIBLE));
-        policies.put(getJSONPolicyType(2,DeviceAccessPolicy.PARTIAL));
-        policies.put(getJSONPolicyType(3,DeviceAccessPolicy.TOTAL));
+        policies.put(getJSONPolicyType(2,DeviceAccessPolicy.VISIBLE));
+        policies.put(getJSONPolicyType(3,DeviceAccessPolicy.PARTIAL));
+        policies.put(getJSONPolicyType(4,DeviceAccessPolicy.TOTAL));
         return policies.toString();
     }
     private JSONObject getJSONPolicyType(int id, DeviceAccessPolicy policy) throws JSONException {
