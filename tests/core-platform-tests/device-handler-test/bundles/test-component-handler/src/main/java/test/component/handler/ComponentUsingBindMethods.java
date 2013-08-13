@@ -30,30 +30,16 @@ public class ComponentUsingBindMethods {
 
     @RequiresDevice(id = "lights", type = "bind", aggregate = true)
     public void bindBinaryLight(BinaryLight light) {
-
-        System.out.println("BIND METHOD");
-        System.out.println("==============================");
-
         synchronized (lights) {
             lights.add(light);
         }
-
-        printInfo(light);
-
     }
 
     @RequiresDevice(id = "lights", type = "unbind", aggregate = true)
     public void unbindBinaryLight(BinaryLight light) {
-
-        System.out.println("UNBIND METHOD");
-        System.out.println("==============================");
-
         synchronized (lights) {
             lights.remove(light);
         }
-
-        printInfo(light);
-
     }
 
     private void printInfo(BinaryLight light) {

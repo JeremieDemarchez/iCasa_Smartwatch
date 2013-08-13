@@ -51,7 +51,9 @@
               fr.liglab.adele.icasa.dependency.manager.interceptor,
               fr.liglab.adele.icasa.dependency.manager.proxy
             </Private-Package>
-            <Export-Package />
+            <Export-Package>
+              fr.liglab.adele.icasa.dependency.manager.exception
+            </Export-Package>
           </instructions>
         </configuration>
       </plugin>

@@ -22,7 +22,6 @@ import org.apache.felix.ipojo.annotations.Validate;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
 @Component
-//@Instantiate
 public class ComponentOnlyRequirePojo {
 
 	@Requires
@@ -32,6 +31,5 @@ public class ComponentOnlyRequirePojo {
 	private void start() {
 		System.out.println(light.getSerialNumber());
    }
-	
-	
+		
 }
