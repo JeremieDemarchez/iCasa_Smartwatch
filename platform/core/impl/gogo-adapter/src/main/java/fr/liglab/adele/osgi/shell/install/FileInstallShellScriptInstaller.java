@@ -17,6 +17,7 @@ package fr.liglab.adele.osgi.shell.install;
 
 import java.io.File;
 
+import fr.liglab.adele.icasa.Constants;
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -24,13 +25,17 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 
 import fr.liglab.adele.osgi.shell.installer.ShellScriptInstaller;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 @Provides
 @Instantiate
 public class FileInstallShellScriptInstaller implements ArtifactInstaller {
 
-	private final static String EXTENSIONS = ".gogo";
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
+    private final static String EXTENSIONS = ".gogo";
 
 	@Requires
 	protected ShellScriptInstaller _scriptInstaller;
@@ -40,7 +45,7 @@ public class FileInstallShellScriptInstaller implements ArtifactInstaller {
 	}
 
 	public void install(File artifact) throws Exception {
-		System.out.println("Install gogo script " + artifact.getAbsolutePath());
+		logger.debug("Install gogo script " + artifact.getAbsolutePath());
 
 		// register the command
 		_scriptInstaller.install(getScopeName(artifact),
@@ -53,7 +58,7 @@ public class FileInstallShellScriptInstaller implements ArtifactInstaller {
 	}
 
 	public void uninstall(File artifact) throws Exception {
-		System.out.println("Uninstall gogo script "
+		logger.debug("Uninstall gogo script "
 				+ artifact.getAbsolutePath());
 
 		// unregister the previously registered command :

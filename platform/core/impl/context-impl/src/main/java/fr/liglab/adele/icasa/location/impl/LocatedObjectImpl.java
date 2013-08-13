@@ -20,10 +20,15 @@ import java.util.List;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class LocatedObjectImpl implements LocatedObject {
+
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_DEVICE);
 
 	private Position m_position;
 
@@ -51,6 +56,7 @@ public abstract class LocatedObjectImpl implements LocatedObject {
 
 	@Override
 	public void setCenterAbsolutePosition(Position position) {
+        logger.debug("Setting center absolute position");
 		Position absolutePosition = getCenterAbsolutePosition();
 		int deltaX = position.x - absolutePosition.x;
 		int deltaY = position.y - absolutePosition.y;
@@ -66,6 +72,7 @@ public abstract class LocatedObjectImpl implements LocatedObject {
 	}
 
     protected void moveAttachedObjects(int deltaX, int deltaY, int deltaZ) {
+        logger.debug("Moving attached objects");
         List<LocatedObject> snapshotAttachedObjects = getAttachedObjects();
         for (LocatedObject object : snapshotAttachedObjects) {
             int newX = object.getCenterAbsolutePosition().x + deltaX;
@@ -85,6 +92,7 @@ public abstract class LocatedObjectImpl implements LocatedObject {
 		} finally {
 			writeLock.unlock();
 		}
+        logger.debug("Attach object");
 		notifyAttachedObject(object);
 	}
 
@@ -98,6 +106,7 @@ public abstract class LocatedObjectImpl implements LocatedObject {
 		} finally {
 			writeLock.unlock();
 		}
+        logger.debug("Detach object");
 		notifyDetachedObject(object);
 	}
 
