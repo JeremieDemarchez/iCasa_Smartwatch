@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.device.*;
 import fr.liglab.adele.icasa.location.Zone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Abstract implementation of the {@link fr.liglab.adele.icasa.device.GenericDevice} interface that manages the
@@ -34,7 +37,9 @@ import fr.liglab.adele.icasa.location.Zone;
  */
 public abstract class AbstractDevice implements GenericDevice {
 
-	private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_DEVICE);
+
+    private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
 
 	private Map<String, Object> _properties = new HashMap<String, Object>();
 
@@ -53,6 +58,7 @@ public abstract class AbstractDevice implements GenericDevice {
 	@Override
 	public Object getPropertyValue(String propertyName) {
 		if (propertyName == null) {
+            logger.warn("Unable to retrieve null property");
 			throw new NullPointerException("Null property name");
 		}
 		Object value = null;
@@ -65,13 +71,15 @@ public abstract class AbstractDevice implements GenericDevice {
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
 		if (propertyName == null) {
-			throw new NullPointerException("Null property name");
+            logger.warn("Unable to set null property");
+            throw new NullPointerException("Null property name");
 		}
 		boolean modified = false;
 		boolean added = false;
 
-		
-		Object oldValue = null;
+        logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " to be updated");
+
+        Object oldValue = null;
 		synchronized (_properties) {
 			
 			added = !_properties.containsKey(propertyName);
@@ -93,40 +101,30 @@ public abstract class AbstractDevice implements GenericDevice {
 				_properties.put(propertyName, value);
 				modified = true;				
 			}
-			
-			/*
-			if (oldValue != null) {
-				// if the new value is equal to the previous one the property is not set
-				if (!oldValue.equals(value)) {
-					_properties.put(propertyName, value);
-					modified = true;
-				}
-			} else {
-				if (value != null) {
-					_properties.put(propertyName, value);
-					modified = true;
-				}
-			}
-			*/
 		}
 
-		if (added)
+		if (added) {
+            logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " added");
 			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_ADDED, propertyName, oldValue, value));
-		if (modified)
+        }
+		if (modified) {
+            logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " modified");
 			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue, value));
+        }
 	}
 
 	@Override
 	public boolean removeProperty(String propertyName) {
 		boolean existProperty;
 		Object oldValue = null;
-		synchronized (_properties) {
+        synchronized (_properties) {
 			existProperty = _properties.containsKey(propertyName);
 			if (existProperty) {
 				oldValue = _properties.remove(propertyName);
 			}
 		}
 		if (existProperty) {
+            logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " removed");
 			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_REMOVED, propertyName, oldValue, null));
 		}
 		return existProperty;

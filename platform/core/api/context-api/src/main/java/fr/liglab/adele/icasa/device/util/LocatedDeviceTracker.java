@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.device.util;
 
 import java.util.*;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
@@ -26,6 +27,8 @@ import org.apache.felix.ipojo.util.Tracker;
 import org.apache.felix.ipojo.util.TrackerCustomizer;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to track iCasa devices.
@@ -34,6 +37,7 @@ import org.osgi.framework.ServiceReference;
  */
 public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
 
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
     /**
      * The bundle context against which this LocatedDeviceTracker object is tracking.
      */
@@ -100,6 +104,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
      * Services which match the search criteria specified when this LocatedDeviceTracker object was created are now tracked by this LocatedDeviceTracker object.
      */
     public synchronized void open() {
+        logger.trace("[DeviceTracker] open");
         if (m_tracked != null) { return; }
 
         m_tracked = new Tracked();
@@ -111,6 +116,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
 
             @Override
             public void addedService(ServiceReference serviceReference) {
+                logger.trace("[DeviceTracker] iCasa ContextManager added");
                 ContextManager contextMgr = (ContextManager) m_context.getService(serviceReference);
                 if (m_tracked == null)
                     return;
@@ -128,6 +134,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
 
             @Override
             public void removedService(ServiceReference serviceReference, Object o) {
+                logger.trace("[DeviceTracker] iCasa ContextManager removed");
                 if (m_tracked == null)
                     return;
 
@@ -145,6 +152,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
      * This method should be called when this LocatedDeviceTracker object should end the tracking of services.
      */
     public synchronized void close() {
+        logger.trace("[DeviceTracker] close");
         if (contextMgrTracker != null) {
             contextMgrTracker.close();
             contextMgrTracker = null;
@@ -278,6 +286,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
          * Tracks the initial list of services. This is called after ServiceEvents can begin to be received. This method must be called from LocatedDeviceTracker.open while not synchronized on this object after the addServiceListener call.
          */
         protected void trackInitialDevices() {
+            logger.trace("[DeviceTracker] tracking initial devices");
             while (true) {
                 LocatedDevice device;
                 synchronized (this) {
@@ -342,6 +351,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
          * @param device the device to be tracked.
          */
         private void trackAdding(LocatedDevice device) {
+            logger.trace("[DeviceTracker] device tracked " + device.getSerialNumber());
             boolean mustBeTracked = false;
             boolean becameUntracked = false;
             boolean mustCallAdded = false;
@@ -475,6 +485,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
 
             @Override
             public void deviceAdded(LocatedDevice device) {
+                logger.trace("[DeviceTracker] device appear " + device.getSerialNumber());
                 if (m_typeFilter.match(device)) {
                     synchronized (m_listenedDevices) {
                         if (!m_listenedDevices.contains(device)) {
@@ -488,6 +499,7 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
 
             @Override
             public void deviceRemoved(LocatedDevice device) {
+                logger.trace("[DeviceTracker] device disappear " + device.getSerialNumber());
                 if (m_typeFilter.match(device)) {
                     synchronized (m_listenedDevices) {
                         if (m_listenedDevices.contains(device)) {

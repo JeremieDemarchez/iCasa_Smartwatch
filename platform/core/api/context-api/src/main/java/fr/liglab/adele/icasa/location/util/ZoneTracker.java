@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.location.util;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
@@ -23,6 +24,8 @@ import org.apache.felix.ipojo.util.Tracker;
 import org.apache.felix.ipojo.util.TrackerCustomizer;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -31,7 +34,9 @@ import java.util.*;
  */
 public class ZoneTracker implements ZoneTrackerCustomizer {
 
-	private ZoneTrackerCustomizer trackerCustomizer;
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
+    private ZoneTrackerCustomizer trackerCustomizer;
 
 	private ZoneFilter zoneFilter;
 
@@ -72,7 +77,9 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 * this ZoneTracker object.
 	 */
 	public synchronized void open() {
-		if (tracked != null) {
+        logger.debug("[ZoneTracker] open");
+
+        if (tracked != null) {
 			return;
 		}
 
@@ -85,6 +92,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 
 			@Override
 			public void addedService(ServiceReference serviceReference) {
+                logger.debug("[ZoneTracker] iCasa Context Manager added");
 				ContextManager contextMgr = (ContextManager) context.getService(serviceReference);
 				if (tracked == null)
 					return;
@@ -102,6 +110,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 
 			@Override
 			public void removedService(ServiceReference serviceReference, Object o) {
+                logger.debug("[ZoneTracker] iCasa Context Manager removed");
 				if (tracked == null)
 					return;
 
@@ -119,6 +128,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 	 * This method should be called when this ZoneTracker object should end the tracking of services.
 	 */
 	public synchronized void close() {
+        logger.debug("[ZoneTracker] close");
 		if (contextMgrTracker != null) {
 			contextMgrTracker.close();
 			contextMgrTracker = null;
@@ -288,8 +298,11 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 			if (zones == null) {
 				return;
 			}
-			int size = zones.length;
-			initial.addAll(Arrays.asList(zones).subList(0, size));
+            for(Zone initialZone: zones){
+                if(zoneFilter.match(initialZone)){
+                    initial.add(initialZone);
+                }
+            }
 		}
 
 		/**
@@ -297,6 +310,7 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 		 * must be called from zoneTracker.open while not synchronized on this object after the addServiceListener call.
 		 */
 		protected void trackInitialZones() {
+            logger.debug("[ZoneTracker] track initial zones");
 			while (true) {
 				Zone zone;
 				synchronized (this) {
@@ -361,7 +375,8 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 		 * @param zone the zone to be tracked.
 		 */
 		private void trackAdding(Zone zone) {
-			boolean mustBeTracked = false;
+            logger.debug("[ZoneTracker] track zone " + zone.getId());
+            boolean mustBeTracked = false;
 			boolean becameUntracked = false;
 			boolean mustCallAdded = false;
 			// Call customizer outside of synchronized region
@@ -398,7 +413,8 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 		 * @param zone the tracked zone.
 		 */
 		protected void untrack(Zone zone, boolean onlyIfNotMatch) {
-			if (onlyIfNotMatch && zoneFilter.match(zone))
+            logger.debug("[ZoneTracker] untrack zone " + zone.getId());
+            if (onlyIfNotMatch && zoneFilter.match(zone))
 				return;
 
 			synchronized (this) {
@@ -455,21 +471,25 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 
 			@Override
 			public void zoneAdded(Zone zone) {
-				trackIfMatch(zone);
+                logger.debug("[ZoneTrackerListener] zone added " + zone.getId());
+                trackIfMatch(zone);
 			}
 
 			@Override
 			public void zoneRemoved(Zone zone) {
+                logger.debug("[ZoneTrackerListener] zone removed " + zone.getId());
 				untrack(zone, false);
 			}
 
 			@Override
 			public void zoneVariableAdded(Zone zone, String propertyName) {
+                logger.debug("[ZoneTrackerListener] zone variable added " + zone.getId());
 				trackIfMatch(zone);
 			}
 
 			@Override
 			public void zoneVariableRemoved(Zone zone, String propertyName) {
+                logger.debug("[ZoneTrackerListener] zone variable removed " + zone.getId());
 				untrack(zone, true);
 			}
 
