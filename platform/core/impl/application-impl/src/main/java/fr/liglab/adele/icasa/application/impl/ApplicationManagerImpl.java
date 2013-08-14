@@ -232,7 +232,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 		boolean isNewApp = (app == null);
 
 		if (isNewApp) {
-            logger.debug("New application detected" + appId);
+            logger.debug("New application detected: " + appId);
 			app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
 			app.setVersion(appVersion);
 			app.setState(ApplicationState.STOPED);

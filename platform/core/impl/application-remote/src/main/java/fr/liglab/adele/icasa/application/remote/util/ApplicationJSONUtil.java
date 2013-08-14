@@ -28,9 +28,9 @@ public class ApplicationJSONUtil {
 		try {
 			String appId = app.getId();
 			appJSON = new JSONObject();
-			appJSON.putOnce("AppId", appId);
-			appJSON.putOnce("AppName", app.getName());
-			appJSON.putOnce("AppVersion", app.getVersion());
+			appJSON.putOnce("id", appId);
+			appJSON.putOnce("name", app.getName());
+			appJSON.putOnce("version", app.getVersion());
 		} catch (JSONException e) {
 			e.printStackTrace();
 			appJSON = null;
