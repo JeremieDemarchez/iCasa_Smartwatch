@@ -62,7 +62,7 @@ public class IcasaJSONUtil {
 			for (String property : device.getProperties()) {
                 JSONObject prop = new JSONObject();
                 prop.put("name", property);
-                prop.put("value", device.getPropertyValue(property));
+                prop.put("value", getValidObject(device.getPropertyValue(property)));
                 prop.put("unit", "N/A");
 				propObject.put(prop);
 			}
@@ -124,7 +124,7 @@ public class IcasaJSONUtil {
 			for (String variable : zone.getVariableNames()) {
                 JSONObject property = new JSONObject();
                 property.put("name", variable);
-                property.put("value", zone.getVariableValue(variable));
+                property.put("value", getValidObject(zone.getVariableValue(variable)));
                 String unit = "N/A";
                 if (variable.equalsIgnoreCase("Volume")){
                     unit = "m3";
@@ -145,9 +145,17 @@ public class IcasaJSONUtil {
 
 		return zoneJSON;
 	}
-	
-	
-	public static JSONObject getClockJSON(Clock clock) {
+
+    private static Object getValidObject(Object variableValue) {
+        if(variableValue instanceof Float && (Float.isInfinite((Float)variableValue) || Float.isNaN((Float)variableValue))){
+            return String.valueOf(variableValue);
+        } else if(variableValue instanceof Double && (Double.isInfinite((Double)variableValue) || Double.isNaN((Double)variableValue))){
+            return String.valueOf(variableValue);
+        }
+        return variableValue;
+    }
+
+    public static JSONObject getClockJSON(Clock clock) {
 		JSONObject clockJSON = null;
 		try {
 			clockJSON = new JSONObject();
