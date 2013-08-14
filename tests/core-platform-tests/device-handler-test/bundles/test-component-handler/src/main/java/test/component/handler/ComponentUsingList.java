@@ -15,25 +15,27 @@
  */
 package test.component.handler;
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Validate;
 
+import java.util.List;
+
+import org.apache.felix.ipojo.annotations.Component;
+
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-@Component(name = "ComponentOnlyRequirePojo")
-public class ComponentOnlyRequirePojo {
+@Component(name="ComponentUsingList")
+public class ComponentUsingList {
+	
+	@RequiresDevice(id="lights", type="field", specification="fr.liglab.adele.icasa.device.light.BinaryLight")
+	private List<BinaryLight> lights;
 
-    @Requires
-    private BinaryLight light;
-
-    @Validate
-    private void start() {
-        System.out.println(light.getSerialNumber());
+	protected void start() {
+	    BinaryLight.class.getName();
+	    System.out.println("Vector Size : " + lights.size());
     }
-    
-    public BinaryLight getLight() {
-        return light;
+	
+	public List getLights() {
+        return lights;
     }
-
+	
 }

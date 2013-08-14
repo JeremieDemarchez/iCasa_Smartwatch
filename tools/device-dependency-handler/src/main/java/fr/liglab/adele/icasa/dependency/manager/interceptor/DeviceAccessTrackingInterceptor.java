@@ -15,10 +15,6 @@
  */
 package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -41,85 +37,81 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 @Instantiate(name = "DeviceAccessTrackingInterceptor-0")
 public class DeviceAccessTrackingInterceptor implements ServiceTrackingInterceptor {
 
-	@Requires
-	private AccessManager accessManager;
+    @Requires
+    private AccessManager accessManager;
 
-	private Boolean disableInterceptor = false;
+    private Boolean disableInterceptor = false;
 
-	public DeviceAccessTrackingInterceptor(BundleContext context) {
-		String disableStr = context.getProperty(Constants.DISABLE_ACCESS_POLICY_PROPERTY);
+    public DeviceAccessTrackingInterceptor(BundleContext context) {
+        String disableStr = context.getProperty(Constants.DISABLE_ACCESS_POLICY_PROPERTY);
 
-		if (disableStr != null) {
-			disableInterceptor = Boolean.valueOf(disableStr);
-		}
-		
-		System.out.println("DeviceAccessTrackingInterceptor -- Disable Access Policy " + disableInterceptor);
+        if (disableStr != null) {
+            disableInterceptor = Boolean.valueOf(disableStr);
+        }
+    }
 
-	}
+    @Override
+    public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context,
+            TransformedServiceReference<S> ref) {
 
-	@Override
-	public void open(DependencyModel dependency) {
+        // Dependency obtained from iCasa Requires
+        if (dependency instanceof DeviceDependency) {
+            DeviceDependency deviceDependency = (DeviceDependency) dependency;
 
-	}
+            String appId = deviceDependency.getApplicationId();
+            String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
 
-	@Override
-	public void close(DependencyModel dependency) {
+            // No application associated or Device Id not Found
+            if (appId == null || deviceId == null) {
+                return null;
+            }
 
-	}
+            AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
+            deviceDependency.addAccessRight(deviceId, accessRight);
 
-	@Override
-	public <S> TransformedServiceReference<S> accept(DependencyModel dependency, BundleContext context,
-	      TransformedServiceReference<S> ref) {
+            if (!accessRight.isVisible()) {
+                return null;
+            }
 
-		// Dependency obtained from iCasa Requires
-		if (dependency instanceof DeviceDependency) {
-			DeviceDependency deviceDependency = (DeviceDependency) dependency;
+        } else {
 
-			String appId = deviceDependency.getApplicationId();
-			String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
+            // Only platform components has access to the device instances using iPOJO
+            if (!isPlatformComponent(dependency)) {
+                // Interceptor is disable by the configuration
+                if (!disableInterceptor) {
+                    return null;
+                }
+            }
+        }
 
-			// No application associated or Device Id not Found
-			if (appId == null || deviceId == null) {
-				return null;
-			}
+        return ref;
+    }
 
-			AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
-			deviceDependency.addAccessRight(deviceId, accessRight);
-			
-			if (!accessRight.isVisible()) {
-				return null;
-			}
+    /**
+     * Determines if the component having this dependency is a iCasa Platform component
+     * 
+     * @param dependency
+     * @return
+     */
+    private boolean isPlatformComponent(DependencyModel dependency) {
+        String[] specs = dependency.getComponentInstance().getFactory().getComponentDescription()
+                .getprovidedServiceSpecification();
 
-		} else {
-			
-			// Only platform components has access to the device instances using iPOJO
-			if (!isPlatformComponent(dependency)) {
-				// Interceptor is disable by the configuration
-				if (!disableInterceptor) {
-					return null;
-				}					
-			}
-		}
+        for (String specification : specs) {
+            if (specification.equals(ContextManager.class.getName()))
+                return true;
+        }
 
-		return ref;
-	}
+        return false;
+    }
 
-	/**
-	 * Determines if the component having this dependency is a iCasa Platform component
-	 * 
-	 * @param dependency
-	 * @return
-	 */
-	private boolean isPlatformComponent(DependencyModel dependency) {
-		String[] specs = dependency.getComponentInstance().getFactory().getComponentDescription()
-		      .getprovidedServiceSpecification();
+    @Override
+    public void open(DependencyModel dependency) {
 
-		for (String specification : specs) {
-			if (specification.equals(ContextManager.class.getName()))
-				return true;
-		}
+    }
 
-		return false;
-	}
+    @Override
+    public void close(DependencyModel dependency) {
 
+    }
 }

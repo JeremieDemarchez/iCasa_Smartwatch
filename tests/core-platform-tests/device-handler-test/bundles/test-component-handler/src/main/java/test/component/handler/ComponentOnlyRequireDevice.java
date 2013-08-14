@@ -33,27 +33,14 @@ public class ComponentOnlyRequireDevice {
 
     @Validate
     private void start() {
-        try {
-            System.out.println("====================== Starting ComponentOnlyRequireDevice ========================");
-            System.out.println("Thermometer: " + thermometer.getSerialNumber());
-            System.out.println("BinaryLight: " + light.getSerialNumber());
-
-            System.out.println("BinaryLight getPowerStatus: " + light.getPowerStatus());
-            System.out.println("Thermometer getTemperature: " + thermometer.getTemperature());
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
     }
     
     
     public BinaryLight getLight() {
-        System.out.println("BinaryLight: " + light.getSerialNumber());
         return light;
     }
     
     public Thermometer getThermometer() {
-        System.out.println("Thermometer: " + thermometer.getSerialNumber());
         return thermometer;
     }
 

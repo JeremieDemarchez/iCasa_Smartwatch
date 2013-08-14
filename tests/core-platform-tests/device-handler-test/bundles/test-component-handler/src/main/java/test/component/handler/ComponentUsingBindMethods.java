@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -30,6 +31,7 @@ public class ComponentUsingBindMethods {
 
     @RequiresDevice(id = "lights", type = "bind", aggregate = true)
     public void bindBinaryLight(BinaryLight light) {
+        System.out.println("ComponentUsingBindMethods - Serial Number ---------------> " + light.getSerialNumber());
         synchronized (lights) {
             lights.add(light);
         }
@@ -37,11 +39,18 @@ public class ComponentUsingBindMethods {
 
     @RequiresDevice(id = "lights", type = "unbind", aggregate = true)
     public void unbindBinaryLight(BinaryLight light) {
+        System.out.println("ComponentUsingBindMethods - Serial Number ---------------> " + light.getSerialNumber());
         synchronized (lights) {
             lights.remove(light);
         }
+        
     }
 
+    @Validate
+    private void start() {
+
+    }
+    
     private void printInfo(BinaryLight light) {
         try {
             System.out.println("ComponentUsingBindMethods - Serial Number ---------------> " + light.getSerialNumber());

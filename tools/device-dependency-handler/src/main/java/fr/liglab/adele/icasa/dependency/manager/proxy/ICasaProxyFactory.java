@@ -19,11 +19,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 
-import org.osgi.framework.BundleContext;
-
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
-import fr.liglab.adele.icasa.dependency.manager.DeviceDependencyHandler;
 import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
@@ -72,6 +69,8 @@ public class ICasaProxyFactory implements InvocationHandler {
 	 * @return the proxy object.
 	 */
 	public Object getProxy(Class spec) {
+	    System.out.println("=======> Handler - Component class: " + m_dependency.getHandler().getInstanceManager().getClazz().getName());
+	    System.out.println("=======> Handler - Dependency class: " + spec.getName());
 		return java.lang.reflect.Proxy.newProxyInstance(m_dependency.getHandler().getInstanceManager().getClazz().getClassLoader(),
 		      new Class[] { spec }, this);
 	}
@@ -143,7 +142,14 @@ public class ICasaProxyFactory implements InvocationHandler {
 	}
 	
 	protected Object getService() {
-		return m_dependency.getService();
+	    Object service = null;
+	    try {
+            service = m_dependency.getService();
+        } catch (Exception e) {
+            // TODO: handle exception
+        }
+	    
+		return service;
 	}
 
 }

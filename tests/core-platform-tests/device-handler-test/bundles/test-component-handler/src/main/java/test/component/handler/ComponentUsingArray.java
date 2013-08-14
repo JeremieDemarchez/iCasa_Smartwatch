@@ -15,25 +15,28 @@
  */
 package test.component.handler;
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Validate;
 
+import org.apache.felix.ipojo.annotations.Component;
+
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
+import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-@Component(name = "ComponentOnlyRequirePojo")
-public class ComponentOnlyRequirePojo {
+@Component(name="ComponentUsingArray")
+public class ComponentUsingArray {
+	
+	@RequiresDevice(id="thermometers", type="field")
+	private BinaryLight[] lights;
 
-    @Requires
-    private BinaryLight light;
-
-    @Validate
-    private void start() {
-        System.out.println(light.getSerialNumber());
+	protected void start() {
+	    System.out.println("===> Array Size : " + lights.length);
+	    System.out.println("===> Array Size : " + DeviceListener.class.getName());
     }
-    
-    public BinaryLight getLight() {
-        return light;
+	
+	public BinaryLight[] getLights() {
+        return lights;
     }
 
+	
+	
 }
