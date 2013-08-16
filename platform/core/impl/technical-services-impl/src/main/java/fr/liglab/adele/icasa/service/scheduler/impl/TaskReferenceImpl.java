@@ -92,7 +92,7 @@ public abstract class TaskReferenceImpl implements TaskReference, Runnable {
 
     public boolean isCancelled() {
         synchronized (m_lock) {
-            return m_cancellationTime == -1;
+            return m_cancellationTime != -1;
         }
     }
 
@@ -122,7 +122,7 @@ public abstract class TaskReferenceImpl implements TaskReference, Runnable {
     public void cancel(boolean interrupt) {
         synchronized (m_lock) {
             // Task already cancelled, return immediately
-            if (m_cancellationTime == -1) {
+            if (m_cancellationTime != -1) {
                 return;
             }
             // Set the task as cancelled now

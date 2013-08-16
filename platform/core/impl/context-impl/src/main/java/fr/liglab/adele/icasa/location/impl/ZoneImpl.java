@@ -352,6 +352,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 	@Override
 	public void setVariableValue(String name, Object newValue) {
 		Object oldValue = null;
+        boolean modified = false;//to notify only when modified.
 		lock.readLock().lock();
 		boolean _useParent = useParentVariable;
 		lock.readLock().unlock();
@@ -365,11 +366,14 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			} else {
 				oldValue = null;
 			}
-
+            if((newValue != null && newValue.equals(oldValue)) || (newValue == null && oldValue == null)){
+                return; // does not notify if variable has not changed.
+            }
 			variables.put(name, newValue);
 		} finally {
 			lock.writeLock().unlock();
 		}
+        logger.debug("Modify variable value "+newValue+"  in zone " + getId());
 		// Listeners notification
 		List<ZoneListener> snapshotListener = getListenerCopy();
 		for (ZoneListener listener : snapshotListener) {

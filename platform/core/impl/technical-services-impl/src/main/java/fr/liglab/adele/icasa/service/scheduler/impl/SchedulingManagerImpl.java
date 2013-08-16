@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.service.scheduler.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -34,14 +35,18 @@ import java.util.concurrent.ConcurrentHashMap;
 @Provides(specifications = {SchedulingManager.class})
 public class SchedulingManagerImpl implements SchedulingManager {
 
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG+".scheduler");
+
     private ConcurrentHashMap<String, Group> sharedClockedGroups = new ConcurrentHashMap<String, Group>();
     private ConcurrentHashMap<String, Group> specificClockedGroups = new ConcurrentHashMap<String, Group>();
-    private Logger logger = LoggerFactory.getLogger(SchedulingManagerImpl.class);
 
     //Stock reference for rescheduling when clock appear/disappear.
     private Set<ScheduledRunnable> scheduledRunables = new HashSet<ScheduledRunnable>();
     private Set<PeriodicRunnable> periodicRunnables = new HashSet<PeriodicRunnable>();
 
+    //Stock reference for rescheduling when clock appear/disappear.
+    //private Set<SpecificClockScheduledRunnable> specificClockScheduledRunnables = new HashSet<SpecificClockScheduledRunnable>();
+    //private Set<SpecificClockPeriodicRunnable> specificClockPeriodicRunnables = new HashSet<SpecificClockPeriodicRunnable>();
 
     private BundleContext context;
 
@@ -49,7 +54,6 @@ public class SchedulingManagerImpl implements SchedulingManager {
         context = ctx;
     }
 
-    @Requires
     private Clock clock;
 
     @Bind(aggregate = true, optional = true)
@@ -218,8 +222,10 @@ public class SchedulingManagerImpl implements SchedulingManager {
         }
     }
 
-    @Validate
-    public synchronized void validate(){
+    @Bind(aggregate = false, optional = true)
+    public void bindClock(Clock clock){
+        logger.trace("Appear clock");
+        this.clock = clock;
         for(ScheduledRunnable runnable: scheduledRunables){
             submitScheduledRunnable(runnable);
         }
@@ -227,14 +233,35 @@ public class SchedulingManagerImpl implements SchedulingManager {
             submitPeriodicRunnable(runnable);
         }
     }
-
-    @Invalidate
-    public void invalidate() {
+    @Unbind
+    public void unbindClock(Clock clock){
+        logger.trace("Disappear clock");
+        this.clock = null;
         //we stop only shared clocked group.
         for (Group group : sharedClockedGroups.values()) {
             group.close();
         }
         sharedClockedGroups.clear();
+    }
+
+
+    @Validate
+    public synchronized void validate(){
+        logger.trace("validate");
+    }
+
+    @Invalidate
+    public void invalidate() {
+        logger.trace("Invalidate");
+        for (Group group : sharedClockedGroups.values()) {
+            group.close();
+        }
+        sharedClockedGroups.clear();
+
+        for (Group group : specificClockedGroups.values()) {
+            group.close();
+        }
+        specificClockedGroups.clear();
     }
 
     public class GroupConfiguration {
