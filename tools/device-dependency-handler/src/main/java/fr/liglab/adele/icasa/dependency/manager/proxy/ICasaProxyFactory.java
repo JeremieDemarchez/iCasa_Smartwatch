@@ -69,8 +69,6 @@ public class ICasaProxyFactory implements InvocationHandler {
 	 * @return the proxy object.
 	 */
 	public Object getProxy(Class spec) {
-	    System.out.println("=======> Handler - Component class: " + m_dependency.getHandler().getInstanceManager().getClazz().getName());
-	    System.out.println("=======> Handler - Dependency class: " + spec.getName());
 		return java.lang.reflect.Proxy.newProxyInstance(m_dependency.getHandler().getInstanceManager().getClazz().getClassLoader(),
 		      new Class[] { spec }, this);
 	}
@@ -126,12 +124,10 @@ public class ICasaProxyFactory implements InvocationHandler {
 		}
 		
 		String deviceId = ((GenericDevice) service).getSerialNumber();
-		System.out.println("===============================> " + deviceId);
 		AccessRight accessRight = m_dependency.getAccessRight(deviceId);
 		
 		if (accessRight != null) {
 			if (accessRight.hasMethodAccess(method)) {
-				System.out.println("================ Invoking iCasa Handler =============");
 				return method.invoke(service, args);				
 			} else {
 				throw new AccessViolationException("Access Policy: No access to method " + method.getName());
