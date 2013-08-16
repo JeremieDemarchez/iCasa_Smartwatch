@@ -136,6 +136,10 @@ public class ContextManagerImpl implements ContextManager {
             logger.warn("Unable to remove zone. It does not exist " + id);
 			return;
         }
+		
+		List<LocatedDevice> localDevices = getDevices();
+		
+		
         logger.debug("Removing zone " + id);
 		// Listeners notification
 		for (ZoneListener listener : snapshotZoneListener) {
@@ -146,6 +150,15 @@ public class ContextManagerImpl implements ContextManager {
 				e.printStackTrace();
 			}
 		}
+
+        for (LocatedDevice locatedDevice : localDevices) {
+            if (zone.contains(locatedDevice)) {
+                // This is done only to force the located device to change its location property value
+                Position position = locatedDevice.getCenterAbsolutePosition();
+                locatedDevice.setCenterAbsolutePosition(position);
+            }
+        }
+
 	}
 
 	@Override
