@@ -15,21 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.temperature.impl;
 
-/**
- *
- *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE team
- *   Licensed under a specific end user license agreement;
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *     http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
@@ -65,6 +50,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public static final double K = 0.724; // 0.661 < k < 0.787
     public static final double HIGHEST_TEMP = 303.16;
     public static final double LOWER_TEMP = 283.16;
+    public static final double DEFAULT_TEMP_VALUE = 293.15; // 20 celsius degrees in kelvin
 
     private volatile long m_lastUpdateTime;
 
@@ -209,7 +195,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public Set<LocatedDevice> getUsedDevices() {
-        return Collections.unmodifiableSet(new HashSet<LocatedDevice>(_temperatureDevices));
+        synchronized (_deviceLock) {
+            return Collections.unmodifiableSet(new HashSet<LocatedDevice>(_temperatureDevices));
+        }
     }
 
     private Set<LocatedDevice> getTemperatureDevicesFromZone(Zone zone) {
@@ -229,11 +217,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     private double computeTemperature(Zone zone, long timeDiff) {
         String zoneId = zone.getId();
 
-        double newTemperature = 20.0; // 20 degrees by default
+        double newTemperature = DEFAULT_TEMP_VALUE; // 20 degrees by default
         synchronized (_zoneModelLock) {
             ZoneModel zoneModel = _zoneModels.get(zoneId);
 
-            double currentTemperature = 20.0; // 20 degrees by default
+            double currentTemperature = DEFAULT_TEMP_VALUE; // 20 degrees by default
             Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
             if (zoneTemperature != null) {
                 try {
@@ -324,7 +312,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         synchronized(_zoneModelLock) {
             for (ZoneModel zoneModel : _zoneModels.values()) {
                 if (zoneModel.getZone().contains(locatedDevice))
-                    zoneModel.addDevice(locatedDevice); // do not need to test if it is contained
+                    zoneModel.addDevice(locatedDevice);
             }
         }
     }
@@ -334,11 +322,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         if (!propChangeHasImpactOnPower(locatedDevice, propName))
             return;
 
-        //TODO implement it
+        //do not need to update total power of a zone, already done in temperature computation step
     }
 
     @Override
-    public void movedDevice(LocatedDevice locatedDevice, Position position, Position position1) {
+    public void movedDevice(LocatedDevice locatedDevice, Position oldPosition, Position newPosition) {
         //TODO implement it
     }
 
@@ -397,6 +385,40 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         // do not need to update thermal capacity done when volume changes
 
         //TODO implement it
+    }
+
+    private double getContactWallSurface(Zone zone1, Zone zone2) {
+        double wallSurface = 0.0;
+
+        int zone1XLength = zone1.getXLength();
+        int zone1YLength = zone1.getYLength();
+        int zone1ZLength = zone1.getZLength();
+        int zone1X1 = zone1.getLeftTopAbsolutePosition().x;
+        int zone1Y1 = zone1.getLeftTopAbsolutePosition().y;
+        int zone1Z1 = zone1.getLeftTopAbsolutePosition().z;
+        int zone1X2 = zone1.getRightBottomAbsolutePosition().x;
+        int zone1Y2 = zone1.getRightBottomAbsolutePosition().y;
+        int zone1Z2 = zone1.getRightBottomAbsolutePosition().z;
+
+        int zone2XLength = zone2.getXLength();
+        int zone2YLength = zone2.getYLength();
+        int zone2ZLength = zone2.getZLength();
+        int zone2X1 = zone2.getLeftTopAbsolutePosition().x;
+        int zone2Y1 = zone2.getLeftTopAbsolutePosition().y;
+        int zone2Z1 = zone2.getLeftTopAbsolutePosition().z;
+        int zone2X2 = zone2.getRightBottomAbsolutePosition().x;
+        int zone2Y2 = zone2.getRightBottomAbsolutePosition().y;
+        int zone2Z2 = zone2.getRightBottomAbsolutePosition().z;
+
+        // case of no intersection of Zone1 and Zone2 (30 cm diff ok)
+        if ((zone2X1 > zone1X2 + 30) || (zone1X1 > zone2X2 + 30) ||
+            (zone2Y1 > zone1Y2 + 30) || (zone1Y1 > zone2Y2 + 30) ||
+            (zone2Z1 > zone1Z2 + 30) || (zone1Z1 > zone2Z2 + 30)) {
+           wallSurface = 0.0;
+        }
+        //TODO implement it
+
+        return wallSurface;
     }
 
     @Override
