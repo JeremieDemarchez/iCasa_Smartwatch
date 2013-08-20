@@ -44,7 +44,10 @@ public class EnableFlagDeviceHandlerTest extends BaseDeviceHandlerTest {
         
     }
     
-    
+    @Override
+    protected Boolean getAccessPolicyPropertyValue() {
+        return Boolean.FALSE;
+    }
     
 
 }

@@ -53,7 +53,6 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 import fr.liglab.adele.icasa.access.AccessManager;
-import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.application.Application;
 import fr.liglab.adele.icasa.application.ApplicationManager;
 
@@ -516,17 +515,17 @@ public class DeviceDependencyHandler extends DependencyHandler {
 				} else if (existingDependency.type.equals("bind")) {
 					if (type.equals("field")) {
 						existingDependency.completeDependency(field, type, aggregate, specification, filter, context,
-						      comparator, policy, nullable, optional, defaultImpl);
+						      comparator, policy, nullable, optional, defaultImpl, mandatoryProps);
 					} else if (type.equals("bind") || type.equals("unbind")) {
 						existingDependency.addCallback(type, method);
 					}
 				} else  { // Existing dependency of type unbind
 					if (type.equals("field")) {
 						existingDependency.completeDependency(field, type, aggregate, specification, filter, context,
-						      comparator, policy, nullable, optional, defaultImpl);
+						      comparator, policy, nullable, optional, defaultImpl, mandatoryProps);
 					} else if (type.equals("bind")) {
 						existingDependency.completeDependency(field, type, aggregate, specification, filter, context,
-						      comparator, policy, nullable, optional, defaultImpl);
+						      comparator, policy, nullable, optional, defaultImpl, mandatoryProps);
 						existingDependency.addCallback(type, method);
 					} else if (type.equals("unbind")) {
 						existingDependency.addCallback(type, method);
@@ -535,7 +534,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 			} else {
 				TemporalDependency temporalDependency = new TemporalDependency(identity);
 				temporalDependency.completeDependency(field, type, aggregate, specification, filter, context,
-				      comparator, policy, nullable, optional, defaultImpl);
+				      comparator, policy, nullable, optional, defaultImpl, mandatoryProps);
 				if (type.equals("bind") || type.equals("unbind")) { // bind or unbind dependency
 					temporalDependency.addCallback(type, method);
 				}
@@ -549,7 +548,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 			DeviceDependency dep = new DeviceDependency(this, temporalDependency.field, temporalDependency.specification,
 			      temporalDependency.filter, temporalDependency.optional, temporalDependency.aggregate,
 			      temporalDependency.nullable, true, temporalDependency.id, temporalDependency.context,
-			      temporalDependency.policy, temporalDependency.comparator, temporalDependency.defaultImpl);
+			      temporalDependency.policy, temporalDependency.comparator, temporalDependency.defaultImpl, temporalDependency.mandatoryProps);
 
 			for (String method : temporalDependency.bindCallbacks) {
 				dep.addDependencyCallback(new DependencyCallback(dep, method, DeviceDependency.BIND_ICASA));
@@ -568,55 +567,6 @@ public class DeviceDependencyHandler extends DependencyHandler {
 			}
 
 		}
-
-		/*
-		 * for (int i = 0; deps != null && i < deps.length; i++) {
-		 * 
-		 * // Create the dependency metadata final Element dependencyElement = deps[i];
-		 * 
-		 * String mandatoryProps = dependencyElement.getAttribute("mandatoryprops");
-		 * 
-		 * String field = dependencyElement.getAttribute("field"); String serviceSpecification =
-		 * getServiceSpecificationAttribute(dependencyElement); String opt = dependencyElement.getAttribute("optional");
-		 * boolean optional = opt != null && opt.equalsIgnoreCase("true"); String defaultImpl =
-		 * dependencyElement.getAttribute("default-implementation");
-		 * 
-		 * String agg = dependencyElement.getAttribute("aggregate"); boolean aggregate = agg != null &&
-		 * agg.equalsIgnoreCase("true");
-		 * 
-		 * String identity = dependencyElement.getAttribute("id");
-		 * 
-		 * String nul = dependencyElement.getAttribute("nullable"); boolean nullable = nul == null ||
-		 * nul.equalsIgnoreCase("true");
-		 * 
-		 * boolean isProxy = isProxy(dependencyElement);
-		 * 
-		 * BundleContext context = getFacetedBundleContext(dependencyElement);
-		 * 
-		 * String filter = computeFilter(dependencyElement, filtersConfiguration, fromConfiguration, aggregate, identity);
-		 * Filter fil = createAndCheckFilter(filter);
-		 * 
-		 * Class spec = null; if (serviceSpecification != null) { spec =
-		 * DependencyMetadataHelper.loadSpecification(serviceSpecification, getInstanceManager().getContext()); }
-		 * 
-		 * int policy = DependencyMetadataHelper.getPolicy(dependencyElement); Comparator cmp =
-		 * DependencyMetadataHelper.getComparator(dependencyElement, getInstanceManager() .getGlobalContext());
-		 * 
-		 * DeviceDependency dep = new DeviceDependency(this, field, spec, fil, optional, aggregate, nullable, isProxy,
-		 * identity, context, policy, cmp, defaultImpl);
-		 * 
-		 * // Look for dependency callback : // addCallbacksToDependency(dependencyElement, dep);
-		 * 
-		 * // Look for dependency callback : icasa method addCallbacksToDependencyNew(dependencyElement, dep);
-		 * 
-		 * // Add the constructor parameter if needed String paramIndex =
-		 * dependencyElement.getAttribute("constructor-parameter"); if (paramIndex != null) { int index =
-		 * Integer.parseInt(paramIndex); dep.addConstructorInjection(index); }
-		 * 
-		 * // Check the dependency : if (checkDependency(dep, manipulation)) { m_dependencies.add(dep); if (dep.getField()
-		 * != null) { getInstanceManager().register(manipulation.getField(dep.getField()), dep); atLeastOneField = true; }
-		 * } }
-		 */
 
 		if (atLeastOneField) { // Does register only if we have fields
 			MethodMetadata[] methods = manipulation.getMethods();
@@ -936,6 +886,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 		boolean nullable;
 		boolean optional;
 		String defaultImpl;
+		String mandatoryProps;
 
 		List<String> bindCallbacks = new ArrayList<String>();
 		List<String> unbindCallbacks = new ArrayList<String>();
@@ -946,7 +897,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 
 		public void completeDependency(String field, String type, boolean aggregate, Class specification, Filter filter,
 		      BundleContext context, Comparator comparator, int policy, boolean nullable, boolean optional,
-		      String defaultImpl) {
+		      String defaultImpl, String mandatoryProps) {
 			this.field = field;
 			this.type = type;
 			this.aggregate = aggregate;
@@ -958,6 +909,7 @@ public class DeviceDependencyHandler extends DependencyHandler {
 			this.nullable = nullable;
 			this.optional = optional;
 			this.defaultImpl = defaultImpl;
+			this.mandatoryProps = mandatoryProps;
 		}
 
 		void addCallback(String type, String callback) {

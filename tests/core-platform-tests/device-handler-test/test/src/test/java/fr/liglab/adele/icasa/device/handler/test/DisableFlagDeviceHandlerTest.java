@@ -17,28 +17,19 @@ package fr.liglab.adele.icasa.device.handler.test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-
-import java.util.List;
 
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.InstanceManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
-import fr.liglab.adele.icasa.access.MemberAccessPolicy;
-import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
-
 import test.component.handler.ComponentOnlyRequireDevice;
 import test.component.handler.ComponentOnlyRequirePojo;
+import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
+import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)

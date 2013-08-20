@@ -21,22 +21,18 @@ import fr.liglab.adele.icasa.device.util.AbstractDevice;
 
 public class ThermometerMockImpl extends AbstractDevice implements GenericDevice, Thermometer {
 
-	private String m_serialNumber;
-	
-	public ThermometerMockImpl(String serialNumber) {
-		m_serialNumber = serialNumber;
-	}
-	
+    private String m_serialNumber;
 
-	public String getSerialNumber() {
-	   return m_serialNumber;
-   }
+    public ThermometerMockImpl(String serialNumber) {
+        m_serialNumber = serialNumber;
+    }
 
+    public String getSerialNumber() {
+        return m_serialNumber;
+    }
 
     public double getTemperature() {
         return 0;
     }
 
-	
-	
 }

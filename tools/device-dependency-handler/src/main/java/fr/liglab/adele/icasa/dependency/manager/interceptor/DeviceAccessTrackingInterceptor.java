@@ -24,6 +24,8 @@ import org.apache.felix.ipojo.dependency.interceptors.ServiceTrackingInterceptor
 import org.apache.felix.ipojo.dependency.interceptors.TransformedServiceReference;
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
@@ -36,6 +38,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 @Provides(specifications = { ServiceTrackingInterceptor.class }, properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
 @Instantiate(name = "DeviceAccessTrackingInterceptor-0")
 public class DeviceAccessTrackingInterceptor implements ServiceTrackingInterceptor {
+    
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_DEVICE);
 
     @Requires
     private AccessManager accessManager;
@@ -68,8 +72,14 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
             AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
             deviceDependency.addAccessRight(deviceId, accessRight);
-
+            
+            // Not injected if device is not visible 
             if (!accessRight.isVisible()) {
+                return null;
+            }
+            
+            // No injected if device is not in tracker (mandatory properties case)
+            if (!deviceDependency.deviceIsTracked(deviceId)) {
                 return null;
             }
 
@@ -81,6 +91,8 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
                 if (!disableInterceptor) {
                     return null;
                 }
+            } else {
+                logger.debug("Only platform components have access to devices");
             }
         }
 

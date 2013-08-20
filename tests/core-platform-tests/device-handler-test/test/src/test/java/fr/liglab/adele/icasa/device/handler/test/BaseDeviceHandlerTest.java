@@ -49,6 +49,7 @@ import org.osgi.service.deploymentadmin.DeploymentPackage;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.handler.test.mock.devices.BinaryLightMockImpl;
@@ -72,6 +73,8 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
 
     protected AccessManager accessManager;
     
+    protected ContextManager contextManager;
+    
     protected final String TEST_APPLICATION_NAME = "test-handler-app";
 
     @Before
@@ -79,6 +82,7 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
         waitForStability(context);
         dpAdmin = (DeploymentAdmin) getService(context, DeploymentAdmin.class);
         accessManager = (AccessManager) getService(context, AccessManager.class);
+        contextManager = (ContextManager) getService(context, ContextManager.class);
         installDeploymentPackage("test-handler-app-dp-1");
     }
 
@@ -110,7 +114,7 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
         return instance;
     }
 
-    protected void createBinaryLigth(String deviceId) {
+    protected GenericDevice createBinaryLigth(String deviceId) {
         BinaryLightMockImpl mockImpl = new BinaryLightMockImpl(deviceId);
 
         Dictionary properties = new Hashtable();
@@ -118,9 +122,11 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
 
         context.registerService(new String[] { GenericDevice.class.getName(), BinaryLight.class.getName() }, mockImpl,
                 properties);
+        
+        return mockImpl;
     }
 
-    protected void createThermometer(String deviceId) {
+    protected GenericDevice createThermometer(String deviceId) {
         ThermometerMockImpl mockImpl = new ThermometerMockImpl(deviceId);
 
         Dictionary properties = new Hashtable();
@@ -128,6 +134,8 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
 
         context.registerService(new String[] { GenericDevice.class.getName(), Thermometer.class.getName() }, mockImpl,
                 properties);
+        
+        return mockImpl;
     }
 
     private URL getDeploymentPackageArtifactURL(String artifactID) throws MalformedURLException {

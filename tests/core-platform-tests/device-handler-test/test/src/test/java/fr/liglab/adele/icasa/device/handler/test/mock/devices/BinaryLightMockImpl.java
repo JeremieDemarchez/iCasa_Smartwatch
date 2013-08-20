@@ -21,34 +21,32 @@ import fr.liglab.adele.icasa.device.util.AbstractDevice;
 
 public class BinaryLightMockImpl extends AbstractDevice implements GenericDevice, BinaryLight {
 
-	private String m_serialNumber;
-	
-	public BinaryLightMockImpl(String serialNumber) {
-		m_serialNumber = serialNumber;
-	}
-	
-	public boolean getPowerStatus() {
-	   return false;
-   }
+    private String m_serialNumber;
 
-	public boolean setPowerStatus(boolean state) {
-	   return false;
-   }
+    public BinaryLightMockImpl(String serialNumber) {
+        m_serialNumber = serialNumber;
+    }
 
-	public void turnOn() {
-   }
+    public boolean getPowerStatus() {
+        return false;
+    }
 
-	public void turnOff() {
-   }
+    public boolean setPowerStatus(boolean state) {
+        return false;
+    }
 
-	public double getMaxPowerLevel() {
-	   return 0;
-   }
+    public void turnOn() {
+    }
 
-	public String getSerialNumber() {
-	   return m_serialNumber;
-   }
+    public void turnOff() {
+    }
 
-	
-	
+    public double getMaxPowerLevel() {
+        return 0;
+    }
+
+    public String getSerialNumber() {
+        return m_serialNumber;
+    }
+
 }
