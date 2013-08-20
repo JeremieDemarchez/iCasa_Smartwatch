@@ -93,4 +93,50 @@ public interface Preferences {
 	 * @return set of properties' name
 	 */
 	Set<String> getApplicationProperties(String applicationId);
+
+    /**
+     * Registers specified listener to value changes of specified application properties.
+     *
+     * @param applicationId application id
+     * @param listener the listener to register
+     */
+    void addApplicationPreferenceChangeListener(String applicationId, PreferenceChangeListener listener);
+
+    /**
+     * Unregisters specified listener to value changes of specified application properties.
+     *
+     * @param applicationId application id
+     * @param listener the listener to unregister
+     */
+    void removeApplicationPreferenceChangeListener(String applicationId, PreferenceChangeListener listener);
+
+    /**
+     * Registers specified listener to value changes of specified user properties.
+     *
+     * @param userId user id
+     * @param listener the listener to register
+     */
+    void addUserPreferenceChangeListener(String userId, PreferenceChangeListener listener);
+
+    /**
+     * Unregisters specified listener to value changes of specified user properties.
+     *
+     * @param userId user id
+     * @param listener the listener to unregister
+     */
+    void removeUserPreferenceChangeListener(String userId, PreferenceChangeListener listener);
+
+    /**
+     * Registers specified listener to value changes of specified global properties.
+     *
+     * @param listener the listener to register
+     */
+    void addGlobalPreferenceChangeListener(PreferenceChangeListener listener);
+
+    /**
+     * Unregisters specified listener to value changes of specified global properties.
+     *
+     * @param listener the listener to unregister
+     */
+    void removeGlobalPreferenceChangeListener(PreferenceChangeListener listener);
 }
