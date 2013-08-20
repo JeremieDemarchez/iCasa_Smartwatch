@@ -31,18 +31,18 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     @Inject
     public BundleContext context;
 
-    @Inject
     public ZoneSizeCalculator _zoneSizeCalculator;
 
-    @Inject
     public ContextManager _contextMgr;
 
-    @Inject
     public Preferences _preferences;
 
     @Before
     public void setUp() {
         waitForStability(context);
+        _zoneSizeCalculator = (ZoneSizeCalculator) getService(context, ZoneSizeCalculator.class);
+        _contextMgr = (ContextManager) getService(context, ContextManager.class);
+        _zoneSizeCalculator = (ZoneSizeCalculator) getService(context, ZoneSizeCalculator.class);
     }
 
     @After
