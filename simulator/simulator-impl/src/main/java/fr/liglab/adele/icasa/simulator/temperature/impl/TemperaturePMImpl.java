@@ -51,6 +51,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public static final double HIGHEST_TEMP = 303.16;
     public static final double LOWER_TEMP = 283.16;
     public static final double DEFAULT_TEMP_VALUE = 293.15; // 20 celsius degrees in kelvin
+    public static final int MAX_WALL_DIST = 30; // maximum distance in centimeters between 2 walls to be considered as the same wall
 
     private volatile long m_lastUpdateTime;
 
@@ -387,7 +388,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         //TODO implement it
     }
 
-    private double getContactWallSurface(Zone zone1, Zone zone2) {
+    private static double getContactWallSurface(Zone zone1, Zone zone2) {
         double wallSurface = 0.0;
 
         int zone1XLength = zone1.getXLength();
@@ -410,15 +411,46 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         int zone2Y2 = zone2.getRightBottomAbsolutePosition().y;
         int zone2Z2 = zone2.getRightBottomAbsolutePosition().z;
 
-        // case of no intersection of Zone1 and Zone2 (30 cm diff ok)
-        if ((zone2X1 > zone1X2 + 30) || (zone1X1 > zone2X2 + 30) ||
-            (zone2Y1 > zone1Y2 + 30) || (zone1Y1 > zone2Y2 + 30) ||
-            (zone2Z1 > zone1Z2 + 30) || (zone1Z1 > zone2Z2 + 30)) {
-           wallSurface = 0.0;
+        int interX = getIntersectionLength(zone1X1, zone1X2, zone2X1, zone2X2);
+        int interY = getIntersectionLength(zone1Y1, zone1Y2, zone2Y1, zone2Y2);
+        int interZ = getIntersectionLength(zone1Z1, zone1Z2, zone2Z1, zone2Z2);
+        int distX = getDistanceBetweenIntervals(zone1X1, zone1X2, zone2X1, zone2X2);
+        int distY = getDistanceBetweenIntervals(zone1Y1, zone1Y2, zone2Y1, zone2Y2);
+        int distZ = getDistanceBetweenIntervals(zone1Z1, zone1Z2, zone2Z1, zone2Z2);
+
+        if ((interX > 0) && (interY > 0) && (interZ > 0)) {
+
+            wallSurface = 0.0;
+        } else if (zone1X1 >= zone2X1) {
+            // case of Zone1 into Zone2
+            wallSurface = 0.0;
         }
-        //TODO implement it
 
         return wallSurface;
+    }
+
+    private static int getMin(int n1, int n2, int n3) {
+        return Math.min(n1, Math.min(n2, n3));
+    }
+
+    private static int getIntersectionLength(int coord1Min, int coord1Max, int coord2Min, int coord2Max) {
+       if ((coord2Min > coord1Max) || (coord1Min > coord2Max))
+           return 0;
+       if (coord1Max >= coord2Min)
+           return coord2Max - coord1Min;
+       else if (coord2Max >= coord1Min)
+           return coord1Max - coord2Min;
+
+       return 0;
+    }
+
+    private static int getDistanceBetweenIntervals(int coord1Min, int coord1Max, int coord2Min, int coord2Max) {
+        if (coord2Min > coord1Max)
+            return coord2Min - coord1Max;
+        if (coord1Min > coord2Max)
+            return coord1Min - coord2Max;
+
+        return 0;
     }
 
     @Override
