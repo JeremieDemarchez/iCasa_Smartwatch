@@ -235,6 +235,15 @@ class ZoneDimensionImpl implements TechnicalService, ZoneDimension, ZoneTrackerC
 
     @Override
     public void changedProperty(String propertyName, Object oldValue, Object newValue) {
-        //To change body of implemented methods use File | Settings | File Templates.
+        if (!ZoneSizeCalculator.X_SCALE_FACTOR_PROP_NAME.equals(propertyName) &&
+                !ZoneSizeCalculator.Y_SCALE_FACTOR_PROP_NAME.equals(propertyName) &&
+                !ZoneSizeCalculator.Z_SCALE_FACTOR_PROP_NAME.equals(propertyName))
+            return; // this change has no impact on computation
+
+        if (m_zoneTracker == null)
+            return;
+
+        for (Zone zone : m_zoneTracker.getZones())
+            updateZoneDimensionProperties(zone);
     }
 }

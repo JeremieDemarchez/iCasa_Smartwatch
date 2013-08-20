@@ -25,9 +25,7 @@ import org.ow2.chameleon.sharedprefs.SharedPreferences;
 import org.ow2.chameleon.sharedprefs.SharedPreferences.OnSharedPreferenceChangeListener;
 import org.ow2.chameleon.sharedprefs.SharedPreferencesService;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -49,15 +47,29 @@ public class PreferencesImpl implements Preferences {
 
     private OnSharedPreferenceChangeListener _globalPropListener;
 
+    /* @GardedBy(_globalPropListeners) */
+    private List<PreferenceChangeListener> _globalPropListeners;
+
     /* @GardedBy(_userPropListener) */
-    private Map<String, OnSharedPreferenceChangeListener> _userPropListener;
+    private Map<String /* userId */, OnSharedPreferenceChangeListener> _userPropListener;
+
+    /* @GardedBy(_userPropListener) */
+    private Map<String /* userId */, List<PreferenceChangeListener>> _userPropListeners;
 
     /* @GardedBy(_appPropListener) */
-    private Map<String, OnSharedPreferenceChangeListener> _appPropListener;
+    private Map<String /* application id */, OnSharedPreferenceChangeListener> _appPropListener;
+
+    /* @GardedBy(_appPropListener) */
+    private Map<String /* application id */, List<PreferenceChangeListener>> _appPropListeners;
 
     public PreferencesImpl() {
+        _globalPropListeners = new ArrayList<PreferenceChangeListener>();
+
         _userPropListener = new HashMap<String, OnSharedPreferenceChangeListener>();
+        _userPropListeners = new HashMap<String, List<PreferenceChangeListener>>();
+
         _appPropListener = new HashMap<String, OnSharedPreferenceChangeListener>();
+        _appPropListeners = new HashMap<String, List<PreferenceChangeListener>>();
     }
 
     @Validate
@@ -67,7 +79,15 @@ public class PreferencesImpl implements Preferences {
 
             @Override
             public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String propName) {
-                //TODO implement notifications
+                synchronized (_globalPropListeners) {
+                    for (PreferenceChangeListener listener : _globalPropListeners) {
+                        try {
+                            listener.changedProperty(propName, null, getGlobalPropertyValue(propName));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
             }
         };
         preferences.registerOnSharedPreferenceChangeListener(_globalPropListener);
@@ -198,12 +218,16 @@ public class PreferencesImpl implements Preferences {
 
     @Override
     public void addGlobalPreferenceChangeListener(PreferenceChangeListener listener) {
-        //TODO implement it
+        synchronized(_globalPropListeners) {
+            _globalPropListeners.add(listener);
+        }
     }
 
     @Override
     public void removeGlobalPreferenceChangeListener(PreferenceChangeListener listener) {
-        //TODO implement it
+        synchronized(_globalPropListeners) {
+            _globalPropListeners.remove(listener);
+        }
     }
 
     private Object getPropertyValue(String name, String storeName) {
