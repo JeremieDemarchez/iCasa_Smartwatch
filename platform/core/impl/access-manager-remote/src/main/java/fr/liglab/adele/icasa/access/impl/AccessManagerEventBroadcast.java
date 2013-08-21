@@ -15,13 +15,12 @@
 
 package fr.liglab.adele.icasa.access.impl;
 
-import fr.liglab.adele.icasa.access.AccessManager;
-import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.access.AccessRightListener;
-import fr.liglab.adele.icasa.access.AccessRightManagerListener;
+import fr.liglab.adele.icasa.access.*;
 import fr.liglab.adele.icasa.access.impl.util.AccessRightJSON;
 import fr.liglab.adele.icasa.remote.RemoteEventBroadcast;
 import org.apache.felix.ipojo.annotations.*;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 /**
  * User: garciai@imag.fr
@@ -56,7 +55,17 @@ public class AccessManagerEventBroadcast implements AccessRightManagerListener{
      */
     @Override
     public void onAccessRightModified(AccessRight accessRight) {
-        eventBroadcast.sendEvent("access-right-modified", AccessRightJSON.toJSON(accessRight));
+        if(accessRight.getPolicy().equals(DeviceAccessPolicy.TOHIDE)){
+            return; //dont sent transitive event change.
+        }
+        JSONObject json = new JSONObject();
+        try {
+            json.put("accessRight", AccessRightJSON.toJSON(accessRight));
+            eventBroadcast.sendEvent("access-right-modified", json);
+        } catch (JSONException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+
     }
 
     /**
@@ -67,11 +76,23 @@ public class AccessManagerEventBroadcast implements AccessRightManagerListener{
      */
     @Override
     public void onMethodAccessRightModified(AccessRight accessRight, String methodName) {
-        eventBroadcast.sendEvent("access-right-modified", AccessRightJSON.toJSON(accessRight));
+        JSONObject json = new JSONObject();
+        try {
+            json.put("accessRight", AccessRightJSON.toJSON(accessRight));
+            eventBroadcast.sendEvent("access-right-modified", json);
+        } catch (JSONException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
     }
 
     @Override
     public void onAccessRightAdded(AccessRight accessRight) {
-        eventBroadcast.sendEvent("access-right-added", AccessRightJSON.toJSON(accessRight));
+        JSONObject json = new JSONObject();
+        try {
+            json.put("accessRight", AccessRightJSON.toJSON(accessRight));
+            eventBroadcast.sendEvent("access-right-added", json);
+        }catch (Exception ex){
+            ex.printStackTrace();
+        }
     }
 }
