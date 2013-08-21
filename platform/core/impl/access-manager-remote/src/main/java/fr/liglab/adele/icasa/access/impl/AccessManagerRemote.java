@@ -147,8 +147,8 @@ public class AccessManagerRemote extends AbstractREST {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/policy")
-    public Response updateApplicationAccess(String content){
+    @Path(value="/policy/{id}")
+    public Response updateApplicationAccess(@PathParam("id")String policyId, String content){
         return setRightAccess(content);
     }
     private String getAllRightAccess() {
