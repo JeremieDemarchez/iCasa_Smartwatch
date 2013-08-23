@@ -15,11 +15,55 @@
  */
 package fr.liglab.adele.icasa.device.zigbee.driver;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a type of device.
- *
+ * 
  * @author Thomas Leveque
  */
 public enum TypeCode {
-	IC001, IC002, IA
+
+	IC001("POWER_BUTTON"), IC003("PRESENCE_SENSOR"), IA001("BINARY_LIGHT");
+
+	private static final Logger logger = LoggerFactory
+			.getLogger(TypeCode.class);
+
+	private String friendlyName;
+
+	private TypeCode(String name) {
+		this.friendlyName = name;
+	}
+
+	public String getFriendlyName() {
+		return friendlyName;
+	}
+
+	public static TypeCode getTypeCodeByFriendlyName(String friendlyName) {
+
+		if (IC001.friendlyName.equals(friendlyName)) {
+			return TypeCode.IC001;
+		} else if (IC003.friendlyName.equals(friendlyName)) {
+			return TypeCode.IC003;
+		} else if (IA001.friendlyName.equals(friendlyName)) {
+			return TypeCode.IA001;
+		} else {
+			logger.error("unknown device type friendly name : " + friendlyName);
+			return null;
+		}
+	}
+	
+	public String toString() {
+		switch (this) {
+		case IC001 :
+			return "IC001";
+		case IC003 :
+			return "IC003";
+		case IA001 :
+			return "IA001";
+		default :
+			return null;
+		}
+	}
 }

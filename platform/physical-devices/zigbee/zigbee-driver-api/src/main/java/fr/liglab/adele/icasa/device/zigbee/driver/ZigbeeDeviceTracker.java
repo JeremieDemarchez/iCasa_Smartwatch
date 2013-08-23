@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.zigbee.driver;
 
+import java.util.EventListener;
+
 
 /**
  * Provides this service to be notified of zigbee device events.
@@ -23,7 +25,7 @@ package fr.liglab.adele.icasa.device.zigbee.driver;
  *
  * @author Thomas Leveque
  */
-public interface ZigbeeDeviceTracker {
+public interface ZigbeeDeviceTracker extends EventListener {
 	
 	static final String FILTER_PROP_NAME = "zigbee.listener.filter";
 

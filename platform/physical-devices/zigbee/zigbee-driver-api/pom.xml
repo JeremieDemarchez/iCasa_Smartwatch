@@ -27,7 +27,7 @@
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>context.api</artifactId>
-            <version>${project.version}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.osgi</groupId>
@@ -37,7 +37,10 @@
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>
 		</dependency>
-
+		<dependency>
+			<groupId>org.apache.felix</groupId>
+			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
+		</dependency>
 	</dependencies>
 
 	<build>
@@ -48,9 +51,20 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-                        <Export-Package>fr.liglab.adele.icasa.device.zigbee.driver</Export-Package>
+						<Export-Package>fr.liglab.adele.icasa.device.zigbee.driver</Export-Package>
 					</instructions>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-ipojo-plugin</artifactId>
+				<executions>
+					<execution>
+						<goals>
+							<goal>ipojo-bundle</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 	</build>

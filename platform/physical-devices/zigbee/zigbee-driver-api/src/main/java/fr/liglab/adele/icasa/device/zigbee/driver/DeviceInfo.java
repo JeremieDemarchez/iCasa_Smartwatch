@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.zigbee.driver;
 
+import java.util.Date;
+
 /**
  * Represents general information about a device.
  *
@@ -42,4 +44,16 @@ public interface DeviceInfo {
      * @return device type code.
      */
 	TypeCode getTypeCode();
+	
+	/**
+	 * Returns device data.
+	 * @return device data.
+	 */
+	Data getDeviceData();
+	
+	/**
+	 * return last connexion date.
+	 * @return last connexion date.
+	 */
+	Date getLastConnexionDate();
 }
