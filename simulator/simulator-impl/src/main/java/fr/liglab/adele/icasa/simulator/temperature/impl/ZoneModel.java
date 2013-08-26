@@ -89,6 +89,10 @@ public class ZoneModel {
         _wallSurfaceMap.remove(zoneId);
     }
 
+    public void clearDevices() {
+        _devices.clear();
+    }
+
     public void addDevice(LocatedDevice device) {
         _devices.add(device);
     }

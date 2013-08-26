@@ -246,7 +246,6 @@ require([
                   console.log("plugin " + pluginName + " loaded !!!");
                 );
 
-
         # widget loading
         widgetsElt = extensionsElt.attr("icasa-widgets");
         if (widgetsElt)
