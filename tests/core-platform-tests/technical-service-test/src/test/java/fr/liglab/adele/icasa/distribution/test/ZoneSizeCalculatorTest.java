@@ -14,6 +14,7 @@ import org.ops4j.pax.exam.junit.PaxExam;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
+import fr.liglab.adele.commons.test.utils.TestUtils;
 
 import javax.inject.Inject;
 
@@ -40,14 +41,20 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     @Before
     public void setUp() {
         waitForStability(context);
-        _zoneSizeCalculator = (ZoneSizeCalculator) getService(context, ZoneSizeCalculator.class);
-        _contextMgr = (ContextManager) getService(context, ContextManager.class);
-        _zoneSizeCalculator = (ZoneSizeCalculator) getService(context, ZoneSizeCalculator.class);
+
+        // should wait for these services
+        _zoneSizeCalculator = (ZoneSizeCalculator) waitForService(context, ZoneSizeCalculator.class);
+        _contextMgr = (ContextManager) waitForService(context, ContextManager.class);
+        _zoneSizeCalculator = (ZoneSizeCalculator) waitForService(context, ZoneSizeCalculator.class);
+        _preferences = (Preferences) waitForService(context, Preferences.class);
     }
 
     @After
     public void tearDown() {
-        // do nothing
+        _zoneSizeCalculator = null;
+        _contextMgr = null;
+        _zoneSizeCalculator = null;
+        _preferences = null;
     }
 
     /**
@@ -133,4 +140,9 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
         _contextMgr.removeZone(zone.getId());
     }
 
+    public Object waitForService(BundleContext context, Class clazz) {
+        TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 10000, 20);
+
+        return getService(context, clazz);
+    }
 }

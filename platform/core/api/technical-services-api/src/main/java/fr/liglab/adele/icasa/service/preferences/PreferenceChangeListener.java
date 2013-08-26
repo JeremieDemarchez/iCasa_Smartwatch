@@ -24,7 +24,7 @@ public interface PreferenceChangeListener {
 
     /**
      * Called when a property value changes.
-     * OldValue may not be computed. In this cae, oldValue is equal to null.
+     * OldValue may not be computed. In this case, oldValue is equal to null.
      *
      * @param propertyName property name
      * @param oldValue the old value of the property
