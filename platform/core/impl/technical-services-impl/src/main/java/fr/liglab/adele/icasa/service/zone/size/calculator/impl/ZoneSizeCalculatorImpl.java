@@ -38,7 +38,7 @@ public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
 	@Requires
 	private ContextManager _contextManager;
 
-    @Requires(optional = true, nullable = true)
+    @Requires(optional = true)
     private Preferences _preferences;
 
 	@Override
@@ -68,7 +68,9 @@ public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
         double scaleFactor = DEFAULT_SCALE_FACTOR;
         if (_preferences != null) {
             try {
-                scaleFactor = (Double) _preferences.getGlobalPropertyValue(X_SCALE_FACTOR_PROP_NAME);
+                Object scaleFactorObj = _preferences.getGlobalPropertyValue(X_SCALE_FACTOR_PROP_NAME);
+                if (scaleFactorObj != null)
+                    scaleFactor = (Double) scaleFactorObj;
             } catch (ClassCastException e) {
                 e.printStackTrace();
             }
@@ -81,7 +83,9 @@ public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
         double scaleFactor = DEFAULT_SCALE_FACTOR;
         if (_preferences != null) {
             try {
-                scaleFactor = (Double) _preferences.getGlobalPropertyValue(Y_SCALE_FACTOR_PROP_NAME);
+                Object scaleFactorObj = _preferences.getGlobalPropertyValue(Y_SCALE_FACTOR_PROP_NAME);
+                if (scaleFactorObj != null)
+                    scaleFactor = (Double) scaleFactorObj;
             } catch (ClassCastException e) {
                 e.printStackTrace();
             }
@@ -94,7 +98,9 @@ public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
         double scaleFactor = DEFAULT_SCALE_FACTOR;
         if (_preferences != null) {
             try {
-                scaleFactor = (Double) _preferences.getGlobalPropertyValue(Z_SCALE_FACTOR_PROP_NAME);
+                Object scaleFactorObj = _preferences.getGlobalPropertyValue(Z_SCALE_FACTOR_PROP_NAME);
+                if (scaleFactorObj != null)
+                    scaleFactor = (Double) scaleFactorObj;
             } catch (ClassCastException e) {
                 e.printStackTrace();
             }
