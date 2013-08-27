@@ -41,6 +41,10 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         Preferences service =  (Preferences)getService(context, Preferences.class);
         Assert.assertNotNull(service);
     }
+
+    /**
+     * Test the callbacks for listener in user shared preference
+     */
     @Test
     public void testUserSharedPreferenceSubscription(){
         String user = "issacUser-1";
@@ -65,6 +69,9 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         verify(listener, times(1)).changedProperty(key2, null, value2);
     }
 
+    /**
+     * Test there is no call for listeners when another user property is modified
+     */
     @Test
     public void testNoCallUserSharedPreferenceSubscription(){
         String user = "issacUser-1";
@@ -83,6 +90,9 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
 
     }
 
+    /**
+     * Test it stop callbacks when listener is removed.
+     */
     @Test
     public void testRemoveUserSharedPreferenceSubscription(){
         String user = "issacUser-1";
@@ -107,6 +117,9 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         verify(listener, never()).changedProperty(key2, null, value2);
     }
 
+    /**
+     * Test the callback for application shared preference listener.
+     */
     @Test
     public void testApplicationSharedPreferenceSubscription(){
         String applicationId = "app2";
@@ -134,6 +147,9 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         verify(listener, times(1)).changedProperty(key2, null, value2);
     }
 
+    /**
+     * test no callback is made when another app property is modified.
+     */
     @Test
     public void testNoCallAppSharedPreferenceSubscription(){
         String app1 = "App1-1";
@@ -151,6 +167,9 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         verify(listener, never()).changedProperty(key, null, value);
     }
 
+    /**
+     * Test it stop receive callbacks when listener is removed.
+     */
     @Test
     public void testRemoveAppSharedPreferenceSubscription(){
         String app = "app-1";
@@ -171,6 +190,63 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         preferences.removeApplicationPreferenceChangeListener(app, listener);
         //change values for app
         preferences.setApplicationPropertyValue(app, key2, value2);
+        //test no call since we remove listener
+        verify(listener, never()).changedProperty(key2, null, value2);
+    }
+
+    /**
+     * Test the global shared preference listener.
+     */
+    @Test
+    public void testGlobalSharedPreferenceSubscription(){
+        String key = "key2-1";
+        String key2 = "key2-2";
+        String value = "value2-1";
+        String value2 = "value2-2";
+
+        //add listener
+        PreferenceChangeListener listener = mock(PreferenceChangeListener.class);
+        preferences.addGlobalPreferenceChangeListener(listener);
+
+        // set first key/value pair
+        preferences.setGlobalPropertyValue(key, value);
+        //test one call for first key/value pair,
+
+        verify(listener, times(1)).changedProperty(key, null, value);
+        //test no call for second key/value pair
+        verify(listener, never()).changedProperty(key2, null, value2);
+
+        //set second key/value pair
+        preferences.setGlobalPropertyValue(key2, value2);
+
+        //verify second key/value pair
+        verify(listener, times(1)).changedProperty(key2, null, value2);
+    }
+
+
+    /**
+     * Test it stop the callbacks when listener is removed.
+     */
+    @Test
+    public void testRemoveGlobalSharedPreferenceSubscription(){
+
+        String key = "key1-1";
+        String value = "value1-1";
+        String key2 = "key1-2";
+        String value2 = "value1-2";
+        //add listener
+        PreferenceChangeListener listener = mock(PreferenceChangeListener.class);
+        preferences.addGlobalPreferenceChangeListener(listener);
+
+        //change values for app
+        preferences.setGlobalPropertyValue(key, value);
+
+        //test one call
+        verify(listener, times(1)).changedProperty(key, null, value);
+        //remove listener
+        preferences.removeGlobalPreferenceChangeListener(listener);
+        //change values for app
+        preferences.setGlobalPropertyValue(key2, value2);
         //test no call since we remove listener
         verify(listener, never()).changedProperty(key2, null, value2);
     }
