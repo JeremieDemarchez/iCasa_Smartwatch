@@ -233,20 +233,8 @@ require([
           name : "GatewayConnectionMgr-1",
         }).start();
 
-        # plugin loading
-        extensionsElt = $("#icasa-extensions");
-        pluginsElt = extensionsElt.attr("icasa-plugins");
-        if (pluginsElt)
-          plugins = pluginsElt.split(",");
-          for pluginStr in plugins
-            do (pluginStr) ->
-              pluginName = pluginStr.replace /^\s+|\s+$/g, "";
-              if (pluginName != "")
-                require(["/plugins/" + pluginName + "/" + pluginName + ".js"], () ->
-                  console.log("plugin " + pluginName + " loaded !!!");
-                );
-
         # widget loading
+        extensionsElt = $("#icasa-extensions");
         widgetsElt = extensionsElt.attr("icasa-widgets");
         if (widgetsElt)
           widgets = widgetsElt.split(",");
@@ -256,6 +244,19 @@ require([
               if (widgetName != "")
                 require(["/widgets/" + widgetName + "/" + widgetName + ".js"], () ->
                   console.log("widget " + widgetName + " loaded !!!");
+                );
+
+        # BUG #95, unable to fix it, coffeescript compilation problem !!!
+        # plugin loading
+        pluginsElt = extensionsElt.attr("icasa-plugins");
+        if (pluginsElt)
+          plugins = pluginsElt.split(",");
+          for pluginStr in plugins
+            do (pluginStr) ->
+              pluginName = pluginStr.replace /^\s+|\s+$/g, "";
+              if (pluginName != "")
+                require(["/plugins/" + pluginName + "/" + pluginName + ".js"], () ->
+                  console.log("plugin " + pluginName + " loaded !!!");
                 );
 );
 
