@@ -495,6 +495,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             return interY * yFactor * interZ * zFactor;
         } else if ((interY == 0) && (interX > 0)) {
             return interX * xFactor * interZ * zFactor;
+        } else if ((interY == 0) && (interX == 0)) {
+            return 0.0d;
         }
 
         // Z2 into Z1 (in terms of x and y)
@@ -515,6 +517,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                         xFactor, yFactor, zFactor) - xyWallSurface;
             }
         }
+
         // Z1 into Z2 (in terms of x and y)
         boolean z1xInZ2x = isInSecondInterval(zone1X, zone2X);
         boolean z1yInZ2y = isInSecondInterval(zone1Y, zone2Y);
@@ -532,6 +535,35 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
                         xFactor, yFactor, zFactor) - xyWallSurface;
             }
+        }
+
+        /* X,Y plan
+         * -------
+         * |Z1  ------
+         * |    | Z2 |
+         * |    ------
+         * -------
+         */
+        if (!z1xInZ2x && !z2xInZ1x && (z2yInZ1y || z1yInZ2y)) {
+            double xzWallSurface = interX * xFactor * interZ * zFactor;
+            Parallelepiped interPara = getInterParallelepiped(p1, p2);
+
+            return (getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
+                        xFactor, yFactor, zFactor) / 2.0d) + xzWallSurface;
+        }
+
+        /* X,Y plan
+        *     ------
+        * ----| Z2 |---
+        * |Z1 ------  |
+        * -------------
+        */
+        if (!z1yInZ2y && !z2yInZ1y && (z2xInZ1x || z1xInZ2x)) {
+            double yzWallSurface = interY * yFactor * interZ * zFactor;
+            Parallelepiped interPara = getInterParallelepiped(p1, p2);
+
+            return (getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
+                    xFactor, yFactor, zFactor) / 2.0d) + yzWallSurface;
         }
 
         return 0.0;
