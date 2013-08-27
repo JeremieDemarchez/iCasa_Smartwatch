@@ -34,14 +34,14 @@ public interface ZoneSizeCalculator {
 	 *            unique id of the given zone
 	 * @return the x size in meter
 	 */
-	public double getXInMeter(String zoneId);
+	public float getXInMeter(String zoneId);
 
     /**
      * Returns scale factor from pixels to meters on X axis.
      *
      * @return scale factor on X axis.
      */
-    public double getXScaleFactor();
+    public float getXScaleFactor();
 
 	/**
 	 * Gets the Y size in meter of the given zone.
@@ -50,14 +50,14 @@ public interface ZoneSizeCalculator {
 	 *            unique id of the given zone
 	 * @return the y size in meter
 	 */
-	public double getYInMeter(String zoneId);
+	public float getYInMeter(String zoneId);
 
     /**
      * Returns scale factor from pixels to meters on Y axis.
      *
      * @return scale factor on Y axis.
      */
-    public double getYScaleFactor();
+    public float getYScaleFactor();
 
     /**
      * Gets the Z size in meter of the given zone.
@@ -66,14 +66,14 @@ public interface ZoneSizeCalculator {
      *            unique id of the given zone
      * @return the z size in meter
      */
-    public double getZInMeter(String zoneId);
+    public float getZInMeter(String zoneId);
 
     /**
      * Returns scale factor from pixels to meters on Z axis.
      *
      * @return scale factor on Z axis.
      */
-    public double getZScaleFactor();
+    public float getZScaleFactor();
 
 	/**
 	 * Gets the surface in meter square.
@@ -82,6 +82,6 @@ public interface ZoneSizeCalculator {
 	 *            unique id of the given zone
 	 * @return the surface in meter square
 	 */
-	public double getSurfaceInMeterSquare(String zoneId);
+	public float getSurfaceInMeterSquare(String zoneId);
 
 }

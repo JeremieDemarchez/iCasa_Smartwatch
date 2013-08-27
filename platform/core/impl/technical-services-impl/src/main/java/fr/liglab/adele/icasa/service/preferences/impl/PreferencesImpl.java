@@ -338,7 +338,7 @@ public class PreferencesImpl implements Preferences {
         }
     }
 
-	private void setPropertyValue(String name, Object value, String storeName) {
+	private void setPropertyValue(String name, Object value, String storeName) throws IllegalArgumentException{
 		SharedPreferences preferences = getSharedPreferences(storeName);
 		SharedPreferences.Editor editor = preferences.edit();
 
@@ -362,6 +362,8 @@ public class PreferencesImpl implements Preferences {
 			Long newValue = (Long) value;
 			editor.putLong(name, newValue);
 			editor.commit();
-		} 
+		} else {
+            throw new IllegalArgumentException("Invalid value type. Supported types: String, Boolean, Float, Integer and Long");
+        }
 	}
 }

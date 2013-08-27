@@ -240,7 +240,7 @@ class ZoneDimensionImpl implements TechnicalService, ZoneDimension, ZoneTrackerC
                 !ZoneSizeCalculator.Z_SCALE_FACTOR_PROP_NAME.equals(propertyName))
             return; // this change has no impact on computation
 
-        if (m_zoneTracker == null)
+        if (m_zoneTracker == null || m_zoneTracker.getZones() == null)
             return;
 
         for (Zone zone : m_zoneTracker.getZones())

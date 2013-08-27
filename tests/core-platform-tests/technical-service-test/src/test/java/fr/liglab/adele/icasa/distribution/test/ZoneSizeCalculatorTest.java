@@ -1,3 +1,18 @@
+/**
+ *
+ *   Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research
+ *   Group Licensed under the Apache License, Version 2.0 (the "License");
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
 package fr.liglab.adele.icasa.distribution.test;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
@@ -8,6 +23,7 @@ import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -40,7 +56,7 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        waitForStability(context);
+        //waitForStability(context);
 
         // should wait for these services
         _zoneSizeCalculator = (ZoneSizeCalculator) waitForService(context, ZoneSizeCalculator.class);
@@ -60,12 +76,12 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     /**
      * Test scheduling a periodic task.
      */
+    @Ignore // It is ignored since it uses preferences service which persist old values.
     @Test
     public void defaultScaleFactorsTest(){
-
-        Assert.assertEquals(0.014d, _zoneSizeCalculator.getXScaleFactor());
-        Assert.assertEquals(0.014d, _zoneSizeCalculator.getYScaleFactor());
-        Assert.assertEquals(0.014d, _zoneSizeCalculator.getZScaleFactor());
+        Assert.assertEquals(0.014f, _zoneSizeCalculator.getXScaleFactor());
+        Assert.assertEquals(0.014f, _zoneSizeCalculator.getYScaleFactor());
+        Assert.assertEquals(0.014f, _zoneSizeCalculator.getZScaleFactor());
     }
 
     /**
@@ -74,15 +90,15 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     @Test
     public void definedByGlobalPropScaleFactorsTest(){
 
-        double xFactor = 0.023d;
+        float xFactor = 0.023f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.X_SCALE_FACTOR_PROP_NAME, xFactor);
         Assert.assertEquals(xFactor, _zoneSizeCalculator.getXScaleFactor());
 
-        double yFactor = 0.034d;
+        float yFactor = 0.034f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.Y_SCALE_FACTOR_PROP_NAME, yFactor);
         Assert.assertEquals(yFactor, _zoneSizeCalculator.getYScaleFactor());
 
-        double zFactor = 0.045d;
+        float zFactor = 0.045f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.Z_SCALE_FACTOR_PROP_NAME, zFactor);
         Assert.assertEquals(zFactor, _zoneSizeCalculator.getZScaleFactor());
     }
@@ -98,15 +114,15 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
         int zLength = 300;
         Zone zone = _contextMgr.createZone("test-zone1", 10, 10, 10, xLength, yLength, zLength);
 
-        double xFactor = 0.023d;
+        float xFactor = 0.023f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.X_SCALE_FACTOR_PROP_NAME, xFactor);
         Assert.assertEquals(xLength * xFactor, _zoneSizeCalculator.getXInMeter(zone.getId()));
 
-        double yFactor = 0.034d;
+        float yFactor = 0.034f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.Y_SCALE_FACTOR_PROP_NAME, yFactor);
         Assert.assertEquals(yLength * yFactor, _zoneSizeCalculator.getYInMeter(zone.getId()));
 
-        double zFactor = 0.045d;
+        float zFactor = 0.045f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.Z_SCALE_FACTOR_PROP_NAME, zFactor);
         Assert.assertEquals(zLength * zFactor, _zoneSizeCalculator.getZInMeter(zone.getId()));
 
@@ -125,13 +141,13 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
         int zLength = 300;
         Zone zone = _contextMgr.createZone("test-zone2", 100, 20, 40, xLength, yLength, zLength);
 
-        double xFactor = 0.023d;
+        float xFactor = 0.023f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.X_SCALE_FACTOR_PROP_NAME, xFactor);
 
-        double yFactor = 0.034d;
+        float yFactor = 0.034f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.Y_SCALE_FACTOR_PROP_NAME, yFactor);
 
-        double zFactor = 0.045d;
+        float zFactor = 0.045f;
         _preferences.setGlobalPropertyValue(ZoneSizeCalculator.Z_SCALE_FACTOR_PROP_NAME, zFactor);
 
         Assert.assertEquals(xLength * xFactor * yLength * yFactor, _zoneSizeCalculator.getSurfaceInMeterSquare(zone.getId()));
