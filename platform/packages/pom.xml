@@ -36,6 +36,7 @@
             </activation>
             <modules>
                 <module>icasa-platform-dp</module>
+                <module>icasa-device-handler-dp</module>
                 <module>upnp-settopbox-core-dp</module>
                 <!--
                 <module>x10-presence-sensor-core-dp</module>
@@ -47,6 +48,7 @@
             <id>release</id>
             <modules>
                 <module>icasa-platform-dp</module>
+                <module>icasa-device-handler-dp</module>
             </modules>
         </profile>
     </profiles>

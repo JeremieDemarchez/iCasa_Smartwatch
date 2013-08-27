@@ -53,6 +53,8 @@ import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.osgi.service.deploymentadmin.DeploymentException;
 import org.osgi.service.deploymentadmin.DeploymentPackage;
 
+import fr.liglab.adele.commons.test.utils.Condition;
+import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.icasa.application.ApplicationManager;
 
 @RunWith(PaxExam.class)
@@ -67,18 +69,10 @@ public class ApplicationManagerTest {
 	
 	private DeploymentAdmin dpAdmin;
 	
-	private ApplicationNumberConditionEvaluation appNumberConditionEvaluation = new ApplicationNumberConditionEvaluation();
-	
-	private BundleNumberConditionEvaluation gasAlarmBundleNumberConditionEvaluation = new BundleNumberConditionEvaluation("gas-alarm-test-app");
-
-	private BundleNumberConditionEvaluation controlBundleNumberConditionEvaluation = new BundleNumberConditionEvaluation("control-test-app");
-	
 	@Configuration
 	public Option[] config() { 
 		return options(junitBundles(), projectConfiguration());
 	}
-
-
 
 	public CompositeOption projectConfiguration() {
 		CompositeOption projectConfig = new DefaultCompositeOption(  
@@ -87,7 +81,8 @@ public class ApplicationManagerTest {
 				mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.ipojo").versionAsInProject(),
 				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.api").versionAsInProject(), 
 				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.impl").versionAsInProject(),
-				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("common").versionAsInProject());
+				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("common").versionAsInProject(),
+				mavenBundle().groupId("fr.liglab.adele.common").artifactId("base.distribution.test").versionAsInProject());
 		return projectConfig;
 	}
 
@@ -123,11 +118,8 @@ public class ApplicationManagerTest {
 		
 		Assert.assertNotNull(manager);
 		
-		int currentApplicationsNumber = checkTimeoutNumberCondition(1, appNumberConditionEvaluation);
-
-		// Only one app installed
-		assertEquals(1, currentApplicationsNumber);
-
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
+		
 		// The instaled application according with bundles
 		assertNotNull(manager.getApplicationOfBundle("test-bundle-1"));
 		
@@ -147,10 +139,8 @@ public class ApplicationManagerTest {
 		
 		Assert.assertNotNull(manager);
 		
-		int currentApplicationsNumber = checkTimeoutNumberCondition(1, appNumberConditionEvaluation);
-
 		// Only one app installed
-		assertEquals(1, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 
 		
 		//printBundles();
@@ -169,16 +159,14 @@ public class ApplicationManagerTest {
 		expectedBundles.add("test-bundle-2");
 		expectedBundles.add("test-bundle-3");
 		
-		int currentBundlesNumber = checkTimeoutNumberCondition(expectedBundles.size(), gasAlarmBundleNumberConditionEvaluation);
-		
 		
 		// Al expected bundles in the list
 		for (Bundle bundle : bundles) {
 			Assert.assertTrue(expectedBundles.contains(bundle.getSymbolicName()));
       }
 		
-		// No more of expected bundles in the list
-		Assert.assertEquals(expectedBundles.size(), currentBundlesNumber);
+		// No more of expected bundles in the list	
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", expectedBundles.size()));
 		
 		// Only one application remains
 		Assert.assertEquals(1, manager.getApplications().size());
@@ -201,11 +189,10 @@ public class ApplicationManagerTest {
 		DeploymentPackage followMeDP1 = installDeploymentPackage("follow-me-test-app-dp-1");
 		
 		Assert.assertNotNull(manager);
-		
-		int currentApplicationsNumber = checkTimeoutNumberCondition(1, appNumberConditionEvaluation); 
+
 				
 		// Only one app installed
-		assertEquals(1, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 
 		// The installed application is not null
 		assertNotNull(manager.getApplication("follow-me-test-app"));
@@ -216,11 +203,9 @@ public class ApplicationManagerTest {
 		
 		followMeDP1.uninstall();
 		
-		currentApplicationsNumber = checkTimeoutNumberCondition(0, appNumberConditionEvaluation);
-		
-		// No application installed
-		assertEquals(0, currentApplicationsNumber);
-		
+   	// No application installed
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(0));
+			
 		// The follow-me-test-app is not more in the platform
 		assertNull(manager.getApplication("follow-me-test-app"));
 	}
@@ -234,10 +219,8 @@ public class ApplicationManagerTest {
 		
 		Assert.assertNotNull(manager);
 		
-		int currentApplicationsNumber = checkTimeoutNumberCondition(1, appNumberConditionEvaluation);
-
 		// Only one app installed
-		assertEquals(1, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-2"));
 		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getName());
@@ -248,28 +231,24 @@ public class ApplicationManagerTest {
 
 		Assert.assertNotNull(manager.getApplication("gas-alarm-test-app"));
 				
-		int currentBundlesNumber = checkTimeoutNumberCondition(2, gasAlarmBundleNumberConditionEvaluation);
 				
 		// No more of expected bundles in the list
-		Assert.assertEquals(2, currentBundlesNumber);
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 		
 		gasAlarmDP1.uninstall();
 		
-		currentBundlesNumber = checkTimeoutNumberCondition(2, gasAlarmBundleNumberConditionEvaluation);
 				
 		// DP2 contains 2 bundles
-		Assert.assertEquals(2, currentBundlesNumber);
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 		
 		// Only one app installed
 		Assert.assertEquals(1, manager.getApplications().size());
 		
 		gasAlarmDP2.uninstall();
 		
-		
-		currentApplicationsNumber = checkTimeoutNumberCondition(0, appNumberConditionEvaluation);
 
 		// No applications installed
-		assertEquals(0, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(0));
 
 	}
 
@@ -280,11 +259,10 @@ public class ApplicationManagerTest {
 		DeploymentPackage gasAlarmDP1 = installDeploymentPackage("gas-alarm-test-app-dp-1");
 		
 		Assert.assertNotNull(manager);
-		
-		int currentApplicationsNumber = checkTimeoutNumberCondition(1, appNumberConditionEvaluation);
+
 
 		// Only one app installed
-		assertEquals(1, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-2"));
 		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getName());
@@ -295,78 +273,50 @@ public class ApplicationManagerTest {
 
 		Assert.assertNotNull(manager.getApplication("gas-alarm-test-app"));
 				
-		int currentBundlesNumber = checkTimeoutNumberCondition(2, gasAlarmBundleNumberConditionEvaluation);
 								
 				
 		// No more of expected bundles in the list
-		Assert.assertEquals(2, currentBundlesNumber);
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
+
 		
 		DeploymentPackage controlDP1 = installDeploymentPackage("control-test-app-dp-1");
 		
-		
-		currentApplicationsNumber = checkTimeoutNumberCondition(2, appNumberConditionEvaluation);
-
-		assertEquals(2, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(2));
 		
 		DeploymentPackage controlDP2 = installDeploymentPackage("control-test-app-dp-2");
 		
-		currentBundlesNumber = checkTimeoutNumberCondition(2, gasAlarmBundleNumberConditionEvaluation);
 				
 				
 		// No more of expected bundles in the list
-		Assert.assertEquals(2, currentBundlesNumber);
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 				
 		gasAlarmDP1.uninstall();
-		
-		currentBundlesNumber = checkTimeoutNumberCondition(2, gasAlarmBundleNumberConditionEvaluation);
 				
 		// DP2 contains 2 bundles
-		Assert.assertEquals(2, currentBundlesNumber);
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 		
 		// Only one app installed
 		Assert.assertEquals(2, manager.getApplications().size());
 		
-		gasAlarmDP2.uninstall();
-		
-		
-		currentApplicationsNumber = checkTimeoutNumberCondition(1, appNumberConditionEvaluation);
+		gasAlarmDP2.uninstall();		
 
 		// Only one application remain
-		assertEquals(1, currentApplicationsNumber);
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 		
 		
 		controlDP1.uninstall();
 		
-		currentBundlesNumber = checkTimeoutNumberCondition(2, controlBundleNumberConditionEvaluation);
 		
-		assertEquals(2, currentBundlesNumber);
+		TestUtils.testConditionWithTimeout(new BundleNumberCondition("control-test-app", 2));
 		
 		// Only one app installed
 		Assert.assertEquals(1, manager.getApplications().size());
 		
 		controlDP2.uninstall();
 		
-		// All applications removed
-		currentApplicationsNumber = checkTimeoutNumberCondition(0, appNumberConditionEvaluation);
-		
-		assertEquals(0, currentApplicationsNumber);
+		// All applications removed	
+		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(0));
 
-	}
-	
-
-	
-	private int checkTimeoutNumberCondition(int expectedNumber, NumberConditionEvaluation conditionEvaluation) {
-		int attempts = 0;
-		int currentNumber = conditionEvaluation.getSize();
-		while((currentNumber!=expectedNumber) && (attempts < 50)) {
-			try {
-	         Thread.sleep(20);
-	         currentNumber = conditionEvaluation.getSize();
-	         attempts++;
-         } catch (InterruptedException e) {
-         }
-		}
-		return currentNumber;
 	}
 	
 
@@ -376,18 +326,6 @@ public class ApplicationManagerTest {
 			return context.getService(reference);
 		return null;
 	}
-
-
-	private void printBundles() {
-		Bundle[] bundles = context.getBundles();
-		for (Bundle bundle : bundles) {
-			if (bundle != null) {
-				System.out.println("=======> " + bundle.getSymbolicName());
-			}
-		}
-	}
-	
-	
 
 	
 	private CompositeOption mockitoBundles() {
@@ -425,44 +363,44 @@ public class ApplicationManagerTest {
 		      frameworkProperty("felix.bootdelegation.implicit").value("false"));
 		return mockitoConfig;
 	}
-
-	/**
-	 * Used in checkTimeoutNumberCondition method to determine a size (of applications, bundles, etc) using a timeout.
-	 * This interface to provide a option to evaluate the size expresion.
-	 * 
-	 * @author Gabriel
-	 * 
-	 */
-	interface NumberConditionEvaluation {
-		int getSize();
-	}
-
 	
-	/**
-	 * Size is the application number
-	 * @author Gabriel
-	 *
-	 */
-	class ApplicationNumberConditionEvaluation implements NumberConditionEvaluation {
-		public int getSize() {
-	      return manager.getApplications().size();
-      }	
-	}
 	
-	/**
-	 * Size is bundle number in an application
-	 * @author Gabriel
-	 *
-	 */
-	class BundleNumberConditionEvaluation implements NumberConditionEvaluation {
-		private String appName;
+	class BundleNumberCondition implements Condition {
+
+		private String m_appName;
+		private int m_expectedBundles;
 		
-		public BundleNumberConditionEvaluation(String appName) {
-			this.appName = appName;
+		public BundleNumberCondition(String appName, int expectedBundles) {
+			m_appName = appName;
+			m_expectedBundles = expectedBundles;
 		}
 		
-		public int getSize() {
-	      return manager.getApplication(appName).getBundles().size();
+		public boolean isChecked() {
+			return (manager.getApplication(m_appName).getBundles().size() == m_expectedBundles);
       }
+
+		public String getDescription() {
+			return "Expected " + m_expectedBundles + " bundles in application " + m_appName +" in Application Manager";
+      }
+		
 	}
+	
+	class ApplicationNumberCondition implements Condition {
+
+		private int m_number;
+		
+		public ApplicationNumberCondition(int number) {
+			m_number = number;
+		}
+		
+		public boolean isChecked() {
+	      return (m_number == manager.getApplications().size());
+      }
+
+		public String getDescription() {
+	      return "Expected " + m_number + " applications in Application Manager";
+      }
+		
+	}
+	
 }

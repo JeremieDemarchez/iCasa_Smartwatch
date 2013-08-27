@@ -15,9 +15,12 @@
  */
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.service.scheduler.TaskExecutionReport;
 import fr.liglab.adele.icasa.service.scheduler.TaskReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,6 +32,9 @@ import java.util.Map;
  * Time: 2:28 PM
  */
 public abstract class TaskReferenceImpl implements TaskReference, Runnable {
+
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
 
     // The access lock
     private final Object m_lock;
@@ -86,7 +92,7 @@ public abstract class TaskReferenceImpl implements TaskReference, Runnable {
 
     public boolean isCancelled() {
         synchronized (m_lock) {
-            return m_cancellationTime == -1;
+            return m_cancellationTime != -1;
         }
     }
 
@@ -116,7 +122,7 @@ public abstract class TaskReferenceImpl implements TaskReference, Runnable {
     public void cancel(boolean interrupt) {
         synchronized (m_lock) {
             // Task already cancelled, return immediately
-            if (m_cancellationTime == -1) {
+            if (m_cancellationTime != -1) {
                 return;
             }
             // Set the task as cancelled now
@@ -134,7 +140,7 @@ public abstract class TaskReferenceImpl implements TaskReference, Runnable {
         synchronized (m_lock) {
             // Task already cancelled, log and return immediately
             if (m_cancellationTime != -1) {
-                System.err.println("Ignoring execution : task is cancelled");
+                logger.warn("Ignoring execution : task is cancelled");
                 return;
             }
             executionCount = m_executionCount;

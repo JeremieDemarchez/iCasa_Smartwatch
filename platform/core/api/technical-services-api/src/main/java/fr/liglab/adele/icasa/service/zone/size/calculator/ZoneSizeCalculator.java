@@ -23,6 +23,10 @@ package fr.liglab.adele.icasa.service.zone.size.calculator;
  */
 public interface ZoneSizeCalculator {
 
+    public static final String X_SCALE_FACTOR_PROP_NAME = "x-scale-factor";
+    public static final String Y_SCALE_FACTOR_PROP_NAME = "y-scale-factor";
+    public static final String Z_SCALE_FACTOR_PROP_NAME = "z-scale-factor";
+
 	/**
 	 * Gets the X size in meter of the given zone.
 	 * 
@@ -32,6 +36,13 @@ public interface ZoneSizeCalculator {
 	 */
 	public double getXInMeter(String zoneId);
 
+    /**
+     * Returns scale factor from pixels to meters on X axis.
+     *
+     * @return scale factor on X axis.
+     */
+    public double getXScaleFactor();
+
 	/**
 	 * Gets the Y size in meter of the given zone.
 	 * 
@@ -40,6 +51,29 @@ public interface ZoneSizeCalculator {
 	 * @return the y size in meter
 	 */
 	public double getYInMeter(String zoneId);
+
+    /**
+     * Returns scale factor from pixels to meters on Y axis.
+     *
+     * @return scale factor on Y axis.
+     */
+    public double getYScaleFactor();
+
+    /**
+     * Gets the Z size in meter of the given zone.
+     *
+     * @param zoneId
+     *            unique id of the given zone
+     * @return the z size in meter
+     */
+    public double getZInMeter(String zoneId);
+
+    /**
+     * Returns scale factor from pixels to meters on Z axis.
+     *
+     * @return scale factor on Z axis.
+     */
+    public double getZScaleFactor();
 
 	/**
 	 * Gets the surface in meter square.

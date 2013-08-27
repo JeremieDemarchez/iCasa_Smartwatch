@@ -20,8 +20,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.TechnicalService;
 import fr.liglab.adele.icasa.Variable;
+import fr.liglab.adele.icasa.device.DeviceListener;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.annotations.*;
@@ -38,7 +40,8 @@ import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
 import fr.liglab.adele.icasa.location.impl.LocatedDeviceImpl;
 import fr.liglab.adele.icasa.location.impl.ZoneImpl;
-import fr.liglab.adele.icasa.location.util.ZoneComparable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 @Provides
@@ -48,7 +51,9 @@ public class ContextManagerImpl implements ContextManager {
 	@Requires(optional = true)
 	private TechnicalService[] _technicalServices;
 
-	private Map<String, Zone> zones = new HashMap<String, Zone>();
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
+    private Map<String, Zone> zones = new HashMap<String, Zone>();
 
 	private Map<String, LocatedDevice> locatedDevices = new HashMap<String, LocatedDevice>();
 
@@ -58,7 +63,9 @@ public class ContextManagerImpl implements ContextManager {
 
 	private List<DeviceTypeListener> deviceTypeListeners = new ArrayList<DeviceTypeListener>();
 
-	private List<LocatedDeviceListener> deviceListeners = new ArrayList<LocatedDeviceListener>();
+	private List<DeviceListener> deviceListeners = new ArrayList<DeviceListener>();
+
+	private List<LocatedDeviceListener> locatedDeviceListeners = new ArrayList<LocatedDeviceListener>();
 
 	private List<ZoneListener> zoneListeners = new ArrayList<ZoneListener>();
 
@@ -84,6 +91,7 @@ public class ContextManagerImpl implements ContextManager {
 			readLock.unlock();
 		}
 		if (exists) {
+            logger.error("Unable to create zone. Already exists " + id);
 			throw new IllegalArgumentException("Zone already exist.");
 		}
 		writeLock.lock();
@@ -93,6 +101,7 @@ public class ContextManagerImpl implements ContextManager {
 		} finally {
 			writeLock.unlock();
 		}
+        logger.debug("Creating zone " + id);
 
 		// Listeners notification
 		for (ZoneListener listener : snapshotZoneListener) {
@@ -108,8 +117,8 @@ public class ContextManagerImpl implements ContextManager {
 	}
 
 	public Zone createZone(String id, Position center, int detectionScope) {
-		return createZone(id, center.x - detectionScope, center.y - detectionScope, center.z - detectionScope, detectionScope * 2,
-		      detectionScope * 2, detectionScope * 2);
+		return createZone(id, center.x - detectionScope, center.y - detectionScope, center.z - detectionScope,
+		      detectionScope * 2, detectionScope * 2, detectionScope * 2);
 	}
 
 	@Override
@@ -123,9 +132,15 @@ public class ContextManagerImpl implements ContextManager {
 		} finally {
 			writeLock.unlock();
 		}
-		if (zone == null)
+		if (zone == null){
+            logger.warn("Unable to remove zone. It does not exist " + id);
 			return;
-
+        }
+		
+		List<LocatedDevice> localDevices = getDevices();
+		
+		
+        logger.debug("Removing zone " + id);
 		// Listeners notification
 		for (ZoneListener listener : snapshotZoneListener) {
 			try {
@@ -135,14 +150,25 @@ public class ContextManagerImpl implements ContextManager {
 				e.printStackTrace();
 			}
 		}
+
+        for (LocatedDevice locatedDevice : localDevices) {
+            if (zone.contains(locatedDevice)) {
+                // This is done only to force the located device to change its location property value
+                Position position = locatedDevice.getCenterAbsolutePosition();
+                locatedDevice.setCenterAbsolutePosition(position);
+            }
+        }
+
 	}
 
 	@Override
 	public void moveZone(String id, int leftX, int topY, int bottomZ) throws Exception {
 		Zone zone = getZone(id);
 		if (zone == null) {
+            logger.warn("Unable to move zone. It does not exist " + id);
 			return;
 		}
+        logger.debug("Moving zone " + id);
 		Position newPosition = new Position(leftX, topY, bottomZ);
 		zone.setLeftTopRelativePosition(newPosition);
 	}
@@ -150,13 +176,17 @@ public class ContextManagerImpl implements ContextManager {
 	@Override
 	public void resizeZone(String id, int width, int height, int depth) throws Exception {
 		Zone zone = getZone(id);
-		if (zone == null)
+		if (zone == null){
+            logger.warn("Unable to resize zone. It does not exist " + id);
 			return;
+        }
+        logger.debug("Moving zone " + id);
 		zone.resize(width, height, depth);
 	}
 
 	@Override
 	public void removeAllZones() {
+        logger.debug("Removing all zones");
 		List<Zone> tempZones = getZones();
 		for (Zone zone : tempZones) {
 			removeZone(zone.getId());
@@ -166,32 +196,40 @@ public class ContextManagerImpl implements ContextManager {
 	@Override
 	public void addZoneVariable(String zoneId, String variable) {
 		Zone zone = getZone(zoneId);
-		if (zone == null)
+		if (zone == null){
+            logger.error("Unable to add a variable to a zone. It does not exist " + zoneId);
 			return;
+        }
 		zone.addVariable(variable);
 	}
 
 	@Override
 	public Set<String> getZoneVariables(String zoneId) {
 		Zone zone = getZone(zoneId);
-		if (zone == null)
+		if (zone == null){
+            logger.error("Unable to retrieve variables from zone. It does not exist " + zoneId);
 			return null;
+        }
 		return zone.getVariableNames();
 	}
 
 	@Override
 	public Object getZoneVariableValue(String zoneId, String variable) {
 		Zone zone = getZone(zoneId);
-		if (zone == null)
-			return null;
+		if (zone == null) {
+            logger.error("Unable to retrieve variables from zone. It does not exist " + zoneId);
+            return null;
+        }
 		return zone.getVariableValue(variable);
 	}
 
 	@Override
 	public void setZoneVariable(String zoneId, String variableName, Object value) {
 		Zone zone = getZone(zoneId);
-		if (zone == null)
+		if (zone == null){
+            logger.error("Unable to set a variable to a zone. It does not exist " + zoneId);
 			return;
+        }
 		zone.setVariableValue(variableName, value);
 	}
 
@@ -251,8 +289,10 @@ public class ContextManagerImpl implements ContextManager {
 		if (zone == null || parent == null)
 			return;
 		boolean ok = parent.addZone(zone);
-		if (!ok)
+		if (!ok){
+            logger.error("Zone does not fit in parent: " + zoneId + " parent: " + parentId);
 			throw new Exception("Zone does not fit in its parent");
+        }
 	}
 
 	@Override
@@ -289,23 +329,25 @@ public class ContextManagerImpl implements ContextManager {
 		LocatedDevice device = getDevice(deviceId);
 
 		if (device != null) {
+            logger.debug("Setting device position: " + deviceId);
 			List<Zone> oldZones = getObjectZones(device);
 			device.setCenterAbsolutePosition(position);
 			List<Zone> newZones = getObjectZones(device);
 
 			// When the zones are different, the device is notified
 			if (!oldZones.equals(newZones)) {
-				// System.out.println("Old zones --> " + oldZones.size());
-				// System.out.println("New zones --> " + newZones.size());
 				Collections.sort(newZones, new ZoneComparable());
 				device.leavingZones(oldZones);
 				device.enterInZones(newZones);
 			}
-		}
+		} else {
+            logger.error("Unable to set position. Device does not exist: " + deviceId);
+        }
 	}
 
 	@Override
 	public void moveDeviceIntoZone(String deviceId, String zoneId) {
+        logger.debug("To move device"+ deviceId + " into zone " + zoneId);
 		Position newPosition = getRandomPositionIntoZone(zoneId);
 		if (newPosition != null) {
 			setDevicePosition(deviceId, newPosition);
@@ -330,13 +372,18 @@ public class ContextManagerImpl implements ContextManager {
 
 		GenericDevice device = getGenericDevice(deviceId);
 
-		if (device == null && !(device instanceof GenericDevice))
+		if (device == null && !(device instanceof GenericDevice)) {
+            logger.warn("Unable to set state to device. It does not exist: " + deviceId);
 			return;
-
-		if (value)
+        }
+		if (value) {
+            logger.debug("Activating device: " + deviceId);
 			device.setState(GenericDevice.STATE_ACTIVATED);
-		else
+        }
+		else {
+            logger.debug("Deactivating device: " + deviceId);
 			device.setState(GenericDevice.STATE_DEACTIVATED);
+        }
 	}
 
 	@Override
@@ -412,27 +459,38 @@ public class ContextManagerImpl implements ContextManager {
 	}
 
 	@Bind(id = "devices", aggregate = true, optional = true)
-	public void bindDevice(GenericDevice simDev) {
+	public void bindDevice(GenericDevice genericDevice) {
+		String sn = genericDevice.getSerialNumber();
+        logger.debug("A new Device OSGi service has appear " + sn);
+		if (m_devices.containsKey(sn)) {
+            logger.error("A device with the same ID: " + sn + " was already registered");
+			return;
+		}
+		
 		boolean contained = false;
 		String deviceType = null;
-		LocatedDevice device = null;
-		List<LocatedDeviceListener> snapshotListeners = null;
-		if (simDev instanceof Pojo) {
+		LocatedDevice locatedDevice = null;
+		List<LocatedDeviceListener> snapshotLocatedDeviceListeners = null;
+		List<DeviceListener> snapshotDeviceListeners = null;
+		if (genericDevice instanceof Pojo) {
 			try {
-				deviceType = ((Pojo) simDev).getComponentInstance().getFactory().getFactoryName();
+				deviceType = ((Pojo) genericDevice).getComponentInstance().getFactory().getFactoryName();
 			} catch (Exception e) {
-				e.printStackTrace();
+                logger.error("Unable to get device Type for " + sn);
+                e.printStackTrace();
 			}
 		}
-		String sn = simDev.getSerialNumber();
+		
 		lock.writeLock().lock();
 		try {
-			m_devices.put(sn, simDev);
+			m_devices.put(sn, genericDevice);
 			contained = locatedDevices.containsKey(sn);
 			if (!contained) {
-				device = new LocatedDeviceImpl(sn, new Position(-1, -1), simDev, deviceType, this);
-				locatedDevices.put(sn, device);
-				snapshotListeners = getDeviceListeners();
+                logger.debug("Creating a LocatedDevice for " + sn);
+				locatedDevice = new LocatedDeviceImpl(sn, new Position(-1, -1), genericDevice, deviceType, this);
+				locatedDevices.put(sn, locatedDevice);
+				snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
+				snapshotDeviceListeners = getDeviceListeners();
 			}
 
 		} finally {
@@ -441,50 +499,76 @@ public class ContextManagerImpl implements ContextManager {
 		// notify only if not already added.
 		if (!contained) {
 			// Listeners notification
-			for (LocatedDeviceListener listener : snapshotListeners) {
+			for (DeviceListener listener : snapshotDeviceListeners) {
 				try {
-					listener.deviceAdded(device);
-					device.addListener(listener);
+					listener.deviceAdded(genericDevice);
+					genericDevice.addListener(listener);
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+			for (LocatedDeviceListener listener : snapshotLocatedDeviceListeners) {
+				try {
+					listener.deviceAdded(locatedDevice);
+					locatedDevice.addListener(listener);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 			// SimulatedDevice listener added
-			simDev.addListener((LocatedDeviceImpl) device);
+			genericDevice.addListener((LocatedDeviceImpl) locatedDevice);
 		}
 	}
 
 	@Unbind(id = "devices")
-	public void unbindDevice(GenericDevice simDev) {
-		String sn = simDev.getSerialNumber();
-		List<LocatedDeviceListener> snapshotListeners = null;
-		LocatedDevice device;
+	public void unbindDevice(GenericDevice genericDevice) {
+		String sn = genericDevice.getSerialNumber();
+
+        logger.debug("A Device service has disappear " + sn);
+
+        List<LocatedDeviceListener> snapshotLocatedDeviceListeners = null;
+		List<DeviceListener> snapshotDeviceListeners = null;
+		LocatedDevice locatedDevice;
 		lock.writeLock().lock();
 		try {
 			m_devices.remove(sn);
-			device = locatedDevices.remove(sn);
-			snapshotListeners = getDeviceListeners();
+			locatedDevice = locatedDevices.remove(sn);
+            logger.debug("Removing LocatedDevice for " + sn);
+			snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
+			snapshotDeviceListeners = getDeviceListeners();
 		} finally {
 			lock.writeLock().unlock();
 		}
 
 		// Listeners notification
-		for (LocatedDeviceListener listener : snapshotListeners) {
+		for (DeviceListener listener : snapshotDeviceListeners) {
 			try {
-				listener.deviceRemoved(device);
-				device.removeListener(listener);
+				listener.deviceRemoved(genericDevice);
+				genericDevice.removeListener(listener);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		for (LocatedDeviceListener listener : snapshotLocatedDeviceListeners) {
+			try {
+				// If two devices with the same ID where registered the locatedDevice can be null in one of unBinds callbacks
+				if (locatedDevice!=null) {
+					listener.deviceRemoved(locatedDevice);
+					locatedDevice.removeListener(listener);					
+				}
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 
 		// SimulatedDevice listener removed
-		simDev.removeListener((LocatedDeviceImpl) device);
+		genericDevice.removeListener((LocatedDeviceImpl) locatedDevice);
 	}
 
 	@Bind(id = "factories", aggregate = true, optional = true, filter = "(component.providedServiceSpecifications=fr.liglab.adele.icasa.device.GenericDevice)")
 	public void bindFactory(Factory factory) {
 		String deviceType = factory.getName();
+        logger.debug("A new Device Type has appear " + deviceType);
 		List<DeviceTypeListener> snapshotListeners = null;
 		lock.writeLock().lock();
 		try {
@@ -507,7 +591,8 @@ public class ContextManagerImpl implements ContextManager {
 	@Unbind(id = "factories")
 	public void unbindFactory(Factory factory) {
 		String deviceType = factory.getName();
-		List<DeviceTypeListener> snapshotListeners = null;
+        logger.debug("A Device Type has disappear " + deviceType);
+        List<DeviceTypeListener> snapshotListeners = null;
 		lock.writeLock().lock();
 		try {
 			m_factories.remove(deviceType);
@@ -542,12 +627,29 @@ public class ContextManagerImpl implements ContextManager {
 				zone.addListener(zoneListener);
 		}
 
+		if (listener instanceof DeviceListener) {
+			DeviceListener deviceListener = (DeviceListener) listener;
+			List<LocatedDevice> snapshotDevices;
+			writeLock.lock();
+			try {
+				deviceListeners.add(deviceListener);
+				snapshotDevices = getDevices();
+			} finally {
+				writeLock.unlock();
+			}
+			for (LocatedDevice device : snapshotDevices) {
+				GenericDevice deviceObj = device.getDeviceObject();
+				if (deviceObj != null)
+					deviceObj.addListener(deviceListener);
+			}
+		}
+
 		if (listener instanceof LocatedDeviceListener) {
 			LocatedDeviceListener deviceListener = (LocatedDeviceListener) listener;
 			List<LocatedDevice> snapshotDevices;
 			writeLock.lock();
 			try {
-				deviceListeners.add(deviceListener);
+				locatedDeviceListeners.add(deviceListener);
 				snapshotDevices = getDevices();
 			} finally {
 				writeLock.unlock();
@@ -586,13 +688,30 @@ public class ContextManagerImpl implements ContextManager {
 			}
 		}
 
+		if (listener instanceof DeviceListener) {
+			DeviceListener deviceListener = (DeviceListener) listener;
+			List<LocatedDevice> locatedDeviceListSnapshot;
+			writeLock.lock();
+			try {
+				locatedDeviceListSnapshot = getDevices();
+				deviceListeners.remove(deviceListener);
+			} finally {
+				writeLock.unlock();
+			}
+			for (LocatedDevice device : locatedDeviceListSnapshot) {
+				GenericDevice deviceObj = device.getDeviceObject();
+				if (deviceObj != null)
+					deviceObj.removeListener(deviceListener);
+			}
+		}
+
 		if (listener instanceof LocatedDeviceListener) {
 			LocatedDeviceListener deviceListener = (LocatedDeviceListener) listener;
 			List<LocatedDevice> locatedDeviceListSnapshot;
 			writeLock.lock();
 			try {
-				deviceListeners.remove(deviceListener);
 				locatedDeviceListSnapshot = getDevices();
+				locatedDeviceListeners.remove(deviceListener);
 			} finally {
 				writeLock.unlock();
 			}
@@ -613,7 +732,7 @@ public class ContextManagerImpl implements ContextManager {
 	}
 
 	private int random(int min, int max) {
-		//final double range = (max - 10) - (min + 10);
+		// final double range = (max - 10) - (min + 10);
 		final double range = max - min;
 		if (range <= 0.0) {
 			throw new IllegalArgumentException("min >= max");
@@ -657,12 +776,28 @@ public class ContextManagerImpl implements ContextManager {
 		}
 	}
 
-	private List<LocatedDeviceListener> getDeviceListeners() {
+	private List<LocatedDeviceListener> getLocatedDeviceListeners() {
 		readLock.lock();
 		try {
-			return new ArrayList<LocatedDeviceListener>(deviceListeners);
+			return new ArrayList<LocatedDeviceListener>(locatedDeviceListeners);
 		} finally {
 			readLock.unlock();
+		}
+	}
+
+	private List<DeviceListener> getDeviceListeners() {
+		readLock.lock();
+		try {
+			return new ArrayList<DeviceListener>(deviceListeners);
+		} finally {
+			readLock.unlock();
+		}
+	}
+
+	private class ZoneComparable implements Comparator<Zone> {
+		@Override
+		public int compare(Zone zone0, Zone zone1) {
+			return zone1.getLayer() - zone0.getLayer();
 		}
 	}
 

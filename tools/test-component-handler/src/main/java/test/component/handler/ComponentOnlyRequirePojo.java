@@ -15,18 +15,24 @@
  */
 package test.component.handler;
 
-import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
-import org.osgi.framework.ServiceReference;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Validate;
 
-//@Component
-//@Instantiate
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+
+@Component
+@Instantiate
 public class ComponentOnlyRequirePojo {
 
-	@Bind(aggregate=true, specification="fr.liglab.adele.icasa.device.GenericDevice")
-	public void bindGenericDevice(ServiceReference reference) {
-		System.out.println("reference " + reference);
-	}
+	@Requires
+	private BinaryLight light;
+	
+	@Validate
+	private void start() {
+		System.out.println(light.getSerialNumber());
+   }
+	
 	
 }

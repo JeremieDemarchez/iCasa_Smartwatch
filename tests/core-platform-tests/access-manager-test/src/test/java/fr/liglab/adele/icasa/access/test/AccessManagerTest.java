@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.access.test;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.access.*;
 import fr.liglab.adele.icasa.clock.Clock;
 import junit.framework.Assert;
@@ -23,17 +24,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.options.DefaultCompositeOption;
 import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
 import javax.inject.Inject;
 
+import java.util.List;
 import java.util.UUID;
 
 import static org.mockito.Mockito.*;
-
+import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 
 @RunWith(PaxExam.class)
@@ -56,6 +60,21 @@ public class AccessManagerTest extends AbstractDistributionBaseTest {
 	public void tearDown() {
 
 	}
+
+    public static Option addSystemProperties() {
+        return new DefaultCompositeOption(
+                systemProperty( Constants.DISABLE_ACCESS_POLICY_PROPERTY).value( "false" )
+        );
+    }
+
+    @org.ops4j.pax.exam.Configuration
+    public Option[] configuration() {
+
+        List<Option> lst = super.config();
+        lst.add(addSystemProperties());
+        Option conf[] = lst.toArray(new Option[0]);
+        return conf;
+    }
 
 	/**
 	 * Test the service availability

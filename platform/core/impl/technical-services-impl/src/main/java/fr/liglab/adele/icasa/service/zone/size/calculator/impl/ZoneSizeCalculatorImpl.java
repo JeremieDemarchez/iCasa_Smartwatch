@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.service.zone.size.calculator.impl;
 
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -30,18 +31,21 @@ import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 @Provides
 public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
 
-	/** The Constant SCALE_FACTOR. */
-	public static final double SCALE_FACTOR = 0.014d; // 1px -> 0.014m
+	/** The Constant DEFAULT_SCALE_FACTOR. */
+	public static final double DEFAULT_SCALE_FACTOR = 0.014d; // 1px -> 0.014m
 
-	/** The _context manager provides access to internal representation of zones */
+    /** The _context manager provides access to internal representation of zones */
 	@Requires
-	ContextManager _contextManager;
+	private ContextManager _contextManager;
+
+    @Requires(optional = true)
+    private Preferences _preferences;
 
 	@Override
 	public double getXInMeter(String zoneId) {
 		Zone zone = _contextManager.getZone(zoneId);
 		if (zone!=null)
-			return zone.getXLength() * SCALE_FACTOR;
+			return zone.getXLength() * getXScaleFactor();
 		return 0;
 	}
 
@@ -56,9 +60,69 @@ public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
 	public double getYInMeter(String zoneId) {
 		Zone zone = _contextManager.getZone(zoneId);
 		if (zone!=null)
-			return zone.getYLength() * SCALE_FACTOR;
+			return zone.getYLength() * getYScaleFactor();
 		return 0;
 	}
+
+    public double getXScaleFactor() {
+        double scaleFactor = DEFAULT_SCALE_FACTOR;
+        if (_preferences != null) {
+            try {
+                Object scaleFactorObj = _preferences.getGlobalPropertyValue(X_SCALE_FACTOR_PROP_NAME);
+                if (scaleFactorObj != null)
+                    scaleFactor = (Double) scaleFactorObj;
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return scaleFactor;
+    }
+
+    public double getYScaleFactor() {
+        double scaleFactor = DEFAULT_SCALE_FACTOR;
+        if (_preferences != null) {
+            try {
+                Object scaleFactorObj = _preferences.getGlobalPropertyValue(Y_SCALE_FACTOR_PROP_NAME);
+                if (scaleFactorObj != null)
+                    scaleFactor = (Double) scaleFactorObj;
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return scaleFactor;
+    }
+
+    public double getZScaleFactor() {
+        double scaleFactor = DEFAULT_SCALE_FACTOR;
+        if (_preferences != null) {
+            try {
+                Object scaleFactorObj = _preferences.getGlobalPropertyValue(Z_SCALE_FACTOR_PROP_NAME);
+                if (scaleFactorObj != null)
+                    scaleFactor = (Double) scaleFactorObj;
+            } catch (ClassCastException e) {
+                e.printStackTrace();
+            }
+        }
+
+        return scaleFactor;
+    }
+
+    /**
+     * Gets the z in meter.
+     *
+     * @param zoneId
+     *            the zone id
+     * @return the z in meter
+     */
+    @Override
+    public double getZInMeter(String zoneId) {
+        Zone zone = _contextManager.getZone(zoneId);
+        if (zone!=null)
+            return zone.getZLength() * getZScaleFactor();
+        return 0;
+    }
 
 	/**
 	 * Gets the surface in meter square.
@@ -71,5 +135,6 @@ public class ZoneSizeCalculatorImpl implements ZoneSizeCalculator {
 	public double getSurfaceInMeterSquare(String zoneId) {
 		return getXInMeter(zoneId) * getYInMeter(zoneId);
 	}
+
 
 }

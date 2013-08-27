@@ -21,7 +21,9 @@ import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.context.impl.ContextManagerImpl;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
@@ -29,6 +31,8 @@ import fr.liglab.adele.icasa.location.LocatedDeviceListener;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevice, DeviceListener<GenericDevice> {
 
@@ -88,11 +92,39 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
 
-		if (deviceComponent == null)
+		if (deviceComponent == null){
+		    logger.warn("Unable to set property in Located Device. deviceComponent is null");
 			return;
+        }
+        logger.debug(" ["+getSerialNumber()+"] Set property in Located Device");
 		// TODO: Test which properties are readonly
 		deviceComponent.setPropertyValue(propertyName, value);
 	}
+	
+	@Override
+   public boolean constainsProperty(String propertyName) {
+		if (deviceComponent != null)
+			return deviceComponent.constainsProperty(propertyName);
+	   return false;
+   }
+
+	@Override
+   public boolean hasPropertyValue(String propertyName) {
+		if (deviceComponent != null)
+			return deviceComponent.hasPropertyValue(propertyName);
+	   return false;
+   }
+
+	@Override
+   public boolean removeProperty(String propertyName) {
+		if (deviceComponent != null){
+            logger.debug(" ["+getSerialNumber()+"] Remove property in Located Device");
+			return deviceComponent.removeProperty(propertyName);
+        }
+        logger.warn(" ["+getSerialNumber()+"] Unable to remove property. DeviceComponent is null");
+	   return false;
+   }
+	
 
 	@Override
 	public void addListener(final LocatedDeviceListener listener) {
@@ -131,7 +163,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			try {
 				listener.deviceMoved(this, oldPosition, position.clone());
 			} catch (Exception ex) {
-				System.err.println("Listener in deviceMoved event has throw an exception: " + listener);
+				logger.error("Listener in deviceMoved event has throw an exception: " + listener);
 				ex.printStackTrace();
 			}
 		}
@@ -160,7 +192,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			try {
 				listener.deviceAttached(this, childDevice);
 			} catch (Exception ex) {
-				System.err.println("Listener has throw an exception: " + listener);
+				logger.error("Listener has throw an exception: " + listener);
 				ex.printStackTrace();
 			}
 		}
@@ -179,7 +211,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			try {
 				listener.deviceDetached(this, childDevice);
 			} catch (Exception ex) {
-				System.err.println("Listener has throw an exception: " + listener);
+				logger.error("Listener has throw an exception: " + listener);
 				ex.printStackTrace();
 			}
 		}
@@ -226,7 +258,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			try {
 				listener.devicePropertyModified(this, propertyName, oldValue, newValue);
 			} catch (Exception ex) {
-				System.err.println("Listener has throw an exception: " + listener);
+				logger.error("Listener has throw an exception: " + listener);
 				ex.printStackTrace();
 			}
 		}
@@ -239,7 +271,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			try {
 				listener.devicePropertyAdded(this, propertyName);
 			} catch (Exception ex) {
-				System.err.println("Listener has throw an exception: " + listener);
+                logger.error("Listener has throw an exception: " + listener);
 				ex.printStackTrace();
 			}
 		}
@@ -252,7 +284,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			try {
 				listener.devicePropertyRemoved(this, propertyName);
 			} catch (Exception ex) {
-				System.err.println("Listener has throw an exception: " + listener);
+                logger.error("Listener has throw an exception: " + listener);
 				ex.printStackTrace();
 			}
 		}
@@ -271,7 +303,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
             try {
                 listener.deviceEvent(this, data);
             } catch (Exception ex) {
-                System.err.println("Listener has throw an exception: " + listener);
+                logger.error("Listener has throw an exception: " + listener);
                 ex.printStackTrace();
             }
         }    }
@@ -284,8 +316,8 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			return false;
 
 		LocatedDeviceImpl that = (LocatedDeviceImpl) o;
-
-		if (!_type.equals(that._type))
+		
+		if (!String.valueOf(_type).equals(String.valueOf(that._type)))
 			return false;
 		if (!m_serialNumber.equals(that.m_serialNumber))
 			return false;
@@ -313,5 +345,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 			lock.readLock().unlock();
 		}
 	}
+
+
 
 }

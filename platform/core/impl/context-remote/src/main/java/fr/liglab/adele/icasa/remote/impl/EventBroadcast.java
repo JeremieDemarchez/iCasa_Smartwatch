@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import fr.liglab.adele.icasa.Constants;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -49,13 +50,17 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.RemoteEventBroadcast;
 import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component(name = "iCasa-event-broadcast")
 @Provides(specifications = RemoteEventBroadcast.class)
 @Instantiate(name = "iCasa-event-broadcast-1")
 public class EventBroadcast extends OnMessage<String> implements RemoteEventBroadcast {
 
-	@Property(name = "mapping", value = "/event")
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_REMOTE+".event");
+
+    @Property(name = "mapping", value = "/event")
 	private String mapping;
 
 	private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
@@ -89,7 +94,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 	@Validate
 	protected void start() {
-
+        logger.debug("start");
 		// Register iCasa listeners
 		_iCasaListener = new ICasaEventListener();
 		_ctxMgr.addListener(_iCasaListener);
@@ -116,7 +121,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 	@Invalidate
 	protected void stop() {
-
+        logger.debug("stop");
 		// Unregister iCasa listeners
 
 		if (_iCasaListener != null) {
@@ -148,6 +153,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 	}
 
 	public void sendEvent(String eventType, JSONObject event) {
+        logger.debug("sending event" + eventType);
 		try {
 			event.put("eventType", eventType);
 			event.put("id", generateUUID());
@@ -155,6 +161,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 			_eventBroadcaster.broadcast(event.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
+            logger.error("Building message error" + eventType, e);
 		}
 	}
 
@@ -167,7 +174,8 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("deviceTypeId", deviceType);
 				sendEvent("device-type-removed",json);
 			} catch (JSONException e) {
-				e.printStackTrace();
+                logger.error("Building message error" + json, e);
+                e.printStackTrace();
 			}
 		}
 
@@ -179,6 +187,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				sendEvent("device-type-added", json);
 			} catch (JSONException e) {
 				e.printStackTrace();
+                logger.error("Building message error" + json, e);
 			}
 		}
 
@@ -190,6 +199,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
 				sendEvent("device-position-update", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -202,6 +212,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
 				sendEvent("device-added", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -213,6 +224,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("deviceId", device.getSerialNumber());
 				sendEvent("device-removed", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -225,6 +237,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
 				sendEvent("device-property-updated", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -237,6 +250,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
 				sendEvent("device-property-added", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -249,6 +263,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
 				sendEvent("device-property-removed", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -267,6 +282,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
                 json.put("child", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
                 sendEvent("device-attached-device", json);
             } catch (JSONException e) {
+                logger.error("Building message error" + json, e);
                 e.printStackTrace();
             }
         }
@@ -285,6 +301,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
                 json.put("child", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
                 sendEvent("device-detached-device", json);
             } catch (JSONException e) {
+                logger.error("Building message error" + json, e);
                 e.printStackTrace();
             }
         }
@@ -304,6 +321,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
                 json.put("event-data", String.valueOf(data));
                 sendEvent("device-event", json);
             } catch (JSONException e) {
+                logger.error("Building message error" + json, e);
                 e.printStackTrace();
             }
         }
@@ -317,6 +335,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-variable-added", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -329,6 +348,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-variable-removed", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -341,6 +361,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-variable-updated", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -353,6 +374,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-moved", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -365,6 +387,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-resized", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -377,6 +400,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-parent-updated", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -395,6 +419,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
                 json.put("device", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
                 sendEvent("device-attached-zone", json);
             } catch (JSONException e) {
+                logger.error("Building message error" + json, e);
                 e.printStackTrace();
             }
         }
@@ -413,6 +438,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
                 json.put("device", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
                 sendEvent("device-detached-zone", json);
             } catch (JSONException e) {
+                logger.error("Building message error" + json, e);
                 e.printStackTrace();
             }
         }
@@ -425,6 +451,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 				sendEvent("zone-added", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -436,6 +463,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("zoneId", zone.getId());
 				sendEvent("zone-removed", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}
@@ -475,6 +503,7 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				json.put("clock", IcasaJSONUtil.getClockJSON(_clock));
 				sendEvent("clock-modified", json);
 			} catch (JSONException e) {
+                logger.error("Building message error" + json, e);
 				e.printStackTrace();
 			}
 		}

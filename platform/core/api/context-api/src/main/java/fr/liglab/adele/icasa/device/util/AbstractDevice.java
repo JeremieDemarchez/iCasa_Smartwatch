@@ -23,19 +23,23 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.device.*;
 import fr.liglab.adele.icasa.location.Zone;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * Abstract implementation of the {@link fr.liglab.adele.icasa.device.GenericDevice} interface that manages
- * the listeners addition, removal and notifications.
+ * Abstract implementation of the {@link fr.liglab.adele.icasa.device.GenericDevice} interface that manages the
+ * listeners addition, removal and notifications.
  * 
  * @author Gabriel Pedraza Ferreira
  */
 public abstract class AbstractDevice implements GenericDevice {
 
-	
-	private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_DEVICE);
+
+    private final List<DeviceListener> m_listeners = new LinkedList<DeviceListener>();
 
 	private Map<String, Object> _properties = new HashMap<String, Object>();
 
@@ -54,6 +58,7 @@ public abstract class AbstractDevice implements GenericDevice {
 	@Override
 	public Object getPropertyValue(String propertyName) {
 		if (propertyName == null) {
+            logger.warn("Unable to retrieve null property");
 			throw new NullPointerException("Null property name");
 		}
 		Object value = null;
@@ -66,30 +71,82 @@ public abstract class AbstractDevice implements GenericDevice {
 	@Override
 	public void setPropertyValue(String propertyName, Object value) {
 		if (propertyName == null) {
-			throw new NullPointerException("Null property name");
+            logger.warn("Unable to set null property");
+            throw new NullPointerException("Null property name");
 		}
 		boolean modified = false;
-		Object oldValue = null;
+		boolean added = false;
+
+        logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " to be updated");
+
+        Object oldValue = null;
 		synchronized (_properties) {
-			oldValue = _properties.get(propertyName);
-			if (oldValue != null) {
-				// if the new value is equal to the previous one the property is not  set
-				if (!oldValue.equals(value)) {
-					_properties.put(propertyName, value);
-					modified = true;
+			
+			added = !_properties.containsKey(propertyName);
+						
+			if (!added) {
+				oldValue = _properties.get(propertyName);
+				if (oldValue != null) {
+					if (!oldValue.equals(value)) {
+						_properties.put(propertyName, value);
+						modified = true;
+					}
+				} else {
+					if (value!=null) {
+						_properties.put(propertyName, value);
+						modified = true;
+					}
 				}
 			} else {
-				if (value != null) {
-					_properties.put(propertyName, value);
-					modified = true;
-				}
+				_properties.put(propertyName, value);
+				modified = true;				
 			}
 		}
 
-		if (modified)
+		if (added) {
+            logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " added");
+			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_ADDED, propertyName, oldValue, value));
+        }
+		if (modified) {
+            logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " modified");
 			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_MODIFIED, propertyName, oldValue, value));
+        }
 	}
 
+	@Override
+	public boolean removeProperty(String propertyName) {
+		boolean existProperty;
+		Object oldValue = null;
+        synchronized (_properties) {
+			existProperty = _properties.containsKey(propertyName);
+			if (existProperty) {
+				oldValue = _properties.remove(propertyName);
+			}
+		}
+		if (existProperty) {
+            logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " removed");
+			notifyListeners(new DevicePropertyEvent(this, DeviceEventType.PROP_REMOVED, propertyName, oldValue, null));
+		}
+		return existProperty;
+	}
+
+	@Override
+	public boolean constainsProperty(String propertyName) {
+		boolean existProperty;
+		synchronized (_properties) {
+			existProperty = _properties.containsKey(propertyName);
+		}
+		return existProperty;
+	}
+
+	@Override
+	public boolean hasPropertyValue(String propertyName) {
+		Object propertyValue;
+		synchronized (_properties) {
+			propertyValue = _properties.get(propertyName);
+		}
+		return (propertyValue != null);
+	}
 
 	@Override
 	public String getState() {
@@ -131,8 +188,7 @@ public abstract class AbstractDevice implements GenericDevice {
 	}
 
 	/**
-	 * Notify all listeners. In case of exceptions, exceptions are dumped to the
-	 * standard error stream.
+	 * Notify all listeners. In case of exceptions, exceptions are dumped to the standard error stream.
 	 */
 	protected void notifyListeners(DeviceEvent event) {
 		List<DeviceListener> listeners;
@@ -149,27 +205,28 @@ public abstract class AbstractDevice implements GenericDevice {
 				} else if (DeviceEventType.REMOVED.equals(event.getType())) {
 					listener.deviceRemoved(event.getDevice());
 					continue;
-				}  else if (DeviceEventType.DEVICE_EVENT.equals(event.getType()) && event instanceof DeviceDataEvent) {
-                    DeviceDataEvent dataEvent = (DeviceDataEvent)event;
-                    listener.deviceEvent(dataEvent.getDevice(), dataEvent.getData());
-                    continue;
-                } else if (DeviceEventType.PROP_ADDED.equals(event.getType()) && event instanceof DevicePropertyEvent) {
-                    DevicePropertyEvent devicePropertyEvent = (DevicePropertyEvent) event;
-                    listener.devicePropertyAdded(devicePropertyEvent.getDevice(), devicePropertyEvent.getPropertyName());
-                    continue;
-                } else if (DeviceEventType.PROP_REMOVED.equals(event.getType()) && event instanceof DevicePropertyEvent) {
-                    DevicePropertyEvent devicePropertyEvent = (DevicePropertyEvent) event;
-                    listener.devicePropertyRemoved(devicePropertyEvent.getDevice(), devicePropertyEvent.getPropertyName());
-                    continue;
-                } else if (DeviceEventType.PROP_MODIFIED.equals(event.getType()) && event instanceof DevicePropertyEvent) {
-                    DevicePropertyEvent devicePropertyEvent = (DevicePropertyEvent) event;
-                    listener.devicePropertyModified(devicePropertyEvent.getDevice(), devicePropertyEvent.getPropertyName(), devicePropertyEvent.getOldValue(), devicePropertyEvent.getNewValue());
-                    continue;
-                } else {
-                    Exception ee = new Exception("Malformed Event '" + event);
-                    ee.printStackTrace();
-                    throw ee;
-                }
+				} else if (DeviceEventType.DEVICE_EVENT.equals(event.getType()) && event instanceof DeviceDataEvent) {
+					DeviceDataEvent dataEvent = (DeviceDataEvent) event;
+					listener.deviceEvent(dataEvent.getDevice(), dataEvent.getData());
+					continue;
+				} else if (DeviceEventType.PROP_ADDED.equals(event.getType()) && event instanceof DevicePropertyEvent) {
+					DevicePropertyEvent devicePropertyEvent = (DevicePropertyEvent) event;
+					listener.devicePropertyAdded(devicePropertyEvent.getDevice(), devicePropertyEvent.getPropertyName());
+					continue;
+				} else if (DeviceEventType.PROP_REMOVED.equals(event.getType()) && event instanceof DevicePropertyEvent) {
+					DevicePropertyEvent devicePropertyEvent = (DevicePropertyEvent) event;
+					listener.devicePropertyRemoved(devicePropertyEvent.getDevice(), devicePropertyEvent.getPropertyName());
+					continue;
+				} else if (DeviceEventType.PROP_MODIFIED.equals(event.getType()) && event instanceof DevicePropertyEvent) {
+					DevicePropertyEvent devicePropertyEvent = (DevicePropertyEvent) event;
+					listener.devicePropertyModified(devicePropertyEvent.getDevice(), devicePropertyEvent.getPropertyName(),
+					      devicePropertyEvent.getOldValue(), devicePropertyEvent.getNewValue());
+					continue;
+				} else {
+					Exception ee = new Exception("Malformed Event '" + event);
+					ee.printStackTrace();
+					throw ee;
+				}
 			} catch (Exception e) {
 				Exception ee = new Exception("Exception in device listener '" + listener + "'", e);
 				ee.printStackTrace();
@@ -177,22 +234,44 @@ public abstract class AbstractDevice implements GenericDevice {
 		}
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see fr.liglab.adele.icasa.device.GenericDevice#enterInZones(java.util.List)
 	 */
 	@Override
 	public void enterInZones(List<Zone> zones) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
+	 * 
 	 * @see fr.liglab.adele.icasa.device.GenericDevice#leavingZones(java.util.List)
 	 */
 	@Override
 	public void leavingZones(List<Zone> zones) {
-		// TODO Auto-generated method stub
-		
+		// do nothing
 	}
 
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || !(o instanceof GenericDevice))
+			return false;
+
+		GenericDevice otherDevice = (GenericDevice) o;
+		String otherSN = otherDevice.getSerialNumber();
+		if (otherSN == null)
+			return (getSerialNumber() == null);
+
+		return otherSN.equals(getSerialNumber());
+	}
+
+	@Override
+	public int hashCode() {
+		String serialNumber = getSerialNumber();
+		return serialNumber == null ? 0 : serialNumber.hashCode();
+	}
 }

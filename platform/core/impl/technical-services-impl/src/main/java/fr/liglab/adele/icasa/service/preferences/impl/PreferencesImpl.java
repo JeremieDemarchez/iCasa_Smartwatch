@@ -18,17 +18,14 @@
  */
 package fr.liglab.adele.icasa.service.preferences.impl;
 
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
+import fr.liglab.adele.icasa.service.preferences.PreferenceChangeListener;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
+import org.apache.felix.ipojo.annotations.*;
 import org.ow2.chameleon.sharedprefs.SharedPreferences;
+import org.ow2.chameleon.sharedprefs.SharedPreferences.OnSharedPreferenceChangeListener;
 import org.ow2.chameleon.sharedprefs.SharedPreferencesService;
 
-import fr.liglab.adele.icasa.service.preferences.Preferences;
+import java.util.*;
 
 /**
  * @author Gabriel Pedraza Ferreira
@@ -39,7 +36,7 @@ import fr.liglab.adele.icasa.service.preferences.Preferences;
 @Instantiate
 public class PreferencesImpl implements Preferences {
 
-	private static final String GLOBAL_PREFIX = "Platform";
+	private static final String GLOBAL_PREFIX = "Platform-";
 
 	private static final String USER_PREFIX = "User-";
 
@@ -47,6 +44,62 @@ public class PreferencesImpl implements Preferences {
 
 	@Requires
 	private SharedPreferencesService preferenceService;
+
+    private OnSharedPreferenceChangeListener _globalPropListener;
+
+    /* @GardedBy(_globalPropListeners) */
+    private List<PreferenceChangeListener> _globalPropListeners;
+
+    /* @GardedBy(_userPropListener) */
+    private Map<String /* userId */, OnSharedPreferenceChangeListener> _userPropListener;
+
+    /* @GardedBy(_userPropListener) */
+    private Map<String /* userId */, List<PreferenceChangeListener>> _userPropListeners;
+
+    /* @GardedBy(_appPropListener) */
+    private Map<String /* application id */, OnSharedPreferenceChangeListener> _appPropListener;
+
+    /* @GardedBy(_appPropListener) */
+    private Map<String /* application id */, List<PreferenceChangeListener>> _appPropListeners;
+
+    public PreferencesImpl() {
+        _globalPropListeners = new ArrayList<PreferenceChangeListener>();
+
+        _userPropListener = new HashMap<String, OnSharedPreferenceChangeListener>();
+        _userPropListeners = new HashMap<String, List<PreferenceChangeListener>>();
+
+        _appPropListener = new HashMap<String, OnSharedPreferenceChangeListener>();
+        _appPropListeners = new HashMap<String, List<PreferenceChangeListener>>();
+    }
+
+    @Validate
+    private void start() {
+        SharedPreferences preferences = preferenceService.getSharedPreferences(GLOBAL_PREFIX);
+        _globalPropListener = new OnSharedPreferenceChangeListener() {
+
+            @Override
+            public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String propName) {
+                synchronized (_globalPropListeners) {
+                    for (PreferenceChangeListener listener : _globalPropListeners) {
+                        try {
+                            listener.changedProperty(propName, null, getGlobalPropertyValue(propName));
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            }
+        };
+        preferences.registerOnSharedPreferenceChangeListener(_globalPropListener);
+    }
+
+    @Invalidate
+    private void stop() {
+        SharedPreferences preferences = preferenceService.getSharedPreferences(GLOBAL_PREFIX);
+        if ((preferences != null) && (_globalPropListener != null)) {
+            preferences.unregisterOnSharedPreferenceChangeListener(_globalPropListener);
+        }
+    }
 
 	/*
 	 * (non-Javadoc)
@@ -143,8 +196,41 @@ public class PreferencesImpl implements Preferences {
 		return getPropertiesNames(APP_PREFIX + applicationId);
 	}
 
-	
-	private Object getPropertyValue(String name, String storeName) {
+    @Override
+    public void addApplicationPreferenceChangeListener(String applicationId, PreferenceChangeListener listener) {
+        //TODO implement it
+    }
+
+    @Override
+    public void removeApplicationPreferenceChangeListener(String applicationId, PreferenceChangeListener listener) {
+        //TODO implement it
+    }
+
+    @Override
+    public void addUserPreferenceChangeListener(String userId, PreferenceChangeListener listener) {
+        //TODO implement it
+    }
+
+    @Override
+    public void removeUserPreferenceChangeListener(String userId, PreferenceChangeListener listener) {
+        //TODO implement it
+    }
+
+    @Override
+    public void addGlobalPreferenceChangeListener(PreferenceChangeListener listener) {
+        synchronized(_globalPropListeners) {
+            _globalPropListeners.add(listener);
+        }
+    }
+
+    @Override
+    public void removeGlobalPreferenceChangeListener(PreferenceChangeListener listener) {
+        synchronized(_globalPropListeners) {
+            _globalPropListeners.remove(listener);
+        }
+    }
+
+    private Object getPropertyValue(String name, String storeName) {
 		SharedPreferences preferences = preferenceService.getSharedPreferences(storeName);
 		if (preferences.contains(name))
 			return preferences.getAll().get(name);
@@ -183,5 +269,4 @@ public class PreferencesImpl implements Preferences {
 			editor.commit();
 		} 
 	}
-
 }

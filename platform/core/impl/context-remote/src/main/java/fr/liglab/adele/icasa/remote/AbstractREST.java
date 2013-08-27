@@ -15,11 +15,17 @@
  */
 package fr.liglab.adele.icasa.remote;
 
+import fr.liglab.adele.icasa.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.core.Response;
 
 public abstract class AbstractREST {
 
-	public static final String ICASA_REST_PROPERTY_NAME = "iCasa-REST";
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_REMOTE);
+
+    public static final String ICASA_REST_PROPERTY_NAME = "iCasa-REST";
 	
 	protected Response makeCORS(Response.ResponseBuilder req) {
 		Response.ResponseBuilder rb = req

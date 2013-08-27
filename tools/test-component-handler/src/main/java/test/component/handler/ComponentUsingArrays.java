@@ -15,22 +15,29 @@
  */
 package test.component.handler;
 
+
+import java.util.List;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 
-@Component
-@Instantiate
+//@Component
+//@Instantiate
 public class ComponentUsingArrays {
 
 	private Thread thread;
 	
 	@RequiresDevice(id="thermometers", type="field")
-	private Thermometer[] thermometers;
+	private BinaryLight[] lightsArray;
+	
+	@RequiresDevice(id="lights", type="field", specification="fr.liglab.adele.icasa.device.light.BinaryLight")
+	private List<BinaryLight> lightsList;
 
 	@Validate
 	private void start() {
@@ -47,13 +54,20 @@ public class ComponentUsingArrays {
 		
 		private boolean execute;
 		
+		private int counter = 0;
 		@Override
 		public void run() {
 			execute = true;
 			while (execute) {
 				try {
 	            Thread.sleep(1000);
-	            printLights();
+	            counter++;
+	            if (counter%2==0) {
+	            	printLightsList();
+	            } else {
+	            	printLightsArray();
+	            }
+	            
             } catch (InterruptedException e) {
 	            execute = false;
 	            e.printStackTrace();
@@ -61,11 +75,24 @@ public class ComponentUsingArrays {
 			}
 		}
 		
-		private void printLights() {
-			for (Thermometer thermometer : thermometers) {
+		private void printLightsList() {
+			System.out.println("Printing List");
+			System.out.println("=================================================");
+			for (BinaryLight light : lightsList) {
 				try {
-					System.out.println("------> Thermometer " + thermometer.getSerialNumber());
-					System.out.println("------> Thermometer " + thermometer.getTemperature());
+					System.out.println("------> BinalyLight " + light.getSerialNumber());
+            } catch (Exception e) {
+            	e.printStackTrace();
+            }
+         }
+      }
+		
+		private void printLightsArray() {
+			System.out.println("Printing Array");
+			System.out.println("=================================================");
+			for (BinaryLight light : lightsArray) {
+				try {
+					System.out.println("------> BinalyLight " + light.getSerialNumber());
             } catch (Exception e) {
             	e.printStackTrace();
             }

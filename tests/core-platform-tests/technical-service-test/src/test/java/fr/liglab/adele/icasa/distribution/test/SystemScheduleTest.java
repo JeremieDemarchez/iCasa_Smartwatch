@@ -65,7 +65,7 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
         // do nothing
 	}
 
-    public static Option helpBundles() {
+    public static Option addSystemProperties() {
 
         return new DefaultCompositeOption(
                 systemProperty( "iCasa.ThreadPool.default.maxThread" ).value( "10" ),
@@ -78,130 +78,130 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
     public Option[] configuration() {
 
         List<Option> lst = super.config();
-        lst.add(helpBundles());
+        lst.add(addSystemProperties());
         Option conf[] = lst.toArray(new Option[0]);
         return conf;
     }
 
-//	/**
-//	 * Test scheduling a periodic task.
-//	 */
-//	@Test
-//	public void scheduleAPeriodicTaskTest(){
-//
-//        PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
-//        when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
-//        when(mockPeriodic.getGroup()).thenReturn("group1");
-//        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        register.unregister();
-//        verify(mockPeriodic, atLeast(2)).run();
-//    }
-//
-//
-//    /**
-//     * Test scheduling one shot task.
-//     */
-//    @Test
-//    public void scheduleTaskTest(){
-//
-//        Date now = new Date();
-//        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
-//
-//        ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
-//        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
-//        when(spyTask.getGroup()).thenReturn("group1");
-//        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
-//
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        register.unregister();
-//        verify(spyTask,times(1)).run();//at least one run.
-//    }
-//
-//    /**
-//     * Test scheduling a task with null group.
-//     */
-//    @Test
-//    public void taskWithNullGroupTest(){
-//        PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
-//        when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
-//        when(mockPeriodic.getGroup()).thenReturn(null);
-//        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        register.unregister();
-//        verify(mockPeriodic, atLeast(2)).run();
-//    }
-//
-//    /**
-//     * Test .
-//     */
-//    @Test
-//    public void scheduleTaskWithNullGroupTest(){
-//
-//        Date now = new Date();
-//        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
-//
-//        ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
-//        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
-//        when(spyTask.getGroup()).thenReturn(null);
-//        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
-//
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        register.unregister();
-//        verify(spyTask,atLeast(1)).run();//at least one run.
-//    }
-//
-//    /**
-//     * Test scheduling one shot task.
-//     */
-//    @Test
-//    public void specificClockScheduleTaskTest(){
-//
-//        Date now = new Date();
-//        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
-//        Date secondTime = new Date(scheduledTime.getTime() + ONE_SECOND);
-//
-//        ManagedClock managedClock = new ManagedClock("specificClockTest-1");
-//        managedClock.setStartDate(now.getTime());
-//
-//        SpecificClockScheduledRunnable spyTask = mock(SpecificClockScheduledRunnable.class);
-//        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
-//        when(spyTask.getGroup()).thenReturn("group1");
-//        when(spyTask.getClock()).thenReturn(managedClock);
-//        ServiceRegistration register = context.registerService(SpecificClockScheduledRunnable.class.getName(), spyTask, new Hashtable());
-//
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        verify(spyTask, times(0)).run();//no run.
-//
-//        managedClock.setCurrentDate(secondTime);
-//        try {
-//            Thread.sleep(10000);
-//        } catch (InterruptedException e) {
-//            e.printStackTrace();
-//        }
-//        register.unregister();
-//        verify(spyTask,times(1)).run();//at least one run.
-//    }
+	/**
+	 * Test scheduling a periodic task.
+	 */
+	@Test
+	public void scheduleAPeriodicTaskTest(){
+
+        PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
+        when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
+        when(mockPeriodic.getGroup()).thenReturn("group1");
+        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
+        verify(mockPeriodic, atLeast(2)).run();
+    }
+
+
+    /**
+     * Test scheduling one shot task.
+     */
+    @Test
+    public void scheduleTaskTest(){
+
+        Date now = new Date();
+        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
+
+        ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
+        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
+        when(spyTask.getGroup()).thenReturn("group1");
+        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
+        verify(spyTask,times(1)).run();//at least one run.
+    }
+
+    /**
+     * Test scheduling a task with null group.
+     */
+    @Test
+    public void taskWithNullGroupTest(){
+        PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
+        when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
+        when(mockPeriodic.getGroup()).thenReturn(null);
+        ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
+        verify(mockPeriodic, atLeast(2)).run();
+    }
+
+    /**
+     * Test .
+     */
+    @Test
+    public void scheduleTaskWithNullGroupTest(){
+
+        Date now = new Date();
+        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
+
+        ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
+        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
+        when(spyTask.getGroup()).thenReturn(null);
+        ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
+        verify(spyTask,atLeast(1)).run();//at least one run.
+    }
+
+    /**
+     * Test scheduling one shot task.
+     */
+    @Test
+    public void specificClockScheduleTaskTest(){
+
+        Date now = new Date();
+        Date scheduledTime = new Date(now.getTime() + ONE_SECOND*5);//Scheduled in 5 seconds from now
+        Date secondTime = new Date(scheduledTime.getTime() + ONE_SECOND);
+
+        ManagedClock managedClock = new ManagedClock("specificClockTest-1");
+        managedClock.setStartDate(now.getTime());
+
+        SpecificClockScheduledRunnable spyTask = mock(SpecificClockScheduledRunnable.class);
+        when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
+        when(spyTask.getGroup()).thenReturn("group1");
+        when(spyTask.getClock()).thenReturn(managedClock);
+        ServiceRegistration register = context.registerService(SpecificClockScheduledRunnable.class.getName(), spyTask, new Hashtable());
+
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        verify(spyTask, times(0)).run();//no run.
+
+        managedClock.setCurrentDate(secondTime);
+        try {
+            Thread.sleep(10000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        register.unregister();
+        verify(spyTask,times(1)).run();//at least one run.
+    }
 
     /**
      * Test scheduling one shot task.

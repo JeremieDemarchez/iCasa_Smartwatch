@@ -23,13 +23,18 @@ import java.net.URLConnection;
 import java.nio.CharBuffer;
 import java.util.List;
 
+import fr.liglab.adele.icasa.Constants;
 import org.apache.felix.service.command.CommandProcessor;
 import org.apache.felix.service.command.CommandSession;
 import org.apache.felix.service.command.Function;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScriptFunction implements Function {
 
-	/**
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
+
+    /**
 	 * The path of the script to be executed by gogo
 	 */
 	private final URI _scriptURI;
@@ -87,7 +92,7 @@ public class ScriptFunction implements Function {
 		int length = conn.getContentLength();
 
 		if (length == -1) {
-			System.err.println("eek! unknown Contentlength for: " + script);
+			logger.error("eek! unknown Contentlength for: " + script);
 			length = 10240;
 		}
 

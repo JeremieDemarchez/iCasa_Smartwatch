@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.service.scheduler.*;
 import fr.liglab.adele.icasa.service.scheduler.impl.task.OneShotTaskImpl;
@@ -42,9 +43,8 @@ public class Group  {
         this.name = config.getName();
         this.clock = clock;
         this.poolSize = config.getMaxThread();
-        this.logger = LoggerFactory.getLogger(Group.class.getName() + "-" + this.name);
-        executor = new SchedulerThreadPoolImpl(this.name, clock, poolSize);
-        new Thread(executor).start();
+        this.logger = LoggerFactory.getLogger(Constants.ICASA_LOG+".scheduler." + this.name);
+        start();
     }
 
     public String getName() {
@@ -62,6 +62,7 @@ public class Group  {
      * @return
      */
     public synchronized boolean submit(ScheduledRunnable runnable) {
+        logger.trace("Submitting ScheduledRunnable Task");
         TaskReferenceImpl taskRef = new OneShotTaskImpl(clock, runnable, new Long(runnable.getExecutionDate()));
         executor.addTask(taskRef);
         jobs.put(runnable, taskRef);
@@ -74,6 +75,7 @@ public class Group  {
      * @return
      */
     public synchronized boolean submit(SpecificClockScheduledRunnable runnable) {
+        logger.trace("Submitting SpecificClockScheduledRunnable Task");
         TaskReferenceImpl taskRef = new OneShotTaskImpl(runnable.getClock(), runnable, new Long(runnable.getExecutionDate()));
         executor.addTask(taskRef);
         jobs.put(runnable, taskRef);
@@ -87,6 +89,7 @@ public class Group  {
      * @return
      */
     public synchronized boolean submit(PeriodicRunnable runnable) {
+        logger.trace("Submitting PeriodicRunnable Task");
         TaskReferenceImpl taskRef = new PeriodicTaskImpl(clock, runnable, new Long(runnable.getPeriod()));
         executor.addTask(taskRef);
         jobs.put(runnable, taskRef);
@@ -99,6 +102,7 @@ public class Group  {
      * @return
      */
     public synchronized boolean submit(SpecificClockPeriodicRunnable runnable) {
+        logger.trace("Submitting SpecificClockPeriodicRunnable Task");
         TaskReferenceImpl taskRef = new PeriodicTaskImpl(runnable.getClock(), runnable, new Long(runnable.getPeriod()));
         executor.addTask(taskRef);
         jobs.put(runnable, taskRef);
@@ -121,11 +125,21 @@ public class Group  {
     }
 
     public synchronized void close() {
+        logger.trace("Closing");
         for (TaskReferenceImpl future : jobs.values()) {
+            logger.info("Removing job {}", future);
             future.cancel(true);
         }
         jobs.clear();
         executor.interrupt();
+        logger.trace("Closed");
+        executor = null;
+    }
+
+    public void start(){
+        logger.trace("Starting");
+        executor = new SchedulerThreadPoolImpl(this.name, this.clock, poolSize);
+        executor.start();
     }
 
 }

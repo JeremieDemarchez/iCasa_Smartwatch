@@ -15,6 +15,7 @@
 
 package fr.liglab.adele.icasa.access.impl;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
@@ -25,6 +26,8 @@ import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
@@ -41,6 +44,7 @@ import java.util.Collections;
 @Provides(specifications={AccessManagerRemote.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
 @Path(value="/policies")
 public class AccessManagerRemote extends AbstractREST {
+
 
     @Requires
     AccessManager manager;
@@ -143,8 +147,8 @@ public class AccessManagerRemote extends AbstractREST {
     @PUT
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/policy")
-    public Response updateApplicationAccess(String content){
+    @Path(value="/policy/{id}")
+    public Response updateApplicationAccess(@PathParam("id")String policyId, String content){
         return setRightAccess(content);
     }
     private String getAllRightAccess() {
@@ -190,9 +194,9 @@ public class AccessManagerRemote extends AbstractREST {
         JSONArray policies = new JSONArray();
         //add the policies. It is not a for to void non-deterministic identifiers.
         policies.put(getJSONPolicyType(0,DeviceAccessPolicy.HIDDEN));
-        policies.put(getJSONPolicyType(1,DeviceAccessPolicy.VISIBLE));
-        policies.put(getJSONPolicyType(2,DeviceAccessPolicy.PARTIAL));
-        policies.put(getJSONPolicyType(3,DeviceAccessPolicy.TOTAL));
+        policies.put(getJSONPolicyType(2,DeviceAccessPolicy.VISIBLE));
+        policies.put(getJSONPolicyType(3,DeviceAccessPolicy.PARTIAL));
+        policies.put(getJSONPolicyType(4,DeviceAccessPolicy.TOTAL));
         return policies.toString();
     }
     private JSONObject getJSONPolicyType(int id, DeviceAccessPolicy policy) throws JSONException {

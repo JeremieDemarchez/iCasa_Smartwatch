@@ -22,7 +22,7 @@ package fr.liglab.adele.icasa.access;
  */
 public enum DeviceAccessPolicy {
 
-    HIDDEN("hidden"), VISIBLE("visible"), PARTIAL("partial"), TOTAL("total");
+    HIDDEN("hidden"), TOHIDE("to-hide"), VISIBLE("visible"), PARTIAL("partial"), TOTAL("total");
 
     private final String name;
 
