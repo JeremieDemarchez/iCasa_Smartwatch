@@ -198,22 +198,36 @@ public class PreferencesImpl implements Preferences {
 
     @Override
     public void addApplicationPreferenceChangeListener(String applicationId, PreferenceChangeListener listener) {
-        //TODO implement it
+        createAppListenerIfNotExist(applicationId);
+        synchronized (_appPropListener){
+            List<PreferenceChangeListener> listeners = getAppPreferencesListeners(applicationId);
+            listeners.add(listener);
+        }
     }
 
     @Override
     public void removeApplicationPreferenceChangeListener(String applicationId, PreferenceChangeListener listener) {
-        //TODO implement it
+        synchronized (_appPropListener){
+            List<PreferenceChangeListener> listeners = getAppPreferencesListeners(applicationId);
+            listeners.remove(listener);
+        }
     }
 
     @Override
     public void addUserPreferenceChangeListener(String userId, PreferenceChangeListener listener) {
-        //TODO implement it
+        createUserListenerIfNotExist(userId);
+        synchronized (_userPropListeners){
+            List<PreferenceChangeListener> listeners = getUserPreferencesListeners(userId);
+            listeners.add(listener);
+        }
     }
 
     @Override
     public void removeUserPreferenceChangeListener(String userId, PreferenceChangeListener listener) {
-        //TODO implement it
+        synchronized (_userPropListeners){
+            List<PreferenceChangeListener> listeners = getUserPreferencesListeners(userId);
+            listeners.remove(listener);
+        }
     }
 
     @Override
@@ -231,20 +245,101 @@ public class PreferencesImpl implements Preferences {
     }
 
     private Object getPropertyValue(String name, String storeName) {
-		SharedPreferences preferences = preferenceService.getSharedPreferences(storeName);
+		SharedPreferences preferences = getSharedPreferences(storeName);
 		if (preferences.contains(name))
 			return preferences.getAll().get(name);
 		return null;
 	}
 
 	private Set<String> getPropertiesNames(String storeName) {
-		SharedPreferences preferences = preferenceService.getSharedPreferences(storeName);
+		SharedPreferences preferences = getSharedPreferences(storeName);
 		Map<String, ?> preferencesMap = preferences.getAll();
 		return preferencesMap.keySet();		
 	}
-	
+
+    private SharedPreferences getSharedPreferences(String storeName){
+        SharedPreferences preferences = preferenceService.getSharedPreferences(storeName);
+        return preferences;
+    }
+
+    /**
+     * Create a OnSharePreferenceChange listener for the user shared preference, if not exist.
+     * @param userId
+     */
+    private void createUserListenerIfNotExist(final String userId) {
+        OnSharedPreferenceChangeListener serviceListener =  _userPropListener.get(userId);
+        if(serviceListener == null){
+            serviceListener = new OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    List<PreferenceChangeListener> listeners =  getUserPreferencesListeners(userId);
+                    Object value = getUserPropertyValue(userId, key);
+                    for (PreferenceChangeListener listener : listeners) {
+                        try {
+                            listener.changedProperty(key, null, value);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            _userPropListener.put(userId, serviceListener);
+            SharedPreferences preferences = preferenceService.getSharedPreferences(USER_PREFIX + userId);
+            preferences.registerOnSharedPreferenceChangeListener(serviceListener);
+        }
+    }
+
+    /**
+     * Creates a OnSharePreferenceChange listener for the app if not exist.
+     * @param appId
+     */
+    private void createAppListenerIfNotExist(final String appId) {
+        OnSharedPreferenceChangeListener serviceListener =  _appPropListener.get(appId);
+        if(serviceListener == null){
+            serviceListener = new OnSharedPreferenceChangeListener() {
+                @Override
+                public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
+                    List<PreferenceChangeListener> listeners =  getAppPreferencesListeners(appId);
+                    Object value = getApplicationPropertyValue(appId, key);
+                    for (PreferenceChangeListener listener : listeners) {
+                        try {
+                            listener.changedProperty(key, null, value);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            };
+            _appPropListener.put(appId, serviceListener);
+            SharedPreferences preferences = preferenceService.getSharedPreferences( APP_PREFIX + appId);
+            preferences.registerOnSharedPreferenceChangeListener(serviceListener);
+        }
+    }
+
+    private List<PreferenceChangeListener> getUserPreferencesListeners(String userId){
+        synchronized (_userPropListeners){
+            List<PreferenceChangeListener> listeners = _userPropListeners.get(userId);
+            if(listeners == null){
+                listeners = new ArrayList<PreferenceChangeListener>();
+                _userPropListeners.put(userId, listeners);
+            }
+            return listeners;
+        }
+    }
+
+    private List<PreferenceChangeListener> getAppPreferencesListeners(String userId){
+        synchronized (_appPropListeners){
+            List<PreferenceChangeListener> listeners = _appPropListeners.get(userId);
+            if(listeners == null){
+                listeners = new ArrayList<PreferenceChangeListener>();
+                _appPropListeners.put(userId, listeners);
+            }
+            return listeners;
+        }
+    }
+
 	private void setPropertyValue(String name, Object value, String storeName) {
-		SharedPreferences preferences = preferenceService.getSharedPreferences(storeName);
+		SharedPreferences preferences = getSharedPreferences(storeName);
 		SharedPreferences.Editor editor = preferences.edit();
 
 		if (value instanceof String) {

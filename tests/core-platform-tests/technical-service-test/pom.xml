@@ -35,6 +35,10 @@
          <artifactId>technical.services.api</artifactId>
          <version>${project.version}</version>
       </dependency>
+        <dependency>
+            <groupId>org.ow2.chameleon.sharedprefs</groupId>
+            <artifactId>shared-preferences-service</artifactId>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo</artifactId>
@@ -129,7 +133,7 @@
             <version>2.5</version>
             <configuration>
                <systemPropertyVariables>
-                  <ipojo.processing.synchronous>true</ipojo.processing.synchronous>
+                  <ipojo.processing.synchronous>false</ipojo.processing.synchronous>
                </systemPropertyVariables>
             </configuration>
          </plugin>
