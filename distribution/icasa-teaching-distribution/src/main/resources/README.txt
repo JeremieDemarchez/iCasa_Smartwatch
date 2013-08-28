@@ -18,6 +18,5 @@ Recommended browser:
 
 Supported browsers:
 - Firefox
-- Chrome
 
 Open a web browser on url http://localhost:9000/ to get home simulator screen.

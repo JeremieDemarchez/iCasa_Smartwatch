@@ -18,5 +18,4 @@
 -->
 <library id="default" name="Default widgets for iCasa predefined devices">
     <widget id="presenceSensor" />
-    <plugin id="fake" />
 </library>
