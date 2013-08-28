@@ -37,4 +37,13 @@ public interface ApplicationTracker {
 	 * @param app an application
 	 */
 	public void removeApplication(Application app);
+	
+	public void deploymentPackageAdded(Application app, String symbolicName);
+	
+	public void deploymentPackageRemoved(Application app, String symbolicName);
+	
+	public void bundleAdded(Application app, String symbolicName);
+	
+	public void bundleRemoved(Application app, String symbolicName);
+	
 }

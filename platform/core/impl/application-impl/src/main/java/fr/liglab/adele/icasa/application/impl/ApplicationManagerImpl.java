@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.application.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -64,322 +65,355 @@ import org.slf4j.LoggerFactory;
 @Provides(specifications = { ApplicationManager.class, EventHandler.class }, properties = { @StaticServiceProperty(name = EventConstants.EVENT_TOPIC, type = "java.lang.String[]", value = "{org/osgi/service/deployment/COMPLETE}") })
 public class ApplicationManagerImpl implements ApplicationManager, EventHandler {
 
-    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG+".applications");
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + ".applications");
 
     @Requires
-	DeploymentAdmin deploymentAdmin;
+    DeploymentAdmin deploymentAdmin;
 
-	/**
-	 * Platform Categories list
-	 */
-	private List<ApplicationCategory> _categories = new ArrayList<ApplicationCategory>();
+    /**
+     * Platform Categories list
+     */
+    private List<ApplicationCategory> _categories = new ArrayList<ApplicationCategory>();
 
-	/**
-	 * List of application trackers
-	 */
-	private List<ApplicationTracker> _listeners = new ArrayList<ApplicationTracker>();
+    /**
+     * List of application trackers
+     */
+    private List<ApplicationTracker> _listeners = new ArrayList<ApplicationTracker>();
 
-	/**
-	 * Map keeping the record of applications
-	 */
-	private Map<String, ApplicationImpl> _appPerId = new HashMap<String, ApplicationImpl>();
+    /**
+     * Map keeping the record of applications
+     */
+    private Map<String, ApplicationImpl> _appPerId = new HashMap<String, ApplicationImpl>();
 
-	private ApplicationCategoryImpl _undefinedCateg;
+    private ApplicationCategoryImpl _undefinedCateg;
 
-	private BundleContext _context;
+    private BundleContext _context;
 
-	private ReadWriteLock lock = new ReentrantReadWriteLock();
+    private ReadWriteLock lock = new ReentrantReadWriteLock();
 
-	private Lock readLock = lock.readLock();
+    private Lock readLock = lock.readLock();
 
-	private Lock writeLock = lock.writeLock();
+    private Lock writeLock = lock.writeLock();
 
-	public ApplicationManagerImpl(BundleContext context) {
-		_context = context;
+    public ApplicationManagerImpl(BundleContext context) {
+        _context = context;
 
-		final ApplicationCategoryImpl humanSafeCateg = new ApplicationCategoryImpl("Human Safety");
-		_categories.add(humanSafeCateg);
-		_categories.add(new ApplicationCategoryImpl("Material Safety"));
-		final ApplicationCategoryImpl humanConfortCateg = new ApplicationCategoryImpl("Human Confort");
-		_categories.add(humanConfortCateg);
-		_categories.add(new ApplicationCategoryImpl("Energy Efficiency"));
-		_categories.add(new ApplicationCategoryImpl("Material Durability"));
-		_undefinedCateg = new ApplicationCategoryImpl("Undefined");
-		_categories.add(_undefinedCateg);
-	}
+        final ApplicationCategoryImpl humanSafeCateg = new ApplicationCategoryImpl("Human Safety");
+        _categories.add(humanSafeCateg);
+        _categories.add(new ApplicationCategoryImpl("Material Safety"));
+        final ApplicationCategoryImpl humanConfortCateg = new ApplicationCategoryImpl("Human Confort");
+        _categories.add(humanConfortCateg);
+        _categories.add(new ApplicationCategoryImpl("Energy Efficiency"));
+        _categories.add(new ApplicationCategoryImpl("Material Durability"));
+        _undefinedCateg = new ApplicationCategoryImpl("Undefined");
+        _categories.add(_undefinedCateg);
+    }
 
-	@Override
-	public List<ApplicationCategory> getCategories() {
-		return Collections.unmodifiableList(_categories);
-	}
+    @Override
+    public List<ApplicationCategory> getCategories() {
+        return Collections.unmodifiableList(_categories);
+    }
 
-	@Override
-	public List<Application> getApplications() {
-		readLock.lock();
-		Collection<ApplicationImpl> appsCollection = _appPerId.values();
-		readLock.unlock();
-		return Collections.unmodifiableList(new ArrayList<Application>(appsCollection));
-	}
+    @Override
+    public List<Application> getApplications() {
+        readLock.lock();
+        Collection<ApplicationImpl> appsCollection = _appPerId.values();
+        readLock.unlock();
+        return Collections.unmodifiableList(new ArrayList<Application>(appsCollection));
+    }
 
-	@Override
-	public Application getApplication(String appId) {
-		readLock.lock();
-		Application app = _appPerId.get(appId);
-		readLock.unlock();
-		return app;
-	}
+    @Override
+    public Application getApplication(String appId) {
+        readLock.lock();
+        Application app = _appPerId.get(appId);
+        readLock.unlock();
+        return app;
+    }
 
-	@Override
-	public void addApplicationListener(ApplicationTracker listener) {
-		synchronized (_listeners) {
-			_listeners.add(listener);
-			notifyCurrentApplicationSet(listener);
-		}
-	}
+    @Override
+    public void addApplicationListener(ApplicationTracker listener) {
+        writeLock.lock();
+        _listeners.add(listener);
+        writeLock.unlock();
+        notifyCurrentApplicationSet(listener);
+    }
 
-	@Override
-	public void removeApplicationListener(ApplicationTracker listener) {
-		synchronized (_listeners) {
-			_listeners.remove(listener);
-			notifyStop(listener);
-		}
-	}
+    @Override
+    public void removeApplicationListener(ApplicationTracker listener) {
+        synchronized (_listeners) {
+            _listeners.remove(listener);
+            notifyStop(listener);
+        }
+    }
 
-	private void notifyCurrentApplicationSet(ApplicationTracker listener) {
-		for (Application app : getApplications()) {
-			listener.addApplication(app);
-		}
-	}
+    private void notifyDeploymentPackagedAdded(Application app, DeploymentPackageRepresentation dpRepresentation) {
+        readLock.lock();
+        List<ApplicationTracker> listenersCopy = Collections.unmodifiableList(_listeners);
+        readLock.unlock();
 
-	@Validate
-	public void start() {
-		logger.debug("start");
-		DeploymentPackage[] packages = deploymentAdmin.listDeploymentPackages();
-      // Installing the deployment packages presents in the platform
-		for (DeploymentPackage deploymentPackage : packages) {
-	      onDeploymePackageArrival(deploymentPackage);
-      }
-		
-		synchronized (_listeners) {
-			for (ApplicationTracker listener : _listeners) {
-				notifyCurrentApplicationSet(listener);
-			}
-		}
-	}
+        for (ApplicationTracker listener : listenersCopy) {
+            listener.deploymentPackageAdded(app, dpRepresentation.getName());
+            for (String bundleId : dpRepresentation.getBundleIds()) {
+                listener.bundleAdded(app, bundleId);
+            }
+        }
+    }
 
-	@Invalidate
-	public void stop() {
+    private void notifyDeploymentPackagedRemoved(Application app, DeploymentPackageRepresentation dpRepresentation) {
+        readLock.lock();
+        List<ApplicationTracker> listenersCopy = Collections.unmodifiableList(_listeners);
+        readLock.unlock();
+
+        for (ApplicationTracker listener : listenersCopy) {
+            listener.deploymentPackageRemoved(app, dpRepresentation.getName());
+            for (String bundleId : dpRepresentation.getBundleIds()) {
+                listener.bundleRemoved(app, bundleId);
+            }
+        }
+    }
+
+    private void notifyApplicationAdded(Application app) {
+        readLock.lock();
+        List<ApplicationTracker> listenersCopy = Collections.unmodifiableList(_listeners);
+        readLock.unlock();
+
+        for (ApplicationTracker listener : listenersCopy) {
+            listener.addApplication(app);
+        }
+    }
+
+    private void notifyApplicationRemoved(Application app) {
+        readLock.lock();
+        List<ApplicationTracker> listenersCopy = Collections.unmodifiableList(_listeners);
+        readLock.unlock();
+
+        for (ApplicationTracker listener : listenersCopy) {
+            listener.removeApplication(app);
+        }
+    }
+
+    private void notifyCurrentApplicationSet(ApplicationTracker listener) {
+        for (Application app : getApplications()) {
+            listener.addApplication(app);
+            ApplicationImpl tempApp = (ApplicationImpl) app;
+            List<DeploymentPackageRepresentation> dps = tempApp.getAllDeploymentPackageRepresentations();
+            for (DeploymentPackageRepresentation deploymentPackageRepresentation : dps) {
+                listener.deploymentPackageAdded(tempApp, deploymentPackageRepresentation.getName());
+                
+                Set<String> bundlesIds = deploymentPackageRepresentation.getBundleIds();
+                for (String bundleId : bundlesIds) {
+                    listener.bundleAdded(tempApp, bundleId);
+                }
+            }                      
+        }
+    }
+
+    private void notifyStop(ApplicationTracker listener) {
+        for (Application app : getApplications()) {
+            listener.removeApplication(app);
+            
+            ApplicationImpl tempApp = (ApplicationImpl) app;
+            List<DeploymentPackageRepresentation> dps = tempApp.getAllDeploymentPackageRepresentations();
+            for (DeploymentPackageRepresentation deploymentPackageRepresentation : dps) {
+                listener.deploymentPackageRemoved(tempApp, deploymentPackageRepresentation.getName());
+                
+                Set<String> bundlesIds = deploymentPackageRepresentation.getBundleIds();
+                for (String bundleId : bundlesIds) {
+                    listener.bundleRemoved(tempApp, bundleId);
+                }
+            }              
+        }
+    }
+
+    @Validate
+    public void start() {
+        logger.debug("start");
+        DeploymentPackage[] packages = deploymentAdmin.listDeploymentPackages();
+
+        // Installing the deployment packages presents in the platform
+        for (DeploymentPackage deploymentPackage : packages) {
+            onDeploymePackageArrival(deploymentPackage);
+        }
+
+        readLock.lock();
+        List<ApplicationTracker> listenersCopy = Collections.unmodifiableList(_listeners);
+        readLock.unlock();
+
+        for (ApplicationTracker listener : listenersCopy) {
+            notifyCurrentApplicationSet(listener);
+        }
+
+    }
+
+    @Invalidate
+    public void stop() {
         logger.debug("stop");
-		synchronized (_listeners) {
-			for (ApplicationTracker listener : _listeners) {
-				notifyStop(listener);
-			}
-		}
-		_appPerId.clear();
-	}
 
-	private void notifyStop(ApplicationTracker listener) {
-		for (Application app : getApplications()) {
-			listener.removeApplication(app);
-		}
-	}
+        readLock.lock();
+        List<ApplicationTracker> listenersCopy = Collections.unmodifiableList(_listeners);
+        readLock.unlock();
 
-	@Override
-	public Application getApplicationOfBundle(String bundleSymbolicName) {
-		Application resultApp = null;
-		readLock.lock();
-		for (ApplicationImpl app : _appPerId.values()) {
-			if (app.constainsBundle(bundleSymbolicName)) {
-				resultApp = app;
-				break;
-			}
-		}
-		readLock.unlock();
-		return resultApp;
-	}
+        for (ApplicationTracker listener : listenersCopy) {
+            notifyStop(listener);
+        }
 
-	private Application getApplicationOfDeploymentPackage(String dpSymbolicName) {
-		Application resultApp = null;
-		readLock.lock();
-		for (ApplicationImpl app : _appPerId.values()) {
-			if (app.containsDeploymentPackageRepresentation(dpSymbolicName)) {
-				resultApp = app;
-				break;
-			}
-		}
-		readLock.unlock();
-		return resultApp;
-	}
+        writeLock.lock();
+        _appPerId.clear();
+        writeLock.unlock();
+    }
 
-	private void onDeploymePackageArrival(DeploymentPackage deploymentPackage) {
+    @Override
+    public Application getApplicationOfBundle(String bundleSymbolicName) {
+        Application resultApp = null;
+        readLock.lock();
+        for (ApplicationImpl app : _appPerId.values()) {
+            if (app.constainsBundle(bundleSymbolicName)) {
+                resultApp = app;
+                break;
+            }
+        }
+        readLock.unlock();
+        return resultApp;
+    }
+
+    private Application getApplicationOfDeploymentPackage(String dpSymbolicName) {
+        Application resultApp = null;
+        readLock.lock();
+        for (ApplicationImpl app : _appPerId.values()) {
+            if (app.containsDeploymentPackageRepresentation(dpSymbolicName)) {
+                resultApp = app;
+                break;
+            }
+        }
+        readLock.unlock();
+        return resultApp;
+    }
+
+    private void onDeploymePackageArrival(DeploymentPackage deploymentPackage) {
         logger.debug("DP arrival " + deploymentPackage.getName());
-		String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
-		if (appId == null) // not an application deployment package
-			return;
+        String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
+        if (appId == null) // not an application deployment package
+            return;
 
-		// String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER);
-		String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
-		if (appVersion == null) { // version is mandatory
-			// ignore if version is not provided
-			logger.error("Deployment Package " + deploymentPackage.getName()
-			      + " must specify an application version.");
-			return;
-		}
+        // String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER);
+        String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
+        if (appVersion == null) { // version is mandatory
+            // ignore if version is not provided
+            logger.error("Deployment Package " + deploymentPackage.getName() + " must specify an application version.");
+            return;
+        }
 
-		writeLock.lock();
+        writeLock.lock();
 
-		ApplicationImpl app = _appPerId.get(appId);
-		boolean isNewApp = (app == null);
+        ApplicationImpl app = _appPerId.get(appId);
+        boolean isNewApp = (app == null);
 
-		if (isNewApp) {
+        if (isNewApp) {
             logger.debug("New application detected: " + appId);
-			app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
-			app.setVersion(appVersion);
-			app.setState(ApplicationState.STOPED);
-		}
+            app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
+            app.setVersion(appVersion);
+            app.setState(ApplicationState.STOPED);
+        }
 
-		app.addDeploymentPackageRepresentation(DeploymentPackageRepresentation
-		      .builFromDeploymentPackage(deploymentPackage));
+        DeploymentPackageRepresentation dpRepresentation = DeploymentPackageRepresentation
+                .builFromDeploymentPackage(deploymentPackage);
 
-		_appPerId.put(app.getId(), app);
+        app.addDeploymentPackageRepresentation(dpRepresentation);
 
-		writeLock.unlock();
+        _appPerId.put(app.getId(), app);
 
-		// Notifies listeners if is a new app
-		if (isNewApp) {
-			readLock.lock();
-			for (ApplicationTracker listener : _listeners) {
-				listener.addApplication(app);
-			}
-			readLock.unlock();
-		}
-	}
+        writeLock.unlock();
 
-	private void onDeploymePackageDeparture(String dpSymbolicName) {
+        // Notifies listeners if is a new app
+        if (isNewApp) {
+            notifyApplicationAdded(app);
+        }
+
+        // Notifies listeners of new deployment packages arrival
+        notifyDeploymentPackagedAdded(app, dpRepresentation);
+    }
+
+    private void onDeploymePackageDeparture(String dpSymbolicName) {
         logger.debug("DP is leaving: " + dpSymbolicName);
         ApplicationImpl tempApp = (ApplicationImpl) getApplicationOfDeploymentPackage(dpSymbolicName);
 
-		if (tempApp == null) // The deployment package is not in the application registry
-			return;
+        if (tempApp == null) // The deployment package is not in the application registry
+            return;
 
-		writeLock.lock();
-		tempApp.removeDeploymentPackageRepresentation(dpSymbolicName);
-		if (tempApp.isEmptyApplication()) {
-            logger.debug("Removing empty application: " + tempApp.getId());
-			_appPerId.remove(tempApp.getId());
-			for (ApplicationTracker listener : _listeners) {
-				listener.removeApplication(tempApp);
-			}
-		}
-		writeLock.unlock();
-	}
+        DeploymentPackageRepresentation dpRepresentation = tempApp.getDeploymentPackageRepresentation(dpSymbolicName);
 
-	/*
-	 * private void onDeploymePackageArrival2(DeploymentPackage deploymentPackage) { String appId = (String)
-	 * deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER); if (appId == null) // not an application deployment
-	 * package return;
-	 * 
-	 * // String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER); String appVersion =
-	 * (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER); if (appVersion == null) { // version
-	 * is mandatory // ignore if version is not provided _logger.log(LogService.LOG_ERROR, "Deployment Package " +
-	 * deploymentPackage.getName() + " must specify an application version."); return; }
-	 * 
-	 * writeLock.lock();
-	 * 
-	 * Application app = _appPerId.get(appId); boolean isNewApp = (app == null);
-	 * 
-	 * if (isNewApp) { ApplicationImpl tempApp = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
-	 * tempApp.setVersion(appVersion); tempApp.setState(ApplicationState.STOPED); _appPerId.put(tempApp.getId(),
-	 * tempApp);
-	 * 
-	 * app = tempApp; }
-	 * 
-	 * // cannot have multiple versions of the same app final String symbolicName = deploymentPackage.getName();
-	 * _appPerDeploymentPackage.put(symbolicName, app);
-	 * 
-	 * // Adding the bundles contained in the deployment packaged to application Set<String> bundleIds =
-	 * _bundlesPerAppId.get(app); if (bundleIds == null) { bundleIds = new HashSet<String>(); _bundlesPerAppId.put(app,
-	 * bundleIds); } bundleIds.addAll(getBundlesNamesFromDeploymentPackage(deploymentPackage));
-	 * 
-	 * writeLock.unlock();
-	 * 
-	 * // Notifies listeners if is a new app if (isNewApp) { readLock.lock(); for (ApplicationTracker listener :
-	 * _listeners) { listener.addApplication(app); } readLock.unlock(); } }
-	 * 
-	 * private void onDeploymePackageDeparture2(DeploymentPackage deploymentPackage) { synchronized
-	 * (_appPerDeploymentPackage) { final String symbolicName = deploymentPackage.getName(); Application app =
-	 * _appPerDeploymentPackage.remove(symbolicName);
-	 * 
-	 * if (app == null) // The deployment package is not in the app registry return;
-	 * 
-	 * Set<String> bundleIds = _bundlesPerAppId.get(app); if (bundleIds != null)
-	 * bundleIds.removeAll(getBundlesNamesFromDeploymentPackage(deploymentPackage));
-	 * 
-	 * _appPerId.remove(app.getId());
-	 * 
-	 * // Listeners notification synchronized (_listeners) { for (ApplicationTracker listener : _listeners) {
-	 * listener.removeApplication(app); } } } }
-	 * 
-	 * 
-	 * private Set<String> getBundlesNamesFromDeploymentPackage(DeploymentPackage deploymentPackage) { Set<String>
-	 * bundles = new HashSet<String>(); if (deploymentPackage != null) { BundleInfo[] bundleInfos =
-	 * deploymentPackage.getBundleInfos(); for (BundleInfo bundleInfo : bundleInfos) {
-	 * bundles.add(bundleInfo.getSymbolicName()); } } return bundles; }
-	 */
+        if (dpRepresentation != null) {
+            tempApp.removeDeploymentPackageRepresentation(dpSymbolicName);
+            
+            // Notifies that the deployment packages has been removed
+            notifyDeploymentPackagedRemoved(tempApp, dpRepresentation);
+            
+            if (tempApp.isEmptyApplication()) {
+                logger.debug("Removing empty application: " + tempApp.getId());
+                writeLock.lock();
+                _appPerId.remove(tempApp.getId());
+                writeLock.unlock();
+                
+                // Notifies that application has been removed
+                notifyApplicationRemoved(tempApp);
+            }
 
-	public Set<Bundle> getBundles(String appId) {
-		Application app = getApplication(appId);
-		if (app == null)
-			return Collections.emptySet();
+        }
+    }
 
-		ApplicationImpl tempApp = (ApplicationImpl) app;
-		Set<String> bundleIds = tempApp.getBundlesIds();
+    public Set<Bundle> getBundles(String appId) {
+        Application app = getApplication(appId);
+        if (app == null)
+            return Collections.emptySet();
 
-		Set<Bundle> bundles = new HashSet<Bundle>();
-		for (String bundleId : bundleIds) {
-			Bundle bundle = getBundle(bundleId);
-			bundles.add(bundle);
-		}
-		return bundles;
-	}
+        ApplicationImpl tempApp = (ApplicationImpl) app;
+        Set<String> bundleIds = tempApp.getBundlesIds();
 
-	private Bundle getBundle(String symbolicName) {
-		Bundle result = null;
-		for (Bundle candidate : _context.getBundles()) {
-			if (symbolicName.equals(candidate.getSymbolicName())) {
-				if (result == null || result.getVersion().compareTo(candidate.getVersion()) < 0) {
-					result = candidate;
-				}
-			}
-		}
-		return result;
-	}
+        Set<Bundle> bundles = new HashSet<Bundle>();
+        for (String bundleId : bundleIds) {
+            Bundle bundle = getBundle(bundleId);
+            bundles.add(bundle);
+        }
+        return bundles;
+    }
 
-	@Override
-	public boolean isApplicationBundle(Bundle bundle) {
-		return getApplicationOfBundle(bundle.getSymbolicName()) != null;
-	}
+    private Bundle getBundle(String symbolicName) {
+        Bundle result = null;
+        for (Bundle candidate : _context.getBundles()) {
+            if (symbolicName.equals(candidate.getSymbolicName())) {
+                if (result == null || result.getVersion().compareTo(candidate.getVersion()) < 0) {
+                    result = candidate;
+                }
+            }
+        }
+        return result;
+    }
 
-	@Override
-	public void handleEvent(Event event) {
-		String topic = event.getTopic();
+    @Override
+    public boolean isApplicationBundle(Bundle bundle) {
+        return getApplicationOfBundle(bundle.getSymbolicName()) != null;
+    }
 
-		// Notification confirming the installation or uninstallation of a Deployment Package
-		if (topic.equals("org/osgi/service/deployment/COMPLETE")) {
-			boolean sucessfull = (Boolean) event.getProperty("successful");
-			if (!sucessfull)
-				return;
-			String dpSymbolicName = (String) event.getProperty(DeploymentPackage.EVENT_DEPLOYMENTPACKAGE_NAME);
-			DeploymentPackage deploymentPackage = deploymentAdmin.getDeploymentPackage(dpSymbolicName);
-			if (deploymentPackage != null) { // Installation Confirmation
-				String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
-				String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
-				if (appId != null && appVersion != null) // iCasa App Deployment Package
-					onDeploymePackageArrival(deploymentPackage);
-			} else { // unInstallation Confirmation
-				onDeploymePackageDeparture(dpSymbolicName);
-			}
-		}
-	}
+    @Override
+    public void handleEvent(Event event) {
+        String topic = event.getTopic();
+
+        // Notification confirming the installation or uninstallation of a Deployment Package
+        if (topic.equals("org/osgi/service/deployment/COMPLETE")) {
+            boolean sucessfull = (Boolean) event.getProperty("successful");
+            if (!sucessfull)
+                return;
+            String dpSymbolicName = (String) event.getProperty(DeploymentPackage.EVENT_DEPLOYMENTPACKAGE_NAME);
+            DeploymentPackage deploymentPackage = deploymentAdmin.getDeploymentPackage(dpSymbolicName);
+            if (deploymentPackage != null) { // Installation Confirmation
+                String appId = (String) deploymentPackage.getHeader(Application.APP_ID_BUNDLE_HEADER);
+                String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
+                if (appId != null && appVersion != null) // iCasa App Deployment Package
+                    onDeploymePackageArrival(deploymentPackage);
+            } else { // unInstallation Confirmation
+                onDeploymePackageDeparture(dpSymbolicName);
+            }
+        }
+    }
 
 }
