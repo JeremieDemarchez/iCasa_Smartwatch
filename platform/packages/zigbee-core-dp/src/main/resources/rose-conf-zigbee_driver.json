@@ -11,12 +11,12 @@
 				}
 				
 		],
-		
+		"_info": "zigbee.driver.port can be setted when launging java -Dzigbee.driver.port=/dev/USBtty0, or in the felix config file",
 		"component" : [
 			{ 
 			  "factory" : "zigbee.driver.impl",
 			  "properties" : {
-			  "serial.port" : "COM3", 
+			  "zigbee.driver.port" : "COM3", 
 			  "baud.rate" : "115200"} 
 			},
 			{ 
@@ -28,3 +28,4 @@
 		]
 	}
 }
+

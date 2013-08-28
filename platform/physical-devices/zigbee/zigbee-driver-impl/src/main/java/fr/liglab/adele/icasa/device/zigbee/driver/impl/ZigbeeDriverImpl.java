@@ -25,6 +25,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
 
+import fr.liglab.adele.icasa.Constants;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -32,6 +33,7 @@ import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,11 +55,15 @@ import fr.liglab.adele.icasa.device.zigbee.driver.serial.model.ResponseType;
 public class ZigbeeDriverImpl implements ZigbeeDriver {
 
 	private SerialPortHandler handler;
+
+    private final BundleContext context;
 	
 	private static final Logger logger = LoggerFactory
-			.getLogger(ZigbeeDriverImpl.class);
+			.getLogger(Constants.ICASA_LOG_DEVICE + ".zigbee");
 
-	@Property(mandatory = false, value = "COM3", name = "serial.port")
+    private static final String SERIAL_PORT_PROPERTY = "zigbee.driver.port";
+
+	@Property(mandatory = false, value = "COM3", name = SERIAL_PORT_PROPERTY)
 	private String port;
 
 	@Property(name = "baud.rate", mandatory = false, value = "115200")
@@ -65,7 +71,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 
 	/* @GardedBy(trackers) */
 	private List<ZigbeeDeviceTracker> trackers;
-	
+
 	public List<ZigbeeDeviceTracker> getTrackers() {
 		synchronized(trackers) {
 			return new ArrayList<ZigbeeDeviceTracker>(trackers);
@@ -102,9 +108,10 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 		}
 	}
 
-	public ZigbeeDriverImpl() throws IOException {
+	public ZigbeeDriverImpl( BundleContext bundleContext) throws IOException {
 		handler = new SerialPortHandler(this);
 		trackers = new ArrayList<ZigbeeDeviceTracker>();
+        context = bundleContext;
 	}
 
 	@Validate
@@ -114,7 +121,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 			@Override
 			public void run() {
 				try {
-					handler.startListening(port, baud);
+					handler.startListening(getCOMPort(), baud);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
@@ -137,6 +144,12 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 	 */
 	@Override
 	public String getCOMPort() {
+        String givenPort = context.getProperty(SERIAL_PORT_PROPERTY);
+        if(givenPort == null || givenPort.length()>0){
+            logger.info("Get port: "+ givenPort+ " from property: " + SERIAL_PORT_PROPERTY);
+            return givenPort;
+        }
+        logger.warn("Get port: "+ givenPort+ " from component: " + SERIAL_PORT_PROPERTY);
 		return port;
 	}
 

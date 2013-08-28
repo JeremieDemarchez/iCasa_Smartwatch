@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.device.zigbee.driver.serial;
 
 /**
- * 
+ *
  */
 
 import java.io.DataInputStream;
@@ -32,6 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import fr.liglab.adele.icasa.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,16 +48,17 @@ import gnu.io.NRSerialPort;
 
 /**
  * Class managing the serial port data input/output.
- * 
+ *
  * @author Kettani Mehdi.
  */
 public class SerialPortHandler {
 
 	private static final Logger logger = LoggerFactory
-			.getLogger(SerialPortHandler.class);
-	private boolean socketOpened = true;
+			.getLogger(Constants.ICASA_LOG_DEVICE+".zigbee");
+	private volatile boolean socketOpened = true;
 	private DataInputStream ins = null;
 	private DataOutputStream ous = null;
+    private Object streamLock = new Object();
 	private Map<String /* module address */, ScheduledFuture<?>> deviceDiscoveryList = new HashMap<String, ScheduledFuture<?>>();
 	/* @GardedBy(deviceList) */
 	private Map<String /* module address */, DeviceInfo> deviceList = new HashMap<String, DeviceInfo>();
@@ -81,51 +83,29 @@ public class SerialPortHandler {
 
 	/**
 	 * Start listening on the given serial port.
-	 * 
-	 * @param args
+	 *
+	 * @param port
 	 * @throws IOException
 	 */
 	public void startListening(String port, int baud) throws IOException {
 
 		NRSerialPort serial = new NRSerialPort(port, baud);
 		serial.connect();
-		ins = new DataInputStream(serial.getInputStream());
-		ous = new DataOutputStream(serial.getOutputStream());
-
-		List<Byte> sb = new ArrayList<Byte>();
+        synchronized (streamLock){
+		    ins = new DataInputStream(serial.getInputStream());
+		    ous = new DataOutputStream(serial.getOutputStream());
+        }
 
 		try {
 			while (socketOpened) {
-				byte b = (byte) ins.read();
-
-				if (b != -1 && b != 0x0d) {
-					// logger.debug((char) b + " : " + b);
-					sb.add(b);
-				} else {
-					if (b == 0x0d) {
-						// flush buffer and parse data
-						parseData(sb);
-						sb.clear();
-					}
-					
-				}
-				// TODO stocker les ecritures et les executer apres le read
+                List<Byte> sb = read();
+                if(sb.size()>0){
+                    parseData(sb);
+                    sb.clear();
+                }
 			}
 		} finally {
-			if (ins != null) {
-				try {
-					ins.close();
-				} catch (IOException e) {
-					logger.error("Exception while closing inputstream : ", e);
-				}
-			}
-			if (ous != null) {
-				try {
-					ous.close();
-				} catch (IOException e) {
-					logger.error("Exception while closing outputstream : ", e);
-				}
-			}
+			closeStreams();
 			serial.disconnect();
 		}
 	}
@@ -136,7 +116,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Parse data from the list of byte read.
-	 * 
+	 *
 	 * @param sb
 	 * @return
 	 * @throws IOException
@@ -236,7 +216,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Build a response for the specified frame type.
-	 * 
+	 *
 	 * @param responseType
 	 * @param moduleAddress
 	 * @return
@@ -263,7 +243,7 @@ public class SerialPortHandler {
 	/**
 	 * Build a response for the specified frame type and sets a new value for
 	 * the device.
-	 * 
+	 *
 	 * @param responseType
 	 * @param moduleAddress
 	 * @param newValue
@@ -292,7 +272,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Parse the frame type from the frame list of bytes given in parameter.
-	 * 
+	 *
 	 * @param sb
 	 * @return
 	 */
@@ -302,7 +282,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Parse the module address in this frame.
-	 * 
+	 *
 	 * @param sb
 	 * @return
 	 */
@@ -312,7 +292,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Parse the battery level in this frame.
-	 * 
+	 *
 	 * @param sb
 	 * @return
 	 */
@@ -322,7 +302,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Parse the data value in this frame.
-	 * 
+	 *
 	 * @param sb
 	 * @return
 	 */
@@ -332,7 +312,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Check if checksum is correct.
-	 * 
+	 *
 	 * @param sb
 	 * @return
 	 */
@@ -355,7 +335,7 @@ public class SerialPortHandler {
 
 	/**
 	 * Convert a list of bytes into characters.
-	 * 
+	 *
 	 * @param byteList
 	 * @return
 	 */
@@ -373,22 +353,42 @@ public class SerialPortHandler {
 
 	/**
 	 * Write a list of bytes into this outputStream.
-	 * 
+	 *
 	 * @param data
 	 * @throws IOException
 	 */
-	private synchronized void write(List<Byte> data) throws IOException {
-
-		if (ous != null) {
-			for (Byte b : data) {
-				ous.write(b.byteValue());
-			}
-		}
+	private void write(List<Byte> data) throws IOException {
+        synchronized (streamLock){
+            if (ous != null) {
+                for (Byte b : data) {
+                    ous.write(b.byteValue());
+                }
+            }
+        }
 	}
+
+    private List<Byte> read() throws IOException {
+        List<Byte> sb = new ArrayList<Byte>();
+        byte readByte = 0x0d;
+        do{
+            synchronized (streamLock){
+                readByte = (byte) ins.read();
+                if(readByte != -1 && readByte != 0x0d) { //no data && end of stream.
+                    sb.add(readByte);
+                }
+                if(readByte == -1){ // no data
+                    try {
+                        streamLock.wait(50);//wait to handle writing
+                    } catch (InterruptedException e) {}//do nothing.
+                }
+            }
+        } while(readByte != 0x0d && socketOpened);
+        return sb;
+    }
 
 	/**
 	 * Write a response built from the given informations.
-	 * 
+	 *
 	 * @param responseType
 	 *            Type of frame to respond to.
 	 * @param moduleAddress
@@ -403,11 +403,30 @@ public class SerialPortHandler {
 		write(buildResponseWithNewValue(responseType, moduleAddress, newValue));
 	}
 
+    private void closeStreams(){
+        synchronized (streamLock){
+            if (ins != null) {
+                try {
+                    ins.close();
+                } catch (IOException e) {
+                    logger.error("Exception while closing inputstream : ", e);
+                }
+            }
+            if (ous != null) {
+                try {
+                    ous.close();
+                } catch (IOException e) {
+                    logger.error("Exception while closing outputstream : ", e);
+                }
+            }
+        }
+    }
+
 	/**
 	 * Task to extend devices timeouts.
-	 * 
+	 *
 	 * @author Kettani Mehdi.
-	 * 
+	 *
 	 */
 	private final class ExtendDeviceTimeoutTask implements Runnable {
 
