@@ -99,11 +99,11 @@ public class SerialPortHandler {
 		try {
 			while (socketOpened) {
                 List<Byte> sb = read();
-                if(sb.size()>0){
+                if(sb.size()>1){
                     parseData(sb);
                     sb.clear();
                 }
-			}
+            }
 		} finally {
 			closeStreams();
 			serial.disconnect();
@@ -178,20 +178,15 @@ public class SerialPortHandler {
 				((DeviceInfoImpl) deviceInfos).setTypeCode(TypeCode
 						.getTypeCodeByFriendlyName(deviceTypes
 								.get(moduleAddress)));
-				logger.debug("battery : " + deviceInfos.getBatteryLevel());
-				logger.debug("ModuleAddress : "
+				logger.trace("battery : " + deviceInfos.getBatteryLevel());
+				logger.trace("ModuleAddress : "
 						+ deviceInfos.getModuleAddress());
-				logger.debug("data value : " + dataValue.getData());
-				logger.debug("type code : "
+				logger.trace("data value : " + dataValue.getData());
+				logger.trace("type code : "
 						+ deviceInfos.getTypeCode().getFriendlyName());
-				// TODO code a enlever
-				if (type == 'R') {
-					write(buildResponseWithNewValue(ResponseType.REQUEST,
-							deviceInfos.getModuleAddress(), dataValue.getData()
-									.equals("1") ? "0" : "1"));
-				} else {
-					write(buildResponse(ResponseType.DATA,
-							deviceInfos.getModuleAddress()));
+				if (type == 'D') {
+                    write(buildResponse(ResponseType.DATA,
+                            deviceInfos.getModuleAddress()));
 				}
 				if (!existingDevice) {
 					logger.debug("notifying tracker about new device.");
@@ -362,11 +357,17 @@ public class SerialPortHandler {
             if (ous != null) {
                 for (Byte b : data) {
                     ous.write(b.byteValue());
+                    logger.trace("Writing:" + b.byteValue());
                 }
             }
         }
 	}
 
+    /**
+     * Read from the serial port. It finish read when the 0x0d(EOS) byte is read.
+     * @return the list of read bytes without the EOS(0x0d) byte.
+     * @throws IOException
+     */
     private List<Byte> read() throws IOException {
         List<Byte> sb = new ArrayList<Byte>();
         byte readByte = 0x0d;
@@ -375,11 +376,6 @@ public class SerialPortHandler {
                 readByte = (byte) ins.read();
                 if(readByte != -1 && readByte != 0x0d) { //no data && end of stream.
                     sb.add(readByte);
-                }
-                if(readByte == -1){ // no data
-                    try {
-                        streamLock.wait(50);//wait to handle writing
-                    } catch (InterruptedException e) {}//do nothing.
                 }
             }
         } while(readByte != 0x0d && socketOpened);
@@ -403,6 +399,9 @@ public class SerialPortHandler {
 		write(buildResponseWithNewValue(responseType, moduleAddress, newValue));
 	}
 
+    /**
+     * Close the serial port streams.
+     */
     private void closeStreams(){
         synchronized (streamLock){
             if (ins != null) {
