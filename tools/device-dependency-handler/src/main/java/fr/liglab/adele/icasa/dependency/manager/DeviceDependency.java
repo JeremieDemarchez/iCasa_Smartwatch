@@ -73,10 +73,10 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
     private Map<String, AccessRight> m_accessRights = new HashMap<String, AccessRight>();
 
     public DeviceDependency(DeviceDependencyHandler handler, String field, Class spec, Filter filter,
-            boolean isOptional, boolean isAggregate, boolean nullable, boolean isProxy, String identity,
-            BundleContext context, int policy, Comparator cmp, String defaultImplem, String mandatoryProps) {
-        super(handler, field, spec, filter, isOptional, isAggregate, nullable, isProxy, identity, context, policy, cmp,
-                defaultImplem);
+            boolean isOptional, boolean isAggregate, String identity,
+            BundleContext context, int policy, Comparator cmp, String mandatoryProps) {
+        super(handler, field, spec, filter, isOptional, isAggregate, false, true, identity, context, policy, cmp,
+                null);
 
         addMandatoryProperties(mandatoryProps);
         
@@ -110,10 +110,6 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
 
         String props = mandatoryProps.substring(1, mandatoryProps.length() - 1);
         m_mandatoryProps = props.split(",");
-
-        for (String property : m_mandatoryProps) {
-            System.out.println("prop ===>" + property + "<===");
-        }
     }
 
 

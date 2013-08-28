@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
+import java.lang.reflect.Method;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -31,6 +33,8 @@ import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
+import fr.liglab.adele.icasa.access.AccessRightListener;
+import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
@@ -44,13 +48,13 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
     @Requires
     private AccessManager accessManager;
 
-    private Boolean disableInterceptor = false;
+    private Boolean disableAccessPolicyFlag = false;
 
     public DeviceAccessTrackingInterceptor(BundleContext context) {
         String disableStr = context.getProperty(Constants.DISABLE_ACCESS_POLICY_PROPERTY);
 
         if (disableStr != null) {
-            disableInterceptor = Boolean.valueOf(disableStr);
+            disableAccessPolicyFlag = Boolean.valueOf(disableStr);
         }
     }
 
@@ -64,13 +68,26 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
 
             String appId = deviceDependency.getApplicationId();
             String deviceId = (String) ref.get(GenericDevice.DEVICE_SERIAL_NUMBER);
-
-            // No application associated or Device Id not Found
-            if (appId == null || deviceId == null) {
+            AccessRight accessRight = null;
+            
+            // Device Id not specified as property of service
+            if (deviceId==null) {
                 return null;
             }
+            
+            if (!disableAccessPolicyFlag) {
+                // No application associated to component (component outside an iCasa Application)
+                if (appId == null) {
+                    return null;
+                }
 
-            AccessRight accessRight = accessManager.getAccessRight(appId, deviceId);
+                accessRight = accessManager.getAccessRight(appId, deviceId);
+            } else {
+                
+                // if disable access policy activate, uses full access right 
+                accessRight = new FullAccessRight(deviceId);
+            }       
+
             deviceDependency.addAccessRight(deviceId, accessRight);
             
             // Not injected if device is not visible 
@@ -82,13 +99,13 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
             if (!deviceDependency.deviceIsTracked(deviceId)) {
                 return null;
             }
-
+            
         } else {
 
             // Only platform components has access to the device instances using iPOJO
             if (!isPlatformComponent(dependency)) {
                 // Interceptor is disable by the configuration
-                if (!disableInterceptor) {
+                if (!disableAccessPolicyFlag) {
                     return null;
                 }
             } else {
@@ -125,5 +142,63 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
     @Override
     public void close(DependencyModel dependency) {
 
+    }
+    
+    private class FullAccessRight implements AccessRight {
+
+        private String deviceId;
+                
+        public FullAccessRight(String deviceId) {
+            this.deviceId = deviceId;
+        }
+
+        @Override
+        public boolean isVisible() {
+            return true;
+        }
+
+        @Override
+        public boolean hasMethodAccess(Method method) throws NullPointerException {
+            return true;
+        }
+
+        @Override
+        public boolean hasMethodAccess(String method) throws NullPointerException {
+            return true;
+        }
+
+        @Override
+        public String[] getMethodList() {
+            return new String[0];
+        }
+
+        @Override
+        public String getApplicationId() {
+            return "platform";
+        }
+
+        @Override
+        public String getDeviceId() {
+            return deviceId;
+        }
+
+        @Override
+        public void addListener(AccessRightListener listener) {
+        }
+
+        @Override
+        public void removeListener(AccessRightListener listener) {
+        }
+
+        @Override
+        public DeviceAccessPolicy getPolicy() {
+            return DeviceAccessPolicy.TOTAL;
+        }
+
+        @Override
+        public Long getIdentifier() {
+            return 123456789l;
+        }
+        
     }
 }
