@@ -498,5 +498,68 @@ public class AccessManagerImpl implements AccessManager {
         return returningList;
     }
 
+    @Override
+    public AccessRight getPlatformAccessRight(String deviceId) {
+        return new FullAccessRight(deviceId);
+    }
+
+    
+    private class FullAccessRight implements AccessRight {
+
+        private String deviceId;
+                
+        public FullAccessRight(String deviceId) {
+            this.deviceId = deviceId;
+        }
+
+        @Override
+        public boolean isVisible() {
+            return true;
+        }
+
+        @Override
+        public boolean hasMethodAccess(Method method) throws NullPointerException {
+            return true;
+        }
+
+        @Override
+        public boolean hasMethodAccess(String method) throws NullPointerException {
+            return true;
+        }
+
+        @Override
+        public String[] getMethodList() {
+            return new String[0];
+        }
+
+        @Override
+        public String getApplicationId() {
+            return "platform";
+        }
+
+        @Override
+        public String getDeviceId() {
+            return deviceId;
+        }
+
+        @Override
+        public void addListener(AccessRightListener listener) {
+        }
+
+        @Override
+        public void removeListener(AccessRightListener listener) {
+        }
+
+        @Override
+        public DeviceAccessPolicy getPolicy() {
+            return DeviceAccessPolicy.TOTAL;
+        }
+
+        @Override
+        public Long getIdentifier() {
+            return 123456789l;
+        }
+        
+    }
 
 }

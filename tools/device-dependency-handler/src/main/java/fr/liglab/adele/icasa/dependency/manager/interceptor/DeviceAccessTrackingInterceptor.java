@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
-import java.lang.reflect.Method;
-
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -33,8 +31,6 @@ import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.access.AccessRightListener;
-import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
@@ -85,7 +81,8 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
             } else {
                 
                 // if disable access policy activate, uses full access right 
-                accessRight = new FullAccessRight(deviceId);
+                // accessRight = new FullAccessRight(deviceId);
+                accessRight = accessManager.getPlatformAccessRight(deviceId);
             }       
 
             deviceDependency.addAccessRight(deviceId, accessRight);
@@ -142,63 +139,5 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
     @Override
     public void close(DependencyModel dependency) {
 
-    }
-    
-    private class FullAccessRight implements AccessRight {
-
-        private String deviceId;
-                
-        public FullAccessRight(String deviceId) {
-            this.deviceId = deviceId;
-        }
-
-        @Override
-        public boolean isVisible() {
-            return true;
-        }
-
-        @Override
-        public boolean hasMethodAccess(Method method) throws NullPointerException {
-            return true;
-        }
-
-        @Override
-        public boolean hasMethodAccess(String method) throws NullPointerException {
-            return true;
-        }
-
-        @Override
-        public String[] getMethodList() {
-            return new String[0];
-        }
-
-        @Override
-        public String getApplicationId() {
-            return "platform";
-        }
-
-        @Override
-        public String getDeviceId() {
-            return deviceId;
-        }
-
-        @Override
-        public void addListener(AccessRightListener listener) {
-        }
-
-        @Override
-        public void removeListener(AccessRightListener listener) {
-        }
-
-        @Override
-        public DeviceAccessPolicy getPolicy() {
-            return DeviceAccessPolicy.TOTAL;
-        }
-
-        @Override
-        public Long getIdentifier() {
-            return 123456789l;
-        }
-        
     }
 }

@@ -23,6 +23,17 @@ import java.lang.reflect.Method;
 public interface AccessManager {
 
     /**
+     * Get the right access of platform to use a specified device.
+     * The {@code returned} object will be synchronized by the Access Manager to
+     * maintain updated the using rights.
+     * @param applicationId The identifier of the application.
+     * @param deviceId The target device to use if it has the correct rights.
+     * @return An {@link AccessRight} object which has the rights information
+     * of the usage of the device.
+     */
+    AccessRight getPlatformAccessRight(String deviceId);
+    
+    /**
      * Get the right access of an application to use a specified device.
      * The {@code returned} object will be synchronized by the Access Manager to
      * maintain updated the using rights.
