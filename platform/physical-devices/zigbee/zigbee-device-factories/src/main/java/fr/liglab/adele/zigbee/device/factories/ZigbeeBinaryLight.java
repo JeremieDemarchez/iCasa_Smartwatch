@@ -18,6 +18,8 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
+import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Property;
@@ -44,9 +46,9 @@ import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 				}author kettani Mehdi
  */
 @Component(name = "zigbeeBinaryLight")
-@Provides(specifications={GenericDevice.class, BinaryLight.class, ZigbeeDevice.class})
+@Provides(specifications={GenericDevice.class, BinaryLight.class, ZigbeeDevice.class, ZigbeeDeviceTracker.class})
 public class ZigbeeBinaryLight extends AbstractDevice implements
-		BinaryLight, ZigbeeDevice, DeviceListener<BinaryLight> {
+		BinaryLight, ZigbeeDevice, DeviceListener<BinaryLight>, ZigbeeDeviceTracker {
 	
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String serialNumber;
@@ -177,4 +179,51 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
 		// do nothing
 	}
 
+    /**
+     * Called when a new device has been discovered by the driver.
+     *
+     * @param deviceInfo information about the device
+     */
+    @Override
+    public void deviceAdded(DeviceInfo deviceInfo) {
+        //do nothing
+    }
+
+    /**
+     * Called when a device has been discovered by the driver.
+     *
+     * @param deviceInfo information about the device
+     */
+    @Override
+    public void deviceRemoved(DeviceInfo deviceInfo) {
+        //do nothing
+    }
+
+    /**
+     * Called when a device data has changed.
+     *
+     * @param moduleAddress a device module address
+     * @param oldData       previous device data
+     * @param newData       new device data
+     */
+    @Override
+    public void deviceDataChanged(String moduleAddress, Data oldData, Data newData) {
+        if(moduleAddress.compareTo(moduleAddress) == 0){
+            String data = newData.getData();
+            boolean status = data.compareTo("1")==0? true : false;
+            setPowerStatus(status);
+        }
+    }
+
+    /**
+     * Called when a device battery level has changed.
+     *
+     * @param moduleAddress   a device module address
+     * @param oldBatteryLevel previous device battery level
+     * @param newBatteryLevel new device battery level
+     */
+    @Override
+    public void deviceBatteryLevelChanged(String moduleAddress, float oldBatteryLevel, float newBatteryLevel) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
 }

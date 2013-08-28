@@ -33,6 +33,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -167,6 +168,8 @@ public class SerialPortHandler {
 							TimeUnit.SECONDS);
 				}
 				dataValue = new DataImpl();
+                Data oldData = deviceInfos.getDeviceData();
+                float oldBatteryLevel = deviceInfos.getBatteryLevel();
 				// parse to get data
 				dataValue.setTimeStamp(new Date());
 				dataValue.setData(parseDataValue(sb));
@@ -178,26 +181,20 @@ public class SerialPortHandler {
 				((DeviceInfoImpl) deviceInfos).setTypeCode(TypeCode
 						.getTypeCodeByFriendlyName(deviceTypes
 								.get(moduleAddress)));
-				logger.trace("battery : " + deviceInfos.getBatteryLevel());
-				logger.trace("ModuleAddress : "
-						+ deviceInfos.getModuleAddress());
-				logger.trace("data value : " + dataValue.getData());
-				logger.trace("type code : "
-						+ deviceInfos.getTypeCode().getFriendlyName());
+                if (!existingDevice) {
+                    logger.debug("notifying tracker about new device.");
+                    //notify to trackers.
+                    notifyDeviceAdded(deviceInfos);
+                }
+                //notify battery level change and data change.
+                //It will notify only when value has already changed.
+                notifyBatteryLevelChange(deviceInfos, oldBatteryLevel);
+                notifyDataChange(deviceInfos, oldData);
 				if (type == 'D') {
                     write(buildResponse(ResponseType.DATA,
                             deviceInfos.getModuleAddress()));
 				}
-				if (!existingDevice) {
-					logger.debug("notifying tracker about new device.");
-					for (ZigbeeDeviceTracker tracker : trackerMgr.getTrackers()) {
-						try {
-							tracker.deviceAdded(deviceInfos);
-						} catch (Exception e) {
-							e.printStackTrace();
-						}
-					}
-				}
+
 				deviceList.put(moduleAddress, deviceInfos);
 				break;
 			default:
@@ -357,7 +354,6 @@ public class SerialPortHandler {
             if (ous != null) {
                 for (Byte b : data) {
                     ous.write(b.byteValue());
-                    logger.trace("Writing:" + b.byteValue());
                 }
             }
         }
@@ -444,13 +440,8 @@ public class SerialPortHandler {
 				// last connexion was before 2min, unregister device
 				fSchedFuture.cancel(true);
 				deviceList.remove(moduleAddress);
-				for (ZigbeeDeviceTracker tracker : trackerMgr.getTrackers()) {
-					try {
-						tracker.deviceRemoved(infos);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
+                //notify to trackers.
+                notifyDeviceRemoved(infos);
 			} else {
 				// extend timeout
 				Runnable extendDeviceTimeoutTask = new ExtendDeviceTimeoutTask(
@@ -466,4 +457,94 @@ public class SerialPortHandler {
 			return deviceList.get(moduleAddress);
 		}
 	}
+
+    /**
+     * Notify trackers when there is a new ZigBee device.
+     * @param deviceInfo
+     */
+    private void notifyDeviceAdded(DeviceInfo deviceInfo){
+        logger.trace("Device Added");
+        logInfo(deviceInfo);
+        List<ZigbeeDeviceTracker> listeners = trackerMgr.getTrackers();
+        for (ZigbeeDeviceTracker tracker : listeners) {
+            try {
+                tracker.deviceAdded(deviceInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Notify trackers when a ZigBee device is no longer available..
+     * @param deviceInfo
+     */
+    private void notifyDeviceRemoved(DeviceInfo deviceInfo){
+        logger.trace("Device Removed");
+        logInfo(deviceInfo);
+        List<ZigbeeDeviceTracker> listeners = trackerMgr.getTrackers();
+        for (ZigbeeDeviceTracker tracker : listeners) {
+            try {
+                tracker.deviceRemoved(deviceInfo);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Notify the new battery level.
+     * @param info
+     * @param oldLevel
+     */
+    private void notifyBatteryLevelChange(DeviceInfo info, float oldLevel){
+        if(info.getBatteryLevel() != oldLevel){ //only notify when data has changed.
+            logger.trace("Battery level changed");
+            logInfo(info);
+            List<ZigbeeDeviceTracker> listeners = trackerMgr.getTrackers();
+            for (ZigbeeDeviceTracker tracker : listeners) {
+                try {
+                    tracker.deviceBatteryLevelChanged(info.getModuleAddress(),info.getBatteryLevel(), oldLevel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * Notify the data value.
+     * @param info
+     * @param oldData
+     */
+    private void notifyDataChange(DeviceInfo info, Data oldData){
+        String oldDataValue = oldData!= null ? oldData.getData(): "";
+
+        if(oldData == null || info.getDeviceData().getData().compareTo(oldDataValue) != 0){ //only notify when data has changed.
+            logger.trace("Data changed (Old value:" + oldDataValue + ")");
+            logInfo(info);
+            List<ZigbeeDeviceTracker> listeners = trackerMgr.getTrackers();
+            for (ZigbeeDeviceTracker tracker : listeners) {
+                try {
+                    tracker.deviceDataChanged(info.getModuleAddress(), oldData, info.getDeviceData());
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    /**
+     * log device info.
+     * @param deviceInfo
+     */
+    private void logInfo(DeviceInfo deviceInfo){
+        logger.trace("battery : " + deviceInfo.getBatteryLevel());
+        logger.trace("ModuleAddress : "
+                + deviceInfo.getModuleAddress());
+        logger.trace("data value : " + deviceInfo.getDeviceData().getData());
+        logger.trace("type code : "
+                + deviceInfo.getTypeCode().getFriendlyName());
+    }
+
 }
