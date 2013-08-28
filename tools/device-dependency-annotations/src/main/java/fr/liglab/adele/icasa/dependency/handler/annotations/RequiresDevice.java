@@ -47,20 +47,6 @@ public @interface RequiresDevice {
     String id();
 
     /**
-     * Enable / Disable nullable pattern.
-     * Default : true
-     */
-    boolean nullable() default true;
-
-    /**
-     * Set the default-implementation to use if the dependency is optional,
-     * and no providers are available.
-     * The class must implement the required service interface.
-     * Default : no default-implementation
-     */
-    Class defaultimplementation() default Class.class;
-
-    /**
      * Set the binding policy.
      * Acceptable policy are dynamic, static and dynamic-priority.
      * Default: dynamic.
@@ -93,8 +79,15 @@ public @interface RequiresDevice {
     
     boolean aggregate() default true;
     
-    
+    /**
+     * List of mandatory properties in dependency
+     * @return
+     */
     String[] mandatoryProps() default {""};
     
+    /**
+     * Dependency type (field, bind or unbind)
+     * @return
+     */
     String type();
 }

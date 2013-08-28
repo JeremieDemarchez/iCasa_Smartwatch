@@ -34,7 +34,6 @@ import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
 import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
 import test.component.handler.ComponentOnlyRequireDevice;
-import test.component.handler.ComponentPropertiesRequireDevice;
 import test.component.handler.ComponentUsingArray;
 import test.component.handler.ComponentUsingBindMethods;
 import test.component.handler.ComponentUsingList;
@@ -43,7 +42,6 @@ import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.access.MemberAccessPolicy;
 import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.location.LocatedDevice;
 
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
