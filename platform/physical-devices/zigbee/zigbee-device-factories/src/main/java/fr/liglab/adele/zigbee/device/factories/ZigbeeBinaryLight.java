@@ -145,19 +145,13 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
 	}
 
 	@Override
-	public void deviceAdded(BinaryLight arg0) {
-		// do nothing
-	}
+	public void deviceAdded(BinaryLight arg0) {/*do nothing*/}
 
 	@Override
-	public void deviceEvent(BinaryLight arg0, Object arg1) {
-		// do nothing
-	}
+	public void deviceEvent(BinaryLight arg0, Object arg1) {/*do nothing*/}
 
 	@Override
-	public void devicePropertyAdded(BinaryLight arg0, String arg1) {
-		// do nothing
-	}
+	public void devicePropertyAdded(BinaryLight arg0, String arg1) {/*do nothing*/}
 
 	@Override
 	public void devicePropertyModified(BinaryLight device, String propName,
@@ -170,24 +164,19 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
 	}
 
 	@Override
-	public void devicePropertyRemoved(BinaryLight arg0, String arg1) {
-		// do nothing
-	}
+	public void devicePropertyRemoved(BinaryLight arg0, String arg1) {/*do nothing*/}
 
 	@Override
-	public void deviceRemoved(BinaryLight arg0) {
-		// do nothing
-	}
+	public void deviceRemoved(BinaryLight arg0){/*do nothing*/}
 
+    //ZigbeeDeviceTracker Methods.
     /**
      * Called when a new device has been discovered by the driver.
      *
      * @param deviceInfo information about the device
      */
     @Override
-    public void deviceAdded(DeviceInfo deviceInfo) {
-        //do nothing
-    }
+    public void deviceAdded(DeviceInfo deviceInfo) {/*do nothing*/}
 
     /**
      * Called when a device has been discovered by the driver.
@@ -195,9 +184,7 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
      * @param deviceInfo information about the device
      */
     @Override
-    public void deviceRemoved(DeviceInfo deviceInfo) {
-        //do nothing
-    }
+    public void deviceRemoved(DeviceInfo deviceInfo) {/*do nothing*/}
 
     /**
      * Called when a device data has changed.
@@ -223,7 +210,9 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
      * @param newBatteryLevel new device battery level
      */
     @Override
-    public void deviceBatteryLevelChanged(String moduleAddress, float oldBatteryLevel, float newBatteryLevel) {
-        //To change body of implemented methods use File | Settings | File Templates.
-    }
+    public void deviceBatteryLevelChanged(String moduleAddress,
+                                          float oldBatteryLevel,
+                                          float newBatteryLevel) {/*do nothing*/}
+
+
 }
