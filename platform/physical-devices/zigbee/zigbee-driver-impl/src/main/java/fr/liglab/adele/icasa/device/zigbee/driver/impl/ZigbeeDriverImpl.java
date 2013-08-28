@@ -222,10 +222,6 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 		try {
 			logger.debug("sending request response to device : " + moduleAddress + " with value : " + dataToSet);
 			handler.write(ResponseType.REQUEST, moduleAddress, dataToSet);
-//			handler.write(buildResponseWithNewValue(ResponseType.REQUEST,
-//					moduleAddress, dataValue.getData()
-//								.equals("1") ? "0" : "1"));
-			
 		} catch (IOException e) {
 			logger.error("IOException caught while sending data to device : " + moduleAddress , e);
 		}
