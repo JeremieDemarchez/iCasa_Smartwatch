@@ -26,73 +26,18 @@
     </parent>
 
     <!-- Project coordinates -->
-    <artifactId>icasa.teaching.distribution</artifactId>
+    <artifactId>icasa.teaching.distribution.access.enabled</artifactId>
     <packaging>osgi-distribution</packaging>
     <name>${productName} :: ${projectName}</name>
 
     <!-- Project dependencies -->
     <dependencies>
-
         <dependency>
-            <groupId>fr.liglab.adele.common</groupId>
-            <artifactId>distribution.base</artifactId>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.teaching.distribution</artifactId>
             <type>osgi-distribution</type>
-        </dependency>
-
-        <!-- deployed packages -->
-        <dependency>
-           <groupId>org.ow2.chameleon.rose</groupId>
-           <artifactId>rose.dp</artifactId>
-            <type>deployment-package</type>
-        </dependency>
-        <dependency>
-            <!-- iCasa Platform -->
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.platform.dp</artifactId>
             <version>${iCasaPlatformVersion}</version>
-            <type>deployment-package</type>
         </dependency>
-         <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.device.hanlder.dp</artifactId>
-            <version>${iCasaPlatformVersion}</version>
-            <type>deployment-package</type>         
-         </dependency>        
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.simulator.dp</artifactId>
-            <version>${project.version}</version>
-            <type>deployment-package</type>
-        </dependency>
-        <!-- DP Remote installer-->
-        <dependency>
-           <groupId>${project.groupId}</groupId>
-           <artifactId>dp-rest-installer.dp</artifactId>
-           <version>${iCasaPlatformVersion}</version>
-           <type>deployment-package</type>
-        </dependency>
-        <!-- Only one clock must be available in the platform-->
-        <dependency>
-           <groupId>${project.groupId}</groupId>
-           <artifactId>clock.simulated.impl</artifactId>
-           <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>command.handler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-
-        <!-- Play 2 applications-->
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.web</artifactId>
-            <version>${project.version}</version>
-            <type>play2</type>
-        </dependency>
-
     </dependencies>
 
     <build>

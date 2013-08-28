@@ -30,6 +30,7 @@
 
 	<modules>
         <module>icasa-teaching-distribution</module>
+        <module>icasa-teaching-distribution-access-enabled</module>
 	</modules>
    <build>
       <plugins>

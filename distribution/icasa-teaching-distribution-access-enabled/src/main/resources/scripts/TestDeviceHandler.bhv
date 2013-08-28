@@ -1,0 +1,23 @@
+<behavior startdate="27/10/2011-00:00:00" factor="1440">
+	 
+	 
+	<create-zone id="kitchen"  leftX="410" topY="370" X-Length="245" Y-Length="210" />	 
+	
+	<add-zone-variable zoneId="kitchen" variable="Temperature" />
+	<add-zone-variable zoneId="kitchen" variable="Illuminance" />
+	<modify-zone-variable zoneId="kitchen" variable="Temperature" value="296.15"/>
+	<modify-zone-variable zoneId="kitchen" variable="Illuminance" value="0"/>
+	
+	<create-device id="Pres-A1255D-D" type="iCasa.PresenceSensor" />
+	<create-device id="Ther-A3654Q-S" type="iCasa.Thermometer" />
+	<create-device id="Phot-A4894S-S" type="iCasa.Photometer" />
+	<create-device id="BiLi-A7496W-S" type="iCasa.BinaryLight" />	
+	<move-device-zone deviceId="Pres-A1255D-D" zoneId="kitchen" />
+	<move-device-zone deviceId="Ther-A3654Q-S" zoneId="kitchen" />
+	<move-device-zone deviceId="Phot-A4894S-S" zoneId="kitchen" />
+	<move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
+
+   <set-access-right applicationId="test-handler-app" deviceId="Ther-A3654Q-S" value="total" />
+   <set-access-right applicationId="test-handler-app" deviceId="BiLi-A7496W-S" value="total" />
+	
+</behavior>
