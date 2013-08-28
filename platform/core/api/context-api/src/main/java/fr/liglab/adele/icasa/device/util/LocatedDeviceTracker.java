@@ -430,7 +430,13 @@ public class LocatedDeviceTracker implements LocatedDeviceTrackerCustomizer {
             } catch (Exception e) {
                 // ignore it
             }
-            for (LocatedDevice device : m_listenedDevices) {
+
+            List<LocatedDevice> locatedDevices = null;
+            synchronized (m_listenedDevices){
+                locatedDevices = new ArrayList<LocatedDevice>(m_listenedDevices);
+            }
+
+            for (LocatedDevice device : locatedDevices) {
                 m_globalDeviceListener.deviceRemoved(device);
             }
         }

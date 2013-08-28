@@ -455,9 +455,11 @@ public class ZoneTracker implements ZoneTrackerCustomizer {
 			} catch (Exception e) {
 				// ignore it
 			}
-			for (Zone zone : getZones()) {
-				globalZoneListener.zoneRemoved(zone);
-			}
+            if(size()>0){
+                for (Zone zone : getZones()) {
+                    globalZoneListener.zoneRemoved(zone);
+                }
+            }
 		}
 
 		private synchronized boolean isTracked(Zone zone) {
