@@ -125,8 +125,10 @@ public class IcasaJSONUtil {
                 JSONObject property = new JSONObject();
                 property.put("name", variable);
                 property.put("value", getValidObject(zone.getVariableValue(variable)));
-                String unit = "N/A";
-                if (variable.equalsIgnoreCase("Volume")){
+                String unit = "N/A"; // TODO change it when Zone API will be improved
+                if (variable.equalsIgnoreCase("Temperature")){
+                    unit = "K";
+                } else if (variable.equalsIgnoreCase("Volume")){
                     unit = "m3";
                 } else if (variable.equalsIgnoreCase("Area")){
                     unit = "m2";
