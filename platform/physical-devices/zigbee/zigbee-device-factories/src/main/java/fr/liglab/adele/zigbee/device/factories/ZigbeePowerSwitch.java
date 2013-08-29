@@ -18,6 +18,9 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
+import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -30,6 +33,9 @@ import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import org.omg.CORBA.PRIVATE_MEMBER;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Zigbee power switch factory.
@@ -37,13 +43,18 @@ import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
  */
 @Component(name="zigbeePowerSwitch")
 @Provides
-public class ZigbeePowerSwitch extends AbstractDevice implements PowerSwitch, ZigbeeDevice {
+public class ZigbeePowerSwitch extends AbstractDevice implements PowerSwitch, ZigbeeDevice, ZigbeeDeviceTracker {
 
-	@Requires
+    @Requires
 	private ZigbeeDriver driver;
 
 	@Property(mandatory = true, name = "zigbee.moduleAddress")
 	private String moduleAddress;
+
+
+
+    private static final Logger logger = LoggerFactory
+            .getLogger(Constants.ICASA_LOG_DEVICE + ".zigBee.powerSwitch");
 
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String serialNumber;
@@ -57,48 +68,71 @@ public class ZigbeePowerSwitch extends AbstractDevice implements PowerSwitch, Zi
 		super();
 		super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
         super.setPropertyValue(POWER_SWITCH_CURRENT_STATUS, false);
+        super.setPropertyValue(BATTERY_LEVEL, 0f);
 	}
 
 	@Override
 	public boolean getStatus() {
-		boolean status = getPowerStatusFromDevice();
-		setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, status);
-		
-		Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS);
-		if (powerStatus == null)
+		Boolean powerStatus = (Boolean) getPropertyValue(PowerSwitch.POWER_SWITCH_CURRENT_STATUS);
+		if (powerStatus == null){
 			return false;
-
+        }
 		return powerStatus;
 	}
 
 	@Override
 	public boolean switchOff() {
-		// the only available data is the switch value, no programmatical modification allowed 
+        logger.error("Power switch status modification is not allowed");
 		return getStatus();
 	}
 
 	@Override
 	public boolean switchOn() {
-		// the only available data is the switch value, no programmatical modification allowed 
+        logger.error("Power switch status modification is not allowed");
 		return getStatus();
 	}
-	
-	private boolean getPowerStatusFromDevice() {
-		boolean value = false;
+    /**
+     * Called when a new device has been discovered by the driver.
+     *
+     * @param deviceInfo information about the device
+     */
+    @Override
+    public void deviceAdded(DeviceInfo deviceInfo) {/*nothing to do*/}
 
-		Data devData = driver.getData(moduleAddress);
-		if (devData == null)
-			return value;
-		String strValue = devData.getData();
-		Integer intValue = null;
-		try {
-			intValue = Integer.valueOf(strValue);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return value;
-		}
+    /**
+     * Called when a device has been discovered by the driver.
+     *
+     * @param deviceInfo information about the device
+     */
+    @Override
+    public void deviceRemoved(DeviceInfo deviceInfo){/*nothing to do*/}
 
-		return (intValue != null) && (intValue == 1);
-	}
+    /**
+     * Called when a device data has changed.
+     *
+     * @param address a device module address
+     * @param oldData       previous device data
+     * @param newData       new device data
+     */
+    @Override
+    public void deviceDataChanged(String address, Data oldData, Data newData) {
+        if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
+            boolean status = newData.getData().equalsIgnoreCase("1")? true: false;
+            setPropertyValue(PowerSwitch.POWER_SWITCH_CURRENT_STATUS, status);
+        }
+    }
 
+    /**
+     * Called when a device battery level has changed.
+     *
+     * @param address   a device module address
+     * @param oldBatteryLevel previous device battery level
+     * @param newBatteryLevel new device battery level
+     */
+    @Override
+    public void deviceBatteryLevelChanged(String address, float oldBatteryLevel, float newBatteryLevel) {
+        if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
+            setPropertyValue(BATTERY_LEVEL, newBatteryLevel);
+        }
+    }
 }

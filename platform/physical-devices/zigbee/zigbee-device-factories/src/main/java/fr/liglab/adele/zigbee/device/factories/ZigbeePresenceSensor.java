@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
+import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import org.apache.felix.ipojo.annotations.*;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -30,7 +32,7 @@ import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
  * @author Kettani Mehdi.
  *
  */
-public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSensor, ZigbeeDevice {
+public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker {
 	
 	@Requires
 	private ZigbeeDriver driver;
@@ -45,13 +47,11 @@ public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSens
 		super();
         super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
         super.setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
+        super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
 	}
 
 	@Override
 	public boolean getSensedPresence() {
-		boolean value = getSensedPresenceFromDevice();
-		setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, value);
-		
 		Boolean presence = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
 		if (presence != null)
 			return presence;
@@ -62,22 +62,50 @@ public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSens
 	public String getSerialNumber() {
 		return serialNumber;
 	}
-	
-	private boolean getSensedPresenceFromDevice() {
-		boolean value = false;
 
-		Data devData = driver.getData(moduleAddress);
-		if (devData == null)
-			return value;
-		String strValue = devData.getData();
-		Integer intValue = null;
-		try {
-			intValue = Integer.valueOf(strValue);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return value;
-		}
+    /**
+     * Called when a new device has been discovered by the driver.
+     *
+     * @param deviceInfo information about the device
+     */
+    @Override
+    public void deviceAdded(DeviceInfo deviceInfo)  {/*nothing to do*/}
 
-		return (intValue != null) && (intValue == 1);
-	}
+    /**
+     * Called when a device has been discovered by the driver.
+     *
+     * @param deviceInfo information about the device
+     */
+    @Override
+    public void deviceRemoved(DeviceInfo deviceInfo) {/*nothing to do*/}
+
+    /**
+     * Called when a device data has changed.
+     *
+     * @param address a device module address
+     * @param oldData       previous device data
+     * @param newData       new device data
+     */
+    @Override
+    public void deviceDataChanged(String address, Data oldData, Data newData) {
+        if(address.compareTo(this.moduleAddress) == 0){
+            String data = newData.getData();
+            boolean status = data.compareTo("1")==0? true : false;
+            setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, status);
+        }
+    }
+
+    /**
+     * Called when a device battery level has changed.
+     *
+     * @param address   a device module address
+     * @param oldBatteryLevel previous device battery level
+     * @param newBatteryLevel new device battery level
+     */
+    @Override
+    public void deviceBatteryLevelChanged(String address, float oldBatteryLevel, float newBatteryLevel) {
+        if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
+            setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
+        }
+    }
 }
