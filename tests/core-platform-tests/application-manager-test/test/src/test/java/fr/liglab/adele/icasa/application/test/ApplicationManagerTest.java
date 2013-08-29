@@ -128,7 +128,6 @@ public class ApplicationManagerTest {
 
 		// No application containing a test-bundle-2 bundle
 		assertNull(manager.getApplicationOfBundle("test-bundle-2"));
-
 	}
 
 	@Test
@@ -141,10 +140,7 @@ public class ApplicationManagerTest {
 		
 		// Only one app installed
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
-
-		
-		//printBundles();
-		
+	
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-2"));
 		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getName());
 
@@ -175,8 +171,7 @@ public class ApplicationManagerTest {
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-3"));
 		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-3").getName());
 
-		Assert.assertEquals(manager.getApplicationOfBundle("test-bundle-2"),
-		      manager.getApplicationOfBundle("test-bundle-3"));
+		Assert.assertEquals(manager.getApplicationOfBundle("test-bundle-2"), manager.getApplicationOfBundle("test-bundle-3"));
 
 	}
 	
@@ -200,10 +195,9 @@ public class ApplicationManagerTest {
 		// Gets the application according with the bundle
 		assertEquals("follow-me-test-app", manager.getApplicationOfBundle("test-bundle-1").getId());
 		
-		
 		followMeDP1.uninstall();
 		
-   	// No application installed
+		// No application installed
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(0));
 			
 		// The follow-me-test-app is not more in the platform
@@ -231,13 +225,11 @@ public class ApplicationManagerTest {
 
 		Assert.assertNotNull(manager.getApplication("gas-alarm-test-app"));
 				
-				
 		// No more of expected bundles in the list
 		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 		
 		gasAlarmDP1.uninstall();
 		
-				
 		// DP2 contains 2 bundles
 		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 		
@@ -249,7 +241,6 @@ public class ApplicationManagerTest {
 
 		// No applications installed
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(0));
-
 	}
 
 	@Test
@@ -259,7 +250,6 @@ public class ApplicationManagerTest {
 		DeploymentPackage gasAlarmDP1 = installDeploymentPackage("gas-alarm-test-app-dp-1");
 		
 		Assert.assertNotNull(manager);
-
 
 		// Only one app installed
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
@@ -272,9 +262,7 @@ public class ApplicationManagerTest {
 		DeploymentPackage gasAlarmDP2 = installDeploymentPackage("gas-alarm-test-app-dp-2");
 
 		Assert.assertNotNull(manager.getApplication("gas-alarm-test-app"));
-				
-								
-				
+
 		// No more of expected bundles in the list
 		TestUtils.testConditionWithTimeout(new BundleNumberCondition("gas-alarm-test-app", 2));
 
@@ -365,42 +353,38 @@ public class ApplicationManagerTest {
 	}
 	
 	
-	class BundleNumberCondition implements Condition {
+    class BundleNumberCondition implements Condition {
+        private String m_appName;
+        private int m_expectedBundles;
 
-		private String m_appName;
-		private int m_expectedBundles;
-		
-		public BundleNumberCondition(String appName, int expectedBundles) {
-			m_appName = appName;
-			m_expectedBundles = expectedBundles;
-		}
-		
-		public boolean isChecked() {
-			return (manager.getApplication(m_appName).getBundles().size() == m_expectedBundles);
-      }
+        public BundleNumberCondition(String appName, int expectedBundles) {
+            m_appName = appName;
+            m_expectedBundles = expectedBundles;
+        }
 
-		public String getDescription() {
-			return "Expected " + m_expectedBundles + " bundles in application " + m_appName +" in Application Manager";
-      }
-		
-	}
+        public boolean isChecked() {
+            return (manager.getApplication(m_appName).getBundles().size() == m_expectedBundles);
+        }
+
+        public String getDescription() {
+            return "Expected " + m_expectedBundles + " bundles in application " + m_appName + " in Application Manager";
+        }
+    }
 	
-	class ApplicationNumberCondition implements Condition {
+    class ApplicationNumberCondition implements Condition {
+        private int m_number;
 
-		private int m_number;
-		
-		public ApplicationNumberCondition(int number) {
-			m_number = number;
-		}
-		
-		public boolean isChecked() {
-	      return (m_number == manager.getApplications().size());
-      }
+        public ApplicationNumberCondition(int number) {
+            m_number = number;
+        }
 
-		public String getDescription() {
-	      return "Expected " + m_number + " applications in Application Manager";
-      }
-		
-	}
+        public boolean isChecked() {
+            return (m_number == manager.getApplications().size());
+        }
+
+        public String getDescription() {
+            return "Expected " + m_number + " applications in Application Manager";
+        }
+    }
 	
 }
