@@ -31,7 +31,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
-public class TemperaturePhysicalModelTests extends AbstractDistributionBaseTest {
+public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
     public static final String TEMPERATURE_VAR_NAME = "Temperature";
     @Inject
