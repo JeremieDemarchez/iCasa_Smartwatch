@@ -15,15 +15,15 @@
  */
 package fr.liglab.adele.icasa.location.impl;
 
-import java.util.*;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.location.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 public class ZoneImpl extends LocatedObjectImpl implements Zone {
 
@@ -360,11 +360,12 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 			return;
 
 		lock.writeLock().lock();
+        boolean isAddedVariable = ! variables.containsKey(name);
 		try {
-			if (variables.containsKey(name)) {
-				oldValue = variables.get(name);
-			} else {
+			if (isAddedVariable) {
 				oldValue = null;
+			} else {
+				oldValue = variables.get(name);
 			}
             if((newValue != null && newValue.equals(oldValue)) || (newValue == null && oldValue == null)){
                 return; // does not notify if variable has not changed.
@@ -373,9 +374,24 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		} finally {
 			lock.writeLock().unlock();
 		}
+
+        List<ZoneListener> snapshotListener = getListenerCopy();
+        if (isAddedVariable) {
+            logger.debug("Add variable " + name + "  in zone " + getId());
+
+            for (ZoneListener listener : snapshotListener) {
+                try {
+                    listener.zoneVariableAdded(this, name);
+                } catch (Exception ex) {
+                    logger.error("Listener error in event zoneVariableAdded");
+                    ex.printStackTrace();
+                }
+
+            }
+        }
+
         logger.debug("Modify variable value "+newValue+"  in zone " + getId());
 		// Listeners notification
-		List<ZoneListener> snapshotListener = getListenerCopy();
 		for (ZoneListener listener : snapshotListener) {
 			try {
 				listener.zoneVariableModified(this, name, oldValue, newValue);

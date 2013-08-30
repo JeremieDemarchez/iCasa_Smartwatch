@@ -35,16 +35,7 @@ import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 
-/**
- * Zigbee binary light factory.if (type == 'R') {
-					write(buildResponseWithNewValue(ResponseType.REQUEST,
-							deviceInfos.getModuleAddress(), dataValue.getData()
-									.equals("1") ? "0" : "1"));
-				} else {
-					write(buildResponse(ResponseType.DATA,
-							deviceInfos.getModuleAddress()));
-				}author kettani Mehdi
- */
+
 @Component(name = "zigbeeBinaryLight")
 @Provides(specifications={GenericDevice.class, BinaryLight.class, ZigbeeDevice.class, ZigbeeDeviceTracker.class})
 public class ZigbeeBinaryLight extends AbstractDevice implements
@@ -64,6 +55,7 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
 		super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
 		super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
 		super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 1.0d); // TODO demander a jean paul
+        super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
 	}
 
 	@Override
@@ -189,13 +181,13 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
     /**
      * Called when a device data has changed.
      *
-     * @param moduleAddress a device module address
+     * @param address a device module address
      * @param oldData       previous device data
      * @param newData       new device data
      */
     @Override
-    public void deviceDataChanged(String moduleAddress, Data oldData, Data newData) {
-        if(moduleAddress.compareTo(moduleAddress) == 0){
+    public void deviceDataChanged(String address, Data oldData, Data newData) {
+        if(address.compareTo(this.moduleAddress) == 0){
             String data = newData.getData();
             boolean status = data.compareTo("1")==0? true : false;
             setPowerStatus(status);
@@ -205,14 +197,16 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
     /**
      * Called when a device battery level has changed.
      *
-     * @param moduleAddress   a device module address
+     * @param address   a device module address
      * @param oldBatteryLevel previous device battery level
      * @param newBatteryLevel new device battery level
      */
     @Override
-    public void deviceBatteryLevelChanged(String moduleAddress,
+    public void deviceBatteryLevelChanged(String address,
                                           float oldBatteryLevel,
-                                          float newBatteryLevel) {/*do nothing*/}
-
-
+                                          float newBatteryLevel) {
+        if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
+            setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
+        }
+    }
 }

@@ -24,4 +24,9 @@ package fr.liglab.adele.zigbee.device.factories;
  */
 public interface ZigbeeDevice {
 
+    /**
+     * Zigbee device battery level.
+     */
+    static final String BATTERY_LEVEL = "ZigBeeDevice.batteryLevel";
+
 }
