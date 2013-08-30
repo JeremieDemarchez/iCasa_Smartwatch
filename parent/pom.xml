@@ -40,7 +40,7 @@ See the License for the specific language governing permissions and
 		<projectName>${project.artifactId}</projectName>
 		<iCasaPlatformVersion>1.1.2-SNAPSHOT</iCasaPlatformVersion>
       <DistributionTestVersion>1.1.2-SNAPSHOT</DistributionTestVersion>
-
+      <osgiDistributionPluginVersion>1.0.3-SNAPSHOT</osgiDistributionPluginVersion>
         <!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
@@ -371,6 +371,7 @@ See the License for the specific language governing permissions and
                 <plugin>
                     <groupId>fr.liglab.adele.common</groupId>
                     <artifactId>maven-osgi-distribution-plugin</artifactId>
+                    <version>${osgiDistributionPluginVersion}</version>                    
                     <extensions>true</extensions>
                     <configuration>
                         <generateScripts>true</generateScripts>
