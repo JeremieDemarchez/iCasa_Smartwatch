@@ -42,6 +42,7 @@
 		<module>technical-services-impl</module>
       <module>access-manager-impl</module>
       <module>access-manager-remote</module>
+       <module>gateway-as-box</module>
    </modules>
    <build>
       <plugins>

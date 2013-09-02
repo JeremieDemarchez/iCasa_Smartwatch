@@ -59,7 +59,6 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
         //waitForStability(context);
 
         // should wait for these services
-        _zoneSizeCalculator = (ZoneSizeCalculator) waitForService(context, ZoneSizeCalculator.class);
         _contextMgr = (ContextManager) waitForService(context, ContextManager.class);
         _zoneSizeCalculator = (ZoneSizeCalculator) waitForService(context, ZoneSizeCalculator.class);
         _preferences = (Preferences) waitForService(context, Preferences.class);
@@ -69,7 +68,6 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     public void tearDown() {
         _zoneSizeCalculator = null;
         _contextMgr = null;
-        _zoneSizeCalculator = null;
         _preferences = null;
     }
 
