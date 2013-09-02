@@ -145,6 +145,13 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
                 <version>${iCasaPlatformVersion}</version>
                 <type>deployment-package</type>
             </dependency>
+            
+          <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>device.dependency.annotations</artifactId>
+            <version>${iCasaPlatformVersion}</version>    
+          </dependency>                    
+            
             <!-- iCasa Simulator-->
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>

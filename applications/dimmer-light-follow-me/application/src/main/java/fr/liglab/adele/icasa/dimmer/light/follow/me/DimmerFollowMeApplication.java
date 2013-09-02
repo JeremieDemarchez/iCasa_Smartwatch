@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.dimmer.light.follow.me;
 
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.light.Photometer;
@@ -26,19 +27,31 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Validate;
+
+@Component(name="DimmerFollowMeApplication")
+@Instantiate
 public class DimmerFollowMeApplication extends EmptyDeviceListener {
 
     /**
      * Field for dimmerLight dependency
      */
+    @RequiresDevice(id="dimmerLights", type="field", optional=true)
     private DimmerLight[] dimmerLights;
+    
     /**
      * Field for presenceSensor dependency
      */
+    @RequiresDevice(id="presenceSensors", type="field", optional=true)
     private PresenceSensor[] presenceSensors;
+    
     /**
      * Field for photometer dependency
      */
+    @RequiresDevice(id="photometers", type="field", optional=true)
     private Photometer[] photometers;
 
     public static String LOCATION_PROPERTY_NAME = "Location";
@@ -65,6 +78,7 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
     /**
      * Bind Method for null dependency
      */
+    @RequiresDevice(id="presenceSensors", type="bind")
     public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
         presenceSensor.addListener(this);
     }
@@ -72,14 +86,15 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
     /**
      * Unbind Method for null dependency
      */
-    public void unbindPresenceSensor(PresenceSensor presenceSensor,
-                                     Map properties) {
+    @RequiresDevice(id="presenceSensors", type="unbind")
+    public void unbindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
         presenceSensor.removeListener(this);
     }
 
     /**
      * Bind Method for null dependency
      */
+    @RequiresDevice(id="photometers", type="bind")
     public void bindPhotometer(Photometer photometer, Map properties) {
         photometer.addListener(this);
     }
@@ -87,28 +102,17 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
     /**
      * Unbind Method for null dependency
      */
+    @RequiresDevice(id="photometers", type="unbind")
     public void unbindPhotometer(Photometer photometer, Map properties) {
         photometer.removeListener(this);
     }
 
-    /**
-     * Bind Method for null dependency
-     */
-    public void bindDimmerLight(DimmerLight dimmerLight, Map properties) {
-        // do nothing
-    }
-
-    /**
-     * Unbind Method for null dependency
-     */
-    public void unbindDimmerLight(DimmerLight dimmerLight, Map properties) {
-        // do nothing
-    }
 
     /**
      * Component Lifecycle Method
      */
-    public void stop() {
+    @Invalidate
+    protected void stop() {
         /*
          * It is extremely important to unregister the device listener.
 		 * Otherwise, iCasa will continue to send notifications to the
@@ -129,7 +133,8 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
     /**
      * Component Lifecycle Method
      */
-    public void start() {
+    @Validate
+    protected void start() {
         // do nothing
     }
 
@@ -139,7 +144,7 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
      * @param location
      * @return
      */
-    public List<DimmerLight> getDimmerLightFromLocation(String location) {
+    private List<DimmerLight> getDimmerLightFromLocation(String location) {
         List<DimmerLight> dimmerInLocation = new ArrayList<DimmerLight>();
         for (DimmerLight dimmer : dimmerLights) {
             if (dimmer.getPropertyValue(LOCATION_PROPERTY_NAME)
@@ -156,7 +161,7 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
      * @param location
      * @return
      */
-    public List<Photometer> getPhotometerFromLocation(String location) {
+    private List<Photometer> getPhotometerFromLocation(String location) {
         List<Photometer> photometersLocation = new ArrayList<Photometer>();
         for (Photometer photometer : photometers) {
             if (photometer.getPropertyValue(Photometer.LOCATION_PROPERTY_NAME).equals(location)) {
@@ -172,7 +177,7 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
      * @param photometers collection of photometer devices
      * @return
      */
-    public double meanPhotometer(Collection<Photometer> photometers) {
+    private double meanPhotometer(Collection<Photometer> photometers) {
         double mean = 0, sum = 0;
 
         for (Photometer photometer : photometers) {
@@ -190,7 +195,7 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
      * @param profilIlluminance
      * @param roomSurface
      */
-    public void setDimmerPowerLevelOnValue(List<DimmerLight> dimmer, double meanIlluminanceValue, int profilIlluminance, double roomSurface) {
+    private void setDimmerPowerLevelOnValue(List<DimmerLight> dimmer, double meanIlluminanceValue, int profilIlluminance, double roomSurface) {
 
         double diffIllumiance = 0;
         double diffPowerLevel = 0;
@@ -244,7 +249,7 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
      *
      * @param dimmer
      */
-    public void setDimmerOff(List<DimmerLight> dimmer) {
+    private void setDimmerOff(List<DimmerLight> dimmer) {
         for (DimmerLight dimmerlight : dimmer) {
             dimmerlight.setPowerLevel(0);
         }
@@ -315,27 +320,5 @@ public class DimmerFollowMeApplication extends EmptyDeviceListener {
         }
     }
 
-    @Override
-    public void deviceAdded(GenericDevice device) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
 
-    @Override
-    public void devicePropertyAdded(GenericDevice arg0, String arg1) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
-
-    @Override
-    public void devicePropertyRemoved(GenericDevice arg0, String arg1) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
-
-    @Override
-    public void deviceRemoved(GenericDevice arg0) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
 }

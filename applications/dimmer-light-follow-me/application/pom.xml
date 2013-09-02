@@ -27,6 +27,10 @@
     	<groupId>org.apache.felix</groupId>
     	<artifactId>org.apache.felix.ipojo</artifactId>
     </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>device.dependency.annotations</artifactId>     
+    </dependency>     
   </dependencies>
   
   <build>

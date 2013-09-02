@@ -19,56 +19,73 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Validate;
+
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
+@Component(name="LightFollowMeApplication")
+@Instantiate
 public class LightFollowMeApplication extends EmptyDeviceListener {
 
     /** Field for binaryLights dependency */
+    @RequiresDevice(id="binaryLights", type="field", optional=true)
     private BinaryLight[] binaryLights;
 
     /** Field for presenceSensors dependency */
+    @RequiresDevice(id="presenceSensors", type="field", optional=true)
     private PresenceSensor[] presenceSensors;
 
     /** Field for powerSwitches dependency */
+    @RequiresDevice(id="powerSwitches", type="field", optional=true)
     private PowerSwitch[] powerSwitches;
 
 
-
     /** Bind Method for null dependency */
+    @RequiresDevice(id="powerSwitches", type="bind")
     public void bindPowerSwitch(PowerSwitch powerSwitch, Map properties) {
         powerSwitch.addListener(this);
     }
 
     /** Unbind Method for null dependency */
+    @RequiresDevice(id="powerSwitches", type="bind")    
     public void unbindPowerswitch(PowerSwitch powerSwitch, Map properties) {
         powerSwitch.removeListener(this);
     }
 
     /** Bind Method for null dependency */
+    @RequiresDevice(id="binaryLights", type="bind")    
     public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
         //do nothing
     }
 
     /** Unbind Method for null dependency */
+    @RequiresDevice(id="binaryLights", type="bind")  
     public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
         //do nothing
     }
 
     /** Bind Method for null dependency */
+    @RequiresDevice(id="presenceSensors", type="bind")
     public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
         presenceSensor.addListener(this);
     }
 
     /** Unbind Method for null dependency */
+    @RequiresDevice(id="presenceSensors", type="unbind")
     public void unbindPrensenceSensor(PresenceSensor presenceSensor,Map properties) {
         presenceSensor.removeListener(this);
     }
 
     /** Component Lifecycle Method */
+    @Invalidate
     public void stop() {
         /*
 		 * It is extremely important to unregister the device listener.
@@ -88,6 +105,7 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
     }
 
     /** Component Lifecycle Method */
+    @Validate
     public void start() {
         // do nothing
     }
