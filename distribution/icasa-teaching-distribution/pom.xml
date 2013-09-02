@@ -105,7 +105,7 @@
                     <outputs>
                        <output>
                           <IncludesArtifactId>icasa.web</IncludesArtifactId>
-                          <directory>icasa.web</directory>
+                          <directory>web.simulator</directory>
                        </output>
                     </outputs>
                 </configuration>
