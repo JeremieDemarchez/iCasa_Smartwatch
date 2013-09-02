@@ -250,6 +250,14 @@ public interface ContextManager {
 	 */
 	public Set<String> getProvidedServices(String deviceType);
 
+    /**
+     * Get a set of Service specifications of specified device.
+     *
+     * @param device the device type to retrieve its service specifications.
+     * @return the set of specifications of specified devices, null if any.
+     */
+    public Set<String> getProvidedServices(LocatedDevice device);
+
 	/**
 	 * Returns all global variables.
 	 * 
