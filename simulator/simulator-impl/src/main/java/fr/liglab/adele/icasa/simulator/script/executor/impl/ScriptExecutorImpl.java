@@ -16,12 +16,12 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
 import java.io.File;
-import java.io.FileWriter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -30,9 +30,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import fr.liglab.adele.icasa.commands.ICasaCommand;
-import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.PersonType;
 import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
@@ -41,15 +38,21 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.annotations.Validate;
+import org.osgi.framework.Bundle;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.commands.ICasaCommand;
+import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.PersonType;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
@@ -97,6 +100,10 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private List<ScriptExecutorListener> listeners = new ArrayList<ScriptExecutorListener>();
 
+	public ScriptExecutorImpl(BundleContext context) {	    
+	           
+	}
+	
 	@Override
 	public State getCurrentScriptState() {
 		if (executorThread != null)
@@ -331,8 +338,8 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Override
 	public void saveSimulationScript(String fileName) {
-		FileWriter outFile;
 		PrintWriter out;
+
 		try {
 
 			String dateStr = DateTextUtil.getTextDate(System.currentTimeMillis());
@@ -344,9 +351,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 					logger.error("Unable to create directory: " + SCRIPTS_DIRECTORY);
 				}
 			}
-			outFile = new FileWriter(SCRIPTS_DIRECTORY + System.getProperty("file.separator") + fileName);
-			out = new PrintWriter(outFile);
-
+			
+			File scriptFile = new File(SCRIPTS_DIRECTORY + System.getProperty("file.separator") + fileName);
+						
+			out = new PrintWriter(scriptFile, "UTF-8");
+			
 			out.println("<behavior startdate=\"" + dateStr + "\" factor=\"1440\">");
 			out.println();
 			out.println("\t<!-- Zone Section -->");
@@ -433,6 +442,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 			e1.printStackTrace();
 		}
 	}
+
 
 	/**
 	 * Parses the script file
