@@ -22,7 +22,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * Date: 9/2/13
  * Time: 10:42 AM
  */
-public interface PushButton extends GenericDevice{
+public interface PushButton extends GenericDevice {
     /**
      * Service property indicating if the button is pushed and hold.
      *
@@ -35,4 +35,12 @@ public interface PushButton extends GenericDevice{
      *
      */
     String PUSH_AND_HOLD = "pushButton.pushAndHold";
+
+
+
+    /**
+     * Retrieves the state of the button.
+     * @return
+     */
+    boolean isPushed();
 }
