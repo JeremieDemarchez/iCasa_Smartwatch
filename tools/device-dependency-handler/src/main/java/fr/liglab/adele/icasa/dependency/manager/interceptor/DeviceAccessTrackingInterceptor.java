@@ -44,11 +44,13 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
     @Requires
     private AccessManager accessManager;
 
+    /**
+     * Flag to determine if the access policy is disable in iCasa Platform
+     */
     private Boolean disableAccessPolicyFlag = false;
 
     public DeviceAccessTrackingInterceptor(BundleContext context) {
         String disableStr = context.getProperty(Constants.DISABLE_ACCESS_POLICY_PROPERTY);
-
         if (disableStr != null) {
             disableAccessPolicyFlag = Boolean.valueOf(disableStr);
         }
@@ -67,7 +69,7 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
             AccessRight accessRight = null;
             
             // Device Id not specified as property of service
-            if (deviceId==null) {
+            if (deviceId == null) {
                 return null;
             }
             
@@ -76,15 +78,13 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
                 if (appId == null) {
                     return null;
                 }
-
                 accessRight = accessManager.getAccessRight(appId, deviceId);
             } else {
-                
                 // if disable access policy activate, uses full access right 
-                // accessRight = new FullAccessRight(deviceId);
                 accessRight = accessManager.getPlatformAccessRight(deviceId);
             }       
 
+            // Add the access right to DeviceDependency 
             deviceDependency.addAccessRight(deviceId, accessRight);
             
             // Not injected if device is not visible 

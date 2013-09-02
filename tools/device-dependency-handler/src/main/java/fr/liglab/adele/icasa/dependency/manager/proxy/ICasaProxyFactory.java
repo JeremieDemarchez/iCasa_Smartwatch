@@ -21,13 +21,13 @@ import java.lang.reflect.Proxy;
 
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
-import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.exception.AccessViolationException;
 
 public class ICasaProxyFactory implements InvocationHandler {
 
 	/**
-	 * 
+	 * The device dependency
 	 */
    private final DeviceDependency m_dependency;
 
@@ -48,13 +48,13 @@ public class ICasaProxyFactory implements InvocationHandler {
 
 	/**
 	 * Creates a DynamicProxyFactory.
-	 * @param dependency TODO
+	 * @param dependency 
 	 */
 	public ICasaProxyFactory(DeviceDependency dependency) {
 		m_dependency = dependency;
 		try {
+            m_equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });		    
 			m_hashCodeMethod = Object.class.getMethod("hashCode", null);
-			m_equalsMethod = Object.class.getMethod("equals", new Class[] { Object.class });
 			m_toStringMethod = Object.class.getMethod("toString", null);
 		} catch (NoSuchMethodException e) {
 			throw new NoSuchMethodError(e.getMessage());
@@ -143,8 +143,7 @@ public class ICasaProxyFactory implements InvocationHandler {
             service = m_dependency.getService();
         } catch (Exception e) {
             // TODO: handle exception
-        }
-	    
+        }	    
 		return service;
 	}
 
