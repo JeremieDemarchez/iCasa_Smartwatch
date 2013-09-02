@@ -186,6 +186,11 @@ See the License for the specific language governing permissions and
 			</dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>technical.services.api</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>icasa.platform.dp</artifactId>
                 <version>${iCasaPlatformVersion}</version>
                 <type>deployment-package</type>
