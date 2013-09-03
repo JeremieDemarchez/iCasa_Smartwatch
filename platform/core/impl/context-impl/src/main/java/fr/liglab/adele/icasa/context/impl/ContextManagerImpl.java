@@ -53,7 +53,7 @@ public class ContextManagerImpl implements ContextManager {
 
 	private Map<String, GenericDevice> m_devices = new HashMap<String, GenericDevice>();
 
-    private HashMap<String, String[]> m_deviceSpecifications;
+    private Map<String, String[]> m_deviceSpecifications = new HashMap<String, String[]>();
 
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
 
