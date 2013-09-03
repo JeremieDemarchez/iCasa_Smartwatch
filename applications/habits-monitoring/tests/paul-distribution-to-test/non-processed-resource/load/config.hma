@@ -3,7 +3,10 @@
 	<interface>fr.liglab.adele.icasa.device.presence.PresenceSensor</interface>
 </id>
 url="mvn:fr.liglab.adele.icasa.apps/presence.sensor.adapter.dp/${project.version}/dp
-<id name="dimming-light" url="file:${settings.localRepository}${file.separator}fr${file.separator}liglab${file.separator}adele${file.separator}icasa${file.separator}apps${file.separator}photometer.adapter.dp${file.separator}${project.version}${file.separator}photometer.adapter.dp-${project.version}.dp">
+<id name="photometer" url="file:${settings.localRepository}${file.separator}fr${file.separator}liglab${file.separator}adele${file.separator}icasa${file.separator}apps${file.separator}photometer.adapter.dp${file.separator}${project.version}${file.separator}photometer.adapter.dp-${project.version}.dp">
 	<interface>fr.liglab.adele.icasa.device.light.Photometer</interface>
+</id>
+<id name="motion-sensor" url="file:${settings.localRepository}${file.separator}fr${file.separator}liglab${file.separator}adele${file.separator}icasa${file.separator}apps${file.separator}photometer.adapter.dp${file.separator}${project.version}${file.separator}motion.sensor.adapter.dp-${project.version}.dp">
+	<interface>fr.liglab.adele.icasa.device.motion.MotionSensor</interface>
 </id>
 </db>

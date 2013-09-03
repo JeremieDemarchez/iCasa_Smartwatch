@@ -33,6 +33,7 @@
 		<module>measure-generator.dp</module>
 		<module>presence-sensor.dp</module>
         <module>photometer.dp</module>
+        <module>motion-sensor.dp</module>
 	</modules>
    <build>
       <plugins>
