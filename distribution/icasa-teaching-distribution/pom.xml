@@ -84,12 +84,6 @@
             <version>${project.version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>gateway.as.box</artifactId>
-            <version>${iCasaPlatformVersion}</version>
-        </dependency>
-
 
         <!-- Play 2 applications-->
         <dependency>
