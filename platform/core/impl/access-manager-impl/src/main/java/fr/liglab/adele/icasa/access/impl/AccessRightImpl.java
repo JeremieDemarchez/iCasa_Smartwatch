@@ -35,7 +35,7 @@ public class AccessRightImpl implements AccessRight {
 
     private volatile DeviceAccessPolicy policy = DeviceAccessPolicy.HIDDEN;
 
-	private final List VISIBLE_METHODS_LIST = Arrays.asList(new String[] { "getSerialNumber", "getState", "getFault" });
+	private final List VISIBLE_METHODS_LIST = Arrays.asList(new String[] { "getSerialNumber", "getState", "getFault", "removeListener", "getPropertyValue" });
 
 	protected List<AccessRightListener> listeners = new ArrayList<AccessRightListener>();
 
