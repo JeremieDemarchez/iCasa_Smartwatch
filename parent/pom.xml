@@ -113,6 +113,11 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>technical.services.api</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
                 <artifactId>context.remote</artifactId>
                 <version>${iCasaPlatformVersion}</version>
             </dependency>

@@ -17,35 +17,28 @@
 	<!-- Project parent -->
 	<parent>
 		<groupId>fr.liglab.adele.icasa.apps</groupId>
-      <artifactId>parent</artifactId>
+		<artifactId>parent</artifactId>
       <version>1.1.2-SNAPSHOT</version>
-      <relativePath>../parent</relativePath>
+      <relativePath>../../../parent</relativePath>
 	</parent>
 
-	<!-- Project Description -->
+	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>applications-reactor</artifactId>
+	<artifactId>binary.light.follow.me.with.motion.sensor.distribution</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-        <module>binary-light-follow-me</module>
-        <module>binary-light-follow-me-with-push-button-and-motion-sensor</module>
-        <module>dimmer-light-follow-me</module>
-        <module>gas-alarm-system</module>
-        <module>habits-monitoring</module>
-        <module>home-devices</module>
+      <module>binary-light-follow-me-with-motion-and-icasa</module>
 	</modules>
-
-	<build>
-		<plugins>
+   <build>
+      <plugins>
          <plugin>
             <artifactId>maven-deploy-plugin</artifactId>
             <configuration>
                <skip>true</skip>
             </configuration>
          </plugin>
-		</plugins>
-	</build>
-
+      </plugins>
+   </build>
 </project>
