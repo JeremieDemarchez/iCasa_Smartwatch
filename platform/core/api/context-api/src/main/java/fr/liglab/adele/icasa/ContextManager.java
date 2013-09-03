@@ -15,14 +15,14 @@
  */
 package fr.liglab.adele.icasa;
 
-import java.util.List;
-import java.util.Set;
-
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * This service provides all information about application context including available devices and zones. It is the main
@@ -30,6 +30,11 @@ import fr.liglab.adele.icasa.location.Zone;
  * modifying directly the platform objects (Zones, Devices).
  */
 public interface ContextManager {
+
+    /**
+     * Name of global property that holds the gateway identifier.
+     */
+    public final static String GATEWAY_ID_PROP_NAME = "gateway.id";
 
 	// -- Zone related methods --//
 
@@ -244,6 +249,14 @@ public interface ContextManager {
 	 * @return the set of specifications, null if any.
 	 */
 	public Set<String> getProvidedServices(String deviceType);
+
+    /**
+     * Get a set of Service specifications of specified device.
+     *
+     * @param device the device type to retrieve its service specifications.
+     * @return the set of specifications of specified devices, null if any.
+     */
+    public Set<String> getProvidedServices(LocatedDevice device);
 
 	/**
 	 * Returns all global variables.

@@ -32,7 +32,8 @@
       <module>application-manager-test</module>
       <module>distributions-test</module>
       <module>technical-service-test</module>
-      <module>access-manager-test</module>      
+      <module>access-manager-test</module>
+      <module>gateway-as-box-test</module>
 	</modules>
    <build>
       <plugins>

@@ -13,18 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device.settopbox;
+package fr.liglab.adele.icasa.device.box;
 
-import fr.liglab.adele.icasa.device.box.Box;
+import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
- * SettopBox device
- * @author Gabriel
+ * Represents a box such as Livebox.
  *
+ * @author Thomas Leveque
  */
-public interface SetTopBox extends Box {
+public interface Box extends GenericDevice {
 
-	public boolean isStarted();
-
-	
 }

@@ -40,7 +40,7 @@ public class IcasaJSONUtil {
         }
 
 		Position devicePosition = _ctxMgr.getDevicePosition(device.getSerialNumber());
-        Set<String> specifications = _ctxMgr.getProvidedServices(deviceType);
+        Set<String> specifications = _ctxMgr.getProvidedServices(device);
 
         JSONObject deviceJSON = null;
 		try {

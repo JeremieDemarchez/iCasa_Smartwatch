@@ -26,15 +26,25 @@
 
     <!-- Project Descrkiption -->
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>device-handler-test-root</artifactId>
+    <artifactId>gateway.as.box.test.root</artifactId>
     <name>${productName} :: ${projectName}</name>
     <packaging>pom</packaging>
 
     <modules>
-        <module>bundles</module>
-        <module>packages</module>
+        <module>distribution</module>
         <module>test</module>
     </modules>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

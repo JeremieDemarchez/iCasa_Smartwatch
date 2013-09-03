@@ -15,33 +15,27 @@
  */
 package fr.liglab.adele.icasa.context.impl;
 
+import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.TechnicalService;
+import fr.liglab.adele.icasa.Variable;
+import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.device.DeviceTypeListener;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.listener.IcasaListener;
+import fr.liglab.adele.icasa.location.*;
+import fr.liglab.adele.icasa.location.impl.LocatedDeviceImpl;
+import fr.liglab.adele.icasa.location.impl.ZoneImpl;
+import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.Pojo;
+import org.apache.felix.ipojo.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.TechnicalService;
-import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.device.DeviceListener;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.Pojo;
-import org.apache.felix.ipojo.annotations.*;
-
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.device.DeviceTypeListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.listener.IcasaListener;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.LocatedDeviceListener;
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.ZoneListener;
-import fr.liglab.adele.icasa.location.impl.LocatedDeviceImpl;
-import fr.liglab.adele.icasa.location.impl.ZoneImpl;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 @Provides
@@ -59,6 +53,8 @@ public class ContextManagerImpl implements ContextManager {
 
 	private Map<String, GenericDevice> m_devices = new HashMap<String, GenericDevice>();
 
+    private HashMap<String, String[]> m_deviceSpecifications;
+
 	private Map<String, Factory> m_factories = new HashMap<String, Factory>();
 
 	private List<DeviceTypeListener> deviceTypeListeners = new ArrayList<DeviceTypeListener>();
@@ -75,7 +71,7 @@ public class ContextManagerImpl implements ContextManager {
 
 	private Lock writeLock = lock.writeLock();
 
-	public ContextManagerImpl() {
+    public ContextManagerImpl() {
 		// do nothing
 	}
 
@@ -429,6 +425,30 @@ public class ContextManagerImpl implements ContextManager {
 		return new HashSet(Arrays.asList(specifications));
 	}
 
+    @Override
+    public Set<String> getProvidedServices(LocatedDevice device) {
+        String deviceType = device.getType();
+        Set<String> specifications = null;
+        if (deviceType != null)
+            specifications = getProvidedServices(deviceType);
+        if (specifications == null) {
+            specifications = new HashSet<String>();
+            lock.readLock().lock();
+            try {
+                String[] deviceSpecifications = m_deviceSpecifications.get(device.getSerialNumber());
+                if ((deviceSpecifications != null) && (deviceSpecifications.length > 0)) {
+                    for (String deviceSpec : deviceSpecifications) {
+                        specifications.add(deviceSpec);
+                    }
+                }
+            } finally {
+                lock.readLock().unlock();
+            }
+        }
+
+        return specifications;
+    }
+
 	@Override
 	public Set<Variable> getGlobalVariables() {
 		return null; // TODO implement it
@@ -458,8 +478,10 @@ public class ContextManagerImpl implements ContextManager {
 		}
 	}
 
-	@Bind(id = "devices", aggregate = true, optional = true)
-	public void bindDevice(GenericDevice genericDevice) {
+	@Bind(id = "devices", aggregate = true, optional = true )
+	public void bindDevice(GenericDevice genericDevice, Map<String, Object> properties) {
+        String[] specifications = (String[]) properties.get(org.osgi.framework.Constants.OBJECTCLASS);
+
 		String sn = genericDevice.getSerialNumber();
         logger.debug("A new Device OSGi service has appear " + sn);
 		if (m_devices.containsKey(sn)) {
@@ -484,6 +506,7 @@ public class ContextManagerImpl implements ContextManager {
 		lock.writeLock().lock();
 		try {
 			m_devices.put(sn, genericDevice);
+            m_deviceSpecifications.put(sn, specifications);
 			contained = locatedDevices.containsKey(sn);
 			if (!contained) {
                 logger.debug("Creating a LocatedDevice for " + sn);
@@ -532,6 +555,7 @@ public class ContextManagerImpl implements ContextManager {
 		lock.writeLock().lock();
 		try {
 			m_devices.remove(sn);
+            m_deviceSpecifications.remove(sn);
 			locatedDevice = locatedDevices.remove(sn);
             logger.debug("Removing LocatedDevice for " + sn);
 			snapshotLocatedDeviceListeners = getLocatedDeviceListeners();
