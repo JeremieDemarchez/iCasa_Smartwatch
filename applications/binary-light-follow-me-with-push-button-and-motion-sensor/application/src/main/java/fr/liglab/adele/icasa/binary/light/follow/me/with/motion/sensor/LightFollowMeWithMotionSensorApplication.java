@@ -15,47 +15,58 @@
  */
 package fr.liglab.adele.icasa.binary.light.follow.me.with.motion.sensor;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
-import fr.liglab.adele.icasa.device.button.PushButton;
-import fr.liglab.adele.icasa.device.motion.MotionSensor;
-import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.power.PowerSwitch;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-@Component(name="LightFollowMeWithMotionSensorApplication")
+import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.button.PushButton;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.motion.MotionSensor;
+import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
+import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
+
+@Component(name = "LightFollowMeWithMotionSensorApplication")
 @Instantiate
 public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListener {
 
     private final BundleContext bundleContext;
 
-    private static long DEFAULT_TIMEOUT = 1000;
+    private static long DEFAULT_TIMEOUT = 60;
 
-    private long timeout = -1;
+    protected static final String APPLICATION_ID = "light.follow.me.with.motion.sensor";
 
-    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG+".follow.me.with.motion");
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + APPLICATION_ID);
+
+    @Requires
+    private Preferences preferences;
 
     /** Field for binaryLights dependency */
-    @RequiresDevice(id="binaryLights", type="field", optional=true)
+    @RequiresDevice(id = "binaryLights", type = "field", optional = true)
     private BinaryLight[] binaryLights;
 
     /** Field for motionSensors dependency */
-    @RequiresDevice(id="motionSensors", type="field", optional=true)
+    @RequiresDevice(id = "motionSensors", type = "field", optional = true)
     private MotionSensor[] motionSensors;
 
     /** Field for pushButtons dependency */
-    @RequiresDevice(id="pushButtons", type="field", optional=true)
+    @RequiresDevice(id = "pushButtons", type = "field", optional = true)
     private PushButton[] pushButtons;
 
     Map<String, ServiceRegistration> registrations = new HashMap<String, ServiceRegistration>();
@@ -65,28 +76,28 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     Object lockObject = new Object();
 
     /** Bind Method for null dependency */
-    @RequiresDevice(id="pushButtons", type="bind")
+    @RequiresDevice(id = "pushButtons", type = "bind")
     public void bindPushButtons(PushButton button, Map properties) {
         logger.trace("Register Listener to PushButton: " + button.getSerialNumber());
         button.addListener(this);
     }
 
     /** Unbind Method for null dependency */
-    @RequiresDevice(id="pushButtons", type="unbind")
+    @RequiresDevice(id = "pushButtons", type = "unbind")
     public void unbindPushButtons(PushButton button, Map properties) {
         logger.trace("Remove Listener to PushButton: " + button.getSerialNumber());
         button.removeListener(this);
     }
 
     /** Bind Method for null dependency */
-    @RequiresDevice(id="motionSensors", type="bind")
+    @RequiresDevice(id = "motionSensors", type = "bind")
     public void bindMotionSensor(MotionSensor motionSensor, Map properties) {
         logger.trace("Register Listener to MotionSensor" + motionSensor.getSerialNumber());
         motionSensor.addListener(this);
     }
 
     /** Unbind Method for null dependency */
-    @RequiresDevice(id="motionSensors", type="unbind")
+    @RequiresDevice(id = "motionSensors", type = "unbind")
     public void unbindMotionSensor(MotionSensor motionSensor, Map properties) {
         logger.trace("Remove Listener to MotionSensor" + motionSensor.getSerialNumber());
         motionSensor.removeListener(this);
@@ -95,7 +106,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     @Requires
     Clock clock;
 
-    public LightFollowMeWithMotionSensorApplication(BundleContext context){
+    public LightFollowMeWithMotionSensorApplication(BundleContext context) {
         this.bundleContext = context;
     }
 
@@ -103,18 +114,15 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     @Invalidate
     public void stop() {
         /*
-		 * It is extremely important to unregister the device listener.
-		 * Otherwise, iCasa will continue to send notifications to the
-		 * unpredictable and invalid component instance.
-		 * This will also causes problem when the bundle is stopped as iCasa
-		 * will still hold a reference on the device listener object.
-		 * Consequently, it (and its bundle) won't be garbage collected
-		 * causing a memory issue known as stale reference.
-		 */
+         * It is extremely important to unregister the device listener. Otherwise, iCasa will continue to send
+         * notifications to the unpredictable and invalid component instance. This will also causes problem when the
+         * bundle is stopped as iCasa will still hold a reference on the device listener object. Consequently, it (and
+         * its bundle) won't be garbage collected causing a memory issue known as stale reference.
+         */
         for (MotionSensor motionSensorSensor : motionSensors) {
             motionSensorSensor.removeListener(this);
         }
-        for(PushButton pushButton : pushButtons) {
+        for (PushButton pushButton : pushButtons) {
             pushButton.removeListener(this);
         }
     }
@@ -127,9 +135,8 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
     /**
      * Return all BinaryLight from the given location
-     *
-     * @param location
-     *            : the given location
+     * 
+     * @param location : the given location
      * @return the list of matching BinaryLights
      */
     private synchronized List<BinaryLight> getBinaryLightFromLocation(String location) {
@@ -138,7 +145,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
             if (binLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
                 binaryLightsLocation.add(binLight);
                 logger.trace("Light match with location " + binLight.getSerialNumber());
-            }else {
+            } else {
                 logger.trace("Light not matching with location " + binLight.getSerialNumber());
             }
         }
@@ -147,56 +154,56 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
     /**
      * Motion sensor will trigger a deviceEvent call.
+     * 
      * @param device the motion sensor detecting the movement.
      * @param data
      */
-    public void deviceEvent(GenericDevice device, Object data){
+    public void deviceEvent(GenericDevice device, Object data) {
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
-        if(device instanceof MotionSensor){
-            logger.trace("Motion detected in " + location );
+        if (device instanceof MotionSensor) {
+            logger.trace("Motion detected in " + location);
             turnOnTheLights(location);
             scheduleTask(location);
         }
     }
 
-
-
-    private void scheduleTask(String location){
-        //If exists, remove service
+    private void scheduleTask(String location) {
+        // If exists, remove service
         TurnOffLightTask task = null;
         ServiceRegistration registration = null;
-        synchronized (lockObject){
-            if(registrations.containsKey(location)){
+        synchronized (lockObject) {
+            if (registrations.containsKey(location)) {
                 registration = registrations.remove(location);
                 task = tasks.get(location);
             }
-            if(task == null) {
+            if (task == null) {
                 task = new TurnOffLightTask();
                 tasks.put(location, task);
-            }
-            task.setLocation(location);
+                task.setLocation(location);
+            }            
             long scheduledTime = clock.currentTimeMillis() + getTimeout();
             task.setExecutionDate(scheduledTime);
         }
-        if(registration != null){
-            registration.unregister();
+        if (registration != null) {
+            try{
+                registration.unregister();
+            }catch(Exception ex){}
         }
         registration = bundleContext.registerService(ScheduledRunnable.class.getName(), task, new Hashtable());
-        synchronized (lockObject){
+        synchronized (lockObject) {
             registrations.put(location, registration);
         }
     }
 
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-        String detectorLocation = (String) device
-                .getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME);
+        String detectorLocation = (String) device.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME);
         if (device instanceof PushButton) {
-            logger.trace("Push button detected in " + detectorLocation );
+            logger.trace("Push button detected in " + detectorLocation);
             // check the change is related to presence sensing
-            if (propertyName.equals(PushButton.PUSH_AND_HOLD) ) {
-                Boolean value = (Boolean)newValue;
-                if(value){
+            if (propertyName.equals(PushButton.PUSH_AND_HOLD)) {
+                Boolean value = (Boolean) newValue;
+                if (value) {
                     turnOnTheLights(detectorLocation);
                     scheduleTask(detectorLocation);
                 }
@@ -204,7 +211,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
         }
     }
 
-    protected void turnOffTheLights(String location){
+    protected void turnOffTheLights(String location) {
         List<BinaryLight> sameLocationLights = getBinaryLightFromLocation(location);
         logger.trace("To turn on Light in " + location);
         for (BinaryLight binaryLight : sameLocationLights) {
@@ -213,7 +220,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
         }
     }
 
-    protected void turnOnTheLights(String location){
+    protected void turnOnTheLights(String location) {
         List<BinaryLight> sameLocationLights = getBinaryLightFromLocation(location);
         logger.trace("To turn on Light in " + location);
         for (BinaryLight binaryLight : sameLocationLights) {
@@ -222,22 +229,13 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
         }
     }
 
-    private long getTimeout(){
-        if(timeout == -1){
-            String tvalue = bundleContext.getProperty("Follow.me.light.timeout");
-            if(tvalue != null){
-                try{
-                    timeout = Long.parseLong(tvalue);
-                }catch (Exception ex){
-                    logger.error("Unable to parse Follow.me.light.timeout");
-                    timeout = DEFAULT_TIMEOUT;
-                }
-
-            } else{ // use default value.
-                timeout = DEFAULT_TIMEOUT;
-            }
+    private long getTimeout() {
+        Long tempValue = (Long) preferences.getApplicationPropertyValue(APPLICATION_ID, "Timeout");
+        if (tempValue != null) {
+            return tempValue;
+        } else {
+            return DEFAULT_TIMEOUT;
         }
-        return timeout;
     }
 
     @Override
@@ -271,12 +269,11 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
         private long executionDate = 0;
 
-        private String location =GenericDevice.LOCATION_UNKNOWN;
+        private String location = GenericDevice.LOCATION_UNKNOWN;
 
         public void setLocation(String location) {
             this.location = location;
         }
-
 
         public void setExecutionDate(long executionDate) {
             this.executionDate = executionDate;
@@ -294,11 +291,16 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
         @Override
         public void run() {
-            synchronized (lockObject){
-                ServiceRegistration registrationTask = registrations.remove(location);
-                registrationTask.unregister();//remove service.
-            }
             turnOffTheLights(location);
+            ServiceRegistration registrationTask = null;
+            synchronized (lockObject) {
+                registrationTask = registrations.remove(location);
+            }
+            if (registrationTask!=null) {
+                try{
+                    registrationTask.unregister();
+                }catch(Exception ex){}
+            }
         }
     }
 
