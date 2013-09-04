@@ -1,0 +1,165 @@
+@(maps: Seq[HouseMap])
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+@import helper._
+@import models._
+
+@main("iCasa Dashboard") {
+
+<section id="mapsContainer">
+    <article>
+        <ul class="thumbnails">
+            @for(map <- maps) {
+            <li class="span3">
+                <a href="/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>Box URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Map">
+                    <img src="/maps/@map.imgFile" class="img-rounded"/>
+                    <p>@map.name</p>
+                </a>
+                <div class="mapButton mapRemoveButton pull-right" onclick="document.remove@(map.id).submit()">
+                    <i class="icon-remove"></i>
+                </div>
+                <form action="/mapDelete" method="POST" name="remove@map.id">
+                    <input type="hidden" name="mapId" value="@map.id"/>
+                </form>
+                <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-target="#form@map.id">
+                    <i class="icon-pencil"></i>
+                </div>
+            </li>
+
+            <div style="width:300px;margin-left:-150px;" id="form@map.id" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel@map.id" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="ModalLabel@map.id">Edit @map.name</h3>
+                </div>
+                <form action="/mapUpdate" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label class="control-label" for="mapId@map.id">ID</label>
+                            <div class="controls">
+                                <input type="text" name="mapId" id="mapId@map.id" value="@map.id" readonly/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapName@map.id">Name</label>
+                            <div class="controls">
+                                <input type="text" name="mapName" id="mapName@map.id" value="@map.name" required/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapDescription@map.id">Description</label>
+                            <div class="controls">
+                                <input type="text" name="mapDescription" id="mapDescription@map.id" value="@map.description"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="gatewayURL@map.id">Box URL</label>
+                            <div class="controls">
+                                <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080" required/>
+                            </div>
+                        </div>
+                        <div class="control-group hidden">
+                            <label class="control-label" for="libs@map.id">Libraries</label>
+                            <div class="controls">
+                                <input type="text" name="libs" id="libs@map.id" value=""/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="picture">Picture</label>
+                            <div class="controls">
+                                <input type="file" name="picture" id="picture@map.id" />
+                            </div>
+                            <img src="/maps/@map.imgFile" class="img-rounded"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                        <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
+                    </div>
+                </form>
+            </div>
+
+            }
+            <li class="span3">
+                <a id="addFormLink" href="#addForm" class="thumbnail" data-toggle="modal">
+                    <img src="@routes.Assets.at("images/buttons/blue-cross.png")" />
+                    <p>Add</p>
+                </a>
+            </li>
+        </ul>
+
+        <div style="width:300px;margin-left:-150px;" id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">Add a new map</h3>
+            </div>
+            <form action="/mapUpload" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="control-group hidden">
+                        <label class="control-label" for="mapId">ID</label>
+                        <div class="controls">
+                            <input type="text" name="mapId" id="mapId" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapName">Name</label>
+                        <div class="controls">
+                            <input type="text" name="mapName" required="required" id="mapName" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapDescription">Description</label>
+                        <div class="controls">
+                            <input type="text" name="mapDescription" id="mapDescription" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="gatewayURL">Box URL</label>
+                        <div class="controls">
+                            <input type="text" name="gatewayURL" id="gatewayURL" required="required" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080"/>
+                        </div>
+                    </div>
+                    <div class="control-group hidden">
+                        <label class="control-label" for="libs">Libraries</label>
+                        <div class="controls">
+                            <input type="text" name="libs" id="libs" value=""/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="picture">Picture</label>
+                        <div class="controls">
+                            <input type="file" name="picture" required="required" id="picture" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" value="Create"/>
+                </div>
+            </form>
+        </div>
+    </article>
+</section>
+
+<script>
+    $(function () {
+        $(".thumbnail").popover({trigger:'hover'});
+    });
+</script>
+
+}

@@ -1,0 +1,23 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.Application.index
+
+# Map management
+GET     /map/*mapId                 controllers.Application.connectToMap(mapId)
+GET     /maps/*file                 controllers.Application.getMap(file)
+POST    /mapUpload                  controllers.Application.uploadMap
+POST    /mapUpdate                  controllers.Application.updateMap
+POST    /mapDelete                  controllers.Application.deleteMap
+GET     /frontend                   controllers.Application.frontendInfo
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)
+
+# static resources directory used for plugins and widgets
+GET     /widgets/*file           controllers.SecuredExternalAssets.at(path="widgets", file)
+GET     /plugins/*file           controllers.SecuredExternalAssets.at(path="plugins", file)
+
