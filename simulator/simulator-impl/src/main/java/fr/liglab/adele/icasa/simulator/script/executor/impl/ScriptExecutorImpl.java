@@ -16,12 +16,14 @@
 package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -38,11 +40,10 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
-import org.apache.felix.ipojo.annotations.Validate;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import fr.liglab.adele.icasa.clock.Clock;
@@ -101,7 +102,9 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	private List<ScriptExecutorListener> listeners = new ArrayList<ScriptExecutorListener>();
 
 	public ScriptExecutorImpl(BundleContext context) {	    
-	           
+        String classpath = System.getProperty("java.class.path");
+        System.out.println("================> " + classpath);
+        System.out.println("================> " + context.getProperty("felix.fileinstall.dir"));        
 	}
 	
 	@Override
@@ -450,22 +453,29 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	 * @param file
 	 * @return
 	 */
-	private ScriptSAXHandler parseFile(File file) {
-		SAXParserFactory factory = SAXParserFactory.newInstance();
-		try {
-			SAXParser saxParser = factory.newSAXParser();
-			ScriptSAXHandler handler = new ScriptSAXHandler();
-			saxParser.parse(file, handler);
-			return handler;
-		} catch (ParserConfigurationException e) {
-			e.printStackTrace();
-		} catch (SAXException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
+    private ScriptSAXHandler parseFile(File file) {
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        try {
+            SAXParser saxParser = factory.newSAXParser();
+            ScriptSAXHandler handler = new ScriptSAXHandler();
+
+            InputStream inputStream = new FileInputStream(file);
+            InputStreamReader inputReader = new InputStreamReader(inputStream, "UTF-8");
+
+            InputSource inputSource = new InputSource(inputReader);
+            inputSource.setEncoding("UTF-8");
+
+            saxParser.parse(inputSource, handler);
+            return handler;
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();
+        } catch (SAXException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
 
 	/**
 	 * Command executor Thread (Runnable) class
