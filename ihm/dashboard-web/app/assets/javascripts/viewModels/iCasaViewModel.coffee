@@ -403,6 +403,7 @@ define(['jquery',
            super(model)
            @state = kb.observable(model, 'state');
 
+
     class PositionedImageViewModel extends NamedViewModel
         constructor: (model) ->
            super(model);
@@ -1060,9 +1061,11 @@ define(['jquery',
             @imgName = ko.computed(() =>
                 imgName = "unknown"
                 if @name() == "dimmer.light.follow.me"
-                    imgName = "actimetrie"
+                    imgName = "follow1"
                 if @name() ==  "test.light.follow.me"
-                    imgName = "actimetrie"
+                    imgName = "follow1"
+                if @name() ==  "light.follow.me.with.motion.sensor"
+                    imgName = "follow1"
                 return imgName;
             );
             @imgIcon = ko.computed(() =>
