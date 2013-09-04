@@ -18,4 +18,6 @@
 -->
 <library id="default" name="Default widgets for iCasa predefined devices">
     <widget id="presenceSensor" />
+    <widget id="box" />
+    <widget id="pushButton" />
 </library>

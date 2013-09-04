@@ -135,8 +135,6 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
          DataModel.collections.devices = new DataModel.Collections.Devices();
 
          DataModel.collections.deviceTypes = new DataModel.Collections.SimulatedDeviceTypes();
-
-
          #Override Backbone sync to get last call time
          oldSync = Backbone.sync;
          Backbone.sync = (method, model, options) ->

@@ -403,6 +403,7 @@ define(['jquery',
            super(model)
            @state = kb.observable(model, 'state');
 
+
     class PositionedImageViewModel extends NamedViewModel
         constructor: (model) ->
            super(model);

@@ -185,7 +185,7 @@ object Application extends Controller {
 
   def uploadMap = Action(parse.multipartFormData) { implicit request =>
     val body = request.body;
-    val (mapId, mapName, mapDescription, gatewayURLToSet, libs) = mapForm.bindFromRequest.get;
+    val (mapId, mapName, mapDescription, gatewayURLToSet, libsToSet) = mapForm.bindFromRequest.get;
 
     body.file("picture").map { picture =>
       import java.io.File
@@ -201,7 +201,7 @@ object Application extends Controller {
             var description = mapDescription;
             var gatewayURL = gatewayURLToSet;
             var imgFile = newFileName;
-            var libs = ""; //TODO manage libraries
+            var libs = libsToSet;
         }
         if (maps.isEmpty)
           loadMaps();
@@ -246,7 +246,7 @@ object Application extends Controller {
               var description = newMap("mapDescription");
               var gatewayURL = newMap("gatewayURL");
               var imgFile = id + ".png";
-              var libs = "" //TODO manage libs
+              var libs = newMap("libs");
           }
           picture.ref.moveTo(Play.getFile(MAP_DIRECTORY + "/" + map.imgFile), true)
 
