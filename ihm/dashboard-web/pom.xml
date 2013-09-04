@@ -79,13 +79,11 @@
 				<configuration>
                     <buildWar>false</buildWar>
                     <play2Home>${user.home}/opt/play-${play2.version}</play2Home>
-                    <!--
                     <additionalFiles>
                        <additionalFile>${basedir}/libs</additionalFile>
                        <additionalFile>${basedir}/maps</additionalFile>
                        <additionalFile>${basedir}/widgets</additionalFile>
                     </additionalFiles>
-                    -->
                 </configuration>
                 <executions>
                     <execution>
