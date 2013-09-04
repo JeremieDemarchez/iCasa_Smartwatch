@@ -17,10 +17,6 @@ package fr.liglab.adele.icasa.device.motion.impl;
 
 import java.util.List;
 
-import fr.liglab.adele.icasa.device.DeviceDataEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -30,7 +26,10 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.osgi.framework.Constants;
 
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.device.DeviceDataEvent;
+import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
@@ -86,32 +85,37 @@ public class SimulatedMotionSensorImpl extends AbstractDevice implements MotionS
 
 	@Override
 	public void personAdded(Person person) {
-		updateState(person);
+		updateState(person, null);
 	}
 
 	@Override
 	public void personRemoved(Person person) {
-		updateState(person);
+		updateState(person, null);
 	}
 
 	@Override
 	public void personMoved(Person person, Position oldPosition) {
-		updateState(person);
+		updateState(person, oldPosition);
 	}
 
 
-	/**
-	 * Calculates if a person is found in the detection zone of this device. When
-	 * there is a change of previous detection a event is sent to listeners
-	 */
-	private void updateState(Person person) {
-		if (m_zone != null) {
-            if (m_zone.contains(person)){
-                this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));//when detection is found always return true.
+    /**
+     * Calculates if a person is found in the detection zone of this device. When there is a change of previous
+     * detection a event is sent to listeners
+     */
+    private void updateState(Person person, Position oldPosition) {
+        if (m_zone != null) {
+            if (m_zone.contains(person)) {
+                // when a person arrives or moves into the  zone.
+                this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
+            } else if (oldPosition != null) {
+                // when a person leaves the device influence zone
+                if (m_zone.contains(oldPosition)) {
+                    this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
+                }
             }
-
-		}
-	}
+        }
+    }
 
 	@Validate
 	protected void start() {
