@@ -14,7 +14,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.1.1</version>
+        <version>1.1.2-SNAPSHOT</version>
         <relativePath>
         </relativePath>
     </parent>
