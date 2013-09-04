@@ -1,0 +1,164 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+   <!-- Project parent -->
+   <parent>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>parent</artifactId>
+      <version>1.1.2-SNAPSHOT</version>
+      <relativePath>../../parent</relativePath>
+   </parent>
+
+   <!-- Project Description -->
+   <modelVersion>4.0.0</modelVersion>
+   <artifactId>dashboard.web</artifactId>
+   <packaging>play2</packaging>
+   <name>${productName} :: ${projectName}</name>
+   
+    <properties>
+       <play2.version>2.0.4</play2.version>
+    </properties>
+
+   <repositories>
+      <repository>
+            <id>typesafe</id>
+            <url>http://repo.typesafe.com/typesafe/releases/</url>
+      </repository>
+   </repositories>
+
+   <dependencies>
+      <!-- modules -->
+      <!--dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>play2.osgi</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+      </dependency-->
+
+      <!-- Play Framework Dependencies -->
+      <dependency>
+            <groupId>play</groupId>
+            <artifactId>play_2.9.1</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+      </dependency>
+      <dependency>
+            <groupId>play</groupId>
+            <artifactId>play-test_2.9.1</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <!-- Play source directory -->
+      <sourceDirectory>app</sourceDirectory>
+      <testSourceDirectory>test</testSourceDirectory>
+
+      <plugins>
+         <plugin>
+            <artifactId>maven-antrun-plugin</artifactId>
+            <version>1.4</version>
+            <executions>
+               <execution>
+                  <phase>compile</phase>
+                  <configuration>
+                     <tasks>
+                        <copy file="${project.build.outputDirectory}/version.txt" toFile="${project.build.directory}/../conf/version.conf" overwrite="true" />
+                        </tasks>
+                     </configuration>
+                     <goals>
+                        <goal>run</goal>
+                     </goals>
+                  </execution>
+               </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.nanoko.playframework</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <extensions>true</extensions>
+				<configuration>
+                    <buildWar>false</buildWar>
+                    <play2Home>${user.home}/opt/play-${play2.version}</play2Home>
+                    <!--
+                    <additionalFiles>
+                       <additionalFile>${basedir}/libs</additionalFile>
+                       <additionalFile>${basedir}/maps</additionalFile>
+                       <additionalFile>${basedir}/widgets</additionalFile>
+                    </additionalFiles>
+                    -->
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>play-installation</id>
+                        <goals>
+                           <goal>install-play</goal>
+                        </goals>
+                        <phase>pre-clean</phase>
+                        <configuration>
+                           <play2version>${play2.version}</play2version>
+                           <play2basedir>${user.home}/opt</play2basedir>
+                        </configuration>
+                  </execution>
+            </executions>
+            </plugin>
+
+            <plugin>
+               <groupId>org.apache.maven.plugins</groupId>
+               <artifactId>maven-compiler-plugin</artifactId>
+               <configuration>
+                  <source>1.6</source>
+                  <target>1.6</target>
+               </configuration>
+            </plugin>
+
+          <plugin>
+              <groupId>org.nanoko.coffee-mill</groupId>
+              <artifactId>coffee-mill-maven-plugin</artifactId>
+              <version>1.0.0</version>
+              <extensions>true</extensions>
+              <executions>
+                  <execution>
+                      <id>compile plugin coffeescript</id>
+                      <phase>generate-resources</phase>
+                      <goals>
+                          <goal>compile-coffeescript</goal>
+                      </goals>
+                      <configuration>
+                          <coffeeScriptDir>plugins</coffeeScriptDir>
+                          <workDir>plugins</workDir>
+                      </configuration>
+                  </execution>
+                  <execution>
+                      <id>compile widget coffeescript</id>
+                      <phase>generate-resources</phase>
+                      <goals>
+                          <goal>compile-coffeescript</goal>
+                      </goals>
+                      <configuration>
+                          <coffeeScriptDir>widgets</coffeeScriptDir>
+                          <workDir>widgets</workDir>
+                      </configuration>
+                  </execution>
+              </executions>
+          </plugin>
+
+      </plugins>
+      <resources>
+         <resource>
+            <directory>conf</directory>
+            <filtering>true</filtering>
+            <includes>
+               <include>**/version.txt</include>
+            </includes>
+         </resource>
+         <resource>
+            <directory>conf</directory>
+            <filtering>false</filtering>
+            <excludes>
+               <exclude>**/version.txt</exclude>
+            </excludes>
+         </resource>
+      </resources>
+   </build>
+
+</project>

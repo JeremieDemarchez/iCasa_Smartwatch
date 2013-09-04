@@ -1,0 +1,105 @@
+@(title: String)(content: Html)
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>@title</title>
+
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css")" />
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap-responsive.min.css")" />
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")" />
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")" />
+
+    <script src="@routes.Assets.at("javascripts/frameworks/jquery/core/jquery-1.8.2.min.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/bootstrap/js/bootstrap.min.js")"> </script>
+
+    <!-- Use to add browser prefix automatically -->
+    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
+
+
+
+</head>
+<body>
+
+<script src="@routes.Assets.at("javascripts/BrowserDetection.js")"></script>
+<script>
+
+if (!(BrowserDetect.browser == "Firefox")) {
+    var modal = $('<div></div>').addClass("modal hide fade");
+    var header = $('<div></div>').addClass("modal-header");
+    var body = $('<div></div>').addClass("modal-body");
+    var warning = $('<h4>Warning</h4>');
+    var text = $('<div></div>').addClass("alert alert-error").append(warning, "Your browser is not officially supported, It may works but there is no guarantee");
+    var footer = $('<div></div>').addClass("modal-footer");
+    var doc = $('<a href="http://adeleresearchgroup.github.com/iCasa-Simulator/" target="_blank">See documentation</a>').addClass("btn btn-primary");
+    var con = $('<button data-dismiss="modal" aria-hidden="true">Close</button>').addClass("btn");
+
+    body.append(text);
+    footer.append(doc, con);
+    modal.append(body, footer);
+    $('body').append(modal);
+    modal.modal('toggle');
+};
+</script>
+
+<header>
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/"><img src="@routes.Assets.at("images/rectLogos/logoICasa_simulator_pfn_30.png")" alt="iCasaLogo" /></a>
+                <nav class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="/">Home</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://store-icasa.rhcloud.com/" target="_blank">Store</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa-Simulator/" target="_blank">Documentation</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="@routes.Assets.at("images/rectLogos/medical_logo.png")" alt="Medical" /><span class="hidden" id="medicalText">Medical Research Project</span></a></li>
+                    </ul>
+                </nav><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+</header>
+@content
+
+    <footer>
+        <p>Copyright LIG, ADELE Research Group - All rights reserved - This project has been partially funded by <a href="http://medical.imag.fr/">Medical Research Project</a></p>
+    </footer>
+</body>
+</html>

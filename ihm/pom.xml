@@ -30,6 +30,7 @@
 
 	<modules>
       <module>icasa-web</module>
+      <module>dashboard-web</module>
 	</modules>
    <build>
       <plugins>
