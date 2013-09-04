@@ -35,7 +35,7 @@
   <dependencies>
      <dependency>
         <groupId>fr.liglab.adele.icasa</groupId>
-        <artifactId>dashboard.distribution</artifactId>
+        <artifactId>icasa.dashboard.distribution</artifactId>
         <version>${iCasaSimulatorVersion}</version>
         <type>osgi-distribution</type>
      </dependency>
