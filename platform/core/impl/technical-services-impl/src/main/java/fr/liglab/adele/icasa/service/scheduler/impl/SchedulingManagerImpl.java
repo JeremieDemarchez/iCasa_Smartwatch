@@ -91,13 +91,14 @@ public class SchedulingManagerImpl implements SchedulingManager {
             Group group = sharedClockedGroups.get(groupName);
             if (group != null) {
                 group.withdraw(runnable);
+                
+                // Is the group is empty, close it
+                if (group.isEmpty()) {
+                    group.close();
+                    sharedClockedGroups.remove(group.getName());
+                }
             }
 
-            // Is the group is empty, close it
-            if (group.isEmpty()) {
-                group.close();
-                sharedClockedGroups.remove(group.getName());
-            }
             scheduledRunables.remove(runnable);
         }
     }
@@ -130,12 +131,12 @@ public class SchedulingManagerImpl implements SchedulingManager {
             Group group = specificClockedGroups.get(groupName);
             if (group != null) {
                 group.withdraw(runnable);
-            }
-
-            // Is the group is empty, close it
-            if (group.isEmpty()) {
-                group.close();
-                specificClockedGroups.remove(group.getName());
+                
+                // Is the group is empty, close it
+                if (group.isEmpty()) {
+                    group.close();
+                    specificClockedGroups.remove(group.getName());
+                }
             }
         }
     }
@@ -174,12 +175,12 @@ public class SchedulingManagerImpl implements SchedulingManager {
             Group group = sharedClockedGroups.get(groupName);
             if (group != null) {
                 group.withdraw(runnable);
-            }
-
-            // If the group is empty, close it
-            if (group.isEmpty()) {
-                group.close();
-                sharedClockedGroups.remove(group.getName());
+                
+                // If the group is empty, close it
+                if (group.isEmpty()) {
+                    group.close();
+                    sharedClockedGroups.remove(group.getName());
+                }
             }
             periodicRunnables.remove(runnable);
         }
@@ -212,12 +213,12 @@ public class SchedulingManagerImpl implements SchedulingManager {
             Group group = specificClockedGroups.get(groupName);
             if (group != null) {
                 group.withdraw(runnable);
-            }
-
-            // If the group is empty, close it
-            if (group.isEmpty()) {
-                group.close();
-                specificClockedGroups.remove(group.getName());
+                
+                // If the group is empty, close it
+                if (group.isEmpty()) {
+                    group.close();
+                    specificClockedGroups.remove(group.getName());
+                }
             }
         }
     }
