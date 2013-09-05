@@ -17,6 +17,7 @@ define(['jquery',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
         'text!templates/applicationStatusWindow.html',
+        'bootstrap',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml) ->
 
@@ -109,6 +110,23 @@ define(['jquery',
                 application = @root.applications.collection().at(index);
                 @root.selectedApplication(@root.applications.viewModelByModel(application));
             )
+    ko.bindingHandlers.jqueryHammerDraggable = {
+
+        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
+            # This will be called when the binding is first applied to an element
+
+            $(element).on("touch" , () =>
+                console.log "device has been touched"
+                if (viewModel.isHighlighted())
+                    viewModel.removeHighlight();
+                    viewModel.isSelected(false);
+                else
+                    viewModel.addHighlight();
+                    viewModel.isSelected(true);
+            )
+
+            return { controlsDescendantBindings: false };
+    };
     #end for dashboard.
 
     ko.bindingHandlers.handlebarTemplate = {
