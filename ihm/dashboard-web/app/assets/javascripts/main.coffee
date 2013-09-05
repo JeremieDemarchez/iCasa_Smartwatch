@@ -32,7 +32,8 @@ require.config({
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
         'underscore' : 'frameworks/underscore/underscore-min',
-        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract'
+        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract' ,
+        'hammer' : 'frameworks/hammer/jquery.hammer'
     },
 
     # Require.js plugins to handle other types of dependencies
@@ -97,6 +98,11 @@ require.config({
 
         'underscore': {
             exports: "_"
+        },
+
+        'hammer' : {
+            deps:['jquery'],
+            exports:'Hammer'
         }
     }
 
