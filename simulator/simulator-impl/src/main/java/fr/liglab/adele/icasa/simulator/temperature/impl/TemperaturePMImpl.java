@@ -230,8 +230,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
             computeTotalPower(zoneModel); //TODO should be computed on the fly
             double powerLevelTotal = zoneModel.getTotalPower();
+            double timeDiffInSeconds = timeDiff / 1000.0d;
 
-            newTemperature = currentTemperature + ((powerLevelTotal * timeDiff) / zoneModel.getThermalCapacity());
+            newTemperature = currentTemperature + ((powerLevelTotal * timeDiffInSeconds) / zoneModel.getThermalCapacity());
             for (Map.Entry<String, Double> zoneWallSurfaceEntry : zoneModel.getWallSurfaces()) {
                 String otherZoneId = zoneWallSurfaceEntry.getKey();
                 double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
@@ -240,7 +241,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                     Object otherZoneTemperature = _contextMgr.getZone(otherZoneId).getVariableValue(TEMPERATURE_PROP_NAME);
                     if (otherZoneTemperature != null)
                         newTemperature += (K * zoneWallSurface * (((Double) otherZoneTemperature) - currentTemperature)
-                                * timeDiff) / zoneModel.getThermalCapacity();
+                                * timeDiffInSeconds) / zoneModel.getThermalCapacity();
                 }
             }
 
@@ -249,7 +250,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
              */
             if (newTemperature > HIGHEST_TEMP)
                 newTemperature = HIGHEST_TEMP;
-            else if (newTemperature > LOWER_TEMP)
+            else if (newTemperature < LOWER_TEMP)
                 newTemperature = LOWER_TEMP;
         }
 
@@ -566,7 +567,40 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                     xFactor, yFactor, zFactor) / 2.0d) + yzWallSurface;
         }
 
-        return 0.0;
+        /* X,Y plan
+        *     ------
+        * ----| Z2 |---
+        * |Z1 |    |  |
+        * ----|    |---
+        *     |    |
+        *     ------
+        */
+        if ((z2xInZ1x && !z1xInZ2x && z1yInZ2y && !z2yInZ1y) || (!z2xInZ1x && z1xInZ2x && !z1yInZ2y && z2yInZ1y)) {
+            double xyWallSurface = interX * xFactor * interY * yFactor;
+            Parallelepiped interPara = getInterParallelepiped(p1, p2);
+
+            return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
+                    xFactor, yFactor, zFactor) + xyWallSurface;
+        }
+
+        /* X,Y plan
+        *     ------
+        * ----| Z2 |---
+        * |Z1 |    |  |
+        * ----|    |---
+        *     |    |
+        *     ------
+        */
+        if ((interX > 0) && (interY > 0) && !z2xInZ1x && !z1xInZ2x && !z1yInZ2y && !z2yInZ1y) {
+            Parallelepiped interPara = getInterParallelepiped(p1, p2);
+
+            return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
+                    xFactor, yFactor, zFactor) / 2.0d;
+        }
+
+        // should not reach this point
+
+        throw new IllegalStateException("Should be dead code.");
     }
 
 

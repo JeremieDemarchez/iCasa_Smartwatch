@@ -9,6 +9,7 @@ Detectors
 * <a href="#PresenceSensorCard">Presence Sensor</a>
 * <a href="#MotionSensorCard">Motion Sensor</a>
 * <a href="#PowerSwitchCard">Power Switch</a>
+* <a href="#PushButtonCard">Push Button</a>
 * <a href="#ThermometerCard">Thermometer</a>
 
 <div class="idCard">
@@ -361,7 +362,68 @@ sensor detects a movement:
 <div class="separator"></div>
 </div>
 
+<!-- Power Switch Card-->
+<div class="idCard">
 
+<div class="titleCard"><a name="PushButtonCard">Push Button</a></div>
+
+<div class="photo"><img src="./devices/T456/bouton_.png" width="100"/></div>
+
+<div class="description">
+<div class="hCard">Overview</div> 
+ 
+<p>PushButton can supply only one model of push button which is a standard binary button (is pressed, or not.). The push button can be used to notify events, for example, to send an alarm.</p>
+ 
+<div class="hCard">Device properties</div>
+
+<table>
+<thead>
+<tr>
+<td>Property name</td>
+<td>Constant name</td>
+<td>Value</td>
+<td>Default value</td>
+<td>Type</td>
+<td>Modifiable</td>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>pushButton.pushAndHold</td>
+<td>PUSH_AND_HOLD</td>
+<td>True/False</td>
+<td>False</td>
+<td>Boolean</td>
+<td>No</td>
+</tr>
+</tbody>
+</table>
+
+
+
+
+        
+<div class="hCard">Methods</div>
+
+<strong>Interface:</strong> <code>fr.liglab.adele.icasa.device.button.PushButton</code>
+
+<ul>
+<li><code>getSerialNumber()</code>: Get the device ID</li>
+<li><code>isPushed()</code>: Get the current status of the button:
+<ul>
+<li>Pushed: true</li>
+<li>Released: false</li>
+</ul>
+</li>
+</ul>
+
+
+<a href="./datasheets/Datasheet_PushButton.pdf">Full datasheet here</a>
+</div>
+<div class="separator"></div>
+</div>
+
+<!-- -->
 
 
 <div class="idCard">

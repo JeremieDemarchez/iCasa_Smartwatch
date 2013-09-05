@@ -52,6 +52,12 @@
             <version>${iCasaPlatformVersion}</version>
             <type>deployment-package</type>
         </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.device.hanlder.dp</artifactId>
+            <version>${iCasaPlatformVersion}</version>
+            <type>deployment-package</type>         
+         </dependency>        
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.simulator.dp</artifactId>
@@ -94,9 +100,14 @@
             <plugin>
                 <groupId>fr.liglab.adele.common</groupId>
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
                 <configuration>
                     <flattenDP>true</flattenDP>
+                    <outputs>
+                       <output>
+                          <IncludesArtifactId>icasa.web</IncludesArtifactId>
+                          <directory>web.simulator</directory>
+                       </output>
+                    </outputs>
                 </configuration>
             </plugin>
          </plugins>

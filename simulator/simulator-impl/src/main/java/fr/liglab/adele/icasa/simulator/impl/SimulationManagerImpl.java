@@ -15,30 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.impl;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import org.apache.felix.ipojo.ConfigurationException;
-import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.Pojo;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
-import org.osgi.framework.Constants;
-
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -46,14 +22,16 @@ import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.PersonType;
-import fr.liglab.adele.icasa.simulator.PhysicalModel;
-import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.*;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 import fr.liglab.adele.icasa.simulator.services.PersonLocationService;
+import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.Constants;
+
+import java.util.*;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 @Component
 @Provides
@@ -90,6 +68,8 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 		addPersonType("Mother");
 		addPersonType("Boy");
 		addPersonType("Girl");
+        addPersonType("Woman");
+        addPersonType("Man");
 	}
 
 	@Override
@@ -711,7 +691,12 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 		return manager.getProvidedServices(deviceType);
 	}
 
-	@Override
+    @Override
+    public Set<String> getProvidedServices(LocatedDevice locatedDevice) {
+        return manager.getProvidedServices(locatedDevice);
+    }
+
+    @Override
 	public Set<Variable> getGlobalVariables() {
 		return manager.getGlobalVariables();
 	}
