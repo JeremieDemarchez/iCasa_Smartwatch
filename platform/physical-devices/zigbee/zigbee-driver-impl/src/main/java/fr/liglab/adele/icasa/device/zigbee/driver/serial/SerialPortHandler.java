@@ -64,7 +64,7 @@ public class SerialPortHandler {
 	/* @GardedBy(deviceList) */
 	private Map<String /* module address */, DeviceInfo> deviceList = new HashMap<String, DeviceInfo>();
 	/* @GardedBy(deviceList) */
-	private Map<String /* module address */, String> deviceTypes = new HashMap<String, String>();
+	private Map<String /* module address */, String/*TypeCode*/> deviceTypes = new HashMap<String, String>();
 	private ZigbeeDriverImpl trackerMgr;
 	private ScheduledExecutorService executor;
 
@@ -74,6 +74,7 @@ public class SerialPortHandler {
 		deviceTypes.put("1234", TypeCode.IC001.getFriendlyName());
 		deviceTypes.put("5001", TypeCode.IA001.getFriendlyName());
 		deviceTypes.put("2345", TypeCode.IC003.getFriendlyName());
+        //deviceTypes.put("2345", TypeCode.IC003.getFriendlyName());
 	}
 
 	public List<DeviceInfo> getDeviceInfos() {
@@ -543,8 +544,6 @@ public class SerialPortHandler {
         logger.trace("ModuleAddress : "
                 + deviceInfo.getModuleAddress());
         logger.trace("data value : " + deviceInfo.getDeviceData().getData());
-        logger.trace("type code : "
-                + deviceInfo.getTypeCode().getFriendlyName());
+        logger.trace("type code : " + deviceInfo.getTypeCode() == null ? "unknown" : deviceInfo.getTypeCode().getFriendlyName());
     }
-
 }
