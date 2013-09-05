@@ -84,7 +84,9 @@ public class ZigbeeMotionSensor extends AbstractDevice implements MotionSensor, 
     public void deviceDataChanged(String address, Data oldData, Data newData) {
         if(address.compareTo(this.moduleAddress) == 0){
             String data = newData.getData();
-            this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
+            if (Integer.parseInt(data) == 1){
+                this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
+            }
         }
     }
 
