@@ -66,9 +66,10 @@ require.config({
         },
 
         'bootstrap': [
-            'jquery',
+            'jquery'
             # 'css!bootstrap.dir/css/bootstrap.min', //loaded by main html page
-            'css!bootstrap.dir/css/bootstrap-responsive.min'],
+            # 'css!bootstrap.dir/css/bootstrap-responsive.min',
+        ],
 
         'handlebars': {
             exports: "Handlebars"

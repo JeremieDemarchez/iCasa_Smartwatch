@@ -17,7 +17,6 @@ define(['jquery',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
         'text!templates/applicationStatusWindow.html',
-        'bootstrap',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml) ->
 
