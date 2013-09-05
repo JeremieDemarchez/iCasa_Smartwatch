@@ -1058,6 +1058,21 @@ define(['jquery',
             # status window management
             @statusWindowTemplate = ko.observable(applicationStatusWindowTemplateHtml);
             @statusWindowVisible = ko.observable(false);
+            @applicationStatus = kb.observable(model,'status')
+            @isRunning = ko.computed(() =>
+                if @applicationStatus() == "Started"
+                    return true;
+                return false;
+            )
+            @changeStatus = () =>
+                console.log "changing app status"
+                if @applicationStatus() == "Started"
+                    #@applicationStatus("Stopped");
+                    model.set({status: "Stopped"})
+                else
+                    #@applicationStatus("Started");
+                    model.set({status: "Started"})
+
             @imgName = ko.computed(() =>
                 imgName = "unknown"
                 if @name() == "dimmer.light.follow.me"
@@ -1074,6 +1089,7 @@ define(['jquery',
             @imgSrc = ko.computed(() =>
                 return "/assets/images/applications/#{@imgName()}.png";
             );
+
 
      #End valid only for dashboard
 

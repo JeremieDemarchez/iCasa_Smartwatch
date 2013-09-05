@@ -34,6 +34,8 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
 
          class DataModel.Models.Application extends Backbone.Model
             urlRoot: "#server#/apps/apps".replace /#server#/, serverUrl
+            defaults:
+                status: "Started"
             constructor: ()->
                 super
                 @accessRights = new DataModel.Collections.AccessRights()
