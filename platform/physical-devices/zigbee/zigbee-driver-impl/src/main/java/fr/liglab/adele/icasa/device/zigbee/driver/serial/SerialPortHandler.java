@@ -22,11 +22,7 @@ package fr.liglab.adele.icasa.device.zigbee.driver.serial;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -60,6 +56,9 @@ public class SerialPortHandler {
 	private DataInputStream ins = null;
 	private DataOutputStream ous = null;
     private Object streamLock = new Object();
+    //requests to sent to devices.
+    private Queue<List<Byte>> toWriteData = new LinkedList<List<Byte>>();//handle write in the same thread as read.
+    private Map<String/*module*/,String /*Expected data*/>  requestData = new Hashtable();
 	private Map<String /* module address */, ScheduledFuture<?>> deviceDiscoveryList = new HashMap<String, ScheduledFuture<?>>();
 	/* @GardedBy(deviceList) */
 	private Map<String /* module address */, DeviceInfo> deviceList = new HashMap<String, DeviceInfo>();
@@ -106,6 +105,7 @@ public class SerialPortHandler {
                     parseData(sb);
                     sb.clear();
                 }
+                handleWrite();
             }
 		} finally {
 			closeStreams();
@@ -193,6 +193,7 @@ public class SerialPortHandler {
                 notifyBatteryLevelChange(deviceInfos, oldBatteryLevel);
                 notifyDataChange(deviceInfos, oldData);
 				if (type == 'D') {
+                    logger.debug("Sent ACK to " + deviceInfos.getModuleAddress());
                     write(buildResponse(ResponseType.DATA,
                             deviceInfos.getModuleAddress()));
 				}
@@ -392,10 +393,48 @@ public class SerialPortHandler {
 	 * @throws IOException
 	 */
 	public void write(ResponseType responseType, String moduleAddress,
-			String newValue) throws IOException {
-
-		write(buildResponseWithNewValue(responseType, moduleAddress, newValue));
+			String newValue) {
+         synchronized (streamLock){ // add to queue.
+             requestData.put(moduleAddress, newValue);//set expected data
+             scheduleWrite(buildResponseWithNewValue(responseType, moduleAddress, newValue));
+         }
+		//write(buildResponseWithNewValue(responseType, moduleAddress, newValue));
 	}
+
+    private void scheduleWrite(List<Byte> data ){
+        synchronized (streamLock){ // add to queue.
+            toWriteData.add(data);
+        }
+    }
+    /**
+     * Handles writing events.
+     */
+    private void handleWrite(){
+        synchronized (streamLock){
+            handleRequests();
+            while(! toWriteData.isEmpty()) {
+                List<Byte> tosend = toWriteData.remove();
+                try {
+                    write(tosend);
+                } catch (IOException e) {
+                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                }
+            }
+        }
+    }
+
+    private void handleRequests(){
+        for(String module: requestData.keySet()){
+            String expected = requestData.get(module);
+            DeviceInfo info = deviceList.get(module);
+            if(info != null ){
+                if(info.getDeviceData().getData().compareTo(expected) != 0 ) {
+                    scheduleWrite(buildResponseWithNewValue(ResponseType.REQUEST, module, expected));
+                    logger.debug("Resent expected value");
+                }
+            }
+        }
+    }
 
     /**
      * Close the serial port streams.
