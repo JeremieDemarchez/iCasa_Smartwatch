@@ -42,6 +42,7 @@
                 <module>x10-presence-sensor-core-dp</module>
                 -->
                 <module>tikitag-core-dp</module>
+                <module>zigbee-core-dp</module>
             </modules>
         </profile>
         <profile>

@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum TypeCode {
 
-	IC001("POWER_BUTTON"), IC003("PRESENCE_SENSOR"), IA001("BINARY_LIGHT");
+	IC001("POWER_BUTTON"), IC003("PRESENCE_SENSOR"), IA001("BINARY_LIGHT"), IC004("MOTION_SENSOR");
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(TypeCode.class);
@@ -48,7 +48,9 @@ public enum TypeCode {
 			return TypeCode.IC003;
 		} else if (IA001.friendlyName.equals(friendlyName)) {
 			return TypeCode.IA001;
-		} else {
+		} else if (IC004.friendlyName.equals(friendlyName)) {
+            return TypeCode.IC004;
+        } else {
 			logger.error("unknown device type friendly name : " + friendlyName);
 			return null;
 		}
@@ -60,6 +62,8 @@ public enum TypeCode {
 			return "IC001";
 		case IC003 :
 			return "IC003";
+        case IC004 :
+            return "IC004";
 		case IA001 :
 			return "IA001";
 		default :

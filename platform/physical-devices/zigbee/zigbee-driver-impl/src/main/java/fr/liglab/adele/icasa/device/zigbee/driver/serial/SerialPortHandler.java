@@ -71,10 +71,11 @@ public class SerialPortHandler {
 	public SerialPortHandler(ZigbeeDriverImpl zigbeeDriverImpl) {
 		this.trackerMgr = zigbeeDriverImpl;
 		executor = Executors.newSingleThreadScheduledExecutor();
-		deviceTypes.put("1234", TypeCode.IC001.getFriendlyName());
-		deviceTypes.put("5001", TypeCode.IA001.getFriendlyName());
-		deviceTypes.put("2345", TypeCode.IC003.getFriendlyName());
-        //deviceTypes.put("2345", TypeCode.IC003.getFriendlyName());
+		deviceTypes.put("1234", TypeCode.IC001.getFriendlyName()); // Push button
+		deviceTypes.put("5001", TypeCode.IA001.getFriendlyName()); // binary light
+		deviceTypes.put("2345", TypeCode.IC004.getFriendlyName());//motion sensor
+        deviceTypes.put("0001", TypeCode.IC004.getFriendlyName());//motion sensor
+        deviceTypes.put("0002", TypeCode.IA001.getFriendlyName()); // binary light
 	}
 
 	public List<DeviceInfo> getDeviceInfos() {
@@ -540,10 +541,14 @@ public class SerialPortHandler {
      * @param deviceInfo
      */
     private void logInfo(DeviceInfo deviceInfo){
-        logger.trace("battery : " + deviceInfo.getBatteryLevel());
-        logger.trace("ModuleAddress : "
-                + deviceInfo.getModuleAddress());
-        logger.trace("data value : " + deviceInfo.getDeviceData().getData());
-        logger.trace("type code : " + deviceInfo.getTypeCode() == null ? "unknown" : deviceInfo.getTypeCode().getFriendlyName());
+        try{
+            logger.trace("battery : " + deviceInfo.getBatteryLevel());
+            logger.trace("ModuleAddress : "
+                    + deviceInfo.getModuleAddress());
+            logger.trace("data value : " + deviceInfo.getDeviceData().getData());
+            logger.trace("type code : " + deviceInfo.getTypeCode() == null ? "unknown" : deviceInfo.getTypeCode().getFriendlyName());
+        }catch(Exception ex) {
+            logger.error("Unable to log DeviceIngo" + deviceInfo.getModuleAddress());
+        }
     }
 }
