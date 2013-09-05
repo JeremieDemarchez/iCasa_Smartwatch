@@ -1041,6 +1041,10 @@ define(['jquery',
                 imgName = "user6";
               if (@type() == "Sherlock")
                 imgName = "user7";
+              if (@type() == "Man")
+                imgName = "user3";
+              if (@type() == "Woman")
+                imgName = "user4";
 
               return "/assets/images/users/" + imgName + ".png";
            , @);

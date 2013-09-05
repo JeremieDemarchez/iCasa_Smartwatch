@@ -68,6 +68,8 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 		addPersonType("Mother");
 		addPersonType("Boy");
 		addPersonType("Girl");
+        addPersonType("Woman");
+        addPersonType("Man");
 	}
 
 	@Override
