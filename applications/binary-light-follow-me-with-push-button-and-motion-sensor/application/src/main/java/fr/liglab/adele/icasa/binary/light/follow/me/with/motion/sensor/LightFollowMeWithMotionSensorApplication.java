@@ -66,7 +66,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     private MotionSensor[] motionSensors;
 
     /** Field for pushButtons dependency */
-    @RequiresDevice(id = "pushButtons", type = "field", optional = true)
+    // @RequiresDevice(id = "pushButtons", type = "field", optional = true)
     private PushButton[] pushButtons;
 
     Map<String, ServiceRegistration> registrations = new HashMap<String, ServiceRegistration>();
@@ -76,14 +76,14 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     Object lockObject = new Object();
 
     /** Bind Method for null dependency */
-    @RequiresDevice(id = "pushButtons", type = "bind")
+    // @RequiresDevice(id = "pushButtons", type = "bind")
     public void bindPushButtons(PushButton button, Map properties) {
         logger.trace("Register Listener to PushButton: " + button.getSerialNumber());
         button.addListener(this);
     }
 
     /** Unbind Method for null dependency */
-    @RequiresDevice(id = "pushButtons", type = "unbind")
+    // @RequiresDevice(id = "pushButtons", type = "unbind")
     public void unbindPushButtons(PushButton button, Map properties) {
         logger.trace("Remove Listener to PushButton: " + button.getSerialNumber());
         button.removeListener(this);
@@ -104,7 +104,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     }
 
     @Requires
-    Clock clock;
+    private Clock clock;
 
     public LightFollowMeWithMotionSensorApplication(BundleContext context) {
         this.bundleContext = context;
@@ -296,10 +296,11 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
             synchronized (lockObject) {
                 registrationTask = registrations.remove(location);
             }
-            if (registrationTask!=null) {
-                try{
+            if (registrationTask != null) {
+                try {
                     registrationTask.unregister();
-                }catch(Exception ex){}
+                } catch (Exception ex) {
+                }
             }
         }
     }
