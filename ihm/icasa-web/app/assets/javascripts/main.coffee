@@ -121,21 +121,27 @@ class SizeUtil
     return { width : e[ a+'Width' ], height : e[ a+'Height' ] };
 
   @initAreaSizes = (mapWidth, mapHeight) ->
+    viewportSize = @.getViewportSize();
+
     map = $("#map");
+
     # hypothesys : areaBorderSize = padding + marging + border = 10 + 3 + 15 = 28px
     areaBorderSize = 28;
     actionTabMinWidth = parseInt($('#actionTabs').css('min-width'), 10) ;
-    availableWidth = @.getViewportSize().width - (4 * areaBorderSize) - 25;
-    #calculate width and height to fith in available space
-    calculatedWidth = availableWidth - actionTabMinWidth;
-    calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+    availableWidthFor2Blocks = viewportSize.width - (4 * areaBorderSize) - 25;
+    availableWidthFor1Block = viewportSize.width - (2 * areaBorderSize) - 25;
 
-    if availableWidth >= 900 && calculatedWidth <= mapWidth
-        map.width(calculatedWidth);
-        map.height(calculatedHeight);
+    #calculate width and height to fith in available space
+    if viewportSize.width >= 900
+      calculatedWidth = availableWidthFor2Blocks - actionTabMinWidth;
+      calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+      map.width(calculatedWidth);
+      map.height(calculatedHeight);
     else
-        map.width(mapWidth);
-        map.height(mapHeight);
+      calculatedWidth = availableWidthFor1Block;
+      calculatedHeight = (mapHeight / mapWidth) * availableWidthFor1Block;
+      map.width(availableWidthFor1Block);
+      map.height(mapHeight);
     @computeAreaSizes("map");
 
   @computeAreaSizes = (resizedAreaId) ->
@@ -147,14 +153,29 @@ class SizeUtil
     mapWidth = map.width();
     mapHeight = map.height();
     actionTabs = $("#actionTabs");
+    actionTabMinWidth = parseInt($('#actionTabs').css('min-width'), 10) ;
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
-    availableWidth = viewportSize.width - (4 * areaBorderSize) - 25;
-    if ((resizedAreaId == undefined) || (resizedAreaId == null) || (resizedAreaId == "map"))
-      actionTabs.width(availableWidth - mapWidth);
-      actionTabs.height(mapHeight);
+    availableWidthFor2Blocks = viewportSize.width - (4 * areaBorderSize) - 25;
+    availableWidthFor1Block = viewportSize.width - (2 * areaBorderSize) - 25;
+    if (resizedAreaId == "map")
+      if (viewportSize.width >= 900)
+        actionTabs.width(availableWidthFor2Blocks - mapWidth);
+        actionTabs.height(mapHeight);
+      else
+        actionTabs.width(availableWidthFor1Block);
+        map.width(availableWidthFor1Block);
+    else if ((resizedAreaId == undefined) || (resizedAreaId == null))
+      if (viewportSize.width >= 900)
+        calculatedWidth = availableWidthFor2Blocks - actionTabMinWidth;
+        map.width(calculatedWidth);
+        actionTabs.width(availableWidthFor2Blocks - calculatedWidth);
+        actionTabs.height(mapHeight);
+      else
+        actionTabs.width(availableWidthFor1Block);
+        map.width(availableWidthFor1Block);
     else
-      map.width(availableWidth - actionTabsWidth);
+      map.width(availableWidthFor2Blocks - actionTabsWidth);
     $("#tabs").tabs("refresh");
 
     statusWindows = $("#statusWindows");
