@@ -105,7 +105,6 @@ public class SerialPortHandler {
                     parseData(sb);
                     sb.clear();
                 }
-                handleWrite();
             }
 		} finally {
 			closeStreams();
@@ -183,21 +182,24 @@ public class SerialPortHandler {
 				((DeviceInfoImpl) deviceInfos).setTypeCode(TypeCode
 						.getTypeCodeByFriendlyName(deviceTypes
 								.get(moduleAddress)));
-                if (!existingDevice) {
-                    logger.debug("notifying tracker about new device.");
-                    //notify to trackers.
-                    notifyDeviceAdded(deviceInfos);
-                }
                 //notify battery level change and data change.
                 //It will notify only when value has already changed.
                 notifyBatteryLevelChange(deviceInfos, oldBatteryLevel);
                 notifyDataChange(deviceInfos, oldData);
 				if (type == 'D') {
-                    logger.debug("Sent ACK to " + deviceInfos.getModuleAddress());
+                    logger.debug("Sent D to " + deviceInfos.getModuleAddress());
                     write(buildResponse(ResponseType.DATA,
                             deviceInfos.getModuleAddress()));
 				}
-
+                //sent writing to set data in device.
+                if(type == 'R'){
+                    handleWrite(moduleAddress);
+                }
+                if (!existingDevice) {
+                    logger.debug("notifying tracker about new device.");
+                    //notify to trackers.
+                    notifyDeviceAdded(deviceInfos);
+                }
 				deviceList.put(moduleAddress, deviceInfos);
 				break;
 			default:
@@ -261,7 +263,6 @@ public class SerialPortHandler {
 		response.add((byte) ((csum >> 4) + 0x30));
 		response.add((byte) ((csum & 0x0F) + 0x30));
 		response.add((byte) '\r');
-		logger.debug("response sent to device " + moduleAddress + " : " + response.toString());
 		return response;
 	}
 
@@ -396,44 +397,41 @@ public class SerialPortHandler {
 			String newValue) {
          synchronized (streamLock){ // add to queue.
              requestData.put(moduleAddress, newValue);//set expected data
-             scheduleWrite(buildResponseWithNewValue(responseType, moduleAddress, newValue));
          }
-		//write(buildResponseWithNewValue(responseType, moduleAddress, newValue));
 	}
-
-    private void scheduleWrite(List<Byte> data ){
-        synchronized (streamLock){ // add to queue.
-            toWriteData.add(data);
-        }
-    }
     /**
      * Handles writing events.
      */
-    private void handleWrite(){
+    private void handleWrite(String module){
         synchronized (streamLock){
-            handleRequests();
-            while(! toWriteData.isEmpty()) {
-                List<Byte> tosend = toWriteData.remove();
+            List<Byte> dataToSend = handleRequests(module);
+            if(dataToSend != null){
                 try {
-                    write(tosend);
+                    write(dataToSend);
                 } catch (IOException e) {
-                    e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+                    logger.error("Unable to write request. ", e);
+
                 }
             }
         }
     }
 
-    private void handleRequests(){
-        for(String module: requestData.keySet()){
-            String expected = requestData.get(module);
-            DeviceInfo info = deviceList.get(module);
-            if(info != null ){
-                if(info.getDeviceData().getData().compareTo(expected) != 0 ) {
-                    scheduleWrite(buildResponseWithNewValue(ResponseType.REQUEST, module, expected));
-                    logger.debug("Resent expected value");
-                }
+    private List<Byte> handleRequests(String moduleAddress){
+        String expected = requestData.get(moduleAddress);
+        DeviceInfo info = deviceList.get(moduleAddress);
+        if(info != null ){
+            if(expected != null && info.getDeviceData().getData().compareTo(expected) != 0 ) {
+                logger.debug("Resent request expected value");
+                List<Byte> response = buildResponseWithNewValue(ResponseType.REQUEST, moduleAddress, expected);
+                logger.trace("response sent to device " + moduleAddress + " : " + response.toString());
+                return(response);
+            } else {
+                //logger.debug("Sent request value");
+                requestData.remove(moduleAddress);
+                return(buildResponseWithNewValue(ResponseType.REQUEST, moduleAddress, info.getDeviceData().getData()));
             }
         }
+        return null;
     }
 
     /**
