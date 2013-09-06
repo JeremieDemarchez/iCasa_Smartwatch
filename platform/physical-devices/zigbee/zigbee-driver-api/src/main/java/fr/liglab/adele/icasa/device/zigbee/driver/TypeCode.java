@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum TypeCode {
 
-	IC001("PUSH_BUTTON"), IC002("POWER_SWITCH"), IC003("PRESENCE_SENSOR"), IA001("BINARY_LIGHT"), IC004("MOTION_SENSOR");
+	IC001("PUSH_BUTTON"), IC002("POWER_SWITCH"), IC003("MOTION_SENSOR"), IC004("PRESENCE_SENSOR"), IA001("BINARY_LIGHT");
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(TypeCode.class);

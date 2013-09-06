@@ -70,11 +70,12 @@ public class SerialPortHandler {
 	public SerialPortHandler(ZigbeeDriverImpl zigbeeDriverImpl) {
 		this.trackerMgr = zigbeeDriverImpl;
 		executor = Executors.newSingleThreadScheduledExecutor();
-		deviceTypes.put("1234", TypeCode.IC001.getFriendlyName()); // Push button
-		deviceTypes.put("5001", TypeCode.IA001.getFriendlyName()); // binary light
-		deviceTypes.put("2345", TypeCode.IC004.getFriendlyName());//motion sensor
-        deviceTypes.put("0001", TypeCode.IC004.getFriendlyName());//motion sensor
-        deviceTypes.put("0002", TypeCode.IA001.getFriendlyName()); // binary light
+        deviceTypes.put("1000", TypeCode.IA001.getFriendlyName()); // binary light
+        deviceTypes.put("1001", TypeCode.IA001.getFriendlyName()); // binary light
+        deviceTypes.put("1002", TypeCode.IA001.getFriendlyName()); // binary light
+        deviceTypes.put("2000", TypeCode.IC003.getFriendlyName()); // Motion sensor
+        deviceTypes.put("2001", TypeCode.IC003.getFriendlyName()); // Motion sensor
+        deviceTypes.put("3000", TypeCode.IC001.getFriendlyName()); // Push button
 	}
 
 	public List<DeviceInfo> getDeviceInfos() {

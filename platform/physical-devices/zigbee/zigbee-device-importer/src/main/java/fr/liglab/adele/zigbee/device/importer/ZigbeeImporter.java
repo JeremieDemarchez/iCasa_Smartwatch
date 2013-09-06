@@ -107,13 +107,13 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 				
 				if (TypeCode.IA001.toString().equals(deviceType)){
 					factory = binaryLightFactory;
-				} else if (TypeCode.IC003.toString().equals(deviceType)){
+				} else if (TypeCode.IC004.toString().equals(deviceType)){
 					factory = presenceSensorFactory;
 				} else if (TypeCode.IC001.toString().equals(deviceType)){
                     factory = pushButtonFactory;
                 } else if (TypeCode.IC002.toString().equals(deviceType)){
 					factory = powerSwitchFactory;
-				} else if (TypeCode.IC004.toString().equals(deviceType)){
+				} else if (TypeCode.IC003.toString().equals(deviceType)){
                     factory = motionSensorFactory;
                 } else {
 					// device type not supported
