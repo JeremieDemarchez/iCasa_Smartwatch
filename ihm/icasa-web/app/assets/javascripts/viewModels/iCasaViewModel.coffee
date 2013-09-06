@@ -5,6 +5,7 @@ define(['jquery',
         'knockout',
         'knockback',
         'handlebars',
+        'hammer-jquery',
         'contracts/DeviceWidgetContract',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
@@ -16,7 +17,7 @@ define(['jquery',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, Hammer, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -100,6 +101,27 @@ define(['jquery',
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
+
+            # manage touch events
+            $(element).hammer().on("hold", (event) ->
+              console.log("hold :" + event);
+              viewModel.isSizeHighlightEnabled(false);
+
+              $(element).hammer().off("hold");
+
+              $("#mapContainer").hammer().on("tap", (event) ->
+                console.log("hold :" + event);
+                #Zones does not utilise widgetWidth
+                if (viewModel instanceof ZoneViewModel)
+                  viewModel.positionX((event.position.left / viewModel.containerWidthRatio()) + (viewModel.width() / 2));
+                  viewModel.positionY((event.position.top / viewModel.containerHeightRatio())  + (viewModel.height() / 2));
+                else
+                  viewModel.positionX((event.position.left / viewModel.containerWidthRatio()) + (viewModel.widgetWidth() / 2));
+                  viewModel.positionY((event.position.top / viewModel.containerHeightRatio())  + (viewModel.widgetHeight() / 2));
+                viewModel.model().save();
+                viewModel.isSizeHighlightEnabled(true);
+              );
+            );
 
             return { controlsDescendantBindings: false };
     };

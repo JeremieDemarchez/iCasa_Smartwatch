@@ -17,6 +17,8 @@ require.config({
         'comp' : 'components',
         'contracts' : 'contracts',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
+        'hammer' : 'frameworks/hammer/hammer', # AMD module
+        'hammer-jquery' : 'frameworks/hammer/jquery.hammer', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
         'hubu' : 'frameworks/hubu/h-ubu-1.0.0',
         # 'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
@@ -32,8 +34,7 @@ require.config({
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
         'underscore' : 'frameworks/underscore/underscore-min',
-        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract' ,
-        'hammer' : 'frameworks/hammer/jquery.hammer'
+        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract'
     },
 
     # Require.js plugins to handle other types of dependencies

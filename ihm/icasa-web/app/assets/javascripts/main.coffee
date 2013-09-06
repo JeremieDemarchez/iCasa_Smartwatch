@@ -17,6 +17,8 @@ require.config({
         'comp' : 'components',
         'contracts' : 'contracts',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
+        'hammer' : 'frameworks/hammer/hammer', # AMD module
+        'hammer-jquery' : 'frameworks/hammer/jquery.hammer', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
         'hubu' : 'frameworks/hubu/h-ubu-1.0.0',
         #'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
