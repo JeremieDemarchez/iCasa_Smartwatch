@@ -77,7 +77,7 @@ public abstract class AbstractDevice implements GenericDevice {
 		boolean modified = false;
 		boolean added = false;
 
-        logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " to be updated");
+        logger.trace("["+getSerialNumber()+"] Property "+ propertyName + " to be updated to " + value + "(old value = "+ ")");
 
         Object oldValue = null;
 		synchronized (_properties) {

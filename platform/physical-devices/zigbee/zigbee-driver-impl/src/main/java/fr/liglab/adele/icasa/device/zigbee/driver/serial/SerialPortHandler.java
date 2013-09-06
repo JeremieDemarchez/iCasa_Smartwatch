@@ -184,8 +184,6 @@ public class SerialPortHandler {
 								.get(moduleAddress)));
                 //notify battery level change and data change.
                 //It will notify only when value has already changed.
-                notifyBatteryLevelChange(deviceInfos, oldBatteryLevel);
-                notifyDataChange(deviceInfos, oldData);
 				if (type == 'D') {
                     logger.debug("Sent D to " + deviceInfos.getModuleAddress());
                     write(buildResponse(ResponseType.DATA,
@@ -199,7 +197,11 @@ public class SerialPortHandler {
                     logger.debug("notifying tracker about new device.");
                     //notify to trackers.
                     notifyDeviceAdded(deviceInfos);
+                    notifyBatteryLevelChange(deviceInfos, oldBatteryLevel, true);
+                    notifyDataChange(deviceInfos, oldData, true);
                 }
+                notifyBatteryLevelChange(deviceInfos, oldBatteryLevel, false);
+                notifyDataChange(deviceInfos, oldData, false);
 				deviceList.put(moduleAddress, deviceInfos);
 				break;
 			default:
@@ -536,14 +538,14 @@ public class SerialPortHandler {
      * @param info
      * @param oldLevel
      */
-    private void notifyBatteryLevelChange(DeviceInfo info, float oldLevel){
-        if(info.getBatteryLevel() != oldLevel){ //only notify when data has changed.
+    private void notifyBatteryLevelChange(DeviceInfo info, float oldLevel, boolean force){
+        if(!force && info.getBatteryLevel() != oldLevel){ //only notify when data has changed.
             logger.trace("Battery level changed");
             logInfo(info);
             List<ZigbeeDeviceTracker> listeners = trackerMgr.getTrackers();
             for (ZigbeeDeviceTracker tracker : listeners) {
                 try {
-                    tracker.deviceBatteryLevelChanged(info.getModuleAddress(),info.getBatteryLevel(), oldLevel);
+                    tracker.deviceBatteryLevelChanged(info.getModuleAddress(),oldLevel, info.getBatteryLevel());
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -556,10 +558,10 @@ public class SerialPortHandler {
      * @param info
      * @param oldData
      */
-    private void notifyDataChange(DeviceInfo info, Data oldData){
+    private void notifyDataChange(DeviceInfo info, Data oldData, boolean force){
         String oldDataValue = oldData!= null ? oldData.getData(): "";
 
-        if(oldData == null || info.getDeviceData().getData().compareTo(oldDataValue) != 0){ //only notify when data has changed.
+        if(!force && oldData == null || !force && info.getDeviceData().getData().compareTo(oldDataValue) != 0){ //only notify when data has changed.
             logger.trace("Data changed (Old value:" + oldDataValue + ")");
             logInfo(info);
             List<ZigbeeDeviceTracker> listeners = trackerMgr.getTrackers();
