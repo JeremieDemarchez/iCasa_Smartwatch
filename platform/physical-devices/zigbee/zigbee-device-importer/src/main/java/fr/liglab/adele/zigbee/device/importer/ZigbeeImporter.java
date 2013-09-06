@@ -68,6 +68,9 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 
     @Requires(filter="(factory.name=zigbeePowerSwitch)")
     private Factory powerSwitchFactory;
+
+    @Requires(filter="(factory.name=zigbeePushButton)")
+    private Factory pushButtonFactory;
 	
 	@Requires(id="rose.machine")
 	private RoseMachine roseMachine;
@@ -107,6 +110,8 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 				} else if (TypeCode.IC003.toString().equals(deviceType)){
 					factory = presenceSensorFactory;
 				} else if (TypeCode.IC001.toString().equals(deviceType)){
+                    factory = pushButtonFactory;
+                } else if (TypeCode.IC002.toString().equals(deviceType)){
 					factory = powerSwitchFactory;
 				} else if (TypeCode.IC004.toString().equals(deviceType)){
                     factory = motionSensorFactory;
