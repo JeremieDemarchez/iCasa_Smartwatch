@@ -244,25 +244,25 @@ require([
     ],
     ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl) ->
 
-      mapName = $("#map").attr("mapId");
-      mapImgUrl = $("#map").attr("mapImgSrc");
+        mapName = $("#map").attr("mapId");
+        mapImgUrl = $("#map").attr("mapImgSrc");
 
-      iCasaViewModel = new ICasaViewModel( {
-      id: mapName,
-      imgSrc: mapImgUrl
-      });
-      SizeUtil.computeMapImgSize(mapImgUrl);
+        iCasaViewModel = new ICasaViewModel( {
+        id: mapName,
+        imgSrc: mapImgUrl
+        });
+        SizeUtil.computeMapImgSize(mapImgUrl);
 
-      #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
-      $("#map").resizable({
-      animate: true,
-      aspectRatio : true,
-      ghost: true,
-      stop: (event, eventUI) ->
-        SizeUtil.computeAreaSizes("map");
-      });
+        #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
+        $("#map").resizable({
+        animate: true,
+        aspectRatio : true,
+        ghost: true,
+        stop: (event, eventUI) ->
+          SizeUtil.computeAreaSizes("map");
+        });
 
-      ko.applyBindings(iCasaViewModel);
+        ko.applyBindings(iCasaViewModel);
 
         $(".slider" ).slider();
         $("#tabs").tabs({
