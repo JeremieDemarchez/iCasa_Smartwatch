@@ -117,7 +117,19 @@ if ( typeof define == "function" && define.amd && define.amd.jQuery)
   );
 
 
+mapRealSizeWidth = 10;
+mapRealSizeHeight = 10;
+
 class SizeUtil
+
+  @computeMapImgSize = (imgSrc) ->
+    imgSrcNoCache = imgSrc + '?cache=' + Date.now();
+    $('<img/>').attr('src', imgSrcNoCache).load(() ->
+      mapRealSizeWidth = this.width;
+      mapRealSizeHeight = this.height;
+      SizeUtil.initAreaSizes(mapRealSizeWidth, mapRealSizeHeight);
+    );
+
   @getViewportSize = () ->
     e = window;
     a = 'inner';
@@ -127,21 +139,31 @@ class SizeUtil
     return { width : e[ a+'Width' ], height : e[ a+'Height' ] };
 
   @initAreaSizes = (mapWidth, mapHeight) ->
+    viewportSize = @.getViewportSize();
+
     map = $("#map");
+
     # hypothesys : areaBorderSize = padding + marging + border = 10 + 3 + 15 = 28px
     areaBorderSize = 28;
     actionTabMinWidth = parseInt($('#actionTabs').css('min-width'), 10) ;
-    availableWidth = @.getViewportSize().width - (4 * areaBorderSize) - 25;
-    #calculate width and height to fith in available space
-    calculatedWidth = availableWidth - actionTabMinWidth;
-    calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+    availableWidthFor2Blocks = viewportSize.width - (4 * areaBorderSize) - 25;
+    availableWidthFor1Block = viewportSize.width - (2 * areaBorderSize) - 25;
 
-    if availableWidth >= 900 && calculatedWidth <= mapWidth
-        map.width(calculatedWidth);
-        map.height(calculatedHeight);
+    #calculate width and height to fith in available space
+    if viewportSize.width >= 900
+      calculatedWidth = availableWidthFor2Blocks - actionTabMinWidth;
+      if (calculatedWidth > mapRealSizeWidth)
+        calculatedWidth = mapRealSizeWidth;
+      calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+      map.width(calculatedWidth);
+      map.height(calculatedHeight);
     else
-        map.width(mapWidth);
-        map.height(mapHeight);
+      calculatedWidth = availableWidthFor1Block;
+      if (calculatedWidth > mapRealSizeWidth)
+        calculatedWidth = mapRealSizeWidth;
+      calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+      map.width(availableWidthFor1Block);
+      map.height(calculatedHeight);
     @computeAreaSizes("map");
 
   @computeAreaSizes = (resizedAreaId) ->
@@ -153,14 +175,53 @@ class SizeUtil
     mapWidth = map.width();
     mapHeight = map.height();
     actionTabs = $("#actionTabs");
+    actionTabMinWidth = parseInt($('#actionTabs').css('min-width'), 10) ;
+    actionTabsMinHeight = 600;
     actionTabsWidth = actionTabs.width();
     actionTabsHeight = actionTabs.height();
-    availableWidth = viewportSize.width - (4 * areaBorderSize) - 25;
-    if ((resizedAreaId == undefined) || (resizedAreaId == null) || (resizedAreaId == "map"))
-      actionTabs.width(availableWidth - mapWidth);
-      actionTabs.height(mapHeight);
+    availableWidthFor2Blocks = viewportSize.width - (4 * areaBorderSize) - 25;
+    availableWidthFor1Block = viewportSize.width - (2 * areaBorderSize) - 25;
+    if (resizedAreaId == "map")
+      if (viewportSize.width >= 900)
+        actionTabs.width(availableWidthFor2Blocks - mapWidth);
+        calculatedHeight = mapHeight;
+        if (calculatedTabHeight < actionTabsMinHeight)
+          calculatedTabHeight = actionTabsMinHeight;
+        actionTabs.height(calculatedTabHeight);
+      else
+        calculatedWidth = availableWidthFor1Block;
+        calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+        actionTabs.width(calculatedWidth);
+        actionTabs.height(actionTabsMinHeight);
+        map.width(calculatedWidth);
+        map.height(calculatedHeight);
+    else if ((resizedAreaId == undefined) || (resizedAreaId == null))
+      if (viewportSize.width >= 900)
+        calculatedWidth = availableWidthFor2Blocks - actionTabMinWidth;
+        if (calculatedWidth > mapRealSizeWidth)
+          calculatedWidth = mapRealSizeWidth;
+        calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+        map.width(calculatedWidth);
+        map.height(calculatedHeight);
+        calculatedTabHeight = mapHeight;
+        if (calculatedTabHeight < actionTabsMinHeight)
+          calculatedTabHeight = actionTabsMinHeight;
+        actionTabs.width(availableWidthFor2Blocks - calculatedWidth);
+        actionTabs.height(calculatedTabHeight);
+      else
+        calculatedWidth = availableWidthFor1Block;
+        calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+        actionTabs.width(calculatedWidth);
+        actionTabs.height(actionTabsMinHeight);
+        map.width(calculatedWidth);
+        map.height(calculatedHeight);
     else
-      map.width(availableWidth - actionTabsWidth);
+      calculatedWidth = availableWidthFor2Blocks - actionTabsWidth;
+      if (calculatedWidth > mapRealSizeWidth)
+        calculatedWidth = mapRealSizeWidth;
+      calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
+      map.width(calculatedWidth);
+      map.height(calculatedHeight);
     $("#tabs").tabs("refresh");
 
     statusWindows = $("#statusWindows");
@@ -183,23 +244,25 @@ require([
     ],
     ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl) ->
 
-        #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
-        $("#map").resizable({
-          animate: true,
-          aspectRatio : true,
-          ghost: true,
-          stop: (event, eventUI) ->
-            SizeUtil.computeAreaSizes("map");
-        });
+      mapName = $("#map").attr("mapId");
+      mapImgUrl = $("#map").attr("mapImgSrc");
 
-        mapName = $("#map").attr("mapId");
-        mapImgUrl = $("#map").attr("mapImgSrc");
+      iCasaViewModel = new ICasaViewModel( {
+      id: mapName,
+      imgSrc: mapImgUrl
+      });
+      SizeUtil.computeMapImgSize(mapImgUrl);
 
-        iCasaViewModel = new ICasaViewModel( {
-          id: mapName,
-          imgSrc: mapImgUrl
-        });
-        ko.applyBindings(iCasaViewModel);
+      #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
+      $("#map").resizable({
+      animate: true,
+      aspectRatio : true,
+      ghost: true,
+      stop: (event, eventUI) ->
+        SizeUtil.computeAreaSizes("map");
+      });
+
+      ko.applyBindings(iCasaViewModel);
 
         $(".slider" ).slider();
         $("#tabs").tabs({

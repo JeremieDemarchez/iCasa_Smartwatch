@@ -85,6 +85,9 @@
             <th data-bind="sortable: {obj: 'device', column: 'name'}">
                 Name
             </th>
+            <th data-bind="sortable: {obj: 'device', column: 'location'}">
+                Location
+            </th>
         </tr>
     </thead>
     <tbody id="filteredDevicesTable" data-bind="foreach: $root.filteredDevices()">
@@ -92,6 +95,7 @@
             <td><input type="checkbox" data-bind="attr:{disabled: $root.disableAccessRight}, checked: hasAccessRight, checkedAccessRight:{root: $root, data: $data}" /></td>
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc }, click: $root.showDeviceWindow "></img></td>
             <td><a data-bind="text: name, click: $root.showDeviceWindow"/></td>
+            <td data-bind="text: location"></td>
         </tr>
     </tbody>
 </table>
