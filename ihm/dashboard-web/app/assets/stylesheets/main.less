@@ -490,12 +490,15 @@ body .btn {
     -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
 }
 .onoffswitch-inner:before {
-    content: "Started";
+    content: attr(enabled-caption);
     padding-left: 10px;
     background-color: #589C00; color: #FFFFFF;
+    #grant {
+        content: "Granted";
+    }
 }
 .onoffswitch-inner:after {
-    content: "Stopped";
+    content: attr(disabled-caption);
     padding-right: 10px;
     background-color: #D10000; color: #FFFFFF;
     text-align: right;

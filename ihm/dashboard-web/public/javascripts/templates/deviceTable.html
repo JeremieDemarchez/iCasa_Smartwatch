@@ -92,7 +92,16 @@
     </thead>
     <tbody id="filteredDevicesTable" data-bind="foreach: $root.filteredDevices()">
         <tr data-bind="css : { warning: isHighlighted }">
-            <td><input type="checkbox" data-bind="attr:{disabled: $root.disableAccessRight}, checked: hasAccessRight, checkedAccessRight:{root: $root, data: $data}" /></td>
+            <td>
+                <div class="controls onoffswitch" >
+                    <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" data-bind="attr:{disabled: $root.disableAccessRight, id:'myonoffswitch'+id()}, checked: hasAccessRight, checkedAccessRight:{root: $root, data: $data}" style="display:none;">
+                    <label class="onoffswitch-label" data-bind="attr:{for: 'myonoffswitch'+id()}">
+                        <div class="onoffswitch-inner" disabled-caption="Denied" enabled-caption="Grant"></div>
+                        <div class="onoffswitch-switch"></div>
+                    </label>
+                </div>
+            </td>
+            <!--<td><input type="checkbox" data-bind="attr:{disabled: $root.disableAccessRight}, checked: hasAccessRight, checkedAccessRight:{root: $root, data: $data}" /></td>-->
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc }, click: $root.showDeviceWindow "></img></td>
             <td><a data-bind="text: name, click: $root.showDeviceWindow"/></td>
             <td data-bind="text: location"></td>
