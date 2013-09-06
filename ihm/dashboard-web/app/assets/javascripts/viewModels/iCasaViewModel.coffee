@@ -1097,6 +1097,8 @@ define(['jquery',
                     imgName = "follow1"
                 if @name() ==  "light.follow.me.with.motion.sensor"
                     imgName = "follow1"
+                if @name() ==  "actimetrics"
+                    imgName = "actimetrics"                      
                 return imgName;
             );
             @imgIcon = ko.computed(() =>
