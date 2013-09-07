@@ -26,7 +26,7 @@
     <div class="control-group">
       <label class="control-label" data-bind="text: name, attr: { for: $parent.getInputEltId(name())}">variable</label>
       <div style="display: inherit;" class="controls input-append">
-          <input type="text" disabled="disabled" data-bind="value: value, attr: { id: $parent.getInputEltId(name())}" />
+          <input type="text" disabled="disabled" data-bind="value: ''+value(), attr: { id: $parent.getInputEltId(name())}" />
           <!--ko if: unit() == "m2" -->
           <span class="add-on">m<span class="sup">2</span></span>
           <!--/ko-->
