@@ -72,7 +72,6 @@ require.config({
             # 'css!bootstrap.dir/css/bootstrap-responsive.min',
         ],
 
-
         'handlebars': {
             exports: "Handlebars"
         },

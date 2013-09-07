@@ -55,7 +55,6 @@ define(['jquery',
 
     };
 
-
     ko.bindingHandlers.handlebarTemplate = {
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
