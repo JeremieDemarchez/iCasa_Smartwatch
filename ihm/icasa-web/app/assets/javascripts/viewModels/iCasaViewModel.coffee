@@ -100,30 +100,28 @@ define(['jquery',
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
-
-            # manage touch events
-            $(element).hammer().on("hold", (event) ->
-              console.log("hold :" + event);
-              viewModel.isSizeHighlightEnabled(false);
-
-              $(element).hammer().off("hold");
-
-              $("#mapContainer").hammer().on("tap", (event) ->
-                console.log("hold :" + event);
-                #Zones does not utilise widgetWidth
-                if (viewModel instanceof ZoneViewModel)
-                  viewModel.positionX((event.position.left / viewModel.containerWidthRatio()) + (viewModel.width() / 2));
-                  viewModel.positionY((event.position.top / viewModel.containerHeightRatio())  + (viewModel.height() / 2));
-                else
-                  viewModel.positionX((event.position.left / viewModel.containerWidthRatio()) + (viewModel.widgetWidth() / 2));
-                  viewModel.positionY((event.position.top / viewModel.containerHeightRatio())  + (viewModel.widgetHeight() / 2));
-                viewModel.model().save();
-                viewModel.isSizeHighlightEnabled(true);
-              );
-            );
+            if Hammer.HAS_TOUCHEVENTS
+                new TouchDragAndDrop(viewModel, element);
 
             return { controlsDescendantBindings: false };
     };
+
+    class TouchDragAndDrop
+        constructor: (@viewModel, @element) ->
+            console.log @viewModel;
+            @lastPosX = @viewModel.styleLetf;
+            @lastPosY = @viewModel.styleTop;
+
+            $(@element).hammer({ drag_max_touches:0}).on("touch drag", (ev) =>
+                touches = ev.gesture.touches;
+                ev.gesture.preventDefault();
+                for t in [0...touches.length]
+                    @viewModel.positionX(((touches[t].pageX-32) / @viewModel.containerWidthRatio()) + (@viewModel.widgetWidth() / 2));
+                    @viewModel.positionY(((touches[t].pageY-64) / @viewModel.containerHeightRatio())  + (@viewModel.widgetHeight() / 2));
+            );
+            $(@element).hammer({ drag_max_touches:0}).on("dragend", (ev) =>
+                @viewModel.model().save()
+            );
 
     ko.bindingHandlers.jqueryResizable = {
 

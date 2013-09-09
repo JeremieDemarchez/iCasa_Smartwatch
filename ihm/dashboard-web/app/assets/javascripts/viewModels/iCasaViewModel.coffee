@@ -174,9 +174,28 @@ define(['jquery',
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
+            if Hammer.HAS_TOUCHEVENTS
+                new TouchDragAndDrop(viewModel, element);
 
             return { controlsDescendantBindings: false };
     };
+
+    class TouchDragAndDrop
+        constructor: (@viewModel, @element) ->
+            console.log @viewModel;
+            @lastPosX = @viewModel.styleLetf;
+            @lastPosY = @viewModel.styleTop;
+
+            $(@element).hammer({ drag_max_touches:0}).on("touch drag", (ev) =>
+                touches = ev.gesture.touches;
+                ev.gesture.preventDefault();
+                for t in [0...touches.length]
+                    @viewModel.positionX(((touches[t].pageX-32) / @viewModel.containerWidthRatio()) + (@viewModel.widgetWidth() / 2));
+                    @viewModel.positionY(((touches[t].pageY-64) / @viewModel.containerHeightRatio())  + (@viewModel.widgetHeight() / 2));
+            );
+            $(@element).hammer({ drag_max_touches:0}).on("dragend", (ev) =>
+                @viewModel.model().save()
+            );
 
     ko.bindingHandlers.jqueryResizable = {
 
@@ -1166,6 +1185,10 @@ define(['jquery',
                 imgName = "user6";
               if (@type() == "Sherlock")
                 imgName = "user7";
+              if (@type() == "Man")
+                imgName = "user3";
+              if (@type() == "Woman")
+                imgName = "user4";
 
               return "/assets/images/users/" + imgName + ".png";
            , @);
