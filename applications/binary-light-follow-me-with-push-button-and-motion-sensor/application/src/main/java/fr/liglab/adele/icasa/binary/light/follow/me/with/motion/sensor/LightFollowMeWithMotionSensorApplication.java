@@ -35,7 +35,6 @@ import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.button.PushButton;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
@@ -65,29 +64,12 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     @RequiresDevice(id = "motionSensors", type = "field", optional = true)
     private MotionSensor[] motionSensors;
 
-    /** Field for pushButtons dependency */
-    // @RequiresDevice(id = "pushButtons", type = "field", optional = true)
-    private PushButton[] pushButtons;
 
     Map<String, ServiceRegistration> registrations = new HashMap<String, ServiceRegistration>();
 
     Map<String, TurnOffLightTask> tasks = new HashMap<String, TurnOffLightTask>();
 
     Object lockObject = new Object();
-
-    /** Bind Method for null dependency */
-    // @RequiresDevice(id = "pushButtons", type = "bind")
-    public void bindPushButtons(PushButton button, Map properties) {
-        logger.trace("Register Listener to PushButton: " + button.getSerialNumber());
-        button.addListener(this);
-    }
-
-    /** Unbind Method for null dependency */
-    // @RequiresDevice(id = "pushButtons", type = "unbind")
-    public void unbindPushButtons(PushButton button, Map properties) {
-        logger.trace("Remove Listener to PushButton: " + button.getSerialNumber());
-        button.removeListener(this);
-    }
 
     /** Bind Method for null dependency */
     @RequiresDevice(id = "motionSensors", type = "bind")
@@ -121,9 +103,6 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
          */
         for (MotionSensor motionSensorSensor : motionSensors) {
             motionSensorSensor.removeListener(this);
-        }
-        for (PushButton pushButton : pushButtons) {
-            pushButton.removeListener(this);
         }
     }
 
@@ -195,21 +174,6 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
         }
     }
 
-    @Override
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-        String detectorLocation = (String) device.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME);
-        if (device instanceof PushButton) {
-            logger.trace("Push button detected in " + detectorLocation);
-            // check the change is related to presence sensing
-            if (propertyName.equals(PushButton.PUSH_AND_HOLD)) {
-                Boolean value = (Boolean) newValue;
-                if (value) {
-                    turnOnTheLights(detectorLocation);
-                    scheduleTask(detectorLocation);
-                }
-            }
-        }
-    }
 
     protected void turnOffTheLights(String location) {
         List<BinaryLight> sameLocationLights = getBinaryLightFromLocation(location);
