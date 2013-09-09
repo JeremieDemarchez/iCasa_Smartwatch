@@ -24,6 +24,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
+import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.button.PushButton;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
@@ -50,6 +51,7 @@ public class ActimetricsApplication  {
     @RequiresDevice(id = "powerSwitchs", type = "field", optional = true)
     private PowerSwitch[] powerSwitchs;
 
+    protected DeviceListener listener;
 
     /** Bind Method for null dependency */
     // @RequiresDevice(id = "pushButtons", type = "bind")
