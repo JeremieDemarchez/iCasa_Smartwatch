@@ -3,15 +3,15 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /dashboard                           controllers.Application.index
 
 # Map management
-GET     /map/*mapId                 controllers.Application.connectToMap(mapId)
-GET     /maps/*file                 controllers.Application.getMap(file)
-POST    /mapUpload                  controllers.Application.uploadMap
-POST    /mapUpdate                  controllers.Application.updateMap
-POST    /mapDelete                  controllers.Application.deleteMap
-GET     /frontend                   controllers.Application.frontendInfo
+GET     /dashboard/map/*mapId                 controllers.Application.connectToMap(mapId)
+GET     /dashboard/maps/*file                 controllers.Application.getMap(file)
+POST    /dashboard/mapUpload                  controllers.Application.uploadMap
+POST    /dashboard/mapUpdate                  controllers.Application.updateMap
+POST    /dashboard/mapDelete                  controllers.Application.deleteMap
+GET     /dashboard/frontend                   controllers.Application.frontendInfo
 
 
 # Map static resources from the /public folder to the /assets URL path

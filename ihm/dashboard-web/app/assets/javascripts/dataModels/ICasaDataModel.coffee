@@ -55,7 +55,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
             urlRoot : "#server#/backend".replace /#server#/, serverUrl
 
          class DataModel.Models.Frontend extends Backbone.Model
-            urlRoot : "/frontend"
+            urlRoot : "/dashboard/frontend"
 
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/devices/device".replace /#server#/, serverUrl

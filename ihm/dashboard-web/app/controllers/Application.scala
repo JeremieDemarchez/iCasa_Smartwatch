@@ -34,6 +34,8 @@ object Application extends Controller {
   */
 
   val LIBS_DIRECTORY: String = "libs";
+  
+  val MAP_DIRECTORY: String = "maps";
 
   var libs = mutable.Map.empty[String, Library];
 
@@ -160,7 +162,7 @@ object Application extends Controller {
         }
       }
 
-      Ok(views.html.map(mapId, "/maps/" + map.imgFile, map.gatewayURL, pluginIds, widgetIds
+      Ok(views.html.map(mapId, "/dashboard/maps/" + map.imgFile, map.gatewayURL, pluginIds, widgetIds
       )).withHeaders(
         "Access-Control-Allow-Origin" -> "*",
         "Access-Control-Allow-Methods" -> "GET, POST, PUT, DELETE, OPTIONS",
@@ -171,7 +173,6 @@ object Application extends Controller {
     }
   }
 
-  val MAP_DIRECTORY: String = "maps";
 
   val mapForm = Form(
       tuple(

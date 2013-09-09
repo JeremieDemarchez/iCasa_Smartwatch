@@ -27,14 +27,14 @@
         <ul class="thumbnails">
             @for(map <- maps) {
             <li class="span3">
-                <a href="/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>Box URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Map">
-                    <img src="/maps/@map.imgFile" class="img-rounded"/>
+                <a href="/simulator/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>Box URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Map">
+                    <img src="/simulator/maps/@map.imgFile" class="img-rounded"/>
                     <p>@map.name</p>
                 </a>
                 <div class="mapButton mapRemoveButton pull-right" onclick="document.remove@(map.id).submit()">
                     <i class="icon-remove"></i>
                 </div>
-                <form action="/mapDelete" method="POST" name="remove@map.id">
+                <form action="/simulator/mapDelete" method="POST" name="remove@map.id">
                     <input type="hidden" name="mapId" value="@map.id"/>
                 </form>
                 <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-target="#form@map.id">
@@ -47,7 +47,7 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 id="ModalLabel@map.id">Edit @map.name</h3>
                 </div>
-                <form action="/mapUpdate" method="POST" enctype="multipart/form-data">
+                <form action="/simulator/mapUpdate" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="control-group">
                             <label class="control-label" for="mapId@map.id">ID</label>
@@ -108,7 +108,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h3 id="myModalLabel">Add a new map</h3>
             </div>
-            <form action="/mapUpload" method="POST" enctype="multipart/form-data">
+            <form action="/simulator/mapUpload" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="control-group hidden">
                         <label class="control-label" for="mapId">ID</label>
