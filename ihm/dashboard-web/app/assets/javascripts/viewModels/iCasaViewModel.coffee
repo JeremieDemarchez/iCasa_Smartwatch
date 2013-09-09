@@ -174,8 +174,8 @@ define(['jquery',
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
-            if Hammer.HAS_TOUCHEVENTS
-                new TouchDragAndDrop(viewModel, element);
+            #if Hammer.HAS_TOUCHEVENTS
+            #    new TouchDragAndDrop(viewModel, element);
 
             return { controlsDescendantBindings: false };
     };
@@ -1027,8 +1027,8 @@ define(['jquery',
         getImage:(imgName)->
           if not imgName?
             imgName = "genericDevice";
-            if (@hasWidget())
-              return @deviceWidget().getBaseIconURL();
+            #if (@hasWidget())
+            #  return  @deviceWidget().getBaseIconURL();
             if ((@type() == "iCasa.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
               imgName = "cooler-off";
             if ((@type() == "iCasa.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
@@ -1063,7 +1063,7 @@ define(['jquery',
               imgName = "tablet";
             if (@type() == "iCasa.Desktop")
               imgName = "desktop";
-            if ((@type() == "iCasa.SettopBox") || @hasService("fr.liglab.adele.icasa.device.settopbox.SetTopBox"))
+            if ((@type() == "iCasa.SettopBox") || @hasService("fr.liglab.adele.icasa.device.settopbox.SetTopBox") || @hasService("fr.liglab.adele.icasa.device.box.Box"))
               imgName = "liveBox";
             if (@type() == "iCasa.RollingShutter")
               imgName = "rollingShutter";
@@ -1085,6 +1085,10 @@ define(['jquery',
               imgName = "liveBox"; #override settopbox icon
             if ((@type() == "iCasa.Sphygmometer") || @hasService("fr.liglab.adele.icasa.device.bathroomscale.Sphygmometer"))
               imgName = "sphygmometer";
+            if ((@type() == "iCasa.PushButton") || @hasService("fr.liglab.adele.icasa.device.button.PushButton"))
+              imgName = "pushButton";
+            if (@hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
+              imgName = "movementDetector";
           return "/assets/images/devices/" + imgName + ".png"; 
 
     #Valid only for dashboard.
