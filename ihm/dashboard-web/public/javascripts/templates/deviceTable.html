@@ -52,12 +52,9 @@
         </div>
     </div>
 
-    <div class="span4">
-        <label>Application</label>
-        <div data-bind="with: selectedApplication" >
-            <h5 data-bind="text: name">Application</h5>
-        </div>
-
+    <div class="span4" data-bind="with: selectedApplication">
+        <label data-bind="text: name()=='NONE'? '': 'Application' ">Application</label>
+        <h5 data-bind="text: name()=='NONE'? 'My Devices': name() ">Application</h5>
     </div>
 
     <div class="hidden">
@@ -96,7 +93,7 @@
                 <div class="controls onoffswitch" >
                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" data-bind="attr:{disabled: $root.disableAccessRight, id:'myonoffswitch'+id()}, checked: hasAccessRight, checkedAccessRight:{root: $root, data: $data}" style="display:none;">
                     <label class="onoffswitch-label" data-bind="attr:{for: 'myonoffswitch'+id()}">
-                        <div class="onoffswitch-inner" disabled-caption="Denied" enabled-caption="Grant"></div>
+                        <div class="onoffswitch-inner" disabled-caption="Denied" enabled-caption="Granted"></div>
                         <div class="onoffswitch-switch"></div>
                     </label>
                 </div>

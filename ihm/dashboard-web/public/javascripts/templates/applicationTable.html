@@ -43,6 +43,9 @@
         <th data-bind="sortable: {obj: 'application', column: 'name'}">
             Name
         </th>
+        <th>
+            Status
+        </th>
     </tr>
     </thead>
     <tbody id="filteredApplicationTable" data-bind="foreach: $root.filteredApplications()">
@@ -53,6 +56,7 @@
         -->
         <td><img class="deviceIcon" data-bind="attr: { src: imgIcon }, click: $root.showApplicationWindow "></img></td>
         <td><a data-bind="text: name, click: $root.showApplicationWindow"/></td>
+        <td><a data-bind="text: status, click: $root.showApplicationWindow"/></td>
     </tr>
     <!--/ko -->
     </tbody>
