@@ -71,15 +71,15 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
     if (json.eventType == "device-added")
       device = locateModel(DataModel.collections.devices,json.deviceId, "deviceId");
       if ((device == null)  || (device == undefined))
+        DataModel.collections.devices.add(json.device);
         #switch property to force update selected application access right
         DataModel.collections.applications.updateAccessRights.set({'update':!DataModel.collections.applications.updateAccessRights.get('update')})
-        DataModel.collections.devices.add(json.device);
     if (json.eventType == "device-removed")
       device = locateModel(DataModel.collections.devices,json.deviceId, "deviceId");
       if ((device != null)  && (device != undefined))
+        DataModel.collections.devices.remove(device);
         #switch property to force update selected application access right
         DataModel.collections.applications.updateAccessRights.set({'update':!DataModel.collections.applications.updateAccessRights.get('update')})
-        DataModel.collections.devices.remove(device);
     if ((json.eventType == "device-position-update") || (json.eventType == "device-property-added") || (json.eventType == "device-property-removed") || (json.eventType == "device-property-updated"))
       device = locateModel(DataModel.collections.devices,json.deviceId, "deviceId");
       if ((device != null)  && (device != undefined))

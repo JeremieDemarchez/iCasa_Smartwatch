@@ -17,9 +17,11 @@ require.config({
         'comp' : 'components',
         'contracts' : 'contracts',
         'domReady' : 'frameworks/require/require-domReady/domReady.min', # AMD module
+        'hammer' : 'frameworks/hammer/hammer', # AMD module
+        'hammer-jquery' : 'frameworks/hammer/jquery.hammer', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
         'hubu' : 'frameworks/hubu/h-ubu-1.0.0',
-        # 'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
+        #'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
         'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
         # TODO remove ui.touch when moving to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
@@ -32,8 +34,7 @@ require.config({
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
         'underscore' : 'frameworks/underscore/underscore-min',
-        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract' ,
-        'hammer' : 'frameworks/hammer/jquery.hammer'
+        'DeviceWidgetContract' : 'contracts/DeviceWidgetContract'
     },
 
     # Require.js plugins to handle other types of dependencies
@@ -99,23 +100,16 @@ require.config({
 
         'underscore': {
             exports: "_"
-        },
-
-        'hammer' : {
-            deps:['jquery'],
-            exports:'Hammer'
         }
     }
 
 });
-
 
 # workaround to have jquery module without double loading, jquery MUST have been loaded before
 if ( typeof define == "function" && define.amd && define.amd.jQuery)
   define("jquery", [], () ->
     return jQuery;
   );
-
 
 mapRealSizeWidth = 10;
 mapRealSizeHeight = 10;
@@ -248,18 +242,18 @@ require([
         mapImgUrl = $("#map").attr("mapImgSrc");
 
         iCasaViewModel = new ICasaViewModel( {
-        id: mapName,
-        imgSrc: mapImgUrl
+          id: mapName,
+          imgSrc: mapImgUrl
         });
         SizeUtil.computeMapImgSize(mapImgUrl);
 
         #DO NOT MOVE following instruction, container must be defined resizable before nested resizable elements
         $("#map").resizable({
-        animate: true,
-        aspectRatio : true,
-        ghost: true,
-        stop: (event, eventUI) ->
-          SizeUtil.computeAreaSizes("map");
+          animate: true,
+          aspectRatio : true,
+          ghost: true,
+          stop: (event, eventUI) ->
+            SizeUtil.computeAreaSizes("map");
         });
 
         ko.applyBindings(iCasaViewModel);
