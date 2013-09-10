@@ -38,6 +38,8 @@ public class SchedulerThreadPoolImpl extends Thread {
 
     private static final int MINIMAL_PERIOD = 5;
 
+    private volatile boolean running = true;
+
     // The threads in charge of task executions
     private final ExecutorThreadImpl[] m_executors;
 
@@ -77,11 +79,13 @@ public class SchedulerThreadPoolImpl extends Thread {
             }
         }
     }
-
+    public void close() {
+        this.running = false;
+    }
     // TODO
     public void run() {
-        boolean running = true;
-        while (running) {
+        boolean isRunning = this.running;
+        while (isRunning) {
             Long now = new Long(clockService.currentTimeMillis());
             synchronized (m_lock) {
                 SortedMap toRun = m_tasks.headMap(now, true);
@@ -122,8 +126,10 @@ public class SchedulerThreadPoolImpl extends Thread {
 
                 Thread.sleep(period);
             } catch (InterruptedException e) {
-                running = false;
+                this.running = false;
+                isRunning = this.running;
             }
+            isRunning = this.running;
         }
         // Interrupt all executors
         synchronized (m_lock) {
@@ -184,7 +190,11 @@ public class SchedulerThreadPoolImpl extends Thread {
             for (;;) {
                 synchronized (m_lock) {
                     if (m_currentTask != null) {
-                        m_currentTask.run();
+                        try{
+                            m_currentTask.run();
+                        }catch(Throwable ex){
+
+                        }
                         m_currentTask = null;
                     }
                     try {

@@ -131,7 +131,7 @@ public class Group  {
             future.cancel(true);
         }
         jobs.clear();
-        executor.interrupt();
+        executor.close();
         logger.trace("Closed");
         executor = null;
     }
