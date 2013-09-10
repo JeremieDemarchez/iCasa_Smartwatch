@@ -1392,8 +1392,9 @@ define(['jquery',
                             device.hasAccessRight(false)
                 );
            @updatingAccessRightInSelectedApplication = kb.observable(DataModel.collections.applications.updateAccessRights,'update')
-           @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication)
+           @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication);
            @selectedApplication.subscribe(@updateSelectedApplication);
+           @devices.subscribe(@updateSelectedApplication);
            #end valid only for dashboard
            @tabs = ko.observableArray([
                 new TabViewModel {
