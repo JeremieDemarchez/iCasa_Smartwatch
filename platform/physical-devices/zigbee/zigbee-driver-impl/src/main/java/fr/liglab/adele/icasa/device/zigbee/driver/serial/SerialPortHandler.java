@@ -73,9 +73,15 @@ public class SerialPortHandler {
         deviceTypes.put("1000", TypeCode.IA001.getFriendlyName()); // binary light
         deviceTypes.put("1001", TypeCode.IA001.getFriendlyName()); // binary light
         deviceTypes.put("1002", TypeCode.IA001.getFriendlyName()); // binary light
+        deviceTypes.put("1003", TypeCode.IA001.getFriendlyName()); // binary light
+        deviceTypes.put("1004", TypeCode.IA001.getFriendlyName()); // binary light
         deviceTypes.put("2000", TypeCode.IC003.getFriendlyName()); // Motion sensor
         deviceTypes.put("2001", TypeCode.IC003.getFriendlyName()); // Motion sensor
+        deviceTypes.put("2002", TypeCode.IC003.getFriendlyName()); // Motion sensor
+        deviceTypes.put("2003", TypeCode.IC003.getFriendlyName()); // Motion sensor
         deviceTypes.put("3000", TypeCode.IC001.getFriendlyName()); // Push button
+        deviceTypes.put("3001", TypeCode.IC001.getFriendlyName()); // Push button
+        deviceTypes.put("3002", TypeCode.IC001.getFriendlyName()); // Push button
 	}
 
 	public List<DeviceInfo> getDeviceInfos() {
