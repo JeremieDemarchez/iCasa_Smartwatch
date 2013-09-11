@@ -11,8 +11,8 @@
   </parent>
 
 
-  <artifactId>test-component-handler</artifactId>
-  <name>Test Component Handler</name>
+  <artifactId>test-anything</artifactId>
+  <name>Test Anything</name>
   <packaging>bundle</packaging>
 
 
@@ -50,7 +50,7 @@
 
         <configuration>
           <instructions>
-            <Private-Package>test.component.handler</Private-Package>
+            <Private-Package>test.any.feature</Private-Package>
             <!-- <_plugin> org.apache.felix.ipojo.bnd.PojoizationPlugin;metadata=${basedir}/metadata.xml;use-local-schemas=true 
               </_plugin> -->
           </instructions>

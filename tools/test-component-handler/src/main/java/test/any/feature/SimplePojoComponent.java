@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package test.component.handler;
+package test.any.feature;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -22,17 +22,16 @@ import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-@Component
+@Component(name="SimplePojoComponent")
 @Instantiate
-public class ComponentOnlyRequirePojo {
+public class SimplePojoComponent {
 
-	@Requires
-	private BinaryLight light;
-	
-	@Validate
-	private void start() {
-		System.out.println(light.getSerialNumber());
-   }
-	
-	
+    @Requires
+    private BinaryLight light;
+    
+    @Validate
+    private void start() {
+        System.out.println("=========> " + light.getSerialNumber());
+    }
+    
 }
