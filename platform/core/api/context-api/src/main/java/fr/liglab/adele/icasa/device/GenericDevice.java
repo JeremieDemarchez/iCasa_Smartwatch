@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.device;
 
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.location.Zone;
 
 import java.util.List;
