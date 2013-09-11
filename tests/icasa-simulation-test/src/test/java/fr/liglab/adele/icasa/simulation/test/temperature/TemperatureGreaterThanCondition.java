@@ -36,7 +36,7 @@ public class TemperatureGreaterThanCondition extends TemperatureVarExistsConditi
             return false;
 
         Object tempObj = _zone.getVariableValue("Temperature");
-        if ((tempObj == null) || (tempObj instanceof Double))
+        if ((tempObj == null) || !(tempObj instanceof Double))
             return false;
         return ((Double) tempObj) > _temp;
     }

@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.temperature.impl;
 
-
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.clock.Clock;
@@ -48,13 +47,14 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     /**
      * Define constants to compute the value of the thermal capacity
      */
-    public static final double AIR_MASS_CAPACITY = 1000; //mass capacity of the air in J/(Kg.K)
-    public static final double AIR_MASS = 1.2; //mass of the air in Kg/m^3
+    public static final double AIR_MASS_CAPACITY = 1000; // mass capacity of the air in J/(Kg.K)
+    public static final double AIR_MASS = 1.2; // mass of the air in Kg/m^3
     public static final double K = 0.724; // 0.661 < k < 0.787
     public static final double HIGHEST_TEMP = 303.16;
     public static final double LOWER_TEMP = 283.16;
     public static final double DEFAULT_TEMP_VALUE = 293.15; // 20 celsius degrees in kelvin
-    public static final int MAX_WALL_DIST = 30; // maximum distance in centimeters between 2 walls to be considered as the same wall
+    public static final int MAX_WALL_DIST = 30; // maximum distance in centimeters between 2 walls to be considered as
+                                                // the same wall
 
     private volatile long m_lastUpdateTime;
 
@@ -118,7 +118,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         SpecificClockPeriodicRunnable computeTempTask = new SpecificClockPeriodicRunnable() {
             @Override
             public long getPeriod() {
-                return 300;
+                return 1500;
             }
 
             @Override
@@ -136,11 +136,12 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 updateTemperatures();
             }
         };
-        _computeTempTaskSRef = _context.registerService(SpecificClockPeriodicRunnable.class.getName(), computeTempTask, new Hashtable());
+        _computeTempTaskSRef = _context.registerService(SpecificClockPeriodicRunnable.class.getName(), computeTempTask,
+                new Hashtable());
     }
 
     private void updateTemperatures() {
-        //called by only one thread
+        // called by only one thread
 
         if (!_computationIsOn)
             return;
@@ -169,22 +170,20 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Invalidate
     private void stop() {
-       _computationIsOn = false;
-       if (_computeTempTaskSRef != null) {
-           _computeTempTaskSRef.unregister();
-           _computeTempTaskSRef = null;
-       }
+        _computationIsOn = false;
+        if (_computeTempTaskSRef != null) {
+            _computeTempTaskSRef.unregister();
+            _computeTempTaskSRef = null;
+        }
 
-       _zoneTracker.close();
-       _heaterTracker.close();
-       _coolerTracker.close();
+        _zoneTracker.close();
+        _heaterTracker.close();
+        _coolerTracker.close();
     }
 
     private boolean propChangeHasImpactOnPower(LocatedDevice locatedDevice, String propName) {
-        return (Heater.HEATER_POWER_LEVEL.equals(propName) ||
-                Heater.HEATER_MAX_POWER_LEVEL.equals(propName) ||
-                Cooler.COOLER_POWER_LEVEL.equals(propName) ||
-                Cooler.COOLER_MAX_POWER_LEVEL.equals(propName));
+        return (Heater.HEATER_POWER_LEVEL.equals(propName) || Heater.HEATER_MAX_POWER_LEVEL.equals(propName)
+                || Cooler.COOLER_POWER_LEVEL.equals(propName) || Cooler.COOLER_MAX_POWER_LEVEL.equals(propName));
     }
 
     @Override
@@ -206,7 +205,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     /**
      * Computes the temperature property value of specified zone according to time difference from the last computation.
-     *
+     * 
      * @param zone a zone
      * @param timeDiff time difference in ms from the last computation
      * @return the temperature computed for time t + dt
@@ -222,26 +221,28 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
             if (zoneTemperature != null) {
                 try {
-                    currentTemperature = (Double) zoneTemperature; //TODO manage external temperature
+                    currentTemperature = (Double) zoneTemperature; // TODO manage external temperature
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
 
-            computeTotalPower(zoneModel); //TODO should be computed on the fly
+            computeTotalPower(zoneModel); // TODO should be computed on the fly
             double powerLevelTotal = zoneModel.getTotalPower();
             double timeDiffInSeconds = timeDiff / 1000.0d;
 
-            newTemperature = currentTemperature + ((powerLevelTotal * timeDiffInSeconds) / zoneModel.getThermalCapacity());
+            newTemperature = currentTemperature
+                    + ((powerLevelTotal * timeDiffInSeconds) / zoneModel.getThermalCapacity());
             for (Map.Entry<String, Double> zoneWallSurfaceEntry : zoneModel.getWallSurfaces()) {
                 String otherZoneId = zoneWallSurfaceEntry.getKey();
                 double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
                 Zone otherZone = _contextMgr.getZone(otherZoneId);
                 if (otherZone != null) {
-                    Object otherZoneTemperature = _contextMgr.getZone(otherZoneId).getVariableValue(TEMPERATURE_PROP_NAME);
+                    Object otherZoneTemperature = _contextMgr.getZone(otherZoneId).getVariableValue(
+                            TEMPERATURE_PROP_NAME);
                     if (otherZoneTemperature != null)
-                        newTemperature += (K * zoneWallSurface * (((Double) otherZoneTemperature) - currentTemperature)
-                                * timeDiffInSeconds) / zoneModel.getThermalCapacity();
+                        newTemperature += (K * zoneWallSurface * (((Double) otherZoneTemperature) - currentTemperature) * timeDiffInSeconds)
+                                / zoneModel.getThermalCapacity();
                 }
             }
 
@@ -274,23 +275,19 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         }
     }
 
-    private void setThermalCapacityFromVolume(Zone zone, Double zoneVolume) {
+    private void setThermalCapacityFromVolume(ZoneModel zoneModel, Double zoneVolume) {
 
         double newVolume = 1.0d; // use this value as default to avoid divide by zero
         if ((zoneVolume != null) && (((Double) zoneVolume) > 0.0d))
             newVolume = (Double) zoneVolume;
 
-        String zoneId = zone.getId();
         double thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
 
-        synchronized (_zoneModelLock) {
-            ZoneModel zoneModel = _zoneModels.get(zoneId);
-            if (zoneModel != null) {
-                zoneModel.setThermalCapacity(thermalCapacity);
-            }
+        if (zoneModel != null) {
+            zoneModel.setThermalCapacity(thermalCapacity);
         }
-    }
 
+    }
 
     /*
      * LocateDeviceTrackerCustomizer
@@ -303,7 +300,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     @Override
     public void addedDevice(LocatedDevice locatedDevice) {
-        synchronized(_zoneModelLock) {
+        synchronized (_zoneModelLock) {
             _temperatureDevices.add(locatedDevice);
 
             for (ZoneModel zoneModel : _zoneModels.values()) {
@@ -318,7 +315,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         if (!propChangeHasImpactOnPower(locatedDevice, propName))
             return;
 
-        //do not need to update total power of a zone, already done in temperature computation step
+        // do not need to update total power of a zone, already done in temperature computation step
     }
 
     @Override
@@ -348,8 +345,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     /*
-    * ZoneTrackerCustomizer
-    */
+     * ZoneTrackerCustomizer
+     */
 
     @Override
     public boolean addingZone(Zone zone) {
@@ -367,9 +364,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 // init thermal capacity
                 Object zoneVolume = zone.getVariableValue(VOLUME_PROP_NAME);
                 if ((zoneVolume != null) && (zoneVolume instanceof Double))
-                    setThermalCapacityFromVolume(zone, (Double) zoneVolume);
+                    setThermalCapacityFromVolume(zoneModel, (Double) zoneVolume);
 
-                //init zone surfaces
+                // init zone surfaces
                 for (ZoneModel curZoneModel : _zoneModels.values())
                     updateZoneSurface(zoneModel, curZoneModel);
 
@@ -398,8 +395,13 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public void modifiedZone(Zone zone, String variableName, Object oldValue, Object newValue) {
         if (!VOLUME_PROP_NAME.equals(variableName))
             return;
-
-        setThermalCapacityFromVolume(zone, (Double) newValue);
+        
+        
+        synchronized (_zoneModelLock) {
+            ZoneModel zoneModel = _zoneModels.get(zone.getId());
+            setThermalCapacityFromVolume(zoneModel, (Double) newValue);    
+        }
+        
     }
 
     @Override
@@ -514,8 +516,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             } else if (interZ > 0) {
                 Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
-                return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
-                        xFactor, yFactor, zFactor) - xyWallSurface;
+                return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval,
+                        interPara.zInterval, xFactor, yFactor, zFactor) - xyWallSurface;
             }
         }
 
@@ -533,32 +535,25 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             } else if (interZ > 0) {
                 Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
-                return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
-                        xFactor, yFactor, zFactor) - xyWallSurface;
+                return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval,
+                        interPara.zInterval, xFactor, yFactor, zFactor) - xyWallSurface;
             }
         }
 
-        /* X,Y plan
-         * -------
-         * |Z1  ------
-         * |    | Z2 |
-         * |    ------
-         * -------
+        /*
+         * X,Y plan ------- |Z1 ------ | | Z2 | | ------ -------
          */
         if (!z1xInZ2x && !z2xInZ1x && (z2yInZ1y || z1yInZ2y)) {
             double xzWallSurface = interX * xFactor * interZ * zFactor;
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
             return (getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
-                        xFactor, yFactor, zFactor) / 2.0d) + xzWallSurface;
+                    xFactor, yFactor, zFactor) / 2.0d) + xzWallSurface;
         }
 
-        /* X,Y plan
-        *     ------
-        * ----| Z2 |---
-        * |Z1 ------  |
-        * -------------
-        */
+        /*
+         * X,Y plan ------ ----| Z2 |--- |Z1 ------ | -------------
+         */
         if (!z1yInZ2y && !z2yInZ1y && (z2xInZ1x || z1xInZ2x)) {
             double yzWallSurface = interY * yFactor * interZ * zFactor;
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
@@ -567,14 +562,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                     xFactor, yFactor, zFactor) / 2.0d) + yzWallSurface;
         }
 
-        /* X,Y plan
-        *     ------
-        * ----| Z2 |---
-        * |Z1 |    |  |
-        * ----|    |---
-        *     |    |
-        *     ------
-        */
+        /*
+         * X,Y plan ------ ----| Z2 |--- |Z1 | | | ----| |--- | | ------
+         */
         if ((z2xInZ1x && !z1xInZ2x && z1yInZ2y && !z2yInZ1y) || (!z2xInZ1x && z1xInZ2x && !z1yInZ2y && z2yInZ1y)) {
             double xyWallSurface = interX * xFactor * interY * yFactor;
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
@@ -583,14 +573,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                     xFactor, yFactor, zFactor) + xyWallSurface;
         }
 
-        /* X,Y plan
-        *     ------
-        * ----| Z2 |---
-        * |Z1 |    |  |
-        * ----|    |---
-        *     |    |
-        *     ------
-        */
+        /*
+         * X,Y plan ------ ----| Z2 |--- |Z1 | | | ----| |--- | | ------
+         */
         if ((interX > 0) && (interY > 0) && !z2xInZ1x && !z1xInZ2x && !z1yInZ2y && !z2yInZ1y) {
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
@@ -603,10 +588,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         throw new IllegalStateException("Should be dead code.");
     }
 
-
     /**
      * Prerequisite : Intersection parallelepiped must not be null.
-     *
+     * 
      * @param p1 a parallelepiped
      * @param p2 another parallelepiped
      * @return intersection of the two parallelepiped.
@@ -620,7 +604,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     private double getSurfaceOfParallelepipedInMeters(Interval zone1X, Interval zone1Y, Interval zone1Z,
-                                                      double xFactor, double yFactor, double zFactor) {
+            double xFactor, double yFactor, double zFactor) {
         double xySurface = zone1X.getLength() * xFactor * zone1Y.getLength() * yFactor;
         double xzSurface = zone1X.getLength() * xFactor * zone1Z.getLength() * zFactor;
         double yzSurface = zone1Y.getLength() * yFactor * zone1Z.getLength() * zFactor;
@@ -653,14 +637,14 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     private static int getIntersectionLength(int coord1Min, int coord1Max, int coord2Min, int coord2Max) {
-       if ((coord2Min > coord1Max) || (coord1Min > coord2Max))
-           return 0;
-       if (coord1Max >= coord2Min)
-           return coord2Max - coord1Min;
-       else if (coord2Max >= coord1Min)
-           return coord1Max - coord2Min;
+        if ((coord2Min > coord1Max) || (coord1Min > coord2Max))
+            return 0;
+        if (coord1Max >= coord2Min)
+            return coord2Max - coord1Min;
+        else if (coord2Max >= coord1Min)
+            return coord1Max - coord2Min;
 
-       return 0;
+        return 0;
     }
 
     private static int getDistanceBetweenIntervals(int coord1Min, int coord1Max, int coord2Min, int coord2Max) {
@@ -679,7 +663,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         synchronized (_zoneModelLock) {
             _zoneModels.remove(zone.getId());
             for (ZoneModel zoneModel : _zoneModels.values()) {
-               zoneModel.removeWallSurface(zoneId);
+                zoneModel.removeWallSurface(zoneId);
             }
         }
     }

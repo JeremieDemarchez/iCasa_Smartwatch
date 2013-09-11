@@ -15,6 +15,29 @@
  */
 package fr.liglab.adele.icasa.simulation.test.temperature;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.fail;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
+import java.util.Properties;
+
+import javax.inject.Inject;
+
+import org.apache.felix.ipojo.Factory;
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerMethod;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
+
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.icasa.ContextManager;
@@ -23,26 +46,10 @@ import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
-import org.osgi.framework.BundleContext;
-
-import javax.inject.Inject;
-
-import java.util.Hashtable;
-
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
 
 /**
  * Tests for temperature physical model.
- *
+ * 
  * @author Thomas Leveque
  */
 @RunWith(PaxExam.class)
@@ -50,6 +57,7 @@ import static org.junit.Assert.assertNotNull;
 public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
     public static final String TEMPERATURE_VAR_NAME = "Temperature";
+
     @Inject
     public BundleContext context;
 
@@ -59,9 +67,11 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
     @Inject
     private SimulationManager simulationMgr;
 
+
     @Before
     public void setUp() {
         waitForStability(context);
+        createXMLSharedPreferencesInstance();
     }
 
     @After
@@ -73,9 +83,33 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
         }
     }
 
+    private void createXMLSharedPreferencesInstance() {
+        try {
+            Collection<ServiceReference<Factory>> refs = context.getServiceReferences(Factory.class,
+                    "(factory.name=org.ow2.chameleon.sharedprefs.XmlSharedPreferences)");
+            if (refs.size() > 0) {
+                ArrayList<ServiceReference<Factory>> arrayReferences = new ArrayList<ServiceReference<Factory>>(refs);
+                ServiceReference<Factory> reference = arrayReferences.get(0);
+
+                Factory preferencesFactory = context.getService(reference);
+
+                Properties props = new Properties();
+                props.put("instance.name", "XmlSharedPreferences-102");
+                props.put("location", "preferences");
+                try {
+                    preferencesFactory.createComponentInstance(props);
+                } catch (Exception e) {
+                    fail("Cannot create the instance : " + e.getMessage());
+                }
+            }
+
+        } catch (InvalidSyntaxException e) {
+            fail("Cannot create the instance : " + e.getMessage());
+        }
+    }
+    
     @Test
-    @Ignore //TODO fix it
-    public void tempVarExistsTest(){
+    public void tempVarExistsTest() {
         assertNotNull(contextMgr);
 
         String zoneId = "tempZone-0";
@@ -85,13 +119,12 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
         waitForTemperatureExists(zone);
 
-        //cleanup
+        // cleanup
         contextMgr.removeZone(zoneId);
     }
 
     @Test
-    @Ignore //TODO fix it
-    public void defaultTempTest(){
+    public void defaultTempTest() {
         assertNotNull(contextMgr);
 
         String zoneId = "tempZone-0";
@@ -99,15 +132,18 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
         Position position = new Position(10, 10);
         Zone zone = contextMgr.createZone(zoneId, position, zoneScope);
 
+        Double temp = (Double) zone.getVariableValue(TEMPERATURE_VAR_NAME);
+        
+        System.out.println("===========> " + temp);
+        
         waitForTemperatureEqualsTo(zone, 293.15);
 
-        //cleanup
+        // cleanup
         contextMgr.removeZone(zoneId);
     }
 
     @Test
-    @Ignore //TODO fix it
-    public void setTempTest(){
+    public void setTempTest() {
         assertNotNull(contextMgr);
 
         String zoneId = "tempZone-0";
@@ -117,34 +153,29 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
         double newTemp = 300.20;
         zone.setVariableValue(TEMPERATURE_VAR_NAME, newTemp);
-
+        
         waitForTemperatureEqualsTo(zone, newTemp);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        assertEquals(newTemp, zone.getVariableValue(TEMPERATURE_VAR_NAME));
 
-        //cleanup
+        // cleanup
         contextMgr.removeZone(zoneId);
     }
 
     @Test
-    @Ignore //TODO fix it
-    public void tempWithOneHeaterTest(){
+    public void tempWithOneHeaterTest() {
         assertNotNull(contextMgr);
 
         String zoneId = "tempZone-0";
-        int zoneScope = 50;
+        int zoneScope = 150;
         Position position = new Position(100, 100);
         Zone zone = contextMgr.createZone(zoneId, position, zoneScope);
 
-        LocatedDevice device = simulationMgr.createDevice("iCasa.Heater", "device1", new Hashtable());
-        device.setPropertyValue(Heater.HEATER_POWER_LEVEL, 0.0d);
-        device.setPropertyValue(Heater.HEATER_MAX_POWER_LEVEL, 1000);
+        LocatedDevice locatedDevice = simulationMgr.createDevice("iCasa.Heater", "device1", new Hashtable());
+        
+        Heater heater = (Heater) locatedDevice.getDeviceObject();
+        
+        heater.setPowerLevel(0.0d);
 
-        double newTemp = 300.20;
+        double newTemp = 299.20;
         zone.setVariableValue(TEMPERATURE_VAR_NAME, newTemp);
 
         try {
@@ -152,28 +183,29 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
+        
         assertEquals(newTemp, zone.getVariableValue(TEMPERATURE_VAR_NAME));
 
-        device.setPropertyValue(Heater.HEATER_POWER_LEVEL, 1.0d);
-
+        heater.setPowerLevel(1.0d);
+        simulationMgr.moveDeviceIntoZone(locatedDevice.getSerialNumber(), zone.getId());
+        
         waitForTemperatureGreaterThan(zone, newTemp);
 
-        //cleanup
+        // cleanup
         contextMgr.removeZone(zoneId);
-        simulationMgr.removeDevice(device.getSerialNumber());
+        simulationMgr.removeDevice(locatedDevice.getSerialNumber());
     }
 
     public void waitForTemperatureExists(Zone zone) {
-        TestUtils.testConditionWithTimeout(new TemperatureVarExistsCondition(zone), 5000, 10);
+        TestUtils.testConditionWithTimeout(new TemperatureVarExistsCondition(zone), 5000, 30);
     }
 
     public void waitForTemperatureEqualsTo(Zone zone, double temp) {
-        TestUtils.testConditionWithTimeout(new TemperatureEqualsToCondition(zone, temp), 5000, 10);
+        TestUtils.testConditionWithTimeout(new TemperatureEqualsToCondition(zone, temp), 5000, 30);
     }
 
     public void waitForTemperatureGreaterThan(Zone zone, double temp) {
-        TestUtils.testConditionWithTimeout(new TemperatureGreaterThanCondition(zone, temp), 5000, 10);
+        TestUtils.testConditionWithTimeout(new TemperatureGreaterThanCondition(zone, temp), 5000, 30);
     }
 
 }
-
