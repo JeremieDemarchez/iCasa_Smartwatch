@@ -50,7 +50,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	}
 
 	@Override
-	public synchronized boolean getPowerStatus() {
+	public boolean getPowerStatus() {
 		Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS);
 		if (powerStatus == null)
 			return false;
@@ -59,7 +59,7 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
 	}
 
 	@Override
-	public synchronized boolean setPowerStatus(boolean status) {
+	public boolean setPowerStatus(boolean status) {
 		setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, (Boolean) status);
 		return status;
 	}

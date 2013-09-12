@@ -245,38 +245,36 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      * @param zone a zone
      */
     private void updateIlluminance(Zone zone) {
-        synchronized (_zoneLock) {
-            double returnedIlluminance = 0.0; //TODO manage external illuminance
-            int activeLightSize = 0;
-            int height = zone.getYLength();
-            int width = zone.getXLength();
-            double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
-            double powerLevelTotal = 0.0d;
+        double returnedIlluminance = 0.0; //TODO manage external illuminance
+        int activeLightSize = 0;
+        int height = zone.getYLength();
+        int width = zone.getXLength();
+        double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
+        double powerLevelTotal = 0.0d;
 
-            Set<GenericDevice> devices = getLightDevicesFromZone(zone);
-            for (GenericDevice device : devices) {
-                if (device instanceof BinaryLight) {
-                    BinaryLight binaryLight = (BinaryLight) device;
+        Set<GenericDevice> devices = getLightDevicesFromZone(zone);
+        for (GenericDevice device : devices) {
+            if (device instanceof BinaryLight) {
+                BinaryLight binaryLight = (BinaryLight) device;
 
-                    if (binaryLight.getPowerStatus()) {
-                        activeLightSize += 1;
-                        powerLevelTotal += binaryLight.getMaxPowerLevel();
-                    } else powerLevelTotal += 0.0d;
-                } else if (device instanceof DimmerLight) {
-                    DimmerLight dimmerLight = (DimmerLight) device;
+                if (binaryLight.getPowerStatus()) {
+                    activeLightSize += 1;
+                    powerLevelTotal += binaryLight.getMaxPowerLevel();
+                } else powerLevelTotal += 0.0d;
+            } else if (device instanceof DimmerLight) {
+                DimmerLight dimmerLight = (DimmerLight) device;
 
-                    if (dimmerLight.getPowerLevel() != 0.0d) {
-                        activeLightSize += 1;
-                        powerLevelTotal += dimmerLight.getPowerLevel() * dimmerLight.getMaxPowerLevel();
-                    }
+                if (dimmerLight.getPowerLevel() != 0.0d) {
+                    activeLightSize += 1;
+                    powerLevelTotal += dimmerLight.getPowerLevel() * dimmerLight.getMaxPowerLevel();
                 }
             }
-
-            if (activeLightSize != 0)
-                returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
-
-            zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
         }
+
+        if (activeLightSize != 0)
+            returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
+
+        zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
     }
 
     @Override
