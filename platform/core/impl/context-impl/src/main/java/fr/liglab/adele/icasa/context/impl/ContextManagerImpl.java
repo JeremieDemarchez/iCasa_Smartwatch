@@ -108,7 +108,8 @@ public class ContextManagerImpl implements ContextManager {
 				e.printStackTrace();
 			}
 		}
-
+        //Update the device locations in the given zone.
+        updateDeviceLocations(zone);
 		return zone;
 	}
 
@@ -133,9 +134,6 @@ public class ContextManagerImpl implements ContextManager {
 			return;
         }
 		
-		List<LocatedDevice> localDevices = getDevices();
-		
-		
         logger.debug("Removing zone " + id);
 		// Listeners notification
 		for (ZoneListener listener : snapshotZoneListener) {
@@ -146,7 +144,18 @@ public class ContextManagerImpl implements ContextManager {
 				e.printStackTrace();
 			}
 		}
+        //Update the device locations in the given zone.
+        updateDeviceLocations(zone);
 
+	}
+
+
+    /**
+     * Updates the device location of a given zone.
+     * @param zone The zone
+     */
+    private void updateDeviceLocations(Zone zone){
+        List<LocatedDevice> localDevices = getDevices();
         for (LocatedDevice locatedDevice : localDevices) {
             if (zone.contains(locatedDevice)) {
                 // This is done only to force the located device to change its location property value
@@ -154,8 +163,7 @@ public class ContextManagerImpl implements ContextManager {
                 locatedDevice.setCenterAbsolutePosition(position);
             }
         }
-
-	}
+    }
 
 	@Override
 	public void moveZone(String id, int leftX, int topY, int bottomZ) throws Exception {
@@ -167,6 +175,8 @@ public class ContextManagerImpl implements ContextManager {
         logger.debug("Moving zone " + id);
 		Position newPosition = new Position(leftX, topY, bottomZ);
 		zone.setLeftTopRelativePosition(newPosition);
+        //Update the device locations in the given zone.
+        updateDeviceLocations(zone);
 	}
 
 	@Override
@@ -178,6 +188,8 @@ public class ContextManagerImpl implements ContextManager {
         }
         logger.debug("Moving zone " + id);
 		zone.resize(width, height, depth);
+        //Update the device locations in the given zone.
+        updateDeviceLocations(zone);
 	}
 
 	@Override
