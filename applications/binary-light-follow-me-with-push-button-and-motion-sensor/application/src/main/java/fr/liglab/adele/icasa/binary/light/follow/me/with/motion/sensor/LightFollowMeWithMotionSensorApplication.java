@@ -51,7 +51,9 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
     protected static final String APPLICATION_ID = "light.follow.me.with.motion.sensor";
 
-    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + APPLICATION_ID);
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + "."+APPLICATION_ID);
+
+    UnregisterTaskThread unregisterTaskThread = new UnregisterTaskThread();
 
     @Requires
     private Preferences preferences;
@@ -64,8 +66,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
     @RequiresDevice(id = "motionSensors", type = "field", optional = true)
     private MotionSensor[] motionSensors;
 
-
-    Map<String, ServiceRegistration> registrations = new HashMap<String, ServiceRegistration>();
+    List<ServiceRegistration> registrationsToRemove = new ArrayList<ServiceRegistration>();
 
     Map<String, TurnOffLightTask> tasks = new HashMap<String, TurnOffLightTask>();
 
@@ -104,12 +105,14 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
         for (MotionSensor motionSensorSensor : motionSensors) {
             motionSensorSensor.removeListener(this);
         }
+        unregisterTaskThread.stop();
     }
 
     /** Component Lifecycle Method */
     @Validate
     public void start() {
         // do nothing
+        new Thread(unregisterTaskThread).start();
     }
 
     /**
@@ -148,32 +151,29 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
     private void scheduleTask(String location) {
         // If exists, remove service
-        TurnOffLightTask task = null;
+        TurnOffLightTask oldTask = null;
+        TurnOffLightTask ntask = null;
         ServiceRegistration registration = null;
         synchronized (lockObject) {
-            if (registrations.containsKey(location)) {
-                registration = registrations.remove(location);
-                task = tasks.get(location);
+            if (tasks.containsKey(location)) {
+                oldTask = tasks.remove(location);
             }
-            if (task == null) {
-                task = new TurnOffLightTask();
-                tasks.put(location, task);
-                task.setLocation(location);
-            }            
-            long scheduledTime = clock.currentTimeMillis() + getTimeout();
-            task.setExecutionDate(scheduledTime);
-        }
-        if (registration != null) {
-            try{
-                registration.unregister();
-            }catch(Exception ex){}
-        }
-        registration = bundleContext.registerService(ScheduledRunnable.class.getName(), task, new Hashtable());
-        synchronized (lockObject) {
-            registrations.put(location, registration);
-        }
-    }
+            if(oldTask != null){
+                oldTask.ignore(true);
+            }
 
+            ntask = new TurnOffLightTask();
+            tasks.put(location, ntask);
+            ntask.setLocation(location);
+
+            long scheduledTime = clock.currentTimeMillis() + getTimeout();
+            ntask.setExecutionDate(scheduledTime);
+        }
+
+        registration = bundleContext.registerService(ScheduledRunnable.class.getName(), ntask, new Hashtable());
+        ntask.setServiceRegistration(registration);
+
+    }
 
     protected void turnOffTheLights(String location) {
         List<BinaryLight> sameLocationLights = getBinaryLightFromLocation(location);
@@ -233,6 +233,21 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
         private long executionDate = 0;
 
+        public void setServiceRegistration(ServiceRegistration serviceRegistration) {
+            this.serviceRegistration = serviceRegistration;
+        }
+
+        private ServiceRegistration serviceRegistration;
+
+
+
+        public void ignore(boolean ignore) {
+            this.ignore = ignore;
+        }
+
+
+        private volatile boolean ignore = false;
+
         private String location = GenericDevice.LOCATION_UNKNOWN;
 
         public void setLocation(String location) {
@@ -255,16 +270,45 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
         @Override
         public void run() {
-            turnOffTheLights(location);
-            ServiceRegistration registrationTask = null;
-            synchronized (lockObject) {
-                registrationTask = registrations.remove(location);
+            if(!ignore){
+                turnOffTheLights(location);
             }
-            if (registrationTask != null) {
-                try {
-                    registrationTask.unregister();
-                } catch (Exception ex) {
+            synchronized (lockObject){
+                registrationsToRemove.add(serviceRegistration);
+            }
+        }
+    }
+
+    private class UnregisterTaskThread implements Runnable {
+
+        private volatile boolean execute = true;
+
+        protected void stop(){
+            execute = false;
+        }
+
+        @Override
+        public void run() {
+            boolean run = execute;
+            while(run){
+                ServiceRegistration toRemove = null;
+                synchronized (lockObject){
+                    if(!registrationsToRemove.isEmpty()){
+                        toRemove = registrationsToRemove.remove(0);
+                    }
                 }
+                try {
+                    Thread.sleep(50);
+                } catch (InterruptedException e) {
+                    stop();
+                }
+                if(toRemove != null){
+                    try{
+                        logger.debug("Unregister scheduled service");
+                        toRemove.unregister();
+                    }catch(Exception ex){}
+                }
+                run = execute;
             }
         }
     }
