@@ -41,10 +41,12 @@ import org.osgi.framework.ServiceReference;
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.simulation.test.temperature.TemperatureDifferentThanCondition.SizeCondition;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
@@ -134,7 +136,6 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
         Double temp = (Double) zone.getVariableValue(TEMPERATURE_VAR_NAME);
         
-        System.out.println("===========> " + temp);
         
         waitForTemperatureEqualsTo(zone, 293.15);
 
@@ -165,47 +166,132 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
         assertNotNull(contextMgr);
 
         String zoneId = "tempZone-0";
-        int zoneScope = 150;
+        int zoneScope = 100;
         Position position = new Position(100, 100);
         Zone zone = contextMgr.createZone(zoneId, position, zoneScope);
 
-        LocatedDevice locatedDevice = simulationMgr.createDevice("iCasa.Heater", "device1", new Hashtable());
+        LocatedDevice locatedDevice = simulationMgr.createDevice("iCasa.Heater", "heater1", new Hashtable());
         
         Heater heater = (Heater) locatedDevice.getDeviceObject();
         
         heater.setPowerLevel(0.0d);
 
-        double newTemp = 299.20;
+        double newTemp = 283.20;
         zone.setVariableValue(TEMPERATURE_VAR_NAME, newTemp);
-
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
         
         assertEquals(newTemp, zone.getVariableValue(TEMPERATURE_VAR_NAME));
 
         heater.setPowerLevel(1.0d);
         simulationMgr.moveDeviceIntoZone(locatedDevice.getSerialNumber(), zone.getId());
         
-        waitForTemperatureGreaterThan(zone, newTemp);
+        waitForTemperatureGreaterThan(zone, newTemp, 0.2d);
 
         // cleanup
         contextMgr.removeZone(zoneId);
         simulationMgr.removeDevice(locatedDevice.getSerialNumber());
     }
 
-    public void waitForTemperatureExists(Zone zone) {
+    @Test
+    public void tempWithOneCoolerTest() {
+        assertNotNull(contextMgr);
+
+        String zoneId = "tempZone-0";
+        int zoneScope = 100;
+        Position position = new Position(100, 100);
+        Zone zone = contextMgr.createZone(zoneId, position, zoneScope);
+
+        LocatedDevice locatedDevice = simulationMgr.createDevice("iCasa.Cooler", "heater2", new Hashtable());
+        
+        Cooler cooler = (Cooler) locatedDevice.getDeviceObject();
+        
+        cooler.setPowerLevel(0.0d);
+
+        double newTemp = 299.20;
+        zone.setVariableValue(TEMPERATURE_VAR_NAME, newTemp);
+
+        
+        assertEquals(newTemp, zone.getVariableValue(TEMPERATURE_VAR_NAME));
+
+        cooler.setPowerLevel(1.0d);
+        simulationMgr.moveDeviceIntoZone(locatedDevice.getSerialNumber(), zone.getId());
+        
+        waitForTemperatureSmallerThan(zone, newTemp, 0.2d);
+
+        // cleanup
+        contextMgr.removeZone(zoneId);
+        simulationMgr.removeDevice(locatedDevice.getSerialNumber());
+    }
+    
+    @Test
+    public void tempWithOneHeaterAndCoolerTest() {
+        assertNotNull(contextMgr);
+
+        String zoneId = "tempZone-0";
+        int zoneScope = 100;
+        Position position = new Position(100, 100);
+        Zone zone = contextMgr.createZone(zoneId, position, zoneScope);
+
+        LocatedDevice coolerLocatedDevice = simulationMgr.createDevice("iCasa.Cooler", "cooler1", new Hashtable());
+        LocatedDevice heaterLocatedDevice = simulationMgr.createDevice("iCasa.Heater", "heater1", new Hashtable());
+        
+        Cooler cooler = (Cooler) coolerLocatedDevice.getDeviceObject();
+        Heater heater = (Heater) heaterLocatedDevice.getDeviceObject();
+        
+        cooler.setPowerLevel(0.0d);
+
+        double newTemp = 299.20;
+        zone.setVariableValue(TEMPERATURE_VAR_NAME, newTemp);
+
+        
+        assertEquals(newTemp, zone.getVariableValue(TEMPERATURE_VAR_NAME));
+
+        cooler.setPowerLevel(1.0d);
+        heater.setPowerLevel(1.0d);
+                       
+        simulationMgr.moveDeviceIntoZone(coolerLocatedDevice.getSerialNumber(), zone.getId());
+        simulationMgr.moveDeviceIntoZone(heaterLocatedDevice.getSerialNumber(), zone.getId());
+        
+        waitForTemperatureStability(zone, newTemp);
+
+        // cleanup
+        contextMgr.removeZone(zoneId);
+        simulationMgr.removeDevice(coolerLocatedDevice.getSerialNumber());
+    }    
+    
+    
+    // @Test // -> Functionality no implemented yet
+    public void twoCloseZonesTest() {
+        assertNotNull(contextMgr);
+        Zone zone1 = contextMgr.createZone("tempZone-0", 100, 100, 0, 100, 100, 100);
+        Zone zone2 = contextMgr.createZone("tempZone-1", 210, 100, 0, 100, 100, 100);
+        
+        double temperatureZone1 = 293.2d;
+        double temperatureZone2 = 283.2d;
+        
+        zone1.setVariableValue(TEMPERATURE_VAR_NAME, temperatureZone1);
+        zone2.setVariableValue(TEMPERATURE_VAR_NAME, temperatureZone2);
+        
+        waitForTemperatureSmallerThan(zone1, temperatureZone1, 0.1d);
+        waitForTemperatureGreaterThan(zone2, temperatureZone2, 0.1d);
+    }
+    
+    private void waitForTemperatureExists(Zone zone) {
         TestUtils.testConditionWithTimeout(new TemperatureVarExistsCondition(zone), 5000, 30);
     }
 
-    public void waitForTemperatureEqualsTo(Zone zone, double temp) {
-        TestUtils.testConditionWithTimeout(new TemperatureEqualsToCondition(zone, temp), 5000, 30);
+    private void waitForTemperatureEqualsTo(Zone zone, double originalValue) {
+        TestUtils.testConditionWithTimeout(new TemperatureEqualsToCondition(zone, originalValue), 5000, 30);
     }
 
-    public void waitForTemperatureGreaterThan(Zone zone, double temp) {
-        TestUtils.testConditionWithTimeout(new TemperatureGreaterThanCondition(zone, temp), 5000, 30);
+    private void waitForTemperatureGreaterThan(Zone zone, double originalValue, double delta) {
+        TestUtils.testConditionWithTimeout(new TemperatureDifferentThanCondition(zone, originalValue, delta, SizeCondition.BIGGER), 20000, 40);
     }
 
+    private void waitForTemperatureSmallerThan(Zone zone, double originalValue, double delta) {
+        TestUtils.testConditionWithTimeout(new TemperatureDifferentThanCondition(zone, originalValue, delta, SizeCondition.SMALLER), 20000, 40);
+    }
+ 
+    private void waitForTemperatureStability(Zone zone, double originalValue) {
+        TestUtils.testConditionWithTimeout(new TemperatureStableCondition(zone, originalValue, 0.2), 20000, 40);
+    }
 }

@@ -22,26 +22,56 @@ import fr.liglab.adele.icasa.location.Zone;
  *
  * @author Thomas Leveque
  */
-public class TemperatureGreaterThanCondition extends TemperatureVarExistsCondition {
-
-    private double _temp;
-
-    public TemperatureGreaterThanCondition(Zone zone, double temp) {
+public class TemperatureDifferentThanCondition extends TemperatureVarExistsCondition {
+    
+    private double _goalValue;
+        
+    private SizeCondition _sizeCondition;
+    
+    
+    public TemperatureDifferentThanCondition(Zone zone, double originalValue, double delta, SizeCondition sizeCondition) {
         super(zone);
-        _temp = temp;
+        
+        _sizeCondition = sizeCondition;        
+        
+        if (sizeCondition == SizeCondition.BIGGER) {
+            _goalValue = originalValue + delta;
+        } else {
+            _goalValue = originalValue - delta;
+        }
     }
 
     public boolean isChecked() {
         if (!super.isChecked())
             return false;
-
+            
         Object tempObj = _zone.getVariableValue("Temperature");
+          
+            
         if ((tempObj == null) || !(tempObj instanceof Double))
             return false;
-        return ((Double) tempObj) > _temp;
+        
+        double newValue = (Double) tempObj;
+        
+        System.out.println("Temperature -------------> " + newValue);
+        
+        if (_sizeCondition == SizeCondition.BIGGER) {
+            return newValue >_goalValue;
+        } else {
+            return newValue < _goalValue;
+        }
     }
 
     public String getDescription() {
-        return "Temperature variable must be greater than " + _temp + " on zone " + _zone.getId() + ".";
+        String temp = "bigger";
+        
+        if (_sizeCondition == SizeCondition.SMALLER)
+            temp = "smaller";
+        
+        return "Temperature variable must be" + temp +" than " + _goalValue + " on zone " + _zone.getId() + ".";
+    }
+    
+    enum SizeCondition {
+        BIGGER, SMALLER
     }
 }
