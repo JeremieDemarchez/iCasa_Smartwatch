@@ -5,7 +5,6 @@ define(['jquery',
         'knockout',
         'knockback',
         'handlebars',
-        #'hammer-jquery',
         'jquery.ui.touch',
         'contracts/DeviceWidgetContract',
         'dataModels/ICasaDataModel'
@@ -20,7 +19,7 @@ define(['jquery',
         'text!templates/zoneStatusWindow.html',
         'text!templates/applicationStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, Hammer, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -111,23 +110,6 @@ define(['jquery',
                 application = @root.applications.collection().at(index);
                 @root.selectedApplication(@root.applications.viewModelByModel(application));
             )
-    ko.bindingHandlers.jqueryHammerDraggable = {
-
-        init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
-            # This will be called when the binding is first applied to an element
-
-            $(element).on("touch" , () =>
-                console.log "device has been touched"
-                if (viewModel.isHighlighted())
-                    viewModel.removeHighlight();
-                    viewModel.isSelected(false);
-                else
-                    viewModel.addHighlight();
-                    viewModel.isSelected(true);
-            )
-
-            return { controlsDescendantBindings: false };
-    };
     #end for dashboard.
 
     ko.bindingHandlers.handlebarTemplate = {
@@ -175,28 +157,9 @@ define(['jquery',
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
-            #if Hammer.HAS_TOUCHEVENTS
-            #    new TouchDragAndDrop(viewModel, element);
 
             return { controlsDescendantBindings: false };
     };
-
-    class TouchDragAndDrop
-        constructor: (@viewModel, @element) ->
-            console.log @viewModel;
-            @lastPosX = @viewModel.styleLetf;
-            @lastPosY = @viewModel.styleTop;
-
-            $(@element).hammer({ drag_max_touches:0}).on("touch drag", (ev) =>
-                touches = ev.gesture.touches;
-                ev.gesture.preventDefault();
-                for t in [0...touches.length]
-                    @viewModel.positionX(((touches[t].pageX-32) / @viewModel.containerWidthRatio()) + (@viewModel.widgetWidth() / 2));
-                    @viewModel.positionY(((touches[t].pageY-64) / @viewModel.containerHeightRatio())  + (@viewModel.widgetHeight() / 2));
-            );
-            $(@element).hammer({ drag_max_touches:0}).on("dragend", (ev) =>
-                @viewModel.model().save()
-            );
 
     ko.bindingHandlers.jqueryResizable = {
 
@@ -737,7 +700,8 @@ define(['jquery',
             if (!curServices)
               return false;
             foundService = ko.utils.arrayFirst(curServices, (curService) ->
-              return ko.utils.stringStartsWith(curService, service);
+               return curService.indexOf(service) == 0;
+              #return ko.utils.stringStartsWith(curService, service);
             );
             if (foundService)
               return true;
@@ -1377,6 +1341,7 @@ define(['jquery',
            @selectedApplication = ko.observable("")
            @applications = kb.collectionObservable(DataModel.collections.applications, {view_model: ApplicationViewModel});
            @updateSelectedApplication = ()=>
+                console.log "calculating selected application rights"
                 ko.utils.arrayForEach(@.devices(), (device) =>
                     applicationModel = @selectedApplication().model()
                     if (applicationModel.get('id') == "NONE")
@@ -1392,9 +1357,7 @@ define(['jquery',
                             device.hasAccessRight(false)
                 );
            @updatingAccessRightInSelectedApplication = kb.observable(DataModel.collections.applications.updateAccessRights,'update')
-           @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication);
-           @selectedApplication.subscribe(@updateSelectedApplication);
-           @devices.subscribe(@updateSelectedApplication);
+           #@devices.subscribe(@updateSelectedApplication);
            #end valid only for dashboard
            @tabs = ko.observableArray([
                 new TabViewModel {
@@ -1818,6 +1781,12 @@ define(['jquery',
            @.persons.subscribe(@.updateWidgetPositions)
            @.devices.subscribe(@.updateWidgetPositions)
            @.zones.subscribe(@.updateWidgetPositions)
+           #valid for dashboard
+           @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication);
+           @selectedApplication.subscribe(@updateSelectedApplication);
+           @.devices.subscribe(@updateSelectedApplication)
+           @updateSelectedApplication();
+           #end valid for dashboard
         
         createRandomId:(collection, type)->
            number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 
