@@ -73,13 +73,13 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
       if ((device == null)  || (device == undefined))
         DataModel.collections.devices.add(json.device);
         #switch property to force update selected application access right
-        DataModel.collections.applications.updateAccessRights.set({'update':!DataModel.collections.applications.updateAccessRights.get('update')})
+        DataModel.collections.applications.updateAccessRights.set({'update':Math.random().toString(36).substring(7)})
     if (json.eventType == "device-removed")
       device = locateModel(DataModel.collections.devices,json.deviceId, "deviceId");
       if ((device != null)  && (device != undefined))
         DataModel.collections.devices.remove(device);
         #switch property to force update selected application access right
-        DataModel.collections.applications.updateAccessRights.set({'update':!DataModel.collections.applications.updateAccessRights.get('update')})
+        DataModel.collections.applications.updateAccessRights.set({'update':Math.random().toString(36).substring(7)})
     if ((json.eventType == "device-position-update") || (json.eventType == "device-property-added") || (json.eventType == "device-property-removed") || (json.eventType == "device-property-updated"))
       device = locateModel(DataModel.collections.devices,json.deviceId, "deviceId");
       if ((device != null)  && (device != undefined))
@@ -134,13 +134,13 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
         policy = locateModel(applicationModel.accessRights, json.accessRight.deviceId, "deviceId");
         policy.set(json.accessRight)
         #switch property to force update selected application access right
-        DataModel.collections.applications.updateAccessRights.set({'update':!DataModel.collections.applications.updateAccessRights.get('update')})
+        DataModel.collections.applications.updateAccessRights.set({'update':Math.random().toString(36).substring(7)})
     if(json.eventType == "access-right-added")
         applicationModel = locateModel(DataModel.collections.applications, json.accessRight.applicationId, "applicationId");
         if applicationModel?
             applicationModel.accessRights.add(json.accessRight)
             #switch property to force update selected application access right
-            DataModel.collections.applications.updateAccessRights.set({'update':!DataModel.collections.applications.updateAccessRights.get('update')})
+            DataModel.collections.applications.updateAccessRights.set({'update':Math.random().toString(36).substring(7)})
         else
             console.log "Application does not exist" + json.accessRight.applicationId;
     #end valid for dashboard.
