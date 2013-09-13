@@ -5,7 +5,6 @@ define(['jquery',
         'knockout',
         'knockback',
         'handlebars',
-        #'hammer-jquery',
         'jquery.ui.touch',
         'contracts/DeviceWidgetContract',
         'dataModels/ICasaDataModel'
@@ -18,7 +17,7 @@ define(['jquery',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, Hammer, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
