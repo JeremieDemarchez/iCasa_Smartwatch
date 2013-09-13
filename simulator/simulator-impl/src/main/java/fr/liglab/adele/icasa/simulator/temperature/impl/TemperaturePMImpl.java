@@ -118,7 +118,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         SpecificClockPeriodicRunnable computeTempTask = new SpecificClockPeriodicRunnable() {
             @Override
             public long getPeriod() {
-                return 1500;
+                return 1000;
             }
 
             @Override
@@ -136,6 +136,8 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 updateTemperatures();
             }
         };
+        
+        m_lastUpdateTime = _clock.currentTimeMillis();
         _computeTempTaskSRef = _context.registerService(SpecificClockPeriodicRunnable.class.getName(), computeTempTask,
                 new Hashtable());
     }
@@ -147,6 +149,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             return;
 
         long previousUpdateTS = m_lastUpdateTime;
+         
         long newUpdateTS = _clock.currentTimeMillis();
         long timeDiff = newUpdateTS - previousUpdateTS;
         if (timeDiff <= 0)
@@ -231,8 +234,10 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             double powerLevelTotal = zoneModel.getTotalPower();
             double timeDiffInSeconds = timeDiff / 1000.0d;
 
-            newTemperature = currentTemperature
-                    + ((powerLevelTotal * timeDiffInSeconds) / zoneModel.getThermalCapacity());
+            double delta = (powerLevelTotal * timeDiffInSeconds) / zoneModel.getThermalCapacity();
+                                 
+            newTemperature = currentTemperature  + delta;
+            
             for (Map.Entry<String, Double> zoneWallSurfaceEntry : zoneModel.getWallSurfaces()) {
                 String otherZoneId = zoneWallSurfaceEntry.getKey();
                 double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
@@ -245,6 +250,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                                 / zoneModel.getThermalCapacity();
                 }
             }
+            
 
             /**
              * Clipping function to saturate the temperature at a certain level

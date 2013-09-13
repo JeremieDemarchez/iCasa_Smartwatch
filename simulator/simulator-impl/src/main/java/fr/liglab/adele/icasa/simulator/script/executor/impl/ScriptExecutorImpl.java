@@ -40,7 +40,6 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -101,11 +100,6 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	private List<ScriptExecutorListener> listeners = new ArrayList<ScriptExecutorListener>();
 
-	public ScriptExecutorImpl(BundleContext context) {	    
-        String classpath = System.getProperty("java.class.path");
-        System.out.println("================> " + classpath);
-        System.out.println("================> " + context.getProperty("felix.fileinstall.dir"));        
-	}
 	
 	@Override
 	public State getCurrentScriptState() {
