@@ -18,28 +18,20 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
-import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
-import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.Validate;
-
-import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
+import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import org.apache.felix.ipojo.annotations.*;
 
 
 @Component(name = "zigbeeBinaryLight")
 @Provides(specifications={GenericDevice.class, BinaryLight.class, ZigbeeDevice.class, ZigbeeDeviceTracker.class})
 public class ZigbeeBinaryLight extends AbstractDevice implements
-		BinaryLight, ZigbeeDevice, DeviceListener<BinaryLight>, ZigbeeDeviceTracker {
+		BinaryLight, ZigbeeDevice, ZigbeeDeviceTracker {
 	
 	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String serialNumber;
@@ -74,7 +66,7 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
 
 	@Override
 	public boolean setPowerStatus(boolean status) {
-         setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, status);
+        setPowerStatusToDevice(status);
 		return status;
 	}
 
@@ -123,43 +115,41 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
 		}
 		return getPowerStatus();
 	}
-	
+
+    private boolean setPowerStatusToSimulatedDevice(boolean powerStatus) {
+        super.setPropertyValue(BINARY_LIGHT_POWER_STATUS, powerStatus);
+        return getPowerStatus();
+    }
+
 	@Validate
 	public void start() {
-		addListener(this);
 		boolean initialValue = getPowerStatusFromDevice();
-		setPowerStatus(initialValue); //TODO manage in a better way the initial value
+        setPowerStatusToSimulatedDevice(initialValue); //TODO manage in a better way the initial value
 	}
 	
 	@Invalidate
 	public void stop() {
-		removeListener(this);
+
 	}
 
-	@Override
-	public void deviceAdded(BinaryLight arg0) {/*do nothing*/}
-
-	@Override
-	public void deviceEvent(BinaryLight arg0, Object arg1) {/*do nothing*/}
-
-	@Override
-	public void devicePropertyAdded(BinaryLight arg0, String arg1) {/*do nothing*/}
-
-	@Override
-	public void devicePropertyModified(BinaryLight device, String propName,
-			Object oldValue, Object newValue) {
-		if (BinaryLight.BINARY_LIGHT_POWER_STATUS.equals(propName)) {
-			Boolean newPowerStatus = (Boolean) newValue;
-			if (newPowerStatus != null)
-				setPowerStatusToDevice(newPowerStatus);
-		}
-	}
-
-	@Override
-	public void devicePropertyRemoved(BinaryLight arg0, String arg1) {/*do nothing*/}
-
-	@Override
-	public void deviceRemoved(BinaryLight arg0){/*do nothing*/}
+    /**
+     * If the given propertyName is the power status, it will set it to the device;
+     * the value will not change, if is not changed in the device. So a @see{deviceDataChanged} will be
+     * charged to change this value in the iCasa Platform.
+     * @param propertyName
+     * @param value
+     */
+    @Override
+    public void setPropertyValue(String propertyName, Object value){
+        if (BinaryLight.BINARY_LIGHT_POWER_STATUS.equals(propertyName)) {
+            Boolean newPowerStatus = (Boolean) value;
+            if (newPowerStatus != null){
+                setPowerStatusToDevice(newPowerStatus);
+            }
+        } else{
+            super.setPropertyValue(propertyName, value);
+        }
+    }
 
     //ZigbeeDeviceTracker Methods.
     /**
@@ -190,7 +180,7 @@ public class ZigbeeBinaryLight extends AbstractDevice implements
         if(address.compareTo(this.moduleAddress) == 0){
             String data = newData.getData();
             boolean status = data.compareTo("1")==0? true : false;
-            setPowerStatus(status);
+            setPowerStatusToSimulatedDevice(status);
         }
     }
 
