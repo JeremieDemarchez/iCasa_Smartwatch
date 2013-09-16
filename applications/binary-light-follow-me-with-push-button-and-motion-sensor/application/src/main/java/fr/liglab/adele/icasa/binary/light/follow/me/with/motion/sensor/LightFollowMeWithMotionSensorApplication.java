@@ -21,6 +21,8 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -46,6 +48,8 @@ import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListener {
 
     private final BundleContext bundleContext;
+
+    private ContextManager contextManager;
 
     private static long DEFAULT_TIMEOUT = 60000;
 
@@ -123,6 +127,12 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
      */
     private synchronized List<BinaryLight> getBinaryLightFromLocation(String location) {
         List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
+
+        //if zone does nor exist, return an empty list.
+        if(contextManager.getZone(location) == null) {
+            return binaryLightsLocation;
+        }
+        //if zone exists, we get the BinaryLight objects by its location
         for (BinaryLight binLight : binaryLights) {
             if (binLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
                 binaryLightsLocation.add(binLight);
