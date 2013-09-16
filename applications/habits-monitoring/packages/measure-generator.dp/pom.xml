@@ -48,6 +48,20 @@
 
 					<writeExtraData>true</writeExtraData>
 					<deploymentPackage>
+                        <headers>
+                            <bundleHeader>
+                                <name>ICasa-Application-Id</name>
+                                <value>habits.monitoring</value>
+                            </bundleHeader>
+                            <bundleHeader>
+                                <name>ICasa-Application-Name</name>
+                                <value>Habits Monitoring</value>
+                            </bundleHeader>
+                            <bundleHeader>
+                                <name>ICasa-Application-Version</name>
+                                <value>${project.version}</value>
+                            </bundleHeader>
+                        </headers>
 					</deploymentPackage>
 				</configuration>
 			</plugin>

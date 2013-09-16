@@ -33,12 +33,26 @@
 				<configuration>
 					<writeExtraData>true</writeExtraData>
 					<deploymentPackage>
-					<resources>
-                     <processedResource>
-                        <processor>org.osgi.deployment.rp.autoload</processor>
-                        <filePath>/src/main/resources/presence-sensor-adapter.cfgcilia</filePath>
-                     </processedResource>
-						</resources>
+                        <headers>
+                            <bundleHeader>
+                                <name>ICasa-Application-Id</name>
+                                <value>habits.monitoring</value>
+                            </bundleHeader>
+                            <bundleHeader>
+                                <name>ICasa-Application-Name</name>
+                                <value>Habits Monitoring</value>
+                            </bundleHeader>
+                            <bundleHeader>
+                                <name>ICasa-Application-Version</name>
+                                <value>${project.version}</value>
+                            </bundleHeader>
+                        </headers>
+                        <resources>
+                         <processedResource>
+                            <processor>org.osgi.deployment.rp.autoload</processor>
+                            <filePath>/src/main/resources/presence-sensor-adapter.cfgcilia</filePath>
+                         </processedResource>
+                        </resources>
 					</deploymentPackage>
 				</configuration>
 			</plugin>
