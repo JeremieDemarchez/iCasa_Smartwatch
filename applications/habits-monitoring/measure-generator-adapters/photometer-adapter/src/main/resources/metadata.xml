@@ -16,13 +16,11 @@
 
 -->
 <ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="org.apache.felix.ipojo http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd"
-  xmlns:ipojo="org.apache.felix.ipojo" xmlns:cilia="fr.liglab.adele.cilia">
+  xmlns:ipojo="org.apache.felix.ipojo" xmlns:cilia="fr.liglab.adele.cilia" xmlns:icasa="fr.liglab.adele.icasa.dependency.handler.annotations">
 
   <collector classname="fr.liglab.adele.habits.monitoring.photometer.PhotometerCollector" name="PhotometerCollector" architecture="true">
-    <requires aggregate="true" optional="true">
-      <callback type="bind" method="bindProxy" />
-      <callback type="unbind" method="unbindProxy" />
-    </requires>
+    <icasa:requiresDevice aggregate="true" optional="true" type="bind" method="bindProxy" id="photometer"/>
+    <icasa:requiresDevice type="unbind" method="unbindProxy" id="photometer"/>
   </collector>
 
   <adapter name="PhotometerAdapter" pattern="in-only">
