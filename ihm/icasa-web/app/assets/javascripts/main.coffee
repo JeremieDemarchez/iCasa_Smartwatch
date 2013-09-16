@@ -314,7 +314,7 @@ require([
             do (widgetStr) ->
               widgetName = widgetStr.replace /^\s+|\s+$/g, "";
               if (widgetName != "")
-                require(["/widgets/" + widgetName + "/" + widgetName + ".js"], () ->
+                require(["/simulator/widgets/" + widgetName + "/" + widgetName + ".js"], () ->
                   console.log("widget " + widgetName + " loaded !!!");
                 );
 
@@ -327,7 +327,7 @@ require([
             do (pluginStr) ->
               pluginName = pluginStr.replace /^\s+|\s+$/g, "";
               if (pluginName != "")
-                require(["/plugins/" + pluginName + "/" + pluginName + ".js"], () ->
+                require(["/simulator/plugins/" + pluginName + "/" + pluginName + ".js"], () ->
                   console.log("plugin " + pluginName + " loaded !!!");
                 );
 );
