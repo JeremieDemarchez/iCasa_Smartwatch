@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.habits.monitoring.presence.sensor;
+package fr.liglab.adele.habits.monitoring.motion.sensor;
 
 import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.framework.AbstractCollector;
