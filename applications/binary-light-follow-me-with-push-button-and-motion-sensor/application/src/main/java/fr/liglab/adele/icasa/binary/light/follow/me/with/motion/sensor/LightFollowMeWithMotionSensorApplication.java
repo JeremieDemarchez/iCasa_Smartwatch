@@ -49,6 +49,7 @@ public class LightFollowMeWithMotionSensorApplication extends EmptyDeviceListene
 
     private final BundleContext bundleContext;
 
+    @Requires
     private ContextManager contextManager;
 
     private static long DEFAULT_TIMEOUT = 60000;
