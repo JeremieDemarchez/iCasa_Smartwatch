@@ -7,6 +7,7 @@ define(['jquery',
         'handlebars',
         'jquery.ui.touch',
         'contracts/DeviceWidgetContract',
+        'contracts/ICasaManager',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
@@ -17,7 +18,7 @@ define(['jquery',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
 
     # HTML custom bindings
 
@@ -1144,6 +1145,11 @@ define(['jquery',
              optional : true
           });
 
+          @hub.provideService({
+            component: @,
+            contract: ICasaManager
+          });
+
         bindDeviceWidget: (svc) ->
           console.log("bindDeviceWidget");
           @deviceWidgets.push(svc);
@@ -1159,6 +1165,12 @@ define(['jquery',
              console.log("stop iCasaViewModel");
              null; #workaround for Coffeescript compilation issue
 
+        getBackendVersion: () ->
+            return @backendVersion();
+
+        getFrontendVersion: () ->
+            return @frontendVersion();
+
         #
         # ViewModel implementation
         #
@@ -1172,14 +1184,6 @@ define(['jquery',
            @backendVersion = kb.observable(DataModel.models.backend, 'version');
            @frontendVersion = kb.observable(DataModel.models.frontend, 'version');
 
-           @sameVersion = ko.computed( () =>
-                sv = @frontendVersion() == @backendVersion();
-                if sv == false
-                    $("#compatibilityWarn").removeClass("hidden");
-                else
-                    $("#compatibilityWarn").addClass("hidden");
-                return sv;
-           , @);
 
            @imgSrc = ko.observable(model.imgSrc);
            @mapWidth = ko.observable(0);

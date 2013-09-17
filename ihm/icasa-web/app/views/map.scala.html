@@ -25,12 +25,12 @@
 </div>
 <div id="icasa-extensions" icasa-plugins="@pluginIds" icasa-widgets="@widgetIds" class="hidden" />
 </div>
-<!--ko ifnot: sameVersion == true-->
+
 <div id="compatibilityWarn"  class="hidden alert alert-block">
     <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) and frontend(<span data-bind="text: frontendVersion"></span>) are not the same version, some functionality may not work.
     </p>
 </div>
-<!--/ko-->
+
 <section>
     <article id="map" mapId="@mapId" gatewayURL="@gatewayURL" mapImgSrc="@mapImgSrc">
         <section id="mapContainer">

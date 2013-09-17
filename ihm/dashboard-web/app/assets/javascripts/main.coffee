@@ -234,10 +234,11 @@ require([
     'dataModels/ICasaDataModelNotifs',
     'components/ConnectionWidget',
     'components/GatewayConnectionMgrImpl',
+    'components/VersionManagerWidget',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, VersionManagerWidget) ->
 
         mapName = $("#map").attr("mapId");
         mapImgUrl = $("#map").attr("mapImgSrc");
@@ -256,7 +257,7 @@ require([
           stop: (event, eventUI) ->
             SizeUtil.computeAreaSizes("map");
         });
-        console.log "apply binding in icasaviewModel"
+
         ko.applyBindings(iCasaViewModel);
 
         $(".slider" ).slider();
@@ -304,6 +305,9 @@ require([
           buttonId : "connection-status-button"
         }).createInstance(GatewayConnectionMgrImpl, {
           name : "GatewayConnectionMgr-1",
+        }).createInstance(VersionManagerWidget, {
+          name: "VersionManagerWidget-1",
+          elementId: "compatibilityWarn"
         }).start();
 
         # widget loading
