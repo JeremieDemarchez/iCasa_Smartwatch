@@ -211,15 +211,15 @@ define(['jquery',
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
-
             titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
-
-            $(element).dialog({
-                autoOpen: false,
-                title: titleUnwrapped,
-                minWidth: 300,
-                width: "auto"
-            });
+            isDialog = $(element).data('dialog')
+            if !isDialog
+                $(element).dialog({
+                    autoOpen: false,
+                    title: titleUnwrapped,
+                    minWidth: 300,
+                    width: "auto"
+                });
 #            $(element).dialog({
 #                autoOpen: false,
 #                position: {my: "center", at: "center", of: "#statusWindows"},
@@ -700,7 +700,7 @@ define(['jquery',
             if (!curServices)
               return false;
             foundService = ko.utils.arrayFirst(curServices, (curService) ->
-               return curService.indexOf(service) == 0;
+              return curService.indexOf(service) == 0;
               #return ko.utils.stringStartsWith(curService, service);
             );
             if (foundService)
@@ -993,7 +993,7 @@ define(['jquery',
           if not imgName?
             imgName = "genericDevice";
             #if (@hasWidget())
-            #  return  @deviceWidget().getBaseIconURL();
+            #  return @deviceWidget().getBaseIconURL();
             if ((@type() == "iCasa.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
               imgName = "cooler-off";
             if ((@type() == "iCasa.AudioSource") || @hasService("fr.liglab.adele.icasa.device.sound.AudioSource"))
@@ -1310,7 +1310,6 @@ define(['jquery',
                 @mapWidthRatio(mapEffWidth / @mapWidth());
               if (@mapHeight() > 0)
                 @mapHeightRatio(mapEffHeight / @mapHeight());
-
 
            @deviceTypes = kb.collectionObservable(DataModel.collections.deviceTypes, {view_model: DeviceTypeViewModel});
 

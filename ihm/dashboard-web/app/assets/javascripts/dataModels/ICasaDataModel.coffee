@@ -116,7 +116,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
 
          #Valid only for dashboard
          DataModel.collections.applications = new DataModel.Collections.Applications();
-         DataModel.collections.applications.add()
+         DataModel.collections.applications.add(new DataModel.Models.Application({id: "NONE", name:"NONE", version: "0.0.0"}))
          #End valid for dashboard.
          #initial backend and frontend information
          DataModel.models.backend = new DataModel.Models.Backend();

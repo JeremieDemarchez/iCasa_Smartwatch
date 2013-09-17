@@ -104,9 +104,10 @@
 
         <!-- /ko -->
         <!-- ko foreach: $root.applications() -->
-        <div class="zoneWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+        <!-- ko if: $data.name() != 'NONE' -->
+        <div class="applicationWindow" data-bind="attr: { id: name, title: name }, jqueryDialog: name, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
         </div>
-
+        <!-- /ko -->
         <!-- /ko -->
     </article>
 </section>

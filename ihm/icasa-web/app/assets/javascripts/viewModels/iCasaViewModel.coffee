@@ -100,28 +100,9 @@ define(['jquery',
                   viewModel.model().save();
                   viewModel.isSizeHighlightEnabled(true);
             });
-            #if Hammer.HAS_TOUCHEVENTS
-            #    new TouchDragAndDrop(viewModel, element);
 
             return { controlsDescendantBindings: false };
     };
-
-    class TouchDragAndDrop
-        constructor: (@viewModel, @element) ->
-            console.log @viewModel;
-            @lastPosX = @viewModel.styleLetf;
-            @lastPosY = @viewModel.styleTop;
-
-            $(@element).hammer({ drag_max_touches:0}).on("touch drag", (ev) =>
-                touches = ev.gesture.touches;
-                ev.gesture.preventDefault();
-                for t in [0...touches.length]
-                    @viewModel.positionX(((touches[t].pageX-32) / @viewModel.containerWidthRatio()) + (@viewModel.widgetWidth() / 2));
-                    @viewModel.positionY(((touches[t].pageY-64) / @viewModel.containerHeightRatio())  + (@viewModel.widgetHeight() / 2));
-            );
-            $(@element).hammer({ drag_max_touches:0}).on("dragend", (ev) =>
-                @viewModel.model().save()
-            );
 
     ko.bindingHandlers.jqueryResizable = {
 
@@ -175,13 +156,14 @@ define(['jquery',
             # This will be called when the binding is first applied to an element
 
             titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
-
-            $(element).dialog({
-                autoOpen: false,
-                title: titleUnwrapped,
-                minWidth: 300,
-                width: "auto"
-            });
+            isDialog = $(element).data('dialog')
+            if !isDialog
+                $(element).dialog({
+                    autoOpen: false,
+                    title: titleUnwrapped,
+                    minWidth: 300,
+                    width: "auto"
+                });
 #            $(element).dialog({
 #                autoOpen: false,
 #                position: {my: "center", at: "center", of: "#statusWindows"},
@@ -662,7 +644,8 @@ define(['jquery',
             if (!curServices)
               return false;
             foundService = ko.utils.arrayFirst(curServices, (curService) ->
-              return ko.utils.stringStartsWith(curService, service);
+              return curService.indexOf(service) == 0;
+              #return ko.utils.stringStartsWith(curService, service);
             );
             if (foundService)
               return true;
