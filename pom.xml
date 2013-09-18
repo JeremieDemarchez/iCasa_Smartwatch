@@ -32,7 +32,7 @@
     <properties>
         <site.path>snapshot</site.path>
         <!-- TODO add property to get current snapshot version qualifier -->
-
+        <github.global.server>github</github.global.server>
         <!-- Site Title -->
         <title>iCasa Platform</title>
         <lastStableSnapshotVersionQualifier>TODO</lastStableSnapshotVersionQualifier>
@@ -182,7 +182,7 @@
                 <!-- Deploy the web site -->
                 <groupId>com.github.github</groupId>
                 <artifactId>site-maven-plugin</artifactId>
-                <version>0.7</version>
+                <version>0.8</version>
                 <executions>
                     <execution>
                         <goals>
@@ -202,46 +202,8 @@
                         </configuration>
                     </execution>
                 </executions>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.mylyn.github</groupId>
-                        <artifactId>org.eclipse.egit.github.core</artifactId>
-                        <version>2.1.3</version>
-                    </dependency>
-                </dependencies>
             </plugin>
 
-            <plugin>
-                <!-- Create the file to download -->
-                <groupId>com.github.github</groupId>
-                <artifactId>downloads-maven-plugin</artifactId>
-                <version>0.6</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>upload</goal>
-                        </goals>
-                        <phase>site-deploy</phase>
-                    </execution>
-                </executions>
-                <configuration>
-                    <!-- configure the repository -->
-                    <repositoryName>iCasa-Platform</repositoryName>
-                    <repositoryOwner>AdeleResearchGroup</repositoryOwner>
-                    <!-- end repository configuration -->
-
-                    <description>${project.version} version of ${project.name}</description>
-                    <override>true</override>
-                    <includeAttached>true</includeAttached>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.eclipse.mylyn.github</groupId>
-                        <artifactId>org.eclipse.egit.github.core</artifactId>
-                        <version>2.1.3</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
         </plugins>
     </build>
     <scm>
