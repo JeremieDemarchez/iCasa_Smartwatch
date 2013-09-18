@@ -4,6 +4,7 @@
 
 # Home page
 GET     /dashboard                           controllers.Application.index
+GET     /dashboard/                           controllers.Application.index
 
 # Map management
 GET     /dashboard/map/*mapId                 controllers.Application.connectToMap(mapId)

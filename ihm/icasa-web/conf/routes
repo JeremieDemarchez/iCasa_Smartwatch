@@ -4,6 +4,7 @@
 
 # Home page
 GET     /simulator                           controllers.Application.index
+GET     /simulator/                           controllers.Application.index
 
 # Map management
 GET     /simulator/map/*mapId                           controllers.Application.connectToMap(mapId)
