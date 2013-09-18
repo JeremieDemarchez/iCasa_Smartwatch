@@ -141,12 +141,14 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		Zone parentZone = getParent();
 		int absoluteX = leftTopPosition.x;
 		int absoluteY = leftTopPosition.y;
+		int absoluteZ = leftTopPosition.z;
 		lock.readLock().unlock();
 		if (parentZone != null) {
 			absoluteX += parentZone.getLeftTopAbsolutePosition().x;
 			absoluteY += parentZone.getLeftTopAbsolutePosition().y;
+			absoluteZ += parentZone.getLeftTopAbsolutePosition().z;
 		}
-		return new Position(absoluteX, absoluteY);
+		return new Position(absoluteX, absoluteY, absoluteZ);
 	}
 
 	@Override
@@ -638,7 +640,7 @@ public class ZoneImpl extends LocatedObjectImpl implements Zone {
 		int newX = leftTopAbsolutePosition.x + xLength;
 		int newY = leftTopAbsolutePosition.y + yLength;
         int newZ = leftTopAbsolutePosition.z + zLength;
-		return new Position(newX, newY);
+		return new Position(newX, newY, newZ);
 	}
 
 	@Override
