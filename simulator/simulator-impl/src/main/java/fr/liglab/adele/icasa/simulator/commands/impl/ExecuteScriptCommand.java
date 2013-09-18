@@ -27,6 +27,7 @@ import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
+import java.util.List;
 
 /**
  * 
@@ -50,8 +51,14 @@ public class ExecuteScriptCommand extends AbstractCommand {
 	@Override
 	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String scriptName = param.getString(ScriptLanguage.SCRIPT_NAME);
-        System.out.println("Executing script ... " + scriptName);
-		executor.execute(scriptName);
+        List<String> scriptList = executor.getScriptList();
+        if(scriptList.contains(scriptName)){
+            out.println("Executing script: " + scriptName);
+		    executor.execute(scriptName);
+        } else {
+            out.println("Non-existent script: " + scriptName);
+            out.println("See command: \'show-scripts\'");
+        }
 		return null;
 	}
 
