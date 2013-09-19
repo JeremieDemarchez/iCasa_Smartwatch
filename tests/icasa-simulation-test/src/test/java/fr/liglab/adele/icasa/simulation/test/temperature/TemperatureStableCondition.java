@@ -24,21 +24,14 @@ import fr.liglab.adele.icasa.location.Zone;
  */
 public class TemperatureStableCondition extends TemperatureVarExistsCondition {
     
-    private double _originalValue;
-    
-    private double _delta;
-    
     private double _previuosValue;
     
     private int _counter = 0;
     
     
-    public TemperatureStableCondition(Zone zone, double originalValue, double delta) {
-        super(zone);
-        
-        _originalValue = originalValue;
-        _previuosValue = originalValue;
-        _delta = delta;        
+    public TemperatureStableCondition(Zone zone, double originalValue) {
+        super(zone);        
+        _previuosValue = originalValue;        
     }
 
     public boolean isChecked() {
@@ -52,10 +45,7 @@ public class TemperatureStableCondition extends TemperatureVarExistsCondition {
             return false;
         
         double newValue = (Double) tempObj;
-        
-        System.out.println("Temperature " + newValue);
-        System.out.println("Counter " + _counter);
-        
+                
         if (_previuosValue == newValue) {
             _counter++;
         } else {

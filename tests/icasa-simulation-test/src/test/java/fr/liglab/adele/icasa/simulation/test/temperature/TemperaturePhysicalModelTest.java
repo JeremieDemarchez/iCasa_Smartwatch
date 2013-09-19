@@ -259,11 +259,11 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
     }    
     
     
-    // @Test // -> Functionality no implemented yet
+    @Test // -> Functionality no implemented yet
     public void twoCloseZonesTest() {
         assertNotNull(contextMgr);
-        Zone zone1 = contextMgr.createZone("tempZone-0", 100, 100, 0, 100, 100, 100);
-        Zone zone2 = contextMgr.createZone("tempZone-1", 210, 100, 0, 100, 100, 100);
+        Zone zone1 = contextMgr.createZone("tempZone-0", 100, 100, 100, 200, 200, 100);
+        Zone zone2 = contextMgr.createZone("tempZone-1", 320, 100, 100, 200, 200, 100);
         
         double temperatureZone1 = 293.2d;
         double temperatureZone2 = 283.2d;
@@ -271,9 +271,27 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
         zone1.setVariableValue(TEMPERATURE_VAR_NAME, temperatureZone1);
         zone2.setVariableValue(TEMPERATURE_VAR_NAME, temperatureZone2);
         
-        waitForTemperatureSmallerThan(zone1, temperatureZone1, 0.1d);
-        waitForTemperatureGreaterThan(zone2, temperatureZone2, 0.1d);
+        waitForTemperatureGreaterThan(zone2, temperatureZone2, 0.001d);
+        waitForTemperatureGreaterThan(zone1, temperatureZone2, 0.001d);
+
     }
+    
+    @Test
+    public void twoNotClosesZonesTest() {
+        assertNotNull(contextMgr);
+        Zone zone1 = contextMgr.createZone("tempZone-0", 100, 100, 100, 200, 200, 100);
+        Zone zone2 = contextMgr.createZone("tempZone-1", 520, 100, 100, 200, 200, 100);
+        
+        double temperatureZone1 = 293.2d;
+        double temperatureZone2 = 283.2d;
+        
+        zone1.setVariableValue(TEMPERATURE_VAR_NAME, temperatureZone1);
+        zone2.setVariableValue(TEMPERATURE_VAR_NAME, temperatureZone2);
+               
+        waitForTemperatureStability(zone2, temperatureZone2);
+        waitForTemperatureStability(zone1, temperatureZone1);        
+        
+    }    
     
     private void waitForTemperatureExists(Zone zone) {
         TestUtils.testConditionWithTimeout(new TemperatureVarExistsCondition(zone), 5000, 30);
@@ -292,6 +310,6 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
     }
  
     private void waitForTemperatureStability(Zone zone, double originalValue) {
-        TestUtils.testConditionWithTimeout(new TemperatureStableCondition(zone, originalValue, 0.2), 20000, 40);
+        TestUtils.testConditionWithTimeout(new TemperatureStableCondition(zone, originalValue), 20000, 40);
     }
 }

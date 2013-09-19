@@ -53,8 +53,6 @@ public class TemperatureDifferentThanCondition extends TemperatureVarExistsCondi
         
         double newValue = (Double) tempObj;
         
-        System.out.println("Temperature -------------> " + newValue);
-        
         if (_sizeCondition == SizeCondition.BIGGER) {
             return newValue >_goalValue;
         } else {
