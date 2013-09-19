@@ -53,7 +53,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public static final double HIGHEST_TEMP = 303.16;
     public static final double LOWER_TEMP = 283.16;
     public static final double DEFAULT_TEMP_VALUE = 293.15; // 20 celsius degrees in kelvin
-    public static final int MAX_WALL_DIST = 30; // maximum distance in centimeters between 2 walls to be considered as
+    public static final double MAX_WALL_DIST = 0.3d; // maximum distance in meters between 2 walls to be considered as
                                                 // the same wall
 
     private volatile long m_lastUpdateTime;
@@ -243,11 +243,12 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
                 Zone otherZone = _contextMgr.getZone(otherZoneId);
                 if (otherZone != null) {
-                    Object otherZoneTemperature = _contextMgr.getZone(otherZoneId).getVariableValue(
-                            TEMPERATURE_PROP_NAME);
-                    if (otherZoneTemperature != null)
+                    //Object otherZoneTemperature = _contextMgr.getZone(otherZoneId).getVariableValue(TEMPERATURE_PROP_NAME);
+                    Object otherZoneTemperature = otherZone.getVariableValue(TEMPERATURE_PROP_NAME);
+                    if (otherZoneTemperature != null) {
                         newTemperature += (K * zoneWallSurface * (((Double) otherZoneTemperature) - currentTemperature) * timeDiffInSeconds)
                                 / zoneModel.getThermalCapacity();
+                    }
                 }
             }
             
@@ -460,13 +461,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         double yFactor = _zoneSizeCalc.getYScaleFactor();
         double zFactor = _zoneSizeCalc.getZScaleFactor();
 
-        double maxXWalldist = MAX_WALL_DIST * xFactor;
-        double maxYWalldist = MAX_WALL_DIST * yFactor;
-        double maxZWalldist = MAX_WALL_DIST * zFactor;
-
-        int zone1XLength = zone1.getXLength();
-        int zone1YLength = zone1.getYLength();
-        int zone1ZLength = zone1.getZLength();
+        //int zone1XLength = zone1.getXLength();
+        //int zone1YLength = zone1.getYLength();
+        //int zone1ZLength = zone1.getZLength();
         int zone1X1 = zone1.getLeftTopAbsolutePosition().x;
         int zone1Y1 = zone1.getLeftTopAbsolutePosition().y;
         int zone1Z1 = zone1.getLeftTopAbsolutePosition().z;
@@ -478,9 +475,9 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         Interval zone1Z = new Interval(zone1Z1, zone1Z2);
         Parallelepiped p1 = new Parallelepiped(zone1X, zone1Y, zone1Z);
 
-        int zone2XLength = zone2.getXLength();
-        int zone2YLength = zone2.getYLength();
-        int zone2ZLength = zone2.getZLength();
+        //int zone2XLength = zone2.getXLength();
+        //int zone2YLength = zone2.getYLength();
+        //int zone2ZLength = zone2.getZLength();
         int zone2X1 = zone2.getLeftTopAbsolutePosition().x;
         int zone2Y1 = zone2.getLeftTopAbsolutePosition().y;
         int zone2Z1 = zone2.getLeftTopAbsolutePosition().z;
@@ -499,6 +496,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         int distY = getDistanceBetweenIntervals(zone1Y1, zone1Y2, zone2Y1, zone2Y2);
         int distZ = getDistanceBetweenIntervals(zone1Z1, zone1Z2, zone2Z1, zone2Z2);
 
+        // Determines if contact surface are close  between zones
+        if ((distX*xFactor > MAX_WALL_DIST) || (distY*yFactor > MAX_WALL_DIST) || (distZ*zFactor > MAX_WALL_DIST)) {
+            return 0.0d;
+        }
+        
         // disjoint zones
         if ((interX == 0) && (interY > 0)) {
             return interY * yFactor * interZ * zFactor;
@@ -514,7 +516,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         boolean z2zInZ1z = isInSecondInterval(zone2Z, zone1Z);
         if (z2xInZ1x && z2yInZ1y) {
             double xyWallSurface = interX * xFactor * interY * yFactor;
-            if ((interZ == 0) && ((distZ * zFactor) <= maxZWalldist))
+            if ((interZ == 0) && ((distZ * zFactor) <= MAX_WALL_DIST))
                 return xyWallSurface;
             else if (z2zInZ1z) {
                 // Z2 is totally into Z1
@@ -533,7 +535,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         boolean z1zInZ2z = isInSecondInterval(zone1Z, zone2Z);
         if (z1xInZ2x && z1yInZ2y) {
             double xyWallSurface = interX * xFactor * interY * yFactor;
-            if ((interZ == 0) && ((distZ * zFactor) <= maxZWalldist))
+            if ((interZ == 0) && ((distZ * zFactor) <= MAX_WALL_DIST))
                 return xyWallSurface;
             else if (z1zInZ2z) {
                 // Z1 is totally into Z2
