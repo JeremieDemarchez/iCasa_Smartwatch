@@ -70,16 +70,22 @@ define(['hubu', 'contracts/GatewayConnectionMgr', 'contracts/ICasaManager'], (hu
       #to hide/show a div based on the connection status and in the version compatibility
       updateElement: () ->
         modelConnected = false;
-        sameVersion = false;
+        sameVersion = true;
+        elementElt = $('#' + @elementId);
+
         if (@gatewayConnectionMgr?)
           modelConnected = @gatewayConnectionMgr.isConnected();
 
-        if (@iCasaMgr?)
-          sameVersion = @iCasaMgr.getFrontendVersion() == @iCasaMgr.getBackendVersion();
+        if(!modelConnected)
+            elementElt.addClass("hidden");
+            return;
 
-        elementElt = $('#' + @elementId);
+        if (@iCasaMgr?)
+            if (@iCasaMgr.getFrontendVersion()? && @iCasaMgr.getBackendVersion()?)
+                sameVersion = @iCasaMgr.getFrontendVersion() == @iCasaMgr.getBackendVersion();
+
          #show warn only when is connected
-        if (modelConnected && !sameVersion)
+        if (!sameVersion)
             elementElt.removeClass("hidden");
         else
             elementElt.addClass("hidden");
