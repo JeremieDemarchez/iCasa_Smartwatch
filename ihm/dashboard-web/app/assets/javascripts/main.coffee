@@ -34,6 +34,7 @@ require.config({
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
+        'locale' : 'locales',
         'underscore' : 'frameworks/underscore/underscore-min',
         'DeviceWidgetContract' : 'contracts/DeviceWidgetContract'
     },
@@ -42,7 +43,8 @@ require.config({
     map: {
         '*': {
             'css': 'frameworks/require/require-css/css',
-            'text': 'frameworks/require/require-text/text'
+            'text': 'frameworks/require/require-text/text',
+            'i18n': 'frameworks/require/require-i18n/i18n'
         }
     },
 

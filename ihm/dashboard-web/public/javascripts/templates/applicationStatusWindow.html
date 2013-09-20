@@ -18,24 +18,25 @@
 <form class="form-horizontal">
 
     <div class="control-group">
-        <label class="control-label" for="myonoffswitch">Status</label>
+        <label class="control-label" for="myonoffswitch" data-bind="text: $root.getLocaleMessage('Status')"></label>
         <div class="controls onoffswitch" data-bind="click: changeStatus">
             <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" data-bind="attr:{checked: isRunning}" style="display:none;">
             <label class="onoffswitch-label" for="myonoffswitch">
-                <div class="onoffswitch-inner" disabled-caption="Stopped" enabled-caption="Started"></div>
+                <div class="onoffswitch-inner" data-bind="attr: {'disabled-caption': $root.getLocaleMessage('Stopped'), 'enabled-caption': $root.getLocaleMessage('Started')}" ></div>
+                     <!--disabled-caption="Stopped" enabled-caption="Started"></div>-->
                 <div class="onoffswitch-switch"></div>
             </label>
         </div>
     </div>
 
     <div class="control-group">
-        <label class="control-label" for="inputName">Name</label>
+        <label class="control-label" for="inputName" data-bind="text: $root.getLocaleMessage('Name')"></label>
         <div class="controls">
             <input type="text" disabled="disabled" id="inputName" data-bind="value: name, attr: { alt: name}" />
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="inputName">ID</label>
+        <label class="control-label" for="inputName" data-bind="text: $root.getLocaleMessage('Id')"></label>
         <div class="controls">
             <div class="input-append">
                 <input type="text" id="identifier" disabled="disabled" data-bind="value: id, attr: { alt: id}" />
@@ -43,7 +44,7 @@
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="inputName">Version</label>
+        <label class="control-label" for="inputName" data-bind="text: $root.getLocaleMessage('Version')"></label>
         <div class="controls">
             <div class="input-append">
                 <input type="text" id="version" disabled="disabled" data-bind="value: version, attr: { alt: version}" />

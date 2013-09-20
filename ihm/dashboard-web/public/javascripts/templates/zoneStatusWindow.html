@@ -17,7 +17,7 @@
 -->
 <form class="form-horizontal">
     <div class="control-group">
-        <label class="control-label" for="inputName">Name</label>
+        <label class="control-label" for="inputName" data-bind="text: $root.getLocaleMessage('Name')"></label>
         <div class="controls">
             <input type="text" id="inputName" disabled="disabled" data-bind="value: name, attr: { alt: name}" />
         </div>

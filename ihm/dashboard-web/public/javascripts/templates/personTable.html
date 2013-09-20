@@ -43,10 +43,10 @@
             </th>
             -->
             <th data-bind="sortable: {obj: 'person', column: 'type'}">
-                Type
+                <span data-bind="text: $root.getLocaleMessage('Type')"></span>
             </th>
             <th data-bind="sortable: {obj: 'person', column: 'name'}">
-                Name
+                <span data-bind="text: $root.getLocaleMessage('Name')"></span>
             </th>
         </tr>
     </thead>
