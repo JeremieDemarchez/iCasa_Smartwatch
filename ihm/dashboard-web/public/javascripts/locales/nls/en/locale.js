@@ -25,5 +25,17 @@ define({
     "Connect":"Connect",
     "Reconnect":"Reconnect" ,
     "Connected.Without.Notifications": "Connected Without Notifications",
-    "Not.Connected": "Not Connected"
+    "Not.Connected": "Not Connected",
+    "Remove.Selected.Devices" : "Remove Selected Devices",
+    "Remove.Selected.Persons" : "Remove Selected Persons",
+    "Day" : "Day",
+    "Time" : "Time",
+    "Factor" : "Factor",
+    "Details" : "Details",
+    "Persons" : "Persons",
+    "Script.Player" : "Script Player",
+    "Simulation.State" : "Simulation State",
+    "Simulation.State" : "Simulation state",
+    "Save.As" : "Save as",
+    "Reset.State" : "Reset State"
 });

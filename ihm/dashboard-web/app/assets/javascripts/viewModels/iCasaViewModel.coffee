@@ -19,7 +19,7 @@ define(['jquery',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
         'text!templates/applicationStatusWindow.html',
-        'i18n!locales/nls/locale'
+        'i18n!locales/nls/locale',
         'domReady'],
   ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml, locale) ->
 

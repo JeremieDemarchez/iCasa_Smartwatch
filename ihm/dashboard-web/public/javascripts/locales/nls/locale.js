@@ -21,12 +21,23 @@ define({
         "Grant.Access":"Accorder l'accès",
         "Type": "Catégorie",
         "Create": "Créer",
-        "Remove.Selected.Zones" : "Supprimer zones sélectionnées",
+        "Remove.Selected.Zones" : "Supprimer les zones sélectionnées",
         "Connected": "Connecté",
         "Connect":"Se connecter",
         "Reconnect":"Reconnecter" ,
         "Connected.Without.Notifications": "Connecté Sans Notifications",
-        "Not.Connected": "Pas Connecté"
+        "Not.Connected": "Pas Connecté",
+        "Remove.Selected.Devices":"Supprimer les dispositifs sélectionnés",
+        "Remove.Selected.Persons" : "Supprimer les personnes sélectionnées",
+        "Day" : "Jour",
+        "Time" : "Temps",
+        "Factor" : "Facteur",
+        "Details" : "Détails",
+        "Persons" : "Personnes",
+        "Script.Player" : "Script Player",
+        "Simulation.State" : "État de la simulation",
+        "Save.As" : "Enregistrer sous",
+        "Reset.State" : "Remettre l'état"
     },
     "en" : true
 });

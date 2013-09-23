@@ -66,14 +66,13 @@
 
     <!--
     <div class="controls controls-row">
-        <label class="span1">Filter</label>
+        <label class="span1" data-bind="text: $root.getLocaleMessage('Filter')"></label>
         <input type="text" class="span2" data-bind="value: $root.deviceFilter, valueUpdate:'afterkeydown'" />
     </div>
     -->
     <thead>
         <tr>
             <th>
-                <!--<input id="checkAllDeviceCheckboxId"  type="checkbox" data-bind="checked: checkAllDevices" />-->
                 <span data-bind="text: $root.getLocaleMessage('Grant.Access')"></span>
             </th>
             <th data-bind="sortable: {obj: 'device', column: 'type'}">
