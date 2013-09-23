@@ -27,7 +27,7 @@
         <ul class="thumbnails">
             @for(map <- maps) {
             <li class="span3">
-                <a href="/dashboard/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>Box URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="@Messages("Map")">
+                <a href="/dashboard/map/@map.id" class="thumbnail" rel="popover" data-content="@Messages("Id") : @map.id<br/>@Messages("Name") : @map.name<br/>@Messages("Box.URL") : @map.gatewayURL<br/>@Messages("Description") : @map.description" data-original-title="@Messages("Map")">
                     <img src="/dashboard/maps/@map.imgFile" class="img-rounded"/>
                     <p>@map.name</p>
                 </a>
