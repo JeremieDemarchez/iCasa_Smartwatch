@@ -28,7 +28,7 @@ The ICASA_HOME directory should have this structure
 
 ![ICasa Structure](install/icasa-home.png "ICasa Structure")
    
-In addition four launch scripts are in the root directory: startGateway.bat, startGateway, startGUI.bat and startGUI.
+In addition four launch scripts are in the root directory: startGateway.bat, startGateway, startSimulatorGUI.bat and startSimulatorGUI.
 
    
 Launch
@@ -38,7 +38,7 @@ Web Server Part Launch
 ---------------
 
 1. Go to the ICASA_HOME directory.
-2. Execute startGUI script on Unix systems or startGUI.bat script on Windows systems.
+2. Execute startSimulatorGUI script on Unix systems or startSimulatorGUI.bat script on Windows systems.
 
 By default, the web server port is set to 9000.
 The simulator home page is available at [http://localhost:9000/](http://localhost:9000/) 
