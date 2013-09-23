@@ -18,7 +18,7 @@ define({
         "Serial.number":"Numéro de Série",
         "Location":"Emplacement",
         "MyDevices":"Mes Dispositifs",
-        "Grant.Access":"Accorder l'accès",
+        "Grant.Access":"Autoriser l'accès",
         "Type": "Catégorie",
         "Create": "Créer",
         "Remove.Selected.Zones" : "Supprimer les zones sélectionnées",
@@ -30,14 +30,14 @@ define({
         "Remove.Selected.Devices":"Supprimer les dispositifs sélectionnés",
         "Remove.Selected.Persons" : "Supprimer les personnes sélectionnées",
         "Day" : "Jour",
-        "Time" : "Temps",
+        "Time" : "Heure",
         "Factor" : "Facteur",
         "Details" : "Détails",
         "Persons" : "Personnes",
         "Script.Player" : "Script Player",
         "Simulation.State" : "État de la simulation",
         "Save.As" : "Enregistrer sous",
-        "Reset.State" : "Remettre l'état"
+        "Reset.State" : "Réinitialiser"
     },
     "en" : true
 });
