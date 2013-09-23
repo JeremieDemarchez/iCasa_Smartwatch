@@ -14,7 +14,7 @@ define({
         "Name":"Nom",
         "Version":"Version",
         "Icon":"Icône",
-        "Filter":"Filtrer",
+        "Filter":"Filtre",
         "Serial.number":"Numéro de Série",
         "Location":"Emplacement",
         "MyDevices":"Mes Dispositifs",
