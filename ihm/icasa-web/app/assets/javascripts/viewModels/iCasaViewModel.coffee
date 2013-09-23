@@ -17,8 +17,9 @@ define(['jquery',
         'text!templates/deviceStatusWindow.html',
         'text!templates/personStatusWindow.html',
         'text!templates/zoneStatusWindow.html',
+        'i18n!locales/nls/locale',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, bathroomScaleStatusWindowTemplateHtml) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, locale) ->
 
     # HTML custom bindings
 
@@ -155,7 +156,6 @@ define(['jquery',
 
         init: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
             # This will be called when the binding is first applied to an element
-
             titleUnwrapped = ko.utils.unwrapObservable(valueAccessor());
             isDialog = $(element).data('dialog')
             if !isDialog
@@ -1184,6 +1184,8 @@ define(['jquery',
            @backendVersion = kb.observable(DataModel.models.backend, 'version');
            @frontendVersion = kb.observable(DataModel.models.frontend, 'version');
 
+           @getLocaleMessage = (name) ->
+              return locale[name];
 
            @imgSrc = ko.observable(model.imgSrc);
            @mapWidth = ko.observable(0);
@@ -1236,19 +1238,19 @@ define(['jquery',
            @tabs = ko.observableArray([
                 new TabViewModel {
                     id: "devices",
-                    name: "Devices",
+                    name: @getLocaleMessage('Devices'),
                     template: devTabHtml},
                 new TabViewModel {
                     id: "zones",
-                    name: "Zones" ,
+                    name: @getLocaleMessage('Zones') ,
                     template: zoneTabHtml},
                 new TabViewModel {
                     id: "persons",
-                    name: "Persons" ,
+                    name: @getLocaleMessage('Persons') ,
                     template: personTabHtml},
                 new TabViewModel {
                     id: "script-player",
-                    name: "Script Player" ,
+                    name: @getLocaleMessage('Script.Player') ,
                     template: scriptPlayerHtml}
            ]);
 

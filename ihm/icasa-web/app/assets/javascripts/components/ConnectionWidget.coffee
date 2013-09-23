@@ -4,7 +4,7 @@
 #
 # @author Thomas Leveque
 ###
-define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) ->
+define(['hubu', 'contracts/GatewayConnectionMgr', 'i18n!locales/nls/locale'], (hub, GatewayConnectionMgr, locale) ->
   return class ConnectionWidget extends HUBU.AbstractComponent
 
       hub: null;
@@ -45,9 +45,9 @@ define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) -
           button.removeClass("btn-success btn-danger btn-warning");
           button.addClass("btn-primary")
           if @gatewayConnectionMgr.isConnected()
-            button.text("Reconnect");
+            button.text(locale["Reconnect"]);
           else
-            button.text("Connect");
+            button.text(locale["Connect"]);
         else
           button.removeClass("btn-primary")
           @updateButton();#revert button original behaviour.
@@ -80,13 +80,13 @@ define(['hubu', 'contracts/GatewayConnectionMgr'], (hub, GatewayConnectionMgr) -
         buttonElt = $("#" + @buttonId);
         buttonElt.removeClass("btn-success btn-danger btn-warning");
         if (modelConnected && notifConnected)
-          buttonElt.text("Connected");
+          buttonElt.text(locale["Connected"]);
           buttonElt.addClass("btn-success");
         else if (modelConnected)
-          buttonElt.text("Connected Without Notifications");
+          buttonElt.text(locale["Connected.Without.Notifications"]);
           buttonElt.addClass("btn-warning");
         else
-          buttonElt.text("Not Connected");
+          buttonElt.text(locale["Not.Connected"]);
           buttonElt.addClass("btn-danger");
 
       reconnect: () =>

@@ -1,4 +1,4 @@
-@(title: String)(content: Html)
+@(title: String)(content: Html)(implicit lang: Lang)
 <!--
 
 
@@ -81,13 +81,13 @@ if (!(BrowserDetect.browser == "Firefox")) {
                 <a class="brand" href="/simulator"><img src="@routes.Assets.at("images/rectLogos/logoICasa_simulator_pfn_30.png")" alt="iCasaLogo" /></a>
                 <nav class="nav-collapse collapse">
                     <ul class="nav">
-                        <li><a href="/simulator">Home</a></li>
+                        <li><a href="/dashboard">@Messages("Home")</a></li>
                         <li class="divider-vertical"></li>
-                        <li><a href="http://store-icasa.rhcloud.com/" target="_blank">Store</a></li>
+                        <li><a href="http://store-icasa.rhcloud.com/" target="_blank">@Messages("Store")</a></li>
                         <li class="divider-vertical"></li>
-                        <li><a href="http://adeleresearchgroup.github.com/iCasa-Simulator/" target="_blank">Documentation</a></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa-Simulator/" target="_blank">@Messages("Documentation")</a></li>
                         <li class="divider-vertical"></li>
-                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="@routes.Assets.at("images/rectLogos/medical_logo.png")" alt="Medical" /><span class="hidden" id="medicalText">Medical Research Project</span></a></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="@routes.Assets.at("images/rectLogos/medical_logo.png")" alt="Medical" /><span class="hidden" id="medicalText">@Messages("Medical.Research.Project")</span></a></li>
                     </ul>
                 </nav><!--/.nav-collapse -->
             </div>
@@ -97,7 +97,7 @@ if (!(BrowserDetect.browser == "Firefox")) {
 @content
 
     <footer>
-        <p>Copyright LIG, ADELE Research Group - All rights reserved - This project has been partially funded by <a href="http://medical.imag.fr/">Medical Research Project</a></p>
+        <p>@Messages("Copyright") <a href="http://medical.imag.fr/">@Messages("Medical.Research.Project")</a></p>
     </footer>
 </body>
 </html>

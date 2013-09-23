@@ -1,4 +1,4 @@
-@(mapId: String, mapImgSrc: String, gatewayURL: String, pluginIds : String, widgetIds : String)
+@(mapId: String, mapImgSrc: String, gatewayURL: String, pluginIds : String, widgetIds : String)(implicit lang: Lang)
 <!--
 
 
@@ -21,13 +21,13 @@
 
 @main("iCasa Simulator") {
 <div id="icasa-simulator-connection-status" />
-    <button id="connection-status-button" class="hidden btn btn-danger">Not Connected</button>
+    <button id="connection-status-button" class="hidden btn btn-danger">@Messages("Not.Connected")</button>
 </div>
 <div id="icasa-extensions" icasa-plugins="@pluginIds" icasa-widgets="@widgetIds" class="hidden" />
 </div>
 
 <div id="compatibilityWarn"  class="hidden alert alert-block">
-    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) and frontend(<span data-bind="text: frontendVersion"></span>) are not the same version, some functionality may not work.
+    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) @Messages("and") Frontend(<span data-bind="text: frontendVersion"></span>)@Messages("are.not.the.same.version.some.functionality.may.not.work")
     </p>
 </div>
 

@@ -17,13 +17,13 @@
 -->
 <form class="form-horizontal">
     <div class="control-group">
-        <label class="control-label" for="inputSerialNumber">Serial Number</label>
+        <label class="control-label" for="inputSerialNumber" data-bind="text: $root.getLocaleMessage('Serial.number')"></label>
         <div class="controls">
             <input type="text" id="inputSerialNumber" disabled="disabled" data-bind="value: id"/>
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="inputName">Name</label>
+        <label class="control-label" for="inputName" data-bind="text: $root.getLocaleMessage('Name')"></label>
         <div class="controls">
             <div class="input-append">
                 <input type="text" id="inputName" disabled="disabled" data-bind="value: name, attr: { alt: name}" />
@@ -35,7 +35,7 @@
     </div>
     <!--ko foreach: collectionProperties -->
     <div class="control-group">
-      <label class="control-label" data-bind="text: name, attr:{for: name()+'input'}">thermometer.currentTemperature</label>
+      <label class="control-label" data-bind="text: name, attr:{for: name()+'input'}"></label>
       <div class="controls">
           <div class="input-append">
               <input class="span2" type="text" disabled="disabled" data-bind="value: ''+value() , attr:{id: name()+'input'}">
