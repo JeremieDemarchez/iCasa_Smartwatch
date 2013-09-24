@@ -15,6 +15,10 @@
  */
 package fr.liglab.adele.icasa.clock.util;
 
+import fr.liglab.adele.icasa.Constants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -29,6 +33,9 @@ public class DateTextUtil {
 
 	public static String SIMULATOR_DATE_FORMAT = "dd/MM/yyyy-HH:mm:ss";
 
+    private static final Logger logger = LoggerFactory
+            .getLogger(Constants.ICASA_LOG);
+
 	/**
 	 * Gets a date from an string using the platform format
 	 * @param dateStr The string representation of the date
@@ -42,6 +49,7 @@ public class DateTextUtil {
 			try {
 				startDate = formatter.parse(dateStr);
 			} catch (ParseException e) {
+                logger.warn("Unable to parse Date, the expected format is " + SIMULATOR_DATE_FORMAT);
 				e.printStackTrace();
 			} finally {
 				if (startDate == null)
