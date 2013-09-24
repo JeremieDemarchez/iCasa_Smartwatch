@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.device.bathroomscale.impl;
 import java.util.List;
 import java.util.Random;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.LocatedDeviceListener;
@@ -27,6 +28,8 @@ import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class MedicalDeviceImpl extends AbstractDevice implements LocatedDeviceListener, PersonListener, SimulatedDevice {
 
@@ -34,7 +37,9 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	
 	public final String PRESENCE_DETECTED_PROPERTY = "presence_detected";
 	
-	public final String DETECTION_SCOPE = "detection_scope"; 
+	public final String DETECTION_SCOPE = "detection_scope";
+
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_DEVICE + ".medical");
 
 	public MedicalDeviceImpl() {
 		super.setPropertyValue(PRESENCE_DETECTED_PROPERTY, false);
@@ -115,7 +120,11 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
    public void deviceRemoved(LocatedDevice device) {
 		if (device.getSerialNumber().equals(getSerialNumber())) {
 			device.detachObject(detectionZone);
-			getManager().removeZone(detectionZone.getId());
+            try{
+			    getManager().removeZone(detectionZone.getId());
+            }catch(Exception ex){ //the case where manager is not available. (ie when stopping the gateway.)
+                logger.warn("Unable to remove zone: " + detectionZone.getId() , ex);
+            }
 		}
 	   
    }
