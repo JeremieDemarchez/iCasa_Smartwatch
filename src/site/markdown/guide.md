@@ -1,6 +1,6 @@
 # Simulator Web Guide
 
-The simulator module of iCasa platform provides a web interface for interaction with the server side (gateway). In the home page the user can select a simulation platform of the list. To access (locally) the home page in your browser go to this url : [http://localhost:9000](http://localhost:9000).
+The simulator module of iCasa platform provides a web interface for interaction with the server side (gateway). In the home page the user can select a simulation platform of the list. To access (locally) the home page in your browser go to this url : [http://localhost:9000/simulator](http://localhost:9000/simulator).
     
 Once one platform selected, the simulator main interface is displayed. The main interface is divided in two sections: the map section presents the house plan, and the actions section shows information about the execution state of the iCasa platform and allows user to modify it.
     
@@ -15,7 +15,7 @@ In this page the user can add a simulation platform, edit it or remove it. Platf
 
 ![Home Page](guide/home-page.png "Home Page")
 
-The user picks a platform to start the main interface of the simulator, shown in the next image. Users can also go directly to simulator main interface using the url pattern _http://localhost:9000/map/$platformID_, for example to access the default platform that have the id __default__ the user have to go to [http://localhost:9000/map/default](http://localhost:9000/map/default)
+The user picks a platform to start the main interface of the simulator, shown in the next image. Users can also go directly to simulator main interface using the url pattern _http://localhost:9000/simulator/map/$platformID_, for example to access the default platform that have the id __default__ the user have to go to [http://localhost:9000/simulator/map/default](http://localhost:9000/simulator/map/default)
 
 ![Main Interface](guide/main-interface.png "Main Interface")
    

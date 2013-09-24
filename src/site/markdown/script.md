@@ -49,6 +49,10 @@ Introduces a delay in (virtual) minutes between the previous instruction and the
 _Example:_
 
     <delay value="60" />
+    
+or
+
+    <delay value="60" unit="h"/>
 	
 <table cellpadding="2" cellspacing="0" border="1">
 <tr>
@@ -58,7 +62,11 @@ _Example:_
 </tr>
 <tr>
   <td>value</td>
-  <td>Time in (virtual) minutes</td>
+  <td>Time in (virtual) units</td>
+</tr>
+<tr>
+  <td>unit</td>
+  <td>Time unit, value it can be h (hours), m (minuts), s (seconds). Default value is m</td>
 </tr>
 </table>
 

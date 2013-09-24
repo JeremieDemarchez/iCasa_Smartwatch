@@ -20,25 +20,23 @@
 
     <div class="input-append">
         <input id="newZoneNameId" type="text" class="span2" data-bind="value: $root.newZoneName, valueUpdate:'afterkeydown'" />
-        <button id="createZoneButton"  class="btn" style="font-size:15px" data-bind="click: $root.createZone, enable: $root.newZoneName().length > 0">Create</button>
+        <button id="createZoneButton"  class="btn" style="font-size:15px" data-bind="text: $root.getLocaleMessage('Create') ,click: $root.createZone, enable: $root.newZoneName().length > 0"></button>
     </div>
 
-    <p><button id="removeSelectedZoneButtonId" class="btn" data-bind="click: $root.removeSelectedZones">Remove Selected Zones</button></p>
+    <p><button id="removeSelectedZoneButtonId" class="btn" data-bind="text: $root.getLocaleMessage('Remove.Selected.Zones'), click: $root.removeSelectedZones"></button></p>
 
     <div class="controls controls-row">
-        <label class="span1">Filter</label>
+        <label class="span1" data-bind="text: $root.getLocaleMessage('Filter')"></label>
         <input type="text" class="span2" data-bind="value: $root.deviceFilter, valueUpdate:'afterkeydown'" />
     </div>
 
     <thead>
     <tr>
-
         <th>
             <input id="checkAllZoneCheckboxId" type="checkbox" data-bind="checked: checkAllZones" />
         </th>
-
         <th data-bind="sortable: {obj: 'zone', column: 'name'}">
-            Name
+            <span data-bind="text: $root.getLocaleMessage('Name')"></span>
         </th>
     </tr>
     </thead>

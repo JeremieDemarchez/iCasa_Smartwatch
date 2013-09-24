@@ -133,12 +133,12 @@ object Application extends Controller {
     }
   }
 
-  def index() = Action {
+  def index() = Action { implicit request =>
       loadMaps();
       Ok(views.html.index(getMaps()));
   }
   
-  def connectToMap(mapId: String) = Action {
+  def connectToMap(mapId: String) = Action { implicit request =>
     loadMaps();
     val map = maps(mapId);
     if (map == null)
@@ -172,7 +172,6 @@ object Application extends Controller {
       )
     }
   }
-
 
 
   val mapForm = Form(

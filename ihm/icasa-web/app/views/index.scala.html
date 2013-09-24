@@ -1,4 +1,4 @@
-@(maps: Seq[HouseMap])
+@(maps: Seq[HouseMap])(implicit lang: Lang)
 <!--
 
 
@@ -27,7 +27,7 @@
         <ul class="thumbnails">
             @for(map <- maps) {
             <li class="span3">
-                <a href="/simulator/map/@map.id" class="thumbnail" rel="popover" data-content="ID : @map.id<br/>Name : @map.name<br/>Box URL : @map.gatewayURL<br/>Description : @map.description" data-original-title="Map">
+                <a href="/simulator/map/@map.id" class="thumbnail" rel="popover" data-content=""@Messages("Id") : @map.id<br/>@Messages("Name") : @map.name<br/>@Messages("Box.URL") : @map.gatewayURL<br/>@Messages("Description") : @map.description" data-original-title="@Messages("Map")">
                     <img src="/simulator/maps/@map.imgFile" class="img-rounded"/>
                     <p>@map.name</p>
                 </a>
@@ -45,42 +45,42 @@
             <div style="width:300px;margin-left:-150px;" id="form@map.id" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel@map.id" aria-hidden="true">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="ModalLabel@map.id">Edit @map.name</h3>
+                    <h3 id="ModalLabel@map.id">@Messages("Edit") @map.name</h3>
                 </div>
                 <form action="/simulator/mapUpdate" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="control-group">
-                            <label class="control-label" for="mapId@map.id">ID</label>
+                            <label class="control-label" for="mapId@map.id">@Messages("Id")</label>
                             <div class="controls">
                                 <input type="text" name="mapId" id="mapId@map.id" value="@map.id" readonly/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="mapName@map.id">Name</label>
+                            <label class="control-label" for="mapName@map.id">@Messages("Name")</label>
                             <div class="controls">
                                 <input type="text" name="mapName" id="mapName@map.id" value="@map.name" required/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="mapDescription@map.id">Description</label>
+                            <label class="control-label" for="mapDescription@map.id">@Messages("Description")</label>
                             <div class="controls">
                                 <input type="text" name="mapDescription" id="mapDescription@map.id" value="@map.description"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="gatewayURL@map.id">Box URL</label>
+                            <label class="control-label" for="gatewayURL@map.id">@Messages("Box.URL")</label>
                             <div class="controls">
                                 <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080" required/>
                             </div>
                         </div>
                         <div class="control-group hidden">
-                            <label class="control-label" for="libs@map.id">Libraries</label>
+                            <label class="control-label" for="libs@map.id">@Messages("Libraries")</label>
                             <div class="controls">
                                 <input type="text" name="libs" id="libs@map.id" value="default"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="picture">Picture</label>
+                            <label class="control-label" for="picture">@Messages("Picture")</label>
                             <div class="controls">
                                 <input type="file" name="picture" id="picture@map.id" />
                             </div>
@@ -88,8 +88,8 @@
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                        <input class="btn btn-primary" type="submit" name="submit" value="Update"/>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("Cancel")</button>
+                        <input class="btn btn-primary" type="submit" name="submit" value="@Messages("Update")"/>
                     </div>
                 </form>
             </div>
@@ -98,7 +98,7 @@
             <li class="span3">
                 <a id="addFormLink" href="#addForm" class="thumbnail" data-toggle="modal">
                     <img src="@routes.Assets.at("images/buttons/blue-cross.png")" />
-                    <p>Add</p>
+                    <p>@Messages("Add")</p>
                 </a>
             </li>
         </ul>
@@ -106,50 +106,50 @@
         <div style="width:300px;margin-left:-150px;" id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="myModalLabel">Add a new map</h3>
+                <h3 id="myModalLabel">@Messages("Add.a.new.map")</h3>
             </div>
             <form action="/simulator/mapUpload" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="control-group hidden">
-                        <label class="control-label" for="mapId">ID</label>
+                        <label class="control-label" for="mapId">@Messages("Id")</label>
                         <div class="controls">
                             <input type="text" name="mapId" id="mapId" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="mapName">Name</label>
+                        <label class="control-label" for="mapName">@Messages("Name")</label>
                         <div class="controls">
                             <input type="text" name="mapName" required="required" id="mapName" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="mapDescription">Description</label>
+                        <label class="control-label" for="mapDescription">@Messages("Description")</label>
                         <div class="controls">
                             <input type="text" name="mapDescription" id="mapDescription" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="gatewayURL">Box URL</label>
+                        <label class="control-label" for="gatewayURL">@Messages("Box.URL")</label>
                         <div class="controls">
                             <input type="text" name="gatewayURL" id="gatewayURL" required="required" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080"/>
                         </div>
                     </div>
                     <div class="control-group hidden">
-                        <label class="control-label" for="libs">Libraries</label>
+                        <label class="control-label" for="libs">@Messages("Libraries")</label>
                         <div class="controls">
                             <input type="text" name="libs" id="libs" value="default"/>
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="picture">Picture</label>
+                        <label class="control-label" for="picture">@Messages("Picture")</label>
                         <div class="controls">
                             <input type="file" name="picture" required="required" id="picture" />
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">Cancel</button>
-                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" value="Create"/>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("Cancel")</button>
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" value="@Messages("create")"/>
                 </div>
             </form>
         </div>

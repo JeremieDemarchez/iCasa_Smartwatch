@@ -53,37 +53,36 @@
     </div>
 
     <div class="span4" data-bind="with: selectedApplication">
-        <label data-bind="text: name()=='NONE'? '': 'Application' ">Application</label>
-        <h5 data-bind="text: name()=='NONE'? 'My Devices': name() ">Application</h5>
+        <label data-bind="text: name()=='NONE'? '': $root.getLocaleMessage('Application') "></label>
+        <h5 data-bind="text: name()=='NONE'? $root.getLocaleMessage('MyDevices'): name() "></h5>
     </div>
 
     <div class="hidden">
         <div class="controls controls-row">
-            <label class="span1">Application</label>
+            <label class="span1" data-bind="text: $root.getLocaleMessage('Application')"></label>
             <select class="span2" data-bind="options: $root.applications(), value: $root.selectedApplication, optionsText: 'name'"></select>
         </div>
     </div>
 
     <!--
     <div class="controls controls-row">
-        <label class="span1">Filter</label>
+        <label class="span1" data-bind="text: $root.getLocaleMessage('Filter')"></label>
         <input type="text" class="span2" data-bind="value: $root.deviceFilter, valueUpdate:'afterkeydown'" />
     </div>
     -->
     <thead>
         <tr>
             <th>
-                <!--<input id="checkAllDeviceCheckboxId"  type="checkbox" data-bind="checked: checkAllDevices" />-->
-                Grant Access
+                <span data-bind="text: $root.getLocaleMessage('Grant.Access')"></span>
             </th>
             <th data-bind="sortable: {obj: 'device', column: 'type'}">
-                Type
+                <span data-bind="text: $root.getLocaleMessage('Type')"></span>
             </th>
             <th data-bind="sortable: {obj: 'device', column: 'name'}">
-                Name
+                <span data-bind="text: $root.getLocaleMessage('Name')"></span>
             </th>
             <th>
-                Location
+                <span data-bind="text: $root.getLocaleMessage('Location')"></span>
             </th>
         </tr>
     </thead>
@@ -93,7 +92,7 @@
                 <div class="controls onoffswitch" >
                     <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" data-bind="attr:{disabled: $root.disableAccessRight, id:'myonoffswitch'+id()}, checked: hasAccessRight, checkedAccessRight:{root: $root, data: $data}" style="display:none;">
                     <label class="onoffswitch-label" data-bind="attr:{for: 'myonoffswitch'+id()}">
-                        <div class="onoffswitch-inner" disabled-caption="Denied" enabled-caption="Granted"></div>
+                        <div class="onoffswitch-inner" data-bind="attr: {'disabled-caption': $root.getLocaleMessage('Denied'), 'enabled-caption': $root.getLocaleMessage('Granted')}" ></div>
                         <div class="onoffswitch-switch"></div>
                     </label>
                 </div>

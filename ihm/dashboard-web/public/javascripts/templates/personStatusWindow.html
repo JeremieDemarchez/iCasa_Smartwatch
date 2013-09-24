@@ -17,28 +17,15 @@
 -->
 <form class="form-horizontal">
     <div class="control-group">
-        <label class="control-label" for="inputName">Name</label>
+        <label class="control-label" for="inputName" data-bind="text: $root.getLocaleMessage('Name')"></label>
         <div class="controls">
             <input type="text" id="inputName" data-bind="value: name, attr: { alt: name}" />
         </div>
     </div>
     <div class="control-group">
-        <label class="control-label" for="inputLocation">Location</label>
+        <label class="control-label" for="inputLocation" data-bind="text: $root.getLocaleMessage('Location')">Location</label>
         <div class="controls">
             <input type="text" id="inputLocation" data-bind="value: location" />
         </div>
     </div>
-    <!--div class="control-group">
-        <label class="control-label" for="inputFault">Fault</label>
-        <div class="controls">
-            <input type="text" id="inputFault" data-bind="value: fault" />
-        </div>
-    </div-->
-    <!--div class="control-group">
-        <div class="controls">
-            <label class="checkbox">
-                <input type="checkbox" data_bind="value: !$data.isDesactivated()" /> Activated
-            </label>
-        </div>
-    </div-->
 </form>
