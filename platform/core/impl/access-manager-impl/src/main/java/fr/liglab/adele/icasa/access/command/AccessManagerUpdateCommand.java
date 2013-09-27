@@ -105,6 +105,7 @@ public class AccessManagerUpdateCommand extends AbstractCommand {
         for (MemberAccessPolicy b : MemberAccessPolicy.values()) {
             description.append(b.toString()).append(" ");
         }
+        description.append("\n");
         return description.toString();
     }
 
