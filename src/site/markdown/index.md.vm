@@ -40,3 +40,8 @@
     iCasa Platform is licensed under Apache V2 <a href="license.html">license</a>. This project is maintained by
     <a href="http://www-adele.imag.fr/">LIG ADELE Research Group</a>.
 </div>
+
+<div class="span11 page-header">
+    <h2>Powered By</h2>
+    <a href="http://www.cloudbees.com/"> <img alt="Cloudbees" src="cloudbees.png" />  </a>
+</div>
