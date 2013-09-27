@@ -31,9 +31,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 
-@Component
-@Provides
-@Instantiate
+//@Component
+//@Provides
+//@Instantiate
 public class CommandFactory implements ICasaCommand {
 
     protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
@@ -79,7 +79,7 @@ public class CommandFactory implements ICasaCommand {
      */
     @Override
     public String getDescription() {
-        return "Expose an ipojo factory";
+        return "Expose an ipojo factory\n";
     }
 
     /**
