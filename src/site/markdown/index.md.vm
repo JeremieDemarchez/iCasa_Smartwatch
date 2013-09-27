@@ -58,6 +58,6 @@
 </div>
 
 <div class="span11 page-header">
-    <h1>Powered By</h1>
-     <a href="http://www.cloudbees.com/"> <img alt="Cloudbees" src="cloudbees.png" />  </a>
+    <h2>Powered By</h2>
+    <a href="http://www.cloudbees.com/"> <img alt="Cloudbees" src="cloudbees.png" />  </a>
 </div>

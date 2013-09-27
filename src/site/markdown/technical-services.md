@@ -17,13 +17,13 @@ iCasa provides a set of technical services. In order to use them, it is needed t
 
 
 <a name="Configuration"></a>
-## iCasa configuration service
+## iCasa preferences service
 
-The iCasa configuration service allows to persist configuration that could be exploited by applications. There are three groups of configuration:
+The iCasa preferences service allows to persist preferences that could be exploited by applications. There are three groups of preferences:
 
-* Global configuration.
-* Per-application configuration.
-* Per-user configuration.
+* Global preferences.
+* Per-application preferences.
+* Per-user preferences.
 
 Any configuration could be retrieved and exploited by any running application. 
 
@@ -121,12 +121,12 @@ Using iPOJ0 it is as simple as adding a service dependency.
 	private Preferences preferenceService;
 
 ####Using Gogo commands
-To see how to use the configuration service, please visit the [Configuration Section](gogo-commands.html#Configuration) in iCasa Gogo Commands.
+To see how to use the preferences service, please visit the [Configuration Section](gogo-commands.html#Configuration) in iCasa Gogo Commands.
 
 ####Using the iCasa scripts
 There are the following instructions that can be used into the iCasa scripts:
 
-* set a global configuration property
+* set a global preference property
 
         </set-global-property name="period" value="80.8" type="Float">
         
