@@ -77,6 +77,9 @@
             <item name="Overview" href="overview.html"/>
             <item name="Download" href="download.html"/>
             <item name="Install" href="install.html"/>
+            <item name="Device Injection in iCasa" href="requires-device.html"/>
+            <item name="iCasa Trackers" href="trackers.html"/>
+            <item name="Technical Services" href="technical-services.html"/>            
             <item name="FAQ" href="faq.html"/>
         </menu>
 
