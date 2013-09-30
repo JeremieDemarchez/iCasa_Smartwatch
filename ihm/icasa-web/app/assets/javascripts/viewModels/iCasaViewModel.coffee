@@ -8,6 +8,7 @@ define(['jquery',
         'jquery.ui.touch',
         'contracts/DeviceWidgetContract',
         'contracts/ICasaManager',
+        'contracts/ICasaShellManager',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
@@ -19,7 +20,7 @@ define(['jquery',
         'text!templates/zoneStatusWindow.html',
         'i18n!locales/nls/locale',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, locale) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, ICasaShell, DataModel, devTabHtml, personTabHtml, zoneTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, locale) ->
 
     # HTML custom bindings
 
@@ -234,6 +235,9 @@ define(['jquery',
             addTabDiv(tab) for tab in viewModel.tabs();
 
             $(element).html(htmlString);
+            $(element).resize(() ->
+              $(element).tabs("refresh");
+            );
 
             return { controlsDescendantBindings: false };
     };
@@ -1129,6 +1133,7 @@ define(['jquery',
         #
         hub: null;
         name: null;
+        shell: null;
 
         getComponentName: ->
           return "iCasaViewModel-" + @name;
@@ -1144,12 +1149,28 @@ define(['jquery',
              aggregate : true,
              optional : true
           });
+          @hub.requireService({
+             component: @,
+             contract:  ICasaShell,
+             bind:      "bindShell",
+             unbind:    "unbindShell",
+             aggregate : false,
+             optional : false
+          });
 
           @hub.provideService({
             component: @,
             contract: ICasaManager
           });
 
+        #shell
+        bindShell: (svc) ->
+          @shell = svc;
+
+        unbindShell: (svc) ->
+          @shell = null;
+
+        #device widget
         bindDeviceWidget: (svc) ->
           console.log("bindDeviceWidget");
           @deviceWidgets.push(svc);
@@ -1621,6 +1642,20 @@ define(['jquery',
            @.persons.subscribe(@.updateWidgetPositions)
            @.devices.subscribe(@.updateWidgetPositions)
            @.zones.subscribe(@.updateWidgetPositions)
+           #shell command.
+           @command = ko.observable("help")
+           @executeShellCommand = () =>
+             params = @.command().split(" ");
+             name = params[0];
+             params.shift();#remove first element.
+             console.log "command name" + name;
+             console.log "params" + params
+             @shell.exec(name,params);
+           @executeShellCommandEvent = (data, event) =>
+             if event.keyCode == 13
+               @executeShellCommand();
+
+
         
         createRandomId:(collection, type)->
            number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 

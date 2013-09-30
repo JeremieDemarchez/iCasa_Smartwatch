@@ -218,12 +218,17 @@ class SizeUtil
       calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
       map.width(calculatedWidth);
       map.height(calculatedHeight);
-    $("#tabs").tabs("refresh");
+    #$("#tabs").tabs("refresh");
 
     statusWindows = $("#statusWindows");
     statusWindowsWidth = statusWindows.width();
-    statusWindows.width(viewportSize.width - (2 * areaBorderSize));
+    statusWindows.width(availableWidthFor1Block);
     statusWindowsHeight = statusWindows.height();
+
+    shellWindows = $("#shellContainer");
+    shellWindows.width(availableWidthFor1Block);
+    #shellFixedWindow = $("#shellOutputFixed");
+    #shellFixedWindow.width(viewportSize.width - (3 * areaBorderSize));
 
 # launch application
 require([
@@ -236,14 +241,15 @@ require([
     'components/ConnectionWidget',
     'components/GatewayConnectionMgrImpl',
     'components/VersionManagerWidget',
+    'components/ICasaShellManagerImpl',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, VersionManagerWidget) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, VersionManagerWidget, ShellManager) ->
 
         mapName = $("#map").attr("mapId");
         mapImgUrl = $("#map").attr("mapImgSrc");
-
+        mapHeightSubscritionCalls = 0;
         iCasaViewModel = new ICasaViewModel( {
           id: mapName,
           imgSrc: mapImgUrl
@@ -286,6 +292,8 @@ require([
 
         # height is set after width
         iCasaViewModel.mapHeight.subscribe(() ->
+          if mapHeightSubscritionCalls > 0
+            return; # if it was called, return.
           SizeUtil.initAreaSizes(iCasaViewModel.mapWidth(), iCasaViewModel.mapHeight());
           iCasaViewModel.updateMapSize();
 
@@ -298,7 +306,10 @@ require([
           $(window).resize( (event) ->
             SizeUtil.computeAreaSizes(null);
           );
+          mapHeightSubscritionCalls = 1;
         );
+
+
 
         # start extensions mechanism using H-UBU
         hub.registerComponent(iCasaViewModel).createInstance(ConnectionWidget, {
@@ -309,6 +320,10 @@ require([
         }).createInstance(VersionManagerWidget, {
           name: "VersionManagerWidget-1",
           elementId: "compatibilityWarn"
+        }).createInstance(ShellManager, {
+          name: "ShellManager-1",
+          outputId: "shellOutput",
+          url: $("#map").attr("gatewayURL").replace(/\/$/, "");
         }).start();
 
         # widget loading

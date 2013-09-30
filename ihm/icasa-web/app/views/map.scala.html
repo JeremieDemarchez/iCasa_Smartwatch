@@ -105,6 +105,39 @@
         <!-- /ko -->
     </article>
 </section>
+<section  >
+    <article id="shellContainer">
+        <form class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label" for="inputCommand" data-bind="text: $root.getLocaleMessage('iCasa.command')"></label>
+                <div class="controls controls-row">
+                    <input class="input-xxlarge" type="text" id="inputCommand" data-bind="value: $root.command, event:{onkeydown: executeShellCommandEvent}" placeholder="help" />
+                    <a class="btn" data-bind="text: $root.getLocaleMessage('Execute'),click: executeShellCommand"></a>
+                </div>
+            </div>
+        </form>
+        <div   id="shellOutputFixed">
+            <div class ="rounded-corners" id="shellOutput">
+
+            </div>
+        </div>
+        <!--
+        <div class="container visible-desktop" >
+            <div class="row" id="shellInput">
+                <div align="center" class="span2"><span data-bind="text: $root.getLocaleMessage('iCasa.command')"></span></div>
+                <input type="text" class="span8" data-bind="value: $root.command, event:{onkeydown: executeShellCommandEvent}" placeholder="help" />
+                <input type="button" data-bind="value: $root.getLocaleMessage('Execute'),click: executeShellCommand"/>
+            </div>
+            <div class="row" >
+                <div class="span11" id="shellOutput">
+
+                </div>
+            </div>
+        </div>
+        -->
+    </article>
+</section>
+
 
 
         <!-- Load the script "javascripts/main.coffee" as our entry point at the end of the dom to optimize loading -->
