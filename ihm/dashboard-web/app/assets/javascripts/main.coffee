@@ -219,11 +219,11 @@ class SizeUtil
       calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
       map.width(calculatedWidth);
       map.height(calculatedHeight);
-    $("#tabs").tabs("refresh");
+
 
     statusWindows = $("#statusWindows");
     statusWindowsWidth = statusWindows.width();
-    statusWindows.width(viewportSize.width - (2 * areaBorderSize));
+    statusWindows.width(availableWidthFor1Block);
     statusWindowsHeight = statusWindows.height();
 
 # launch application
@@ -244,7 +244,7 @@ require([
 
         mapName = $("#map").attr("mapId");
         mapImgUrl = $("#map").attr("mapImgSrc");
-
+        mapHeightSubscritionCalls = 0;
         iCasaViewModel = new ICasaViewModel( {
           id: mapName,
           imgSrc: mapImgUrl
@@ -287,6 +287,8 @@ require([
 
         # height is set after width
         iCasaViewModel.mapHeight.subscribe(() ->
+          if mapHeightSubscritionCalls > 0
+            return; # if it was called, return.
           SizeUtil.initAreaSizes(iCasaViewModel.mapWidth(), iCasaViewModel.mapHeight());
           iCasaViewModel.updateMapSize();
 
@@ -299,6 +301,7 @@ require([
           $(window).resize( (event) ->
             SizeUtil.computeAreaSizes(null);
           );
+          mapHeightSubscritionCalls = 1;
         );
 
         # start extensions mechanism using H-UBU

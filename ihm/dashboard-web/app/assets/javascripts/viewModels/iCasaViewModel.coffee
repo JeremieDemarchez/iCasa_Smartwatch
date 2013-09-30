@@ -291,6 +291,9 @@ define(['jquery',
             addTabDiv(tab) for tab in viewModel.tabs();
 
             $(element).html(htmlString);
+            $(element).resize(() ->
+              $(element).tabs("refresh");
+            );
 
             return { controlsDescendantBindings: false };
     };
