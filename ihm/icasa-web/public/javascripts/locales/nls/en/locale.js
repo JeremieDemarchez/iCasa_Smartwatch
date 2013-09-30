@@ -37,5 +37,7 @@ define({
     "Simulation.State" : "Simulation State",
     "Simulation.State" : "Simulation state",
     "Save.As" : "Save as",
-    "Reset.State" : "Reset State"
+    "Reset.State" : "Reset State",
+    "Execute": "Execute",
+    "iCasa.command" : "iCasa Command :"
 });

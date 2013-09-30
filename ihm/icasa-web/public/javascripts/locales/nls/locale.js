@@ -37,7 +37,9 @@ define({
         "Script.Player" : "Script Player",
         "Simulation.State" : "État de la simulation",
         "Save.As" : "Enregistrer sous",
-        "Reset.State" : "Réinitialiser"
+        "Reset.State" : "Réinitialiser",
+        "Execute": "Exécuter",
+        "iCasa.command":"Commande iCasa :"
     },
     "en" : true
 });
