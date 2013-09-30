@@ -34,6 +34,7 @@ require.config({
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
+        'locale' : 'locales',
         'underscore' : 'frameworks/underscore/underscore-min',
         'DeviceWidgetContract' : 'contracts/DeviceWidgetContract'
     },
@@ -218,7 +219,7 @@ class SizeUtil
       calculatedHeight = (mapHeight / mapWidth) * calculatedWidth;
       map.width(calculatedWidth);
       map.height(calculatedHeight);
-    #$("#tabs").tabs("refresh");
+
 
     statusWindows = $("#statusWindows");
     statusWindowsWidth = statusWindows.width();
