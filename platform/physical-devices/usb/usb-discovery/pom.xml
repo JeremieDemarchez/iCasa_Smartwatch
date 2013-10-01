@@ -5,7 +5,7 @@
   <parent>
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>platform.parent</artifactId>
-    <version>1.1.2-SNAPSHOT</version>
+    <version>1.2.1-SNAPSHOT</version>
     <relativePath>../../../../parent</relativePath>
   </parent>
 
@@ -15,7 +15,7 @@
   <artifactId>org.apache.felix.usb.basedriver</artifactId>
   <packaging>bundle</packaging>
     <name>${productName} :: Apache Felix Usb Base Driver</name>
-  <version>1.1.2-SNAPSHOT</version>
+  <version>1.2.1-SNAPSHOT</version>
   <description> A Bundle implementation of the Usb Device Discovery</description>
 
   <dependencies>
