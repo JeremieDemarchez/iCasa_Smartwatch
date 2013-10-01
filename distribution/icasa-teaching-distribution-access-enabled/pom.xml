@@ -36,7 +36,7 @@
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.teaching.distribution</artifactId>
             <type>osgi-distribution</type>
-            <version>${iCasaPlatformVersion}</version>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
