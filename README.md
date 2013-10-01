@@ -5,7 +5,7 @@ This project aims at providing a complete toolkit to build digital home applicat
 The home page of the project is <http://adeleresearchgroup.github.com/iCasa-Platform/>.
 The project websites are:
  * Development version <http://adeleresearchgroup.github.com/iCasa-Platform/snapshot/>
- * Last stable release version <http://adeleresearchgroup.github.com/iCasa-Platform/1.1.1/>
+ * Last stable release version <http://adeleresearchgroup.github.com/iCasa-Platform/1.2.0/>
 
 License
 =====
