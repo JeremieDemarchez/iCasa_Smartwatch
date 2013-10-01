@@ -150,7 +150,7 @@
                         <include>*Test.*</include>
                     </includes>
                     <systemPropertyVariables>
-                        <geb.build.baseUrl>http://localhost:9000</geb.build.baseUrl>
+                        <geb.build.baseUrl>http://localhost:9000/simulator</geb.build.baseUrl>
                         <geb.build.reportsDir>target/test-reports/geb</geb.build.reportsDir>
                         <webdriver.chrome.driver>src/test/resources/driver/${os.name}/${browser.driver}</webdriver.chrome.driver>
                     </systemPropertyVariables>
@@ -217,7 +217,7 @@
                                     <arg value="${startGatewayScript}"/>
                                 </exec>
                                 <exec executable="${run.command}"
-                                      dir="${project.build.directory}/distribution/${distrib.artifactId}"
+                                      dir="${project.build.directory}/distribution/${distrib.artifactId}/web.simulator"
                                       spawn="true">
                                     <arg value="${run.command.additionnal.arg}"/>
                                     <arg value="${startGUIScript}"/>
@@ -241,7 +241,7 @@
                                     <arg value="${stopGatewayScript}"/>
                                 </exec>
                                 <exec executable="${run.command}"
-                                      dir="${project.build.directory}/distribution/${distrib.artifactId}"
+                                      dir="${project.build.directory}/distribution/${distrib.artifactId}/web.simulator"
                                       spawn="true">
                                     <arg value="${run.command.additionnal.arg}"/>
                                     <arg value="${stopGUIScript}"/>

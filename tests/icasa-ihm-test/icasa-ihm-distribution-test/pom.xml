@@ -40,12 +40,14 @@
             <type>osgi-distribution</type>
         </dependency>
         <!-- Play 2 applications-->
+        <!--
         <dependency>
            <groupId>fr.liglab.adele.icasa</groupId>
            <artifactId>icasa.web</artifactId>
            <version>${project.version}</version>
            <type>play2</type>
         </dependency>
+        -->
     </dependencies>
 
     <build>
@@ -53,7 +55,6 @@
             <plugin>
                 <groupId>fr.liglab.adele.common</groupId>
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
-                <version>1.0.2-SNAPSHOT</version>
                 <configuration>
                     <flattenDP>true</flattenDP>
                 </configuration>
