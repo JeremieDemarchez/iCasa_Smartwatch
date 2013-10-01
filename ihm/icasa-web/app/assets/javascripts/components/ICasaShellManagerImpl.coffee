@@ -38,16 +38,18 @@ define(['jquery','hubu', 'contracts/ICasaShellManager'], ($, hub, contract) ->
       printCommandResult: (data,  textStatus, jqXHR) =>
         json_data = JSON.stringify(data);
         result = "Unknown";
-        console.log textStatus;
-        console.log jqXHR;
+        jqueryElement = $('#' + @shellResult);
+        if jqXHR == "Not Found"
+          result = "Command not found";
         if data.result?
           result = data.result
           result = result.replace(/\n/g,"<br>");
           result = result.replace(/\t/g,"&nbsp;&nbsp;&nbsp;&nbsp;")
-        console.log result;
         old = $('#' + @shellResult).html();
-        newData = result + "<br><br>" + old;
-        $('#' + @shellResult).html(newData);
+        newData = old + "<br><br>" + result;
+        jqueryElement.html(newData);
+        jqueryElement.scrollTop(jqueryElement[0].scrollHeight);
+
 
       exec:(name, params)=>
         json_params = JSON.stringify(params);
@@ -63,8 +65,8 @@ define(['jquery','hubu', 'contracts/ICasaShellManager'], ($, hub, contract) ->
           success: @.printCommandResult,
           error: @.printCommandResult
         );
-        historyCalls[historyCallNumber] = name + " " + params;
-        historyCallNumber  = historyCallNumber + 1;
+        @historyCalls[@historyCallNumber] = name + " " + params;
+        @historyCallNumber  = @historyCallNumber + 1;
 
 
 

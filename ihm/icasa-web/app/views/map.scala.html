@@ -106,13 +106,14 @@
     </article>
 </section>
 <section  >
-    <article id="shellContainer">
-        <form class="form-horizontal">
+    <article id="shellContainer" >
+        <form class="form-horizontal" onsubmit="doNothing(); return false;">
             <div class="control-group">
                 <label class="control-label" for="inputCommand" data-bind="text: $root.getLocaleMessage('iCasa.command')"></label>
                 <div class="controls controls-row">
-                    <input class="input-xxlarge" type="text" id="inputCommand" data-bind="value: $root.command, event:{onkeydown: executeShellCommandEvent}" placeholder="help" />
-                    <a class="btn" data-bind="text: $root.getLocaleMessage('Execute'),click: executeShellCommand"></a>
+                    <input class="input-xxlarge" tabindex="60" type="text" id="inputCommand" data-bind="value: $root.command, valueUpdate:'afterkeydown', event:{keypress: executeShellCommandEvent}" placeholder="help" />
+                    <a class="btn" tabindex="61" type="submit" data-bind="text: $root.getLocaleMessage('Execute'),click: executeShellCommand, event:{keypress: executeShellCommandEvent}"></a>
+                    <a class="btn" tabindex="62" data-bind="text: $root.getLocaleMessage('Help'),click: showHelp"></a>
                 </div>
             </div>
         </form>

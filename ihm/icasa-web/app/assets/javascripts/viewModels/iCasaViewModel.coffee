@@ -1647,13 +1647,17 @@ define(['jquery',
            @executeShellCommand = () =>
              params = @.command().split(" ");
              name = params[0];
-             params.shift();#remove first element.
-             console.log "command name" + name;
-             console.log "params" + params
+             params.shift();#remove first element(command name).
              @shell.exec(name,params);
+
+           @showHelp = () =>
+             @shell.exec("help",[]);
+
            @executeShellCommandEvent = (data, event) =>
              if event.keyCode == 13
+               event.preventDefault();
                @executeShellCommand();
+             return true;
 
 
         
