@@ -10,7 +10,9 @@ The project websites are:
 License
 =====
 
-This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENSE-2.0.html>).
+This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENSE-2.0.html>) for the gateway part and
+a specific end user license for the simulator and dashboard web applications
+(http://adeleresearchgroup.github.io/iCasa-Simulator/1.1.1/license.html).
 
 Contributors
 =====
@@ -24,11 +26,13 @@ Source Organization
 ====
 
 - _distribution_: Contains ready to use distributions of client and server simulator parts.
+- _ihm_: Contains android applications, the simulator web application and the dashboard web application.
 - _packages_: Contains deployment packages of client and server simulator parts.
-- _ihm_: Contains android applications and a client web application to use the simulator.
 - _parent_: Contains the global build configuration including licensing information.
 - _simulator_: Contains server part of the simulator.
 - _src_: Contains the project web site source code.
+- _tests_: Contains automatic tests (integration and acceptance tests) of the simulator.
+- _tools_: Contains optional tools and components that you can use with the simulator.
 
 How to use it
 =====
@@ -36,30 +40,15 @@ How to use it
 Use a distribution
 ----
 
-1. Install jdk 6 (NOT java 7 !!!)
+1. Install jdk 6 or greater
 2. Unzip one of the distribution
-3. Execute startGateway file on Unix (or startGateway.bat file on Windows)
+3. Execute startGateway.sh file on Unix (or startGateway.bat file on Windows)
 
-Build a new distribution
-----
+If your distribution contains simulator Web application
+4. Execute startSimulatorGUI.sh on Unix (or startSimulatorGUI.bat file on Windows)
 
-1. Install all build prerequisites (described in next section).
-2. Then add the following maven repositories to your project pom.xml file.
-```xml
-<repository>
-	<id>maven-icasa-repository-release</id>
-	<name>iCasa - Release</name>
-	<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-	<layout>default</layout>
-</repository>
-<repository>
-	<id>maven-icasa-repository-snapshot</id>
-	<name>iCasa - Snapshot</name>
-	<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-	<layout>default</layout>
-</repository>
-```
-3.
+If your distribution contains dashboard Web application
+5. Execute startDashboardGUI.sh on Unix (or startSimulatorGUI.bat file on Windows)
 
 Build
 =====
@@ -68,7 +57,7 @@ Prerequisites
 -----
 
 - install Maven 3.x
-- install jdk 6 (NOT java 7 !!!)
+- install jdk 6 or greater
 
 Instructions
 ----
@@ -86,18 +75,41 @@ Maven Repositories
 ----
 
 ```xml
-<repository>
-	<id>maven-icasa-repository-release</id>
-	<name>iCasa - Release</name>
-	<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-	<layout>default</layout>
-</repository>
-<repository>
-	<id>maven-icasa-repository-snapshot</id>
-	<name>iCasa - Snapshot</name>
-	<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-	<layout>default</layout>
-</repository>
+<!-- Project repositories -->
+<repositories>
+
+    <!-- ADELE repositories -->
+    <repository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>adele-central-snapshot</id>
+        <name>adele-repos</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </repository>
+    <repository>
+        <snapshots />
+        <id>snapshots</id>
+        <name>adele-central-release</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>central</id>
+        <name>adele-repos</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </pluginRepository>
+    <pluginRepository>
+        <snapshots />
+        <id>snapshots</id>
+        <name>adele-central-release</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </pluginRepository>
+</pluginRepositories>
 ```
 
 Contribute to this project
