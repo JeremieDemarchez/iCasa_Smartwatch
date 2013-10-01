@@ -39,7 +39,8 @@ define({
         "Save.As" : "Enregistrer sous",
         "Reset.State" : "Réinitialiser",
         "Execute": "Exécuter",
-        "iCasa.command":"Commande iCasa :"
+        "iCasa.command":"Commande iCasa :",
+        "Help":"Aide"
     },
     "en" : true
 });

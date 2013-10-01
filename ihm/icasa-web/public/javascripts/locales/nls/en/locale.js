@@ -39,5 +39,6 @@ define({
     "Save.As" : "Save as",
     "Reset.State" : "Reset State",
     "Execute": "Execute",
-    "iCasa.command" : "iCasa Command :"
+    "iCasa.command" : "iCasa Command :",
+    "Help" : "Help"
 });
