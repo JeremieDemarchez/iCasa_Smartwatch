@@ -24,13 +24,14 @@ Source Organization
 ====
 
 - _appstore_: Contains the iCasa store sources.
-- _dependencies_: Contains packages of used dependencies such as ROSE and Cilia.
 - _distribution_: Contains distributions.
 - _doc_: Contains documentation about development environment setup.
 - _parent_: Contain the global build configuration including licensing information.
-- _platform_: Contains technical services and device drivers used by the applications and distributions.
-- _portal_: Contains the iCasa web portal sources.
+- _platform_: Contains platform source code, technical services and device drivers used by the applications and
+distributions.
+- _portal_: Contains the iCasa web portal sources (deprecated).
 - _tests_: Contains integration tests.
+- _tools_: Contains tools used by the platform such as iPOJO handlers.
 
 How to use it
 =====
@@ -38,30 +39,9 @@ How to use it
 Use a distribution
 ----
 
-1. Install jdk 6 (NOT java 7 !!!)
+1. Install jdk 6 or greater
 2. Unzip one of the distribution
-3. Execute PRODUCT file (or PRODUCT.bat file on Windows)
-
-Build a new distribution
-----
-
-Install all build prerequisites.
-Then add the following maven repositories to your project pom.xml file.
-```xml
-<repository>
-	<id>maven-icasa-repository-release</id>
-	<name>icasa - Release</name>
-	<url>https://repository-icasa.forge.cloudbees.com/release/</url>
-	<layout>default</layout>
-</repository>
-<repository>
-	<id>maven-icasa-repository-snapshot</id>
-	<name>icasa - Snapshot</name>
-	<url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-	<layout>default</layout>
-</repository>
-```
-TODO
+3. Execute startGateway.sh file (or startGateway.bat file on Windows)
 
 Build
 =====
@@ -87,18 +67,43 @@ The project is built every week on the following continuous integration server :
 Maven Repositories
 ----
 
+```xml
+<!-- Project repositories -->
+<repositories>
+
+    <!-- ADELE repositories -->
     <repository>
-    	<id>maven-icasa-repository-release</id>
-	    <name>icasa - Release</name>
-	    <url>https://repository-icasa.forge.cloudbees.com/release/</url>
-	    <layout>default</layout>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>adele-central-snapshot</id>
+        <name>adele-repos</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
     </repository>
     <repository>
-	    <id>maven-icasa-repository-snapshot</id>
-	    <name>icasa - Snapshot</name>
-	    <url>https://repository-icasa.forge.cloudbees.com/snapshot/</url>
-	    <layout>default</layout>
+        <snapshots />
+        <id>snapshots</id>
+        <name>adele-central-release</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
     </repository>
+</repositories>
+<pluginRepositories>
+    <pluginRepository>
+        <snapshots>
+            <enabled>false</enabled>
+        </snapshots>
+        <id>central</id>
+        <name>adele-repos</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </pluginRepository>
+    <pluginRepository>
+        <snapshots />
+        <id>snapshots</id>
+        <name>adele-central-release</name>
+        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+    </pluginRepository>
+</pluginRepositories>
+```
 
 Contribute to this project
 ====
