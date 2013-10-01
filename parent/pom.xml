@@ -13,7 +13,7 @@
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.1.2</version>
+        <version>1.2.0</version>
         <relativePath />
     </parent>
 
@@ -32,8 +32,8 @@
     <properties>
         <productName>iCasa Platform</productName>
         <productVersion>${project.version}</productVersion>
-        <AdeleBaseVersion>1.1.1</AdeleBaseVersion>
-        <DistributionTestVersion>1.1.3-SNAPSHOT</DistributionTestVersion>
+        <AdeleBaseVersion>1.2.0</AdeleBaseVersion>
+        <DistributionTestVersion>1.2.1-SNAPSHOT</DistributionTestVersion>
         <cxfVersion>2.3.2</cxfVersion>
 
         <!--UPNP -->
