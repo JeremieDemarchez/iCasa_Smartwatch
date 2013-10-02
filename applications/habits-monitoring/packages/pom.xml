@@ -30,10 +30,11 @@
 
 	<modules>
       <module>measure-generator-mock.dp</module>
-		<module>measure-generator.dp</module>
-		<module>presence-sensor.dp</module>
-        <module>photometer.dp</module>
-        <module>motion-sensor.dp</module>
+      <module>measure-generator.dp</module>
+      <module>presence-sensor.dp</module>
+      <module>photometer.dp</module>
+      <module>motion-sensor.dp</module>
+      <module>push-button.dp</module>
 	</modules>
    <build>
       <plugins>

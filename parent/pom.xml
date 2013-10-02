@@ -235,6 +235,11 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
             </dependency>
             <dependency>
                 <groupId>fr.liglab.adele.cilia</groupId>
+                <artifactId>cilia-ipojo-plugin</artifactId>
+                <version>${ciliaVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.cilia</groupId>
                 <artifactId>cilia-remote</artifactId>
                 <version>${ciliaVersion}</version>
             </dependency>

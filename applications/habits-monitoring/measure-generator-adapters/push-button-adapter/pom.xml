@@ -18,9 +18,9 @@
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>photometer.adapter</artifactId>
+	<artifactId>push.button.adapter</artifactId>
 	<packaging>bundle</packaging>
-	<name>${productName} :: Habits Monitoring :: Photometer Adapter</name>
+	<name>${productName} :: Habits Monitoring :: Push Button Adapter</name>
 
 	<dependencies>
 		<dependency>
@@ -44,6 +44,10 @@
 		    <artifactId>measure.generator</artifactId>
 		    <version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>device.dependency.annotations</artifactId>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -54,7 +58,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.habits.monitoring.photometer</Private-Package>
+						<Private-Package>fr.liglab.adele.habits.monitoring.button</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>

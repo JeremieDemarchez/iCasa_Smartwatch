@@ -47,7 +47,7 @@ public class RestProcessEventService implements ProcessEventService {
 	 * Call the RestFul WebService with the given event data values
 	 * 
 	 * @param  sensorId    sensor providing the event
-	 * @param  patiendId   concerned patient id
+	 * @param  patientId   concerned patient id
 	 * @param  eventType   type of event(location, electric,...)
 	 * @param  dateTime    date and time when occurred the event
 	 * @param  reliability reliability of the measure

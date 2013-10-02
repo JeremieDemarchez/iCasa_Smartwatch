@@ -32,6 +32,7 @@
 		<module>presence-sensor-adapter</module>
 		<module>photometer-adapter</module>
         <module>motion-sensor-adapter</module>
+        <module>push-button-adapter</module>
 		<module>db-adapter-fileinstall</module>
 	</modules>
    <build>
