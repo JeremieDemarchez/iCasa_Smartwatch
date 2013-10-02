@@ -157,7 +157,6 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
 		
 		// execute script for zones and devices
 		scriptExecutor.execute(firstScript);
-        wait(10000);
         if(!helper.waitToComponent("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
             Assert.fail("Unable to retrieve presence-collector component after 10sec");
         }

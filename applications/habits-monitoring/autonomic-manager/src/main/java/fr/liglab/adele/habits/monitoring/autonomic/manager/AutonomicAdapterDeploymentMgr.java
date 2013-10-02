@@ -37,8 +37,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 public class AutonomicAdapterDeploymentMgr implements
 		DeviceListener<GenericDevice>, DPInfosListener {
 
-	private static final Logger logger = LoggerFactory
-			.getLogger(AutonomicAdapterDeploymentMgr.class);
+	private static final Logger logger = LoggerFactory.getLogger(fr.liglab.adele.icasa.Constants.ICASA_LOG + "apps.autonomic");
 
 	private Map<String, GenericDevice> devices = new HashMap<String, GenericDevice>();
 	private Map<String, Set<String>> uninstalledDevices = new HashMap<String, Set<String>>();
