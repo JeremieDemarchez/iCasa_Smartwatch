@@ -160,6 +160,9 @@ public class PaulDistribTest extends AbstractDistributionBaseTest {
         if(!helper.waitToComponent("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
             Assert.fail("Unable to retrieve presence-collector component after 10sec");
         }
+        if(!helper.checkValidState("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve presence-collector  as a valid component after 10sec");
+        }
 
 		Set<String> devices = icasa.getDeviceIds();
 		Set<String> zones = icasa.getZoneIds();
