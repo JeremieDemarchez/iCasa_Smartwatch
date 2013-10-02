@@ -50,6 +50,7 @@
             <modules>
                 <module>icasa-platform-dp</module>
                 <module>icasa-device-handler-dp</module>
+                <module>zigbee-core-dp</module>
             </modules>
         </profile>
     </profiles>
