@@ -105,15 +105,15 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 				String serialNumber = (String) epdProps.get(RemoteConstants.ENDPOINT_ID);
 				logger.debug("endpoint received in importer with module address : " + moduleAddress);
 				
-				if (TypeCode.IA001.toString().equals(deviceType)){
+				if (TypeCode.A001.toString().equals(deviceType)){
 					factory = binaryLightFactory;
-				} else if (TypeCode.IC004.toString().equals(deviceType)){
+				} else if (TypeCode.C004.toString().equals(deviceType)){
 					factory = presenceSensorFactory;
-				} else if (TypeCode.IC001.toString().equals(deviceType)){
+				} else if (TypeCode.C001.toString().equals(deviceType)){
                     factory = pushButtonFactory;
-                } else if (TypeCode.IC002.toString().equals(deviceType)){
+                } else if (TypeCode.C002.toString().equals(deviceType)){
 					factory = powerSwitchFactory;
-				} else if (TypeCode.IC003.toString().equals(deviceType)){
+				} else if (TypeCode.C003.toString().equals(deviceType)){
                     factory = motionSensorFactory;
                 } else {
 					// device type not supported

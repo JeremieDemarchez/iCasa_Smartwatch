@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  */
 public enum TypeCode {
 
-	IC001("PUSH_BUTTON"), IC002("POWER_SWITCH"), IC003("MOTION_SENSOR"), IC004("PRESENCE_SENSOR"), IA001("BINARY_LIGHT");
+	C001("PUSH_BUTTON"), C002("POWER_SWITCH"), C003("MOTION_SENSOR"), C004("PRESENCE_SENSOR"), A001("BINARY_LIGHT");
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(TypeCode.class);
@@ -42,16 +42,16 @@ public enum TypeCode {
 
 	public static TypeCode getTypeCodeByFriendlyName(String friendlyName) {
 
-		if (IC001.friendlyName.equals(friendlyName)) {
-			return TypeCode.IC001;
-		} else if (IC002.friendlyName.equals(friendlyName)) {
-            return TypeCode.IC002;
-        } else if (IC003.friendlyName.equals(friendlyName)) {
-            return TypeCode.IC003;
-        }else if (IC004.friendlyName.equals(friendlyName)) {
-            return TypeCode.IC004;
-        }else if (IA001.friendlyName.equals(friendlyName)) {
-			return TypeCode.IA001;
+		if (C001.friendlyName.equals(friendlyName)) {
+			return TypeCode.C001;
+		} else if (C002.friendlyName.equals(friendlyName)) {
+            return TypeCode.C002;
+        } else if (C003.friendlyName.equals(friendlyName)) {
+            return TypeCode.C003;
+        }else if (C004.friendlyName.equals(friendlyName)) {
+            return TypeCode.C004;
+        }else if (A001.friendlyName.equals(friendlyName)) {
+			return TypeCode.A001;
         }else {
 			logger.error("unknown device type friendly name : " + friendlyName);
 			return null;
@@ -60,16 +60,16 @@ public enum TypeCode {
 	
 	public String toString() {
 		switch (this) {
-		case IC001 :
-			return "IC001";
-        case IC002:
-            return "IC002";
-		case IC003 :
-			return "IC003";
-        case IC004 :
-            return "IC004";
-		case IA001 :
-			return "IA001";
+		case C001 :
+			return "C001";
+        case C002:
+            return "C002";
+		case C003 :
+			return "C003";
+        case C004 :
+            return "C004";
+		case A001 :
+			return "A001";
 		default :
 			return null;
 		}
