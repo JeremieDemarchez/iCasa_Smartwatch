@@ -54,6 +54,21 @@
             <artifactId>device.push.button</artifactId>
             <version>${iCasaSimulatorVersion}</version>
         </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>device.presence</artifactId>
+            <version>${iCasaPlatformVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>device.light</artifactId>
+            <version>${iCasaPlatformVersion}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>device.motion</artifactId>
+            <version>${iCasaPlatformVersion}</version>
+        </dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo</artifactId>

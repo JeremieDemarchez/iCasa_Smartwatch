@@ -21,12 +21,16 @@ import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.button.simulated.SimulatedPushButton;
+import fr.liglab.adele.icasa.device.light.Photometer;
+import fr.liglab.adele.icasa.device.motion.MotionSensor;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
@@ -134,50 +138,137 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void validMeasureWithPushButtonTest(){
-		// instrument a cilia helper class
-		CiliaHelper helper = new CiliaHelper(context);
-		Assert.assertEquals(true, helper.waitToChain("generator-mesures", 5000));
-        //wait to transformer component.
-        if(!helper.waitToComponent("generator-mesures", "transformer", 10000)){
-            Assert.fail("Unable to retrieve transformer component after 10sec");
-        }
+        String expectedCiliaComponent = "push-button-adapter";
+        String existentCiliaComponent = "transformer";
+        String deviceId = "simulatedDevice";
+        String chainId = "generator-mesures";
+        String deviceType = "iCasa.PushButton";
 
-		MediatorTestHelper transformer = helper.instrumentMediatorInstance("generator-mesures", "transformer", new String[]{"in"}, new String[]{"out"});
-		Assert.assertNotNull(transformer);
-
-        LocatedDevice device = createPushButton("pushButton-2");
-        SimulatedPushButton button = (SimulatedPushButton) device.getDeviceObject();
-        //it will trigger the dp installation.
-
-        //wait for the push-button-adapter.
-        if(!helper.waitToComponent("generator-mesures", "push-button-adapter", 10000)){//It will download the dp and install it.
-            Assert.fail("Unable to retrieve push-button-adapter component after 10sec");
-        }
-        if(!helper.checkValidState("generator-mesures", "push-button-adapter", 10000)){//It will download the dp and install it.
-            Assert.fail("Unable to retrieve push-button-adapter as a valid component after 10sec");
-        }
-		Set<String> devices = icasa.getDeviceIds();
-    	Assert.assertEquals(1, devices.size());//only the push button.
-
-        button.pushAndRelease();
-
-		CiliaHelper.checkReceived(transformer,1,5000);
-		Assert.assertTrue(transformer.getAmountData()>0);
-		Data lastData = transformer.getLastData();
-		assertThat(lastData.getContent(), instanceOf(Measure.class));
-		
-		Measure measure = (Measure) lastData.getContent();
-		assertThat(devices, hasItem(measure.getDeviceId()));
-		assertThat(true, equalTo(measure.getReliability() >  (float)50));
+        testAutonomicAdapterCreation(deviceType,deviceId, chainId, existentCiliaComponent, expectedCiliaComponent, new DeviceActivitySimulator() {
+            public void executeActivity(LocatedDevice device) {
+                SimulatedPushButton actuator = (SimulatedPushButton)device.getDeviceObject();
+                actuator.pushAndRelease();
+            }
+        });
 
 	}
 
+    /**
+     * Test the reception of a valid measure.
+     */
+    @Test
+    public void validMeasureWithPhotometer(){
+        String expectedCiliaComponent = "photometer-collector";
+        String existentCiliaComponent = "transformer";
+        String deviceId = "simulatedDevice";
+        String chainId = "generator-mesures";
+        String deviceType = "iCasa.Photometer";
+
+        testAutonomicAdapterCreation(deviceType,deviceId, chainId, existentCiliaComponent, expectedCiliaComponent, new DeviceActivitySimulator() {
+            public void executeActivity(LocatedDevice device) {
+                Photometer actuator = (Photometer)device.getDeviceObject();
+                actuator.setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, 10f);
+            }
+        });
+
+    }
+
+    @Test
+    public void validMeasureWithPresenceSensorTest(){
+        String expectedCiliaComponent = "presence-collector";
+        String existentCiliaComponent = "transformer";
+        String deviceId = "simulatedDevice";
+        String chainId = "generator-mesures";
+        String deviceType = "iCasa.PresenceSensor";
+
+        testAutonomicAdapterCreation(deviceType,deviceId, chainId, existentCiliaComponent, expectedCiliaComponent, new DeviceActivitySimulator() {
+            public void executeActivity(LocatedDevice device) {
+                PresenceSensor sensor = (PresenceSensor)device.getDeviceObject();
+                sensor.setPropertyValue(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE, Boolean.TRUE);
+            }
+        });
+
+    }
+
+    @Test
+    public void validMeasureWithMotionSensorTest(){
+        String expectedCiliaComponent = "motion-sensor-collector";
+        String existentCiliaComponent = "transformer";
+        String deviceId = "simulatedDevice";
+        String chainId = "generator-mesures";
+        String deviceType = "iCasa.MotionSensor";
+
+        testAutonomicAdapterCreation(deviceType,deviceId, chainId, existentCiliaComponent, expectedCiliaComponent, new DeviceActivitySimulator() {
+            public void executeActivity(LocatedDevice device) {
+                MotionSensor sensor = (MotionSensor)device.getDeviceObject();
+                String zone = "zoneId";
+                String person = "Jhon";
+                //simulate a person has moved into zone.
+                simulationManager.createZone(zone, 100,100,100,100,100,100);
+                simulationManager.addPerson(person, "Father");
+                simulationManager.moveDeviceIntoZone(device.getSerialNumber(),zone);
+                simulationManager.setPersonZone(person, zone);
+            }
+        });
+
+    }
+
+    private void testAutonomicAdapterCreation(String deviceType, String deviceId, String chainId, String existantCiliaComponent, String expectedCiliaComponent, DeviceActivitySimulator activity){
+        CiliaHelper helper = new CiliaHelper(context);
+
+        //wait to chain
+        Assert.assertEquals(true, helper.waitToChain(chainId, 5000));
+
+        //wait to transformer component.
+        if(!helper.waitToComponent(chainId, existantCiliaComponent, 10000)){
+            Assert.fail("Unable to retrieve transformer component after 10sec");
+        }
+        //instrument transformer.
+        MediatorTestHelper transformer = helper.instrumentMediatorInstance(chainId, existantCiliaComponent, new String[]{"in"}, new String[]{"out"});
+        Assert.assertNotNull(transformer);
+
+        //it will trigger the dp installation.
+        LocatedDevice device = createDevice(deviceType, deviceId);
 
 
-    private LocatedDevice createPushButton(String id){
-        LocatedDevice device = simulationManager.createDevice("iCasa.PushButton", id, new Hashtable());
+        //wait for the adapter in a valid state.
+        if(!helper.waitToComponent(chainId, expectedCiliaComponent, 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve "+expectedCiliaComponent+" component after 10sec");
+        }
+        if(!helper.checkValidState(chainId, expectedCiliaComponent, 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve "+ expectedCiliaComponent +" as a valid component after 10sec");
+        }
+
+        Set<String> devices = icasa.getDeviceIds();
+        Assert.assertEquals(1, devices.size());//only one device.
+
+        //simulate device activity
+        activity.executeActivity(device);
+
+        //at least one message
+        CiliaHelper.checkReceived(transformer,1,5000);
+        Assert.assertTrue(transformer.getAmountData()>0);
+
+        //Get the last message
+        Data lastData = transformer.getLastData();
+        assertThat(lastData.getContent(), instanceOf(Measure.class));
+
+        //test value of last message.
+        Measure measure = (Measure) lastData.getContent();
+        assertThat(devices, hasItem(measure.getDeviceId()));
+        assertThat(true, equalTo(measure.getReliability() >  (float)50));
+
+        helper.dispose();
+        simulationManager.removeAllDevices();
+    }
+
+    private LocatedDevice createDevice(String type, String id){
+        LocatedDevice device = simulationManager.createDevice(type, id, new Hashtable());
         return device;
     }
 
+    private interface DeviceActivitySimulator {
+        void executeActivity(LocatedDevice device);
+    }
 
 }
