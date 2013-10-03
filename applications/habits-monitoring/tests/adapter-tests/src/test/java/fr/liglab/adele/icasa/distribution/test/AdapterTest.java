@@ -64,8 +64,6 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 	@Inject
 	public SimulationManager simulationManager;
 
-	@Inject
-	public ContextManager icasa;
 
 
 	@Before
@@ -206,6 +204,7 @@ public class AdapterTest extends AbstractDistributionBaseTest {
                 //simulate a person has moved into zone.
                 simulationManager.createZone(zone, 100,100,100,100,100,100);
                 simulationManager.addPerson(person, "Father");
+                //move device into created zone.
                 simulationManager.moveDeviceIntoZone(device.getSerialNumber(),zone);
                 simulationManager.setPersonZone(person, zone);
             }
@@ -229,18 +228,16 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
         //it will trigger the dp installation.
         LocatedDevice device = createDevice(deviceType, deviceId);
-
+        Set<String> devices = simulationManager.getDeviceIds();
 
         //wait for the adapter in a valid state.
-        if(!helper.waitToComponent(chainId, expectedCiliaComponent, 10000)){//It will download the dp and install it.
+        if(!helper.waitToComponent(chainId, expectedCiliaComponent, 10000)){//It will wait the.created component by the dp.
             Assert.fail("Unable to retrieve "+expectedCiliaComponent+" component after 10sec");
         }
-        if(!helper.checkValidState(chainId, expectedCiliaComponent, 10000)){//It will download the dp and install it.
+
+        if(!helper.checkValidState(chainId, expectedCiliaComponent, 10000)){//It will wait the created component until is valid (max 10sec).
             Assert.fail("Unable to retrieve "+ expectedCiliaComponent +" as a valid component after 10sec");
         }
-
-        Set<String> devices = icasa.getDeviceIds();
-        Assert.assertEquals(1, devices.size());//only one device.
 
         //simulate device activity
         activity.executeActivity(device);
@@ -257,7 +254,7 @@ public class AdapterTest extends AbstractDistributionBaseTest {
         Measure measure = (Measure) lastData.getContent();
         assertThat(devices, hasItem(measure.getDeviceId()));
         assertThat(true, equalTo(measure.getReliability() >  (float)50));
-
+        //dispose chain and simulated devices
         helper.dispose();
         simulationManager.removeAllDevices();
     }
