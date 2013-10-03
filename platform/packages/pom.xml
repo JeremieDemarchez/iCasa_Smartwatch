@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>platform.parent</artifactId>
-      <version>1.1.2-SNAPSHOT</version>
+      <version>1.2.1-SNAPSHOT</version>
       <relativePath>../../parent</relativePath>
 	</parent>
 
@@ -50,6 +50,7 @@
             <modules>
                 <module>icasa-platform-dp</module>
                 <module>icasa-device-handler-dp</module>
+                <module>zigbee-core-dp</module>
             </modules>
         </profile>
     </profiles>

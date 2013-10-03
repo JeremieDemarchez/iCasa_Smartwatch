@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>platform.parent</artifactId>
-      <version>1.1.2-SNAPSHOT</version>
+      <version>1.2.1-SNAPSHOT</version>
       <relativePath>../../../parent</relativePath>
 	</parent>
 
@@ -43,8 +43,6 @@
         <profile>
             <id>release</id>
             <modules>
-                <module>usb-discovery-rose</module>
-                <module>rfid-reader</module>
                 <module>usb-rfid-reader-importer</module>
             </modules>
         </profile>
