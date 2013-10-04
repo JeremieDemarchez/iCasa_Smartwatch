@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-Copyright 2010-2011 Universit� Joseph Fourier
+Copyright 2010-2011 Université Joseph Fourier
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -27,10 +27,10 @@ limitations under the License.
          </parent>
          
          <!-- Project coordinates -->
-         <artifactId>habits.monitoring.distribution.box.paul</artifactId>
+         <artifactId>habits.monitoring.mocked.distribution</artifactId>
          <packaging>osgi-distribution</packaging>
          <!-- Project description -->
-         <name>${productName} :: Habits Monitoring :: Distribution :: Box Paul</name>
+         <name>${productName} :: Habits Monitoring :: Distribution :: Mocked</name>
          
          <properties>
             <productName>iCasa Apps</productName>
@@ -43,7 +43,6 @@ limitations under the License.
 				<artifactId>icasa.teaching.distribution</artifactId>
 				<type>osgi-distribution</type>
 			</dependency>
-
             <!-- deployed packages -->
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
@@ -59,16 +58,10 @@ limitations under the License.
             <!-- habits monitoring application -->
             <dependency>
                <groupId>${project.groupId}</groupId>
-               <artifactId>measure.generator.dp</artifactId>
+               <artifactId>measure.generator.mock.dp</artifactId>
                <type>deployment-package</type>
                <version>${project.version}</version>
             </dependency>
-<!--             <dependency> -->
-<!--                <groupId>${project.groupId}</groupId> -->
-<!--                <artifactId>presence.sensor.adapter.dp</artifactId> -->
-<!--                <type>deployment-package</type> -->
-<!--                <version>${project.version}</version> -->
-<!--             </dependency> -->
             <dependency>
                 <groupId>${project.groupId}</groupId>
                 <artifactId>db.adapter.fileinstall</artifactId>
@@ -81,9 +74,6 @@ limitations under the License.
                <plugin>
                   <groupId>fr.liglab.adele.common</groupId>
                   <artifactId>maven-osgi-distribution-plugin</artifactId>
-                   <configuration>
-                       <flattenDP>true</flattenDP>
-                   </configuration>
                </plugin>
             </plugins>
          </build>

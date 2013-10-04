@@ -27,10 +27,10 @@ limitations under the License.
          </parent>
          
          <!-- Project coordinates -->
-         <artifactId>habits.monitoring.distribution.box.paul.autonomic</artifactId>
+         <artifactId>habits.monitoring.distribution.to.test</artifactId>
          <packaging>osgi-distribution</packaging>
          <!-- Project description -->
-         <name>${productName} :: Habits Monitoring :: Distribution test :: Box Paul</name>
+         <name>${productName} :: Habits Monitoring :: Distribution test</name>
          
          <properties>
             <productName>iCasa Apps</productName>
@@ -40,8 +40,8 @@ limitations under the License.
          <dependencies>
             <dependency>
 				<groupId>fr.liglab.adele.icasa.apps</groupId>
-				<artifactId>habits.monitoring.distribution.box.paul</artifactId>
-                <version>${project.version}</version>
+            <artifactId>habits.monitoring.mocked.distribution</artifactId>
+            <version>${project.version}</version>
 				<type>osgi-distribution</type>
 			</dependency>
 

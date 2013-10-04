@@ -36,11 +36,11 @@
 						<headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
-                        <value>light.follow.me.with.motion.sensor</value>
+                                <value>light.follow.me.with.motion.sensor</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Name</name>
-								<value>Light Follow Me App With Motion Sensor and Push Button</value>
+								<value>Light Follow Me App With Motion Sensor</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Version</name>
