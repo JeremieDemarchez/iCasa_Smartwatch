@@ -1085,13 +1085,13 @@ define(['jquery',
 
             @imgName = ko.computed(() =>
                 imgName = "unknown"
-                if @name() == "dimmer.light.follow.me"
+                if @id() == "dimmer.light.follow.me"
                     imgName = "follow1"
-                if @name() ==  "test.light.follow.me"
+                if @id() ==  "test.light.follow.me"
                     imgName = "follow1"
-                if @name() ==  "light.follow.me.with.motion.sensor"
+                if @id() ==  "light.follow.me.with.motion.sensor"
                     imgName = "follow1"
-                if @name() ==  "actimetrics"
+                if @id() ==  "actimetrics"
                     imgName = "actimetrics"                      
                 return imgName;
             );
