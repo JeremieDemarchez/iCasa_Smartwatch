@@ -19,6 +19,16 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
     </parent>
     <artifactId>applications-root-reactor</artifactId>
     <packaging>pom</packaging>
+
+    <properties>
+        <site.path>snapshot</site.path>
+        <!-- TODO add property to get current snapshot version qualifier -->
+        <github.global.server>github</github.global.server>
+        <!-- Site Title -->
+        <title>iCasa Apps</title>
+        <lastStableSnapshotVersionQualifier>TODO</lastStableSnapshotVersionQualifier>
+    </properties>
+
     <profiles>
        <profile>
           <id>release</id>
@@ -39,6 +49,108 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
           </modules>
        </profile>
     </profiles>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>2.9</version>
+                <configuration>
+                    <!-- Default configuration for all reports -->
+
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>aggregate</id>
+                        <goals>
+                            <goal>aggregate</goal>
+                        </goals>
+                        <phase>site</phase>
+                        <configuration>
+                            <!-- Specific configuration for the aggregate report -->
+
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+
+            <!-- Plugin used to generate website -->
+            <plugin>
+                <artifactId>maven-site-plugin</artifactId>
+                <version>3.0</version>
+                <configuration>
+                    <skipDeploy>true</skipDeploy>
+                    <reportPlugins>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-project-info-reports-plugin</artifactId>
+                            <version>2.4</version>
+                            <configuration>
+                                <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                                <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.nanoko.coffee-mill</groupId>
+                            <artifactId>coffee-mill-maven-plugin</artifactId>
+                            <version>1.0.0</version>
+                            <configuration>
+                                <jsdocIncludePrivate>true</jsdocIncludePrivate>
+                                <skipJSDOC>true</skipJSDOC>
+                            </configuration>
+                        </plugin>
+                        <plugin>
+                            <groupId>org.apache.maven.plugins</groupId>
+                            <artifactId>maven-surefire-report-plugin</artifactId>
+                            <version>2.5</version>
+                        </plugin>
+                    </reportPlugins>
+                </configuration>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.kohsuke</groupId>
+                        <artifactId>doxia-module-markdown</artifactId>
+                        <version>1.0</version>
+                    </dependency>
+                </dependencies>
+            </plugin>
+
+            <plugin>
+                <!-- Deploy the web site -->
+                <groupId>com.github.github</groupId>
+                <artifactId>site-maven-plugin</artifactId>
+                <version>0.8</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>site</goal>
+                        </goals>
+                        <phase>site-deploy</phase>
+                        <configuration>
+                            <!-- configure the repository -->
+                            <repositoryName>iCasa-Apps</repositoryName>
+                            <repositoryOwner>AdeleResearchGroup</repositoryOwner>
+                            <!-- end repository configuration -->
+
+                            <message>Building site for ${project.version}</message>
+                            <path>${site.path}</path>
+
+                            <merge>true</merge>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 
     <scm>
         <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</connection>
