@@ -38,6 +38,13 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
           </modules>
        </profile>
        <profile>
+          <id>site</id>
+          <modules>
+             <module>parent</module>
+             <module>applications</module>
+          </modules>
+       </profile>
+       <profile>
           <id>all</id>
           <activation>
              <activeByDefault>true</activeByDefault>
