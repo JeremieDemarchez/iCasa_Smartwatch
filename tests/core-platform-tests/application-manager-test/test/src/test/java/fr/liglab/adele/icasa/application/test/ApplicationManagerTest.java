@@ -142,7 +142,7 @@ public class ApplicationManagerTest {
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 	
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-2"));
-		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getName());
+		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getId());
 
 		Assert.assertNull(manager.getApplicationOfBundle("test-bundle-3"));
 
@@ -169,7 +169,7 @@ public class ApplicationManagerTest {
 		
 		
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-3"));
-		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-3").getName());
+		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-3").getId());
 
 		Assert.assertEquals(manager.getApplicationOfBundle("test-bundle-2"), manager.getApplicationOfBundle("test-bundle-3"));
 
@@ -217,7 +217,7 @@ public class ApplicationManagerTest {
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-2"));
-		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getName());
+		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getId());
 
 		Assert.assertNull(manager.getApplicationOfBundle("test-bundle-3"));
 
@@ -255,7 +255,7 @@ public class ApplicationManagerTest {
 		TestUtils.testConditionWithTimeout(new ApplicationNumberCondition(1));
 
 		Assert.assertNotNull(manager.getApplicationOfBundle("test-bundle-2"));
-		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getName());
+		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-2").getId());
 
 		Assert.assertNull(manager.getApplicationOfBundle("test-bundle-3"));
 

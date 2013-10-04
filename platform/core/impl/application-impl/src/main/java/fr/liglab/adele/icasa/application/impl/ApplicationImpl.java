@@ -60,19 +60,19 @@ public class ApplicationImpl extends EntityImpl implements Application, ServiceT
 
     private Map<String, DeploymentPackageRepresentation> deploymentPackageRepresentations;
 
-    public ApplicationImpl(String id, String vendor, ApplicationCategory category, ApplicationManagerImpl appMgr,
+    public ApplicationImpl(String id, String vendor, String name, ApplicationCategory category, ApplicationManagerImpl appMgr,
             BundleContext context) {
-        this(id, vendor, category, ApplicationState.STOPED, appMgr, context);
+        this(id, vendor, name, category, ApplicationState.STOPED, appMgr, context);
     }
 
-    public ApplicationImpl(String id, String vendor, ApplicationCategory category, ApplicationState state,
+    public ApplicationImpl(String id, String vendor, String name, ApplicationCategory category, ApplicationState state,
             ApplicationManagerImpl appMgr, BundleContext context) {
         super(id);
         _context = context;
         StateVariable vendorVar = new StateVariableImpl(VENDOR_PROP_NAME, vendor, String.class,
                 VariableType.HUMAN_READABLE_DESCRIPTION, "Entity identifier", false, true, this);
         addStateVariable(vendorVar);
-        StateVariable nameVar = new StateVariableImpl(NAME_PROP_NAME, id, String.class,
+        StateVariable nameVar = new StateVariableImpl(NAME_PROP_NAME, name, String.class,
                 VariableType.HUMAN_READABLE_DESCRIPTION, "Name", false, true, this);
         addStateVariable(nameVar);
         StateVariable stateVar = new StateVariableImpl(ACTIVATION_STATE_PROP_NAME, state, ApplicationState.class,

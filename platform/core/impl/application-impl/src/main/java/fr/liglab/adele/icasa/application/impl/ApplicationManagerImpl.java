@@ -295,7 +295,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
         if (appId == null) // not an application deployment package
             return;
 
-        // String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER);
+        String appName = (String) deploymentPackage.getHeader(Application.APP_NAME_BUNDLE_HEADER);
         String appVersion = (String) deploymentPackage.getHeader(Application.APP_VERSION_BUNDLE_HEADER);
         if (appVersion == null) { // version is mandatory
             // ignore if version is not provided
@@ -310,7 +310,7 @@ public class ApplicationManagerImpl implements ApplicationManager, EventHandler 
 
         if (isNewApp) {
             logger.debug("New application detected: " + appId);
-            app = new ApplicationImpl(appId, null, _undefinedCateg, this, _context);
+            app = new ApplicationImpl(appId, null, appName, _undefinedCateg, this, _context);
             app.setVersion(appVersion);
             app.setState(ApplicationState.STOPED);
         }
