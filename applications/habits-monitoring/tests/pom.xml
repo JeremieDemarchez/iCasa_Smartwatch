@@ -29,9 +29,8 @@
     <name>${productName} :: ${projectName}</name>
 
     <modules>
-       <module>paul-distribution-to-test</module>
-        <module>paul-distribution-test</module>
-        <module>adapter-tests</module>
+       <module>distribution-to-test</module>
+       <module>adapter-tests</module>
     </modules>
     <build>
         <plugins>

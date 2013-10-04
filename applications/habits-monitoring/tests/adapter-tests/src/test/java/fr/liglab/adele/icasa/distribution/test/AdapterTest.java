@@ -27,6 +27,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
@@ -43,6 +44,7 @@ import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 
 import javax.inject.Inject;
+import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
 import java.util.Set;
@@ -51,6 +53,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.core.IsInstanceOf.instanceOf;
 import static org.junit.Assert.assertThat;
 import static org.junit.matchers.JUnitMatchers.hasItem;
+import static org.mockito.Mockito.mock;
 import static org.ops4j.pax.exam.CoreOptions.*;
 
 
@@ -64,7 +67,8 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 	@Inject
 	public SimulationManager simulationManager;
 
-
+    @Inject
+    public ScriptExecutor scriptExecutor;
 
 	@Before
 	public void setUp() {
@@ -210,6 +214,56 @@ public class AdapterTest extends AbstractDistributionBaseTest {
             }
         });
 
+    }
+
+    @Test
+    public void validMeasureTestUsingScript(){
+
+        String firstScript = "demo_config.bhv";
+        String secondScript = "init_demo_oseo.bhv";
+
+        // instrument a cilia helper class
+        CiliaHelper helper = new CiliaHelper(context);
+        Assert.assertEquals(true, helper.waitToChain("generator-mesures", 5000));
+        MediatorTestHelper transformer = helper.instrumentMediatorInstance("generator-mesures", "transformer", new String[]{"in"}, new String[]{"out"});
+        Assert.assertNotNull(transformer);
+
+        // init data : run scripts
+        ScriptExecutorListener listener = mock(ScriptExecutorListener.class);
+        scriptExecutor.addListener(listener);
+
+        // execute script for zones and devices
+        scriptExecutor.execute(firstScript);
+        if(!helper.waitToComponent("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve presence-collector component after 10sec");
+        }
+        if(!helper.checkValidState("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+            Assert.fail("Unable to retrieve presence-collector  as a valid component after 10sec");
+        }
+
+        Set<String> devices = simulationManager.getDeviceIds();
+        Set<String> zones = simulationManager.getZoneIds();
+        Assert.assertEquals(4, devices.size());
+        Assert.assertEquals(4, zones.size());
+
+        //verify(listener).scriptStopped(firstScript);
+        // execute second script to trigger events
+        scriptExecutor.execute(secondScript);
+
+        CiliaHelper.waitSomeTime(5000);
+        scriptExecutor.stop();
+        CiliaHelper.checkReceived(transformer,1,5000);
+        Assert.assertTrue(transformer.getAmountData()>0);
+        Data lastData = transformer.getLastData();
+        assertThat(lastData.getContent(), instanceOf(Measure.class));
+
+        Measure measure = (Measure) lastData.getContent();
+        Assert.assertEquals(measure.getLocalisation(), simulationManager.getPerson("Paul").getLocation());
+        assertThat(devices, hasItem(measure.getDeviceId()));
+        assertThat(true, equalTo(measure.getReliability() >  (float)50));
+        System.out.println("StartDate:" + new Date(scriptExecutor.getStartDate(secondScript)));
+        System.out.println("Measure Time:" + new Date(measure.getTimestamp()));
+        assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < (1000*scriptExecutor.getFactor(secondScript))));
     }
 
     private void testAutonomicAdapterCreation(String deviceType, String deviceId, String chainId, String existantCiliaComponent, String expectedCiliaComponent, DeviceActivitySimulator activity){
