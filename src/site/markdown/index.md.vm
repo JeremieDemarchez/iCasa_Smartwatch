@@ -24,9 +24,9 @@
 
 
 <ul>
-<li><strong>Technical Services:</strong> TODO.</li>
-<li><strong>Application Development Model:</strong> TODO.</li>
-<li><strong>Tools:</strong> TODO.</li>
+<li><strong>Technical Services:</strong> Scheduling Service, Preference Service. </li>
+<li><strong>Application Development Model:</strong>  Encouraging the separation of concerns</li>
+<li><strong>Tools:</strong> iCasa Shell to inspect the context (device, zones, ...)</li>
 </ul>
 
 <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
