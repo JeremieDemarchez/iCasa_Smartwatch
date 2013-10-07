@@ -50,5 +50,8 @@
 	<move-device-zone deviceId="BiLi-D7496W-S" zoneId="bathroom" />
 	
 	<create-person id="Paul" type="Grandfather" />
-	<create-person id="Marie" type="Girl" />
+    <move-person personId="Paul" newX="30" newY="30"/>
+    <create-person id="Marie" type="Girl" />
+    <move-person personId="Marie" newX="30" newY="90"/>
+
 </behavior>
