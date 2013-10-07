@@ -40,8 +40,9 @@
 
 	<dependency>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
-        <artifactId>dimmer.light.follow.me.application</artifactId>
+        <artifactId>dimmer.light.follow.me.application.dp</artifactId>
         <version>${project.version}</version>
+        <type>deployment-package</type>
 	</dependency>
 	
   </dependencies>

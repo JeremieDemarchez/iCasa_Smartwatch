@@ -41,8 +41,9 @@
 
 	<dependency>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
-        <artifactId>gas.alarm.sys.application</artifactId>
+        <artifactId>gas.alarm.sys.application.dp</artifactId>
         <version>${project.version}</version>
+        <type>deployment-package</type>
 	</dependency>
 	
   </dependencies>

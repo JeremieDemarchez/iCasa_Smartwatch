@@ -41,8 +41,9 @@
 
 	<dependency>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
-        <artifactId>binary.light.follow.me.application</artifactId>
+        <artifactId>binary.light.follow.me.application.dp</artifactId>
         <version>${project.version}</version>
+        <type>deployment-package</type>
 	</dependency>
 	
   </dependencies>
