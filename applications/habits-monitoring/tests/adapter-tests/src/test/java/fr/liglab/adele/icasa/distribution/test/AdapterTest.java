@@ -18,6 +18,8 @@ import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.helper.CiliaHelper;
 import fr.liglab.adele.cilia.helper.MediatorTestHelper;
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+import fr.liglab.adele.commons.test.utils.Condition;
+import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.button.simulated.SimulatedPushButton;
@@ -241,10 +243,10 @@ public class AdapterTest extends AbstractDistributionBaseTest {
             Assert.fail("Unable to retrieve presence-collector  as a valid component after 10sec");
         }
 
+        TestUtils.testConditionWithTimeout(new DeviceNumberCondition(4), 10000, 50);
+        TestUtils.testConditionWithTimeout(new ZoneNumberCondition(4), 10000, 50);
         Set<String> devices = simulationManager.getDeviceIds();
         Set<String> zones = simulationManager.getZoneIds();
-        Assert.assertEquals(4, devices.size());
-        Assert.assertEquals(4, zones.size());
 
         //verify(listener).scriptStopped(firstScript);
         // execute second script to trigger events
@@ -320,6 +322,38 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
     private interface DeviceActivitySimulator {
         void executeActivity(LocatedDevice device);
+    }
+
+    class DeviceNumberCondition implements Condition {
+        private int m_number;
+
+        public DeviceNumberCondition(int number) {
+            m_number = number;
+        }
+
+        public boolean isChecked() {
+            return (simulationManager.getDeviceIds().size() >= m_number);
+        }
+
+        public String getDescription() {
+            return "Expected " + m_number + " devices in Simulation manager";
+        }
+    }
+
+    class ZoneNumberCondition implements Condition {
+        private int m_number;
+
+        public ZoneNumberCondition(int number) {
+            m_number = number;
+        }
+
+        public boolean isChecked() {
+            return (simulationManager.getZoneIds().size() >= m_number);
+        }
+
+        public String getDescription() {
+            return "Expected " + m_number + " zones in Simulation manager";
+        }
     }
 
 }
