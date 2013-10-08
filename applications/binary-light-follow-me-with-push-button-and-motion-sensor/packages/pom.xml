@@ -27,7 +27,6 @@
 			<plugin>
 				<groupId>de.akquinet.gomobile</groupId>
 				<artifactId>maven-dp-plugin</artifactId>
-				<version>1.0.2-SNAPSHOT</version>
 				<extensions>true</extensions>
 				<configuration>
 					<writeExtraData>true</writeExtraData>
