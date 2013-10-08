@@ -14,7 +14,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
     <parent>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
         <artifactId>parent</artifactId>
-        <version>1.1.2-SNAPSHOT</version>
+        <version>1.2.1</version>
         <relativePath>parent</relativePath>
     </parent>
     <artifactId>applications-root-reactor</artifactId>
@@ -163,7 +163,7 @@ OR CONDITIONS OF ANY KIND, either express or implied. See the License for
         <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</connection>
         <url>https://github.com/AdeleResearchGroup/iCasa-Apps.git</url>
         <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Apps.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>iCasaApps-1.2.1</tag>
     </scm>
 </project>
       
