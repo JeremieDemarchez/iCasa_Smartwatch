@@ -24,7 +24,7 @@
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>simulator.root</artifactId>
+	<artifactId>icasa.reactor</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
