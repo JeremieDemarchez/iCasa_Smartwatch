@@ -5,7 +5,7 @@ Contains a set of ready-to-run iCasa applications and demonstrations.
 The home page of the project is <http://adeleresearchgroup.github.com/iCasa-Apps/>.
 The project websites are:
  * Development version <http://adeleresearchgroup.github.com/iCasa-Apps/snapshot/>
- * Last stable release version <http://adeleresearchgroup.github.com/iCasa-Apps/1.2.0/>
+ * Last stable release version <http://adeleresearchgroup.github.com/iCasa-Apps/1.2.1/>
 
 License
 =====
