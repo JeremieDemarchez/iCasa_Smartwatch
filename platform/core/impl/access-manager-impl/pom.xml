@@ -1,0 +1,68 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Project parent -->
+	<parent>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>platform.parent</artifactId>
+      <version>1.2.2-SNAPSHOT</version>
+      <relativePath>../../../../parent</relativePath>
+	</parent>
+
+	<!-- Project Description -->
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>access.manager.impl</artifactId>
+	<packaging>bundle</packaging>
+    <name>${productName} :: ${projectName}</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+            <artifactId>access.manager.api</artifactId>
+            <version>${project.version}</version>
+		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>context.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.kxml</groupId>
+            <artifactId>kxml2</artifactId>
+            <version>2.3.0</version>
+            <scope>compile</scope>
+        </dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+                <version>2.0.1</version>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Private-Package>fr.liglab.adele.icasa.access.impl, fr.liglab.adele.icasa.access.command, fr.liglab.adele.icasa.access.utils</Private-Package>
+                        <Embed-Dependency>kxml2</Embed-Dependency>
+                    </instructions>
+				</configuration>
+			</plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>ipojo-bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+		</plugins>
+	</build>
+
+</project>

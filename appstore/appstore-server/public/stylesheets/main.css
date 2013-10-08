@@ -1,0 +1,41 @@
+body {
+	padding-top: 60px;
+	padding-bottom: 40px;
+}
+
+.sidebar-nav {
+	padding: 9px 0;
+}
+
+.center-table
+{
+  margin: 0 auto !important;
+  float: none !important;
+}
+
+.thumb-well {
+    width:266px;
+    height:266px;
+}
+
+.carrousel-img {
+    width:456px;
+    height:456px;
+}
+
+.grid-img {
+    width:160px;
+    height:160px;
+}
+
+.dropdown-menu
+{
+    padding: 15px;
+    padding-bottom: 0px;
+}
+
+.table tbody tr:hover td, .table tbody tr:hover th {
+    background-color: white;
+    cursor: pointer;
+}
+

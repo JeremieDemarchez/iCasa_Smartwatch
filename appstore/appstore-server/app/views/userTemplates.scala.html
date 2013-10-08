@@ -1,0 +1,88 @@
+
+<!-- TEMPLATES-->
+		<!-- The template for the modal window with three tabs: description/services/applications-->
+		<script type="text/html" id="modal-product-template" >
+	        <div data-bind="attr:{id: modalId}" class="modal hide fade" role="dialog" aria-labelledby="myModalLabelProductDescription" aria-hidden="true">
+	            <div class="modal-header">
+	                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+	                <h3 id="myModalLabelProductDescription" data-bind="text: name">@Messages("icasa.productDescription")</h3>
+	            </div>
+	            <div class="modal-body">
+	                <ul class="nav nav-tabs">
+	                    <li class="active"><a data-bind="attr:{href: modalTabDescriptionIdRef}" data-toggle="tab" >@Messages("icasa.description")</a></li>
+	                    <li><a data-bind="attr:{href: modalTabServicesIdRef}" data-toggle="tab">@Messages("icasa.services")</a></li>
+	                    <li><a data-bind="attr:{href: modalTabAppsIdRef}"data-toggle="tab">@Messages("icasa.applications")</a></li>
+	                </ul>
+	            </div>
+	            <div class="tab-content">
+	                <div class="tab-pane active" data-bind="template: { name: 'modal-description-template', data: $data}, attr:{id: modalTabDescriptionId}">...</div>
+	                <div class="tab-pane" data-bind="template: { name: 'modal-service-template', data: $data} , attr:{id: modalTabServicesId}">...</div>
+	                <div class="tab-pane" data-bind="template: { name: 'modal-application-template', data: $data} , attr:{id: modalTabAppsId}">...</div>
+	            </div>
+	            <div class="modal-footer">
+	                <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("icasa.close")</button>
+	                <button class="btn btn-primary" data-bind="buyModalButton: {}" data-dismiss="modal">@Messages("icasa.buy")</button>
+	            </div>
+	        </div>
+		</script>
+		<!--The template for the description tab in the modal window-->
+		<script type="text/html" id="modal-description-template">
+			<div class="well">
+				<h4>@Messages("icasa.categories"):<div data-bind="foreach: categories">
+						<span data-bind="text: '|' + name +'|'" >Generic</span>
+					</div>
+				</h4>
+				<h4>@Messages("icasa.description")</h4>
+				<span data-bind="text:'current version: ' + lastVersion.version">0.0.0</span>
+				
+				<p data-bind="text: description" ></p>
+			</div>
+		</script>
+
+		<!--The template for the applications tab in the modal window-->
+		<script type="text/html" id="modal-service-template">
+			<div class="well">
+				<h4>@Messages("icasa.services")</h4> <span data-bind="text: lastVersion.version">0.0.0</span>
+				<p data-bind="text: description" ></p>
+			</div>
+		</script>
+		<!--The template for the applications tab in the modal window-->
+		<script type="text/html" id="modal-application-template">
+			<div class="well">
+				<h4>@Messages("icasa.applications")</h4> <span data-bind="text: lastVersion.version">0.0.0</span>
+				<p data-bind="text: description" ></p>
+			</div>
+		</script>
+
+<!-- Add Device modal activated with the User menu-->
+<div id="addDeviceModal" class="modal hide fade" role="dialog" aria-labelledby="myModalLabelNewDevice" aria-hidden="true">
+    <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+        <h3 id="myModalLabelNewDevice" data-bind="text: name">@Messages("icasa.newDevice")</h3>
+    </div>
+    <div class="modal-body">
+        <form class="form-horizontal" onSubmit = "return addDevice()" >
+            <div class="control-group">
+                <label class="control-label" for="inputDeviceName">@Messages("icasa.name")</label>
+                <div class="controls">
+                    <input type="text" maxlength="20" id="inputDeviceName" placeholder="Name">
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label" for="inputDeviceURL">URL</label>
+                <div class="controls">
+                    <input type="text" id="inputDeviceURL" placeholder="URL">
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <button class="btn btn-success" >@Messages("icasa.add")</button>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("icasa.close")</button>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script src="@routes.Assets.at("javascripts/frameworks/require/require.js")" data-main="@routes.Assets.at("javascripts/usersPage")" > </script>
+

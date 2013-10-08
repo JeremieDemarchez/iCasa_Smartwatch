@@ -1,0 +1,14 @@
+@(productForm: Form[models.values.Product])
+@import helper._ 
+
+@main{@adminMenu.render} {
+		<form class="input" data-bind="submit: saveModel">
+			<p>Id<input type="text" data-bind="value: id"></p>
+			<p>Name<input type="text" data-bind="value: name"></p>
+			<p>Description<input type="text" data-bind="value: description"></p>
+			<button type="Submit">Create</button>
+		</form>
+} {
+{@adminTemplates.render}
+}
+

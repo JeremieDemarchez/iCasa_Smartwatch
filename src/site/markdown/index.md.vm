@@ -1,0 +1,47 @@
+<div class="row-fluid page-header">
+    <div class="title span10">
+        <h1 style="text-align: center;">iCasa Platform</h1>
+        <p style="text-align: center;" class="lead">Digital Home Execution Platform</p>
+        <!--p>
+            <span class="span4">&nbsp;</span>
+            <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Execution Platform</a>
+            <span class="span4">&nbsp;</span>
+        </p-->
+    </div>
+</div>
+
+<div class="span11 well">
+    <div class="span4">
+        <img src="index/map.png" alt="iCasa Platform Main Interface" />
+    </div>
+
+    <div class="span6">
+        <h1>&nbsp; iCasa Platform</h1>
+        <p>ICasa Platform is an execution platform on top of OSGi for digital home applications. It has been developed in the context of the Medical project by the ADELE Research Group and the Orange Labs. </p>
+
+<p>Specifically, iCASA-Platform provides:</p>
+
+
+<ul>
+<li><strong>Technical Services:</strong> Scheduling Service, Preference Service. </li>
+<li><strong>Application Development Model:</strong>  Encouraging the separation of concerns</li>
+<li><strong>Tools:</strong> iCasa Shell to inspect the context (device, zones, ...)</li>
+</ul>
+
+<a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+    </div>
+</div>
+
+
+<div class="span11 page-header">
+    <h1>License</h1>
+    iCasa Platform is licensed under Apache V2 <a href="license.html">license</a>. This project is maintained by
+    <a href="http://www-adele.imag.fr/">LIG ADELE Research Group</a>.
+</div>
+
+<div class="span11 page-header">
+    <h2>Powered By</h2>
+    <a href="http://www.cloudbees.com/"> <img alt="Cloudbees" src="cloudbees.png" />  </a>
+</div>

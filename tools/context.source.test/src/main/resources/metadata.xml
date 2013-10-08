@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research
+      Group Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<ipojo xmlns="org.apache.felix.ipojo">
+
+
+<!-- 
+  <instance component="FakeDeviceComponent" name="FakeDeviceComponent-1">
+    <property name="device.serialNumber" value="1234-kitchen" />
+    <property name="location" value="kitchen" />
+  </instance>
+
+  <instance component="FakeDeviceComponent" name="FakeDeviceComponent-2">
+    <property name="device.serialNumber" value="1234-bathroom" />
+    <property name="location" value="bathroom" />
+  </instance>
+
+  <instance component="FakeDeviceComponent" name="FakeDeviceComponent-3">
+    <property name="device.serialNumber" value="1234-livingroom" />
+    <property name="location" value="livingroom" />
+  </instance>
+
+  <instance component="FakeDeviceComponent" name="FakeDeviceComponent-4">
+    <property name="device.serialNumber" value="1234-bedroom" />
+    <property name="location" value="bedroom" />
+  </instance>
+ -->
+
+
+  <instance name="ConsumerFakeDevice-1" component="ConsumerFakeDevice">
+    <property name="requires.filters">
+      <property name="dev" value="(location=${person.paul.location})" />
+    </property>
+  </instance>
+
+  <instance name="ConsumerFakeDevice-2" component="ConsumerFakeDevice">
+    <property name="requires.filters">
+      <property name="dev" value="(location=kitchen)" />
+    </property>
+  </instance>
+  
+  <instance name="ConsumerFakeDevice-3" component="ConsumerFakeDevice">
+    <property name="requires.filters">
+      <property name="dev" value="(location=bathroom)" />
+    </property>
+  </instance>  
+
+  <!-- <instance component="ConsumerFakeDevice" name="ConsumerFakeDevice-0" /> -->
+
+</ipojo>

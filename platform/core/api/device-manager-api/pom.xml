@@ -1,0 +1,57 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+	<!-- Project parent -->
+	<parent>
+		<groupId>fr.liglab.adele.icasa</groupId>
+		<artifactId>platform.parent</artifactId>
+      <version>1.2.2-SNAPSHOT</version>
+      <relativePath>../../../../parent</relativePath>
+	</parent>
+
+	<!-- Project Description -->
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>device.manager.api</artifactId>
+	<packaging>bundle</packaging>
+	<name>${productName} :: ${projectName}</name>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.compendium</artifactId>
+		</dependency>
+		<dependency>
+         <groupId>${project.groupId}</groupId>
+			<artifactId>application.api</artifactId>
+         <version>${project.version}</version>
+		</dependency>
+		<dependency>
+         <groupId>${project.groupId}</groupId>
+			<artifactId>common</artifactId>
+         <version>${project.version}</version>         
+		</dependency>
+		<dependency>
+			<groupId>org.osgi</groupId>
+			<artifactId>org.osgi.enterprise</artifactId>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.felix</groupId>
+				<artifactId>maven-bundle-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<instructions>
+						<Export-Package>fr.liglab.adele.icasa.device.manager</Export-Package>
+					</instructions>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

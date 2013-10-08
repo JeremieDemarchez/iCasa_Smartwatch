@@ -1,0 +1,40 @@
+   <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+      <modelVersion>4.0.0</modelVersion>
+      <!-- Project parent -->
+      <parent>
+         <groupId>fr.liglab.adele.icasa</groupId>
+         <artifactId>platform.parent</artifactId>
+         <version>1.2.2-SNAPSHOT</version>
+         <relativePath>../../../../../parent</relativePath>
+      </parent>
+
+      <artifactId>upnp.android.photometer</artifactId>
+      <name>${productName} :: ${projectName}</name>
+      <packaging>apk</packaging>
+
+      
+      <dependencies>
+         <dependency>
+               <groupId>com.google.android</groupId>
+               <artifactId>android</artifactId>
+         </dependency>
+         <dependency>
+            <groupId>org.teleal.cling</groupId>
+            <artifactId>cling-support</artifactId>
+         </dependency>
+      </dependencies>
+      <build>
+         <!-- This should be just the artifact identifier, no version on the APK file,
+         because this is what IntelliJ will use by default.
+            -->
+               <finalName>${project.artifactId}</finalName>
+               <plugins>
+                  <plugin>
+                     <groupId>com.jayway.maven.plugins.android.generation2</groupId>
+                     <artifactId>android-maven-plugin</artifactId>
+                     <!-- configuration is in parent project-->
+                     </plugin>
+                  </plugins>
+               </build>
+      
+   </project>

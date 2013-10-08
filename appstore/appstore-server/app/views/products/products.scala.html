@@ -1,0 +1,12 @@
+@(products: List[models.values.Product]) 
+@import helper._
+
+@main{@adminMenu.render} {
+	<h1>@products.size() Products (s)</h1>
+	<div id="product_list" data-bind="foreach: products">
+			<a class="span2" href="#" rel="popover"
+				data-bind="bsPopover:{title: name, content: description}, text: name" >Loading...</a>
+	</div>
+}{
+ <script src="@routes.Assets.at("javascripts/frameworks/require/require.js")" data-main="@routes.Assets.at("javascripts/showProducts")" > </script>
+ }

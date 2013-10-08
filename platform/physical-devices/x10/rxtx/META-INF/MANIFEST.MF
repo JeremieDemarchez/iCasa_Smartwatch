@@ -1,0 +1,44 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: org.rxtx
+Bundle-SymbolicName: org.rxtx
+Bundle-Version: 2.2.7
+Bundle-Vendor: rxtx.org
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-NativeCode: 
+ nativelib/Linux/arm/librxtxI2C.so; 
+ nativelib/Linux/arm/librxtxParallel.so; 
+ nativelib/Linux/arm/librxtxRS485.so;
+ nativelib/Linux/arm/librxtxRaw.so; 
+ nativelib/Linux/arm/librxtxSerial.so;
+ osname = Linux ;processor = armle; processor = armv4tl,
+ nativelib/Linux/i686-unknown-linux-gnu/librxtxParallel.so;
+ nativelib/Linux/i686-unknown-linux-gnu/librxtxSerial.so;
+ osname=Linux; processor=x86,
+ nativelib/Linux/x86_64/librxtxParallel.so;
+ nativelib/Linux/x86_64/librxtxSerial.so;
+ osname=Linux; processor=x86-64,
+ nativelib/Linux/x86_64/librxtxParallel.so;
+ nativelib/Linux/x86_64/librxtxSerial.so;
+ osname=Linux; processor=x86_64,
+ nativelib/Mac_OS_X/librxtxSerial.jnilib;
+ osname=Mac OS X; processor=x86; processor=PowerPC; processor=x86-64,
+ nativelib/Solaris/sparc-solaris/sparc32-sun-solaris2.8/librxtxSerial-2.1-7.so;
+ nativelib/Solaris/sparc-solaris/sparc32-sun-solaris2.8/librxtxSerial.so;
+ osname=Solaris; processor=Sparc,
+ nativelib/Solaris/sparc-solaris/sparc64-sun-solaris2.8/librxtxSerial-2.1-7.so;
+ nativelib/Solaris/sparc-solaris/sparc64-sun-solaris2.8/librxtxSerial.so;
+ osname=Solaris; processor=Sparc64,
+ nativelib/Windows/x64/rxtxParallel.dll;
+ nativelib/Windows/x64/rxtxSerial.dll;
+ osname = Windows Vista; osname = Windows 7; processor=x86_64,
+ nativelib/Windows/x64/rxtxParallel.dll;
+ nativelib/Windows/x64/rxtxSerial.dll;
+ osname = Windows Vista; osname = Windows 7; processor=x64,
+ nativelib/Windows/x86/rxtxParallel.dll;
+ nativelib/Windows/x86/rxtxSerial.dll;
+ osname = Win32; osname = Windows NT; osname = Windows 98; osname = Windows 95; osname = Windows 2000; osname = Windows XP; osname = Windows Vista; osname = Windows 7; processor=x86,
+ nativelib/Windows/x86/rxtxParallel.dll;
+ nativelib/Windows/x86/rxtxSerial.dll;
+ *
+Export-Package: gnu.io

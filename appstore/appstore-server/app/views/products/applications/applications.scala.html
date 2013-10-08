@@ -1,0 +1,15 @@
+@(applications: List[models.values.Application])
+@import helper._ 
+
+@main{@adminMenu.render} {
+    <h1>@applications.size() applications(s)</h1>
+	<ul>
+		@for(application <- applications) {
+		<li>
+			@application.name
+			@application.description 
+		</li>
+		}
+	</ul>
+    
+}   {@adminTemplates.render}

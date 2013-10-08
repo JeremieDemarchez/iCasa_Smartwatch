@@ -1,0 +1,17 @@
+@(serviceForm: Form[models.values.Service])
+@import helper._ 
+
+@main{@adminMenu.render} {
+   @form(routes.ServiceController.addService()) { 
+	
+		@inputText(serviceForm("id"))
+		
+		@inputText(serviceForm("name"))
+		
+		@inputText(serviceForm("description"))
+		
+		<input type="submit" value="Create">
+	
+	} 
+    
+} {@adminTemplates.render}

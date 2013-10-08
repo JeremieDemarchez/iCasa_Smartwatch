@@ -1,0 +1,94 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <!-- Project parent -->
+  <parent>
+     <groupId>fr.liglab.adele.icasa</groupId>
+     <artifactId>platform.parent</artifactId>
+     <version>1.2.2-SNAPSHOT</version>
+     <relativePath>../../parent</relativePath>
+  </parent>
+
+	<!-- Project Description -->
+	<modelVersion>4.0.0</modelVersion>
+	<artifactId>appstore-server</artifactId>
+	<packaging>play2</packaging>
+	<name>${productName} :: ${projectName}</name>
+	
+	<properties>
+		<play2.version>2.0.4</play2.version>
+	</properties>
+
+	<repositories>
+		<repository>
+		<id>typesafe</id>
+		<url>http://repo.typesafe.com/typesafe/releases/</url>
+		</repository>
+		<repository>
+			<id>jBCript</id>
+			<url>http://repo1.maven.org/maven2/org/</url>
+		</repository>
+      <repository>
+         <id>securesocial</id>
+         <url>http://repo1.maven.org/maven2/org/</url>
+      </repository>
+	</repositories>
+	<dependencies>
+<!--
+        Add your dependencies here (modules, libraries...).
+        Dependencies in the compile scope will be embedded within the application.
+        -->
+        <!-- Play Framework Dependencies -->
+        <dependency>
+           <groupId>securesocial</groupId>
+           <artifactId>securesocial_2.9.1</artifactId>
+           <version>2.0.8</version>
+        </dependency>
+		<dependency>
+			<groupId>play</groupId>
+			<artifactId>play_2.9.1</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>play</groupId>
+			<artifactId>play-test_2.9.1</artifactId>
+			<version>2.0</version>
+			<scope>provided</scope>
+		</dependency>
+	</dependencies>
+
+    <build>
+        <!-- Play source directory -->
+        <sourceDirectory>app</sourceDirectory>
+        <testSourceDirectory>test</testSourceDirectory>
+
+        <plugins>
+
+            <plugin>
+                <groupId>org.nanoko.playframework</groupId>
+                <artifactId>play2-maven-plugin</artifactId>
+                <extensions>true</extensions>
+				<configuration>
+                    <buildWar>false</buildWar>
+                    <play2Home>${user.home}/opt/play-${play2.version}</play2Home>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>play-installation</id>
+                        <goals>
+                            <goal>install-play</goal>
+                        </goals>
+                        <phase>pre-clean</phase>
+                        <configuration>
+                            <play2version>${play2.version}</play2version>
+                            <play2basedir>${user.home}/opt</play2basedir>
+                        </configuration>
+                    </execution>
+				</executions>
+            </plugin>
+
+        </plugins>
+
+    </build>
+
+</project>

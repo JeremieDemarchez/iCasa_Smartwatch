@@ -1,0 +1,207 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+
+  <!-- Project parent -->
+  <parent>
+    <groupId>fr.liglab.adele.icasa</groupId>
+    <artifactId>platform.parent</artifactId>
+    <version>1.2.2-SNAPSHOT</version>
+    <relativePath>../../../../parent</relativePath>
+  </parent>
+
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>application.manager.test</artifactId>
+  <name>Application Manager Test</name>
+
+
+  <properties>
+    <exam.version>3.0.0</exam.version>
+    <url.version>1.5.2</url.version>
+  </properties>
+
+
+  <dependencies>
+
+    <!-- Platform Bundles -->
+
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.eventadmin</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>de.akquinet.gomobile</groupId>
+      <artifactId>deployment-admin-impl</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.common</groupId>
+      <artifactId>base.distribution.test</artifactId>
+      <version>${DistributionTestVersion}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>common</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>application.api</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>application.impl</artifactId>
+      <version>${project.version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <exclusion>
+          <groupId>org.eclipse.osgi</groupId>
+          <artifactId>org.eclipse.osgi</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+
+    <!-- Deployment packages to test -->
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>follow-me-test-app-dp-1</artifactId>
+      <version>${project.version}</version>
+      <type>dp</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>gas-alarm-test-app-dp-1</artifactId>
+      <version>${project.version}</version>
+      <type>dp</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>gas-alarm-test-app-dp-2</artifactId>
+      <version>${project.version}</version>
+      <type>dp</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>control-test-app-dp-1</artifactId>
+      <version>${project.version}</version>
+      <type>dp</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>control-test-app-dp-2</artifactId>
+      <version>${project.version}</version>
+      <type>dp</type>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-container-native</artifactId>
+      <version>${exam.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-junit4</artifactId>
+      <version>${exam.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.exam</groupId>
+      <artifactId>pax-exam-link-mvn</artifactId>
+      <version>${exam.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.url</groupId>
+      <artifactId>pax-url-aether</artifactId>
+      <version>${url.version}</version>
+      <scope>test</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ops4j.pax.url</groupId>
+      <artifactId>pax-url-wrap</artifactId>
+      <version>${url.version}</version>
+    </dependency>
+
+
+
+
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-all</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+
+
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=128m</argLine>
+          <systemPropertyVariables>
+            <ipojo.processing.synchronous>true</ipojo.processing.synchronous>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <configuration>
+          <source>1.5</source>
+          <target>1.5</target>
+        </configuration>
+      </plugin>
+
+      <plugin>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>maven-paxexam-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-config</id>
+            <goals>
+              <goal>generate-depends-file</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>

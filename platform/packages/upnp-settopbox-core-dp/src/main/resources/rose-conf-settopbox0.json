@@ -1,0 +1,24 @@
+{
+	"machine" : {
+		"id" : "settopbox-devices-machine",
+		"host" : "localhost",
+		
+		"connection" : [
+			{ "in" : {"endpoint_filter" : "(service.imported.configs=upnp)" } }
+		], 
+		"component" : [
+			{ 
+			  "factory" : "UPnPPhotometerImporter",
+			  "properties" : {"factory.name"  : "UPnPPhotometerProxy"} 
+			} ,
+			{ 
+			  "factory" : "UPnPBinaryLightImporter",
+			  "properties" : {"factory.name"  : "UPnPBinaryLightProxy"} 
+			} ,
+			{ 
+			  "factory" : "UPnPRoseDiscovery",
+			  "properties" : { }
+			}			
+		]
+	}
+}

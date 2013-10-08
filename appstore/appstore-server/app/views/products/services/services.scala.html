@@ -1,0 +1,15 @@
+@(services: List[models.values.Service])
+@import helper._ 
+
+@main{@adminMenu.render} {
+    <h1>@services.size() service(s)</h1>
+	<ul>
+		@for(service <- services) {
+		<li>
+			@service.name 
+			@service.description 
+		</li>
+		}
+	</ul>
+    
+}  {@adminTemplates.render}

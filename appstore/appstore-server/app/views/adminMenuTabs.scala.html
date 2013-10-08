@@ -1,0 +1,116 @@
+<!-- Users Main page, right side pane-->
+<div class="tab-content" id="main-tab-content">
+    <!-- Main pane, list of available availableProducts-->
+    <div class="tab-pane active" id="products">
+        <div class="page-header">
+            <h3>@Messages("icasa.availableProducts")</h3>
+        </div>
+        <!--ko foreach: products -->
+        <div id="all-products">
+            <div class="accordion-products ">
+                <div class="maccordion" data-bind="bsAccordionTable:{}">
+                    <center><h4>@Messages("icasa.productName"): <span data-bind="text: name"></span></h4></center>
+                    <table class="table-products table table-hover">
+                        <tr >
+                            <td><img  class="grid-img" data-bind="attr:{src: imageURL}" /></td>
+                            <td>
+                                <h4>@Messages("icasa.description"):</h4> <p><span href="#" data-bind="text: description"></span></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <!--ko if: applications.collection().length + services.collection().length > 0 -->
+                <div class="well hidden-table">
+                    <!--ko if: applications.collection().length > 0-->
+                        <center><h5>@Messages("icasa.applications")</h5></center>
+                        <table class="table table-bordered table-condensed">
+                            <thead >
+                            <tr>
+                                <th>@Messages("icasa.name")</th>
+                                <th colspan="2">@Messages("icasa.description")</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--ko foreach: applications -->
+                            <tr>
+                                <td data-bind="text: name"></td>
+                                <td data-bind="text: description"></td>
+                            </tr>
+                            <!--/ko -->
+                            </tbody>
+                        </table>
+                    <!--/ko-->
+                    <!--ko if: services.collection().length > 0-->
+                        <center><h5>@Messages("icasa.services")</h5></center>
+                        <table class="table table-bordered table-condensed">
+                            <thead >
+                            <tr>
+                                <th>@Messages("icasa.name")</th>
+                                <th>@Messages("icasa.description")</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--ko foreach: services -->
+                            <tr>
+                                <td data-bind="text: name"></td>
+                                <td data-bind="text: description"></td>
+                            </tr>
+                            <!--/ko-->
+                            </tbody>
+                        </table>
+                    <!--/ko-->
+                    <!--ko if: devices.collection().length > 0-->
+                        <center><h5>@Messages("icasa.devices")</h5></center>
+                        <table class="table table-bordered table-condensed">
+                            <thead >
+                            <tr>
+                                <th>@Messages("icasa.name")</th>
+                                <th colspan="2">@Messages("icasa.description")</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <!--ko foreach: devices -->
+                            <tr>
+                                <td data-bind="text: name"></td>
+                                <td data-bind="text: description"></td>
+                            </tr>
+                            <!--/ko -->
+                            </tbody>
+                        </table>
+                    <!--/ko-->
+                </div>
+                <!--/ko-->
+                <!-- ko ifnot: applications.collection().length + services.collection().length + devices.collection().length > 0 -->
+                <div class="hidden-table alert alert-block">
+                        @Messages("icasa.thereIsAnyServiceApplications")
+                </div>
+                <!--/ko-->
+            </div>
+        </div>
+        <!--/ko-->
+    </div>
+    <!-- Main pane, list of available devices-->
+    <div class="tab-pane" id="devices">
+        <div class="page-header">
+            <h3>@Messages("icasa.availableDevices")</h3>
+        </div>
+        <!--ko foreach: devices -->
+        <div id="all-devices">
+            <div class="accordion-products ">
+                <div class="maccordion" data-bind="bsAccordionTable:{}">
+                    <center><h4>@Messages("icasa.deviceName"): <span data-bind="text: name"></span></h4></center>
+                    <table class="table-products table table-hover">
+                        <tr >
+                            <td><img  class="grid-img" data-bind="attr:{src: imageURL}" /></td>
+                            <td>
+                                <h4>@Messages("icasa.description"):</h4> <p><span href="#" data-bind="text: description"></span></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--/ko-->
+    </div>
+</div> <!-- END of Users Main page, right side pane-->

@@ -1,0 +1,80 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /                           controllers.MainController.index()
+
+GET     /admin                           controllers.MainController.admin()
+
+# Login page
+GET     /login                      securesocial.controllers.LoginPage.login
+GET     /logout                     securesocial.controllers.LoginPage.logout
+
+# User Registration and password handling
+GET     /signup                     securesocial.controllers.Registration.startSignUp
+POST    /signup                     securesocial.controllers.Registration.handleStartSignUp
+GET     /signup/:token              securesocial.controllers.Registration.signUp(token)
+POST    /signup/:token              securesocial.controllers.Registration.handleSignUp(token)
+GET     /reset                      securesocial.controllers.Registration.startResetPassword
+POST    /reset                      securesocial.controllers.Registration.handleStartResetPassword
+GET     /reset/:token               securesocial.controllers.Registration.resetPassword(token)
+POST    /reset/:token               securesocial.controllers.Registration.handleResetPassword(token)
+GET     /password                   securesocial.controllers.PasswordChange.page
+POST    /password                   securesocial.controllers.PasswordChange.handlePasswordChange
+
+# Providers entry points
+GET     /authenticate/:provider     securesocial.controllers.ProviderController.authenticate(provider)
+POST    /authenticate/:provider     securesocial.controllers.ProviderController.authenticateByPost(provider)
+GET     /not-authorized             securesocial.controllers.ProviderController.notAuthorized
+
+#Product Catalog Controllers REST
+
+GET      /catalog/products             controllers.ProductController.products()
+
+POST     /catalog/products              controllers.ProductController.addProduct()
+
+POST     /catalog/products/:productId/image              controllers.ProductController.uploadImage(productId)
+
+GET      /catalog/categories       controllers.CategoryController.getAvailableCategories()
+
+GET      /catalog/products/category/:category   controllers.ProductController.getProductsPerCategory(category)
+
+
+
+#Product User Controllers REST
+
+PUT      /user/products/:id      controllers.ProductController.buyProduct(id)
+
+GET      /user/products         controllers.ProductController.ownedProducts()
+
+#Owned Device Controllers
+GET      /user/ownedDevices               controllers.OwnedDeviceController.getDevices
+
+POST     /user/ownedDevices               controllers.OwnedDeviceController.addDevice
+
+#Purshased Devices
+GET      /user/devices               controllers.DeviceController.ownedDevices
+
+
+#Applications Catalog Controllers REST
+POST     /catalog/applications               controllers.ApplicationController.addApplication()
+
+GET      /catalog/applications              controllers.ApplicationController.applications()
+
+#Service Catalog Controllers REST
+
+POST     /catalog/services                   controllers.ServiceController.addService()
+
+GET      /catalog/services                  controllers.ServiceController.services()
+
+#Device Catalog Controllers REST
+
+
+POST     /catalog/devices                   controllers.DeviceController.addDevice()
+GET      /catalog/devices                  controllers.DeviceController.devices()
+POST     /catalog/devices/:productId/image              controllers.DeviceController.uploadImage(productId)
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

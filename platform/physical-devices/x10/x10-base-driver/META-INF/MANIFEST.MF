@@ -1,0 +1,10 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: fr.orange.x10
+Bundle-SymbolicName: fr.orange.x10
+Bundle-Version: 1.0.0
+Bundle-Vendor: Orange
+Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Export-Package: fr.orange.x10
+Import-Package: gnu.io,
+ org.apache.felix.ipojo

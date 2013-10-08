@@ -1,0 +1,180 @@
+<!-- Users Main page, right side pane-->
+<div class="tab-content" id="main-tab-content" xmlns="http://www.w3.org/1999/html" xmlns="http://www.w3.org/1999/html">
+    <!-- Main pane, list of available availableProducts-->
+    <div class="tab-pane active" id="products">
+        <div id="myCarousel" class="carousel slide" data-interval="5000">
+            <!-- Carousel items -->
+            <div class="carousel-inner" data-bind="foreach: availableProducts">
+                <div data-bind="attr: {class: classItem}">
+                    <center>
+                        <a data-bind="attr:{href: modalIdRef}" data-toggle="modal" >
+                            <img class="carrousel-img" data-bind="attr: {src: imageURL}" alt="">
+                        </a>
+                    </center>
+                    <div class="carousel-caption">
+                        <h4 data-bind="text: name"></h4>
+                        <p data-bind="text: description"></p>
+                    </div>
+                </div>
+            </div>
+            <!-- Carousel nav -->
+            <a class="carousel-control left" href="#myCarousel" data-slide="prev">&lsaquo;</a>
+            <a class="carousel-control right" href="#myCarousel" data-slide="next">&rsaquo;</a>
+        </div>
+        <div class ="row offset1" >
+            <div >
+                <div  id="product_list" data-bind="foreach: availableProductsGrid">
+                    <div class="span3 well thumb-well" >
+                        <table width="100%">
+                            <tr><td height="160" >
+                                <div data-bind="bsToggle:{}">
+                                    <div  style="z-index:0" >
+                                        <center>
+                                            <img  class="grid-img" data-bind="attr:{src: imageURL}" />
+                                        </center>
+                                    </div>
+                                    <div style="z-index:0">
+                                        <h4 data-bind="text: name">Loading</h4>
+                                        <p data-bind="text: shortDescription()">Loading</p>
+                                    </div>
+                                </div>
+                            </td>
+                            </tr>
+                            <tr>
+                                <td>
+                                    <center>
+                                        <p><span data-bind="text: name">Loading</span></p>
+                                        <button data-bind="buyModalButton: {}" data-toggle="modal" >@Messages("icasa.buy")</button>
+                                        <button data-bind="attr:{href: modalIdRef}" data-toggle="modal" >@Messages("icasa.details")</button>
+                                    </center>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div data-bind="template: { name: 'modal-product-template', foreach: availableProductsGrid}"></div>
+            </div>
+        </div>
+    </div>
+    <!-- Main pane, list of purshased products-->
+    <div class="tab-pane" id="ownedProducts">
+        <div class="page-header">
+            <h3>@Messages("icasa.purshasedProducts")</h3>
+        </div>
+        <!--ko foreach: ownedProducts -->
+        <div id="purshased-products">
+            <div class="accordion-products ">
+                <div class="maccordion" data-bind="bsAccordionTable:{}">
+                    <center><h4>@Messages("icasa.productName"): <span data-bind="text: name"></span></h4></center>
+                    <table class="table-products table table-hover">
+                        <tr >
+                            <td><img  class="grid-img" data-bind="attr:{src: imageURL}" /></td>
+                            <td>
+                                <h4>@Messages("icasa.description")</h4> <p><span href="#" data-bind="text: description"></span></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+
+                <div class="well hidden-table">
+                    <table class="table table-bordered table-condensed">
+                        <thead >
+                        <tr>
+                            <th>@Messages("icasa.name")</th>
+                            <th colspan="2">@Messages("icasa.description")</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!--ko foreach: applications -->
+                        <tr>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: description"></td>
+                            <td>
+                                <div class="dropdown" id="ownedDeviceList">
+                                    <a class="dropdown-toggle" id="drop5" role="button" data-toggle="dropdown" href="#">@Messages("icasa.installOn")<b class="caret"></b></a>
+                                    <ul id="menu3" class="dropdown-menu" role="menu" aria-labelledby="drop5">
+                                        <!-- ko foreach: $root.ownedDevices -->
+                                        <li><a tabindex="-1" href="#" data-bind="text: name, click: function(data,event) { $root.installApplication($parent,data,event) }">.</a></li>
+                                        <!-- /ko-->
+                                    </ul>
+                                </div>
+                            </td>
+                        </tr>
+                        <!--/ko -->
+                        </tbody>
+                    </table>
+
+                    <table class="table table-bordered table-condensed">
+                        <thead >
+                        <tr>
+                            <th>@Messages("icasa.name")</th>
+                            <th>@Messages("icasa.description")</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <!--ko foreach: services -->
+                        <tr>
+                            <td data-bind="text: name"></td>
+                            <td data-bind="text: description"></td>
+                        </tr>
+                        <!--/ko-->
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+        <!--/ko-->
+    </div>
+    <!-- Main pane, list of purshased devices-->
+    <div class="tab-pane" id="allDevices">
+        <div class="page-header">
+            <h3>@Messages("icasa.devices")</h3>
+        </div>
+        <!--ko foreach: purshasedDevices -->
+        <div id="purshased-devices">
+            <div class="accordion-products ">
+                <div class="maccordion" data-bind="bsAccordionTable:{}">
+                    <center><h4>@Messages("icasa.name"): <span data-bind="text: name"></span></h4></center>
+                    <table class="table-products table table-hover">
+                        <tr >
+                            <td><img  class="grid-img" data-bind="attr:{src: imageURL}" /></td>
+                            <td>
+                                <h4>@Messages("icasa.description")</h4> <p><span href="#" data-bind="text: description"></span></p>
+                            </td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <!--/ko-->
+    </div>
+
+    <!-- Main pane, list of installed products-->
+    <!--ko foreach: ownedDevices -->
+    <div class="tab-pane" data-bind="attr: {id: 'installed' + id}">
+        <div class="page-header">
+            <h3>@Messages("icasa.installedApplicationsOn") <span data-bind="text: name"> </span></h3>
+        </div>
+        <div class="well">
+            <table class="table table-bordered table-condensed">
+                <thead >
+                <tr>
+                    <th>@Messages("icasa.name")</th>
+                    <th colspan="2">@Messages("icasa.description")</th>
+                </tr>
+                </thead>
+                <tbody>
+                <!--ko foreach: installedPackages-->
+                <tr>
+                    <td data-bind="text: name"></td>
+                    <td data-bind="text: name"></td>
+                </tr>
+                <!--/ko -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <!-- /ko -->
+</div> <!-- END of Users Main page, right side pane-->
+

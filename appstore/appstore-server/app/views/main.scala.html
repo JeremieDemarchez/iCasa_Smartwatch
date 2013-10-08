@@ -1,0 +1,38 @@
+@(sidebar: Html)(content: Html)(templates: Html)
+
+<!DOCTYPE html>
+
+<html>
+<head>
+<title>@Messages("icasa.appName")</title>
+<script type="text/javascript">
+      document.documentElement.className = 'tohide';
+</script>
+<link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap.css")" >
+<link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+<link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")">
+
+
+</head>
+<body>
+	<div class="navbar navbar-inverse navbar-fixed-top">
+		<div class="navbar-inner">
+			<div class="container-fluid">
+				<a class="brand" href="/">@Messages("icasa.appName")</a>
+        		<ul class="nav pull-right">
+          			<li><a href="/logout">@Messages("icasa.logout")</a></li>
+        		</ul>
+      		</div>
+		</div>
+	</div>
+	<div class="span3">@sidebar
+	</div>
+
+		<div class="row-fluid">
+			<div class="span9 ">
+				<div class="well">@content</div>
+			</div>
+	</div>
+</body>
+@templates
+</html>

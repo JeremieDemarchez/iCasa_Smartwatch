@@ -1,0 +1,70 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <!-- Project parent -->
+  <parent>
+    <groupId>fr.liglab.adele.icasa</groupId>
+    <artifactId>platform.parent</artifactId>
+    <version>1.2.2-SNAPSHOT</version>
+    <relativePath>../../parent</relativePath>
+  </parent>
+
+  <artifactId>device.dependency.handler</artifactId>
+  <packaging>bundle</packaging>
+  <name>${productName} :: ${projectName}</name>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>context.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>access.manager.api</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Private-Package>fr.liglab.adele.icasa.dependency.manager,
+              fr.liglab.adele.icasa.dependency.manager.interceptor,
+              fr.liglab.adele.icasa.dependency.manager.proxy
+            </Private-Package>
+            <Export-Package>
+              fr.liglab.adele.icasa.dependency.manager.exception
+            </Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-ipojo-plugin</artifactId>
+      </plugin>
+    </plugins>
+  </build>
+
+</project>
