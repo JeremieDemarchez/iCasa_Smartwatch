@@ -1,0 +1,22 @@
+{
+	"machine" : {
+		"id" : "server1",
+		"host" : "localhost",
+		
+		"connection" : [
+				{ "in" : {"endpoint_filter" : "(service.imported.configs=usb)", "importer_filter" : "(rose.protos.configs=usb)"} },
+				{ "in" : {"endpoint_filter" : "(service.imported.configs=simulated-zigbee)", "importer_filter" : "(rose.protos.configs=simulated-zigbee)"} }
+		],
+
+		"component" : [
+		    { 
+				"factory" : "USBRFIDReaderImporter",
+				"properties" : { "instance.name" : "RoSe_RFID_importer_usb-1" }
+			},
+			{ 
+				"factory" : "SimulatedSensorImporter",
+				"properties" : { "instance.name" : "RoSe_simporter_simulatedSensor-1" }
+			}
+		],
+	}
+}

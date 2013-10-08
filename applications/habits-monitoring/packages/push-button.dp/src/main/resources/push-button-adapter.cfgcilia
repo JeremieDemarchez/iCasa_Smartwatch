@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cilia>
+    <chain id="generator-mesures" extension="true">
+        <adapters>
+			<adapter-instance id="push-button-adapter" type="PushButtonAdapter" >
+			</adapter-instance>
+
+		</adapters>
+		<bindings>
+         <binding from="push-button-adapter:out" to="loc-enricher:in" />
+		</bindings>
+    </chain>
+</cilia>

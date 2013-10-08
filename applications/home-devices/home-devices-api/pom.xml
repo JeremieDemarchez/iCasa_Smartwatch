@@ -1,0 +1,39 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!-- Project parent -->
+  <parent>
+     <groupId>home.application</groupId>
+     <artifactId>home.application.parent</artifactId>
+     <version>0.0.1-SNAPSHOT</version>
+    <relativePath>../</relativePath>
+  </parent>
+  
+  <!-- Project description -->
+  <modelVersion>4.0.0</modelVersion>
+  <artifactId>home.devices.api</artifactId>
+  <name>Home devices API</name>
+  <packaging>bundle</packaging>
+
+   <dependencies>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>context.api</artifactId>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+              <Export-Package>fr.liglab.adele.home.devices.general,fr.liglab.adele.home.devices.kitchen, fr.liglab.adele.home.devices.water</Export-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
+</project>

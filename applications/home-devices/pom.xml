@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+ Copyright Adele Team LIG
+ Licensed under the Apache License, Version 2.0 (the "License");
+ you may not use this file except in compliance with the License.
+ You may obtain a copy of the License at
+
+   http://www.apache.org/licenses/LICENSE-2.0
+
+ Unless required by applicable law or agreed to in writing, software
+ distributed under the License is distributed on an "AS IS" BASIS,
+ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ See the License for the specific language governing permissions and
+ limitations under the License.
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+
+    <!-- Project Descrkiption -->
+    <modelVersion>4.0.0</modelVersion>
+    <groupId>home.application</groupId>
+    <artifactId>home.application.parent</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Home Application Project </name>
+
+    <!-- Project common properties -->
+    <properties>
+        <productVersion>${project.version}</productVersion>
+        <projectName>${project.artifactId}</projectName>
+        <iPojoVersion>1.10.1</iPojoVersion>
+        <!-- ADELE Projects -->
+        <AdeleBaseVersion>1.2.0</AdeleBaseVersion>
+        <roseVersion>1.2.2</roseVersion>
+        <iCasaPlatformVersion>1.2.2-SNAPSHOT</iCasaPlatformVersion>
+        <iCasaSimulatorVersion>1.2.2-SNAPSHOT</iCasaSimulatorVersion>
+        <DistributionTestVersion>1.2.1-SNAPSHOT</DistributionTestVersion>
+
+    </properties>
+
+    <!-- Project repositories -->
+    <repositories>
+
+        <!-- ADELE repositories -->
+        <repository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>adele-central-snapshot</id>
+            <name>adele-repos</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </repository>
+        <repository>
+            <snapshots/>
+            <id>snapshots</id>
+            <name>adele-central-release</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <snapshots>
+                <enabled>false</enabled>
+            </snapshots>
+            <id>central</id>
+            <name>adele-repos</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </pluginRepository>
+        <pluginRepository>
+            <snapshots/>
+            <id>snapshots</id>
+            <name>adele-central-release</name>
+            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        </pluginRepository>
+    </pluginRepositories>
+
+    <modules>
+        <module>home-devices-api</module>
+        <module>home-devices-impl</module>
+        <module>distribution</module>
+    </modules>
+    <!-- Dependencies version management -->
+    <dependencyManagement>
+        <dependencies>
+            <!-- Distribution Base-->
+            <dependency>
+                <groupId>fr.liglab.adele.common</groupId>
+                <artifactId>distribution.base</artifactId>
+                <version>${AdeleBaseVersion}</version>
+                <type>osgi-distribution</type>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>icasa.teaching.distribution</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+                <type>osgi-distribution</type>
+            </dependency>
+            <!-- iCasa -->
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>common</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>application.api</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>context.api</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>technical.services.api</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>context.remote</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>context.impl</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>application.impl</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.manager.api</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>icasa.web</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+                <type>play2</type>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>icasa.platform.dp</artifactId>
+                <version>${iCasaPlatformVersion}</version>
+                <type>deployment-package</type>
+            </dependency>
+            <!-- iCasa Simulator-->
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>simulator.api</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>simulator.impl</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.light</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.sound</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.temperature</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.presence</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.power</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.personal</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>device.bathroom.scale</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>clock.simulated.impl</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>fr.liglab.adele.icasa</groupId>
+                <artifactId>icasa.simulator.dp</artifactId>
+                <version>${iCasaSimulatorVersion}</version>
+                <type>deployment-package</type>
+            </dependency>
+            <!--RoSe DP-->
+            <dependency>
+                <groupId>org.ow2.chameleon.rose</groupId>
+                <artifactId>rose.dp</artifactId>
+                <version>${roseVersion}</version>
+                <type>deployment-package</type>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+                <version>${iPojoVersion}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>org.apache.felix.ipojo</artifactId>
+                <version>${iPojoVersion}</version>
+            </dependency>
+
+        </dependencies>
+    </dependencyManagement>
+
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>maven-deploy-plugin</artifactId>
+                <configuration>
+                    <skip>true</skip>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

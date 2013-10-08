@@ -1,0 +1,58 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
+  <!-- Project parent -->
+  <parent>
+    <groupId>myapp</groupId>
+    <artifactId>app.skeleton</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <relativePath>..</relativePath>
+  </parent>
+  
+  <!-- Project description -->
+  <modelVersion>4.0.0</modelVersion>
+  <groupId>myapp</groupId>
+  <artifactId>empty.application</artifactId>
+  <name>Empty Application</name>
+  <packaging>bundle</packaging>
+
+   <dependencies>
+    <dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>context.api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+    </dependency>
+    <dependency>
+    	<groupId>org.apache.felix</groupId>
+    	<artifactId>org.apache.felix.ipojo</artifactId>
+    </dependency>
+  </dependencies>
+  
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Private-Package>myapp</Private-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-ipojo-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>ipojo-bundle</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
+</project>

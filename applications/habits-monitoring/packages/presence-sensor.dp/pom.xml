@@ -1,0 +1,62 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+  <!-- Project parent -->
+  <parent>
+     <groupId>fr.liglab.adele.icasa.apps</groupId>
+     <artifactId>parent</artifactId>
+     <version>1.2.2-SNAPSHOT</version>
+     <relativePath>../../../../parent</relativePath>
+  </parent>
+
+	<!-- Project Description -->
+	<artifactId>presence.sensor.adapter.dp</artifactId>
+	<packaging>deployment-package</packaging>
+   <name>${productName} :: Habits Monitoring :: Presence Sensor Adapter :: DP</name>
+
+	<dependencies>
+      <!-- habits monitoring application -->
+      <dependency>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>presence.sensor.adapter</artifactId>
+         <version>${project.version}</version>
+      </dependency>
+
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>de.akquinet.gomobile</groupId>
+				<artifactId>maven-dp-plugin</artifactId>
+				<extensions>true</extensions>
+				<configuration>
+					<writeExtraData>true</writeExtraData>
+					<deploymentPackage>
+                        <headers>
+                            <bundleHeader>
+                                <name>ICasa-Application-Id</name>
+                                <value>habits.monitoring</value>
+                            </bundleHeader>
+                            <bundleHeader>
+                                <name>ICasa-Application-Name</name>
+                                <value>Habits Monitoring</value>
+                            </bundleHeader>
+                            <bundleHeader>
+                                <name>ICasa-Application-Version</name>
+                                <value>${project.version}</value>
+                            </bundleHeader>
+                        </headers>
+                        <resources>
+                         <processedResource>
+                            <processor>org.osgi.deployment.rp.autoload</processor>
+                            <filePath>/src/main/resources/presence-sensor-adapter.cfgcilia</filePath>
+                         </processedResource>
+                        </resources>
+					</deploymentPackage>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>

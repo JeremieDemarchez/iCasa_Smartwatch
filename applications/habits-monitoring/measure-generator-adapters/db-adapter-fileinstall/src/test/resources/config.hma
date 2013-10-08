@@ -1,0 +1,8 @@
+<db>
+<id name="presence-sensor" url="http://www.test.com">
+	<interface>fr.liglab.adele.icasa.device.presence.PresenceSensor</interface>
+</id>
+<id name="dimming-light" url="http://www.light.com">
+	<interface>fr.liglab.adele.icasa.simulator.SimulatedDevice</interface>
+</id>
+</db>
