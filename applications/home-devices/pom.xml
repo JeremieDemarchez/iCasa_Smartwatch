@@ -31,11 +31,11 @@
         <projectName>${project.artifactId}</projectName>
         <iPojoVersion>1.10.1</iPojoVersion>
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.1.1</AdeleBaseVersion>
+        <AdeleBaseVersion>1.2.0</AdeleBaseVersion>
         <roseVersion>1.2.2</roseVersion>
-        <iCasaPlatformVersion>1.1.2-SNAPSHOT</iCasaPlatformVersion>
-        <iCasaSimulatorVersion>1.1.2-SNAPSHOT</iCasaSimulatorVersion>
-        <DistributionTestVersion>1.1.2-SNAPSHOT</DistributionTestVersion>
+        <iCasaPlatformVersion>1.2.2-SNAPSHOT</iCasaPlatformVersion>
+        <iCasaSimulatorVersion>1.2.2-SNAPSHOT</iCasaSimulatorVersion>
+        <DistributionTestVersion>1.2.1-SNAPSHOT</DistributionTestVersion>
 
     </properties>
 
