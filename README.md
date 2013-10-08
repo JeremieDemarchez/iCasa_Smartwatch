@@ -1,18 +1,18 @@
-iCasa-Simulator
+iCasa
 =====
 
 This project aims at providing a simulator to do functional testing of digital home application based on iCasa runtime.
-The home page of the project is <http://adeleresearchgroup.github.com/iCasa-Simulator/>.
+The home page of the project is <http://adeleresearchgroup.github.com/iCasa/>.
 The project websites are:
- * Development version <http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/>
- * Last stable release version <http://adeleresearchgroup.github.com/iCasa-Simulator/1.2.0/>
+ * Development version <http://adeleresearchgroup.github.com/iCasa/snapshot/>
+ * Last stable release version <http://adeleresearchgroup.github.com/iCasa/1.2.0/> (in migration phase)
 
 License
 =====
 
 This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENSE-2.0.html>) for the gateway part and
 a specific end user license for the simulator and dashboard web applications
-(http://adeleresearchgroup.github.io/iCasa-Simulator/1.1.1/license.html).
+(http://adeleresearchgroup.github.io/iCasa/1.1.1/license.html).
 
 Contributors
 =====
@@ -22,7 +22,7 @@ The main contributors are
 - _ADELE Reseach Group_
 - _Orange Labs_
 
-Source Organization
+Source Organization (to be changed)
 ====
 
 - _distribution_: Contains ready to use distributions of client and server simulator parts.
