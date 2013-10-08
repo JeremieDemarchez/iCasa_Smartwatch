@@ -1,0 +1,63 @@
+<div class="row-fluid page-header">
+    <div class="title span10">
+        <h1 style="text-align: center;">iCasa Simulator</h1>
+        <p style="text-align: center;" class="lead">Digital Home Simulation Tool</p>
+        <!--p>
+            <span class="span4">&nbsp;</span>
+            <a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+       btn-primary span2 btn-large"><i class="fa-icon-download"></i>&nbsp; iCasa Simulator</a>
+            <span class="span4">&nbsp;</span>
+        </p-->
+    </div>
+</div>
+
+<div class="span11 well">
+    <div class="span4">
+        <img src="index/map.png" alt="iCasa Simulator Main Interface" />
+    </div>
+
+    <div class="span6">
+        <h1>&nbsp; iCasa Simulator</h1>
+        <p>ICasa Simulator is a digital home simulator developed in the context of the Medical project by the ADELE Research Group and the Orange Labs. The very purpose of iCasa is to provide developers of pervasive applications with a simulated environment enabling complete control of the environment and time.</p>
+
+<p>Specifically, iCasa provides:</p>
+
+
+<ul>
+<li><strong>A graphical user interface:</strong> The interface displays a map of the house and the localization of the different devices. It allows developers to create and configure devices, create and move physical users, and watch their actual configurations.</li>
+<li><strong>Scripting facilities:</strong> iCasa supports the scripts writing to control the environment. Scripts provide a convenient way to test the applications under reproducible conditions.</li>
+<li><strong>Notification facilities:</strong> iCasa is event-based and is able to notify subscribers of any modifications in the environment.</li>
+</ul>
+
+<a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+    </div>
+</div>
+
+<!--div class="span11 page-header">
+    <div class="span5">
+       <h1><i class="fa-icon-th-large"></i>&nbsp; Features</h1>
+       <ul class="feature-list">
+            <li><strong>Feature1</strong>: TODO.</li>
+            <li><strong>Feature2</strong>: TODO.</li>
+        </ul>
+    </div>
+    <div class="span5">
+        <h1><i class="fa-icon-gift"></i>&nbsp; What's new ?</h1>
+        <ul class="feature-list">
+            <li><strong>News1</strong>: TODO.</li>
+            <li><strong>News2</strong>: TODO.</li>
+        </ul>
+    </div>
+</div-->
+
+<div class="span11 page-header">
+    <h1>License</h1>
+    iCasa Simulator is licensed under a <a href="license.html">specific end user license</a>. This project is maintained by
+    <a href="http://www-adele.imag.fr/">LIG ADELE Research Group</a>.
+</div>
+
+<div class="span11 page-header">
+    <h2>Powered By</h2>
+    <a href="http://www.cloudbees.com/"> <img alt="Cloudbees" src="cloudbees.png" />  </a>
+</div>

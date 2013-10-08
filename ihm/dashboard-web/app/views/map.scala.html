@@ -1,0 +1,119 @@
+@(mapId: String, mapImgSrc: String, gatewayURL: String, pluginIds : String, widgetIds : String)(implicit lang: Lang)
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+@import helper._
+
+@main("iCasa Dashboard") {
+<div id="icasa-simulator-connection-status" />
+    <button id="connection-status-button" class="hidden btn btn-danger">@Messages("Not.Connected")</button>
+</div>
+<div id="icasa-extensions" icasa-plugins="@pluginIds" icasa-widgets="@widgetIds" class="hidden" />
+</div>
+
+<div id="compatibilityWarn"  class="hidden alert alert-block">
+    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) @Messages("and") Frontend(<span data-bind="text: frontendVersion"></span>)@Messages("are.not.the.same.version.some.functionality.may.not.work")
+    </p>
+</div>
+
+<section>
+    <article id="map" mapId="@mapId" gatewayURL="@gatewayURL" mapImgSrc="@mapImgSrc">
+        <section id="mapContainer">
+            <img id="mapImg" data-bind="attr: {src: imgSrc}" />
+            <!-- ko foreach: $root.persons() -->
+                <div class="userWidget" data-bind="attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
+                    <div class="userWidgetContainer">
+                        <img class="userWidgetIcon"data-bind="attr: { src: imgSrc, alt: name, title: name }" />
+                        <div class="userWidgetDecorators" data-bind="foreach: decorators">
+                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
+                        </div>
+                    </div>
+                </div>
+            <!-- /ko -->
+            <!-- ko foreach: $root.filteredDevices() -->
+                <div class="deviceWidget" data-bind="jqueryDraggable: {},attr: { id: name, 'data-content': popoverdata()}, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }, popOver: {}" data-original-title="Device detail">
+                    <div class="deviceWidgetContainer">
+                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: blurDevice }" />
+                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
+                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
+                        </div>
+                        <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: blurDevice }">
+                        </div>
+                    </div>
+                    <div class="deviceWidgetHalo"></div>
+                    <!-- ko if: showNameInMap -->
+                    <div class="visibleProperty" id="deviceName">
+                        <span  data-bind="text: name"></span></br>
+                    </div>
+                    <!-- /ko -->
+                    <div class="visibleProperty" id="deviceProperties">
+                        <!-- ko foreach: filtered_properties -->
+                        <span  data-bind="text: $data.value"></span></br>
+                        <!-- /ko -->
+                    </div>
+
+                </div>
+            <!-- /ko -->
+            <!-- ko foreach: $root.zones() -->
+                 <div class="zoneSection" data-bind="jqueryResizable: {}, jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight, visibility: visibility , background: background, borderColor: borderColor}">
+                    <div data-bind="text: name"></div>
+                     <div class="visibleProperty" id="zoneVariables">
+                         <!-- ko foreach: filtered_variables -->
+                         <span  data-bind="text: $data.value"></span></br>
+                         <!-- /ko -->
+                     </div>
+                 </div>
+            <!-- /ko -->
+        </section>
+    </article>
+    <aside id="actionTabs">
+        <div id="tabs" data-bind="jqueryTabs: {}">
+            Loading...
+        </div>
+    </aside>
+</section>
+<section>
+    <article id="statusWindows">
+        <!-- ko foreach: $root.devices() -->
+            <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name, title:name}, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+        <!-- /ko -->
+        <!-- ko foreach: $root.persons() -->
+           <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+
+        <!-- /ko -->
+        <!-- ko foreach: $root.zones() -->
+            <div class="zoneWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+
+        <!-- /ko -->
+        <!-- ko foreach: $root.applications() -->
+        <!-- ko if: $data.name() != 'NONE' -->
+        <div class="applicationWindow" data-bind="attr: { id: name, title: name }, jqueryDialog: name, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+        </div>
+        <!-- /ko -->
+        <!-- /ko -->
+    </article>
+</section>
+
+
+        <!-- Load the script "javascripts/main.coffee" as our entry point at the end of the dom to optimize loading -->
+        <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
+
+}

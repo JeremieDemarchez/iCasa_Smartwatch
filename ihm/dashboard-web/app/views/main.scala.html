@@ -1,0 +1,89 @@
+@(title: String)(content: Html)(implicit lang: Lang)
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>@title</title>
+
+    <!--[if lt IE 9]>
+        <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css")" />
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap.min.css")" />
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("javascripts/frameworks/bootstrap/css/bootstrap-responsive.min.css")" />
+
+    <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")" />
+    <link rel="shortcut icon" type="image/png" href="@routes.Assets.at("images/favicon.png")" />
+
+    <script src="@routes.Assets.at("javascripts/frameworks/jquery/core/jquery-1.8.2.min.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/bootstrap/js/bootstrap.min.js")"> </script>
+
+    <!-- Use to add browser prefix automatically -->
+    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.min.js")"> </script>
+    <script src="@routes.Assets.at("javascripts/frameworks/prefixfree/prefixfree.jquery.js")"> </script>
+
+
+
+</head>
+<body>
+
+<script src="@routes.Assets.at("javascripts/BrowserDetection.js")"></script>
+<script src="@routes.Assets.at("javascripts/util/cookiesUtil.js")"></script>
+<script src="@routes.Assets.at("javascripts/BrowserCompatibilityCheck.js")"></script>
+
+
+<header>
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/dashboard"><img src="@routes.Assets.at("images/rectLogos/iCasa_dashboard_long_30.png")" alt="iCasaLogo" /></a>
+                <nav class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="/dashboard">@Messages("Home")</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://store-icasa.rhcloud.com/" target="_blank">@Messages("Store")</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa-Simulator/" target="_blank">@Messages("Documentation")</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="@routes.Assets.at("images/rectLogos/medical_logo.png")" alt="Medical" /><span class="hidden" id="medicalText">@Messages("Medical.Research.Project")</span></a></li>
+                    </ul>
+                </nav><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+</header>
+@content
+
+    <footer>
+        <p>@Messages("Copyright") <a href="http://medical.imag.fr/">@Messages("Medical.Research.Project")</a></p>
+    </footer>
+</body>
+</html>

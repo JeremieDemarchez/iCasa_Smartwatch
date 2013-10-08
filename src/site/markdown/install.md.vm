@@ -1,0 +1,67 @@
+Standard Install
+==========
+
+iCasa Simulator is decomposed in two parts:
+
+* _Gateway part_ corresponding to the box runtime (iCasa Home Server) including the simulator module.
+* _Web server part_ serving the client web application code (Content Server).
+
+A client using a Web browser access first the Web Server to get the content of web application and then, it access the Gateway to get information about the iCasa execution context and to interact with it.
+
+![Web Architecture](install/install-architecture.png "Web Architecture")
+
+
+Installation Prerequesites
+------------
+
+- Java Development Toolkit 6 (Avoid Java 7 that may cause troubles).
+- A modern Web browser (We recommend to use Firefox but you can also use Chrome, Internet Explorer is not yet supported).
+
+
+Installation Procedure
+-----------
+
+1. Download a full iCasa Simulator binary distribution (We recommend the icasa.teaching.distribution to start).
+2. Unzip it on a local folder i.e. the ICASA_HOME directory.
+
+The ICASA_HOME directory should have this structure
+
+![ICasa Structure](install/icasa-home.png "ICasa Structure")
+   
+In addition four launch scripts are in the root directory: startGateway.bat, startGateway, startSimulatorGUI.bat and startSimulatorGUI.
+
+   
+Launch
+======
+
+Web Server Part Launch
+---------------
+
+1. Go to the ICASA_HOME directory.
+2. Execute startSimulatorGUI script on Unix systems or startSimulatorGUI.bat script on Windows systems.
+
+By default, the web server port is set to 9000.
+The simulator home page is available at [http://localhost:9000/](http://localhost:9000/) 
+
+Gateway Part Launch
+--------------
+
+1. Go to the ICASA_HOME directory.
+2. Execute startGateway script on Unix systems or startGateway.bat script on Windows systems.
+
+By default, the gateway port is set to 8080.
+In this case, the platform url would be _http://localhost:8080/_.
+
+
+Advanced Installation
+========
+
+Depending on your needs, you can choose between different installation architectures:
+
+* _Gateway part_ and _Web server part_ on the same machine. (Default installation)
+* One instance of _Web server part_ per _Gateway part_.
+* One shared instance of _Web server part_ for several _Gateway parts_.
+
+
+
+

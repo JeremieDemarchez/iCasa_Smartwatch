@@ -1,0 +1,24 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Home page
+GET     /simulator                           controllers.Application.index
+GET     /simulator/                           controllers.Application.index
+
+# Map management
+GET     /simulator/map/*mapId                           controllers.Application.connectToMap(mapId)
+GET     /simulator/maps/*file                           controllers.Application.getMap(file)
+POST    /simulator/mapUpload                            controllers.Application.uploadMap
+POST    /simulator/mapUpdate                            controllers.Application.updateMap
+POST    /simulator/mapDelete                            controllers.Application.deleteMap
+GET     /simulator/frontend                             controllers.Application.frontendInfo
+
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file                         controllers.Assets.at(path="/public", file)
+
+# static resources directory used for plugins and widgets
+GET     /simulator/widgets/*file                        controllers.SecuredExternalAssets.at(path="widgets", file)
+GET     /simulator/plugins/*file                        controllers.SecuredExternalAssets.at(path="plugins", file)
+

@@ -1,0 +1,14 @@
+diff --git a/ihm/icasa-web/public/javascripts/frameworks/knockback/knockback.js b/ihm/icasa-web/public/javascripts/frameworks/knockback/knockback.js
+index b9dc431..1647ef3 100644
+--- a/ihm/icasa-web/public/javascripts/frameworks/knockback/knockback.js
++++ b/ihm/icasa-web/public/javascripts/frameworks/knockback/knockback.js
+@@ -1621,8 +1621,8 @@ kb.CollectionObservable = (function() {
+         if ((view_model = this.viewModelByModel(arg))) {
+           return;
+         }
+-        view_model = this._createViewModel(arg);
+         this.in_edit++;
++        view_model = this._createViewModel(arg);
+         if ((comparator = this._comparator())) {
+           observable().push(view_model);
+           observable.sort(comparator);
