@@ -45,12 +45,14 @@
          </activation>
          <modules>
             <module>parent</module>
+            <!--
             <module>simulator</module>
             <module>ihm</module>
             <module>tools</module>
             <module>packages</module>
             <module>distribution</module>
             <module>tests</module>
+            -->
          </modules>
       </profile>
       <profile>
@@ -60,22 +62,26 @@
            </activation>
            <modules>
                <module>parent</module>
+               <!--
                <module>simulator</module>
                <module>ihm</module>
                <module>tools</module>
                <module>packages</module>
                <module>distribution</module>
                <module>tests</module>
+               -->
            </modules>
       </profile>
       <profile>
          <id>backend</id>
          <modules>
             <module>parent</module>
+            <!--
             <module>simulator</module>
             <module>tools</module>
             <module>packages</module>
             <module>distribution</module>
+            -->
          </modules>
       </profile>
       <profile>
@@ -85,11 +91,13 @@
          </properties>
          <modules>
             <module>parent</module>
+            <!--
             <module>simulator</module>
             <module>ihm</module>
             <module>tools</module>
             <module>packages</module>
             <module>distribution</module>
+            -->
          </modules>
       </profile>
    </profiles>
@@ -182,7 +190,7 @@
                         <phase>site-deploy</phase>
                         <configuration>
                             <!-- configure the repository -->
-                            <repositoryName>iCasa-Simulator</repositoryName>
+                            <repositoryName>iCasa</repositoryName>
                             <repositoryOwner>AdeleResearchGroup</repositoryOwner>
                             <!-- end repository configuration -->
 
@@ -197,9 +205,9 @@
 		</plugins>
 	</build>
    <scm>
-      <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</connection>
-      <url>http://github.com/AdeleResearchGroup/iCasa-Simulator/</url>
-      <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</developerConnection>
+      <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
+      <url>http://github.com/AdeleResearchGroup/iCasa/</url>
+      <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
       <tag>HEAD</tag>
    </scm>
 </project>
