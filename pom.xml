@@ -48,30 +48,24 @@
             <module>platform</module>
             <module>simulator</module>
             <module>frontend</module>
-            <module>distribution</module>
-            <!--
             <module>tools</module>
-            <module>packages</module>
+            <module>distribution</module>
             
+            <!--
             <module>tests</module>
             -->
          </modules>
       </profile>
       <profile>
            <id>tests</id>
-           <activation>
-               <activeByDefault>true</activeByDefault>
-           </activation>
            <modules>
                <module>parent</module>
                <module>platform</module>
                <module>simulator</module>
                <module>frontend</module>
+               <module>tools</module>
                <module>distribution</module>
                <!--
-               <module>tools</module>
-               <module>packages</module>
-               
                <module>tests</module>
                -->
            </modules>
@@ -81,13 +75,9 @@
          <modules>
             <module>parent</module>
             <module>platform</module>
-            <module>simulator</module>            
-            <module>distribution</module>
-            <!--
+            <module>simulator</module>          
             <module>tools</module>
-            <module>packages</module>
-            
-            -->
+            <module>distribution</module>
          </modules>
       </profile>
       <profile>
@@ -99,13 +89,9 @@
             <module>parent</module>
             <module>platform</module>
             <module>simulator</module>
-            <module>distribution</module>
-            <module>frontend</module>
-            <!--
-            <module>ihm</module>
             <module>tools</module>
-            <module>packages</module>
-            -->
+            <module>frontend</module>
+            <module>distribution</module>
          </modules>
       </profile>
    </profiles>
