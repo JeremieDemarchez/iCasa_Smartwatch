@@ -47,9 +47,9 @@
             <module>parent</module>
             <module>platform</module>
             <module>simulator</module>
+            <module>frontend</module>
             <module>distribution</module>
             <!--
-            <module>ihm</module>
             <module>tools</module>
             <module>packages</module>
             
@@ -66,9 +66,9 @@
                <module>parent</module>
                <module>platform</module>
                <module>simulator</module>
+               <module>frontend</module>
                <module>distribution</module>
                <!--
-               <module>ihm</module>
                <module>tools</module>
                <module>packages</module>
                
@@ -100,6 +100,7 @@
             <module>platform</module>
             <module>simulator</module>
             <module>distribution</module>
+            <module>frontend</module>
             <!--
             <module>ihm</module>
             <module>tools</module>
