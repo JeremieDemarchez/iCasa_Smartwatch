@@ -45,6 +45,7 @@
          </activation>
          <modules>
             <module>parent</module>
+            <module>platform</module>
             <!--
             <module>simulator</module>
             <module>ihm</module>
@@ -62,6 +63,7 @@
            </activation>
            <modules>
                <module>parent</module>
+               <module>platform</module>
                <!--
                <module>simulator</module>
                <module>ihm</module>
@@ -76,6 +78,7 @@
          <id>backend</id>
          <modules>
             <module>parent</module>
+            <module>platform</module>
             <!--
             <module>simulator</module>
             <module>tools</module>
@@ -91,6 +94,7 @@
          </properties>
          <modules>
             <module>parent</module>
+            <module>platform</module>
             <!--
             <module>simulator</module>
             <module>ihm</module>

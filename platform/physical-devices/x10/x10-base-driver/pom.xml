@@ -16,7 +16,7 @@
 	<!-- Project parent -->
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>platform.parent</artifactId>
+		<artifactId>parent</artifactId>
       <version>1.2.2-SNAPSHOT</version>
       <relativePath>../../../../parent</relativePath>
 	</parent>
