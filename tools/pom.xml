@@ -24,7 +24,7 @@
 
 	<!-- Project Description -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>simulator.tools</artifactId>
+	<artifactId>tools.reactor</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
@@ -32,6 +32,8 @@
 		<module>command-handler</module>
       <module>device-dependency-annotations</module>
       <module>device-dependency-handler</module>
+      <module>dp-rest-installer</module>
+      <module>dp-rest-installer.dp</module>
 	</modules>
 
    <build>
