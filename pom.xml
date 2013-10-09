@@ -33,7 +33,7 @@
         <!-- TODO add property to get current snapshot version qualifier -->
         <github.global.server>github</github.global.server>
         <!-- Site Title -->
-        <title>iCasa Simulator</title>
+        <title>iCasa</title>
         <lastStableSnapshotVersionQualifier>TODO</lastStableSnapshotVersionQualifier>
     </properties>
 
@@ -47,11 +47,12 @@
             <module>parent</module>
             <module>platform</module>
             <module>simulator</module>
+            <module>distribution</module>
             <!--
             <module>ihm</module>
             <module>tools</module>
             <module>packages</module>
-            <module>distribution</module>
+            
             <module>tests</module>
             -->
          </modules>
@@ -65,11 +66,12 @@
                <module>parent</module>
                <module>platform</module>
                <module>simulator</module>
+               <module>distribution</module>
                <!--
                <module>ihm</module>
                <module>tools</module>
                <module>packages</module>
-               <module>distribution</module>
+               
                <module>tests</module>
                -->
            </modules>
@@ -80,10 +82,11 @@
             <module>parent</module>
             <module>platform</module>
             <module>simulator</module>            
+            <module>distribution</module>
             <!--
             <module>tools</module>
             <module>packages</module>
-            <module>distribution</module>
+            
             -->
          </modules>
       </profile>
@@ -96,11 +99,11 @@
             <module>parent</module>
             <module>platform</module>
             <module>simulator</module>
+            <module>distribution</module>
             <!--
             <module>ihm</module>
             <module>tools</module>
             <module>packages</module>
-            <module>distribution</module>
             -->
          </modules>
       </profile>
