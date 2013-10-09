@@ -30,6 +30,7 @@
 
     <properties>
         <site.path>snapshot</site.path>
+        <projectName>Platform and Simulator</projectName>
         <!-- TODO add property to get current snapshot version qualifier -->
         <github.global.server>github</github.global.server>
         <!-- Site Title -->
