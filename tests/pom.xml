@@ -30,7 +30,9 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>core-platform-tests</module>
+		<module>icasa-platform-tests</module>
+      <module>icasa-simulation-test</module>
+      <module>icasa-frontend-test</module>
 	</modules>
 
 	<build>
