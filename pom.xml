@@ -51,10 +51,7 @@
             <module>frontend</module>
             <module>tools</module>
             <module>distribution</module>
-            
-            <!--
             <module>tests</module>
-            -->
          </modules>
       </profile>
       <profile>
@@ -66,9 +63,7 @@
                <module>frontend</module>
                <module>tools</module>
                <module>distribution</module>
-               <!--
                <module>tests</module>
-               -->
            </modules>
       </profile>
       <profile>
