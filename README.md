@@ -5,14 +5,14 @@ This project aims at providing a simulator to do functional testing of digital h
 The home page of the project is <http://adeleresearchgroup.github.com/iCasa/>.
 The project websites are:
  * Development version <http://adeleresearchgroup.github.com/iCasa/snapshot/>
- * Last stable release version <http://adeleresearchgroup.github.com/iCasa/1.2.0/> (in migration phase)
+ * Last stable release version <http://adeleresearchgroup.github.com/iCasa/1.2.1/>
 
 License
 =====
 
 This project relies on Apache v2 license (<http://www.apache.org/licenses/LICENSE-2.0.html>) for the gateway part and
 a specific end user license for the simulator and dashboard web applications
-(http://adeleresearchgroup.github.io/iCasa/1.1.1/license.html).
+(http://adeleresearchgroup.github.io/iCasa/1.2.1/license.html).
 
 Contributors
 =====
