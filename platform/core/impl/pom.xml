@@ -42,7 +42,8 @@
 		<module>technical-services-impl</module>
       <module>access-manager-impl</module>
       <module>access-manager-remote</module>
-       <module>gateway-as-box</module>
+      <module>gateway-as-box</module>
+      <module>dp-rest-installer</module>
    </modules>
    <build>
       <plugins>

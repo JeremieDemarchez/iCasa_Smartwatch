@@ -10,9 +10,9 @@
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>platform.parent</artifactId>
+		<artifactId>parent</artifactId>
 		<version>1.2.2-SNAPSHOT</version>
-		<relativePath>../../parent</relativePath>
+      <relativePath>../../../../parent</relativePath>
 	</parent>
 	<artifactId>dp-rest-installer</artifactId>
 	<packaging>bundle</packaging>
