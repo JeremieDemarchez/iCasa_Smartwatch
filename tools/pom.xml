@@ -30,6 +30,8 @@
 
 	<modules>
 		<module>command-handler</module>
+      <module>device-dependency-annotations</module>
+      <module>device-dependency-handler</module>
 	</modules>
 
    <build>
