@@ -8,7 +8,7 @@
         <version>1.2.2-SNAPSHOT</version>
         <relativePath>../../../parent</relativePath>
     </parent>
-    <artifactId>icasa.ihm.test</artifactId>
+    <artifactId>icasa.frontend.test</artifactId>
     <packaging>jar</packaging>
     <name>${productName} :: ${projectName}</name>
     <properties>
@@ -16,7 +16,7 @@
         <groovyVersion>1.8.6</groovyVersion>
         <seleniumVersion>2.33.0</seleniumVersion>
         <distrib.groupId>${project.groupId}</distrib.groupId>
-        <distrib.artifactId>icasa.ihm.distribution.test</distrib.artifactId>
+        <distrib.artifactId>icasa.frontend.distribution.test</distrib.artifactId>
         <distrib.version>${project.version}</distrib.version>
     </properties>
 
@@ -111,12 +111,6 @@
         </dependency>
 
 
-        <!--        <dependency>
-                    <groupId>org.seleniumhq.selenium</groupId>
-                    <artifactId>selenium-chrome-driver</artifactId>
-                    <version>${seleniumVersion}</version>
-                    <scope>test</scope>
-                </dependency>-->
 
       </dependencies>
     <build>

@@ -24,13 +24,13 @@
 
 	<!-- Project Description -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>ihm.tests.reactor</artifactId>
+	<artifactId>frontend.tests.reactor</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>icasa-ihm-distribution-test</module>
-      <module>icasa-ihm-it</module>
+		<module>icasa-frontend-distribution-test</module>
+      <module>icasa-frontend-it</module>
 	</modules>
    <build>
       <plugins>

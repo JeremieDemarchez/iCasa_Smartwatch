@@ -28,13 +28,26 @@
 	<artifactId>tests</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
-
-	<modules>
-		<module>icasa-platform-tests</module>
-      <module>icasa-simulation-test</module>
-      <module>icasa-frontend-test</module>
-	</modules>
-
+   <profiles>
+      <profile>
+         <id>no-ihm-tests</id>
+         <activation>
+            <activeByDefault>true</activeByDefault>
+         </activation>
+         <modules>
+            <module>icasa-platform-tests</module>
+            <module>icasa-simulation-test</module>
+         </modules>
+      </profile>
+      <profile>
+         <id>tests</id>
+         <modules>
+            <module>icasa-platform-tests</module>
+            <module>icasa-simulation-test</module>
+            <module>icasa-frontend-test</module>
+         </modules>
+      </profile>
+   </profiles>
 	<build>
 		<plugins>
 			<plugin>
