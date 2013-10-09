@@ -20,8 +20,9 @@
       <artifactId>org.apache.felix.ipojo.annotations</artifactId>
     </dependency>  
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>context.api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>

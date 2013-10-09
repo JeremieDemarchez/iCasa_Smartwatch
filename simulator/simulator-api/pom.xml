@@ -23,8 +23,8 @@
   <!-- Project dependencies -->
   <dependencies>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>context.api</artifactId>
+       <groupId>${project.groupId}</groupId>
+       <artifactId>context.api</artifactId>
     </dependency>
     <dependency>
       <groupId>org.ow2.chameleon.json</groupId>

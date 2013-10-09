@@ -29,12 +29,14 @@
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>context.api</artifactId>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>context.api</artifactId>
+         <version>${project.version}</version>
 		</dependency>
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>context.remote</artifactId>
+         <groupId>${project.groupId}</groupId>
+         <artifactId>context.remote</artifactId>
+         <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>

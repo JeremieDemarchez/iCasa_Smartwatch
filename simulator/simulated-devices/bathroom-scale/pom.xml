@@ -37,16 +37,19 @@
       <artifactId>org.apache.felix.ipojo.annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>context.api</artifactId>
+      <version>${project.version}</version>
    </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>simulator.api</artifactId>
+      <version>${project.version}</version>
    </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
+      <groupId>${project.groupId}</groupId>
       <artifactId>continua-rest-client</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 

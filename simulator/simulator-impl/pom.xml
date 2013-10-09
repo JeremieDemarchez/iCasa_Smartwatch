@@ -43,22 +43,24 @@
       <artifactId>org.apache.felix.ipojo.annotations</artifactId>
     </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>context.api</artifactId>
+       <groupId>${project.groupId}</groupId>
+       <artifactId>context.api</artifactId>
+       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>context.impl</artifactId>
+       <groupId>${project.groupId}</groupId>
+       <artifactId>context.impl</artifactId>
+       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>technical.services.api</artifactId>
-      <version>${project.version}</version>
+       <groupId>${project.groupId}</groupId>
+       <artifactId>technical.services.api</artifactId>
+       <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>simulator.api</artifactId>
-      <version>${project.version}</version>
+       <groupId>${project.groupId}</groupId>
+       <artifactId>simulator.api</artifactId>
+       <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
