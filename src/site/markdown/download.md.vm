@@ -1,6 +1,18 @@
 Download
 ==========
 
+iCasa Platform distribution
+----------
+
+It contains the iCasa Platform gateway without any application and without simulator.
+<br/><br/>
+<h3>Version=${project.version}</h3>
+<br/>
+<a href="http://maven.dynamis-technologies.com/artifactory/adele-repos/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+
+<hr/>
+
 iCasa Teaching distribution
 ----------
 

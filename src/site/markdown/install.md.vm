@@ -1,7 +1,7 @@
 Standard Install
 ==========
 
-iCasa Simulator is decomposed in two parts:
+iCasa is decomposed in two parts:
 
 * _Gateway part_ corresponding to the box runtime (iCasa Home Server) including the simulator module.
 * _Web server part_ serving the client web application code (Content Server).
@@ -21,7 +21,7 @@ Installation Prerequesites
 Installation Procedure
 -----------
 
-1. Download a full iCasa Simulator binary distribution (We recommend the icasa.teaching.distribution to start).
+1. Download a full iCasa binary distribution (We recommend the icasa.teaching.distribution to start).
 2. Unzip it on a local folder i.e. the ICASA_HOME directory.
 
 The ICASA_HOME directory should have this structure
