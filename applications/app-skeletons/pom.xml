@@ -18,10 +18,10 @@
 
     <!-- Project parent -->
     <parent>
-        <groupId>fr.liglab.adele.icasa.apps</groupId>
+        <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
         <version>1.2.2-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
+        <relativePath>../../parent</relativePath>
     </parent>
 
     <!-- Project Descrkiption -->
@@ -32,39 +32,6 @@
 
     <!-- Project repositories -->
     <repositories>
-
-        <!-- ADELE repositories -->
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>adele-central-snapshot</id>
-            <name>adele-repos</name>
-            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
-        </repository>
-        <repository>
-            <snapshots/>
-            <id>snapshots</id>
-            <name>adele-central-release</name>
-            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>central</id>
-            <name>adele-repos</name>
-            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
-        </pluginRepository>
-        <pluginRepository>
-            <snapshots/>
-            <id>snapshots</id>
-            <name>adele-central-release</name>
-            <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
-        </pluginRepository>
-    </pluginRepositories>
 
     <modules>
         <module>app-skeleton</module>
