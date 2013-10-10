@@ -15,6 +15,7 @@
 
 
 	<properties>
+      <name>${productName} :: Habits Monitoring :: Adapters tests</name>
 		<exam.version>3.0.0</exam.version>
 		<url.version>1.5.2</url.version>
 		<distrib.groupId>fr.liglab.adele.icasa.apps</distrib.groupId>
@@ -22,52 +23,37 @@
 		<distrib.version>${project.version}</distrib.version>
 	</properties>
 
-	<repositories>
-    <repository>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <id>adele-central-snapshot</id>
-      <name>adele-repos</name>
-      <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
-    </repository>
-    <repository>
-      <snapshots />
-      <id>snapshots</id>
-      <name>adele-central-release</name>
-      <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
-    </repository>
-	</repositories>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>context.api</artifactId>
-			<version>${iCasaPlatformVersion}</version>
+			<version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>simulator.api</artifactId>
+         <version>${project.version}</version>
 		</dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.push.button</artifactId>
-            <version>${iCasaSimulatorVersion}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.presence</artifactId>
-            <version>${iCasaPlatformVersion}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.light</artifactId>
-            <version>${iCasaPlatformVersion}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.motion</artifactId>
-            <version>${iCasaPlatformVersion}</version>
+            <version>${project.version}</version>
         </dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>

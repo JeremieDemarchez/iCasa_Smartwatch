@@ -41,9 +41,9 @@ See the License for the specific language governing permissions and
         <DistributionTestVersion>1.2.1-SNAPSHOT</DistributionTestVersion>
         <!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.2.0</AdeleBaseVersion>
+        <ciliaVersion>1.7.2</ciliaVersion>
 	</properties>
 
 	<developers>

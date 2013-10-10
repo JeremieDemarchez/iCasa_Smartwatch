@@ -33,10 +33,6 @@ limitations under the License.
          <!-- Project description -->
          <name>${productName} :: Habits Monitoring :: Distribution test</name>
          
-         <properties>
-            <productName>iCasa Apps</productName>
-         </properties>
-         
          <!-- Project dependencies -->
          <dependencies>
             <dependency>

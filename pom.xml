@@ -93,6 +93,15 @@
             <module>applications</module>
          </modules>
       </profile>
+      <profile>
+         <id>site</id>
+         <modules>
+            <module>parent</module>
+            <module>platform</module>
+            <module>simulator</module>
+            <module>tools</module>
+         </modules>
+      </profile>
    </profiles>
       
 

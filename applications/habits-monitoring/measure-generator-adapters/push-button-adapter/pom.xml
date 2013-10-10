@@ -23,18 +23,22 @@
 	<packaging>bundle</packaging>
 	<name>${productName} :: Habits Monitoring :: Push Button Adapter</name>
 
+	
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.cilia</groupId>
 			<artifactId>cilia-core</artifactId>
+         <version>${ciliaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.cilia</groupId>
 			<artifactId>cilia-runtime</artifactId>
+         <version>${ciliaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>context.api</artifactId>
+         <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -48,6 +52,7 @@
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.dependency.annotations</artifactId>
+            <version>${project.version}</version>
         </dependency>
 	</dependencies>
 

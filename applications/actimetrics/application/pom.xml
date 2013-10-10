@@ -19,6 +19,7 @@
     <dependency>
       <groupId>fr.liglab.adele.icasa</groupId>
       <artifactId>context.api</artifactId>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
@@ -31,10 +32,12 @@
        <dependency>
            <groupId>fr.liglab.adele.icasa</groupId>
            <artifactId>device.dependency.annotations</artifactId>
+           <version>${project.version}</version>
        </dependency>
        <dependency>
            <groupId>fr.liglab.adele.icasa</groupId>
            <artifactId>technical.services.api</artifactId>
+           <version>${project.version}</version>
        </dependency>
    </dependencies>
   

@@ -22,19 +22,22 @@
 	<artifactId>motion.sensor.adapter</artifactId>
 	<packaging>bundle</packaging>
 	<name>${productName} :: Habits Monitoring :: Motion Sensor Adapter</name>
-
+  
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.cilia</groupId>
 			<artifactId>cilia-core</artifactId>
+         <version>${ciliaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.cilia</groupId>
 			<artifactId>cilia-runtime</artifactId>
+         <version>${ciliaVersion}</version>
 		</dependency>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa</groupId>
 			<artifactId>context.api</artifactId>
+         <version>${project.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
