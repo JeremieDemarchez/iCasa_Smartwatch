@@ -49,13 +49,13 @@
             <!-- iCasa Platform -->
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.platform.dp</artifactId>
-            <version>${iCasaPlatformVersion}</version>
+            <version>${project.version}</version>
             <type>deployment-package</type>
         </dependency>
          <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.device.hanlder.dp</artifactId>
-            <version>${iCasaPlatformVersion}</version>
+            <version>${project.version}</version>
             <type>deployment-package</type>         
          </dependency>        
         <dependency>
@@ -68,7 +68,7 @@
         <dependency>
            <groupId>${project.groupId}</groupId>
            <artifactId>dp-rest-installer.dp</artifactId>
-           <version>${iCasaPlatformVersion}</version>
+           <version>${project.version}</version>
            <type>deployment-package</type>
         </dependency>
         <!-- Only one clock must be available in the platform-->

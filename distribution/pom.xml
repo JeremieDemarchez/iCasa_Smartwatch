@@ -31,6 +31,9 @@
 	<modules>
         <module>icasa-platform-distribution</module>
         <module>icasa-platform-handler-distribution</module>        
+        <module>icasa-teaching-distribution</module>
+        <module>icasa-teaching-distribution-access-enabled</module>
+        <module>icasa-dashboard-distribution</module>
 	</modules>
    <build>
       <plugins>
