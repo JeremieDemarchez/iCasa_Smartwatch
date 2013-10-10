@@ -56,7 +56,7 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        //waitForStability(context);
+        waitForStability(context);
 
         // should wait for these services
         _contextMgr = (ContextManager) waitForService(context, ContextManager.class);
@@ -155,7 +155,7 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     }
 
     public Object waitForService(BundleContext context, Class clazz) {
-        TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 10000, 20);
+        TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 20000, 20);
 
         return getService(context, clazz);
     }

@@ -16,10 +16,13 @@
 package fr.liglab.adele.icasa.distribution.test;
 
 import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.icasa.service.preferences.PreferenceChangeListener;
 import fr.liglab.adele.icasa.service.preferences.Preferences;
 import junit.framework.Assert;
 import org.apache.felix.ipojo.Factory;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
@@ -41,11 +44,21 @@ import javax.inject.Inject;
 @ExamReactorStrategy(PerMethod.class)
 public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
 
-    @Inject
     Preferences preferences;
 
     @Inject
     BundleContext context;
+
+    @Before
+    public void setUp() {
+        waitForStability(context);
+        preferences = (Preferences) waitForService(context, Preferences.class);
+    }
+
+    @After
+    public void tearDown() {
+        preferences = null;
+    }
 
     @Test
     public void testServiceExistence(){
@@ -264,6 +277,12 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
         preferences.setGlobalPropertyValue(key2, value2);
         //test no call since we remove listener
         verify(listener, never()).changedProperty(key2, null, value2);
+    }
+
+    public Object waitForService(BundleContext context, Class clazz) {
+        TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 20000, 20);
+
+        return getService(context, clazz);
     }
 
 }
