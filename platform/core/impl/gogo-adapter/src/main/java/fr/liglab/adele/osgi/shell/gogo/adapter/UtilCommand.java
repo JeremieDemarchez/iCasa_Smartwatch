@@ -15,10 +15,7 @@
  */
 package fr.liglab.adele.osgi.shell.gogo.adapter;
 
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.SortedSet;
-import java.util.TreeSet;
+import java.util.*;
 
 import fr.liglab.adele.icasa.commands.ICasaCommand;
 import org.apache.felix.ipojo.annotations.Component;
@@ -78,10 +75,11 @@ public final class UtilCommand {
 		StringBuilder builder = new StringBuilder();
 
 		synchronized (_availableCommandsLock) {
-			for (Map.Entry<String, String> entry : _availableCommands
-					.entrySet()) {
-				builder.append(entry.getKey()).append(NEWLINE).append(TAB)
-						.append(entry.getValue()).append(NEWLINE);
+            Set<String> commandNames = new TreeSet(_availableCommands.keySet());
+
+			for (String name : commandNames) {
+				builder.append(name).append(NEWLINE).append(TAB)
+						.append(_availableCommands.get(name)).append(NEWLINE);
 			}
 		}
 

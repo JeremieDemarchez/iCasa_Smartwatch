@@ -28,10 +28,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintStream;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -148,7 +145,8 @@ public class RemoteShell extends AbstractREST {
         JSONObject result = new JSONObject();
         //JSONArray list = new JSONArray();
         StringBuilder builder = new StringBuilder();
-        for(String name :commands.keySet()){
+        Set<String> commandNames = new TreeSet(commands.keySet());
+        for(String name :commandNames){
             //JSONObject command = new JSONObject();
             String description = "unknown";
             //command.put("name", name);
