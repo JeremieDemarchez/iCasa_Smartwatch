@@ -77,7 +77,7 @@ public class GatewayAsBoxTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() throws Exception {
-        //waitForStability(context); //TODO workaround for NPE bug in waitForStability
+        waitForStability(context); //TODO workaround for NPE bug in waitForStability
 
         // should wait for these services
         _contextMgr = (ContextManager) waitForService(context, ContextManager.class);
