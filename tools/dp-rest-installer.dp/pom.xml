@@ -17,11 +17,11 @@ limitations under the License.
 	<modelVersion>4.0.0</modelVersion>
 
 	<!-- Project parent -->
-	<parent>
-		<groupId>fr.liglab.adele.icasa</groupId>
-		<artifactId>parent</artifactId>
+   <parent>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>parent</artifactId>
       <version>1.2.2-SNAPSHOT</version>
-      <relativePath>../../../parent</relativePath>
+      <relativePath>../../parent</relativePath>
    </parent>
 
 	<!-- Project Description -->
