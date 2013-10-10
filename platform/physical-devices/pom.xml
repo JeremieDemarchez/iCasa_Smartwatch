@@ -35,17 +35,12 @@
                 <activeByDefault>true</activeByDefault>
             </activation>
             <modules>
-                <module>upnp</module>
-                <!--<module>x10</module-->
-                <module>usb</module><!--not released because LGPL dependency in USB base driver -->
-                <!--module>bluetooth</module-->
                 <module>zigbee</module>
             </modules>
         </profile>
         <profile>
             <id>release</id>
             <modules>
-                <module>upnp</module>
                 <module>zigbee</module>
             </modules>
         </profile>
