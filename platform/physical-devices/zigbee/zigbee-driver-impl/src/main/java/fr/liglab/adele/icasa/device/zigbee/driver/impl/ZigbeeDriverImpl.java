@@ -63,7 +63,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 
     private static final String SERIAL_PORT_PROPERTY = "zigbee.driver.port";
 
-	@Property(mandatory = false, value = "COM3", name = SERIAL_PORT_PROPERTY)
+	//@Property(mandatory = false, value = "COM3", name = SERIAL_PORT_PROPERTY)
 	private String port;
 
 	@Property(name = "baud.rate", mandatory = false, value = "115200")
@@ -71,6 +71,13 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 
 	/* @GardedBy(trackers) */
 	private List<ZigbeeDeviceTracker> trackers;
+
+    @Property(mandatory = false, value = "NONE", name = SERIAL_PORT_PROPERTY)
+    public void setPort(String seriaPort){
+        this.port = seriaPort;
+        this.stop();//stop if there is a current handler.
+        this.start();//will initialize it with the new port.
+    }
 
 	public List<ZigbeeDeviceTracker> getTrackers() {
 		synchronized(trackers) {
@@ -115,7 +122,12 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 	}
 
 	@Validate
-	private void start() throws IOException {
+	private void start() {
+        String lport = getCOMPort();
+        if(lport.compareTo("NONE") == 0){
+            logger.warn("Please set a port for ZigBee Driver");
+            return;
+        }
 		Thread thread = new Thread(new Runnable() {
 
 			@Override
@@ -123,7 +135,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 				try {
 					handler.startListening(getCOMPort(), baud);
 				} catch (Exception e) {
-					logger.warn("Unable to connect into port: " + port);
+					logger.warn("Unable to connect into port: " + getCOMPort());
 				}
 			};
 			

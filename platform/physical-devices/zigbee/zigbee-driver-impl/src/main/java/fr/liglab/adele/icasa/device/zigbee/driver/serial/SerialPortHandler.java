@@ -95,6 +95,7 @@ public class SerialPortHandler {
 		NRSerialPort serial = new NRSerialPort(port, baud);
 		serial.connect();
 		synchronized (streamLock) {
+            this.socketOpened = true;
 			ins = new DataInputStream(serial.getInputStream());
 			ous = new DataOutputStream(serial.getOutputStream());
 		}
