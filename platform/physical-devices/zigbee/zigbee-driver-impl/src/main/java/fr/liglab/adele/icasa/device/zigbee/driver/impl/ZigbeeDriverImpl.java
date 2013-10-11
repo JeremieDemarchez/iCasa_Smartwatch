@@ -122,8 +122,8 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 			public void run() {
 				try {
 					handler.startListening(getCOMPort(), baud);
-				} catch (IOException e) {
-					e.printStackTrace();
+				} catch (Exception e) {
+					logger.warn("Unable to connect into port: " + port);
 				}
 			};
 			
