@@ -517,7 +517,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 			for (int i = index; i < actionDescriptions.size(); i++) {
 				ActionDescription action = actionDescriptions.get(i);
-				int actionDelay = action.getDelay() * 60 * 1000; // action delay in
+				int actionDelay = action.getDelay() ; // action delay in
 				                                                 // virtual
 				                                                 // milliseconds
 				if (elapsedTime >= actionDelay)

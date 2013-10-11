@@ -68,22 +68,22 @@ public class ScriptSAXHandler extends DefaultHandler {
 
         } else if (qName.equals("delay")) {
             try {
-                int delta = 0;
+                long delta = 0;
                 
-                int tempDelay = Integer.valueOf(attributes.getValue("value"));
+                long tempDelay = Long.valueOf(attributes.getValue("value"));
                 String unit = attributes.getValue("unit");
                 
                 if (unit!=null) {
                     if (unit.equals("h")) {
-                        delta = tempDelay * 60;
+                        delta = tempDelay * 60 * 60 * 1000; // (h * 60mn * 60s * 1000ms) convert into milliseconds
                     } else if (unit.equals("m")) {
-                        delta = tempDelay;
+                        delta = tempDelay * 60 * 1000; //(m * 60s * 1000ms) convert into milliseconds
                     } else if (unit.equals("s")) {
-                        delta = tempDelay / 60;
+                        delta = tempDelay * 1000; // (s * 1000ms) convert into milliseconds
                     }                    
                 } else { // default unit is minutes
-                    logger.error("value of unit attribute not provided. Default minutes will be used");
-                    delta = tempDelay;
+                    logger.warn("value of unit attribute not provided. Default minutes will be used");
+                    delta = tempDelay * 60 * 1000; //(m * 60s * 1000ms) convert into milliseconds
                 }
                                 
                 delay += delta;
