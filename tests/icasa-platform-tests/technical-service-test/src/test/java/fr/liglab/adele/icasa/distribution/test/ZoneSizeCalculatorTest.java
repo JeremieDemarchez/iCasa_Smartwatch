@@ -43,8 +43,6 @@ import javax.inject.Inject;
 @ExamReactorStrategy(PerMethod.class)
 public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
 
-    static final long ONE_SECOND=1000;
-
     @Inject
     public BundleContext context;
 

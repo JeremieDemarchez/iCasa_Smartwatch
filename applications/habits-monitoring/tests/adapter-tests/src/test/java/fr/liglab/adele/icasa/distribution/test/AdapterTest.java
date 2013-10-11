@@ -226,7 +226,7 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
         // instrument a cilia helper class
         CiliaHelper helper = new CiliaHelper(context);
-        Assert.assertEquals(true, helper.waitToChain("generator-mesures", 5000));
+        Assert.assertEquals(true, helper.waitToChain("generator-mesures", 20000));
         MediatorTestHelper transformer = helper.instrumentMediatorInstance("generator-mesures", "transformer", new String[]{"in"}, new String[]{"out"});
         Assert.assertNotNull(transformer);
 
@@ -236,15 +236,15 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
         // execute script for zones and devices
         scriptExecutor.execute(firstScript);
-        if(!helper.waitToComponent("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+        if(!helper.waitToComponent("generator-mesures", "presence-collector", 20000)){//It will download the dp and install it.
             Assert.fail("Unable to retrieve presence-collector component after 10sec");
         }
-        if(!helper.checkValidState("generator-mesures", "presence-collector", 10000)){//It will download the dp and install it.
+        if(!helper.checkValidState("generator-mesures", "presence-collector", 20000)){//It will download the dp and install it.
             Assert.fail("Unable to retrieve presence-collector  as a valid component after 10sec");
         }
 
-        TestUtils.testConditionWithTimeout(new DeviceNumberCondition(4), 10000, 50);
-        TestUtils.testConditionWithTimeout(new ZoneNumberCondition(4), 10000, 50);
+        TestUtils.testConditionWithTimeout(new DeviceNumberCondition(4), 20000, 50);
+        TestUtils.testConditionWithTimeout(new ZoneNumberCondition(4), 20000, 50);
         Set<String> devices = simulationManager.getDeviceIds();
         Set<String> zones = simulationManager.getZoneIds();
 
@@ -254,7 +254,7 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
         CiliaHelper.waitSomeTime(5000);
         scriptExecutor.stop();
-        CiliaHelper.checkReceived(transformer,1,5000);
+        CiliaHelper.checkReceived(transformer,1,20000);
         Assert.assertTrue(transformer.getAmountData()>0);
         Data lastData = transformer.getLastData();
         assertThat(lastData.getContent(), instanceOf(Measure.class));
