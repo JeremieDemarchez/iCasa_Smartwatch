@@ -49,12 +49,6 @@ limitations under the License.
                <version>${ciliaVersion}</version>
                <type>deployment-package</type>
             </dependency>
-            <dependency>
-               <groupId>fr.liglab.adele.cilia</groupId>
-               <artifactId>cilia-remote.dp</artifactId>
-               <version>${ciliaVersion}</version>
-               <type>deployment-package</type>
-            </dependency>
             
             <!-- habits monitoring application -->
             <dependency>
@@ -69,13 +63,39 @@ limitations under the License.
                 <type>bundle</type>
                 <version>${project.version}</version>
             </dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>presence.sensor.adapter.dp</artifactId>
+				<type>deployment-package</type>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>push.button.adapter.dp</artifactId>
+				<type>deployment-package</type>
+				<version>${project.version}</version>
+			</dependency>
+			<dependency>
+				<groupId>${project.groupId}</groupId>
+				<artifactId>motion.sensor.adapter.dp</artifactId>
+				<type>deployment-package</type>
+				<version>${project.version}</version>
+			</dependency>
          </dependencies>
          <build>
             <plugins>
                <plugin>
                   <groupId>fr.liglab.adele.common</groupId>
                   <artifactId>maven-osgi-distribution-plugin</artifactId>
+				  <configuration>
+					<flattenDP>false</flattenDP>
+				  </configuration>
                </plugin>
+			   <plugin>
+				<groupId>de.akquinet.gomobile</groupId>
+				<artifactId>maven-dp-plugin</artifactId>
+				<extensions>true</extensions>
+			  </plugin>
             </plugins>
          </build>
            
