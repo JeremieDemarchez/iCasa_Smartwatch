@@ -103,12 +103,14 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	
 	@Override
 	public State getCurrentScriptState() {
-		if (executorThread != null)
-			if (executorThread.isAlive())
+		if (executorThread != null && getCurrentScript()!= null){
+			if (executorThread.isAlive()){
 				if (!clock.isPaused())
 					return ScriptExecutor.State.STARTED;
 				else
 					return ScriptExecutor.State.PAUSED;
+            }
+        }
 		return ScriptExecutor.State.STOPPED;
 	}
 
@@ -353,7 +355,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 						
 			out = new PrintWriter(scriptFile, "UTF-8");
 			
-			out.println("<behavior startdate=\"" + dateStr + "\" factor=\"1440\">");
+			out.println("<behavior factor=\"1\">");
 			out.println();
 			out.println("\t<!-- Zone Section -->");
 			out.println();
@@ -509,7 +511,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 					execute = false;
 				}
 			}
+            String oldScript = currentScript;
 			currentScript = null; // Script execution finished
+            List<ScriptExecutorListener> listeners =  getListenersCopy();
+            for(ScriptExecutorListener listener: listeners){
+                listener.scriptStopped(oldScript);
+            }
 		}
 
 		private List<ActionDescription> calculeToExecute(int index, long elapsedTime) {
@@ -531,7 +538,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		private void executeActions(List<ActionDescription> toExecute) {
 			if (!toExecute.isEmpty()) {
 				synchronized (clock) {
-					clock.pause();
+					clock.pause(false); //false to not notify listeners.
 					for (ActionDescription actionDescription : toExecute) {
 						ICasaCommand command = commands.get(actionDescription.getCommandName());
 						if (command != null) {
@@ -542,7 +549,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 							}
 						}
 					}
-					clock.resume();
+					clock.resume(false);//false to not notify listeners.
 				}
 			}
 		}

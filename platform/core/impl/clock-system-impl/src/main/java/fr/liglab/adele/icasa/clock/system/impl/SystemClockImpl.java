@@ -81,7 +81,27 @@ public class SystemClockImpl implements Clock {
 	   
    }
 
-	@Override
+    /**
+     * Pauses the (virtual) time flowing.
+     *
+     * @param notify True to notify listeners, false if not.
+     */
+    @Override
+    public void pause(boolean notify) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Resumes the (virtual) time flowing.
+     *
+     * @param notify True to notify listeners, false if not.
+     */
+    @Override
+    public void resume(boolean notify) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    @Override
    public void reset() {
 	   // TODO Auto-generated method stub
 	   

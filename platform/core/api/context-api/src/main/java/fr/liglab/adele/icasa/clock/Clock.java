@@ -69,6 +69,18 @@ public interface Clock {
 	 */
 	public void resume();
 
+    /**
+     * Pauses the (virtual) time flowing.
+     * @param notify True to notify listeners, false if not.
+     */
+    public void pause(boolean notify);
+
+    /**
+     * Resumes the (virtual) time flowing.
+     * @param notify True to notify listeners, false if not.
+     */
+    public void resume(boolean notify);
+
 	/**
 	 * Sets the elapsed time to 0 and pauses the (virtual) time flowing.
 	 */

@@ -126,7 +126,7 @@ public class ScriptSAXHandler extends DefaultHandler {
    }
 	
 	public int getExecutionTime() {
-		return delay;
+		return delay ;
 	}
 
 }

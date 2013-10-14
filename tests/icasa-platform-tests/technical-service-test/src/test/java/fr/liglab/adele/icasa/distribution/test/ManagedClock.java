@@ -80,6 +80,24 @@ public class ManagedClock implements Clock {
         // do nothing
     }
 
+    /**
+     * Pauses the (virtual) time flowing.
+     *
+     * @param notify True to notify listeners, false if not.
+     */
+    public void pause(boolean notify) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
+    /**
+     * Resumes the (virtual) time flowing.
+     *
+     * @param notify True to notify listeners, false if not.
+     */
+    public void resume(boolean notify) {
+        //To change body of implemented methods use File | Settings | File Templates.
+    }
+
 
     public void reset() {
         // do nothing

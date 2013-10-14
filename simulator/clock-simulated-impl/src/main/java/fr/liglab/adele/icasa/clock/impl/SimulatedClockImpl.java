@@ -139,30 +139,42 @@ public class SimulatedClockImpl implements Clock {
 
 	@Override
 	public void pause() {
-		if (pause)
-			return;
-		
-		pause = true;
-		
-		// Call all listeners sequentially
-		for (ClockListener listener : getListenersCopy()) {
-			listener.clockPaused();
-		}
+		pause(true);
 	}
 
+    @Override
+    public void pause(boolean notify) {
+        if (pause)
+            return;
+
+        pause = true;
+        if(notify){
+            // Call all listeners sequentially
+            for (ClockListener listener : getListenersCopy()) {
+                listener.clockPaused();
+            }
+        }
+    }
+
+    @Override
+    public void resume(){
+        resume(true);
+    }
+
 	@Override
-	public void resume() {
+	public void resume(boolean notify) {
 		if (!pause)
 			return;
 		
 		pause = false;		
-		
-		// Call all listeners sequentially
-		for (ClockListener listener : getListenersCopy()) {
-            try {
-                listener.clockResumed();
-            } catch (Exception e) {
-                e.printStackTrace();
+		if(notify){
+            // Call all listeners sequentially
+            for (ClockListener listener : getListenersCopy()) {
+                try {
+                    listener.clockResumed();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
         }
 		
