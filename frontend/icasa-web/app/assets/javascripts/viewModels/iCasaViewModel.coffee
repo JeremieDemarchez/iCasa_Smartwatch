@@ -1548,9 +1548,10 @@ define(['jquery',
               if @selectedScript()
                 dateStr = @selectedScript().startDate()
                 d = new Date(dateStr.substring(6,10),dateStr.substring(3,5)-1,dateStr.substring(0,2),dateStr.substring(11,13),dateStr.substring(14,16),dateStr.substring(17,19),0)
-                timestamp = d.getTime() + (@selectedScript().executionTime() * 60 * 1000)
+                timestamp = d.getTime() + (@selectedScript().executionTime() ) # * 60 * 1000. It is currently in ms
                 d = new Date(timestamp)
                 day = if d.getDate() < 10 then '0'+ d.getDate() else d.getDate()
+                console.log "End Date" + d;
                 return day + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
               else
                 d = new Date()
@@ -1586,8 +1587,12 @@ define(['jquery',
               if (@selectedScript())
                 if ( (@selectedScript().executionTime() != 0) && ( (@selectedScript().state() == 'started') || (@selectedScript().state() == 'paused')))
                   scriptTime = @clock.currentTime() - @clock.startDate()
-                  executionTimeMs = (@selectedScript().executionTime() * 60 * 1000)
-                  return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) ) * 100
+                  dateStr = @selectedScript().startDate()
+                  d = new Date(dateStr.substring(6,10),dateStr.substring(3,5)-1,dateStr.substring(0,2),dateStr.substring(11,13),dateStr.substring(14,16),dateStr.substring(17,19),0)
+                  executionTimeMs = d.getTime() + (@selectedScript().executionTime() ) # * 60 * 1000. It is currently in ms
+                  #executionTimeMs = (@selectedScript().executionTime() ) ##* 60 * 1000 It is currently in ms
+                  return (1 - (scriptTime * 100) / executionTimeMs)
+                  #return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) ) * 100
                 else
                   return 0
               else
@@ -1598,7 +1603,7 @@ define(['jquery',
               timer = ()=>
                 if (! @clock.pause())
                   currentTime = @clock.currentTime()
-                  @clock.currentTime(currentTime + (100 * @clock.factor()))
+                  @clock.currentTime(currentTime + (100 * @clock.factor())) # multiply for 100 'cause it will be executed each 100ms
                   setTimeout(timer, 100)
 
               timer();
