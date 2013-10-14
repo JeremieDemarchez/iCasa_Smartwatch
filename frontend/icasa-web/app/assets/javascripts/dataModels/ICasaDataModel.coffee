@@ -18,7 +18,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
                     success: () =>
                         DataModel.collections.zones.reset();
                         DataModel.collections.persons.reset();
-                        DataModel.collections.devices.reset(); #TODO potential bug if there is real devices
+                        DataModel.collections.devices.fetch(); #Get unremoved devices (real devices)
                     error :() =>
                         console.log "Unable to reset simulation in backend";
                 );
