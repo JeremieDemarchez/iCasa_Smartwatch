@@ -768,6 +768,12 @@ define(['jquery',
                        if (presence == true)
                          decorator.show(presence == true);
                   );
+                if ((@type() == "iCasa.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
+                  presence = @.getPropertyValue("presenceSensor.sensedPresence");
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    if (decorator.name() == "presence")
+                      decorator.show(presence == true);
+                  );
                 if ((@type() == "iCasa.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))
                   powerLevel = @.getPropertyValue("dimmerLight.powerLevel");
                   if (powerLevel == null)
@@ -1256,6 +1262,18 @@ define(['jquery',
 
            @scripts = kb.collectionObservable(DataModel.collections.scripts, {view_model: ScriptViewModel});
 
+           @updateExecutingScript = (newValue) =>
+             ko.utils.arrayForEach(@scripts(), (script) =>
+               if (script == undefined)
+                 return;
+
+               if (script.state() == "started")
+                 @selectedScript(script);
+
+             );
+
+           @.scripts.subscribe(@.updateExecutingScript);
+
            @tabs = ko.observableArray([
                 new TabViewModel {
                     id: "devices",
@@ -1591,7 +1609,7 @@ define(['jquery',
                   d = new Date(dateStr.substring(6,10),dateStr.substring(3,5)-1,dateStr.substring(0,2),dateStr.substring(11,13),dateStr.substring(14,16),dateStr.substring(17,19),0)
                   executionTimeMs = d.getTime() + (@selectedScript().executionTime() ) # * 60 * 1000. It is currently in ms
                   #executionTimeMs = (@selectedScript().executionTime() ) ##* 60 * 1000 It is currently in ms
-                  return (1 - (scriptTime * 100) / executionTimeMs)
+                  return ((scriptTime * 1000) / executionTimeMs) ;
                   #return (1 - ( (executionTimeMs - scriptTime) / executionTimeMs) ) * 100
                 else
                   return 0
@@ -1603,10 +1621,9 @@ define(['jquery',
               timer = ()=>
                 if (! @clock.pause())
                   currentTime = @clock.currentTime()
-                  @clock.currentTime(currentTime + (100 * @clock.factor())) # multiply for 100 'cause it will be executed each 100ms
-                  setTimeout(timer, 100)
-
-              timer();
+                  @clock.currentTime(currentTime + (500 * @clock.factor())) # multiply for 500 'cause it will be executed each 500ms
+              setInterval(timer, 500);
+              #timer();
 
            @pauseClock = ()=>
               @clock.pause(true);
@@ -1617,12 +1634,12 @@ define(['jquery',
               @clock.model().save();
 
            # init clock state
-           @updateClockTimer= (newValue) =>
-             clockPaused = newValue;
-             if (! clockPaused)
-               @startClockTimer();
+           #@updateClockTimer= (newValue) =>
+           #  clockPaused = newValue;
+           #  if (! clockPaused)
+           #    @startClockTimer();
 
-           @clock.pause.subscribe(@updateClockTimer);
+           #@clock.pause.subscribe(@updateClockTimer);
            @startClockTimer();
 
            # managing map size change (must update position of persons, zones and devices)
