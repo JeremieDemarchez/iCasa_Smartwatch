@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import org.apache.felix.ipojo.Factory;
 import org.junit.After;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.junit.PaxExam;
@@ -56,6 +57,7 @@ import fr.liglab.adele.icasa.simulator.SimulationManager;
  */
 @RunWith(PaxExam.class)
 @ExamReactorStrategy(PerMethod.class)
+@Ignore
 public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
     public static final String TEMPERATURE_VAR_NAME = "Temperature";

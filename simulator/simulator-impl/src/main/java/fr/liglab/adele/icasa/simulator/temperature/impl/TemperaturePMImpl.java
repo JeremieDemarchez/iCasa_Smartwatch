@@ -118,7 +118,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         SpecificClockPeriodicRunnable computeTempTask = new SpecificClockPeriodicRunnable() {
             @Override
             public long getPeriod() {
-                return 10000;//each 10sec will update the temperature.
+                return 60000;//each 60sec will update the temperature.
             }
 
             @Override
