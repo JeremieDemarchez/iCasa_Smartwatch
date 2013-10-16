@@ -64,11 +64,29 @@ limitations under the License.
                <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>${project.groupId}</groupId>
-                <artifactId>db.adapter.fileinstall</artifactId>
-                <type>bundle</type>
-                <version>${project.version}</version>
-            </dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>presence.sensor.adapter.dp</artifactId>
+			<type>deployment-package</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>push.button.adapter.dp</artifactId>
+			<type>deployment-package</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
+			<artifactId>motion.sensor.adapter.dp</artifactId>
+			<type>deployment-package</type>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>zigbee.core.dp</artifactId>
+      <type>deployment-package</type>
+      <version>${project.version}</version>
+   </dependency>
          </dependencies>
          <build>
             <plugins>
@@ -76,6 +94,11 @@ limitations under the License.
                   <groupId>fr.liglab.adele.common</groupId>
                   <artifactId>maven-osgi-distribution-plugin</artifactId>
                </plugin>
+               <plugin>
+				<groupId>de.akquinet.gomobile</groupId>
+				<artifactId>maven-dp-plugin</artifactId>
+				<extensions>true</extensions>
+			</plugin>
             </plugins>
          </build>
            
