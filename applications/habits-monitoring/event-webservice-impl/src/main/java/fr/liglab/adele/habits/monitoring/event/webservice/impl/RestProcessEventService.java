@@ -95,7 +95,7 @@ public class RestProcessEventService implements ProcessEventService {
 					 }
 				} 
 				catch(Exception ex) {
-					logger.info("An error occured when proceeding event data : "+ex.toString());
+					logger.error("An error occured when proceeding event data : "+ex.toString());
 					//return false;
 				}		
 				
