@@ -20,6 +20,7 @@ import java.util.Date;
 
 import javax.ws.rs.core.MediaType;
 
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -45,6 +46,9 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 
 	@Requires
 	private IHL7MessageFileInstaller fileInstaller;
+
+    @Requires
+    private Preferences preferences;
 
 	private Client c = Client.create();
 
@@ -83,10 +87,21 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 		data = data.replace("$diastolic", "" + diastolic);
 		data = data.replace("$average", "" + ((systolic + diastolic)/2));
 		data = data.replace("$pulsations", "" + pulsations);
-		
-		
+
+        data = data.replace("$name", getProperty("user.name", "Joseph") );
+        data = data.replace("$middlename", getProperty("user.middleName", "John") );
+        data = data.replace("$lastname", getProperty("user.lastName", "Doe") );
 		return data;
 	}
+
+    private String getProperty(String property, String defaultValue){
+        String userName = (String) preferences.getGlobalPropertyValue(property);
+        if (userName != null) {
+            return userName;
+        } else {
+            return defaultValue;
+        }
+    }
 
 
 }

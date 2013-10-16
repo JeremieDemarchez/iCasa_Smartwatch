@@ -52,6 +52,11 @@
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.fileinstall</artifactId>
     </dependency>
+      <dependency>
+          <groupId>fr.liglab.adele.icasa</groupId>
+          <artifactId>technical.services.api</artifactId>
+          <version>${project.version}</version>
+      </dependency>
   </dependencies>
 
   <build>

@@ -18,7 +18,10 @@ package fr.liglab.adele.icasa.device.bathroomscale.rest.impl;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+
 import javax.ws.rs.core.MediaType;
+
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
@@ -45,6 +48,9 @@ public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 
 	@Requires
 	private IHL7MessageFileInstaller fileInstaller;
+
+    @Requires
+    private Preferences preferences;
 
 	private Client c = Client.create();
 
@@ -77,6 +83,18 @@ public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 		String timestamp = formatter.format(new Date()); 
 		data = data.replace("$date", timestamp);
 		data = data.replace("$weight", "" + ((Float)weight).intValue());
+        data = data.replace("$name", getProperty("user.name", "Joseph") );
+        data = data.replace("$middlename", getProperty("user.middleName", "John") );
+        data = data.replace("$lastname", getProperty("user.lastName", "Doe") );
 		return data;
 	}
+
+    private String getProperty(String property, String defaultValue){
+        String userName = (String) preferences.getGlobalPropertyValue(property);
+        if (userName != null) {
+            return userName;
+        } else {
+            return defaultValue;
+        }
+    }
 }
