@@ -37,7 +37,9 @@ define({
         "Script.Player" : "Script Player",
         "Simulation.State" : "État de la simulation",
         "Save.As" : "Enregistrer sous",
-        "Reset.State" : "Remettre l'état"
+        "Reset.State" : "Remettre l'état",
+        "Granted" : "Accordée",
+        "Denied": "Refusée"
     },
     "en" : true
 });
