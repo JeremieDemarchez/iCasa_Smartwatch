@@ -32,11 +32,6 @@
          <artifactId>measure.generator</artifactId>
          <version>${project.version}</version>
       </dependency>
-      <dependency>
-          <groupId>${project.groupId}</groupId>
-          <artifactId>autonomic.manager</artifactId>
-          <version>${project.version}</version>
-      </dependency>
 	</dependencies>
 
 	<build>
