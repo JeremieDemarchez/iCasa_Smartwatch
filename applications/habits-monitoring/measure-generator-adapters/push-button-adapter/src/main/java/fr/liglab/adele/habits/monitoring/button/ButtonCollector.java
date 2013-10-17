@@ -59,7 +59,7 @@ public class ButtonCollector extends AbstractCollector implements
 	 * @param detector
 	 *            A new PresenceDetector (proxy)
 	 */
-    @RequiresDevice(id = "pushButton", type = "bind")
+    @RequiresDevice(id = "pushButton", type = "bind", aggregate=true)
     public void bindProxy(PushButton detector) {
 		logger.info("A new proxy has been found, id "
 				+ detector.getSerialNumber());
