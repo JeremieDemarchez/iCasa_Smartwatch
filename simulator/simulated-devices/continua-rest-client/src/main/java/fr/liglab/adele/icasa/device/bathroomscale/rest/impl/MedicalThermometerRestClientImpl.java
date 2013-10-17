@@ -94,8 +94,8 @@ public class MedicalThermometerRestClientImpl implements MedicalThermometerRestA
 				
 		data = data.replace("$temperature", "" + df.format(temperature));
 
-        data = data.replace("$name", getProperty("user.name", "Joseph") );
-        data = data.replace("$middlename", getProperty("user.middleName", "John") );
+        data = data.replace("$name", getProperty("user.name", "Elizabeth") );
+        data = data.replace("$middlename", getProperty("user.middleName", "Gzlez") );
         data = data.replace("$lastname", getProperty("user.lastName", "Doe") );
 		
 		return data;

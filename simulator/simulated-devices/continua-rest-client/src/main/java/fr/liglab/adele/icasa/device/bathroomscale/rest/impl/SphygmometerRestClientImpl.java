@@ -88,8 +88,8 @@ public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 		data = data.replace("$average", "" + ((systolic + diastolic)/2));
 		data = data.replace("$pulsations", "" + pulsations);
 
-        data = data.replace("$name", getProperty("user.name", "Joseph") );
-        data = data.replace("$middlename", getProperty("user.middleName", "John") );
+        data = data.replace("$name", getProperty("user.name", "Elizabeth") );
+        data = data.replace("$middlename", getProperty("user.middleName", "Gzlez") );
         data = data.replace("$lastname", getProperty("user.lastName", "Doe") );
 		return data;
 	}

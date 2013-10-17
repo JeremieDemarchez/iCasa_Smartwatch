@@ -83,8 +83,8 @@ public class BathroomScaleRestClientImpl implements BathroomScaleRestAPI {
 		String timestamp = formatter.format(new Date()); 
 		data = data.replace("$date", timestamp);
 		data = data.replace("$weight", "" + ((Float)weight).intValue());
-        data = data.replace("$name", getProperty("user.name", "Joseph") );
-        data = data.replace("$middlename", getProperty("user.middleName", "John") );
+        data = data.replace("$name", getProperty("user.name", "Elizabeth") );
+        data = data.replace("$middlename", getProperty("user.middleName", "Gzlez") );
         data = data.replace("$lastname", getProperty("user.lastName", "Doe") );
 		return data;
 	}
