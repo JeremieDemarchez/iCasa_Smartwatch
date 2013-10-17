@@ -111,6 +111,9 @@ public class IcasaJSONUtil {
 		JSONObject zoneJSON = null;
 		try {
 			String zoneId = zone.getId();
+            if (zoneId.contains("#zone")){    //skip zones attached to medical devices.
+                return null;
+            }
 			zoneJSON = new JSONObject();
 			zoneJSON.putOnce(ZoneJSON.ID_PROP, zoneId);
 			zoneJSON.putOnce(ZoneJSON.NAME_PROP, zoneId);
