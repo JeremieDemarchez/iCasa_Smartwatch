@@ -23,7 +23,9 @@ import java.io.Serializable;
  */
 public class Measure implements Serializable{
    
-   /**
+
+
+/**
 	 * 
 	 */
    private static final long serialVersionUID = -3384373522563403670L;
@@ -118,5 +120,12 @@ public class Measure implements Serializable{
         return this.isPatientPresent ;
     }
    
+    @Override
+    public String toString() {
+    	return "Measure [gatewayId=" + gatewayId + ", patientId=" + patientId
+    			+ ", deviceId=" + deviceId + ", localisation=" + localisation
+    			+ ", reliability=" + reliability + ", timestamp=" + timestamp
+    			+ ", isPatientPresent=" + isPatientPresent + "]";
+    }
    
 }

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @author Gabriel
+ * @author Gabriel, Mehdi Kettani
  *
  */
 public class ProcessEventServiceImpl implements ProcessEventService {
@@ -45,10 +45,12 @@ public class ProcessEventServiceImpl implements ProcessEventService {
 		
 		Format formatter = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss");
 		
-
+		logger.info("==================================================");
 		logger.info("Patient ID --->" + patientId);
 		logger.info("Sensor ID --->" + sensorId);
 		logger.info("Date  --->" + formatter.format(dateTime));
+		logger.info("Localisation  --->" + value);
+		logger.info("==================================================");
 		return true;
 	}
 
