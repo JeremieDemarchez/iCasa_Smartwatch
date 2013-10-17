@@ -42,6 +42,7 @@ public class ScriptSAXHandler extends DefaultHandler {
 	
 	private String startdateStr;
 
+    protected boolean useClockDateToStart = true;
 
     @Override
 	public void startDocument() throws SAXException {
@@ -54,7 +55,9 @@ public class ScriptSAXHandler extends DefaultHandler {
         if (qName.equals("behavior")) {
             if (attributes.getValue("startdate") != null) {
                 startdateStr = attributes.getValue("startdate");
+                useClockDateToStart = false;
             } else {
+                useClockDateToStart = true;
                 startdateStr = DateTextUtil.getTextDate(new Date());
             }
             if (attributes.getValue("factor") != null) {

@@ -130,10 +130,16 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 		ScriptSAXHandler handler = scriptMap.get(scriptName);
 		if (handler != null) {
-			if (useInternal)
-				startExecutionThread(handler.getActionList(), handler.getStartDate(), handler.getFactor());
-			else
+			if (useInternal){
+                Long execDate = handler.getStartDate();
+                if (handler.useClockDateToStart){
+                    execDate = clock.currentTimeMillis();
+                }
+				startExecutionThread(handler.getActionList(), execDate, handler.getFactor());
+            }
+			else{
 				startExecutionThread(handler.getActionList(), startDate, factor);
+            }
 			currentScript = scriptName;
 
 			for (ScriptExecutorListener listener : getListenersCopy()) {
