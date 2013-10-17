@@ -832,6 +832,12 @@ define(['jquery',
                        if (presence == true)
                          decorator.show(presence == true);
                   );
+                if ((@type() == "iCasa.PresenceSensor") || @hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
+                  presence = @.getPropertyValue("presenceSensor.sensedPresence");
+                  ko.utils.arrayForEach(@decorators(), (decorator) ->
+                    if (decorator.name() == "presence")
+                      decorator.show(presence == true);
+                  );
                 if ((@type() == "iCasa.DimmerLight") || @hasService("fr.liglab.adele.icasa.device.light.DimmerLight"))
                   powerLevel = @.getPropertyValue("dimmerLight.powerLevel");
                   if (powerLevel == null)
@@ -932,6 +938,16 @@ define(['jquery',
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
                        imgSrc: '/assets/images/devices/decorators/foots.png',
+                       width: 32,
+                       height: 32,
+                       positionX: 1,
+                       positionY: 1,
+                       show: false
+                     });
+                if (@hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "presence",
+                       imgSrc: '/assets/images/devices/decorators/movementDetector_detected.png',
                        width: 32,
                        height: 32,
                        positionX: 1,

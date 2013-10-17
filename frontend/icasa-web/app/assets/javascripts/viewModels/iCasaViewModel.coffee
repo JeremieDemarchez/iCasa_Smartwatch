@@ -880,6 +880,16 @@ define(['jquery',
                        positionY: 1,
                        show: false
                      });
+                if (@hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
+                     @decorators.push(new DecoratorViewModel new Backbone.Model {
+                       name: "presence",
+                       imgSrc: '/assets/images/devices/decorators/movementDetector_detected.png',
+                       width: 32,
+                       height: 32,
+                       positionX: 1,
+                       positionY: 1,
+                       show: false
+                     });
                 if ((@type() == "iCasa.COGasSensor") || (@type() == "iCasa.CO2GasSensor"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "redLed",
