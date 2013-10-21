@@ -183,7 +183,8 @@ public class SimulatedClockImpl implements Clock {
 
 	@Override
 	public void reset(){		
-		pause();
+		pause(false);
+        initDate = System.currentTimeMillis();
 		elapsedTime = 0;
 		
 		// Call all listeners sequentially
