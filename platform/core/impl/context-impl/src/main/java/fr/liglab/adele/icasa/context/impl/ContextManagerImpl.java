@@ -109,7 +109,13 @@ public class ContextManagerImpl implements ContextManager {
 			}
 		}
         //Update the device locations in the given zone.
-        updateDeviceLocations(zone);
+        Set<LocatedDevice> devicesInZone = getDeviceInZone(id);
+        //Update the device locations in the given zone.
+        for(LocatedDevice device: devicesInZone ){
+            updateDeviceZone(device, Collections.EMPTY_LIST);
+        }
+
+        //updateDeviceLocations(zone);
 		return zone;
 	}
 
@@ -121,9 +127,11 @@ public class ContextManagerImpl implements ContextManager {
 	@Override
 	public void removeZone(String id) {
 		Zone zone;
-		List<ZoneListener> snapshotZoneListener;
+        Set<LocatedDevice> devicesInZone = null;
+        List<ZoneListener> snapshotZoneListener;
 		writeLock.lock();
 		try {
+            devicesInZone = getDeviceInZone(id);
 			zone = zones.remove(id);
 			snapshotZoneListener = getZoneListeners();
 		} finally {
@@ -144,9 +152,13 @@ public class ContextManagerImpl implements ContextManager {
 				e.printStackTrace();
 			}
 		}
-        //Update the device locations in the given zone.
-        updateDeviceLocations(zone);
 
+        List oldZones = Collections.singletonList(zone);
+
+        //Update the device locations in the given zone.
+        for(LocatedDevice device: devicesInZone ){
+            updateDeviceZone(device, oldZones);
+        }
 	}
 
 
@@ -154,6 +166,7 @@ public class ContextManagerImpl implements ContextManager {
      * Updates the device location of a given zone.
      * @param zone The zone
      */
+
     private void updateDeviceLocations(Zone zone){
         List<LocatedDevice> localDevices = getDevices();
         for (LocatedDevice locatedDevice : localDevices) {
@@ -173,10 +186,19 @@ public class ContextManagerImpl implements ContextManager {
 			return;
 		}
         logger.debug("Moving zone " + id);
-		Position newPosition = new Position(leftX, topY, bottomZ);
+
+        Set<LocatedDevice> devicesInZone = getDeviceInZone(id);
+        List oldZones = Collections.singletonList(zone);
+
+        Position newPosition = new Position(leftX, topY, bottomZ);
 		zone.setLeftTopRelativePosition(newPosition);
         //Update the device locations in the given zone.
-        updateDeviceLocations(zone);
+        for(LocatedDevice device: devicesInZone ){
+            updateDeviceZone(device, oldZones);
+        }
+        if(devicesInZone.isEmpty()){
+            updateDeviceLocations(zone);
+        }
 	}
 
 	@Override
@@ -187,9 +209,17 @@ public class ContextManagerImpl implements ContextManager {
 			return;
         }
         logger.debug("Moving zone " + id);
+        Set<LocatedDevice> devicesInZone = getDeviceInZone(id);
+        List oldZones = Collections.singletonList(zone);
+
 		zone.resize(width, height, depth);
         //Update the device locations in the given zone.
-        updateDeviceLocations(zone);
+        for(LocatedDevice device: devicesInZone ){
+            updateDeviceZone(device, oldZones);
+        }
+        if(devicesInZone.isEmpty()){
+            updateDeviceLocations(zone);
+        }
 	}
 
 	@Override
@@ -340,18 +370,25 @@ public class ContextManagerImpl implements ContextManager {
             logger.debug("Setting device position: " + deviceId);
 			List<Zone> oldZones = getObjectZones(device);
 			device.setCenterAbsolutePosition(position);
-			List<Zone> newZones = getObjectZones(device);
-
-			// When the zones are different, the device is notified
-			if (!oldZones.equals(newZones)) {
-				Collections.sort(newZones, new ZoneComparable());
-				device.leavingZones(oldZones);
-				device.enterInZones(newZones);
-			}
+			updateDeviceZone(device, oldZones);
 		} else {
             logger.error("Unable to set position. Device does not exist: " + deviceId);
         }
 	}
+
+    private void updateDeviceZone(LocatedDevice device, List<Zone> oldZones){
+            List<Zone> newZones = getObjectZones(device);
+            // When the zones are different, the device is notified
+            if (!oldZones.equals(newZones)) {
+                Collections.sort(newZones, new ZoneComparable());
+                if(!oldZones.isEmpty()){
+                    device.leavingZones(oldZones);
+                }
+                if(!newZones.isEmpty()){
+                    device.enterInZones(newZones);
+                }
+            }
+    }
 
 	@Override
 	public void moveDeviceIntoZone(String deviceId, String zoneId) {
@@ -837,4 +874,21 @@ public class ContextManagerImpl implements ContextManager {
 		}
 	}
 
+    /**
+     * Get the list of LocatedDevice contained in a given zone.
+     * @param zoneId the zone identifier
+     * @return a Set of all the devices contained in a given zone. If any, return an empty set.
+     */
+    private Set<LocatedDevice> getDeviceInZone(String zoneId){
+        Set<LocatedDevice> containedDevices = new HashSet<LocatedDevice>();
+
+        Zone zone = getZone(zoneId);
+        List<LocatedDevice> devices = getDevices();
+        for (LocatedDevice device : devices) {
+            if (zone.contains(device)){
+                containedDevices.add(device);
+            }
+        }
+        return containedDevices;
+    }
 }

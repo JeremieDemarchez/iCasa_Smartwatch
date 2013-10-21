@@ -141,29 +141,24 @@ public class ZoneREST extends AbstractREST {
 		Position position = new Position(zoneJSON.getLeftX(), zoneJSON.getTopY());
 
 		// TODO: Review for children zones
-		if (!position.equals(zoneFound.getLeftTopAbsolutePosition()))
+		if (!position.equals(zoneFound.getLeftTopAbsolutePosition())){ //move zone
 			try {
-				zoneFound.setLeftTopRelativePosition(position);
+                _simulationMgr.moveZone(zoneFound.getId(),position.x,position.y,position.z);
 			} catch (Exception e1) {
 				e1.printStackTrace();
 			}
+        }
 
 		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
 		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
 
-		if (zoneFound.getXLength() != width)
+		if (zoneFound.getXLength() != width || zoneFound.getYLength() != height){
 			try {
-				zoneFound.setXLength(width);
+                _simulationMgr.resizeZone(zoneFound.getId(), width, height,zoneFound.getZLength());
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-
-		if (zoneFound.getYLength() != height)
-			try {
-				zoneFound.setYLength(height);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+        }
 
 		return makeCORS(Response.ok(IcasaJSONUtil.getZoneJSON(zoneFound).toString()));
 

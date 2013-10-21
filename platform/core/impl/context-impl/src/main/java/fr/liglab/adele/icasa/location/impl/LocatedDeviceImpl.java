@@ -167,17 +167,19 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 				ex.printStackTrace();
 			}
 		}
-
-		// Computes the new location
-		if (deviceComponent != null) {
-			Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
-			String location = GenericDevice.LOCATION_UNKNOWN;
-			if (zone != null)
-				location = zone.getId();
-			deviceComponent.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, location);
-		}
-
+        updatePosition();
 	}
+
+    public void updatePosition(){
+        // Computes the new location
+        if (deviceComponent != null) {
+            Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
+            String location = GenericDevice.LOCATION_UNKNOWN;
+            if (zone != null)
+                location = zone.getId();
+            deviceComponent.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, location);
+        }
+    }
 
 	@Override
 	protected void notifyAttachedObject(LocatedObject attachedObject) {
@@ -225,11 +227,13 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	@Override
 	public void enterInZones(List<Zone> zones) {
 		deviceComponent.enterInZones(zones);
+        updatePosition();
 	}
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
 		deviceComponent.leavingZones(zones);
+        updatePosition();
 	}
 
 	@Override
