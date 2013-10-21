@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
@@ -28,6 +29,8 @@ import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.PersonType;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * TODO
@@ -45,6 +48,8 @@ public class PersonImpl extends LocatedObjectImpl implements Person {
 	ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	private SimulationManager manager;
+
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
 	public PersonImpl(String name, Position position, PersonType personType, SimulationManager manager) {
 		super(position);
@@ -107,7 +112,11 @@ public class PersonImpl extends LocatedObjectImpl implements Person {
 		// Listeners notification
 		List<PersonListener> snapshotListeners = getListeners();
 		for (PersonListener listener : snapshotListeners) {
-			listener.personMoved(this, oldPosition);
+            try{
+			    listener.personMoved(this, oldPosition);
+            }catch(Exception ex){
+                 logger.error("Exception in person listener when moving person", ex);
+            }
 		}
 	}
 
@@ -122,7 +131,11 @@ public class PersonImpl extends LocatedObjectImpl implements Person {
 		}
 		List<PersonListener> snapshotListeners = getListeners();
 		for (PersonListener listener : snapshotListeners) {
-			listener.personDeviceAttached(this, device);
+            try{
+			    listener.personDeviceAttached(this, device);
+            }catch(Exception ex){
+                logger.error("Exception in person listener when notify attached object", ex);
+            }
 		}
 	}
 
@@ -137,7 +150,11 @@ public class PersonImpl extends LocatedObjectImpl implements Person {
 		}
 		List<PersonListener> snapshotListeners = getListeners();
 		for (PersonListener listener : snapshotListeners) {
-			listener.personDeviceDetached(this, device);
+            try{
+			    listener.personDeviceDetached(this, device);
+            }catch(Exception ex){
+                logger.error("Exception in person listener when detaching object", ex);
+            }
 		}
 	}
 
