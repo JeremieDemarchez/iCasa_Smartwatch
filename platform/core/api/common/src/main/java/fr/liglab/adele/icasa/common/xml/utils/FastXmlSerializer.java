@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.access.utils;
+package fr.liglab.adele.icasa.common.xml.utils;
 
 import org.xmlpull.v1.XmlSerializer;
 

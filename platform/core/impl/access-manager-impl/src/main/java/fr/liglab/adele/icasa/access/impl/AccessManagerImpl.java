@@ -17,7 +17,8 @@ package fr.liglab.adele.icasa.access.impl;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.access.*;
-import fr.liglab.adele.icasa.access.utils.*;
+
+import fr.liglab.adele.icasa.common.xml.utils.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
