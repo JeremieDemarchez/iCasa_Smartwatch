@@ -45,11 +45,11 @@
                 <a class="brand" href="/simulator"><img src="assets/images/rectLogos/logoICasa_simulator_pfn_30.png" alt="iCasaLogo" /></a>
                 <nav class="nav-collapse collapse">
                     <ul class="nav">
-                        <li><a href="/simulator">@Messages("Home")</a></li>
+                        <li><a href="/simulator" data-bind="text: $root.getLocaleMessage('Home')"></a></li>
                         <li class="divider-vertical"></li>
-                        <li><a href="http://adeleresearchgroup.github.com/iCasa/" target="_blank">@Messages("Documentation")</a></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa/" target="_blank" data-bind="text: $root.getLocaleMessage('Documentation')"></a></li>
                         <li class="divider-vertical"></li>
-                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="assets/images/rectLogos/medical_logo.png" alt="Medical" /><span class="hidden" id="medicalText">@Messages("Medical.Research.Project")</span></a></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="assets/images/rectLogos/medical_logo.png" alt="Medical" /><span class="hidden" id="medicalText" data-bind="text: $root.getLocaleMessage('Medical.Research.Project')"></span></a></li>
                     </ul>
                 </nav><!--/.nav-collapse -->
             </div>
@@ -60,80 +60,79 @@
 <section id="mapsContainer">
     <article>
         <ul class="thumbnails">
-            @for(map <- maps) {
+            <!--ko foreach: maps -->
             <li class="span3">
-                <a href="/simulator/map/@map.id" class="thumbnail" rel="popover" data-content="@Messages("Id") : @map.id<br/>@Messages("Name") : @map.name<br/>@Messages("Box.URL") : @map.gatewayURL<br/>@Messages("Description") : @map.description" data-original-title="@Messages("Map")">
-                    <img src="/simulator/maps/@map.imgFile" class="img-rounded"/>
-                    <p>@map.name</p>
+                <a class="thumbnail" rel="popover" data-content='' data-original-title="" data-bind="attr: {href:'/simulator/map/' + id(), 'data-content': '' + $root.getLocaleMessage('Id')+ ':' + id() + '<br/>' + $root.getLocaleMessage('Name') +' : ' + name() + '<br/>' + $root.getLocaleMessage('Box.URL')+' : ' + gatewayURL() + '<br/>' + $root.getLocaleMessage('Description')+' : ' + description() , 'data-original-title': $root.getLocaleMessage('Map')}">
+                    <img data-bind="attr:{src: '/simulator/maps/'+imgFile()}"  class="img-rounded"/>
+                    <p data-bind="text: name"></p>
                 </a>
-                <div class="mapButton mapRemoveButton pull-right" onclick="document.remove@(map.id).submit()">
+                <div class="mapButton mapRemoveButton pull-right" data-bind="attr:{onclick: 'document.remove' + id() + '.submit()'}">
                     <i class="icon-remove"></i>
                 </div>
-                <form action="/simulator/mapDelete" method="POST" name="remove@map.id">
-                    <input type="hidden" name="mapId" value="@map.id"/>
+                <form action="/simulator/mapDelete" method="POST" data-bind="attr:{name: id}" >
+                    <input type="hidden" name="mapId" data-bind="attr: {value: id}"/>
                 </form>
-                <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-target="#form@map.id">
+                <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-bind="attr:{'data-target': '#form' + id()}" >
                     <i class="icon-pencil"></i>
                 </div>
             </li>
 
-            <div style="width:300px;margin-left:-150px;" id="form@map.id" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel@map.id" aria-hidden="true">
+            <div style="width:300px;margin-left:-150px;"  class="modal hide fade" tabindex="-1" role="dialog" data-bind="attr:{id: 'form'+id(),'aria-labelledby': 'ModalLabel'+id()}" aria-hidden="true">
                 <div class="modal-header">
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                    <h3 id="ModalLabel@map.id">@Messages("Edit") @map.name</h3>
+                    <h3 data-bind="text: $root.getLocaleMessage('Edit') + name(), attr:{id: 'ModalLabel' + id()}"></h3>
                 </div>
                 <form action="/simulator/mapUpdate" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="control-group">
-                            <label class="control-label" for="mapId@map.id">@Messages("Id")</label>
+                            <label class="control-label" data-bind="attr:{for: 'map'+id()}, text: $root.getLocaleMessage('Id')" ></label>
                             <div class="controls">
-                                <input type="text" name="mapId" id="mapId@map.id" value="@map.id" readonly/>
+                                <input type="text" data-bind="attr:{id:'map'+'id(), value: id'}" name="mapId" readonly/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="mapName@map.id">@Messages("Name")</label>
+                            <label class="control-label"  data-bind="attr:{for: 'mapName' + id()}, text: $root.getLocaleMessage('Name')"></label>
                             <div class="controls">
-                                <input type="text" name="mapName" id="mapName@map.id" value="@map.name" required/>
+                                <input type="text" name="mapName" data-bind="attr:{id: 'mapName' + id(), value:'name'}" required/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="mapDescription@map.id">@Messages("Description")</label>
+                            <label class="control-label"  data-bind="attr:{for: 'mapDescription' + id()}, text: $root.getLocaleMessage('Description')"></label>
                             <div class="controls">
-                                <input type="text" name="mapDescription" id="mapDescription@map.id" value="@map.description"/>
+                                <input type="text" name="mapDescription"  data-bind="attr:{id: 'mapDescription' + id(), value: description}"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="gatewayURL@map.id">@Messages("Box.URL")</label>
+                            <label class="control-label" data-bind="attr: {for: 'gatewayURL' + id()}, text: $root.getLocaleMessage('Box.URL')"></label>
                             <div class="controls">
-                                <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080" required/>
+                                <input type="text" name="gatewayURL" data-bind="attr:{id: 'gatewayURL' + id(), value:'gatewayURL'}" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080" required/>
                             </div>
                         </div>
                         <div class="control-group hidden">
-                            <label class="control-label" for="libs@map.id">@Messages("Libraries")</label>
+                            <label class="control-label" data-bind="attr:{for: 'libs'+ id()}, text: $root.getLocaleMessage('Libraries')"></label>
                             <div class="controls">
-                                <input type="text" name="libs" id="libs@map.id" value="default"/>
+                                <input type="text" name="libs" data-bind="attr:{id:'libs' + id()}" value="default"/>
                             </div>
                         </div>
                         <div class="control-group">
-                            <label class="control-label" for="picture">@Messages("Picture")</label>
+                            <label class="control-label" for="picture" data-bind="text: $root.getLocaleMessage('Picture')"></label>
                             <div class="controls">
-                                <input type="file" name="picture" id="picture@map.id" />
+                                <input type="file" name="picture" data-bind="attr:{id:'picture' + id()}" />
                             </div>
-                            <img src="/simulator/maps/@map.imgFile" class="img-rounded"/>
+                            <img  data-bind="attr:{src:'/simulator/maps/' + imgFile() }" class="img-rounded"/>
                         </div>
                     </div>
                     <div class="modal-footer">
-                        <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("Cancel")</button>
-                        <input class="btn btn-primary" type="submit" name="submit" value="@Messages("Update")"/>
+                        <button class="btn" data-dismiss="modal" aria-hidden="true" data-bind="text: $root.getLocaleMessage('Cancel')" >@Messages("Cancel")</button>
+                        <input class="btn btn-primary" type="submit" name="submit" data-bind="attr:{value: $root.getLocaleMessage('Update') }" />
                     </div>
                 </form>
             </div>
-
-            }
+            <!-- /ko -->
             <li class="span3">
                 <a id="addFormLink" href="#addForm" class="thumbnail" data-toggle="modal">
                     <img src="assets/images/buttons/blue-cross.png" />
-                    <p>@Messages("Add")</p>
+                    <p data-bind="text: getLocaleMessage('Add')"></p>
                 </a>
             </li>
         </ul>
@@ -141,50 +140,50 @@
         <div style="width:300px;margin-left:-150px;" id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-                <h3 id="myModalLabel">@Messages("Add.a.new.map")</h3>
+                <h3 id="myModalLabel" data-bind="text: getLocaleMessage('Add.a.new.map')"></h3>
             </div>
             <form action="/simulator/mapUpload" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="control-group hidden">
-                        <label class="control-label" for="mapId">@Messages("Id")</label>
+                        <label class="control-label" for="mapId" data-bind="text: getLocaleMessage('Id')"></label>
                         <div class="controls">
                             <input type="text" name="mapId" id="mapId" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="mapName">@Messages("Name")</label>
+                        <label class="control-label" for="mapName" data-bind="text: getLocaleMessage('Name')"></label>
                         <div class="controls">
                             <input type="text" name="mapName" required="required" id="mapName" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="mapDescription">@Messages("Description")</label>
+                        <label class="control-label" for="mapDescription" data-bind="text: getLocaleMessage('Description')"></label>
                         <div class="controls">
                             <input type="text" name="mapDescription" id="mapDescription" />
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="gatewayURL">@Messages("Box.URL")</label>
+                        <label class="control-label" for="gatewayURL" data-bind="text: getLocaleMessage('Box.URL')"></label>
                         <div class="controls">
                             <input type="text" name="gatewayURL" id="gatewayURL" required="required" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080"/>
                         </div>
                     </div>
                     <div class="control-group hidden">
-                        <label class="control-label" for="libs">@Messages("Libraries")</label>
+                        <label class="control-label" for="libs" data-bind="text: getLocaleMessage('Libraries')"></label>
                         <div class="controls">
                             <input type="text" name="libs" id="libs" value="default"/>
                         </div>
                     </div>
                     <div class="control-group">
-                        <label class="control-label" for="picture">@Messages("Picture")</label>
+                        <label class="control-label" for="picture" data-bind="text: getLocaleMessage('Picture')"></label>
                         <div class="controls">
                             <input type="file" name="picture" required="required" id="picture" />
                         </div>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("Cancel")</button>
-                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" value="@Messages("create")"/>
+                    <button class="btn" data-dismiss="modal" aria-hidden="true" data-bind="text: getLocaleMessage('Cancel')"></button>
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" data-bind="attr:{value: getLocaleMessage('create')}" />
                 </div>
             </form>
         </div>
@@ -198,7 +197,7 @@
 </script>
 
 <footer>
-    <p>@Messages("Copyright") <a href="http://medical.imag.fr/">@Messages("Medical.Research.Project")</a></p>
+    <p data-bind="text: getLocaleMessage('Copyright')"><a href="http://medical.imag.fr/" data-bind="text: getLocaleMessage('Medical.Research.Project')" ></a></p>
 </footer>
 </body>
 <script data-main="assets/javascripts/main/requireIndex.js" src="assets/javascripts/frameworks/require/require.js"> </script>
