@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>iCasa</title>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+
+    <link rel="stylesheet" media="screen" href="assets/javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css" />
+    <link rel="stylesheet" media="screen" href="assets/javascripts/frameworks/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" media="screen" href="assets/javascripts/frameworks/bootstrap/css/bootstrap-responsive.min.css" />
+
+    <link rel="stylesheet" media="screen" href="assets/stylesheets/main.css" />
+    <link rel="shortcut icon" type="image/png" href="assets/images/favicon.png" />
+
+    <script src="assets/javascripts/frameworks/jquery/core/jquery-1.8.2.min.js"> </script>
+    <script src="assets/javascripts/frameworks/bootstrap/js/bootstrap.min.js"> </script>
+
+    <!-- Use to add browser prefix automatically -->
+    <script src="assets/javascripts/frameworks/prefixfree/prefixfree.min.js"> </script>
+    <script src="assets/javascripts/frameworks/prefixfree/prefixfree.jquery.js"> </script>
+
+</head>
+<body>
+
+<script src="assets/javascripts/BrowserDetection.js"></script>
+<script src="assets/javascripts/util/cookiesUtil.js"></script>
+<script src="assets/javascripts/BrowserCompatibilityCheck.js"></script>
+
+<header>
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/simulator"><img src="assets/images/rectLogos/logoICasa_simulator_pfn_30.png" alt="iCasaLogo" /></a>
+                <nav class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="/simulator">@Messages("Home")</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa/" target="_blank">@Messages("Documentation")</a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="assets/images/rectLogos/medical_logo.png" alt="Medical" /><span class="hidden" id="medicalText">@Messages("Medical.Research.Project")</span></a></li>
+                    </ul>
+                </nav><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+</header>
+
+<section id="mapsContainer">
+    <article>
+        <ul class="thumbnails">
+            @for(map <- maps) {
+            <li class="span3">
+                <a href="/simulator/map/@map.id" class="thumbnail" rel="popover" data-content="@Messages("Id") : @map.id<br/>@Messages("Name") : @map.name<br/>@Messages("Box.URL") : @map.gatewayURL<br/>@Messages("Description") : @map.description" data-original-title="@Messages("Map")">
+                    <img src="/simulator/maps/@map.imgFile" class="img-rounded"/>
+                    <p>@map.name</p>
+                </a>
+                <div class="mapButton mapRemoveButton pull-right" onclick="document.remove@(map.id).submit()">
+                    <i class="icon-remove"></i>
+                </div>
+                <form action="/simulator/mapDelete" method="POST" name="remove@map.id">
+                    <input type="hidden" name="mapId" value="@map.id"/>
+                </form>
+                <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-target="#form@map.id">
+                    <i class="icon-pencil"></i>
+                </div>
+            </li>
+
+            <div style="width:300px;margin-left:-150px;" id="form@map.id" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="ModalLabel@map.id" aria-hidden="true">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <h3 id="ModalLabel@map.id">@Messages("Edit") @map.name</h3>
+                </div>
+                <form action="/simulator/mapUpdate" method="POST" enctype="multipart/form-data">
+                    <div class="modal-body">
+                        <div class="control-group">
+                            <label class="control-label" for="mapId@map.id">@Messages("Id")</label>
+                            <div class="controls">
+                                <input type="text" name="mapId" id="mapId@map.id" value="@map.id" readonly/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapName@map.id">@Messages("Name")</label>
+                            <div class="controls">
+                                <input type="text" name="mapName" id="mapName@map.id" value="@map.name" required/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="mapDescription@map.id">@Messages("Description")</label>
+                            <div class="controls">
+                                <input type="text" name="mapDescription" id="mapDescription@map.id" value="@map.description"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="gatewayURL@map.id">@Messages("Box.URL")</label>
+                            <div class="controls">
+                                <input type="text" name="gatewayURL" id="gatewayURL@map.id" value="@map.gatewayURL" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080" required/>
+                            </div>
+                        </div>
+                        <div class="control-group hidden">
+                            <label class="control-label" for="libs@map.id">@Messages("Libraries")</label>
+                            <div class="controls">
+                                <input type="text" name="libs" id="libs@map.id" value="default"/>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label class="control-label" for="picture">@Messages("Picture")</label>
+                            <div class="controls">
+                                <input type="file" name="picture" id="picture@map.id" />
+                            </div>
+                            <img src="/simulator/maps/@map.imgFile" class="img-rounded"/>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("Cancel")</button>
+                        <input class="btn btn-primary" type="submit" name="submit" value="@Messages("Update")"/>
+                    </div>
+                </form>
+            </div>
+
+            }
+            <li class="span3">
+                <a id="addFormLink" href="#addForm" class="thumbnail" data-toggle="modal">
+                    <img src="assets/images/buttons/blue-cross.png" />
+                    <p>@Messages("Add")</p>
+                </a>
+            </li>
+        </ul>
+
+        <div style="width:300px;margin-left:-150px;" id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <h3 id="myModalLabel">@Messages("Add.a.new.map")</h3>
+            </div>
+            <form action="/simulator/mapUpload" method="POST" enctype="multipart/form-data">
+                <div class="modal-body">
+                    <div class="control-group hidden">
+                        <label class="control-label" for="mapId">@Messages("Id")</label>
+                        <div class="controls">
+                            <input type="text" name="mapId" id="mapId" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapName">@Messages("Name")</label>
+                        <div class="controls">
+                            <input type="text" name="mapName" required="required" id="mapName" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="mapDescription">@Messages("Description")</label>
+                        <div class="controls">
+                            <input type="text" name="mapDescription" id="mapDescription" />
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="gatewayURL">@Messages("Box.URL")</label>
+                        <div class="controls">
+                            <input type="text" name="gatewayURL" id="gatewayURL" required="required" pattern="^(http|https)\://[a-zA-Z0-9\-\.]+(:[0-9]*)?/?([a-zA-Z0-9\-\._\?\,\'/\\\+&amp;%\$#\=~])*$" placeholder="http://localhost:8080"/>
+                        </div>
+                    </div>
+                    <div class="control-group hidden">
+                        <label class="control-label" for="libs">@Messages("Libraries")</label>
+                        <div class="controls">
+                            <input type="text" name="libs" id="libs" value="default"/>
+                        </div>
+                    </div>
+                    <div class="control-group">
+                        <label class="control-label" for="picture">@Messages("Picture")</label>
+                        <div class="controls">
+                            <input type="file" name="picture" required="required" id="picture" />
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn" data-dismiss="modal" aria-hidden="true">@Messages("Cancel")</button>
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" value="@Messages("create")"/>
+                </div>
+            </form>
+        </div>
+    </article>
+</section>
+
+<script>
+    $(function () {
+        $(".thumbnail").popover({trigger:'hover'});
+    });
+</script>
+
+<footer>
+    <p>@Messages("Copyright") <a href="http://medical.imag.fr/">@Messages("Medical.Research.Project")</a></p>
+</footer>
+</body>
+<script data-main="assets/javascripts/main/requireIndex.js" src="assets/javascripts/frameworks/require/require.js"> </script>
+</html>
