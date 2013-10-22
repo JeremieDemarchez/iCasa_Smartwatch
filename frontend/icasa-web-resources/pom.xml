@@ -16,7 +16,7 @@
     <name>${productName} :: ${projectName}</name>
 
     <properties>
-        <unprocessedResourcePath>unprocessed-resources</unprocessedResourcePath>
+        <unprocessedResourcePath>src/main</unprocessedResourcePath>
         <resourceBasePath>target/processed-resources</resourceBasePath>
         <resourceTargetPath>${resourceBasePath}/assets</resourceTargetPath>
     </properties>

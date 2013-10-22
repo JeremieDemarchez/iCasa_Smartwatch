@@ -17,15 +17,14 @@ import java.io.IOException;
  */
 
 @Component
-@Provides
 @Instantiate
 public class FrontendServlet {
 
 
 
 
-    @Property(value = "/simulator")
-    private String servletName;
+    //@Property(value = "/simulator")
+    //private String servletName;
 
     @Property(value = "/simulator/assets")
     private String resources ;
@@ -40,6 +39,7 @@ public class FrontendServlet {
 
     @Bind
     private void bindHttpService(HttpService service) {
+        System.out.println("Register resources");
         try {
             //service.registerServlet(servletName, this, null, null);
             service.registerResources(resources, "/assets", null);
@@ -52,9 +52,11 @@ public class FrontendServlet {
 
     @Unbind
     public void unbindHttpService(HttpService service) {
+        System.out.println("Unregister resources");
         //service.unregister(servletName);
         service.unregister(resources);
         service.unregister(resourcesPages);
+        service.unregister(mapResources);
 
     }
 

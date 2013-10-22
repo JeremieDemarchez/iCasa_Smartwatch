@@ -30,9 +30,7 @@
 
 	<modules>
       <module>frontend-services</module>
-      <module>icasa-web</module>
       <module>icasa-web-resources</module>
-      <module>dashboard-web</module>
 	</modules>
    <build>
       <plugins>

@@ -35,8 +35,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Export-Package>fr.liglab.adele.icasa.common, fr.liglab.adele.icasa.common.impl, fr.liglab.adele.icasa.common.xml.utils</Export-Package>
-                        <Embed-Dependency>kxml2</Embed-Dependency>
+						<Export-Package>fr.liglab.adele.icasa.common, fr.liglab.adele.icasa.common.impl, fr.liglab.adele.icasa.common.xml.utils, org.xmlpull.v1</Export-Package>
+                        <Embed-Dependency>kxml2;inline=true</Embed-Dependency>
 					</instructions>
 				</configuration>
 			</plugin>

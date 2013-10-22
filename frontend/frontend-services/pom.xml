@@ -56,7 +56,11 @@
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>
 		</dependency>
-
+        <dependency>
+            <groupId>com.sun.jersey.contribs</groupId>
+            <artifactId>jersey-multipart</artifactId>
+            <version>${jerseyVersion}</version>
+        </dependency>
 
 		<dependency>
 			<groupId>javax.servlet</groupId>
@@ -71,7 +75,8 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.icasa.frontend.services.impl</Private-Package>
+						<Private-Package>fr.liglab.adele.icasa.frontend.services,
+                            fr.liglab.adele.icasa.frontend.services.*</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>

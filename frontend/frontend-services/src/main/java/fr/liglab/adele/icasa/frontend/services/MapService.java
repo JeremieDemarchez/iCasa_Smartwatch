@@ -13,4 +13,6 @@ public interface MapService {
 
     Set<ICasaMap> getMaps();
 
+    boolean contains(String mapId);
+
 }

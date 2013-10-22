@@ -29,20 +29,37 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
     @Property(name="location", value = "maps")
     private String location;
 
-    private Set<ICasaMap> icasaMaps = new HashSet<ICasaMap>();
+    private Map<String, ICasaMap> icasaMaps = new HashMap();
+
+    private Object lockObject = new Object();
 
     @Override
     public Set<ICasaMap> getMaps() {
+        HashSet returnSet = new HashSet();
         loadMaps();
-        return Collections.unmodifiableSet(icasaMaps);
+        synchronized (lockObject){
+            for(String id: icasaMaps.keySet()){
+                returnSet.add(icasaMaps.get(id));
+            }
+        }
+        return returnSet;
+    }
+
+    @Override
+    public boolean contains(String mapId) {
+        synchronized (lockObject){
+            return icasaMaps.containsKey(mapId);
+        }
     }
 
     public void loadMaps(){
-        List<Map> maps = loadFile();
-        icasaMaps.clear();
-        for (Map map: maps){
-            ICasaMap iCasaMap = new ICasaMap(map);
-            icasaMaps.add(iCasaMap);
+        synchronized (lockObject){
+            List<Map> maps = loadFile();
+            icasaMaps.clear();
+            for (Map map: maps){
+                ICasaMap iCasaMap = new ICasaMap(map);
+                icasaMaps.put(iCasaMap.getId(), iCasaMap);
+            }
         }
     }
 
@@ -53,12 +70,11 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
     @Override
     public List getInfo() {
         Set<ICasaMap> maps = getMaps();
-        Map mapsInMap = new HashMap();
-        List<Map> rightsInMap = new ArrayList();
+        List<Map> mapsInList = new ArrayList();
         for (ICasaMap map : maps) {
-            rightsInMap.add(map.toMap());
+            mapsInList.add(map.toMap());
         }
-        return rightsInMap;
+        return mapsInList;
     }
 
 
