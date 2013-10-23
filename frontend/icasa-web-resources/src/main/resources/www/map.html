@@ -1,4 +1,4 @@
-@(mapId: String, mapImgSrc: String, gatewayURL: String, pluginIds : String, widgetIds : String)(implicit lang: Lang)
+<!--@(mapId: String, mapImgSrc: String, gatewayURL: String, pluginIds : String, widgetIds : String)(implicit lang: Lang)-->
 <!--
 
 
@@ -16,18 +16,73 @@
       limitations under the License.
 
 -->
+<!DOCTYPE html>
 
-@import helper._
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>iCasa</title>
 
-@main("iCasa Simulator") {
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+
+    <link rel="stylesheet" media="screen" href="/simulator/assets/javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css" />
+    <link rel="stylesheet" media="screen" href="/simulator/assets/javascripts/frameworks/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" media="screen" href="/simulator/assets/javascripts/frameworks/bootstrap/css/bootstrap-responsive.min.css" />
+
+    <link rel="stylesheet" media="screen" href="/simulator/assets/stylesheets/main.css" />
+    <link rel="shortcut icon" type="image/png" href="/simulator/assets/images/favicon.png" />
+
+    <script src="/simulator/assets/javascripts/frameworks/jquery/core/jquery-1.8.2.min.js"> </script>
+    <script src="/simulator/assets/javascripts/frameworks/bootstrap/js/bootstrap.min.js"> </script>
+
+    <!-- Use to add browser prefix automatically -->
+    <script src="/simulator/assets/javascripts/frameworks/prefixfree/prefixfree.min.js"> </script>
+    <script src="/simulator/assets/javascripts/frameworks/prefixfree/prefixfree.jquery.js"> </script>
+
+</head>
+<body>
+
+<script src="/simulator/assets/javascripts/BrowserDetection.js"></script>
+<script src="/simulator/assets/javascripts/util/cookiesUtil.js"></script>
+<script src="/simulator/assets/javascripts/BrowserCompatibilityCheck.js"></script>
+
+<header>
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/simulator"><img src="/simulator/assets/images/rectLogos/logoICasa_simulator_pfn_30.png" alt="iCasaLogo" /></a>
+                <nav class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="/simulator" data-bind="text: $root.getLocaleMessage('Home')"></a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa/" target="_blank" data-bind="text: $root.getLocaleMessage('Documentation')"></a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="/simulator/assets/images/rectLogos/medical_logo.png" alt="Medical" /><span class="hidden" id="medicalText" data-bind="text: $root.getLocaleMessage('Medical.Research.Project')"></span></a></li>
+                    </ul>
+                </nav><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+</header>
+
 <div id="icasa-simulator-connection-status" />
-    <button id="connection-status-button" class="hidden btn btn-danger">@Messages("Not.Connected")</button>
+    <button id="connection-status-button" class="hidden btn btn-danger" data-bind="text: getLocaleMessage('Not.Connected')"></button>
 </div>
 <div id="icasa-extensions" icasa-plugins="@pluginIds" icasa-widgets="@widgetIds" class="hidden" />
 </div>
 
 <div id="compatibilityWarn"  class="hidden alert alert-block">
-    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) @Messages("and") Frontend(<span data-bind="text: frontendVersion"></span>)@Messages("are.not.the.same.version.some.functionality.may.not.work")
+    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) <span data-bind="text: getLocaleMessage('and')"></span> Frontend(<span data-bind="text: frontendVersion"></span> )<span data-bind="text: getLocaleMessage('are.not.the.same.version.some.functionality.may.not.work')"></span>
     </p>
 </div>
 
@@ -83,6 +138,7 @@
     </article>
     <aside id="actionTabs">
         <div id="tabs" data-bind="jqueryTabs: {}">
+
             Loading...
         </div>
     </aside>
@@ -105,7 +161,7 @@
         <!-- /ko -->
     </article>
 </section>
-<section  >
+<section>
     <article id="shellContainer" >
         <form class="form-horizontal" onsubmit="doNothing(); return false;">
             <div class="control-group">
@@ -122,26 +178,13 @@
 
             </div>
         </div>
-        <!--
-        <div class="container visible-desktop" >
-            <div class="row" id="shellInput">
-                <div align="center" class="span2"><span data-bind="text: $root.getLocaleMessage('iCasa.command')"></span></div>
-                <input type="text" class="span8" data-bind="value: $root.command, event:{onkeydown: executeShellCommandEvent}" placeholder="help" />
-                <input type="button" data-bind="value: $root.getLocaleMessage('Execute'),click: executeShellCommand"/>
-            </div>
-            <div class="row" >
-                <div class="span11" id="shellOutput">
-
-                </div>
-            </div>
-        </div>
-        -->
     </article>
 </section>
 
 
-
-        <!-- Load the script "javascripts/main.coffee" as our entry point at the end of the dom to optimize loading -->
-        <script data-main="@routes.Assets.at("javascripts/main")" src="@routes.Assets.at("javascripts/frameworks/require/require.js")"> </script>
-
-}
+<footer>
+    <p> <span data-bind="text: getLocaleMessage('Copyright')"></span>  <a href="http://medical.imag.fr/" data-bind="text: getLocaleMessage('Medical.Research.Project')"></a></p>
+</footer>
+</body>
+<script data-main="/simulator/assets/javascripts/main/requireMap.js" src="/simulator/assets/javascripts/frameworks/require/require.js"> </script>
+</html>

@@ -1,6 +1,8 @@
 package fr.liglab.adele.frontend.servlet;
 
+import fr.liglab.adele.icasa.frontend.services.utils.ICasaMap;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;
 import org.osgi.service.http.NamespaceException;
 
@@ -8,7 +10,8 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
+import java.io.*;
+import java.net.URL;
 
 /**
  * User: garciai@imag.fr
@@ -18,34 +21,35 @@ import java.io.IOException;
 
 @Component
 @Instantiate
-public class FrontendServlet {
+public class FrontendServlet extends HttpServlet {
 
 
+    private final BundleContext context;
 
-
-    //@Property(value = "/simulator")
-    //private String servletName;
+    @Property(value = "/simulator")
+    private String servletName;
 
     @Property(value = "/simulator/assets")
     private String resources ;
 
-    @Property(value = "/simulator")
-    private String resourcesPages;
-
     @Property(value = "/simulator/maps")
     private String mapResources;
 
-
+    public FrontendServlet(BundleContext c){
+        this.context = c;
+    }
 
     @Bind
     private void bindHttpService(HttpService service) {
         System.out.println("Register resources");
         try {
-            //service.registerServlet(servletName, this, null, null);
+            service.registerServlet(servletName, this, null, null);
             service.registerResources(resources, "/assets", null);
-            service.registerResources(resourcesPages, "/www", null);
+            //service.registerResources(resourcesPages, "/www", null);
             service.registerResources(mapResources, "/", new HttpExternalResourceContext("maps"));
         } catch (NamespaceException e) {
+            e.printStackTrace();
+        } catch (ServletException e) {
             e.printStackTrace();
         }
     }
@@ -53,10 +57,38 @@ public class FrontendServlet {
     @Unbind
     public void unbindHttpService(HttpService service) {
         System.out.println("Unregister resources");
-        //service.unregister(servletName);
+        service.unregister(servletName);
         service.unregister(resources);
-        service.unregister(resourcesPages);
+        //service.unregister(resourcesPages);
         service.unregister(mapResources);
+
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String result = getTemplate().toString();
+        PrintWriter writer = resp.getWriter();
+        writer.append(result);
+        writer.close();
+    }
+
+    private StringBuilder getTemplate() throws IOException {
+        //get template.
+        URL f= context.getBundle().getResource("www/index.html");
+
+        byte[] buf = new byte[8192];
+
+        InputStream is = f.openStream();
+
+        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
+        String line;
+        StringBuilder result = new StringBuilder();
+        while( ( line = reader.readLine() ) != null)
+        {
+            result.append(line).append("\n");
+        }
+        reader.close();
+        return result;
 
     }
 

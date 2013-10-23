@@ -107,14 +107,9 @@ public class HttpExternalResourceContext implements HttpContext {
      */
     @Override
     public URL getResource(String name) {
-        System.out.println("Resource:" + name);
         File file = new File(rootDir, name);
         try {
-            System.out.println("toPath: " + file.getAbsolutePath());
-            System.out.println("to URI: " + file.toURI());
-            System.out.println("to URL: " + file.toURL());
-            System.out.println("to URL: " + file.toURI().toURL());
-            return file.toURL();
+            return file.toURI().toURL();
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -137,6 +132,6 @@ public class HttpExternalResourceContext implements HttpContext {
      */
     @Override
     public String getMimeType(String name) {
-        return null;  //To change body of implemented methods use File | Settings | File Templates.
+        return null;
     }
 }

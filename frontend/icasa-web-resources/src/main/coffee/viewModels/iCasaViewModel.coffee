@@ -1214,6 +1214,33 @@ define(['jquery',
 
         constructor : (model) ->
            @name = model.id;
+           #to handle localization.
+           @getLocaleMessage = (name) ->
+              return locale[name];
+           #add tabs.
+           deviceTab = new TabViewModel ({
+                id: "devices",
+                name: @getLocaleMessage('Devices'),
+                template: devTabHtml});
+           zoneTab = new TabViewModel ({
+              id: "zones",
+              name: @getLocaleMessage('Zones') ,
+              template: zoneTabHtml});
+           personTab = new TabViewModel ({
+              id: "persons",
+              name: @getLocaleMessage('Persons') ,
+              template: personTabHtml});
+           scriptTab = new TabViewModel ({
+              id: "script-player",
+              name: @getLocaleMessage('Script.Player') ,
+              template: scriptPlayerHtml});
+           tabsItems = [];
+           tabsItems.push(deviceTab);
+           tabsItems.push(zoneTab);
+           tabsItems.push(personTab);
+           tabsItems.push(scriptTab);
+
+           @tabs = ko.observableArray(tabsItems);
 
            @deviceWidgets = ko.observableArray();
 
@@ -1221,8 +1248,6 @@ define(['jquery',
            @backendVersion = kb.observable(DataModel.models.backend, 'version');
            @frontendVersion = kb.observable(DataModel.models.frontend, 'version');
 
-           @getLocaleMessage = (name) ->
-              return locale[name];
 
            @imgSrc = ko.observable(model.imgSrc);
            @mapWidth = ko.observable(0);
@@ -1283,25 +1308,6 @@ define(['jquery',
              );
 
            @.scripts.subscribe(@.updateExecutingScript);
-
-           @tabs = ko.observableArray([
-                new TabViewModel {
-                    id: "devices",
-                    name: @getLocaleMessage('Devices'),
-                    template: devTabHtml},
-                new TabViewModel {
-                    id: "zones",
-                    name: @getLocaleMessage('Zones') ,
-                    template: zoneTabHtml},
-                new TabViewModel {
-                    id: "persons",
-                    name: @getLocaleMessage('Persons') ,
-                    template: personTabHtml},
-                new TabViewModel {
-                    id: "script-player",
-                    name: @getLocaleMessage('Script.Player') ,
-                    template: scriptPlayerHtml}
-           ]);
 
 
            # device management
