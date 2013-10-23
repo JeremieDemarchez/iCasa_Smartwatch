@@ -33,6 +33,11 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
 
     private Object lockObject = new Object();
 
+    @Validate
+    public void validate(){
+        loadMaps();
+    }
+
     @Override
     public Set<ICasaMap> getMaps() {
         HashSet returnSet = new HashSet();
@@ -49,6 +54,13 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
     public boolean contains(String mapId) {
         synchronized (lockObject){
             return icasaMaps.containsKey(mapId);
+        }
+    }
+
+    @Override
+    public ICasaMap getMap(String mapId) {
+        synchronized (lockObject){
+            return icasaMaps.get(mapId);
         }
     }
 

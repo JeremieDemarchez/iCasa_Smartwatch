@@ -15,4 +15,6 @@ public interface MapService {
 
     boolean contains(String mapId);
 
+    ICasaMap getMap(String mapId);
+
 }
