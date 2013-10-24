@@ -6,7 +6,6 @@ import fr.liglab.adele.icasa.frontend.services.MapService;
 import fr.liglab.adele.icasa.frontend.services.utils.ICasaMap;
 import fr.liglab.adele.icasa.frontend.services.utils.JSONMap;
 import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.remote.impl.iCasaREST;
 import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -15,8 +14,9 @@ import org.json.JSONObject;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.io.InputStream;
-import java.util.Random;
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Service implementation to retrieve available maps in the frontend service.
@@ -69,25 +69,64 @@ public class MapRemoteServiceImpl extends AbstractREST {
     @POST
     @Produces(MediaType.APPLICATION_JSON)
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Path("/image")
-    public Response installApplication(
-            @FormDataParam("name") String name,
-            @FormDataParam("description") String description,
+    public Response postMap(
+            @FormDataParam("mapId") String id,
+            @FormDataParam("mapName") String name,
+            @FormDataParam("mapDescription") String description,
             @FormDataParam("gatewayURL") String gatewayURL,
             @FormDataParam("libs") String libs,
-            @FormDataParam("file") InputStream uploadedInputStream,
-            @FormDataParam("file") FormDataContentDisposition fileDetail) {
+            @FormDataParam("picture") InputStream uploadedInputStream,
+            @FormDataParam("picture") FormDataContentDisposition fileDetail,
+            @HeaderParam("Referer") String refer) {
 
-        return null;
-    }
-
-    private String generateId(String name){
-        String mapId = name.replaceAll("[^A-Za-z0-9]", "");//remove non-alphanumeric char
-        Random random = new Random();
-        while (mapService.contains(mapId)){   //Synchronization issue, map could be aggregated meanwhile.
-            mapId = mapId + random.nextInt(); //add a number.
+        ICasaMap map;
+        System.out.println("id " + id);
+        System.out.println("name " + name);
+        System.out.println("description " + description);
+        System.out.println("gatewayURL " + gatewayURL);
+        System.out.println("libs " + libs);
+        if(!id.isEmpty()){ //update map.
+            map = handleUpdate(id,name,description,gatewayURL,libs);
+            if(map == null){
+                return Response.status(Response.Status.NOT_FOUND).build();
+            }
+        }  else{ // new map.
+            map = new ICasaMap(name, description, gatewayURL, libs);
+            mapService.addMap(map);
         }
-        return mapId;
+
+
+
+        if(uploadedInputStream != null){
+            String fileURL = mapService.getLocation() + "/" + map.getImgFile();
+            try {
+                OutputStream newFileStream = new FileOutputStream(new File(fileURL));
+                byte[] buffer = new byte[1024];
+                int len;
+                while ((len = uploadedInputStream.read(buffer)) != -1) {
+                    newFileStream.write(buffer, 0, len);
+                }
+                uploadedInputStream.close();
+                newFileStream.close();
+             } catch (IOException ioe) {
+                ioe.printStackTrace();
+                Response.serverError().build();
+             }
+        }
+
+        System.out.println(refer);
+        try {
+            //we don't know if its an upload from simulator or dashboard, so we redirect to referer.
+            return Response.seeOther(new URI(refer)).build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            return Response.serverError().build();
+        }
     }
+
+     private ICasaMap handleUpdate(String id, String name, String description, String gatewayURL, String libs){
+         return mapService.updateMap(id, name, description, gatewayURL, libs);
+     }
+
 
 }

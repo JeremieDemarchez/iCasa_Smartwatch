@@ -11,10 +11,35 @@ import java.util.Set;
  */
 public interface MapService {
 
+    /**
+     *
+     * Retrieves the set of ICasaMaps in the server.
+     * @return
+     */
     Set<ICasaMap> getMaps();
 
+    /**
+     * Check the existence of a map.
+     * @param mapId
+     * @return
+     */
     boolean contains(String mapId);
 
+    /**
+     * Get a specific iCasaMap information
+     * @param mapId
+     * @return
+     */
     ICasaMap getMap(String mapId);
+
+    /**
+     * Get the path where the maps are
+     * @return
+     */
+    String getLocation();
+
+    String addMap(ICasaMap map);
+
+    ICasaMap updateMap(String id, String name, String description, String gatewayURL, String libs);
 
 }

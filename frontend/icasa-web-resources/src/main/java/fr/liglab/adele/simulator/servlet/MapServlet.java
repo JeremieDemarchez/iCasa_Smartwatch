@@ -1,4 +1,4 @@
-package fr.liglab.adele.frontend.servlet;
+package fr.liglab.adele.simulator.servlet;
 
 import fr.liglab.adele.icasa.frontend.services.MapService;
 import fr.liglab.adele.icasa.frontend.services.utils.ICasaMap;

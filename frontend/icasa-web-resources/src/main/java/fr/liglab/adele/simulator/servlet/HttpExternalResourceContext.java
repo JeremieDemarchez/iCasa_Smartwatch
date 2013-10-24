@@ -1,4 +1,4 @@
-package fr.liglab.adele.frontend.servlet;
+package fr.liglab.adele.simulator.servlet;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpContext;

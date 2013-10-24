@@ -41,7 +41,6 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
     @Override
     public Set<ICasaMap> getMaps() {
         HashSet returnSet = new HashSet();
-        loadMaps();
         synchronized (lockObject){
             for(String id: icasaMaps.keySet()){
                 returnSet.add(icasaMaps.get(id));
@@ -97,10 +96,61 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
     }
 
     @Override
+    public String addMap(ICasaMap map) {
+        String id = null;
+        synchronized (lockObject){
+            if(map.getId() == null){
+                id = generateId(map.getName());
+                map.setId(id);
+            }
+            if(map.getImgFile() == null){
+                map.setImgFile(map.getId() + ".png");
+            }
+            icasaMaps.put(map.getId(), map);
+            saveMaps();
+        }
+        return id;
+    }
+
+    @Override
+    public ICasaMap updateMap(String id, String name, String description, String gatewayURL, String libs) {
+        synchronized (lockObject){
+            if(!contains(id)){
+                return null;
+            }
+            ICasaMap map = getMap(id);
+            if(name != null){
+                map.setName(name);
+            }
+            if(description != null){
+                map.setDescription(description);
+            }
+            if(gatewayURL!= null){
+                map.setGatewayURL(gatewayURL);
+            }
+            if(libs!= null){
+                map.setLibs(libs);
+            }
+            saveMaps();
+            return map;
+        }
+
+    }
+
+    @Override
     public String getFileName() {
         return "maps";
     }
 
 
+
+    private String generateId(String name){
+        String mapId = name.replaceAll("[^A-Za-z0-9]", "");//remove non-alphanumeric char
+        Random random = new Random();
+        while (contains(mapId)){   //Synchronization issue, map could be aggregated meanwhile.
+            mapId = mapId + random.nextInt(); //add a number.
+        }
+        return mapId;
+    }
 
 }

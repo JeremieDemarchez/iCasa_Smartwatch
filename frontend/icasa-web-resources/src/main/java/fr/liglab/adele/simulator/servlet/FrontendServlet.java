@@ -1,5 +1,6 @@
-package fr.liglab.adele.frontend.servlet;
+package fr.liglab.adele.simulator.servlet;
 
+import fr.liglab.adele.frontend.servlet.HttpExternalResourceContext;
 import fr.liglab.adele.icasa.frontend.services.utils.ICasaMap;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
@@ -41,11 +42,9 @@ public class FrontendServlet extends HttpServlet {
 
     @Bind
     private void bindHttpService(HttpService service) {
-        System.out.println("Register resources");
         try {
             service.registerServlet(servletName, this, null, null);
             service.registerResources(resources, "/assets", null);
-            //service.registerResources(resourcesPages, "/www", null);
             service.registerResources(mapResources, "/", new HttpExternalResourceContext("maps"));
         } catch (NamespaceException e) {
             e.printStackTrace();
@@ -59,7 +58,6 @@ public class FrontendServlet extends HttpServlet {
         System.out.println("Unregister resources");
         service.unregister(servletName);
         service.unregister(resources);
-        //service.unregister(resourcesPages);
         service.unregister(mapResources);
 
     }

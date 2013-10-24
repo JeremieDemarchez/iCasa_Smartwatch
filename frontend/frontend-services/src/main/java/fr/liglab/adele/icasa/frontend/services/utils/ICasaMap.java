@@ -13,7 +13,7 @@ import java.util.Map;
 public class ICasaMap {
 
     /**
-     * The immutable identifier of the map.
+     * The identifier of the map.
      * The id will be generated using the name.
      */
     private String id;
@@ -50,21 +50,27 @@ public class ICasaMap {
         this.libs = String.valueOf(fromMap.get("libs"));
     }
 
-    public ICasaMap(String id, String name, String description, String gatewayURL, String imgFile, String libs) {
-        this.id = id;
+    public ICasaMap(String name, String description, String gatewayURL, String libs) {
         this.name = name;
         this.description = description;
         this.gatewayURL = gatewayURL;
-        this.imgFile = imgFile;
         this.libs = libs;
     }
 
     /**
-     * The immutable identifier of the map.
+     * The identifier of the map.
      * The id will be generated using the name.
      */
     public String getId() {
         return id;
+    }
+
+    /**
+     * The identifier of the map.
+     * The id will be generated using the name.
+     */
+    public void setId(String id) {
+        this.id = id;
     }
 
     /**
