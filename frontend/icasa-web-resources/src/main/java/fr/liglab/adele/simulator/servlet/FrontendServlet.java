@@ -1,7 +1,5 @@
 package fr.liglab.adele.simulator.servlet;
 
-import fr.liglab.adele.frontend.servlet.HttpExternalResourceContext;
-import fr.liglab.adele.icasa.frontend.services.utils.ICasaMap;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.http.HttpService;

@@ -59,7 +59,7 @@
                 <artifactId>maven-bundle-plugin</artifactId>
                 <configuration>
                     <instructions>
-                        <Private-Package>fr.liglab.adele.frontend.servlet</Private-Package>
+                        <Private-Package>fr.liglab.adele.simulator.servlet</Private-Package>
                         <Include-Resource>{maven-resources},${resourceBasePath}</Include-Resource>
                     </instructions>
                 </configuration>
