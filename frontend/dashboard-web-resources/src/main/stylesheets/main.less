@@ -1,0 +1,523 @@
+/* utility functions */
+
+/* add customized polices */
+
+/*@font-face
+{
+  font-family: 'BallparkWeiner';
+  src: url('/dashboard//assets/stylesheets/polices/ballpark.eot');
+  src: url('/dashboard/assets/stylesheets/polices/ballpark.eot') format('embedded-opentype'),
+  url('/dashboard/assets/stylesheets/polices/ballpark.woff') format('woff'),
+  url('/dashboard/assets/stylesheets/polices/ballpark.ttf') format('truetype'),
+  url('polices/ballpark.svg#BallparkWeiner') format('svg');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face
+{
+  font-family: 'Dayrom';
+  src: url('/dashboard/assets/stylesheets/polices/dayrom.eot');
+  src: url('/dashboard/assets/stylesheets/polices/dayrom.eot') format('embedded-opentype'),
+  url('/dashboard/assets/stylesheets/polices/dayrom.woff') format('woff'),
+  url('/dashboard/assets/stylesheets/polices/dayrom.ttf') format('truetype'),
+  url('polices/dayrom.svg#Dayrom') format('svg');
+  font-weight: normal;
+  font-style: normal;
+} */
+
+.rounded-corners (@radius: 15px) {
+  border-radius: @radius;
+}
+
+/* macros */
+
+.blurAndGrayscale {
+  filter: url(blurAndGrayscale.svg#blurAndGrayscale); /* Firefox 3.5+ */
+  filter: gray; /* IE6-9 */
+  -webkit-filter: grayscale(100%) blur(1px);
+  filter: grayscale(100%) blur(1px);
+}
+
+/* Global settings */
+
+.sup {
+    vertical-align: super;
+    font-size: 50%;
+}
+
+body
+{
+//    padding-top: 41px;  // use it only if you use navbar-fixed-top
+  font-family: 'Trebuchet MS', Arial, sans-serif;
+  background-color: rgb(192, 192, 192);
+}
+
+nav a
+{
+  font-family: Verdana,Arial,sans-serif;
+  font-weight: normal;
+}
+
+/* following two rules are to workaround bootstrap navbar size issue  */
+body {
+    padding-left: 0px;
+    padding-right: 0px;
+}
+
+.navbar-fixed-top, .navbar-fixed-bottom, .navbar-static-top {
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+.navbar .brand {
+  color : white;
+}
+
+header .container {
+  margin-left: 0;
+  margin-right: 0;
+}
+
+/* Main title */
+header h1
+{
+  font-family: Verdana,Arial,sans-serif;
+  font-size: 1.5em;
+  font-weight: normal;
+}
+
+#logo, header h1
+{
+  display: inline-block;
+  margin-bottom: 0px;
+}
+
+#icasa-simulator-connection-status {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+
+    @media (max-width: 979px) {
+       top: 8px;
+       right: 80px;
+    }
+}
+
+/* main part of ui */
+body section
+{
+  width: 100%;
+
+  article, aside {
+    display: inline-block;
+    vertical-align: top;
+    border: 3px rgb(150,150,150) solid;
+    .rounded-corners;
+    margin: 15px;
+    background-color: white;
+    padding: 10px;
+
+    &#map {
+
+      #mapContainer {
+        position: relative;
+        top:0px;
+        left:0px;
+
+        #mapImg {
+          z-index: 0;
+          width: 100%;
+        }
+
+        .deviceWidget {
+          width: 32px;
+          height: 32px;
+          position: absolute;
+          z-index: 2;
+
+          .deviceWidgetContainer {
+            position: relative;
+            top:0px;
+            left:0px;
+
+            .deviceWidgetIcon {
+              position: absolute;
+              width: 100%;
+            }
+
+            .deviceWidgetDecorators {
+              position: absolute;
+              top:0px;
+              left:0px;
+              width: 32px;
+              height: 32px;
+              z-index: 3;
+
+              .deviceWidgetDecorator {
+                position: absolute;
+              }
+            }
+
+            .deviceTitle {
+
+            }
+          }
+
+          .deviceWidgetHalo {
+            width:1px;
+            height:1px;
+            margin:50% 50%;
+            transition:box-shadow 0.2s;
+          }
+
+          &:hover .deviceWidgetHalo{
+            box-shadow:0px 0px 17px 15px #f6cc3b;
+          }
+          .visibleProperty {
+            font-size: 10px;
+            line-height: 8px;
+            margin-top: 0px;
+            margin-bottom: 0px;
+          }
+
+        }
+
+        .userWidget {
+          width: 50px;
+          position: absolute;
+          z-index: 4;
+
+          .userWidgetContainer {
+            position: relative;
+            top:0px;
+            left:0px;
+
+            .userWidgetIcon {
+              position: absolute;
+              width: 100%;
+            }
+
+            .userWidgetDecorators {
+              position: absolute;
+              top:0px;
+              left:0px;
+              width: 50px;
+
+              .userWidgetDecorator {
+                position: absolute;
+              }
+            }
+          }
+        }
+
+        .zoneSection {
+          position: absolute;
+          z-index: 1;
+          background:#FF0000;
+          visibility:hidden;
+          color:#000;
+          width:100%;
+          border-style:solid;
+          border-width:4px;
+          border-color:red;
+          div {
+            text-align: center;
+          }
+        }
+      }
+
+      .deviceIcon, .personIcon {
+        width: 32px;
+      }
+    }
+
+    &#statusWindows {
+      width:0;
+      height:0;
+      border:0;
+      display:none;
+    }
+
+    #scriptPlayerSlider {
+      position:relative;
+      height:50px;
+
+      #scriptPlayerSliderMin {
+        position:absolute;
+        top:42%
+      }
+
+      #scriptPlayerSliderBar {
+        width:78%;
+        margin-left:4%;
+        position:absolute;
+        top:50%
+      }
+
+      #scriptPlayerSliderMax {
+        width:54px;
+        position:absolute;
+        right:7px;
+        top:0;
+
+        input {
+          width:50px
+        }
+      }
+    }
+  }
+
+  aside {
+
+    width: 50%;
+    height: 100%;
+    min-width:450px;
+
+    &#actionTabs {
+      height: 555px;
+    }
+
+    .deviceIcon {
+      width: 32px;
+      height: 32px;
+    }
+
+    .removeIcon {
+      width: 32px;
+      height: 32px;
+    }
+  }
+}
+
+/* main part of ui */
+#mapsContainer
+{
+  width: 95%;
+  margin : 10px auto;
+  article {
+    display : block;
+    background: #f5f5f5 url('/dashboard/assets/images/backgrounds/absurdidad.png');
+    margin:0;
+    ul {
+      li {
+        position: relative;
+        .mapButton {
+          position: absolute;
+          width:18px;
+          height:18px;
+          background:#FFFFFF;
+          border:3px solid #818181;
+          border-radius:11px;
+          transition:border 0.2s, box-shadow 0.2s;
+          i {
+            margin: 1px 0px 0px 2px;
+          }
+          &:hover {
+            border:3px solid #333333;
+            box-shadow: 0px 0px 6px #888888;
+          }
+        }
+
+        .mapRemoveButton {
+          right:-6px;
+          top:-6px;
+        }
+        .mapEditButton {
+          right:-6px;
+          top:20px;
+        }
+        a {
+          background-color: white;
+          border: 3px rgb(150,150,150) solid;
+          border-radius: 6px;
+
+          img{
+            max-height: 150px;
+          }
+
+          p {
+            text-align:center;
+          }
+        }
+      }
+    }
+  }
+}
+
+body #scriptPlayerDialog
+{
+  div{
+    .ui-widget-header {
+      background: #FFF;
+      border: 0px;
+
+    }   }
+  #scriptPlayerDialogTable {
+    width:230px;
+    height:250px;
+    overflow:auto;
+    table {
+
+      .scriptLineCell {
+        cursor:pointer;
+      }
+
+      tr {
+        .add {
+          font-weight: bold;
+          color: #51A351;
+        }
+
+        .add:before {
+          content: "+";
+        }
+
+        .delete {
+          font-weight: bolder;
+          color: #BD362F;
+        }
+
+        .delete:before {
+          content: "–";
+        }
+
+        .modify {
+          font-weight: bold;
+          color: #006DCC;
+        }
+
+        .modify:before {
+          content: "*";
+        }
+      }
+    }
+  }
+
+  #scriptPlayerDialogForm {
+    width:200px;
+    height:250px;
+    overflow:auto;
+  }
+
+  #scriptPlayerDialogBtns {
+    width:70px;
+    margin:0 auto;
+    margin-top: 5px;
+  }
+
+}
+
+body .scriptPlayerGrp
+{
+  border: 1px solid #CCCCCC;
+  padding:5px;
+  legend {
+    border: 0 none;
+    padding: 0 5px;
+    margin-bottom: 5px;
+    width:auto;
+  }
+}
+
+/* main part of ui */
+body footer
+{
+  background-color: black;
+  //position: fixed;
+  bottom:0px;
+  width:100%;
+  height: 30px;
+  margin-bottom: 0px;
+
+  p {
+    text-align: center;
+    color: rgb(255, 255, 255);
+  }
+}
+
+/* Fix btn class */
+body .btn {
+  font-family: "Arial";
+}
+
+.hidden {
+  display: none;
+}
+/* Valid for dashboard*/
+.carousel-controls-mini {
+
+}
+
+.carousel-controls-mini > a {
+  position: absolute;
+  top: 40%;
+  left: 15px;
+  width: 40px;
+  height: 40px;
+  margin-top: -20px;
+  font-size: 60px;
+  font-weight: 100;
+  line-height: 30px;
+  color: #ffffff;
+  text-align: center;
+  background: #222222;
+  border: 3px solid #ffffff;
+  -webkit-border-radius: 23px;
+     -moz-border-radius: 23px;
+          border-radius: 23px;
+  opacity: 0.3;
+  filter: alpha(opacity=50);
+}
+
+.onoffswitch {
+    position: relative; width: 97px;
+    -webkit-user-select:none; -moz-user-select:none; -ms-user-select: none;
+}
+.onoffswitch-checkbox {
+    display: none;
+}
+.onoffswitch-label {
+    display: block; overflow: hidden; cursor: pointer;
+    border: 2px solid #999999; border-radius: 7px;
+}
+.onoffswitch-inner {
+    width: 200%; margin-left: -100%;
+    -moz-transition: margin 0.3s ease-in 0s; -webkit-transition: margin 0.3s ease-in 0s;
+    -o-transition: margin 0.3s ease-in 0s; transition: margin 0.3s ease-in 0s;
+}
+.onoffswitch-inner:before, .onoffswitch-inner:after {
+    float: left; width: 50%; height: 24px; padding: 0; line-height: 24px;
+    font-size: 14px; color: white; font-family: Trebuchet, Arial, sans-serif; font-weight: bold;
+    -moz-box-sizing: border-box; -webkit-box-sizing: border-box; box-sizing: border-box;
+}
+.onoffswitch-inner:before {
+    content: attr(enabled-caption);
+    padding-left: 10px;
+    background-color: #589C00; color: #FFFFFF;
+    #grant {
+        content: "Granted";
+    }
+}
+.onoffswitch-inner:after {
+    content: attr(disabled-caption);
+    padding-right: 10px;
+    background-color: #D10000; color: #FFFFFF;
+    text-align: right;
+}
+.onoffswitch-switch {
+    width: 16px; margin: 4px;
+    background: #FFFFFF;
+    border: 2px solid #999999; border-radius: 7px;
+    position: absolute; top: 0; bottom: 0; right: 69px;
+    -moz-transition: all 0.3s ease-in 0s; -webkit-transition: all 0.3s ease-in 0s;
+    -o-transition: all 0.3s ease-in 0s; transition: all 0.3s ease-in 0s;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-inner {
+    margin-left: 0;
+}
+.onoffswitch-checkbox:checked + .onoffswitch-label .onoffswitch-switch {
+    right: 0px;
+}
+
+/*End valid for dashboard*/
