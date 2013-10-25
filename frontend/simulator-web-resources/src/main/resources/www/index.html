@@ -69,7 +69,7 @@
                 <div class="mapButton mapRemoveButton pull-right" data-bind="attr:{onclick: 'document.remove' + id() + '.submit()'}">
                     <i class="icon-remove"></i>
                 </div>
-                <form action="/simulator/mapDelete" method="POST" data-bind="attr:{name: id}" >
+                <form action="/icasa/frontend/maps/delete" method="POST" data-bind="attr:{name: 'remove'+id()}" >
                     <input type="hidden" name="mapId" data-bind="attr: {value: id}"/>
                 </form>
                 <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-bind="attr:{'data-target': '#form' + id()}" >
@@ -87,7 +87,7 @@
                         <div class="control-group">
                             <label class="control-label" data-bind="attr:{for: 'map'+id()}, text: $root.getLocaleMessage('Id')" ></label>
                             <div class="controls">
-                                <input type="text" data-bind="attr:{id:'map'+'id(), value: id'}" name="mapId" readonly/>
+                                <input type="text" data-bind="attr:{id:'map'+id(), value: id}" name="mapId" readonly/>
                             </div>
                         </div>
                         <div class="control-group">
@@ -183,7 +183,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true" data-bind="text: getLocaleMessage('Cancel')"></button>
-                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" data-bind="attr:{value: getLocaleMessage('create')}" />
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit"  data-bind="attr:{value: $root.getLocaleMessage('Create') }" />
                 </div>
             </form>
         </div>

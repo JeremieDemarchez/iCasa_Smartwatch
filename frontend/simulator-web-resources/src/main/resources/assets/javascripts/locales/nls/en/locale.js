@@ -50,8 +50,6 @@ define({
     "Cancel":"Cancel",
     "Add":"Add",
     "Add.a.new.map":"Add a new map",
-    "Id":"ID",
-    "Create":"Create",
     "Update":"Update",
     "Home":"Home",
     "Store":"Store",

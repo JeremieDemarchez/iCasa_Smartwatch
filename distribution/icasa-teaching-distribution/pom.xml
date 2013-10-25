@@ -79,12 +79,28 @@
         </dependency>
 
 
-        <!-- Play 2 applications-->
+        <!-- Simulator application-->
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.web</artifactId>
+            <artifactId>simulator.web.resources</artifactId>
             <version>${project.version}</version>
-            <type>play2</type>
+        </dependency>
+        
+        <!-- GUI dependencies-->
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>frontend.services</artifactId>
+           <version>${project.version}</version>
+        </dependency>
+        <dependency>
+           <groupId>com.sun.jersey.contribs</groupId>
+           <artifactId>jersey-multipart</artifactId>
+           <version>${jerseyVersion}</version>
+        </dependency>
+        <dependency>
+           <groupId>org.jvnet</groupId>
+           <artifactId>mimepull</artifactId>
+           <version>${mimepullVersion}</version>
         </dependency>
 
     </dependencies>
@@ -96,12 +112,6 @@
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
                     <flattenDP>true</flattenDP>
-                    <outputs>
-                       <output>
-                          <IncludesArtifactId>icasa.web</IncludesArtifactId>
-                          <directory>web.simulator</directory>
-                       </output>
-                    </outputs>
                 </configuration>
             </plugin>
          </plugins>

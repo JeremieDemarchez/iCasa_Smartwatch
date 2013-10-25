@@ -50,8 +50,6 @@ define({
         "Cancel":"Annuler",
         "Add":"Ajouter",
         "Add.a.new.map":"Ajouter une nouvelle carte",
-        "Id":"ID",
-        "Create":"Créer",
         "Update":"Mettre à jour",
         "Home":"Accueil",
         "Store":"Magasin",

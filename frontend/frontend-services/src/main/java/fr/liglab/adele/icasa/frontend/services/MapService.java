@@ -38,8 +38,29 @@ public interface MapService {
      */
     String getLocation();
 
+    /**
+     * Add a new map to the service
+     * @param map the new map
+     * @return the identifier of the map.
+     */
     String addMap(ICasaMap map);
 
+    /**
+     * Update map information.
+     * @param id
+     * @param name
+     * @param description
+     * @param gatewayURL
+     * @param libs
+     * @return
+     */
     ICasaMap updateMap(String id, String name, String description, String gatewayURL, String libs);
+
+    /**
+     * Removes a map
+     * @param id the identifier of the map.
+     * @return the reference of the removed map.
+     */
+    ICasaMap removeMap(String id);
 
 }

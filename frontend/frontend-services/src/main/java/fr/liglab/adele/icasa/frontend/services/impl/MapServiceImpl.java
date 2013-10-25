@@ -137,6 +137,21 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
 
     }
 
+    /**
+     * Removes a map
+     *
+     * @param id the identifier of the map.
+     * @return the reference of the removed map.
+     */
+    @Override
+    public ICasaMap removeMap(String id) {
+        synchronized (lockObject){
+            ICasaMap map = icasaMaps.remove(id);
+            saveMaps();
+            return map;
+        }
+    }
+
     @Override
     public String getFileName() {
         return "maps";

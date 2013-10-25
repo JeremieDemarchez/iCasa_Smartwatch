@@ -80,13 +80,9 @@ public class MapRemoteServiceImpl extends AbstractREST {
             @HeaderParam("Referer") String refer) {
 
         ICasaMap map;
-        System.out.println("id " + id);
-        System.out.println("name " + name);
-        System.out.println("description " + description);
-        System.out.println("gatewayURL " + gatewayURL);
-        System.out.println("libs " + libs);
+        //get new or to update map.
         if(!id.isEmpty()){ //update map.
-            map = handleUpdate(id,name,description,gatewayURL,libs);
+            map = mapService.updateMap(id, name, description, gatewayURL, libs);
             if(map == null){
                 return Response.status(Response.Status.NOT_FOUND).build();
             }
@@ -95,38 +91,60 @@ public class MapRemoteServiceImpl extends AbstractREST {
             mapService.addMap(map);
         }
 
-
-
-        if(uploadedInputStream != null){
-            String fileURL = mapService.getLocation() + "/" + map.getImgFile();
-            try {
-                OutputStream newFileStream = new FileOutputStream(new File(fileURL));
-                byte[] buffer = new byte[1024];
-                int len;
-                while ((len = uploadedInputStream.read(buffer)) != -1) {
-                    newFileStream.write(buffer, 0, len);
-                }
-                uploadedInputStream.close();
-                newFileStream.close();
-             } catch (IOException ioe) {
-                ioe.printStackTrace();
-                Response.serverError().build();
-             }
+        //handle image
+        if(!fileDetail.getFileName().isEmpty()){
+            handleImage(map, uploadedInputStream);
         }
 
-        System.out.println(refer);
         try {
             //we don't know if its an upload from simulator or dashboard, so we redirect to referer.
             return Response.seeOther(new URI(refer)).build();
         } catch (URISyntaxException e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
             return Response.serverError().build();
         }
     }
 
-     private ICasaMap handleUpdate(String id, String name, String description, String gatewayURL, String libs){
-         return mapService.updateMap(id, name, description, gatewayURL, libs);
-     }
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
+    @Path("/delete")
+    public Response deleteMap(
+            @FormParam("mapId") String id,
+            @HeaderParam("Referer") String refer) {
 
+        ICasaMap map = mapService.removeMap(id);
 
+        //remove image file.
+        File file = new File(mapService.getLocation() + "/" + map.getImgFile());
+        if(file.exists()){
+            file.delete();
+        }
+
+        try {
+            //we don't know if its a remove from simulator or dashboard, so we redirect to referer.
+            return Response.seeOther(new URI(refer)).build();
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return Response.serverError().build();
+        }
+    }
+
+    private boolean handleImage(ICasaMap map, InputStream uploadedInputStream){
+        String fileURL = mapService.getLocation() + "/" + map.getImgFile();
+        try {
+            OutputStream newFileStream = new FileOutputStream(new File(fileURL));
+            byte[] buffer = new byte[1024];
+            int len;
+            while ((len = uploadedInputStream.read(buffer)) != -1) {
+                newFileStream.write(buffer, 0, len);
+            }
+            uploadedInputStream.close();
+            newFileStream.close();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+            return false;
+        }
+        return true;
+    }
 }
