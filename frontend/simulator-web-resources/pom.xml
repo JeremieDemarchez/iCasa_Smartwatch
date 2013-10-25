@@ -11,7 +11,7 @@
 
     <!-- Project Description -->
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>icasa.web.resources</artifactId>
+    <artifactId>simulator.web.resources</artifactId>
     <packaging>bundle</packaging>
     <name>${productName} :: ${projectName}</name>
 
