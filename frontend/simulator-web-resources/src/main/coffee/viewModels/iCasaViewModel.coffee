@@ -1585,7 +1585,6 @@ define(['jquery',
                 timestamp = d.getTime() + (@selectedScript().executionTime() ) # * 60 * 1000. It is currently in ms
                 d = new Date(timestamp)
                 day = if d.getDate() < 10 then '0'+ d.getDate() else d.getDate()
-                console.log "End Date" + d;
                 return day + "/" + (d.getMonth()+1) + "/" + d.getFullYear();
               else
                 d = new Date()

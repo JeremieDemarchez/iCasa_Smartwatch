@@ -455,7 +455,7 @@ define(['jquery',
            @name = kb.defaultObservable(kb.observable(model, 'name'), 'state');
 
            @show = kb.defaultObservable(kb.observable(model, 'show'), false);
-           @imgSrc = kb.defaultObservable(@imgSrc, '/assets/images/devices/decorators/play.png');
+           @imgSrc = kb.defaultObservable(@imgSrc, '/dashboard/assets/images/devices/decorators/play.png');
            @positionX = kb.defaultObservable(@positionX, 16);
            @positionY = kb.defaultObservable(@positionY, 16);
            if (@width() <= 0)
@@ -756,15 +756,15 @@ define(['jquery',
            @decorators = ko.observableArray([
                 new DecoratorViewModel new Backbone.Model {
                     name: "event",
-                    imgSrc: '/assets/images/devices/decorators/event.png',
+                    imgSrc: '/dashboard/assets/images/devices/decorators/event.png',
                     show: false},
                 new DecoratorViewModel new Backbone.Model {
                     name: "fault",
-                    imgSrc: '/assets/images/devices/decorators/warning.png',
+                    imgSrc: '/dashboard/assets/images/devices/decorators/warning.png',
                     show: false},
                 new DecoratorViewModel new Backbone.Model {
                     name: "activated",
-                    imgSrc: '/assets/images/devices/decorators/play.png',
+                    imgSrc: '/dashboard/assets/images/devices/decorators/play.png',
                     show: true}
            ]);
            @updateWidgetImg= (newValue) =>
@@ -912,7 +912,7 @@ define(['jquery',
                 if ((@type() == "iCasa.Heater") || @hasService("fr.liglab.adele.icasa.device.temperature.Heater"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "hot",
-                       imgSrc: '/assets/images/devices/decorators/heater-hot-decorator-top.png',
+                       imgSrc: '/dashboard/assets/images/devices/decorators/heater-hot-decorator-top.png',
                        width: 28,
                        height: 13,
                        positionX: 2,
@@ -922,7 +922,7 @@ define(['jquery',
                  if ((@type() == "iCasa.Cooler") || @hasService("fr.liglab.adele.icasa.device.temperature.Cooler"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "cold",
-                       imgSrc: '/assets/images/devices/decorators/cooler-cold-decorator-top.png',
+                       imgSrc: '/dashboard/assets/images/devices/decorators/cooler-cold-decorator-top.png',
                        width: 28,
                        height: 13,
                        positionX: 2,
@@ -937,7 +937,7 @@ define(['jquery',
                 if (@type() == "iCasa.BathroomScale")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "foots",
-                       imgSrc: '/assets/images/devices/decorators/foots.png',
+                       imgSrc: '/dashboard/assets/images/devices/decorators/foots.png',
                        width: 32,
                        height: 32,
                        positionX: 1,
@@ -947,7 +947,7 @@ define(['jquery',
                 if (@hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "presence",
-                       imgSrc: '/assets/images/devices/decorators/movementDetector_detected.png',
+                       imgSrc: '/dashboard/assets/images/devices/decorators/movementDetector_detected.png',
                        width: 32,
                        height: 32,
                        positionX: 1,
@@ -957,7 +957,7 @@ define(['jquery',
                 if ((@type() == "iCasa.COGasSensor") || (@type() == "iCasa.CO2GasSensor"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "redLed",
-                       imgSrc: '/assets/images/devices/decorators/redLed.png',
+                       imgSrc: '/dashboard/assets/images/devices/decorators/redLed.png',
                        width: 8,
                        height: 8,
                        positionX: 4,
@@ -972,7 +972,7 @@ define(['jquery',
                 if (@type() == "iCasa.Sphygmometer")
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
                        name: "sphygmometer_measure",
-                       imgSrc: '/assets/images/devices/decorators/sphygmometer_measure.png',
+                       imgSrc: '/dashboard/assets/images/devices/decorators/sphygmometer_measure.png',
                        width: 12,
                        height: 9,
                        positionX: 17,
@@ -1075,7 +1075,7 @@ define(['jquery',
               imgName = "pushButton";
             if (@hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
               imgName = "movementDetector";
-          return "/assets/images/devices/" + imgName + ".png"; 
+          return "/dashboard/assets/images/devices/" + imgName + ".png"; 
 
     #Valid only for dashboard.
     class ApplicationViewModel extends NamedViewModel
@@ -1114,10 +1114,10 @@ define(['jquery',
                 return imgName;
             );
             @imgIcon = ko.computed(() =>
-                return "/assets/images/applications/#{@imgName()}_48.png";
+                return "/dashboard/assets/images/applications/#{@imgName()}_48.png";
             );
             @imgSrc = ko.computed(() =>
-                return "/assets/images/applications/#{@imgName()}.png";
+                return "/dashboard/assets/images/applications/#{@imgName()}.png";
             );
 
 
@@ -1182,7 +1182,7 @@ define(['jquery',
               if (@type() == "Woman")
                 imgName = "user4";
 
-              return "/assets/images/users/" + imgName + ".png";
+              return "/dashboard/assets/images/users/" + imgName + ".png";
            , @);
            @decorators = ko.observableArray([  ]);
 

@@ -69,7 +69,7 @@
                 <div class="mapButton mapRemoveButton pull-right" data-bind="attr:{onclick: 'document.remove' + id() + '.submit()'}">
                     <i class="icon-remove"></i>
                 </div>
-                <form action="/dashboard/mapDelete" method="POST" data-bind="attr:{name: id}" >
+                <form action="/icasa/frontend/maps/delete" method="POST" data-bind="attr:{name: 'remove'+id()}" >
                     <input type="hidden" name="mapId" data-bind="attr: {value: id}"/>
                 </form>
                 <div class="mapButton mapEditButton pull-right" data-toggle="modal" data-bind="attr:{'data-target': '#form' + id()}" >
@@ -82,12 +82,12 @@
                     <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                     <h3 data-bind="text: $root.getLocaleMessage('Edit') + name(), attr:{id: 'ModalLabel' + id()}"></h3>
                 </div>
-                <form action="/dashboard/mapUpdate" method="POST" enctype="multipart/form-data">
+                <form action="/icasa/frontend/maps" method="POST" enctype="multipart/form-data">
                     <div class="modal-body">
                         <div class="control-group">
                             <label class="control-label" data-bind="attr:{for: 'map'+id()}, text: $root.getLocaleMessage('Id')" ></label>
                             <div class="controls">
-                                <input type="text" data-bind="attr:{id:'map'+'id(), value: id'}" name="mapId" readonly/>
+                                <input type="text" data-bind="attr:{id:'map'+id(), value: id}" name="mapId" readonly/>
                             </div>
                         </div>
                         <div class="control-group">
@@ -142,7 +142,7 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
                 <h3 id="myModalLabel" data-bind="text: getLocaleMessage('Add.a.new.map')"></h3>
             </div>
-            <form action="/dashboard/mapUpload" method="POST" enctype="multipart/form-data">
+            <form action="/icasa/frontend/maps" method="POST" enctype="multipart/form-data">
                 <div class="modal-body">
                     <div class="control-group hidden">
                         <label class="control-label" for="mapId" data-bind="text: getLocaleMessage('Id')"></label>
@@ -183,7 +183,7 @@
                 </div>
                 <div class="modal-footer">
                     <button class="btn" data-dismiss="modal" aria-hidden="true" data-bind="text: getLocaleMessage('Cancel')"></button>
-                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit" data-bind="attr:{value: getLocaleMessage('create')}" />
+                    <input id="addMapFormSubmitButton" class="btn btn-primary" type="submit" name="submit"  data-bind="attr:{value: $root.getLocaleMessage('Create') }" />
                 </div>
             </form>
         </div>
@@ -197,7 +197,7 @@
 </script>
 
 <footer>
-    <span data-bind="text: getLocaleMessage('Copyright')"> <a href="http://medical.imag.fr/"> <span data-bind="text: getLocaleMessage('Medical.Research.Project')" ></span></a></span>
+    <p> <span data-bind="text: getLocaleMessage('Copyright')"></span>  <a href="http://medical.imag.fr/" data-bind="text: getLocaleMessage('Medical.Research.Project')"></a></p>
 </footer>
 </body>
 <script data-main="/dashboard/assets/javascripts/main/requireIndex.js" src="/dashboard/assets/javascripts/frameworks/require/require.js"> </script>

@@ -76,13 +76,13 @@
 </header>
 
 <div id="icasa-simulator-connection-status" />
-    <button id="connection-status-button" class="hidden btn btn-danger">@Messages("Not.Connected")</button>
+    <button id="connection-status-button" class="hidden btn btn-danger" data-bind="text: getLocaleMessage('Not.Connected')"></button>
 </div>
 <div id="icasa-extensions" icasa-plugins="@pluginIds" icasa-widgets="@widgetIds" class="hidden" />
 </div>
 
 <div id="compatibilityWarn"  class="hidden alert alert-block">
-    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) @Messages("and") Frontend(<span data-bind="text: frontendVersion"></span>)@Messages("are.not.the.same.version.some.functionality.may.not.work")
+    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) <span data-bind="text: getLocaleMessage('and')"></span> Frontend(<span data-bind="text: frontendVersion"></span> )<span data-bind="text: getLocaleMessage('are.not.the.same.version.some.functionality.may.not.work')"></span>
     </p>
 </div>
 
@@ -169,7 +169,7 @@
 
 
 <footer>
-    <p data-bind="text: getLocaleMessage('Copyright')"> <a href="http://medical.imag.fr/"><span data-bind="text: getLocaleMessage('Medical.Research.Project')" ></span></a></p>
+    <p> <span data-bind="text: getLocaleMessage('Copyright')"></span>  <a href="http://medical.imag.fr/" data-bind="text: getLocaleMessage('Medical.Research.Project')"></a></p>
 </footer>
 </body>
 <script data-main="/dashboard/assets/javascripts/main/requireMap.js" src="/dashboard/assets/javascripts/frameworks/require/require.js"> </script>
