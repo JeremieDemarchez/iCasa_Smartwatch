@@ -67,6 +67,13 @@
 			<type>deployment-package</type>
 			<version>${project.version}</version>
 		</dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>photometer.adapter.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+
 	</dependencies>
 	<build>
 		<plugins>
