@@ -66,6 +66,9 @@ public class MapServiceImpl extends AbstractXMLParser implements MapService {
     public void loadMaps(){
         synchronized (lockObject){
             List<Map> maps = loadFile();
+            if(maps == null){
+                return;
+            }
             icasaMaps.clear();
             for (Map map: maps){
                 ICasaMap iCasaMap = new ICasaMap(map);
