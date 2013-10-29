@@ -44,6 +44,7 @@ See the License for the specific language governing permissions and
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.2.0</AdeleBaseVersion>
         <ciliaVersion>1.7.2</ciliaVersion>
+        <mimepullVersion>1.4</mimepullVersion>
 	</properties>
 
 	<developers>

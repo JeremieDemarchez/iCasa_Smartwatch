@@ -1,0 +1,171 @@
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+
+<table class="table table-striped table-bordered">
+    <fieldset class="scriptPlayerGrp">
+    <legend data-bind="text: $root.getLocaleMessage('Time')"></legend>
+
+    <div class="controls controls-row">
+        <label class="span1" for="date" data-bind="text: getLocaleMessage('Day')"></label>
+        <div class="controls">
+            <input type="text" class="span2" id="date" data-bind="value: $root.clock.date"/>
+        </div>
+    </div>
+
+    <div class="controls controls-row">
+        <label class="span1" data-bind="text: $root.getLocaleMessage('Time')"></label>
+        <div class="input-append input-prepend">
+            <input type="number" id="hour" class="input-mini" maxlength="2" min="0" max="23" data-bind="value: $root.clock.hours"/>
+            <span class="add-on">H</span>
+            <input type="number" id="minute" class="input-mini" maxlength="2" min="0" max="59" data-bind="value: $root.clock.minutes"/>
+            <span class="add-on">Min</span>
+        </div>
+    </div>
+
+    <div class="controls controls-row">
+        <label class="span1" data-bind="text: $root.getLocaleMessage('Factor')"></label>
+        <div class="controls">
+            <input type="text" id="timeSpeed" class="input-mini span1" data-bind="value: $root.clock.factorTmp, hasfocus: $root.clock.factorEditing"/>
+            <button class="btn span" id="play" data-bind="click: $root.startClock, visible: $root.clock.pause"><i class="icon-play"></i>Play</button>
+            <button class="btn span" id="pause" data-bind="click: $root.pauseClock, visible: !$root.clock.pause()"><i class="icon-pause"></i>Pause</button>
+        </div>
+    </div>
+
+    <div id="scriptPlayerSlider">
+        <span id="scriptPlayerSliderMin" class="pull-left">0</span>
+        <div id="scriptPlayerSliderBar" style="" data-bind="jqFactorSlider: {value: $root.clock.factor}, sliderOpt: {min: 0, max: 15000}"></div>
+        <div id="scriptPlayerSliderMax">
+            <span>Max</span>
+            <input type="text" data-bind="value: $root.maxFactor"/>
+        </div>
+    </div>
+
+    </fieldset>
+    <fieldset class="scriptPlayerGrp">
+    <legend>Script</legend>
+
+    <div class="controls controls-row">
+        <label class="span1">Script</label>
+        <div class="controls">
+            <select class="span2" data-bind="options: $root.scripts, value: $root.selectedScript, optionsText: 'name', enable: ($root.selectedScriptState() != 'started' && $root.selectedScriptState() != 'paused')"></select>
+        </div>
+        <button class="btn span1" id="scriptPlayerDialogBtn">Details</button>
+    </div>
+    <div class="controls controls-row">
+        <div class="controls">
+            <button id="startScriptButtonId" class="btn span" data-bind="click: startScript, visible: ($root.selectedScript() == undefined || $root.selectedScript().state() == 'stopped' || $root.selectedScript().state() == 'paused') "><i class='icon-play'></i>Start</button>
+            <button class="btn span" data-bind="click: pauseScript, visible: (($root.selectedScript() != undefined) && ($root.selectedScript().state() == 'started'))"><i class='icon-pause'></i>Pause</button>
+            <button class="btn span" data-bind="click: stopScript, enable: (($root.selectedScript() != undefined) && (($root.selectedScript().state() == 'started') || ($root.selectedScript().state() == 'paused') ))"><i class='icon-stop'></i>Stop</button>
+        </div>
+    </div>
+    <br/>
+    <!--
+    <div id="progressScriptBarId" class="progress" data-bind="jqScriptProgress: {value: $root.scriptProgress}"></div>
+
+    <input class="input-small pull-left" type="text" id="scriptStart" data-bind="value: $root.scriptStartDate"/>
+    <input class="input-small pull-right" type="text" id="scriptEnd" data-bind="value: $root.scriptEndDate" readonly/>
+     -->
+    <div class="clearfix"></div>
+
+    </fieldset>
+    <fieldset class="scriptPlayerGrp">
+    <legend data-bind="text: $root.getLocaleMessage('Simulation.State')"></legend>
+        <!--Save script state-->
+        <div class="input-prepend">
+            <input class="span2" type="text" data-bind="value: $root.newScriptName, valueUpdate:'afterkeydown'"/>
+            <button class="btn" style="font-size:15px" data-bind="text: $root.getLocaleMessage('Save.As'),click: $root.saveScript, enable: $root.newScriptName().length > 0">Save as</button>
+        </div>
+        <div class="controls controls-row">
+            <button class="btn" id="reset" data-bind="text: $root.getLocaleMessage('Reset.State'),click: $root.resetState"><i class="icon-fast-backward"></i>Reset State</button>
+        </div>
+    </fieldset>
+</table>
+
+
+    <!-- Hidden block : Dialog -->
+
+
+<div id="scriptPlayerDialog">
+    <div class="controls">
+        <button class="btn span" id="scriptPlayerDialogDelete">Delete Selected</button>
+
+        <div class="input-prepend pull-left">
+            <a href="#" class="btn span">Add</a>
+            <select class="span2">
+                <option>add-device</option>
+                <option>move-device-zone</option>
+                <option>modify-device-value</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="clearfix"></div>
+
+    <div id="scriptPlayerDialogTable" class="pull-left">
+        <table class="table table-condensed table-hover">
+            <tr>
+                <th><input type="checkbox" id="scriptPlayerDialogCb"/></th>
+                <th>Action</th>
+                <th>Element</th>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="scriptPlayerDialogBoxes" /></td>
+                <td class="scriptLineCell">+</td>
+                <td class="scriptLineCell">ID-long-text</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="scriptPlayerDialogBoxes" /></td>
+                <td class="scriptLineCell">+</td>
+                <td class="scriptLineCell">BiLi-A7496W-S</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="scriptPlayerDialogBoxes" /></td>
+                <td class="scriptLineCell">+</td>
+                <td class="scriptLineCell">ID-long-text</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="scriptPlayerDialogBoxes" /></td>
+                <td class="scriptLineCell">+</td>
+                <td class="scriptLineCell">ID-long-text</td>
+            </tr>
+            <tr>
+                <td><input type="checkbox" class="scriptPlayerDialogBoxes" /></td>
+                <td class="scriptLineCell">+</td>
+                <td class="scriptLineCell">ID-long-text</td>
+            </tr>
+        </table>
+    </div>
+
+    <div id="scriptPlayerDialogForm" class="pull-right">
+        <form>
+            <label>variable1</label>
+            <input type="text" class="span2"/>
+            <label>variable2</label>
+            <input type="text" class="span2"/>
+
+            <p class="pull-right">
+                <button class="btn">Cancel</button>
+                <button class="btn btn-primary">Save</button>
+            </p>
+        </form>
+    </div>
+</div>
+
+<script src="/simulator/assets/javascripts/templates/scriptPlayer.js"></script>
+
+

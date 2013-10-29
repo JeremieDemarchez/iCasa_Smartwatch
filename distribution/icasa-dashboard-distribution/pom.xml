@@ -40,12 +40,11 @@
             <type>osgi-distribution</type>
         </dependency>
 
-        <!-- Play 2 applications-->
+        <!-- Dashboard application-->
         <dependency>
            <groupId>${project.groupId}</groupId>
-            <artifactId>dashboard.web</artifactId>
+            <artifactId>dashboard.web.resources</artifactId>
             <version>${project.version}</version>
-            <type>play2</type>
         </dependency>
 
     </dependencies>
@@ -57,12 +56,6 @@
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
                     <flattenDP>true</flattenDP>
-                    <outputs>
-                        <output>
-                            <IncludesArtifactId>dashboard.web</IncludesArtifactId>
-                            <directory>web.dashboard</directory>
-                        </output>
-                    </outputs>
                 </configuration>
             </plugin>
          </plugins>

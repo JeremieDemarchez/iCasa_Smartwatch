@@ -1,0 +1,189 @@
+<!--@(mapId: String, mapImgSrc: String, gatewayURL: String, pluginIds : String, widgetIds : String)(implicit lang: Lang)-->
+<!--
+
+
+      Copyright 2011-2012 Universite Joseph Fourier, LIG, ADELE Research Group
+      Licensed under the Apache License, Version 2.0 (the "License");
+      you may not use this file except in compliance with the License.
+      You may obtain a copy of the License at
+
+        http://www.apache.org/licenses/LICENSE-2.0
+
+      Unless required by applicable law or agreed to in writing, software
+      distributed under the License is distributed on an "AS IS" BASIS,
+      WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+      See the License for the specific language governing permissions and
+      limitations under the License.
+
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/html">
+<head>
+    <title>iCasa</title>
+
+    <!--[if lt IE 9]>
+    <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+    <script src="http://css3-mediaqueries-js.googlecode.com/svn/trunk/css3-mediaqueries.js"></script>
+    <![endif]-->
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, maximum-scale=1">
+
+    <link rel="stylesheet" media="screen" href="/simulator/assets/javascripts/frameworks/jquery/ui/1.9/css/smoothness/jquery-ui-1.9.0.custom.min.css" />
+    <link rel="stylesheet" media="screen" href="/simulator/assets/javascripts/frameworks/bootstrap/css/bootstrap.min.css" />
+    <link rel="stylesheet" media="screen" href="/simulator/assets/javascripts/frameworks/bootstrap/css/bootstrap-responsive.min.css" />
+
+    <link rel="stylesheet" media="screen" href="/simulator/assets/stylesheets/main.css" />
+    <link rel="shortcut icon" type="image/png" href="/simulator/assets/images/favicon.png" />
+
+    <script src="/simulator/assets/javascripts/frameworks/jquery/core/jquery-1.8.2.min.js"> </script>
+    <script src="/simulator/assets/javascripts/frameworks/bootstrap/js/bootstrap.min.js"> </script>
+
+    <!-- Use to add browser prefix automatically -->
+    <script src="/simulator/assets/javascripts/frameworks/prefixfree/prefixfree.min.js"> </script>
+    <script src="/simulator/assets/javascripts/frameworks/prefixfree/prefixfree.jquery.js"> </script>
+
+</head>
+<body>
+
+<script src="/simulator/assets/javascripts/BrowserDetection.js"></script>
+<script src="/simulator/assets/javascripts/util/cookiesUtil.js"></script>
+<script src="/simulator/assets/javascripts/BrowserCompatibilityCheck.js"></script>
+
+<header>
+    <div class="navbar navbar-inverse navbar-static-top">
+        <div class="navbar-inner">
+            <div class="container">
+                <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </a>
+                <a class="brand" href="/simulator"><img src="/simulator/assets/images/rectLogos/logoICasa_simulator_pfn_30.png" alt="iCasaLogo" /></a>
+                <nav class="nav-collapse collapse">
+                    <ul class="nav">
+                        <li><a href="/simulator" data-bind="text: $root.getLocaleMessage('Home')"></a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://adeleresearchgroup.github.com/iCasa/" target="_blank" data-bind="text: $root.getLocaleMessage('Documentation')"></a></li>
+                        <li class="divider-vertical"></li>
+                        <li><a href="http://medical.imag.fr/" target="_blank"><img src="/simulator/assets/images/rectLogos/medical_logo.png" alt="Medical" /><span class="hidden" id="medicalText" data-bind="text: $root.getLocaleMessage('Medical.Research.Project')"></span></a></li>
+                    </ul>
+                </nav><!--/.nav-collapse -->
+            </div>
+        </div>
+    </div>
+</header>
+
+<div id="icasa-simulator-connection-status" />
+    <button id="connection-status-button" class="hidden btn btn-danger" data-bind="text: getLocaleMessage('Not.Connected')"></button>
+</div>
+<div id="icasa-extensions" icasa-plugins="@pluginIds" icasa-widgets="@widgetIds" class="hidden" />
+</div>
+
+<div id="compatibilityWarn"  class="hidden alert alert-block">
+    <p class="text-error">Backend(<span data-bind="text: backendVersion"></span>) <span data-bind="text: getLocaleMessage('and')"></span> Frontend(<span data-bind="text: frontendVersion"></span> )<span data-bind="text: getLocaleMessage('are.not.the.same.version.some.functionality.may.not.work')"></span>
+    </p>
+</div>
+
+<section>
+    <article id="map" mapId="@mapId" gatewayURL="@gatewayURL" mapImgSrc="@mapImgSrc">
+        <section id="mapContainer">
+            <img id="mapImg" data-bind="attr: {src: imgSrc}" />
+            <!-- ko foreach: $root.persons() -->
+                <div class="userWidget" data-bind="jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }">
+                    <div class="userWidgetContainer">
+                        <img class="userWidgetIcon"data-bind="attr: { src: imgSrc, alt: name, title: name }" />
+                        <div class="userWidgetDecorators" data-bind="foreach: decorators">
+                            <img class="userWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
+                        </div>
+                    </div>
+                </div>
+            <!-- /ko -->
+            <!-- ko foreach: $root.devices() -->
+                <div class="deviceWidget" data-bind="jqueryDraggable: {}, attr: { id: name, 'data-content': popoverdata()}, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }, popOver: {}" data-original-title="Device detail">
+                    <div class="deviceWidgetContainer">
+                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
+                        <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
+                            <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
+                        </div>
+                        <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }">
+                        </div>
+                    </div>
+                    <div class="deviceWidgetHalo"></div>
+                    <!-- ko if: showNameInMap -->
+                    <div class="visibleProperty" id="deviceName">
+                        <span  data-bind="text: name"></span></br>
+                    </div>
+                    <!-- /ko -->
+                    <div class="visibleProperty" id="deviceProperties">
+                        <!-- ko foreach: filtered_properties -->
+                        <span  data-bind="text: $data.value"></span></br>
+                        <!-- /ko -->
+                    </div>
+
+                </div>
+            <!-- /ko -->
+            <!-- ko foreach: $root.zones() -->
+                 <div class="zoneSection" data-bind="jqueryResizable: {}, jqueryDraggable: {}, attr: { id: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight, visibility: visibility , background: background, borderColor: borderColor}">
+                    <div data-bind="text: name"></div>
+                     <div class="visibleProperty" id="zoneVariables">
+                         <!-- ko foreach: filtered_variables -->
+                         <span  data-bind="text: $data.value"></span></br>
+                         <!-- /ko -->
+                     </div>
+                 </div>
+            <!-- /ko -->
+        </section>
+    </article>
+    <aside id="actionTabs">
+        <div id="tabs" data-bind="jqueryTabs: {}">
+            Loading...
+        </div>
+    </aside>
+</section>
+<section>
+    <article id="statusWindows">
+        <!-- ko foreach: $root.devices() -->
+            <div class="deviceWindow" data-bind="jqueryDialog: name, attr: { id: name, title:name}, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+        <!-- /ko -->
+        <!-- ko foreach: $root.persons() -->
+           <div class="personWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+
+        <!-- /ko -->
+        <!-- ko foreach: $root.zones() -->
+            <div class="zoneWindow" data-bind="jqueryDialog: name, attr: { id: name, title: name }, staticTemplate: {template: $data.statusWindowTemplate, data: $data}">
+            </div>
+
+        <!-- /ko -->
+    </article>
+</section>
+<section>
+    <article id="shellContainer" >
+        <form class="form-horizontal" onsubmit="doNothing(); return false;">
+            <div class="control-group">
+                <label class="control-label" for="inputCommand" data-bind="text: $root.getLocaleMessage('iCasa.command')"></label>
+                <div class="controls controls-row">
+                    <input class="input-xxlarge" tabindex="60" type="text" id="inputCommand" data-bind="value: $root.command, valueUpdate:'afterkeydown', event:{keypress: executeShellCommandEvent}" placeholder="help" />
+                    <a class="btn" tabindex="61" type="submit" data-bind="text: $root.getLocaleMessage('Execute'),click: executeShellCommand, event:{keypress: executeShellCommandEvent}"></a>
+                    <a class="btn" tabindex="62" data-bind="text: $root.getLocaleMessage('Help'),click: showHelp"></a>
+                </div>
+            </div>
+        </form>
+        <div   id="shellOutputFixed">
+            <div class ="rounded-corners" id="shellOutput">
+
+            </div>
+        </div>
+    </article>
+</section>
+
+
+<footer>
+    <p> <span data-bind="text: getLocaleMessage('Copyright')"></span>  <a href="http://medical.imag.fr/" data-bind="text: getLocaleMessage('Medical.Research.Project')"></a></p>
+</footer>
+</body>
+<script data-main="/simulator/assets/javascripts/main/requireMap.js" src="/simulator/assets/javascripts/frameworks/require/require.js"> </script>
+</html>

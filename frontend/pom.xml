@@ -29,8 +29,9 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-      <module>icasa-web</module>
-      <module>dashboard-web</module>
+      <module>frontend-services</module>
+      <module>simulator-web-resources</module>
+      <module>dashboard-web-resources</module>
 	</modules>
    <build>
       <plugins>
