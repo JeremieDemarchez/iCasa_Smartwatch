@@ -48,9 +48,8 @@ The platform will automatically compute the devices which are eligible for a spe
 The web applications provided by iCasa are Simulator GUI and dashboard GUI.
 Their architecture is the same with following parts:
 
-- A Play 2 Webserver that provides web application code and keeps information about maps, their corresponding gateways and the widgets which must be loaded.
 - A Web Browser (Firefox) that executes the application code.
-- The iCasa home gateway that embeds the iCasa execution platform.
+- The iCasa home gateway that embeds the iCasa execution platform and the web resources.
 
 The web application part is mostly written in Coffeescript then compiled to Javascript.
 It implements the architecture described in the following picture.
