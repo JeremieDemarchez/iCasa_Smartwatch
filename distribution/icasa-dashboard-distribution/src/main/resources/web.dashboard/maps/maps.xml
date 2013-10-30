@@ -1,4 +1,0 @@
-<?xml version='1.0' encoding='UTF-8'?>
-<maps>
-<map id="default" name="House" description="Default house" gatewayURL="http://localhost:8080" imgFile="house.png" libs="default"/>
-</maps>

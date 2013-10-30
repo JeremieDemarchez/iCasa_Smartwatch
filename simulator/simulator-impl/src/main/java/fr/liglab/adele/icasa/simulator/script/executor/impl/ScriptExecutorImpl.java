@@ -174,7 +174,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		}
 
 		for (ScriptExecutorListener listener : getListenersCopy()) {
-			listener.scriptPaused(getCurrentScript());
+            try{
+			    listener.scriptPaused(getCurrentScript());
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
 		}
 	}
 
@@ -188,7 +192,11 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 		}
 
 		for (ScriptExecutorListener listener : getListenersCopy()) {
-			listener.scriptResumed(getCurrentScript());
+            try{
+			    listener.scriptResumed(getCurrentScript());
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
 		}
 	}
 
@@ -336,8 +344,12 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 
 	@Override
 	public State getState(String scriptName) {
-		if (scriptName.equals(scriptName))
+        if(scriptName == null){
+            return null;
+        }
+		if (scriptName.equals(this.currentScript)) {
 			return getCurrentScriptState();
+        }
 		return ScriptExecutor.State.STOPPED;
 	}
 

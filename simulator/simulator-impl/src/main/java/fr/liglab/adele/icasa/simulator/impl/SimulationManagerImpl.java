@@ -62,14 +62,16 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 	private ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public SimulationManagerImpl() {
+        addPersonType("Old man");
+        addPersonType("Old woman");
+        addPersonType("Woman");
+        addPersonType("Man");
 		addPersonType("Grandfather");
 		addPersonType("Grandmother");
 		addPersonType("Father");
 		addPersonType("Mother");
 		addPersonType("Boy");
 		addPersonType("Girl");
-        addPersonType("Woman");
-        addPersonType("Man");
 	}
 
 	@Override

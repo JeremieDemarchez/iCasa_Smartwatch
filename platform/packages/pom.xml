@@ -18,7 +18,7 @@
 	<parent>
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
-      <version>1.2.2-SNAPSHOT</version>
+      <version>1.2.3-SNAPSHOT</version>
       <relativePath>../../parent</relativePath>
 	</parent>
 
@@ -37,11 +37,14 @@
             <modules>
                 <module>icasa-platform-dp</module>
                 <module>icasa-device-handler-dp</module>
-                <module>upnp-settopbox-core-dp</module>
                 <!--
+                Not maintained projects
+                <module>upnp-settopbox-core-dp</module>
+                
                 <module>x10-presence-sensor-core-dp</module>
-                -->
+                
                 <module>tikitag-core-dp</module>
+                -->
                 <module>zigbee-core-dp</module>
             </modules>
         </profile>
