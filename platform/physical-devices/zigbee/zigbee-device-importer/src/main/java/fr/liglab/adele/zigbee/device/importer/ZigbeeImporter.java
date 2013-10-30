@@ -48,36 +48,38 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.TypeCode;
 
 /**
- *  rose importer for zigbee presence sensor devices.
- *	@author Kettani Mehdi
+ * rose importer for zigbee presence sensor devices.
+ * 
+ * @author Kettani Mehdi
  */
-@Component(name="zigbee.device.importer")
-@Provides(specifications= {ImporterService.class},
-properties = {
-        @StaticServiceProperty(type = "java.lang.String", name = "rose.protos.configs", value="zigbee") })
+@Component(name = "zigbee.device.importer")
+@Provides(specifications = { ImporterService.class }, properties = { @StaticServiceProperty(type = "java.lang.String", name = "rose.protos.configs", value = "zigbee") })
 public class ZigbeeImporter extends AbstractImporterComponent {
 
-	@Requires(filter="(factory.name=zigbeePresenceSensor)")
-	private Factory presenceSensorFactory;
-	
-	@Requires(filter="(factory.name=zigbeeBinaryLight)")
+	@Requires(filter = "(factory.name=zigbeePhotometer)")
+	private Factory photometerFactory;
+
+	@Requires(filter = "(factory.name=zigbeeBinaryLight)")
 	private Factory binaryLightFactory;
-	
-	@Requires(filter="(factory.name=zigbeeMotionSensor)")
+
+	@Requires(filter = "(factory.name=zigbeeMotionSensor)")
 	private Factory motionSensorFactory;
 
-    @Requires(filter="(factory.name=zigbeePowerSwitch)")
-    private Factory powerSwitchFactory;
+	@Requires(filter = "(factory.name=zigbeePowerSwitch)")
+	private Factory powerSwitchFactory;
 
-    @Requires(filter="(factory.name=zigbeePushButton)")
-    private Factory pushButtonFactory;
-	
-	@Requires(id="rose.machine")
+	@Requires(filter = "(factory.name=zigbeePushButton)")
+	private Factory pushButtonFactory;
+
+	@Requires(filter = "(factory.name=zigbeeThermometer)")
+	private Factory thermometerFactory;
+
+	@Requires(id = "rose.machine")
 	private RoseMachine roseMachine;
-	
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(ZigbeeImporter.class);
-	
+
 	@Override
 	public List<String> getConfigPrefix() {
 		List<String> list = new ArrayList<String>();
@@ -95,45 +97,50 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 			Map<String, Object> arg1) {
 		ComponentInstance instance;
 		try {
-			
+
 			Factory factory = null;
 
-			if (epd != null){
+			if (epd != null) {
 				Map<String, Object> epdProps = epd.getProperties();
-				String deviceType = (String) epdProps.get("zigbee.device.type.code");
+				String deviceType = (String) epdProps
+						.get("zigbee.device.type.code");
 				String moduleAddress = (String) epdProps.get("id");
-				String serialNumber = (String) epdProps.get(RemoteConstants.ENDPOINT_ID);
-				logger.debug("endpoint received in importer with module address : " + moduleAddress);
-				
-				if (TypeCode.A001.toString().equals(deviceType)){
+				String serialNumber = (String) epdProps
+						.get(RemoteConstants.ENDPOINT_ID);
+				logger.debug("endpoint received in importer with module address : "
+						+ moduleAddress);
+
+				if (TypeCode.A001.toString().equals(deviceType)) {
 					factory = binaryLightFactory;
-				} else if (TypeCode.C004.toString().equals(deviceType)){
-					factory = presenceSensorFactory;
-				} else if (TypeCode.C001.toString().equals(deviceType)){
-                    factory = pushButtonFactory;
-                } else if (TypeCode.C002.toString().equals(deviceType)){
+				} else if (TypeCode.C004.toString().equals(deviceType)) {
+					factory = photometerFactory;
+				} else if (TypeCode.C001.toString().equals(deviceType)) {
+					factory = pushButtonFactory;
+				} else if (TypeCode.C002.toString().equals(deviceType)) {
 					factory = powerSwitchFactory;
-				} else if (TypeCode.C003.toString().equals(deviceType)){
-                    factory = motionSensorFactory;
-                } else {
+				} else if (TypeCode.C003.toString().equals(deviceType)) {
+					factory = motionSensorFactory;
+				} else if (TypeCode.C005.toString().equals(deviceType)) {
+					factory = thermometerFactory;
+				} else {
 					// device type not supported
 					return null;
 				}
-				
+
 				Hashtable properties = new Hashtable();
 				properties.put("zigbee.moduleAddress", moduleAddress);
-				properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, serialNumber);
-				
+				properties
+						.put(GenericDevice.DEVICE_SERIAL_NUMBER, serialNumber);
+
 				instance = factory.createComponentInstance(properties);
 				logger.debug("proxy created for zigbee device.");
-				
+
 				if (instance != null) {
-					ServiceRegistration sr = new IpojoServiceRegistration(instance);
+					ServiceRegistration sr = new IpojoServiceRegistration(
+							instance);
 					return sr;
 				}
 			}
-
-
 
 		} catch (Exception ex) {
 			ex.printStackTrace();
@@ -143,8 +150,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 	}
 
 	@Override
-	protected void destroyProxy(EndpointDescription arg0,
-			ServiceRegistration sr) {
+	protected void destroyProxy(EndpointDescription arg0, ServiceRegistration sr) {
 		sr.unregister();
 	}
 
@@ -152,17 +158,17 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 	protected LogService getLogService() {
 		return null;
 	}
-	
+
 	@Validate
 	protected void start() {
 		super.start();
 	}
-	
+
 	@Invalidate
 	protected void stop() {
 		super.stop();
 	}
-	
+
 	/**
 	 * A wrapper for ipojo Component instances
 	 * 
@@ -185,8 +191,11 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 		 */
 		public ServiceReference getReference() {
 			try {
-				ServiceReference[] references = instance.getContext().getServiceReferences(
-				      instance.getClass().getCanonicalName(), "(instance.name=" + instance.getInstanceName() + ")");
+				ServiceReference[] references = instance.getContext()
+						.getServiceReferences(
+								instance.getClass().getCanonicalName(),
+								"(instance.name=" + instance.getInstanceName()
+										+ ")");
 				if (references.length > 0)
 					return references[0];
 			} catch (InvalidSyntaxException e) {
@@ -199,7 +208,8 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 		 * (non-Javadoc)
 		 * 
 		 * @see
-		 * org.osgi.framework.ServiceRegistration#setProperties(java.util.Dictionary)
+		 * org.osgi.framework.ServiceRegistration#setProperties(java.util.Dictionary
+		 * )
 		 */
 		public void setProperties(Dictionary properties) {
 			instance.reconfigure(properties);

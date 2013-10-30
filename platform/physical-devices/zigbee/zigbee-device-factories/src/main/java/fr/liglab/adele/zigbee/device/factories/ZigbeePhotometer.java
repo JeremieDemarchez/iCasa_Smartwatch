@@ -1,0 +1,155 @@
+package fr.liglab.adele.zigbee.device.factories;
+
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.ServiceProperty;
+
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.light.Photometer;
+import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.device.zigbee.driver.Data;
+import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+
+@Component(name = "zigbeePhotometer")
+@Provides
+/**
+ * Zigbee light sensor factory.
+ * @author Kettani Mehdi.
+ *
+ */
+public class ZigbeePhotometer extends AbstractDevice implements Photometer,
+		ZigbeeDevice, ZigbeeDeviceTracker {
+
+	@Requires
+	private ZigbeeDriver driver;
+
+	@Property(mandatory = true, name = "zigbee.moduleAddress")
+	private String moduleAddress;
+
+	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
+	private String serialNumber;
+
+	public ZigbeePhotometer() {
+		super();
+		super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME,
+				GenericDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
+	}
+
+	@Override
+	public String getSerialNumber() {
+		return serialNumber;
+	}
+
+	@Override
+	public void deviceAdded(DeviceInfo deviceInfo) {/* nothing to do */
+	}
+
+	@Override
+	public void deviceRemoved(DeviceInfo deviceInfo) {/* nothing to do */
+	}
+
+	@Override
+	public void deviceDataChanged(String moduleAddress, Data oldData,
+			Data newData) {
+		if (moduleAddress.compareTo(this.moduleAddress) == 0) {
+			String data = newData.getData();
+			String computedIlluminance = computeIlluminance(data);
+			setPropertyValue(PHOTOMETER_CURRENT_ILLUMINANCE,
+					computedIlluminance);
+		}
+	}
+
+	/**
+	 * Compute Illuminance from the given data.
+	 * 
+	 * @param data
+	 * @return
+	 */
+	private String computeIlluminance(String data) {
+		char val = 0;
+		double c0,c1, aff_lumiere;
+		
+		
+		// TODO reste calcul val a partir de data
+		c0 = tri_val(val);
+		c1 = tri_val(val);
+		
+		if ((c0 != -1) && (c1 != -1)){
+			aff_lumiere = c0*(0.46) * (Math.pow(2.71828, -3.13*c1/c0));
+		} else {
+			aff_lumiere = 0.0;
+		}
+		return String.valueOf(aff_lumiere);
+	}
+
+	private double tri_val(char val) {
+
+		double value, chord = 0, step = 0, step_number;
+		char i;
+
+		if (val < 128) {
+			value = -1.0;
+		} else {
+			i = (char) ((val & 0x70) >> 4);
+			switch (i) {
+			case 0:
+				chord = 0.0;
+				step = 1.0;
+				break;
+			case 1:
+				chord = 16.0;
+				step = 2.0;
+				break;
+			case 2:
+				chord = 49.0;
+				step = 4.0;
+				break;
+			case 3:
+				chord = 115.0;
+				step = 8.0;
+				break;
+			case 4:
+				chord = 247.0;
+				step = 16.0;
+				break;
+			case 5:
+				chord = 511.0;
+				step = 32.0;
+				break;
+			case 6:
+				chord = 1039.0;
+				step = 64.0;
+				break;
+			case 7:
+				chord = 2095.0;
+				step = 128.0;
+				break;
+			}
+			step_number = (double) (val & 0x0F);
+			value = (double) (chord + (step * step_number));
+		}
+		return value;
+	}
+
+	@Override
+	public void deviceBatteryLevelChanged(String moduleAddress,
+			float oldBatteryLevel, float newBatteryLevel) {
+		if (moduleAddress.compareToIgnoreCase(this.moduleAddress) == 0) { // this
+																			// device.
+			setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
+		}
+	}
+
+	@Override
+	public double getIlluminance() {
+		Double illuminance = (Double) getPropertyValue(PHOTOMETER_CURRENT_ILLUMINANCE);
+		if (illuminance == null)
+			return 0;
+		return illuminance;
+	}
+}
