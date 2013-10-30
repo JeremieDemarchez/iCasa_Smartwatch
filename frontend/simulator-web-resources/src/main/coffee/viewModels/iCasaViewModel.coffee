@@ -1053,13 +1053,13 @@ define(['jquery',
            @statusWindowTemplate(personStatusWindowTemplateHtml);
            @imgSrc = ko.computed(() =>
               imgName = "user2";
-              if (@type() == "Grandmother")
+              if (@type() == "Grandmother" || @type() == "Old woman")
                 imgName = "user1";
-              if (@type() == "Grandfather")
+              if (@type() == "Grandfather" || @type() == "Old man")
                 imgName = "user2";
-              if (@type() == "Father")
+              if (@type() == "Father" || @type() == "Man")
                 imgName = "user3";
-              if (@type() == "Mother")
+              if (@type() == "Mother" || @type() == "Woman")
                 imgName = "user4";
               if (@type() == "Girl")
                 imgName = "user5";
@@ -1067,10 +1067,6 @@ define(['jquery',
                 imgName = "user6";
               if (@type() == "Sherlock")
                 imgName = "user7";
-              if (@type() == "Man")
-                imgName = "user3";
-              if (@type() == "Woman")
-                imgName = "user4";
 
               return "/simulator/assets/images/users/" + imgName + ".png";
            , @);
