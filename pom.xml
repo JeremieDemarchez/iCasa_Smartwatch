@@ -30,6 +30,7 @@
 
     <properties>
         <site.path>snapshot</site.path>
+        <repo.path>snapshot</repo.path>
         <projectName>Platform and Simulator</projectName>
         <!-- TODO add property to get current snapshot version qualifier -->
         <github.global.server>github</github.global.server>
@@ -82,6 +83,7 @@
          <id>release</id>
          <properties>
             <site.path>${project.version}</site.path>
+            <repo.path>release</repo.path
          </properties>
          <modules>
             <module>parent</module>

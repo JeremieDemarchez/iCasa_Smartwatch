@@ -192,7 +192,7 @@ ___Simulation API - Simulated Device interface___
 
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>simulator.api</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.2.3-SNAPSHOT</version>
 
 Repositories :	
 
@@ -203,13 +203,13 @@ Repositories :
 		</snapshots>
 		<id>adele-central-snapshot</id>
 		<name>adele-repos</name>
-		<url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+		<url>http://repository-icasa.forge.cloudbees.com/snapshot</url>
 	  </repository>
 	  <repository>
 		<snapshots />
 		<id>snapshots</id>
 		<name>adele-central-release</name>
-		<url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+		<url>http://repository-icasa.forge.cloudbees.com/release</url>
 	  </repository>
 	</repositories>
 
@@ -234,15 +234,15 @@ The pom file used in iCasa simulator module to build the simulated Thermometer i
 		   <snapshots>
 		    <enabled>false</enabled>
 		   </snapshots>
-		   <id>adele-central-snapshot</id>
+		   <id>adele-central-release</id>
 		   <name>adele-repos</name>
-		   <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+		   <url>http://repository-icasa.forge.cloudbees.com/release</url>
 	     </repository>
 	    <repository>
 		  <snapshots />
 		  <id>snapshots</id>
-		  <name>adele-central-release</name>
-		  <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+		  <name>adele-central-snapshot</name>
+		  <url>http://repository-icasa.forge.cloudbees.com/snapshot</url>
 	     </repository>
 	   </repositories>
   
