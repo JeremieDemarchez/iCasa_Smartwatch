@@ -83,7 +83,7 @@
          <id>release</id>
          <properties>
             <site.path>${project.version}</site.path>
-            <repo.path>release</repo.path
+            <repo.path>release</repo.path>
          </properties>
          <modules>
             <module>parent</module>
