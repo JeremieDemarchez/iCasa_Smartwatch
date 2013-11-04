@@ -32,8 +32,6 @@
         <site.path>snapshot</site.path>
         <repo.path>snapshot</repo.path>
         <projectName>Platform and Simulator</projectName>
-        <!-- TODO add property to get current snapshot version qualifier -->
-        <github.global.server>github</github.global.server>
         <!-- Site Title -->
         <title>iCasa</title>
         <lastStableSnapshotVersionQualifier>TODO</lastStableSnapshotVersionQualifier>
@@ -197,6 +195,7 @@
                             <repositoryName>iCasa</repositoryName>
                             <repositoryOwner>AdeleResearchGroup</repositoryOwner>
                             <!-- end repository configuration -->
+                            <server>github</server>
 
                             <message>Building site for ${project.version}</message>
                             <path>${site.path}</path>
@@ -209,9 +208,9 @@
 		</plugins>
 	</build>
    <scm>
-      <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</connection>
+      <connection>scm:git:git@github.com:AdeleResearchGroup/iCasa.git</connection>
       <url>https://github.com/AdeleResearchGroup/iCasa/</url>
-      <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa.git</developerConnection>
+      <developerConnection>scm:git:git@github.com:AdeleResearchGroup/iCasa.git</developerConnection>
       <tag>HEAD</tag>
    </scm>
 </project>
