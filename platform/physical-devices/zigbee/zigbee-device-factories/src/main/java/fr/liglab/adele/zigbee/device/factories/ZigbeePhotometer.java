@@ -74,7 +74,6 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 		char val = 0;
 		double c0,c1, aff_lumiere;
 		
-		
 		// TODO reste calcul val a partir de data
 		c0 = tri_val(val);
 		c1 = tri_val(val);
