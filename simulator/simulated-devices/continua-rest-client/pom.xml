@@ -11,7 +11,7 @@
   <parent>
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>parent</artifactId>
-    <version>1.2.3-SNAPSHOT</version>
+    <version>1.2.4-SNAPSHOT</version>
     <relativePath>../../../parent</relativePath>
   </parent>
 
@@ -48,6 +48,10 @@
       <groupId>com.sun.jersey</groupId>
       <artifactId>jersey-client</artifactId>
     </dependency>
+      <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-core</artifactId>
+      </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
       <artifactId>org.apache.felix.fileinstall</artifactId>
@@ -56,6 +60,11 @@
           <groupId>fr.liglab.adele.icasa</groupId>
           <artifactId>technical.services.api</artifactId>
           <version>${project.version}</version>
+      </dependency>
+      <dependency>
+          <groupId>com.sun.jersey</groupId>
+          <artifactId>jersey-client</artifactId>
+          <version>1.9</version>
       </dependency>
   </dependencies>
 
