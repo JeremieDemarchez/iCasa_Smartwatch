@@ -46,20 +46,20 @@ public class ZigbeeThermometerTest {
 	@Test
 	public void testPositiveTemperatureConversion() {
 		String result = sensor.computeTemperature("13>0");
-		Assert.assertEquals("19.875", result);
+		Assert.assertEquals("19.88", result);
 
 		String result2 = sensor.computeTemperature("13?0");
-		Assert.assertEquals("19.9375", result2);
+		Assert.assertEquals("19.94", result2);
 
 	}
 
 	@Test
 	public void testNegativeTemperatureConversion() {
 		String result = sensor.computeTemperature(">6?0");
-		Assert.assertEquals("-25.0625", result);
+		Assert.assertEquals("-25.06", result);
 
 		String result2 = sensor.computeTemperature(">710");
-		Assert.assertEquals("-24.9375", result2);
+		Assert.assertEquals("-24.94", result2);
 	}
 
 	@Test

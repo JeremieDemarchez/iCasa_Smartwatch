@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
+import java.text.DecimalFormat;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -93,7 +95,7 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 			return null;
 		}
 
-		double c0, c1, aff_lumiere;
+		double c0, c1, lux;
 
 		StringBuilder convertedData = new StringBuilder();
 
@@ -117,11 +119,17 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 																			// octets
 
 		if ((c0 != -1) && (c1 != -1)) {
-			aff_lumiere = c0 * (0.46) * (Math.pow(2.71828, -3.13 * c1 / c0));
+			lux = c0 * (0.46) * (Math.pow(2.71828, -3.13 * c1 / c0));
 		} else {
-			aff_lumiere = 0.0;
+			lux = 0.0;
 		}
-		return String.valueOf(aff_lumiere);
+		
+		// format lux to take integer part only
+		DecimalFormat df = new DecimalFormat();
+		df.setMaximumFractionDigits(0);
+		df.setGroupingUsed(false);
+		
+		return df.format(lux);
 	}
 
 	private double tri_val(int val) {

@@ -41,10 +41,10 @@ public class ZigbeePhotometerTest {
 	public void testComputedIlluminance(){
 		
 		String result = photometer.computeIlluminance("?>=5");
-		Assert.assertEquals("1041.63088241661", result);
+		Assert.assertEquals("1042", result);
 		
 		String result2 = photometer.computeIlluminance("<297");
-		Assert.assertEquals("91.6634831318675", result2);
+		Assert.assertEquals("92", result2);
 	}
 	
 	@Test

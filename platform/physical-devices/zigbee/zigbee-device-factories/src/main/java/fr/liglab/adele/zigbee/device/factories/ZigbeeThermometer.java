@@ -15,6 +15,10 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -133,7 +137,13 @@ public class ZigbeeThermometer extends AbstractDevice implements Thermometer,
 			computedTemp = Integer.valueOf(convertedData.toString(), 16) * 0.0625;
 		}
 
-		return String.valueOf(computedTemp);
+		// format temperature to take integer part and 2 decimal values
+		DecimalFormat df = new DecimalFormat();
+		df.setMinimumFractionDigits(2);
+		df.setMaximumFractionDigits(2);
+		df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+		
+		return df.format(computedTemp);
 	}
 
 	/**
