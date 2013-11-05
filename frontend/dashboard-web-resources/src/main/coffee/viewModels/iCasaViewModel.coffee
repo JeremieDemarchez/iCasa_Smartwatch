@@ -1319,8 +1319,8 @@ define(['jquery',
               name: @getLocaleMessage('Zones') ,
               template: zoneTabHtml});
            appTab = new TabViewModel ({
-              id: "persons",
-              name: @getLocaleMessage('Persons') ,
+              id: "applications",
+              name: @getLocaleMessage('Applications') ,
               template: appTabHtml});
            tabsItems = [];
            tabsItems.push(deviceTab);
