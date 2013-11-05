@@ -196,7 +196,7 @@ public class FollowMeWithPhotometerApplication extends EmptyDeviceListener {
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
         if (device instanceof MotionSensor) {
             logger.trace("Motion detected in " + location);
-            if(getMediaIlluminance(location) <= MIN_LUX){
+            if(getMediaIlluminance(location) <= getMinLux()){
                 turnOnTheLights(location);
                 scheduleTask(location);
             } else {
@@ -257,6 +257,15 @@ public class FollowMeWithPhotometerApplication extends EmptyDeviceListener {
             return tempValue;
         } else {
             return DEFAULT_TIMEOUT;
+        }
+    }
+
+    private double getMinLux() {
+        Double tempValue = (Double) preferences.getApplicationPropertyValue(APPLICATION_ID, "Minimum.lux");
+        if (tempValue != null) {
+            return tempValue;
+        } else {
+            return MIN_LUX;
         }
     }
 
