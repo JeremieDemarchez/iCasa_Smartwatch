@@ -37,7 +37,7 @@ limitations under the License.
          <dependencies>
             <dependency>
 				<groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>habits.monitoring.mocked.distribution</artifactId>
+            <artifactId>habits.monitoring.standard.distribution</artifactId>
             <version>${project.version}</version>
 				<type>osgi-distribution</type>
 			</dependency>

@@ -30,7 +30,6 @@
    <name>${productName} :: Habits Monitoring :: Deployment Packages</name>
 
 	<modules>
-      <module>measure-generator-mock.dp</module>
       <module>measure-generator.dp</module>
 	  <module>measure-generator-autonomic.dp</module>
       <module>presence-sensor.dp</module>

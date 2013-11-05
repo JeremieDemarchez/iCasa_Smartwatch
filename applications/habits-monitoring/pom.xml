@@ -34,7 +34,6 @@ limitations under the License.
          <id>release</id>
          <modules>
             <module>event-webservice-api</module>
-            <module>event-webservice-mock-impl</module>
             <module>event-webservice-impl</module>
             <module>measure-generator</module>
             <module>measure-generator-adapters</module>
@@ -50,7 +49,6 @@ limitations under the License.
          </activation>
          <modules>
             <module>event-webservice-api</module>
-            <module>event-webservice-mock-impl</module>
             <module>event-webservice-impl</module>
             <module>measure-generator</module>
             <module>measure-generator-adapters</module>

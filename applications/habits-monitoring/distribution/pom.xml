@@ -31,7 +31,6 @@
 
 	<modules>
         <module>standard-distribution</module>
-        <module>mocked-distribution</module>
 	</modules>
    <build>
       <plugins>

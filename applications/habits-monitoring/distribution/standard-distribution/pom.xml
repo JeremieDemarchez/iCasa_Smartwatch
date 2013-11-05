@@ -76,6 +76,12 @@ limitations under the License.
 			<version>${project.version}</version>
 		</dependency>
 		<dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>photometer.adapter.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>motion.sensor.adapter.dp</artifactId>
 			<type>deployment-package</type>

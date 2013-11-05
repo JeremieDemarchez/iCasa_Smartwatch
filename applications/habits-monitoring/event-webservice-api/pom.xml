@@ -28,7 +28,7 @@ limitations under the License.
   <packaging>bundle</packaging>
   <groupId>fr.liglab.adele.icasa.apps</groupId>
   <artifactId>event.webservice.api</artifactId>
-  <name>${productName} :: Habits Monitoring :: Event WebService Mock API</name>
+  <name>${productName} :: Habits Monitoring :: Event WebService API</name>
 
   <build>
     <plugins>
