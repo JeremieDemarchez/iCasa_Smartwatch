@@ -74,8 +74,10 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 		if (moduleAddress.compareTo(this.moduleAddress) == 0) {
 			String data = newData.getData();
 			String computedIlluminance = computeIlluminance(data);
-			setPropertyValue(PHOTOMETER_CURRENT_ILLUMINANCE,
-					computedIlluminance);
+			if (computedIlluminance != null) {
+				setPropertyValue(PHOTOMETER_CURRENT_ILLUMINANCE,
+						computedIlluminance);
+			}
 		}
 	}
 
@@ -85,23 +87,44 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 	 * @param data
 	 * @return
 	 */
-	private String computeIlluminance(String data) {
-		char val = 0;
-		double c0,c1, aff_lumiere;
-		
-		// TODO reste calcul val a partir de data
-		c0 = tri_val(val);
-		c1 = tri_val(val);
-		
-		if ((c0 != -1) && (c1 != -1)){
-			aff_lumiere = c0*(0.46) * (Math.pow(2.71828, -3.13*c1/c0));
+	public String computeIlluminance(String data) {
+
+		if (data.length() != 4) {
+			return null;
+		}
+
+		double c0, c1, aff_lumiere;
+
+		StringBuilder convertedData = new StringBuilder();
+
+		for (byte b : data.getBytes()) {
+			String hex = String.format("%04x", (int) b);
+			char c = hex.charAt(hex.length() - 1);
+			convertedData.append(c);
+		}
+
+		c0 = tri_val(Integer.valueOf(convertedData.substring(0, 2), 16)); // valeur
+																			// reconstituee
+																			// des
+																			// deux
+																			// premiers
+																			// octets
+		c1 = tri_val(Integer.valueOf(convertedData.substring(2, 4), 16)); // valeur
+																			// reconstituee
+																			// des
+																			// deux
+																			// derniers
+																			// octets
+
+		if ((c0 != -1) && (c1 != -1)) {
+			aff_lumiere = c0 * (0.46) * (Math.pow(2.71828, -3.13 * c1 / c0));
 		} else {
 			aff_lumiere = 0.0;
 		}
 		return String.valueOf(aff_lumiere);
 	}
 
-	private double tri_val(char val) {
+	private double tri_val(int val) {
 
 		double value, chord = 0, step = 0, step_number;
 		char i;

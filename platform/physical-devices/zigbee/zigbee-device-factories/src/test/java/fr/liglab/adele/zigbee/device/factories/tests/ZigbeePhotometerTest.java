@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zigbee.device.factories;
+package fr.liglab.adele.zigbee.device.factories.tests;
 
 import junit.framework.Assert;
 
@@ -21,14 +21,11 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * Test class for zigbee temperature sensor.
- * @author Kettani Mehdi
- *
- */
-public class ZigbeeTemperatureSensorTest {
+import fr.liglab.adele.zigbee.device.factories.ZigbeePhotometer;
+
+public class ZigbeePhotometerTest {
 	
-	private ZigbeeThermometer sensor = new ZigbeeThermometer();
+	private ZigbeePhotometer photometer = new ZigbeePhotometer();
 
 	@Before
 	public void setUp() {
@@ -41,21 +38,18 @@ public class ZigbeeTemperatureSensorTest {
 	}
 
 	@Test
-	public void testPositiveTemperatureConversion(){
-		String result = sensor.computeTemperature("13E");
-		Assert.assertEquals("19.875", result);
+	public void testComputedIlluminance(){
 		
-		String result2 = sensor.computeTemperature("13F");
-		Assert.assertEquals("19.9375", result2);
+		String result = photometer.computeIlluminance("?>=5");
+		Assert.assertEquals("1041.63088241661", result);
+		
+		String result2 = photometer.computeIlluminance("<297");
+		Assert.assertEquals("91.6634831318675", result2);
 	}
 	
-	
 	@Test
-	public void testNegativeTemperatureConversion(){
-		String result = sensor.computeTemperature("E6F");
-		Assert.assertEquals("-25.0625", result);
-		
-		String result2 = sensor.computeTemperature("E71");
-		Assert.assertEquals("-24.9375", result2);
+	public void testComputedIlluminanceWithInvalidData(){
+		String result = photometer.computeIlluminance("?>=");
+		Assert.assertEquals(null, result);
 	}
 }

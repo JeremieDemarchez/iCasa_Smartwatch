@@ -30,28 +30,28 @@ import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 
 /**
- * User: Kettani Mehdi
- * Date: 24/10/13
- * Time: 4:27 PM
+ * User: Kettani Mehdi Date: 24/10/13 Time: 4:27 PM
  */
-@Component(name="zigbeeThermometer")
+@Component(name = "zigbeeThermometer")
 @Provides
-public class ZigbeeThermometer extends AbstractDevice implements Thermometer, ZigbeeDevice, ZigbeeDeviceTracker {
+public class ZigbeeThermometer extends AbstractDevice implements Thermometer,
+		ZigbeeDevice, ZigbeeDeviceTracker {
 
 	@Requires
-    private ZigbeeDriver driver;
+	private ZigbeeDriver driver;
 
-    @Property(mandatory=true, name="zigbee.moduleAddress")
-    private String moduleAddress;
+	@Property(mandatory = true, name = "zigbee.moduleAddress")
+	private String moduleAddress;
 
-    @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
-    private String serialNumber;
+	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
+	private String serialNumber;
 
-    public ZigbeeThermometer(){
-        super();
-        super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
-    }
+	public ZigbeeThermometer() {
+		super();
+		super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME,
+				GenericDevice.LOCATION_UNKNOWN);
+		super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
+	}
 
 	@Override
 	public String getSerialNumber() {
@@ -59,79 +59,108 @@ public class ZigbeeThermometer extends AbstractDevice implements Thermometer, Zi
 	}
 
 	/**
-     * Called when a new device has been discovered by the driver.
-     *
-     * @param deviceInfo information about the device
-     */
+	 * Called when a new device has been discovered by the driver.
+	 * 
+	 * @param deviceInfo
+	 *            information about the device
+	 */
 	@Override
-	public void deviceAdded(DeviceInfo deviceInfo) {/*nothing to do*/}
+	public void deviceAdded(DeviceInfo deviceInfo) {/* nothing to do */
+	}
 
 	/**
-     * Called when a device has been removed by the driver.
-     *
-     * @param deviceInfo information about the device
-     */
+	 * Called when a device has been removed by the driver.
+	 * 
+	 * @param deviceInfo
+	 *            information about the device
+	 */
 	@Override
-	public void deviceRemoved(DeviceInfo deviceInfo) {/*nothing to do*/}
-	
+	public void deviceRemoved(DeviceInfo deviceInfo) {/* nothing to do */
+	}
+
 	/**
-     * Called when a device data has changed.
-     *
-     * @param address a device module address
-     * @param oldData       previous device data
-     * @param newData       new device data
-     */
+	 * Called when a device data has changed.
+	 * 
+	 * @param address
+	 *            a device module address
+	 * @param oldData
+	 *            previous device data
+	 * @param newData
+	 *            new device data
+	 */
 	@Override
 	public void deviceDataChanged(String moduleAddress, Data oldData,
 			Data newData) {
-		if(moduleAddress.compareTo(this.moduleAddress) == 0){
-            String data = newData.getData();
-            String computedTemperature = computeTemperature(data);
-            setPropertyValue(THERMOMETER_CURRENT_TEMPERATURE, computedTemperature);
-        }
+		if (moduleAddress.compareTo(this.moduleAddress) == 0) {
+			String data = newData.getData();
+			String computedTemperature = computeTemperature(data);
+			if (computedTemperature != null) {
+				setPropertyValue(THERMOMETER_CURRENT_TEMPERATURE,
+						computedTemperature);
+			}
+		}
 	}
 
 	/**
 	 * Compute temperature from the given hexadecimal value.
+	 * 
 	 * @param data
 	 * @return
 	 */
 	public String computeTemperature(String data) {
-		
-		double computedTemp;
-		
-		String sign = data.substring(0, 1);
-		
-		if (Integer.valueOf(sign, 16) > 7){ // negative value
-			computedTemp = -(Integer.parseInt("1000", 16) - Integer.parseInt(data, 16)) * 0.0625;
-		} else { // positive value
-			computedTemp = Integer.parseInt(data, 16) * 0.0625;
+
+		if (data.length() != 4) {
+			return null;
 		}
-		
+
+		double computedTemp;
+
+		StringBuilder convertedData = new StringBuilder();
+
+		for (byte b : data.getBytes()) {
+			String hex = String.format("%04x", (int) b);
+			char c = hex.charAt(hex.length() - 1);
+			convertedData.append(c);
+		}
+		convertedData.deleteCharAt(convertedData.length() - 1);
+
+		String sign = convertedData.substring(0, 1);
+
+		if (Integer.valueOf(sign, 16) > 7) { // negative value
+			computedTemp = -(Integer.parseInt("1000", 16) - Integer.valueOf(
+					convertedData.toString(), 16)) * 0.0625;
+		} else { // positive value
+			computedTemp = Integer.valueOf(convertedData.toString(), 16) * 0.0625;
+		}
+
 		return String.valueOf(computedTemp);
 	}
 
 	/**
-     * Called when a device battery level has changed.
-     *
-     * @param address   a device module address
-     * @param oldBatteryLevel previous device battery level
-     * @param newBatteryLevel new device battery level
-     */
+	 * Called when a device battery level has changed.
+	 * 
+	 * @param address
+	 *            a device module address
+	 * @param oldBatteryLevel
+	 *            previous device battery level
+	 * @param newBatteryLevel
+	 *            new device battery level
+	 */
 	@Override
 	public void deviceBatteryLevelChanged(String moduleAddress,
 			float oldBatteryLevel, float newBatteryLevel) {
-		if(moduleAddress.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
-            setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
-        }
+		if (moduleAddress.compareToIgnoreCase(this.moduleAddress) == 0) { // this
+																			// device.
+			setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
+		}
 	}
 
 	@Override
 	public double getTemperature() {
-		Double temperature =(Double)getPropertyValue(THERMOMETER_CURRENT_TEMPERATURE);
-		if (temperature == null){
+		Double temperature = (Double) getPropertyValue(THERMOMETER_CURRENT_TEMPERATURE);
+		if (temperature == null) {
 			return 0;
 		}
-		return temperature; 
+		return temperature;
 	}
 }
