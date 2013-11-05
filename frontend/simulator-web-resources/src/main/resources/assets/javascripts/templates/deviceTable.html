@@ -45,6 +45,9 @@
             <th data-bind="sortable: {obj: 'device', column: 'name'}">
                 <span data-bind="text: $root.getLocaleMessage('Name')"></span>
             </th>
+            <th>
+                <span data-bind="text: $root.getLocaleMessage('Location')"></span>
+            </th>
         </tr>
     </thead>
     <tbody id="filteredDevicesTable" data-bind="foreach: $root.filteredDevices()">
@@ -52,6 +55,7 @@
             <td><input type="checkbox" data-bind="checked: isSelected" /></td>
             <td><img class="deviceIcon" data-bind="attr: { src: imgSrc }, click: $root.showDeviceWindow "></img></td>
             <td><a data-bind="text: name, click: $root.showDeviceWindow"/></td>
+            <td data-bind="text: location"></td>
         </tr>
     </tbody>
 </table>
