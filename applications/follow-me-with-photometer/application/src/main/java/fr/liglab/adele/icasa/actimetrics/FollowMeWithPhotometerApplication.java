@@ -206,6 +206,12 @@ public class FollowMeWithPhotometerApplication extends EmptyDeviceListener {
         }
     }
 
+    /**
+     * This method will be called only if the lux in the detected zone is less than the desired lux
+     * This method will schedule the @see #turnOfflight method.
+     * @see #deviceEvent(GenericDevice device, Object data).
+     * @param location
+     */
     private void scheduleTask(String location) {
         // If exists, remove service
         TurnOffLightTask oldTask = null;
