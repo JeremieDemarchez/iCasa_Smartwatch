@@ -40,16 +40,16 @@ public class ZigbeePhotometerTest {
 	@Test
 	public void testComputedIlluminance(){
 		
-		String result = photometer.computeIlluminance("?>=5");
-		Assert.assertEquals("1042", result);
+		Double result = photometer.computeIlluminance("?>=5");
+		Assert.assertEquals("1042.0", result.toString());
 		
-		String result2 = photometer.computeIlluminance("<297");
-		Assert.assertEquals("92", result2);
+		Double result2 = photometer.computeIlluminance("<297");
+		Assert.assertEquals("92.0", result2.toString());
 	}
 	
 	@Test
 	public void testComputedIlluminanceWithInvalidData(){
-		String result = photometer.computeIlluminance("?>=");
-		Assert.assertEquals(null, result);
+		Double result = photometer.computeIlluminance("?>=");
+		Assert.assertEquals("0.0", result.toString());
 	}
 }

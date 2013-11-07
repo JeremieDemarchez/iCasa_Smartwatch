@@ -75,7 +75,7 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 			Data newData) {
 		if (moduleAddress.compareTo(this.moduleAddress) == 0) {
 			String data = newData.getData();
-			String computedIlluminance = computeIlluminance(data);
+			Double computedIlluminance = computeIlluminance(data);
 			if (computedIlluminance != null) {
 				setPropertyValue(PHOTOMETER_CURRENT_ILLUMINANCE,
 						computedIlluminance);
@@ -89,10 +89,10 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 	 * @param data
 	 * @return
 	 */
-	public String computeIlluminance(String data) {
+	public Double computeIlluminance(String data) {
 
 		if (data.length() != 4) {
-			return null;
+			return 0.0;
 		}
 
 		double c0, c1, lux;
@@ -129,7 +129,7 @@ public class ZigbeePhotometer extends AbstractDevice implements Photometer,
 		df.setMaximumFractionDigits(0);
 		df.setGroupingUsed(false);
 		
-		return df.format(lux);
+		return Double.valueOf(df.format(lux));
 	}
 
 	private double tri_val(int val) {
