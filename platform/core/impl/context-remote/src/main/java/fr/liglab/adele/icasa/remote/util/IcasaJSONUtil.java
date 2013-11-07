@@ -48,7 +48,11 @@ public class IcasaJSONUtil {
 			deviceJSON.putOnce(DeviceJSON.ID_PROP, device.getSerialNumber());
 			deviceJSON.putOnce(DeviceJSON.NAME_PROP, device.getSerialNumber());
 			deviceJSON.put(DeviceJSON.FAULT_PROP, device.getPropertyValue(GenericDevice.FAULT_PROPERTY_NAME));
-			deviceJSON.put(DeviceJSON.LOCATION_PROP, device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
+            if (String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME)).contains("#zone")){
+                deviceJSON.put(DeviceJSON.LOCATION_PROP, "N/A");
+            } else {
+                deviceJSON.put(DeviceJSON.LOCATION_PROP, device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
+            }
 			deviceJSON.put(DeviceJSON.STATE_PROP, device.getPropertyValue(GenericDevice.STATE_PROPERTY_NAME));
 			deviceJSON.put(DeviceJSON.TYPE_PROP, deviceType);
             if(specifications != null){
