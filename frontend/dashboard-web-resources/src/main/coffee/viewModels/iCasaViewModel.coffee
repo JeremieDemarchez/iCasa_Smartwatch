@@ -1110,7 +1110,9 @@ define(['jquery',
                 if @id() ==  "actimetrics"
                     imgName = "actimetrics"
                 if @id() ==  "habits.monitoring"
-                    imgName = "actimetrics"                                          
+                    imgName = "actimetrics"
+                if @id() ==  "light.follow.me.with.motion.sensor.and.photometer"
+                    imgName = "follow1"
                 return imgName;
             );
             @imgIcon = ko.computed(() =>
