@@ -8,12 +8,11 @@ require([
     'dataModels/ICasaDataModelNotifs',
     'components/ConnectionWidget',
     'components/GatewayConnectionMgrImpl',
-    'components/VersionManagerWidget',
     'components/ICasaShellManagerImpl',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, VersionManagerWidget, ShellManager) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, ShellManager) ->
 
         mapRealSizeWidth = 10;
         mapRealSizeHeight = 10;
@@ -149,13 +148,9 @@ require([
           stop: (event, eventUI) ->
             SizeUtil.computeAreaSizes("map");
         });
-        console.log "to apply binding"
-        console.log "tabs"
-        console.log iCasaViewModel.tabs()
+
         ko.applyBindings(iCasaViewModel);
-        console.log "binding applied"
-        console.log "tabs"
-        console.log iCasaViewModel.tabs()
+
         $(".slider" ).slider();
         $("#tabs").tabs({
             heightStyle: "fill"
@@ -206,9 +201,6 @@ require([
           buttonId : "connection-status-button"
         }).createInstance(GatewayConnectionMgrImpl, {
           name : "GatewayConnectionMgr-1",
-        }).createInstance(VersionManagerWidget, {
-          name: "VersionManagerWidget-1",
-          elementId: "compatibilityWarn"
         }).createInstance(ShellManager, {
           name: "ShellManager-1",
           outputId: "shellOutput",

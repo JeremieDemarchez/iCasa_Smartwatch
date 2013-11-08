@@ -24,11 +24,6 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
                 );
 
 
-         class DataModel.Models.Backend extends Backbone.Model
-            urlRoot : "#server#/backend".replace /#server#/, serverUrl
-
-         class DataModel.Models.Frontend extends Backbone.Model
-            urlRoot : "/simulator/frontend"
 
          class DataModel.Models.Device extends Backbone.Model
             urlRoot : "#server#/devices/device".replace /#server#/, serverUrl
@@ -87,10 +82,6 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
            url: "#server#/scriptPlayer/scripts".replace /#server#/, serverUrl
            model: DataModel.Models.Script
 
-         #initial backend and frontend information
-         DataModel.models.backend = new DataModel.Models.Backend();
-         DataModel.models.backend.lastConnection = new Date();#get initial Date
-         DataModel.models.frontend = new DataModel.Models.Frontend();
 
          # initial import of data model
          DataModel.models.clock = new DataModel.Models.Clock({id: "default"});
@@ -106,11 +97,7 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
          DataModel.collections.devices = new DataModel.Collections.Devices();
 
          DataModel.collections.deviceTypes = new DataModel.Collections.SimulatedDeviceTypes();
-         #Override Backbone sync to get last call time
-         oldSync = Backbone.sync;
-         Backbone.sync = (method, model, options) ->
-           DataModel.models.backend.lastConnection = new Date();
-           oldSync(method, model,options);
+
          # component that will manage remote Data model connections
          class DataModelMgrImpl
            hub : null;
@@ -162,8 +149,6 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
                  throw err;
              };
 
-             DataModel.models.backend.fetch(connectionCallback);
-             DataModel.models.frontend.fetch();
              DataModel.models.clock.fetch(connectionCallback);
              DataModel.collections.scripts.fetch(connectionCallback);
              DataModel.collections.zones.fetch(connectionCallback);
@@ -172,20 +157,9 @@ define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnecti
              DataModel.collections.devices.fetch(connectionCallback);
              DataModel.collections.deviceTypes.fetch(connectionCallback);
 
-           checkBackendConnection :()=>
-             now = new Date().getTime();
-             lastConnection = DataModel.models.backend.lastConnection.getTime();
-             if (now > lastConnection + 5000)
-                DataModel.models.backend.fetch
-                    success: (data) =>
-                        @setConnected(true);
-                    error: (err) =>
-                        @setConnected(false);
-                        throw err;
-
            start : () =>
              @reconnect();
-             setInterval(@checkBackendConnection, 5000);
+
 
            stop : () =>
              @connected = false;

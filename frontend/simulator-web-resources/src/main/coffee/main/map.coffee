@@ -8,12 +8,11 @@ require([
     'dataModels/ICasaDataModelNotifs',
     'components/ConnectionWidget',
     'components/GatewayConnectionMgrImpl',
-    'components/VersionManagerWidget',
     'components/ICasaShellManagerImpl',
     'domReady',
     'jquery.resize'
     ],
-    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, VersionManagerWidget, ShellManager) ->
+    ($, ui, ko, hub, ICasaViewModel, iCasaNotifSocket, ConnectionWidget, GatewayConnectionMgrImpl, ShellManager) ->
 
         mapRealSizeWidth = 10;
         mapRealSizeHeight = 10;
@@ -202,9 +201,6 @@ require([
           buttonId : "connection-status-button"
         }).createInstance(GatewayConnectionMgrImpl, {
           name : "GatewayConnectionMgr-1",
-        }).createInstance(VersionManagerWidget, {
-          name: "VersionManagerWidget-1",
-          elementId: "compatibilityWarn"
         }).createInstance(ShellManager, {
           name: "ShellManager-1",
           outputId: "shellOutput",

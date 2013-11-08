@@ -7,8 +7,8 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
   transport = "sse"
   # workaround for SECURITY Exception on Chrome while using sse on localhost
   isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-  if (isChrome && (serverUrl.indexOf("localhost") > -1))
-      transport = "long-polling";
+  #if (isChrome && (serverUrl.indexOf("localhost") > -1))
+  #    transport = "long-polling";
 
   requestUrl = "#server#/atmosphere/event".replace(/#server#/, serverUrl)
   request =
@@ -189,7 +189,7 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
       subSocket = socket.subscribe(request);
 
     start : () =>
-      @reconnect();
+      #@reconnect();
 
     stop : () =>
       if (@subSocket?)

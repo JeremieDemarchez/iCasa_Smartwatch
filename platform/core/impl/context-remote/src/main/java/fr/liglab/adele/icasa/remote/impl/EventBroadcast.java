@@ -329,7 +329,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
         @Override
 		public void zoneVariableAdded(Zone zone, String variableName) {
-			JSONObject json = new JSONObject();
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
+            JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
@@ -342,6 +345,9 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 		@Override
 		public void zoneVariableRemoved(Zone zone, String variableName) {
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
 			JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
@@ -355,6 +361,9 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 		@Override
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
 			JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
@@ -368,7 +377,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 		@Override
 		public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
-			JSONObject json = new JSONObject();
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
+            JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
@@ -381,7 +393,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 		@Override
 		public void zoneResized(Zone zone) {
-			JSONObject json = new JSONObject();
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
+            JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
@@ -394,7 +409,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 		@Override
 		public void zoneParentModified(Zone zone, Zone oldParent, Zone newParent) {
-			JSONObject json = new JSONObject();
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
+            JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
@@ -412,6 +430,9 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
          * @param child
          */
         public void deviceAttached(Zone container, LocatedDevice child) {
+            if(isAScopeZone(container)) {
+                return ; // we don't send scope zones to the frontend
+            }
             JSONObject json = new JSONObject();
             try {
                 json.put("zoneId", container.getId());
@@ -431,6 +452,9 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
          * @param child
          */
         public void deviceDetached(Zone container, LocatedDevice child) {
+            if(isAScopeZone(container)) {
+                return ; // we don't send scope zones to the frontend
+            }
             JSONObject json = new JSONObject();
             try {
                 json.put("zoneId", container.getId());
@@ -445,7 +469,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
         @Override
 		public void zoneAdded(Zone zone) {
-			JSONObject json = new JSONObject();
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
+            JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
 				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
@@ -458,7 +485,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 
 		@Override
 		public void zoneRemoved(Zone zone) {
-			JSONObject json = new JSONObject();
+            if(isAScopeZone(zone)) {
+                return ; // we don't send scope zones to the frontend
+            }
+            JSONObject json = new JSONObject();
 			try {
 				json.put("zoneId", zone.getId());
 				sendEvent("zone-removed", json);
@@ -467,6 +497,17 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 				e.printStackTrace();
 			}
 		}
+
+        private boolean isAScopeZone(Zone zone){
+            //turnaround: As scope does not exist, zones
+            //containing #zone in the name are considered as scope zones, they are used in medical devices
+            //to identify in simulation when a simulated person use the medical device.
+            if (zone.getId().contains("#zone")) {
+                return true;
+            }
+            return false;
+        }
+
 
 	}
 

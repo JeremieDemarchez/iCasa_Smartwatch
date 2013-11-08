@@ -1240,10 +1240,6 @@ define(['jquery',
 
            @deviceWidgets = ko.observableArray();
 
-           #backend and frontend information
-           @backendVersion = kb.observable(DataModel.models.backend, 'version');
-           @frontendVersion = kb.observable(DataModel.models.frontend, 'version');
-
 
            @imgSrc = ko.observable(model.imgSrc);
            @mapWidth = ko.observable(0);
@@ -1336,8 +1332,8 @@ define(['jquery',
               generatedId = @.createRandomId(DataModel.collections.devices, @newDeviceType().name());
               newDevice = new DataModel.Models.Device({ deviceId: generatedId, name: @newDeviceName(), "type": @newDeviceType().name(), positionX: 1, positionY: 1, properties: []});
               newDevice.save();
-              newDevice.set(id: generatedId)
-              DataModel.collections.devices.push(newDevice);
+              #newDevice.set(id: generatedId)
+              #DataModel.collections.devices.push(newDevice);
 
            @removeDevice = (device) =>
               device.model().destroy();
@@ -1433,8 +1429,8 @@ define(['jquery',
            @createPerson = () =>
               newPerson = new DataModel.Models.Person({ personId: @newPersonName(), name: @newPersonName(), "type": @newPersonType().name(), positionX: 1, positionY: 1 });
               newPerson.save();
-              newPerson.set(id: @newPersonName())
-              DataModel.collections.persons.push(newPerson);
+              #newPerson.set(id: @newPersonName())
+              #DataModel.collections.persons.push(newPerson);
               @newPersonName("");
 
               
@@ -1477,8 +1473,8 @@ define(['jquery',
            @createZone = () =>
               newZone = new DataModel.Models.Zone({ zoneId: @newZoneName(), name: @newZoneName(), isRoom: false, leftX: 1, topY: 1, rightX : 50, bottomY: 50 , isSelected: true, variables: []});
               newZone.save();
-              newZone.set(id: @newZoneName());
-              DataModel.collections.zones.push(newZone);
+              #newZone.set(id: @newZoneName());
+              #DataModel.collections.zones.push(newZone);
               
               
            @removeSelectedZones = () =>
