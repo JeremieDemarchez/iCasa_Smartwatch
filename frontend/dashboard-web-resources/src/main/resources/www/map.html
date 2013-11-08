@@ -99,11 +99,11 @@
             <!-- ko foreach: $root.filteredDevices() -->
                 <div class="deviceWidget" data-bind="jqueryDraggable: {},attr: { id: name, 'data-content': popoverdata()}, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, event: { mouseover: addHighlight, mouseout: removeHighlight }, popOver: {}" data-original-title="Device detail">
                     <div class="deviceWidgetContainer">
-                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: blurDevice }" />
+                        <img class="deviceWidgetIcon" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }" />
                         <div class="deviceWidgetDecorators" data-bind="foreach: decorators">
                             <img class="deviceWidgetDecorator" data-bind="attr: { src: imgSrc, alt: name }, style: { left: styleLeft, top: styleTop, width: styleWidth, height: styleHeight }, visible: show" />
                         </div>
-                        <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: blurDevice }">
+                        <div class="deviceTitle" data-bind="attr: { src: imgSrc, alt: name, title: name }, css: { blurAndGrayscale: isDesactivated }">
                         </div>
                     </div>
                     <div class="deviceWidgetHalo"></div>
