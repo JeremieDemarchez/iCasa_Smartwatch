@@ -44,7 +44,7 @@ import java.util.*;
 public class FollowMeWithPhotometerApplication extends EmptyDeviceListener {
 
 
-    protected static final String APPLICATION_ID = "follow.me.with.photometer.application";
+    protected static final String APPLICATION_ID = "light.follow.me.with.motion.sensor.and.photometer";
 
     protected static final double MIN_LUX = 50.0;
 

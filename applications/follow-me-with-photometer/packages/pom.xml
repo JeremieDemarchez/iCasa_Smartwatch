@@ -11,14 +11,14 @@
 
 	<!-- Project Description -->
    <groupId>fr.liglab.adele.icasa.apps</groupId>
-	<artifactId>follow.me.with.photometer.dp</artifactId>
+	<artifactId>binary.light.follow.me.with.photometer.dp</artifactId>
 	<packaging>deployment-package</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>follow.me.with.photometer.application</artifactId>
+            <artifactId>binary.light.follow.me.with.photometer.application</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
