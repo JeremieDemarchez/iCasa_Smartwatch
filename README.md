@@ -83,15 +83,15 @@ Maven Repositories
         <snapshots>
             <enabled>false</enabled>
         </snapshots>
-        <id>adele-central-snapshot</id>
+        <id>adele-central-release</id>
         <name>adele-repos</name>
-        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        <url>http://repository-icasa.forge.cloudbees.com/release/</url>
     </repository>
     <repository>
         <snapshots />
         <id>snapshots</id>
-        <name>adele-central-release</name>
-        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        <name>adele-central-snapshot</name>
+        <url>http://repository-icasa.forge.cloudbees.com/snapshot/</url>
     </repository>
 </repositories>
 <pluginRepositories>
@@ -101,13 +101,13 @@ Maven Repositories
         </snapshots>
         <id>central</id>
         <name>adele-repos</name>
-        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        <url>http://repository-icasa.forge.cloudbees.com/release/</url>
     </pluginRepository>
     <pluginRepository>
         <snapshots />
         <id>snapshots</id>
-        <name>adele-central-release</name>
-        <url>http://maven.dynamis-technologies.com/artifactory/adele-repos</url>
+        <name>adele-central-snapshot</name>
+        <url>http://repository-icasa.forge.cloudbees.com/snapshot/</url>
     </pluginRepository>
 </pluginRepositories>
 ```
