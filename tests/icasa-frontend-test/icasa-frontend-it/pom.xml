@@ -31,12 +31,9 @@
             <properties>
                 <run.command>cmd</run.command>
                 <browser.driver>chromedriver.exe</browser.driver>
-                <startGatewayScript>startGateway.bat</startGatewayScript>
                 <run.command.additionnal.arg>/c</run.command.additionnal.arg>
                 <startGatewayScript>startGatewayDemon.bat</startGatewayScript>
                 <stopGatewayScript>stopGatewayDemon.bat</stopGatewayScript>
-                <startGUIScript>startGUIDemon.bat</startGUIScript>
-                <stopGUIScript>stopGUIDemon.bat</stopGUIScript>
             </properties>
         </profile>
         <profile>
@@ -52,8 +49,6 @@
                 <startGatewayScript>startGatewayDemon.sh</startGatewayScript>
                 <run.command.additionnal.arg>-v</run.command.additionnal.arg>
                 <stopGatewayScript>stopGatewayDemon.sh</stopGatewayScript>
-                <startGUIScript>startGUIDemon.sh</startGUIScript>
-                <stopGUIScript>stopGUIDemon.sh</stopGUIScript>
             </properties>
         </profile>
 
@@ -144,7 +139,7 @@
                         <include>*Test.*</include>
                     </includes>
                     <systemPropertyVariables>
-                        <geb.build.baseUrl>http://localhost:9000/simulator</geb.build.baseUrl>
+                        <geb.build.baseUrl>http://localhost:8080/simulator</geb.build.baseUrl>
                         <geb.build.reportsDir>target/test-reports/geb</geb.build.reportsDir>
                         <webdriver.chrome.driver>src/test/resources/driver/${os.name}/${browser.driver}</webdriver.chrome.driver>
                     </systemPropertyVariables>
@@ -210,13 +205,7 @@
                                     <arg value="${run.command.additionnal.arg}"/>
                                     <arg value="${startGatewayScript}"/>
                                 </exec>
-                                <exec executable="${run.command}"
-                                      dir="${project.build.directory}/distribution/${distrib.artifactId}/web.simulator"
-                                      spawn="true">
-                                    <arg value="${run.command.additionnal.arg}"/>
-                                    <arg value="${startGUIScript}"/>
-                                </exec>
-                            </target>
+                             </target>
                         </configuration>
                         <goals>
                             <goal>run</goal>
@@ -233,12 +222,6 @@
                                       spawn="true">
                                     <arg value="${run.command.additionnal.arg}"/>
                                     <arg value="${stopGatewayScript}"/>
-                                </exec>
-                                <exec executable="${run.command}"
-                                      dir="${project.build.directory}/distribution/${distrib.artifactId}/web.simulator"
-                                      spawn="true">
-                                    <arg value="${run.command.additionnal.arg}"/>
-                                    <arg value="${stopGUIScript}"/>
                                 </exec>
                             </target>
                         </configuration>
