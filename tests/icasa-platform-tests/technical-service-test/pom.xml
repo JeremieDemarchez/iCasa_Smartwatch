@@ -132,6 +132,7 @@
             <artifactId>maven-surefire-plugin</artifactId>
             <version>2.5</version>
             <configuration>
+               <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=256m</argLine>
                <systemPropertyVariables>
                   <ipojo.processing.synchronous>false</ipojo.processing.synchronous>
                </systemPropertyVariables>
