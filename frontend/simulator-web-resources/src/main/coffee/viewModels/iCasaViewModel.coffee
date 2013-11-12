@@ -530,8 +530,8 @@ define(['jquery',
             );
         @variables.subscribe(@updateVariables);
         @updateVariables();
-        if model.get('isSelected')?
-          @isSelected(model, 'isSelected');
+        @isSelected(true);
+
         @variables_name = ko.computed({
           read: () =>
             if (@.variables() instanceof Object)
