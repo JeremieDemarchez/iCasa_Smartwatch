@@ -10,7 +10,7 @@ require.config({
     # paths MUST not include .js extension
     paths: {
         'atmosphere' : 'frameworks/atmosphere/jquery.atmosphere',
-        'backbone' : 'frameworks/backbone/backbone-min',
+        'backbone' : 'frameworks/backbone/backbone-1.1.0.debug',
         'backbone.debug' : 'frameworks/backbone/backbone.debug',
         'bootstrap.dir' : 'frameworks/bootstrap',
         'bootstrap' : 'frameworks/bootstrap/js/bootstrap.min',
@@ -28,9 +28,9 @@ require.config({
         'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
         'jquery.mobile' : 'frameworks/jquery/mobile/1.2.0/jquery.mobile-1.2.0.min',
         'log4javascript' : 'frameworks/log4javascript/log4javascript',
-        'knockback' : 'frameworks/knockback/knockback', # AMD module
+        'knockback' : 'frameworks/knockback/knockback-0.17.2.min', # AMD module
         'knockout.debug' : 'frameworks/knockout/knockout-2.1.0.debug', # AMD module
-        'knockout' : 'frameworks/knockout/knockout-2.3.0', # AMD module
+        'knockout' : 'frameworks/knockout/knockout-3.0.0.debug', # AMD module
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
