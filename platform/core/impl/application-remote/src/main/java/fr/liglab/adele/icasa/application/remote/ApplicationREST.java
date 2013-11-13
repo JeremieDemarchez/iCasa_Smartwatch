@@ -73,7 +73,7 @@ public class ApplicationREST {
 	/**
 	 * Retrieves a zone.
 	 * 
-	 * @param zoneId
+	 * @param appId
 	 *           The ID of the zone to retrieve
 	 * @return The required zone
 	 */
@@ -101,10 +101,10 @@ public class ApplicationREST {
 	 * @return a JSON array containing all applications.
 	 */
 	private String getApplications() {
-		// boolean atLeastOne = false;
 		JSONArray currentApps = new JSONArray();
 		
 		List<Application>  apps = _applicationMgr.getApplications();
+        currentApps.put(ApplicationJSONUtil.getEmptyApplication());//add at least one application: with NONE
 		for (Application app : apps) {
 			JSONObject appJSON = ApplicationJSONUtil.getApplicationJSON(app);
 			if (appJSON==null) {

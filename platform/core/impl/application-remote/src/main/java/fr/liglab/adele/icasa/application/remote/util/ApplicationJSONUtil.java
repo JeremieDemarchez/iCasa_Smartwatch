@@ -38,5 +38,21 @@ public class ApplicationJSONUtil {
 
 		return appJSON;
 	}
+
+    public static JSONObject getEmptyApplication(){
+        JSONObject appJSON = null;
+        try {
+            String appId = "NONE";
+            appJSON = new JSONObject();
+            appJSON.putOnce("id", "NONE");
+            appJSON.putOnce("name", "NONE");
+            appJSON.putOnce("version", "0.0.0");
+        } catch (JSONException e) {
+            e.printStackTrace();
+            appJSON = null;
+        }
+
+        return appJSON;
+    }
 	
 }
