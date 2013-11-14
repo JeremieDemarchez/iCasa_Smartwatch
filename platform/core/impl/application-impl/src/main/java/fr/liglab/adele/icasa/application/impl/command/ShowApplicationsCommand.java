@@ -15,8 +15,12 @@
  */
 package fr.liglab.adele.icasa.application.impl.command;
 
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.util.List;
 
+import fr.liglab.adele.icasa.commands.AbstractCommand;
+import fr.liglab.adele.icasa.commands.Signature;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -25,27 +29,40 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 
 import fr.liglab.adele.icasa.application.Application;
 import fr.liglab.adele.icasa.application.ApplicationManager;
+import org.json.JSONObject;
 
 @Component(name = "ShowApplicationsCommand")
-@Provides(properties = {
-      @StaticServiceProperty(name = "osgi.command.scope", type = "String", value = "apps"),
-      @StaticServiceProperty(name = "osgi.command.function", type = "String[]", value = "{showApps}") })
+@Provides
 @Instantiate(name="ShowApplicationsCommand-0")
-public class ShowApplicationsCommand {
+public class ShowApplicationsCommand extends AbstractCommand {
 	
 	@Requires
 	ApplicationManager manager;
-	
-	public void showApps() {
-		List<Application> apps = manager.getApplications();
-		
-		for (Application application : apps) {
-			System.out.println("App ID :: " + application.getId());
-	      System.out.println("App Name :: " + application.getName());
-	      System.out.println("App Version :: " + application.getVersion());
-	      System.out.println("-----------------------------");
-      }
-				
-   }
 
+    public ShowApplicationsCommand(){
+        addSignature(EMPTY_SIGNATURE);
+    }
+
+    @Override
+    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        List<Application> apps = manager.getApplications();
+
+        for (Application application : apps) {
+            out.println("App ID :: " + application.getId());
+            out.println("App Name :: " + application.getName());
+            out.println("App Version :: " + application.getVersion());
+            out.println("-----------------------------");
+        }
+        return null;
+    }
+
+    /**
+     * Get the name of the Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "show-applications";
+    }
 }
