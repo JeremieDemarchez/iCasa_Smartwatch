@@ -30,7 +30,7 @@
 
     <properties>
         <site.path>snapshot</site.path>
-        <repo.path>snapshot</repo.path>
+        <repo_path>snapshot</repo_path>
         <projectName>Platform and Simulator</projectName>
         <!-- Site Title -->
         <title>iCasa</title>
@@ -81,7 +81,7 @@
          <id>release</id>
          <properties>
             <site.path>${project.version}</site.path>
-            <repo.path>release</repo.path>
+            <repo_path>release</repo_path>
          </properties>
          <modules>
             <module>parent</module>
@@ -92,6 +92,19 @@
             <module>distribution</module>
             <module>applications</module>
          </modules>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                     <configuration>
+                           <systemPropertyVariables>
+                              <repo_path>release</repo_path>
+                           </systemPropertyVariables>
+                        </configuration>
+                     </plugin>
+            </plugins>
+         </build>
       </profile>
       <profile>
          <id>site</id>
@@ -101,6 +114,20 @@
             <module>simulator</module>
             <module>tools</module>
          </modules>
+         <build>
+            <plugins>
+               <plugin>
+                  <groupId>org.apache.maven.plugins</groupId>
+                  <artifactId>maven-surefire-plugin</artifactId>
+                  <configuration>
+                     <systemPropertyVariables>
+                        <repo_path>snapshot</repo_path>
+                     </systemPropertyVariables>
+                  </configuration>
+               </plugin>
+            </plugins>
+         </build>
+         
       </profile>
    </profiles>
       
