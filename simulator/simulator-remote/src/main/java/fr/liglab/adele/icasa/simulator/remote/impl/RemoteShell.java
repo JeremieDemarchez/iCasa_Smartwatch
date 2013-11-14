@@ -87,7 +87,6 @@ public class RemoteShell extends AbstractREST {
         try {
             receivedParams = new JSONObject(content);
             List<String> arguments = getReceivedParams(receivedParams);
-            System.out.println("args" + arguments);
             params = getParamsInJSON(command, arguments);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -165,8 +164,6 @@ public class RemoteShell extends AbstractREST {
     private JSONObject getParamsInJSON(ICasaCommand command, List arguments) throws JSONException {
         JSONObject params = new JSONObject();
         int argumentsSize = (arguments!=null)?arguments.size() : 0;
-        System.out.println("Command" + command.getName());
-        System.out.println("Args size" + argumentsSize);
         Signature signature =  command.getSignature(argumentsSize);
         if (signature != null){
             String paramsNames[] = signature.getParameters();
