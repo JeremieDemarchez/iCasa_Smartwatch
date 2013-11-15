@@ -79,7 +79,9 @@ public class ApplicationManagerTest {
 				mavenBundle().groupId("de.akquinet.gomobile").artifactId("deployment-admin-impl").versionAsInProject(),
 				mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.eventadmin").versionAsInProject(),
 				mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.ipojo").versionAsInProject(),
-				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.api").versionAsInProject(), 
+                mavenBundle().groupId("org.ow2.chameleon.json").artifactId("json-service-json.org").versionAsInProject(),
+                mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("context.api").versionAsInProject(),
+                mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.api").versionAsInProject(),
 				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.impl").versionAsInProject(),
 				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("common").versionAsInProject(),
 				mavenBundle().groupId("fr.liglab.adele.common").artifactId("base.distribution.test").versionAsInProject());
