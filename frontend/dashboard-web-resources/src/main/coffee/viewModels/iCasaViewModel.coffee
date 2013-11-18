@@ -8,6 +8,7 @@ define(['jquery',
         'jquery.ui.touch',
         'contracts/DeviceWidgetContract',
         'contracts/ICasaManager',
+        'contracts/ICasaShellManager',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
         'text!templates/personTable.html',
@@ -21,7 +22,7 @@ define(['jquery',
         'text!templates/applicationStatusWindow.html',
         'i18n!locales/nls/locale',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml, locale) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, ICasaShell, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml, locale) ->
 
     # HTML custom bindings
 
@@ -1257,7 +1258,7 @@ define(['jquery',
         #
         hub: null;
         name: null;
-
+        shell: null;
 
         getComponentName: ->
           return "iCasaViewModel-" + @name;
@@ -1273,12 +1274,26 @@ define(['jquery',
              aggregate : true,
              optional : true
           });
+          @hub.requireService({
+             component: @,
+             contract:  ICasaShell,
+             bind:      "bindShell",
+             unbind:    "unbindShell",
+             aggregate : false,
+             optional : false
+          });
 
           @hub.provideService({
             component: @,
             contract: ICasaManager
           });
 
+        #shell
+        bindShell: (svc) ->
+          @shell = svc;
+
+        unbindShell: (svc) ->
+          @shell = null;
 
         #device widget
         bindDeviceWidget: (svc) ->
@@ -1381,6 +1396,18 @@ define(['jquery',
            @clock = new ClockViewModel(DataModel.models.clock);
 
            @scripts = kb.collectionObservable(DataModel.collections.scripts, {view_model: ScriptViewModel});
+
+           @updateExecutingScript = (newValue) =>
+             ko.utils.arrayForEach(@scripts(), (script) =>
+               if (script == undefined)
+                 return;
+               if (script.state() == "started")
+                 @selectedScript(script);
+
+             );
+
+           @.scripts.subscribe(@.updateExecutingScript);
+
            #valid only for dashboard
            @selectedApplication = ko.observable("")
            @applications = kb.collectionObservable(DataModel.collections.applications, {view_model: ApplicationViewModel});
@@ -1504,7 +1531,7 @@ define(['jquery',
                   return false
               )
 
-           @filteredDevices = ko.computed(() =>
+           @filteredDevicesForApp = ko.computed(() =>
               #Valid for dashboard.
               return ko.utils.arrayFilter(@devices(),(device) =>
                 applicationModel = DataModel.collections.applications.get(@selectedApplication().model().get('id'))
@@ -1517,6 +1544,10 @@ define(['jquery',
               )
               #End valid for dashboard.
               #return @filteredList("device") #commented for dashboard.
+           , @)
+
+           @filteredDevices = ko.computed(() =>
+              return @filteredList("device")
            , @)
 
            @filteredZones = ko.computed(() =>
@@ -1804,6 +1835,23 @@ define(['jquery',
            @.persons.subscribe(@.updateWidgetPositions)
            @.devices.subscribe(@.updateWidgetPositions)
            @.zones.subscribe(@.updateWidgetPositions)
+           #shell command.
+           @command = ko.observable("help")
+           @executeShellCommand = () =>
+             params = @.command().split(" ");
+             name = params[0];
+             params.shift();#remove first element(command name).
+             @shell.exec(name,params);
+
+           @showHelp = () =>
+             @shell.exec("help",[]);
+
+           @executeShellCommandEvent = (data, event) =>
+             if event.keyCode == 13
+               event.preventDefault();
+               @executeShellCommand();
+             return true;
+
            #valid for dashboard
            @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication);
            @selectedApplication.subscribe(@updateSelectedApplication);

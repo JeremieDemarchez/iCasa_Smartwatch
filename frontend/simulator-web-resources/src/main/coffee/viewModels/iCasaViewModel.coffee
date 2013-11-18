@@ -1293,7 +1293,6 @@ define(['jquery',
              ko.utils.arrayForEach(@scripts(), (script) =>
                if (script == undefined)
                  return;
-
                if (script.state() == "started")
                  @selectedScript(script);
 
