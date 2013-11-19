@@ -35,24 +35,51 @@ public class MapServlet   extends HttpServlet {
         this.context = c;
     }
 
+    HttpService service;
+
     @Requires
     MapService mapService;
 
     @Bind
     public void bindHTTPService(HttpService service){
-        try {
-            service.registerServlet(alias, this, null, null);
-        } catch (ServletException e) {
-            e.printStackTrace();
-        } catch (NamespaceException e) {
-            e.printStackTrace();
-        }
+        this.service = service;
     }
 
     @Unbind
     public void unbindHTTPService(HttpService service){
-        service.unregister(alias);
+        unregister();
+        this.service = null;
     }
+
+    /**
+     * When dependencies are resolved, we register the servlet.
+     */
+    @Validate
+    public void onValidate(){
+        try {
+            service.registerServlet(alias, this, null, null);
+        } catch (NamespaceException e) {
+            e.printStackTrace();
+        } catch (ServletException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * When component is invalid, and if there is a references to the http service.
+     * The servlet is unregistered.
+     */
+    @Invalidate
+    public void onInvalidate(){
+        unregister();
+    }
+
+    private void unregister(){
+        if (service != null){
+            service.unregister(alias);
+        }
+    }
+
 
 
     /**

@@ -23,8 +23,21 @@ public class FrontendResources {
     @Property(value = "/dashboard/maps")
     private String mapResources;
 
+    HttpService service;
+
     @Bind
     private void bindHttpService(HttpService service) {
+        this.service = service;
+    }
+
+    @Unbind
+    public void unbindHttpService(HttpService service) {
+        unregister();
+        this.service = null;
+    }
+
+    @Validate
+    public void onValidate() {
         try {
             service.registerResources(resources, "/assets", null);
             service.registerResources(mapResources, "/", new HttpExternalResourceContext("maps"));
@@ -33,11 +46,16 @@ public class FrontendResources {
         }
     }
 
-    @Unbind
-    public void unbindHttpService(HttpService service) {
-        service.unregister(resources);
-        service.unregister(mapResources);
+    @Invalidate
+    public void onInvalidate(){
+        unregister();
+    }
 
+    public void unregister(){
+        if(service != null){
+            service.unregister(resources);
+            service.unregister(mapResources);
+        }
     }
 
 }

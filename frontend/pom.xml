@@ -30,8 +30,9 @@
 
 	<modules>
       <module>frontend-services</module>
-      <module>simulator-web-resources</module>
       <module>dashboard-web-resources</module>
+      <module>simulator-web-instance</module>
+      <module>dashboard-web-instance</module>
 	</modules>
    <build>
       <plugins>

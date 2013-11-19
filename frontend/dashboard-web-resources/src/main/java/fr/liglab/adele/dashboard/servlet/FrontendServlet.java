@@ -31,22 +31,31 @@ public class FrontendServlet extends HttpServlet {
     @Property(value="dashboard")
     private String servletType;
 
-    //@Property(value = "/dashboard/assets")
-    //private String resources ;
-
-    //@Property(value = "/dashboard/maps")
-    //private String mapResources;
+    @Requires
+    HttpService service;
 
     public FrontendServlet(BundleContext c){
         this.context = c;
     }
 
     @Bind
-    private void bindHttpService(HttpService service) {
+    private void bindHttpService(HttpService _service) {
+        this.service = _service; //assign http service
+    }
+
+    @Unbind
+    public void unbindHttpService(HttpService _service) {
+        unregister();
+        service = null;
+    }
+
+    /**
+     * When dependencies are resolved, we register the servlet.
+     */
+    @Validate
+    public void onValidate(){
         try {
             service.registerServlet(servletName, this, null, null);
-            //service.registerResources(resources, "/assets", null);
-            //service.registerResources(mapResources, "/", new HttpExternalResourceContext("maps"));
         } catch (NamespaceException e) {
             e.printStackTrace();
         } catch (ServletException e) {
@@ -54,13 +63,22 @@ public class FrontendServlet extends HttpServlet {
         }
     }
 
-    @Unbind
-    public void unbindHttpService(HttpService service) {
-        service.unregister(servletName);
-        //service.unregister(resources);
-       //service.unregister(mapResources);
 
+    /**
+     * When component is invalid, and if there is a references to the http service.
+     * The servlet is unregistered.
+     */
+    @Invalidate
+    public void onInvalidate(){
+        unregister();
     }
+
+    private void unregister(){
+        if (service != null){
+            service.unregister(servletName);
+        }
+    }
+
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {

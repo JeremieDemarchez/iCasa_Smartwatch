@@ -1,0 +1,31 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+    <!-- Project parent -->
+    <parent>
+        <groupId>fr.liglab.adele.icasa</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.2.4-SNAPSHOT</version>
+        <relativePath>../../parent</relativePath>
+    </parent>
+
+    <!-- Project Description -->
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>dashboard.web.instance</artifactId>
+    <packaging>bundle</packaging>
+    <name>${productName} :: ${projectName}</name>
+
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
