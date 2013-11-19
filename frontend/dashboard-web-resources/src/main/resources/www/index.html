@@ -42,10 +42,10 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </a>
-                <a class="brand" href="/dashboard"><img src="/dashboard/assets/images/rectLogos/iCasa_dashboard_long_30.png" alt="iCasaLogo" /></a>
+                <a class="brand" href="/@servletType"><img src="/dashboard/assets/images/rectLogos/iCasa_@servletType_30.png" alt="iCasaLogo" /></a>
                 <nav class="nav-collapse collapse">
                     <ul class="nav">
-                        <li><a href="/dashboard" data-bind="text: $root.getLocaleMessage('Home')"></a></li>
+                        <li><a href="/@servletType" data-bind="text: $root.getLocaleMessage('Home')"></a></li>
                         <li class="divider-vertical"></li>
                         <li><a href="http://adeleresearchgroup.github.com/iCasa/" target="_blank" data-bind="text: $root.getLocaleMessage('Documentation')"></a></li>
                         <li class="divider-vertical"></li>
@@ -62,7 +62,7 @@
         <ul class="thumbnails">
             <!--ko foreach: maps -->
             <li class="span3">
-                <a class="thumbnail" rel="popover" data-content='' data-original-title="" data-bind="attr: {href:'/dashboard/map/' + id(), 'data-content': '' + $root.getLocaleMessage('Id')+ ':' + id() + '<br/>' + $root.getLocaleMessage('Name') +' : ' + name() + '<br/>' + $root.getLocaleMessage('Box.URL')+' : ' + gatewayURL() + '<br/>' + $root.getLocaleMessage('Description')+' : ' + description() , 'data-original-title': $root.getLocaleMessage('Map')}">
+                <a class="thumbnail" rel="popover" data-content='' data-original-title="" data-bind="attr: {href:'/@servletType/map/' + id(), 'data-content': '' + $root.getLocaleMessage('Id')+ ':' + id() + '<br/>' + $root.getLocaleMessage('Name') +' : ' + name() + '<br/>' + $root.getLocaleMessage('Box.URL')+' : ' + gatewayURL() + '<br/>' + $root.getLocaleMessage('Description')+' : ' + description() , 'data-original-title': $root.getLocaleMessage('Map')}">
                     <img data-bind="attr:{src: '/dashboard/maps/'+imgFile()}"  class="img-rounded"/>
                     <p data-bind="text: name"></p>
                 </a>

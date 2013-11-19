@@ -18,8 +18,8 @@ import java.net.URL;
  * Time: 4:11 PM
  */
 
-@Component
-@Instantiate
+@Component(name="FrontendServlet")
+//@Instantiate
 public class FrontendServlet extends HttpServlet {
 
 
@@ -28,11 +28,14 @@ public class FrontendServlet extends HttpServlet {
     @Property(value = "/dashboard")
     private String servletName;
 
-    @Property(value = "/dashboard/assets")
-    private String resources ;
+    @Property(value="dashboard")
+    private String servletType;
 
-    @Property(value = "/dashboard/maps")
-    private String mapResources;
+    //@Property(value = "/dashboard/assets")
+    //private String resources ;
+
+    //@Property(value = "/dashboard/maps")
+    //private String mapResources;
 
     public FrontendServlet(BundleContext c){
         this.context = c;
@@ -42,8 +45,8 @@ public class FrontendServlet extends HttpServlet {
     private void bindHttpService(HttpService service) {
         try {
             service.registerServlet(servletName, this, null, null);
-            service.registerResources(resources, "/assets", null);
-            service.registerResources(mapResources, "/", new HttpExternalResourceContext("maps"));
+            //service.registerResources(resources, "/assets", null);
+            //service.registerResources(mapResources, "/", new HttpExternalResourceContext("maps"));
         } catch (NamespaceException e) {
             e.printStackTrace();
         } catch (ServletException e) {
@@ -54,14 +57,15 @@ public class FrontendServlet extends HttpServlet {
     @Unbind
     public void unbindHttpService(HttpService service) {
         service.unregister(servletName);
-        service.unregister(resources);
-        service.unregister(mapResources);
+        //service.unregister(resources);
+       //service.unregister(mapResources);
 
     }
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String result = getTemplate().toString();
+        result = result.replace("@servletType", servletType);//dashboard or simulator.
         PrintWriter writer = resp.getWriter();
         writer.append(result);
         writer.close();

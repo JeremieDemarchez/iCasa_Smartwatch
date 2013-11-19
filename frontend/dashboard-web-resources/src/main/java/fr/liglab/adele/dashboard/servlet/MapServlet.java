@@ -20,13 +20,16 @@ import java.net.URL;
  * Time: 6:01 PM
  */
 
-@Component
-@Instantiate
+@Component(name="MapServlet")
+//@Instantiate
 public class MapServlet   extends HttpServlet {
 
     private final BundleContext context;
     @Property(value="/dashboard/map")
     String alias;
+
+    @Property(value="dashboard")
+    String servletType;
 
     public MapServlet(BundleContext c){
         this.context = c;
@@ -128,6 +131,7 @@ public class MapServlet   extends HttpServlet {
             result = result.replace("@mapId", mapId);
             result = result.replace("@pluginIds", "");
             result = result.replace("@widgetIds", "");
+            result = result.replace("@servletType", servletType);//dashboard or simulator.
             result = result.replace("@gatewayURL", map.getGatewayURL());
             result = result.replace("@mapImgSrc", "/dashboard/maps/" + map.getImgFile());
             PrintWriter writer = resp.getWriter();

@@ -133,10 +133,12 @@ require([
 
         mapName = $("#map").attr("mapId");
         mapImgUrl = $("#map").attr("mapImgSrc");
+        servletType = $("#map").attr("servletType");
         mapHeightSubscritionCalls = 0;
         iCasaViewModel = new ICasaViewModel( {
           id: mapName,
-          imgSrc: mapImgUrl
+          imgSrc: mapImgUrl,
+          servletType: servletType
         });
         SizeUtil.computeMapImgSize(mapImgUrl);
 

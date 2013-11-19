@@ -11,6 +11,7 @@ define(['jquery',
         'contracts/ICasaShellManager',
         'dataModels/ICasaDataModel'
         'text!templates/deviceTable.html',
+        'text!templates/deviceAppTable.html',
         'text!templates/personTable.html',
         'text!templates/zoneTable.html',
         'text!templates/applicationTable.html',
@@ -22,7 +23,7 @@ define(['jquery',
         'text!templates/applicationStatusWindow.html',
         'i18n!locales/nls/locale',
         'domReady'],
-  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, ICasaShell, DataModel, devTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml, locale) ->
+  ($, ui, Backbone, ko, kb, HandleBars, jqueryTouch, DeviceWidgetContract, ICasaManager, ICasaShell, DataModel, devTabHtml, devAppTabHtml, personTabHtml, zoneTabHtml, appTabHtml, scriptPlayerHtml, tabsTemplateHtml, deviceStatusWindowTemplateHtml, personStatusWindowTemplateHtml, zoneStatusWindowTemplateHtml, applicationStatusWindowTemplateHtml, locale) ->
 
     # HTML custom bindings
 
@@ -1102,6 +1103,8 @@ define(['jquery',
 
             @imgName = ko.computed(() =>
                 imgName = "unknown"
+                if @id() == "binary.light.follow.me"
+                    imgName = "follow1"
                 if @id() == "dimmer.light.follow.me"
                     imgName = "follow1"
                 if @id() ==  "test.light.follow.me"
@@ -1323,26 +1326,52 @@ define(['jquery',
 
         constructor : (model) ->
            @name = model.id;
+           #to determine if is a dashboard or a simulator.
+           @servletType = model.servletType;
            #to handle localization.
            @getLocaleMessage = (name) ->
               return locale[name];
            #add tabs.
-           deviceTab = new TabViewModel ({
+           tabsItems = [];
+           if (@servletType == "dashboard")
+             deviceTab = new TabViewModel ({
                 id: "devices",
                 name: @getLocaleMessage('Devices'),
-                template: devTabHtml});
-           zoneTab = new TabViewModel ({
+                template: devAppTabHtml});
+             zoneTab = new TabViewModel ({
               id: "zones",
               name: @getLocaleMessage('Zones') ,
               template: zoneTabHtml});
-           appTab = new TabViewModel ({
+             appTab = new TabViewModel ({
               id: "applications",
               name: @getLocaleMessage('Applications') ,
               template: appTabHtml});
-           tabsItems = [];
-           tabsItems.push(deviceTab);
-           tabsItems.push(zoneTab);
-           tabsItems.push(appTab);
+
+             tabsItems.push(deviceTab);
+             tabsItems.push(zoneTab);
+             tabsItems.push(appTab);
+           else #simulator
+             deviceTab = new TabViewModel ({
+               id: "devices",
+               name: @getLocaleMessage('Devices'),
+               template: devTabHtml});
+             zoneTab = new TabViewModel ({
+               id: "zones",
+               name: @getLocaleMessage('Zones') ,
+               template: zoneTabHtml});
+             personTab = new TabViewModel ({
+               id: "persons",
+               name: @getLocaleMessage('Persons') ,
+               template: personTabHtml});
+             scriptTab = new TabViewModel ({
+               id: "script-player",
+               name: @getLocaleMessage('Script.Player') ,
+               template: scriptPlayerHtml});
+             tabsItems.push(deviceTab);
+             tabsItems.push(zoneTab);
+             tabsItems.push(personTab);
+             tabsItems.push(scriptTab);
+
 
            @tabs = ko.observableArray(tabsItems);
 
@@ -1409,9 +1438,10 @@ define(['jquery',
            @.scripts.subscribe(@.updateExecutingScript);
 
            #valid only for dashboard
-           @selectedApplication = ko.observable("")
-           @applications = kb.collectionObservable(DataModel.collections.applications, {view_model: ApplicationViewModel});
-           @updateSelectedApplication = ()=>
+           if @servletType == "dashboard"
+             @selectedApplication = ko.observable("")
+             @applications = kb.collectionObservable(DataModel.collections.applications, {view_model: ApplicationViewModel});
+             @updateSelectedApplication = ()=>
                 console.log "calculating selected application rights"
                 ko.utils.arrayForEach(@.devices(), (device) =>
                     applicationModel = @selectedApplication().model()
@@ -1427,7 +1457,7 @@ define(['jquery',
                         else
                             device.hasAccessRight(false)
                 );
-           @updatingAccessRightInSelectedApplication = kb.observable(DataModel.collections.applications.updateAccessRights,'update')
+             @updatingAccessRightInSelectedApplication = kb.observable(DataModel.collections.applications.updateAccessRights,'update')
            #@devices.subscribe(@updateSelectedApplication);
            #end valid only for dashboard
 
@@ -1508,6 +1538,7 @@ define(['jquery',
              @[list+"Filter"](tps);
 
            @filteredList = (list) =>
+              console.log "filtering " + list
               opt = @[list+"Filter"]().split("=");
               if opt.length <= 1
                 attr = "name";
@@ -1531,23 +1562,21 @@ define(['jquery',
                   return false
               )
 
-           @filteredDevicesForApp = ko.computed(() =>
-              #Valid for dashboard.
-              return ko.utils.arrayFilter(@devices(),(device) =>
-                applicationModel = DataModel.collections.applications.get(@selectedApplication().model().get('id'))
-                if !(applicationModel?) || (@selectedApplication().model().get('id') == "NONE")
-                    return true;
-                list = applicationModel.accessRights.where({'deviceId': device.model().get('id')})
-                if(list.length>0)
-                    return true;
-                return false;
-              )
-              #End valid for dashboard.
-              #return @filteredList("device") #commented for dashboard.
-           , @)
-
            @filteredDevices = ko.computed(() =>
-              return @filteredList("device")
+              if @servletType == "dashboard"
+                  #Valid for dashboard.
+                  return ko.utils.arrayFilter(@devices(),(device) =>
+                    applicationModel = DataModel.collections.applications.get(@selectedApplication().model().get('id'))
+                    if !(applicationModel?) || (@selectedApplication().model().get('id') == "NONE")
+                        return true;
+                    list = applicationModel.accessRights.where({'deviceId': device.model().get('id')})
+                    if(list.length>0)
+                        return true;
+                    return false;
+                  )
+              else
+                #for simulator
+                return @filteredList("device") #commented for dashboard.
            , @)
 
            @filteredZones = ko.computed(() =>
@@ -1572,16 +1601,17 @@ define(['jquery',
            }, @)
 
            #Valid only for dashboard.
-           @filteredApplications = ko.computed(() =>
-              return @filteredList("application")
-           , @)
-           @disableAccessRight = ko.computed(() =>
-              if (!(@selectedApplication().model?) )
-                return true;
-              if (@selectedApplication().model().get('id') == "NONE")
-                return true;
-              return false;
-           , @)
+           if @servletType == "dashboard"
+             @filteredApplications = ko.computed(() =>
+               return @filteredList("application")
+             , @)
+             @disableAccessRight = ko.computed(() =>
+               if (!(@selectedApplication().model?) )
+                 return true;
+               if (@selectedApplication().model().get('id') == "NONE")
+                 return true;
+               return false;
+             , @)
            #End valid for dashboard.
 
            # person management
@@ -1853,10 +1883,11 @@ define(['jquery',
              return true;
 
            #valid for dashboard
-           @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication);
-           @selectedApplication.subscribe(@updateSelectedApplication);
-           @.devices.subscribe(@updateSelectedApplication)
-           @updateSelectedApplication();
+           if @servletType == "dashboard"
+             @updatingAccessRightInSelectedApplication.subscribe(@updateSelectedApplication);
+             @selectedApplication.subscribe(@updateSelectedApplication);
+             @.devices.subscribe(@updateSelectedApplication)
+             @updateSelectedApplication();
            #end valid for dashboard
         
         createRandomId:(collection, type)->
