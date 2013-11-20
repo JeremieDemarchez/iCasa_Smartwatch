@@ -34,7 +34,6 @@
         <module>icasa-teaching-distribution</module>
         <module>icasa-teaching-distribution-access-enabled</module>
         <module>icasa-dashboard-distribution</module>
-        <module>icasa-teaching-distribution-with-apps</module>
 	</modules>
    <build>
       <plugins>
