@@ -30,7 +30,7 @@
 
 	<modules>
       <module>frontend-services</module>
-      <module>dashboard-web-resources</module>
+      <module>web-resources</module>
       <module>simulator-web-instance</module>
       <module>dashboard-web-instance</module>
 	</modules>
