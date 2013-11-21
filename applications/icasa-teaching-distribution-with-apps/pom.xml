@@ -59,9 +59,6 @@
     <profiles>
        <profile>
           <id>all</id>
-          <activation>
-             <activeByDefault>true</activeByDefault>
-          </activation>
           <build>
              <plugins>
                 <plugin>
