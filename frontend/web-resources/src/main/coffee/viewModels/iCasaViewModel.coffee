@@ -783,7 +783,7 @@ define(['jquery',
                     if (decorator.name() == "fault")
                         decorator.show(activatedState && faultState);
                 );
-                @imgSrc(@.getImage());
+                #@imgSrc(@.getImage()); #image has been already setted
 
            # location change saving
            @saveLocation= ko.observable(false);

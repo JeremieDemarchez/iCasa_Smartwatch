@@ -43,7 +43,7 @@
         <!-- Dashboard application-->
         <dependency>
            <groupId>${project.groupId}</groupId>
-            <artifactId>dashboard.web.resources</artifactId>
+            <artifactId>dashboard.web.instance</artifactId>
             <version>${project.version}</version>
         </dependency>
 
