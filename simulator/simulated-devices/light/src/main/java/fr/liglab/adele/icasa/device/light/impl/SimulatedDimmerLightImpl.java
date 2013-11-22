@@ -40,7 +40,7 @@ public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLi
 	public SimulatedDimmerLightImpl() {
 		super();
 		super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 1.0d);
+		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 100.0d);
 		super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
 
 	}
