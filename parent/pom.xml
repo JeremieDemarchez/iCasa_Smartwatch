@@ -57,6 +57,7 @@ See the License for the specific language governing permissions and
 			<organization>Adele | LIG</organization>
 			<organizationUrl>http://adele.imag.fr</organizationUrl>
 		</developer>
+      <developer>
 			<name>Thomas Leveque</name>
 			<email> leveque.thomas @nospam@ gmail.com	</email>
 			<roles>
