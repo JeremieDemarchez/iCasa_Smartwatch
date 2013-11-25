@@ -20,7 +20,7 @@ require([
         class SizeUtil
 
           @computeMapImgSize = (imgSrc) ->
-            imgSrcNoCache = imgSrc + '?cache=' + Date.now();
+            imgSrcNoCache = imgSrc #+ '?cache=' + Date.now();
             $('<img/>').attr('src', imgSrcNoCache).load(() ->
               mapRealSizeWidth = this.width;
               mapRealSizeHeight = this.height;
