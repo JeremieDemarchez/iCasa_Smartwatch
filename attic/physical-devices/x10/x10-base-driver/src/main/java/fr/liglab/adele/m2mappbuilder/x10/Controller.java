@@ -26,7 +26,6 @@ package fr.liglab.adele.m2mappbuilder.x10;
 * @author Wade Wassenberg
 *
 * @version 1.0
-* @see fr.orange.x10.Command
 * @see x10.UnitListener
 */
 

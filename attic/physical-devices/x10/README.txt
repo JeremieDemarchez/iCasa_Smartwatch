@@ -43,11 +43,6 @@ To be able to use X10 devices, you must:
    <version>0.0.1-SNAPSHOT</version>
 </dependency>
 
-<dependency>
-   <groupId>fr.orange</groupId>
-   <artifactId>fr.orange.x10</artifactId>
-   <version>0.0.1-SNAPSHOT</version>
-</dependency>
 
 4 - Add a rose configuration file named "rose-conf-x10.json" in the fine le install directory 
 (icasa distribution usually use load directory) with following content:
