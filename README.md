@@ -17,10 +17,10 @@ a specific end user license for the simulator and dashboard web applications
 Contributors
 =====
 
-This project has been created by the LIG laboratory ADELE Reseach Group of Grenoble University.
+This project has been created by the LIG laboratory of Grenoble University.
 The main contributors are 
 - _ADELE Reseach Group_
-- _Orange Labs_
+
 
 Source Organization (to be changed)
 ====
