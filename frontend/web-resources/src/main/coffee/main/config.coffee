@@ -10,7 +10,7 @@ require.config({
     # paths MUST not include .js extension
     paths: {
         'atmosphere' : 'frameworks/atmosphere/jquery.atmosphere',
-        'backbone' : 'frameworks/backbone/backbone-1.1.0.debug',
+        'backbone' : 'frameworks/backbone/backbone-1.1.0.min',
         'backbone.debug' : 'frameworks/backbone/backbone.debug',
         'bootstrap.dir' : 'frameworks/bootstrap',
         'bootstrap' : 'frameworks/bootstrap/js/bootstrap.min',
@@ -20,9 +20,9 @@ require.config({
         'hammer' : 'frameworks/hammer/hammer', # AMD module
         'hammer-jquery' : 'frameworks/hammer/jquery.hammer', # AMD module
         'handlebars' : 'frameworks/handlebars/handlebars-1.0.rc.1',
-        'hubu' : 'frameworks/hubu/h-ubu-1.0.0',
+        'hubu' : 'frameworks/hubu/h-ubu-1.0.0-min',
         #'jquery' : 'frameworks/jquery/core/jquery-1.8.2.min', # AMD module
-        'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom',
+        'jquery.ui':'frameworks/jquery/ui/1.9/js/jquery-ui-1.9.0.custom.min',
         # TODO remove ui.touch when moving to jquery.ui 1.9 (will manage touch events)
         'jquery.ui.touch' : 'frameworks/jquery/ui.touch/jquery-ui-touch-punch.min',
         'jquery.resize' : 'frameworks/jquery/ba-resize/jquery.ba-resize.min',
@@ -30,7 +30,7 @@ require.config({
         'log4javascript' : 'frameworks/log4javascript/log4javascript',
         'knockback' : 'frameworks/knockback/knockback-0.17.2.min', # AMD module
         'knockout.debug' : 'frameworks/knockout/knockout-2.1.0.debug', # AMD module
-        'knockout' : 'frameworks/knockout/knockout-3.0.0.debug', # AMD module
+        'knockout' : 'frameworks/knockout/knockout-3.0.0', # AMD module
         'modernizr' : 'frameworks/modernizr/modernizr.custom.min',
         'sammy' : 'frameworks/sammy/sammy-latest.min', # AMD module
         'templates' : 'templates',
