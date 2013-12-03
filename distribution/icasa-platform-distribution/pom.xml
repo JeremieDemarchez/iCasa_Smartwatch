@@ -21,7 +21,7 @@
     <parent>
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
-        <version>1.2.5-SNAPSHOT</version>
+        <version>1.2.6-SNAPSHOT</version>
         <relativePath>../../parent</relativePath>
     </parent>
 
@@ -75,5 +75,34 @@
             </plugin>
         </plugins>
     </build>
+    <profiles>
+       <profile>
+          <id>all</id>
+          <build>
+             <plugins>
+                <plugin>
+                   <groupId>org.codehaus.mojo</groupId>
+                   <artifactId>wagon-maven-plugin</artifactId>
+                   <executions>
+                      <execution>
+                         <id>upload-snapshot</id>
+                         <phase>deploy</phase>
+                         <goals>
+                            <goal>upload-single</goal>
+                         </goals>
+                         <configuration>
+                            <serverId>icasa-deploy-cloudbees-snapshot</serverId>
+                            <fromFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</fromFile>
+                            <url>https://repository-icasa.forge.cloudbees.com/snapshot</url>
+                            <toFile>fr/liglab/adele/icasa/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}.zip</toFile>
+                         </configuration>
+                      </execution>
+                   </executions>
+                </plugin>  
+             </plugins>
+          </build>
+       </profile>
+       
+    </profiles>
 
 </project>
