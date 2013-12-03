@@ -28,7 +28,6 @@ import java.util.Vector;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.InstanceManager;
-import org.apache.felix.ipojo.handlers.dependency.AggregateDependencyInjectionType;
 import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.handlers.dependency.DependencyCallback;
 import org.osgi.framework.BundleContext;
@@ -77,7 +76,7 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
             boolean isOptional, boolean isAggregate, String identity,
             BundleContext context, int policy, Comparator cmp, String mandatoryProps) {
         super(handler, field, spec, filter, isOptional, isAggregate, false, true, identity, context, policy, cmp,
-                null, null);
+                null);
 
         addMandatoryProperties(mandatoryProps);
         
@@ -94,9 +93,9 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
      * Since iPOJO 1.11.x type has changed from integer to AggregateDependencyInjectionType enum.
      * @param type
      */
-    protected void setType(AggregateDependencyInjectionType type) {
-        super.setAggregateType(type);
-        //super.setType(type);
+    protected void setType(int/*AggregateDependencyInjectionType*/ type) {
+        //super.setAggregateType(type);
+        super.setType(type);
     }
 
 
