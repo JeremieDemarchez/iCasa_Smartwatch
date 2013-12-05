@@ -39,11 +39,19 @@
             <type>osgi-distribution</type>
         </dependency>
 
-        <!-- deployed packages -->
+        <!-- RoSe bundles -->
         <dependency>
            <groupId>org.ow2.chameleon.rose</groupId>
-           <artifactId>rose.dp</artifactId>
-           <type>deployment-package</type>
+           <artifactId>rose-core</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>fr.liglab.adele.common</groupId>
+           <artifactId>rose-chameleon-deployer-configurator</artifactId>
+           <version>${AdeleBaseVersion}</version>
+        </dependency>
+        <dependency>
+           <groupId>org.apache.felix</groupId>
+           <artifactId>org.apache.felix.http.jetty</artifactId>
         </dependency>
         <!-- iCasa Platform -->
         <dependency>
@@ -71,7 +79,8 @@
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
                     <flattenDP>true</flattenDP>
-                </configuration>
+                    <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                 </configuration>
             </plugin>
         </plugins>
     </build>

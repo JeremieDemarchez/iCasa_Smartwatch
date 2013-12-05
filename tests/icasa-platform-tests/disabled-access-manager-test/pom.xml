@@ -10,7 +10,7 @@
       <relativePath>../../../parent</relativePath>
    </parent>
 
-   <artifactId>icasa.platform.access.manager.test</artifactId>
+   <artifactId>icasa.platform.dissabled.access.manager.test</artifactId>
    <name>${productName} :: iCasa Access Manager Tests</name>
    <packaging>jar</packaging>
 
@@ -135,6 +135,7 @@
                   <ipojo.processing.synchronous>false</ipojo.processing.synchronous>
                    <org.osgi.framework.bootdelegation>sun.*</org.osgi.framework.bootdelegation>
                    <felix.bootdelegation.implicit>false</felix.bootdelegation.implicit>
+                   <icasa.disable.access.policy>true</icasa.disable.access.policy>
                </systemPropertyVariables>
             </configuration>
          </plugin>

@@ -15,72 +15,42 @@
  */
 package fr.liglab.adele.icasa.access.test;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.access.MemberAccessPolicy;
 import junit.framework.Assert;
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 import javax.inject.Inject;
-import java.util.List;
 import java.util.UUID;
-
-
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 /**
  * User: garciai@imag.fr
  * Date: 8/12/13
  * Time: 11:13 AM
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class AccessManagerDisableTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class AccessManagerDisableTest {
 
     @Inject
     public BundleContext context;
 
+    OSGiHelper helper;
 
     @Before
-    public void setUp() {
-        waitForStability(context);
-    }
-
-    @After
-    public void tearDown() {
-        // do nothing
-    }
-
-    public static Option addSystemProperties() {
-        return new DefaultCompositeOption(
-                systemProperty( Constants.DISABLE_ACCESS_POLICY_PROPERTY).value( "true" )
-        );
-    }
-
-    @org.ops4j.pax.exam.Configuration
-    public Option[] configuration() {
-
-        List<Option> lst = super.config();
-        lst.add(addSystemProperties());
-        Option conf[] = lst.toArray(new Option[0]);
-        return conf;
+    public void setup(){
+        helper = new OSGiHelper(context);
     }
 
     @Test
     public void testAccessRightAssignment(){
-        AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
+        AccessManager service = helper.getServiceObject(AccessManager.class);
         String applicationID = "AppT1" + generateId();
         String deviceID = "deviceT11" + generateId();
         Assert.assertNotNull(service);
@@ -96,7 +66,7 @@ public class AccessManagerDisableTest extends AbstractDistributionBaseTest {
      */
     @Test
     public void testPartialAccessRightAssignment(){
-        AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
+        AccessManager service = helper.getServiceObject(AccessManager.class);
         String applicationID = "AppT2" + generateId();
         String deviceID = "deviceT2"  + generateId();
         String method = "pingPong" + generateId();
@@ -116,7 +86,7 @@ public class AccessManagerDisableTest extends AbstractDistributionBaseTest {
 
     @Test
     public void testVisibleAccessRightAssignment(){
-        AccessManager service = (AccessManager) this.getService(context, AccessManager.class);
+        AccessManager service = helper.getServiceObject(AccessManager.class);;
         String applicationID = "AppT3" + generateId();
         String deviceID = "deviceT3" + generateId();
         String method1 = "pingPongT3_1" + generateId();
