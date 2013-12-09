@@ -15,8 +15,7 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.commons.test.utils.TestUtils;
+
 import fr.liglab.adele.icasa.service.preferences.PreferenceChangeListener;
 import fr.liglab.adele.icasa.service.preferences.Preferences;
 import junit.framework.Assert;
@@ -26,11 +25,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import static org.mockito.Mockito.*;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
 import org.ow2.chameleon.sharedprefs.SharedPreferencesService;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 import javax.inject.Inject;
 
@@ -40,18 +39,19 @@ import javax.inject.Inject;
  * Date: 8/26/13
  * Time: 5:08 PM
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class SharedPreferenceTest  {
 
     Preferences preferences;
 
     @Inject
     BundleContext context;
 
+    OSGiHelper helper;
+
     @Before
     public void setUp() {
-        waitForStability(context);
+        helper = new OSGiHelper(context);
         preferences = (Preferences) waitForService(context, Preferences.class);
     }
 
@@ -62,11 +62,11 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
 
     @Test
     public void testServiceExistence(){
-        Factory serviceFactory =  (Factory)getService(context, Factory.class, "(&(factory.name=iCasaPreferences)(factory.state=1))");
+        Factory serviceFactory =  helper.getServiceObject(Factory.class, "(&(factory.name=iCasaPreferences)(factory.state=1))");
         Assert.assertNotNull(serviceFactory);
-        Assert.assertNotNull(getService(context, Factory.class, "(&(factory.name=org.ow2.chameleon.sharedprefs.XmlSharedPreferences)(factory.state=1))"));
-        Assert.assertNotNull(getService(context, SharedPreferencesService.class));
-        Preferences service =  (Preferences)getService(context, Preferences.class);
+        Assert.assertNotNull(helper.getServiceObject(Factory.class, "(&(factory.name=org.ow2.chameleon.sharedprefs.XmlSharedPreferences)(factory.state=1))"));
+        Assert.assertNotNull(helper.getServiceObject(SharedPreferencesService.class));
+        Preferences service =  helper.getServiceObject(Preferences.class);
         Assert.assertNotNull(service);
     }
 
@@ -282,7 +282,7 @@ public class SharedPreferenceTest  extends AbstractDistributionBaseTest {
     public Object waitForService(BundleContext context, Class clazz) {
         TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 20000, 20);
 
-        return getService(context, clazz);
+        return helper.getServiceObject(clazz);
     }
 
 }
