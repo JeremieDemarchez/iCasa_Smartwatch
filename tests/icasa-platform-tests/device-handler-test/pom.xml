@@ -34,6 +34,7 @@
         <module>bundles</module>
         <module>packages</module>
         <module>test</module>
+        <module>test-disabled-policy</module>
     </modules>
 
 

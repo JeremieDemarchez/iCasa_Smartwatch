@@ -86,6 +86,12 @@ public class BaseDeviceHandlerTest {
     public void tearDown() {
 
     }
+    
+
+
+    private Boolean getAccessPolicyPropertyValue() {
+        return Boolean.FALSE;
+    }
 
     protected ComponentInstance createComponentInstance(String factoryName) throws Exception {
         Factory factory = osgi.getServiceObject(Factory.class, "(factory.name=" + factoryName + ")");

@@ -18,23 +18,23 @@ package fr.liglab.adele.icasa.device.handler.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.fail;
 
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.exception.AccessViolationException;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.InstanceManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 import test.component.handler.ComponentOnlyRequireDevice;
 import test.component.handler.ComponentOnlyRequirePojo;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
-import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
+
+@RunWith(ChameleonRunner.class)
 public class DisableFlagDeviceHandlerTest extends BaseDeviceHandlerTest {
 
+    ContextManager icasa;
        
     @Test
     public void noPlatformComponentAccesingDeviceTest() throws Exception {
@@ -81,7 +81,7 @@ public class DisableFlagDeviceHandlerTest extends BaseDeviceHandlerTest {
     }
     
     
-    @Override
+
     protected Boolean getAccessPolicyPropertyValue() {
         return Boolean.TRUE;
     }

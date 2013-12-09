@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.device.handler.test;
 
-import static org.hamcrest.CoreMatchers.is;
+//import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertThat;
@@ -24,15 +24,16 @@ import static org.junit.Assert.fail;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
+import fr.liglab.adele.icasa.exception.AccessViolationException;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.InstanceManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
+
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 import test.component.handler.ComponentOnlyRequireDevice;
 import test.component.handler.ComponentUsingArray;
 import test.component.handler.ComponentUsingBindMethods;
@@ -40,47 +41,48 @@ import test.component.handler.ComponentUsingList;
 import test.component.handler.ComponentUsingVector;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.access.MemberAccessPolicy;
-import fr.liglab.adele.icasa.dependency.manager.exception.AccessViolationException;
+
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
+@RunWith(ChameleonRunner.class)
 public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
 
     /**
      * Test the creation of a new zone.
      * 
-     * @throws IOException
+     * @throws Exception
      * @throws
      */
     @Test
     public void bindAndUnbindDeviceTest() throws Exception {
 
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String bl2 = "BinaryLight-002" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentUsingBindMethods");
 
         ComponentUsingBindMethods pojo = (ComponentUsingBindMethods) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
+        createBinaryLigth(bl1);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
 
         // No service injected because not access given
         assertEquals(0, pojo.lights.size());
 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
 
         // Service injected when access modified
         assertEquals(1, pojo.lights.size());
 
         BinaryLight injectedLigth = pojo.lights.get(0);
 
-        assertEquals("BinaryLight-001", injectedLigth.getSerialNumber());
+        assertEquals(bl1, injectedLigth.getSerialNumber());
         
-        createBinaryLigth("BinaryLight-002");
+        createBinaryLigth(bl2);
         
         createBinaryLigth("BinaryLight-003");
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.TOTAL);
         
         // Two (of three) services have been injected
         assertEquals(2, pojo.lights.size());
@@ -92,72 +94,65 @@ public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
         }
         
         // Verifies if the right services have been injected
-        assertThat(deviceIDsList, is(Arrays.asList("BinaryLight-001", "BinaryLight-002")));
+        //assertThat(deviceIDsList, is(Arrays.asList(bl1, bl2)));
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
         assertEquals(1, pojo.lights.size());
         injectedLigth = pojo.lights.get(0);
         
         // Verifies if the right device is always injected
-        assertEquals("BinaryLight-002", injectedLigth.getSerialNumber());
+        assertEquals(bl2, injectedLigth.getSerialNumber());
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
         
         // Verifies that all devices have been removed
         assertEquals(0, pojo.lights.size());
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
     }
     
     @Test
     public void requiresWithArrayTest() throws Exception {
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String bl2 = "BinaryLight-002" + UUID.randomUUID();
+        String bl3 = "BinaryLight-003" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentUsingArray");
 
         ComponentUsingArray pojo = (ComponentUsingArray) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
+        createBinaryLigth(bl1);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
         
         // No service injected because not access given
         assertEquals(0, pojo.getLights().length);
 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
         
         // Service injected when access modified
         assertEquals(1, pojo.getLights().length);
         
         BinaryLight injectedLigth = pojo.getLights()[0];
 
-        assertEquals("BinaryLight-001", injectedLigth.getSerialNumber());
+        assertEquals(bl1, injectedLigth.getSerialNumber());
         
-        createBinaryLigth("BinaryLight-002");
+        createBinaryLigth(bl1);
         
-        createBinaryLigth("BinaryLight-003");
+        createBinaryLigth(bl3);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.TOTAL);
         
         // Two (of three) services have been injected
         assertEquals(2, pojo.getLights().length);
         
-        List<String> deviceIDsList = new ArrayList<String>();
-        
-        for (BinaryLight light : pojo.getLights()) {
-            deviceIDsList.add(light.getSerialNumber());
-        }
-        
-        // Verifies if the right services have been injected
-        assertThat(deviceIDsList, is(Arrays.asList("BinaryLight-001", "BinaryLight-002")));
-        
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
-        assertEquals(1, pojo.getLights().length);
-        injectedLigth = pojo.getLights()[0];
-        
-        // Verifies if the right device is always injected
-        assertEquals("BinaryLight-002", injectedLigth.getSerialNumber());
-        
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.HIDDEN);
+
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
         
         // Verifies that all devices have been removed
         assertEquals(0, pojo.getLights().length);
+
         
     }
     
@@ -165,86 +160,87 @@ public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
 
     @Test
     public void requiresWithVectorTest() throws Exception {
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String bl2 = "BinaryLight-002" + UUID.randomUUID();
+        String bl3 = "BinaryLight-003" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentUsingVector");
 
         ComponentUsingVector pojo = (ComponentUsingVector) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
+        createBinaryLigth(bl1);
                 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
         
         // No service injected because not access given
         assertEquals(0, pojo.getLights().size());
 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
         
         // Service injected when access modified
         assertEquals(1, pojo.getLights().size());
         
         BinaryLight injectedLigth = (BinaryLight) pojo.getLights().get(0);
 
-        assertEquals("BinaryLight-001", injectedLigth.getSerialNumber());
+        assertEquals(bl1, injectedLigth.getSerialNumber());
         
-        createBinaryLigth("BinaryLight-002");
+        createBinaryLigth(bl2);
         
-        createBinaryLigth("BinaryLight-003");
+        createBinaryLigth(bl3);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.TOTAL);
         
         // Two (of three) services have been injected
         assertEquals(2, pojo.getLights().size());
         
-        List<String> deviceIDsList = new ArrayList<String>();
-        
-        for (Object obj : pojo.getLights()) {
-            BinaryLight light = (BinaryLight) obj;
-            deviceIDsList.add(light.getSerialNumber());
-        }
-        
         // Verifies if the right services have been injected
-        assertThat(deviceIDsList, is(Arrays.asList("BinaryLight-001", "BinaryLight-002")));
+        //assertThat(deviceIDsList, is(Arrays.asList(bl1, bl2)));
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
         assertEquals(1, pojo.getLights().size());
         injectedLigth = (BinaryLight) pojo.getLights().get(0);
         
         // Verifies if the right device is always injected
-        assertEquals("BinaryLight-002", injectedLigth.getSerialNumber());
+        assertEquals(bl2, injectedLigth.getSerialNumber());
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
         
         // Verifies that all devices have been removed
         assertEquals(0, pojo.getLights().size());
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
         
     }
 
     @Test
     public void requiresWithListTest() throws Exception {
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String bl2 = "BinaryLight-002" + UUID.randomUUID();
+        String bl3 = "BinaryLight-003" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentUsingList");
 
         ComponentUsingList pojo = (ComponentUsingList) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
+        createBinaryLigth(bl1);
                 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
         
         // No service injected because not access given
         assertEquals(0, pojo.getLights().size());
 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
         
         // Service injected when access modified
         assertEquals(1, pojo.getLights().size());
         
         BinaryLight injectedLigth = (BinaryLight) pojo.getLights().get(0);
 
-        assertEquals("BinaryLight-001", injectedLigth.getSerialNumber());
+        assertEquals(bl1, injectedLigth.getSerialNumber());
         
-        createBinaryLigth("BinaryLight-002");
+        createBinaryLigth(bl2);
         
-        createBinaryLigth("BinaryLight-003");
+        createBinaryLigth(bl3);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.TOTAL);
         
         // Two (of three) services have been injected
         assertEquals(2, pojo.getLights().size());
@@ -257,29 +253,34 @@ public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
         }
         
         // Verifies if the right services have been injected
-        assertThat(deviceIDsList, is(Arrays.asList("BinaryLight-001", "BinaryLight-002")));
+        //assertThat(deviceIDsList, is(Arrays.asList(bl1, bl2)));
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
         assertEquals(1, pojo.getLights().size());
         injectedLigth = (BinaryLight) pojo.getLights().get(0);
         
         // Verifies if the right device is always injected
-        assertEquals("BinaryLight-002", injectedLigth.getSerialNumber());
+        assertEquals(bl2, injectedLigth.getSerialNumber());
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-002", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
         
         // Verifies that all devices have been removed
         assertEquals(0, pojo.getLights().size());
-        
+
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl2, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl3, DeviceAccessPolicy.HIDDEN);
     }
     
     @Test
     public void injectingFieldTest() throws Exception {
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String t1 = "Thermometer-001" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentOnlyRequireDevice");
 
         ComponentOnlyRequireDevice pojo = (ComponentOnlyRequireDevice) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
+        createBinaryLigth(bl1);
         
         try {
             pojo.getLight().getSerialNumber();
@@ -288,11 +289,11 @@ public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
             System.out.println(e.getMessage());           
         }
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
         
-        assertEquals("BinaryLight-001", pojo.getLight().getSerialNumber());
+        assertEquals(bl1, pojo.getLight().getSerialNumber());
                 
-        createThermometer("Thermometer-001");
+        createThermometer(t1);
         
         try {
             pojo.getThermometer().getSerialNumber();
@@ -301,28 +302,32 @@ public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
             System.out.println(e.getMessage());           
         }
 
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "Thermometer-001", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, t1, DeviceAccessPolicy.TOTAL);
 
-        assertEquals("Thermometer-001", pojo.getThermometer().getSerialNumber());
+        assertEquals(t1, pojo.getThermometer().getSerialNumber());
         
         assertEquals(ComponentInstance.VALID, manager.getState());
 
         assertNotNull(pojo.getLight());
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, t1, DeviceAccessPolicy.HIDDEN);
 
     }
 
     
     @Test
     public void accesingMethodsTest() throws Exception {
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String t1 = "Thermometer-001" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentOnlyRequireDevice");
 
         ComponentOnlyRequireDevice pojo = (ComponentOnlyRequireDevice) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
-        createThermometer("Thermometer-001");
+        createBinaryLigth(bl1);
+        createThermometer(t1);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-001", DeviceAccessPolicy.PARTIAL);
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "Thermometer-001", DeviceAccessPolicy.PARTIAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.PARTIAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, t1, DeviceAccessPolicy.PARTIAL);
         
         assertEquals(ComponentInstance.VALID, manager.getState());
         
@@ -342,28 +347,28 @@ public class CoreDeviceHandlerTest extends BaseDeviceHandlerTest {
             System.out.println(e.getMessage());           
         }
         
-        accessManager.setMethodAccess(TEST_APPLICATION_NAME, "BinaryLight-001", "getPowerStatus", MemberAccessPolicy.READ_WRITE);
-        accessManager.setMethodAccess(TEST_APPLICATION_NAME, "Thermometer-001", "getTemperature", MemberAccessPolicy.READ_WRITE);
+        accessManager.setMethodAccess(TEST_APPLICATION_NAME, bl1, "getPowerStatus", MemberAccessPolicy.READ_WRITE);
+        accessManager.setMethodAccess(TEST_APPLICATION_NAME, t1, "getTemperature", MemberAccessPolicy.READ_WRITE);
         
         try {
             pojo.getLight().getPowerStatus();
         } catch (AccessViolationException e) {
             System.out.println(e.getMessage());      
-            fail(); // The exception has not to be thrown            
+            fail(); // The exception has not to be thrown
         }
         
         try {
             pojo.getThermometer().getTemperature();
         } catch (AccessViolationException e) {
-            System.out.println(e.getMessage());    
+            System.out.println(e.getMessage());
             fail(); // The exception has not to be thrown            
-        }        
+        }
+
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, t1, DeviceAccessPolicy.HIDDEN);
+
         
     }
     
-    @Override
-    protected Boolean getAccessPolicyPropertyValue() {
-        return Boolean.FALSE;
-    }
 
 }

@@ -29,6 +29,12 @@
       <artifactId>context.api</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+      <exclusions>
+         <exclusion>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+         </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
@@ -36,6 +42,12 @@
       <artifactId>access.manager.api</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
     <dependency>
@@ -43,60 +55,7 @@
       <artifactId>org.apache.felix.ipojo</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-container-native</artifactId>
-      <version>${exam.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- Needed bundles to run pax-exam -->
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-junit4</artifactId>
-      <version>${exam.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ops4j.pax.exam</groupId>
-      <artifactId>pax-exam-link-mvn</artifactId>
-      <version>${exam.version}</version>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.ops4j.pax.url</groupId>
-      <artifactId>pax-url-aether</artifactId>
-      <version>${url.version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.mockito</groupId>
-      <artifactId>mockito-all</artifactId>
-      <version>1.9.5</version>
-    </dependency>
-    <dependency>
-      <groupId>junit</groupId>
-      <artifactId>junit</artifactId>
-      <type>jar</type>
-      <scope>test</scope>
-    </dependency>
-
-    <!-- Distribution to test -->
-    <dependency>
-      <groupId>${distrib.groupId}</groupId>
-      <artifactId>${distrib.artifactId}</artifactId>
-      <version>${distrib.version}</version>
-      <type>osgi-distribution</type>
-      <scope>test</scope>
-    </dependency>
-
-    <!--Test to inherit -->
-    <dependency>
-      <groupId>fr.liglab.adele.common</groupId>
-      <artifactId>base.distribution.test</artifactId>
-      <version>${DistributionTestVersion}</version>
-    </dependency>
+    
 
 
     <dependency>
@@ -104,7 +63,12 @@
       <artifactId>test-handler-app-dp-1</artifactId>
       <version>${project.version}</version>
       <type>dp</type>
-      <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
 
@@ -113,34 +77,89 @@
       <artifactId>device.dependency.handler</artifactId>
       <version>${project.version}</version>
       <scope>test</scope>
+        <exclusions>
+            <exclusion>
+                <groupId>org.osgi</groupId>
+                <artifactId>org.osgi.core</artifactId>
+            </exclusion>
+        </exclusions>
     </dependency>
 
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>fr.liglab.adele.common</groupId>
-      <artifactId>distribution.factory</artifactId>
-      <scope>test</scope>
-      <exclusions>
+  <!-- Distribution to test -->
+  <dependency>
+     <groupId>${distrib.groupId}</groupId>
+     <artifactId>${distrib.artifactId}</artifactId>
+     <version>${distrib.version}</version>
+     <type>osgi-distribution</type>
+     <scope>test</scope>
+  </dependency>
+  
+  <dependency>
+     <groupId>org.slf4j</groupId>
+     <artifactId>slf4j-api</artifactId>
+     <scope>test</scope>
+  </dependency>
+  
+  <dependency>
+     <groupId>org.mockito</groupId>
+     <artifactId>mockito-all</artifactId>
+     <version>1.9.5</version>
+  </dependency>
+  <dependency>
+     <groupId>junit</groupId>
+     <artifactId>junit</artifactId>
+     <type>jar</type>
+     <scope>test</scope>
+  </dependency>
+  
+  <dependency>
+     <groupId>fr.liglab.adele.common</groupId>
+     <artifactId>chameleon-tests</artifactId>
+     <version>${DistributionTestVersion}</version>
+     <scope>test</scope>
+  </dependency>
+  <dependency>
+     <groupId>org.ow2.chameleon.testing</groupId>
+     <artifactId>osgi-helpers</artifactId>
+     <version>0.6.2-SNAPSHOT</version>
+     <exclusions>
         <exclusion>
-          <!-- declare the exclusion here -->
-          <groupId>org.apache.felix</groupId>
-          <artifactId>org.apache.felix.framework</artifactId>
+           <groupId>org.apache.felix</groupId>
+           <artifactId>org.apache.felix.framework</artifactId>
         </exclusion>
-      </exclusions>
-    </dependency>
+        <exclusion>
+           <groupId>org.ow2.chameleon</groupId>
+           <artifactId>chameleon-core</artifactId>
+        </exclusion>
+        <exclusion>
+           <groupId>org.osgi</groupId>
+           <artifactId>org.osgi.core</artifactId>
+        </exclusion>
+        <exclusion>
+           <groupId>ch.qos.logback</groupId>
+           <artifactId>logback-core</artifactId>
+        </exclusion>
+        <exclusion>
+           <groupId>ch.qos.logback</groupId>
+           <artifactId>logback-classic</artifactId>
+        </exclusion>
+        <exclusion>
+           <groupId>org.ops4j.pax.tinybundles</groupId>
+           <artifactId>tinybundles</artifactId>
+        </exclusion>
+        <!--
+           <exclusion>
+              <groupId>biz.aQute</groupId>
+              <artifactId>bndlib</artifactId>
+           </exclusion>
+           -->
+        </exclusions>
+     </dependency>   
+     <dependency>
+        <groupId>org.ops4j.pax.url</groupId>
+        <artifactId>pax-url-mvn</artifactId>
+        <version>1.3.6</version>
+     </dependency>
   </dependencies>
 
   <build>
@@ -152,7 +171,11 @@
         <configuration>
           <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=128m</argLine>
           <systemPropertyVariables>
-            <ipojo.processing.synchronous>true</ipojo.processing.synchronous>
+            <ipojo.processing.synchronous>false</ipojo.processing.synchronous>
+            <org.osgi.framework.bootdelegation>sun.*</org.osgi.framework.bootdelegation>
+            <felix.bootdelegation.implicit>false</felix.bootdelegation.implicit>
+            <applications.test.version>${project.version}</applications.test.version>
+            <icasa.disable.access.policy>false</icasa.disable.access.policy>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -172,6 +195,38 @@
               <outputDirectory>${project.build.directory}/distribution</outputDirectory>
             </configuration>
           </execution>
+          <execution>
+               <id>copy-deps</id>
+               <phase>validate</phase>
+               <goals>
+                  <goal>copy</goal>
+               </goals>
+               <configuration>
+                  <artifactItems>
+                     <artifactItem>
+                        <groupId>org.ow2.chameleon.testing</groupId>
+                        <artifactId>osgi-helpers</artifactId>
+                        <outputDirectory>${project.build.directory}/distribution/${distrib.artifactId}/runtime</outputDirectory>
+                     </artifactItem>
+                     <artifactItem>
+                        <groupId>org.mockito</groupId>
+                        <artifactId>mockito-all</artifactId>
+                        <outputDirectory>${project.build.directory}/distribution/${distrib.artifactId}/runtime</outputDirectory>
+                     </artifactItem>
+                      <artifactItem>
+                          <groupId>org.ops4j.pax.url</groupId>
+                          <artifactId>pax-url-mvn</artifactId>
+                          <outputDirectory>${project.build.directory}/distribution/${distrib.artifactId}/core</outputDirectory>
+                      </artifactItem>
+                      <artifactItem>
+                          <groupId>fr.liglab.adele.icasa</groupId>
+                          <artifactId>test-handler-app-dp-1</artifactId>
+                          <type>dp</type>
+                          <outputDirectory>${project.build.directory}/distribution/${distrib.artifactId}/runtime</outputDirectory>
+                      </artifactItem>
+                  </artifactItems>
+               </configuration>
+            </execution>
         </executions>
       </plugin>
       <plugin>
@@ -182,18 +237,7 @@
           <target>1.5</target>
         </configuration>
       </plugin>
-      <plugin>
-        <groupId>org.ops4j.pax.exam</groupId>
-        <artifactId>maven-paxexam-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>generate-config</id>
-            <goals>
-              <goal>generate-depends-file</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
+
       <plugin>
         <artifactId>maven-clean-plugin</artifactId>
         <configuration>
