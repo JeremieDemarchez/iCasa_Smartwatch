@@ -79,7 +79,7 @@ define(['jquery',
                 if list.length < 1
                     return;
                 policy = list[0]
-                if @device.hasAccessRight()
+                if policy.get('policy') == "hidden"
                     policy.set({policy:"total"})
                 else
                     policy.set({policy: "hidden"})
