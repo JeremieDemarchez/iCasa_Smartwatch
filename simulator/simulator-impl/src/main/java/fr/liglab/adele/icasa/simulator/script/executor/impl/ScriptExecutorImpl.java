@@ -32,7 +32,6 @@ import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;
 import javax.xml.parsers.SAXParserFactory;
 
-import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -40,6 +39,7 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
+import org.ow2.chameleon.core.services.AbstractDeployer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
@@ -66,7 +66,7 @@ import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 @Component(name = "script-executor")
 @Instantiate(name = "script-executor-0")
 @Provides
-public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
+public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecutor{
 
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
 	private static final String SCRIPTS_DIRECTORY = "scripts";
@@ -252,7 +252,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	// -- File Install methods -- //
 
 	@Override
-	public boolean canHandle(File artifact) {
+	public boolean accept(File artifact) {
 		if (artifact.getName().endsWith(".bhv")) {
 			return true;
 		}
@@ -260,7 +260,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	@Override
-	public void install(File artifact) throws Exception {
+	public void onFileCreate(File artifact) {
 		ScriptSAXHandler handler = parseFile(artifact);
 		if (handler != null) {
 			String scriptName = artifact.getName();
@@ -276,7 +276,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	@Override
-	public void update(File artifact) throws Exception {
+	public void onFileChange(File artifact) {
 		ScriptSAXHandler handler = parseFile(artifact);
 		if (handler != null) {
 			String scriptName = artifact.getName();
@@ -292,7 +292,7 @@ public class ScriptExecutorImpl implements ScriptExecutor, ArtifactInstaller {
 	}
 
 	@Override
-	public void uninstall(File artifact) throws Exception {
+	public void onFileDelete(File artifact) {
 		String scriptName = artifact.getName();
 		scriptMap.remove(scriptName);
 		for (ScriptExecutorListener listener : getListenersCopy()) {

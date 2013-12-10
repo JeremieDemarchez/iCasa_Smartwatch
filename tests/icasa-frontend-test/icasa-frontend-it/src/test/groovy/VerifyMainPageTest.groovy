@@ -39,7 +39,7 @@ class VerifyMainPageTest extends GebReportingSpec {
 
     def "add Map"() {
         when:
-        go()
+        go(baseUrl)
 
         then:
         waitFor { title.startsWith("iCasa") }

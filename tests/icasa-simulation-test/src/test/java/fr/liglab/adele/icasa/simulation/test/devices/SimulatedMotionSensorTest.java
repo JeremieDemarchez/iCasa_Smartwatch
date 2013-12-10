@@ -15,33 +15,26 @@
  */
 package fr.liglab.adele.icasa.simulation.test.devices;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Matchers;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
-
-import static org.mockito.Mockito.*;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 
 import javax.inject.Inject;
 import java.util.Hashtable;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class SimulatedMotionSensorTest extends AbstractDistributionBaseTest {
+import static org.mockito.Mockito.*;
+
+@RunWith(ChameleonRunner.class)
+public class SimulatedMotionSensorTest  {
 
     @Inject
     BundleContext context;
@@ -51,7 +44,7 @@ public class SimulatedMotionSensorTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        waitForStability(context);
+
     }
 
     @After

@@ -16,8 +16,6 @@
 
 
    <properties>
-      <exam.version>3.0.0</exam.version>
-      <url.version>1.5.2</url.version>
       <distrib.groupId>${project.groupId}</distrib.groupId>
       <distrib.artifactId>icasa.platform.distribution</distrib.artifactId>
       <distrib.version>${project.version}</distrib.version>
