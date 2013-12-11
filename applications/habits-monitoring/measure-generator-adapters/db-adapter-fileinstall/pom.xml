@@ -29,10 +29,6 @@
 			<artifactId>slf4j-api</artifactId>
 		</dependency>
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.fileinstall</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>fr.liglab.adele.icasa.apps</groupId>
 			<artifactId>autonomic.manager</artifactId>
 			<version>${project.parent.version}</version>
@@ -43,7 +39,11 @@
 			<type>jar</type>
 			<scope>test</scope>
 		</dependency>
-	</dependencies>
+        <dependency>
+            <groupId>org.ow2.chameleon</groupId>
+            <artifactId>chameleon-core</artifactId>
+        </dependency>
+    </dependencies>
 
 	<build>
 		<plugins>

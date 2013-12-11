@@ -52,6 +52,7 @@
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
                     <flattenDP>false</flattenDP>
+                    <defaultOutputDirectory>applications</defaultOutputDirectory>
                 </configuration>
             </plugin>
         </plugins>

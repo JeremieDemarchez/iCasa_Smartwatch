@@ -162,6 +162,9 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
             return givenPort;
         }
         logger.warn("Get port: "+ givenPort+ " from component: " + SERIAL_PORT_PROPERTY);
+        if (port == null) {
+            return "NONE";
+        }
 		return port;
 	}
 

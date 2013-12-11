@@ -51,6 +51,11 @@ limitations under the License.
             </dependency>
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
+               <artifactId>cilia-chameleon-deployer</artifactId>
+               <version>${ciliaVersion}</version>
+            </dependency>
+            <dependency>
+               <groupId>fr.liglab.adele.cilia</groupId>
                <artifactId>cilia-remote.dp</artifactId>
                <version>${ciliaVersion}</version>
                <type>deployment-package</type>
@@ -99,6 +104,10 @@ limitations under the License.
                <plugin>
                   <groupId>fr.liglab.adele.common</groupId>
                   <artifactId>maven-osgi-distribution-plugin</artifactId>
+                  <configuration>
+                     <flattenDP>true</flattenDP>
+                     <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                  </configuration>
                </plugin>
                <plugin>
 				<groupId>de.akquinet.gomobile</groupId>

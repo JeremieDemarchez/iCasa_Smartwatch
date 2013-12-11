@@ -69,7 +69,7 @@ import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecutor{
 
 	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
-	private static final String SCRIPTS_DIRECTORY = "scripts";
+	protected static final String SCRIPTS_DIRECTORY = "scripts";
 	/**
 	 * The clock use for simulation
 	 */
