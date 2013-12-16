@@ -13,34 +13,14 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote;
+package fr.liglab.adele.icasa.remote.wisdom;
 
-import java.util.Map;
-import java.util.Set;
+import org.json.JSONObject;
 
 /**
  * @author <a href="mailto:cilia-devel@lists.ligforge.imag.fr">Cilia Project
  *         Team</a>
  */
-public interface SimulatedDeviceManager {
-
-	/**
-	 * @param deviceType
-	 * @param deviceId
-	 * @param properties
-	 */
-	void createDevice(String deviceType, String deviceId,
-			Map<String, Object> properties);
-
-	/**
-	 * @param deviceId
-	 */
-	void removeDevice(String deviceId);
-	
-	/**
-	 * Retrieve the list of simulated devices
-	 * @return the list of types.
-	 */
-	Set<String> getDeviceTypes();
-
+public interface RemoteEventBroadcast {
+	void sendEvent(String eventType, JSONObject event);
 }

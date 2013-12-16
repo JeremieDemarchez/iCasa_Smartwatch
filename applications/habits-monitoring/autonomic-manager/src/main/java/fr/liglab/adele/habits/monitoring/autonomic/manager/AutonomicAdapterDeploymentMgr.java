@@ -163,7 +163,7 @@ public class AutonomicAdapterDeploymentMgr implements
 	 *            A new GenericDevice (proxy)
 	 * @throws ClassNotFoundException
 	 */
-	@Bind(id = "GenericDeviceDep", specification = "fr.liglab.adele.icasa.device.GenericDevice", aggregate = true)
+	@Bind(id = "GenericDeviceDep", specification = GenericDevice.class, aggregate = true)
 	public void bindDevice(ServiceReference detectorRef)
 			throws ClassNotFoundException {
 

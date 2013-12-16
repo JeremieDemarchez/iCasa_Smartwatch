@@ -13,26 +13,24 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.impl;
+package fr.liglab.adele.icasa.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.osgi.framework.BundleContext;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
+import org.wisdom.api.http.Status;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Created with IntelliJ IDEA.
@@ -41,11 +39,10 @@ import javax.ws.rs.core.Response;
  * Time: 2:35 PM
  * To change this template use File | Settings | File Templates.
  */
-@Component(name = "remote-rest-icasa")
-@Instantiate(name = "remote-rest-icasa-0")
-@Provides(specifications = { iCasaREST.class }, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value = "/backend")
-public class iCasaREST extends AbstractREST{
+@Component
+@Provides
+@Instantiate
+public class iCasaREST extends DefaultController {
 
     private BundleContext context;
 
@@ -53,23 +50,17 @@ public class iCasaREST extends AbstractREST{
         this.context = _context;
     }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response versionOptions() {
-        return makeCORS(Response.ok());
-    }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response info() {
+    @Route(method = HttpMethod.GET, uri = "/icasa/backend")
+    public Result info() {
         String info = null;
         try {
             info = getInfo();
         } catch (JSONException e) {
             e.printStackTrace();
-            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).build();
+            return status(Status.INTERNAL_SERVER_ERROR);
         }
-        return makeCORS(Response.ok(info));
+        return ok(info).as(MimeTypes.JSON);
     }
 
     /**

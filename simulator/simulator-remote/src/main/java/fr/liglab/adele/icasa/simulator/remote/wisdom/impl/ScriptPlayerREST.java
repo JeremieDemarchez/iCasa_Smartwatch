@@ -13,19 +13,10 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -34,31 +25,40 @@ import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.simulator.remote.util.IcasaSimulatorJSONUtil;
-import fr.liglab.adele.icasa.simulator.remote.util.ScriptJSON;
+import fr.liglab.adele.icasa.simulator.remote.wisdom.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.wisdom.util.ScriptJSON;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor.State;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
+import org.wisdom.api.http.Status;
+
+import java.io.IOException;
 
 /**
  * @author Thomas Leveque
  */
-@Component(name = "remote-rest-script-player")
-@Instantiate(name = "remote-rest-script-player-0")
-@Provides(specifications = { ScriptPlayerREST.class }, properties = { @StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value = "true", type = "java.lang.Boolean") })
-@Path(value = "/scriptPlayer/")
-public class ScriptPlayerREST extends AbstractREST {
+@Component
+@Provides
+@Instantiate
+@Path("/icasa/scriptPlayer")
+public class ScriptPlayerREST extends DefaultController {
 
 
 	@Requires
 	private ScriptExecutor _scriptExecutor;
 
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/scripts/")
-	public Response scripts() {
-		return makeCORS(Response.ok(getScripts()));
+
+    @Route(method = HttpMethod.GET, uri = "/scripts")
+	public Result scripts() {
+		return ok(getScripts()).as(MimeTypes.JSON);
 	}
 
 	/*
@@ -117,62 +117,46 @@ public class ScriptPlayerREST extends AbstractREST {
 	 * @return The required script, return
 	 *         <code>null<code> if the script does not exist.
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/script/{scriptId}")
-	public Response script(@PathParam("scriptId") String scriptId) {
+    @Route(method = HttpMethod.GET, uri = "/script/{scriptId}")
+    public Result script(@Parameter("scriptId") String scriptId) {
 		if (scriptId == null || scriptId.length() < 1) {
-			return makeCORS(Response.ok(getScripts()));
+			return ok(getScripts()).as(MimeTypes.JSON);
 		}
 
 		boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
 		if (!scriptFound) {
-			return makeCORS(Response.status(404));
+			return notFound();
 		} else {
 			JSONObject scriptJSON = IcasaSimulatorJSONUtil.getScriptJSON(scriptId, _scriptExecutor);
-			return makeCORS(Response.ok(scriptJSON.toString()));
+			return ok(scriptJSON.toString()).as(MimeTypes.JSON);
 		}
 	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/scripts/")
-	public Response getScriptsOptions() {
-		return makeCORS(Response.ok());
-	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/script/{scriptId}")
-	public Response updatesScriptOptions(@PathParam("scriptId") String scriptId) {
-		return makeCORS(Response.ok());
-	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/script/")
-	public Response createsScriptOptions() {
-		return makeCORS(Response.ok());
-	}
 
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path(value = "/script/{scriptId}")
-	public Response updatesScriptPut(@PathParam("scriptId") String scriptId, String content) {
+    @Route(method = HttpMethod.PUT, uri = "/script/{scriptId}")
+    public Result updatesScriptPut(@Parameter("scriptId") String scriptId) {
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
 		if (scriptId == null || scriptId.length() < 1) {
-			return makeCORS(Response.status(404));
+			return notFound();
 		}
 
 		boolean scriptFound = _scriptExecutor.getScriptList().contains(scriptId);
 		if (!scriptFound) {
-			return makeCORS(Response.status(404));
+			return notFound();
 		}
 
 		ScriptJSON script = ScriptJSON.fromString(content);
 
 		if (script == null)
-			return makeCORS(Response.status(404));
+			return notFound();
 
 		String currentScriptName = _scriptExecutor.getCurrentScript();
 		State currentScriptState = _scriptExecutor.getCurrentScriptState();
@@ -191,7 +175,7 @@ public class ScriptPlayerREST extends AbstractREST {
 				if (State.STARTED == newState)
 					_scriptExecutor.execute(scriptId);
 			} else {
-				return makeCORS(Response.status(Response.Status.SERVICE_UNAVAILABLE));
+				return status(Status.SERVICE_UNAVAILABLE);
 			}				
 		} else { // New script
 			if (currentScriptState == State.STOPPED)
@@ -203,22 +187,27 @@ public class ScriptPlayerREST extends AbstractREST {
 
 		JSONObject scriptJSON = IcasaSimulatorJSONUtil.getScriptJSON(scriptId, _scriptExecutor);
 
-		return makeCORS(Response.ok(scriptJSON.toString()));
+		return ok(scriptJSON.toString()).as(MimeTypes.JSON);
 	}
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path(value = "/script/")
-	public Response createScript(String content) {
 
+    @Route(method = HttpMethod.POST, uri = "/script")
+    public Result createScript() {
+
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
 		ScriptJSON scriptJSON = ScriptJSON.fromString(content);
 		String fileName = scriptJSON.getId();
 
 		//_simulationMgr.saveSimulationState(fileName);
 		_scriptExecutor.saveSimulationScript(fileName);
 
-		return makeCORS(Response.ok(scriptJSON.toString()));
+		return ok(scriptJSON.toString()).as(MimeTypes.JSON);
 	}
 
 }

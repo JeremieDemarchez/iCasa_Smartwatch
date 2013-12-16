@@ -13,19 +13,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.remote.util;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.util;
 
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.PersonType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.clock.util.DateTextUtil;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 
-public class IcasaSimulatorJSONUtil extends IcasaJSONUtil{
+public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 
 	public static JSONObject getPersonJSON(Person person) {
 		JSONObject personJSON = null;

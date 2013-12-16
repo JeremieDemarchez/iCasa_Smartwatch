@@ -13,8 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
+import fr.liglab.adele.icasa.remote.wisdom.RemoteEventBroadcast;
 import fr.liglab.adele.icasa.simulator.PersonType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -28,18 +29,17 @@ import org.osgi.framework.BundleContext;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.remote.RemoteEventBroadcast;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
 import fr.liglab.adele.icasa.simulator.listener.SimulatedLocatedDeviceListener;
-import fr.liglab.adele.icasa.simulator.remote.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.wisdom.util.IcasaSimulatorJSONUtil;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 
-@Component(name = "iCasa-simulation-event-broadcast")
-@Instantiate(name = "iCasa-simulation-event-broadcast-1")
+@Component
+@Instantiate
 public class SimulationEventBroadcast  {
 
 	@Requires 

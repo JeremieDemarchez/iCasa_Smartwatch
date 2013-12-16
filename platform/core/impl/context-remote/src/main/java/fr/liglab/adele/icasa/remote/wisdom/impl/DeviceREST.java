@@ -16,51 +16,43 @@
 /**
  *
  */
-package fr.liglab.adele.icasa.remote.impl;
-
-import java.text.ParseException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.json.JSONArray;
-import org.json.JSONObject;
+package fr.liglab.adele.icasa.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.remote.SimulatedDeviceManager;
-import fr.liglab.adele.icasa.remote.util.DeviceJSON;
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.remote.wisdom.SimulatedDeviceManager;
+import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import org.apache.felix.ipojo.annotations.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.wisdom.api.DefaultController;
+
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
+import org.wisdom.api.http.Status;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * @author Thomas Leveque
  *
  */
-@Component(name="remote-rest-device")
-@Instantiate(name="remote-rest-device-0")
-@Provides(specifications={DeviceREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value="/devices/")
-public class DeviceREST extends AbstractREST {
+@Component
+@Provides
+@Instantiate
+@Path("/icasa/devices")
+public class DeviceREST extends DefaultController {
 
     @Requires
     private ContextManager _contextMgr;
@@ -68,63 +60,28 @@ public class DeviceREST extends AbstractREST {
     @Requires (optional = true) 
     SimulatedDeviceManager simulator;
     
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/deviceTypes/")
-    public Response getDeviceTypesOptions() {
-        return makeCORS(Response.ok());
+
+
+
+    @Route(method = HttpMethod.GET, uri = "/deviceTypes")
+    public Result deviceTypes() {
+        return ok(getDeviceTypes()).as(MimeTypes.JSON);
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/deviceTypes/")
-    public Response deviceTypes() {
-        return makeCORS(Response.ok(getDeviceTypes()));
-    }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/simulatedDeviceTypes/")
-    public Response getSimulatedDeviceTypesOptions() {
-        return makeCORS(Response.ok());
-    }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/simulatedDeviceTypes/")
-    public Response simulatedDeviceTypes() {
+    @Route(method = HttpMethod.GET, uri = "/simulatedDeviceTypes")
+    public Result simulatedDeviceTypes() {
     	if(simulator == null) {
-    		return makeCORS(Response.status(Status.SERVICE_UNAVAILABLE));
+    		return internalServerError();
     	}
-        return makeCORS(Response.ok(getSimulatedDeviceTypes()));
+        return ok(getSimulatedDeviceTypes()).as(MimeTypes.JSON);
     }
     
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/device/")
-    public Response createsDeviceOptions() {
-        return makeCORS(Response.ok());
-    }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/device/{deviceId}")
-    public Response updatesDeviceOptions(@PathParam("deviceId") String deviceId) {
-        return makeCORS(Response.ok());
-    }
-
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/devices/")
-    public Response getDevicesOptions() {
-        return makeCORS(Response.ok());
-    }
-
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/devices/")
-    public Response devices() {
-        return makeCORS(Response.ok(getDevices()));
+    @Route(method = HttpMethod.GET, uri = "/devices")
+    public Result devices() {
+        return ok(getDevices()).as(MimeTypes.JSON);
     }
 
     /**
@@ -133,23 +90,21 @@ public class DeviceREST extends AbstractREST {
      * @param deviceId The ID of the device to retrieve
      * @return The required device,
      * return <code>null<code> if the device does not exist.
-     * @throws ParseException
+     * @throws java.text.ParseException
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/device/{deviceId}")
-    public Response device(@PathParam("deviceId") String deviceId) {
+    @Route(method = HttpMethod.GET, uri = "/device/{deviceId}")
+    public Result device(@Parameter("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return makeCORS(Response.ok(getDevices()));
+            return ok(getDevices()).as(MimeTypes.JSON);
         }
 
         LocatedDevice foundDevice = findDevice(deviceId);
         if (foundDevice == null) {
-            return makeCORS(Response.status(404));
+            return notFound();
         } else {
             JSONObject foundDeviceJSON = IcasaJSONUtil.getDeviceJSON(foundDevice, _contextMgr);
 
-            return makeCORS(Response.ok(foundDeviceJSON.toString()));
+            return ok(foundDeviceJSON.toString()).as(MimeTypes.JSON);
         }
     }
 
@@ -157,17 +112,23 @@ public class DeviceREST extends AbstractREST {
         return _contextMgr.getDevice(deviceId);
     }
 
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/device/{deviceId}")
-    public Response updatesDevice(@PathParam("deviceId") String deviceId, String content) {
+    @Route(method = HttpMethod.PUT, uri = "/device/{deviceId}")
+    public Result updatesDevice(@Parameter("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return makeCORS(Response.status(404));
+            return notFound();
         }
+
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
+
         LocatedDevice device = findDevice(deviceId);
         if (device == null){
-            return makeCORS(Response.status(404));
+            return notFound();
         }
 
         DeviceJSON updatedDevice = DeviceJSON.fromString(content);
@@ -193,7 +154,7 @@ public class DeviceREST extends AbstractREST {
 
         JSONObject deviceJSON = IcasaJSONUtil.getDeviceJSON(device, _contextMgr);
 
-        return makeCORS(Response.ok(deviceJSON.toString()));
+        return ok(deviceJSON.toString()).as(MimeTypes.JSON);
     }
 
     /**
@@ -201,14 +162,19 @@ public class DeviceREST extends AbstractREST {
      *
      * @return
      */
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/device/")
-    public Response createDevice(String content) {
-   
+    @Route(method = HttpMethod.POST, uri = "/device")
+    public Result createDevice() {
+        String content = null;
+        try {
+            BufferedReader reader = context().getReader();
+            content = IcasaJSONUtil.getContent(reader);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
     	if(simulator == null) {
-    		return makeCORS(Response.status(Status.SERVICE_UNAVAILABLE));
+
+    		return internalServerError();
     	}
         DeviceJSON deviceJSON = DeviceJSON.fromString(content);
 
@@ -233,11 +199,11 @@ public class DeviceREST extends AbstractREST {
         }
 
         if (newDevice == null)
-            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+            return internalServerError();
 
         JSONObject newDeviceJSON = IcasaJSONUtil.getDeviceJSON(newDevice, _contextMgr);
 
-        return makeCORS(Response.ok(newDeviceJSON.toString()));
+        return ok(newDeviceJSON.toString()).as(MimeTypes.JSON);
     }
 
     /**
@@ -246,24 +212,22 @@ public class DeviceREST extends AbstractREST {
      * @param deviceId device id
      * @return true if chain is successful deleted, false if it does not exist.
      */
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/device/{deviceId}")
-    public Response deleteDevice(@PathParam("deviceId") String deviceId) {
+    @Route(method = HttpMethod.DELETE, uri = "/device/{deviceId}")
+    public Result deleteDevice(@Parameter("deviceId") String deviceId) {
 
     	if(simulator == null) {
-    		return makeCORS(Response.status(Status.SERVICE_UNAVAILABLE));
+    		return status(Status.INTERNAL_SERVER_ERROR);
     	}
         LocatedDevice foundDevice = findDevice(deviceId);
         if (foundDevice == null)
-            return Response.status(404).build();
+            return notFound();
         try {
             simulator.removeDevice(deviceId);
         } catch (Exception e) {
-            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+            return status(Status.INTERNAL_SERVER_ERROR);
         }
 
-        return makeCORS(Response.ok());
+        return ok();
     }
     
     

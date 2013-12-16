@@ -29,6 +29,7 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
+        <module>wisdom-bundles</module>
         <module>icasa-platform-distribution</module>
         <module>icasa-platform-handler-distribution</module>        
         <module>icasa-teaching-distribution</module>

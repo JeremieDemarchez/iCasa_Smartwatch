@@ -13,24 +13,29 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.remote.AbstractREST;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.Result;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 /**
  * Remote service to manipulate global context simulation info (e.g reset the context)
  */
-@Component(name="remote-rest-simulation")
-@Instantiate(name="remote-rest-simulation-0")
-@Provides(specifications={SimulationREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value="/simulation")
-public class SimulationREST extends AbstractREST {
+
+//@Path(value="/simulation")
+@Component
+@Provides
+@Instantiate
+public class SimulationREST extends DefaultController {
     @Requires
     private SimulationManager _simulationMgr;
 
@@ -39,16 +44,11 @@ public class SimulationREST extends AbstractREST {
      * Reset the simulation context (persons, simulated devices, zones, ...)
      * @return
      */
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response resetSimulation() {
+
+    @Route(method = HttpMethod.DELETE, uri = "/icasa/simulation")
+    public Result resetSimulation() {
         _simulationMgr.resetContext();
-        return makeCORS(Response.ok());
+        return ok();
     }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    public Response resetSimulationOptions() {
-        return makeCORS(Response.ok());
-    }
 }

@@ -1,46 +1,21 @@
 /**
- *
- *   Copyright 2011-2013 Universite Joseph Fourier, LIG, ADELE Research
- *   Group Licensed under a specific end user license agreement;
- *   you may not use this file except in compliance with the License.
- *   You may obtain a copy of the License at
- *
- *     http://adeleresearchgroup.github.com/iCasa/snapshot/license.html
- *
- *   Unless required by applicable law or agreed to in writing, software
- *   distributed under the License is distributed on an "AS IS" BASIS,
- *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- *   See the License for the specific language governing permissions and
- *   limitations under the License.
- */
-package fr.liglab.adele.icasa.remote.impl;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+*
+*   Copyright 2011-2013 Universite Joseph Fourier, LIG, ADELE Research
+*   Group Licensed under a specific end user license agreement;
+*   you may not use this file except in compliance with the License.
+*   You may obtain a copy of the License at
+*
+*     http://adeleresearchgroup.github.com/iCasa/snapshot/license.html
+*
+*   Unless required by applicable law or agreed to in writing, software
+*   distributed under the License is distributed on an "AS IS" BASIS,
+*   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+*   See the License for the specific language governing permissions and
+*   limitations under the License.
+*/
+package fr.liglab.adele.icasa.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Validate;
-import org.atmosphere.cpr.AtmosphereInterceptor;
-import org.atmosphere.cpr.AtmosphereResponse;
-import org.atmosphere.cpr.Broadcaster;
-import org.atmosphere.handler.OnMessage;
-import org.atmosphere.interceptor.AtmosphereResourceLifecycleInterceptor;
-import org.barjo.atmosgi.AtmosphereService;
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.osgi.framework.BundleContext;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
-
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
@@ -48,49 +23,52 @@ import fr.liglab.adele.icasa.listener.MultiEventListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.remote.RemoteEventBroadcast;
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.remote.wisdom.RemoteEventBroadcast;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import org.apache.felix.ipojo.annotations.*;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wisdom.api.Controller;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.*;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.Result;
+import org.wisdom.api.http.websockets.Publisher;
 
-@Component(name = "iCasa-event-broadcast")
-@Provides(specifications = RemoteEventBroadcast.class)
-@Instantiate(name = "iCasa-event-broadcast-1")
-public class EventBroadcast extends OnMessage<String> implements RemoteEventBroadcast {
+import java.util.Date;
+import java.util.UUID;
+
+import org.wisdom.api.Controller;
+
+@Component
+@Provides(specifications = {RemoteEventBroadcast.class, Controller.class})
+@Instantiate
+public class EventBroadcast extends DefaultController implements RemoteEventBroadcast {
 
     protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG_REMOTE+".event");
 
-    @Property(name = "mapping", value = "/event")
-	private String mapping;
-
-	private final List<AtmosphereInterceptor> _interceptors = new ArrayList<AtmosphereInterceptor>();
+    @Property (name = "url", value="/icasa/websocket/event")
+	private String url;
 
 	@Requires
-	private AtmosphereService _atmoService;
-
-	@Requires
-	private HttpService _httpService;
+	private Publisher publisher;
 
 	@Requires
 	private ContextManager _ctxMgr;
-	
-	
+
+
 
 	@Requires
 	private Clock _clock;
 
-	private Broadcaster _eventBroadcaster;
-
 	private ICasaEventListener _iCasaListener;
 
 	private ClockEventListener _clockListener;
-	
 
-	// private final BundleContext _context;
 
-	public EventBroadcast(BundleContext context) {
-		// _context = context;
-	}
 
 	@Validate
 	protected void start() {
@@ -98,24 +76,10 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 		// Register iCasa listeners
 		_iCasaListener = new ICasaEventListener();
 		_ctxMgr.addListener(_iCasaListener);
-		
+
 
 		_clockListener = new ClockEventListener();
 		_clock.addListener(_clockListener);
-		
-
-		_eventBroadcaster = _atmoService.getBroadcasterFactory().get();
-
-		// Register the server (itself)
-		_interceptors.add(new AtmosphereResourceLifecycleInterceptor());
-		_atmoService.addAtmosphereHandler(mapping, this, _eventBroadcaster, _interceptors);
-
-		// Register the web client
-		try {
-			_httpService.registerResources("/event", "/web", null);
-		} catch (NamespaceException e) {
-			e.printStackTrace();
-		}
 
 	}
 
@@ -132,18 +96,9 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 			_clock.removeListener(_clockListener);
 			_clockListener = null;
 		}
-		
-		_atmoService.removeAtmosphereHandler(mapping);
-		_interceptors.clear();
-
-		_httpService.unregister("/event");
 
 	}
 
-	@Override
-	public void onMessage(AtmosphereResponse atmosphereResponse, String s) throws IOException {
-		atmosphereResponse.getWriter().write(s);
-	}
 
 	private UUID _lastEventId = UUID.randomUUID();
 
@@ -152,13 +107,34 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 		return _lastEventId.toString();
 	}
 
+    @Opened("{name}")
+    public void open(@Parameter("name") String name) {
+        System.out.println("Web socket opened => " + name);
+    }
+
+    @Closed("{name}")
+    public void close(@Parameter("name") String name) {
+        System.out.println("Web socket closed => " + name);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/icasa/websocket/event")
+    public Result handshake() {
+        return ok();
+    }
+
+    @OnMessage("{name}")
+    public void onMessage(@Parameter("name") String name) {
+        System.out.println("Receiving message on " + name + " : ");
+        publisher.publish(url, "OK");
+    }
+
 	public void sendEvent(String eventType, JSONObject event) {
-        logger.debug("sending event" + eventType);
+        logger.debug("!! sending event : " + eventType  + "to " + url);
 		try {
 			event.put("eventType", eventType);
 			event.put("id", generateUUID());
 			event.put("time", new Date().getTime());
-			_eventBroadcaster.broadcast(event.toString());
+            publisher.publish(url, event.toString());
 		} catch (JSONException e) {
 			e.printStackTrace();
             logger.error("Building message error" + eventType, e);
@@ -550,6 +526,6 @@ public class EventBroadcast extends OnMessage<String> implements RemoteEventBroa
 		}
 
 	}
-	
+
 
 }

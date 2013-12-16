@@ -1,15 +1,20 @@
 package fr.liglab.adele.dashboard.servlet;
 
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Provides;
 import org.osgi.framework.BundleContext;
-import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.URL;
 
 /**
@@ -18,75 +23,42 @@ import java.net.URL;
  * Time: 4:11 PM
  */
 
-@Component(name="FrontendServlet")
-//@Instantiate
-public class FrontendServlet extends HttpServlet {
+@Component
+@Provides
+@Instantiate
+public class FrontendServlet extends DefaultController {
 
 
     private final BundleContext context;
-
-    @Property(value = "/dashboard")
-    private String servletName;
-
-    @Property(value="dashboard")
-    private String servletType;
-
-    @Requires
-    HttpService service;
 
     public FrontendServlet(BundleContext c){
         this.context = c;
     }
 
-    @Bind
-    private void bindHttpService(HttpService _service) {
-        this.service = _service; //assign http service
-    }
 
-    @Unbind
-    public void unbindHttpService(HttpService _service) {
-        unregister();
-        service = null;
-    }
 
-    /**
-     * When dependencies are resolved, we register the servlet.
-     */
-    @Validate
-    public void onValidate(){
+    @Route(method = HttpMethod.GET, uri = "/dashboard")
+    public Result getDashboard(){
+        String result = null;
         try {
-            service.registerServlet(servletName, this, null, null);
-        } catch (NamespaceException e) {
-            e.printStackTrace();
-        } catch (ServletException e) {
-            e.printStackTrace();
+            result = getTemplate().toString();
+        } catch (IOException e) {
+            return internalServerError();
         }
+        result = result.replace("@servletType", "dashboard");//dashboard or simulator.
+        return ok(result).as(MimeTypes.HTML);
     }
 
-
-    /**
-     * When component is invalid, and if there is a references to the http service.
-     * The servlet is unregistered.
-     */
-    @Invalidate
-    public void onInvalidate(){
-        unregister();
-    }
-
-    private void unregister(){
-        if (service != null){
-            service.unregister(servletName);
+    @Route(method = HttpMethod.GET, uri = "/simulator")
+    public Result getSimulator(){
+        String result = null;
+        try {
+            result = getTemplate().toString();
+        } catch (IOException e) {
+            return internalServerError();
         }
-    }
-
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String result = getTemplate().toString();
-        result = result.replace("@servletType", servletType);//dashboard or simulator.
-        PrintWriter writer = resp.getWriter();
-        writer.append(result);
-        writer.close();
+        result = result.replace("@servletType", "simulator");//dashboard or simulator.
+        return ok(result).as(MimeTypes.HTML);
     }
 
     private StringBuilder getTemplate() throws IOException {

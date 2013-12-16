@@ -13,67 +13,50 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.impl;
-
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.json.JSONArray;
-import org.json.JSONObject;
+package fr.liglab.adele.icasa.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.remote.util.ZoneJSON;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.remote.wisdom.util.ZoneJSON;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.json.JSONArray;
+import org.json.JSONObject;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
+
+import java.io.IOException;
+
 
 /**
  * @author Thomas Leveque
  */
-@Component(name = "remote-rest-zone")
-@Instantiate(name = "remote-rest-zone-0")
-@Provides(specifications = { ZoneREST.class }, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value = "/zones/")
-public class ZoneREST extends AbstractREST {
+@Component
+@Provides
+@Instantiate
+@Path("/icasa/zones")
+public class ZoneREST extends DefaultController {
 
 	@Requires
 	private ContextManager _simulationMgr;
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/zones/")
-	public Response zones() {
-		return makeCORS(Response.ok(getZones()));
+
+    @Route(method = HttpMethod.GET, uri = "/zones")
+    public Result zones() {
+		return ok(getZones()).as(MimeTypes.JSON);
 	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/zone/{zoneId}")
-	public Response updatesZoneOptions(@PathParam("zoneId") String zoneId) {
-		return makeCORS(Response.ok());
-	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/zone/")
-	public Response createsZoneOptions() {
-		return makeCORS(Response.ok());
-	}
 
 	/**
 	 * Retrieves a zone.
@@ -82,21 +65,20 @@ public class ZoneREST extends AbstractREST {
 	 *           The ID of the zone to retrieve
 	 * @return The required zone
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/zone/{zoneId}")
-	public Response getZone(@PathParam("zoneId") String zoneId) {
+
+    @Route(method = HttpMethod.GET, uri = "/zone/{zoneId}")
+	public Result getZone(@Parameter("zoneId") String zoneId) {
 		if (zoneId == null || zoneId.length() < 1) {
-			return makeCORS(Response.ok(getZones()));
+			return ok(getZones()).as(MimeTypes.JSON);
 		}
 
 		Zone zoneFound = _simulationMgr.getZone(zoneId);
 		if (zoneFound == null) {
-			return makeCORS(Response.status(404));
+			return notFound();
 		} else {
 			JSONObject zoneJSON = IcasaJSONUtil.getZoneJSON(zoneFound);
 
-			return makeCORS(Response.ok(zoneJSON.toString()));
+			return ok(zoneJSON.toString()).as(MimeTypes.JSON);
 		}
 	}
 
@@ -123,18 +105,23 @@ public class ZoneREST extends AbstractREST {
 		return currentZones.toString();
 	}
 
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path(value = "/zone/{zoneId}")
-	public Response updatesZone(@PathParam("zoneId") String zoneId, String content) {
+
+    @Route(method = HttpMethod.PUT, uri = "/zone/{zoneId}")
+	public Result updatesZone(@Parameter("zoneId") String zoneId) {
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
 		if (zoneId == null || zoneId.length() < 1) {
-			return makeCORS(Response.status(404));
+			return notFound();
 		}
 
 		Zone zoneFound = _simulationMgr.getZone(zoneId);
 		if (zoneFound == null)
-			return makeCORS(Response.status(404));
+			return notFound();
 
 		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
 
@@ -160,15 +147,19 @@ public class ZoneREST extends AbstractREST {
 			}
         }
 
-		return makeCORS(Response.ok(IcasaJSONUtil.getZoneJSON(zoneFound).toString()));
+		return ok(IcasaJSONUtil.getZoneJSON(zoneFound).toString()).as(MimeTypes.JSON);
 
 	}
 
-	@POST
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-	@Path(value = "/zone/")
-	public Response createZone(String content) {
+    @Route(method = HttpMethod.POST, uri = "/zone")
+	public Result createZone() {
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
 
 		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
 
@@ -179,26 +170,25 @@ public class ZoneREST extends AbstractREST {
 		Zone newZone = _simulationMgr
 		      .createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), zoneJSON.getBottomZ(), width, height, depth);
 
-		return makeCORS(Response.ok(IcasaJSONUtil.getZoneJSON(newZone).toString()));
+		return ok(IcasaJSONUtil.getZoneJSON(newZone).toString()).as(MimeTypes.JSON);
 
 	}
 
-	@DELETE
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/zone/{zoneId}")
-	public Response deleteZone(@PathParam("zoneId") String zoneId) {
+
+    @Route(method = HttpMethod.DELETE, uri = "/zone/{zoneId}")
+	public Result deleteZone(@Parameter("zoneId") String zoneId) {
 
 		Zone zone = _simulationMgr.getZone(zoneId);
 
 		if (zone == null)
-			return makeCORS(Response.status(404));
+			return notFound();
 		try {
 			_simulationMgr.removeZone(zoneId);
 		} catch (Exception e) {
 			e.printStackTrace();
-			return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+			return internalServerError();
 		}
-		return makeCORS(Response.ok());
+		return ok();
 	}
 
 }

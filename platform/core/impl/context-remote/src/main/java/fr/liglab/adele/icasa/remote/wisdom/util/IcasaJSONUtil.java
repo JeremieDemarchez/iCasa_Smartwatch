@@ -13,12 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.util;
-
-import fr.liglab.adele.icasa.remote.impl.ClockREST;
-import org.json.JSONArray;
-import org.json.JSONException;
-import org.json.JSONObject;
+package fr.liglab.adele.icasa.remote.wisdom.util;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clock.Clock;
@@ -27,7 +22,13 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.remote.wisdom.impl.ClockREST;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.IOException;
 import java.util.Set;
 
 public class IcasaJSONUtil {
@@ -182,6 +183,19 @@ public class IcasaJSONUtil {
 		return clockJSON;
 	}
 
+    public static String getContent(BufferedReader reader){
+        StringBuffer content = new StringBuffer();
+        String line = null;
+        try {
+            while((line = reader.readLine()) != null){
+                content.append(line);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+            return content.toString();
+        }
+        return content.toString();
+    }
 	
 	
 	

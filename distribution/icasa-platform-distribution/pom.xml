@@ -38,7 +38,12 @@
             <artifactId>distribution.base</artifactId>
             <type>osgi-distribution</type>
         </dependency>
-
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>wisdom.bundles</artifactId>
+           <version>${project.version}</version>
+           <type>osgi-distribution</type>
+        </dependency>
         <!-- RoSe bundles -->
         <dependency>
            <groupId>org.ow2.chameleon.rose</groupId>

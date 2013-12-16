@@ -13,53 +13,45 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.impl;
+package fr.liglab.adele.icasa.remote.wisdom.impl;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.remote.util.IcasaJSONUtil;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.*;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
+
+import java.io.IOException;
+
 
 /**
  * 
  * @author Gabriel Pedraza Ferreira
  * 
  */
-@Component(name = "remote-rest-clock")
-@Instantiate(name = "remote-rest-clock-0")
-@Provides(specifications = { ClockREST.class }, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value = "/clocks/")
-public class ClockREST extends AbstractREST {
+@Component
+@Provides
+@Instantiate
+@Path("/icasa/clocks")
+public class ClockREST  extends DefaultController{
 
     public static final String DEFAULT_INSTANCE_NAME = "default";
 
     @Requires(optional = true)
 	private Clock clock;
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/clocks/")
-    public Response clocksOptions() {
-        return makeCORS(Response.ok());
-    }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/clocks/")
-    public Response clocks() {
-        return makeCORS(Response.ok(getClocks()));
+    @Route(method = HttpMethod.GET, uri = "/clocks")
+    public Result clocks() {
+        return ok(getClocks()).as(MimeTypes.JSON);
     }
 
     /**
@@ -79,30 +71,27 @@ public class ClockREST extends AbstractREST {
         return currentClocks.toString();
     }
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/clock/{clockId}")
-	public Response clock(@PathParam("clockId") String clockId) {
+    @Route(method = HttpMethod.GET, uri = "/clock/{clockId}")
+	public Result clock(@Parameter("clockId") String clockId) {
         if ((clock == null) || (clockId == null) || (! DEFAULT_INSTANCE_NAME.equals(clockId)))
-            return makeCORS(Response.status(404));
+            return notFound();
 
-		return makeCORS(Response.ok(IcasaJSONUtil.getClockJSON(clock).toString()));
+		return ok(IcasaJSONUtil.getClockJSON(clock).toString()).as(MimeTypes.JSON);
 	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/clock/{clockId}")
-	public Response clockOptions(@PathParam("clockId") String clockId) {
-		return makeCORS(Response.ok());
-	}
 
-	@PUT
-	@Produces(MediaType.APPLICATION_JSON)
-	@Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/clock/{clockId}")
-	public Response updateClock(@PathParam("clockId") String clockId, String content) {
+
+    @Route(method = HttpMethod.PUT, uri = "/clock/{clockId}")
+	public Result updateClock(@Parameter("clockId") String clockId) {
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
         if ((clock == null) || (clockId == null) || (! "default".equals(clockId)))
-            return makeCORS(Response.status(404));
+            return notFound();
 
 		try {
 			JSONObject clockObject = new JSONObject(content);
@@ -131,7 +120,7 @@ public class ClockREST extends AbstractREST {
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
-		return makeCORS(Response.ok(IcasaJSONUtil.getClockJSON(clock).toString()));
+		return ok(IcasaJSONUtil.getClockJSON(clock).toString()).as(MimeTypes.JSON);
 	}
 
 

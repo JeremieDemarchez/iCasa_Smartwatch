@@ -16,25 +16,25 @@
 /**
  *
  */
-package fr.liglab.adele.icasa.simulator.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
 import java.util.Map;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.remote.wisdom.SimulatedDeviceManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 
-import fr.liglab.adele.icasa.remote.SimulatedDeviceManager;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 /**
  * @author Thomas Leveque
  *
  */
-@Component(name="simulator-remote-rest-device")
-@Instantiate(name="simulator-remote-rest-device-0")
+@Component
+@Instantiate
 @Provides(specifications={SimulatedDeviceManager.class})
 public class SimulatedDeviceREST implements SimulatedDeviceManager {
 

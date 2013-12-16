@@ -5,7 +5,7 @@ require.config({
     waitSeconds: 15,
 
     # By default load any module IDs from assets/javascripts
-    baseUrl: '/dashboard/assets/javascripts',
+    baseUrl: '/assets/javascripts',
 
     # paths MUST not include .js extension
     paths: {

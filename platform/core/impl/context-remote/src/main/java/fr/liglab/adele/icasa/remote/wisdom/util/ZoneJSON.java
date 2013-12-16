@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.remote.util;
+package fr.liglab.adele.icasa.remote.wisdom.util;
 
 import fr.liglab.adele.icasa.location.Zone;
 import org.json.JSONException;

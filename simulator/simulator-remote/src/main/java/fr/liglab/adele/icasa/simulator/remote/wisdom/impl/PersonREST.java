@@ -13,45 +13,44 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.DELETE;
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.POST;
-import javax.ws.rs.PUT;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.PersonType;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
+import fr.liglab.adele.icasa.simulator.remote.wisdom.util.IcasaSimulatorJSONUtil;
+import fr.liglab.adele.icasa.simulator.remote.wisdom.util.PersonJSON;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
 
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.remote.util.IcasaSimulatorJSONUtil;
-import fr.liglab.adele.icasa.simulator.remote.util.PersonJSON;
+import java.io.IOException;
+
+//import org.wisdom.api.http.Response;
 
 /**
  * @author Thomas Leveque
  *
  */
-@Component(name="remote-rest-person")
-@Instantiate(name="remote-rest-person-0")
-@Provides(specifications={PersonREST.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value="/persons/")
-public class PersonREST extends AbstractREST {
+@Component
+@Provides
+@Instantiate
+@Path("/icasa/persons")
+public class PersonREST extends DefaultController {
 
     @Requires
     private SimulationManager _simulationMgr;
@@ -97,47 +96,23 @@ public class PersonREST extends AbstractREST {
         return currentPersonTypes.toString();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/personTypes/")
-    public Response personTypes() {
-        return makeCORS(Response.ok(getPersonTypes()));
+
+    @Route(method = HttpMethod.GET, uri = "/personTypes")
+    public Result personTypes() {
+        return ok(getPersonTypes()).as(MimeTypes.JSON);
     }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/personTypes/")
-    public Response getPersonTypesOptions() {
-        return makeCORS(Response.ok());
+    @Route(method = HttpMethod.OPTIONS, uri = "/personTypes")
+    public Result getPersonTypesOptions() {
+        return ok();
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/persons/")
-    public Response persons() {
-        return makeCORS(Response.ok(getPersons()));
+
+    @Route(method = HttpMethod.GET, uri = "/persons")
+    public Result persons() {
+        return ok(getPersons()).as(MimeTypes.JSON);
     }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/persons/")
-    public Response getPersonsOptions() {
-        return makeCORS(Response.ok());
-    }
-
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/person/{personId}")
-    public Response updatesPersonOptions(@PathParam("personId") String personId) {
-        return makeCORS(Response.ok());
-    }
-
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/person/")
-    public Response createsPersonOptions() {
-        return makeCORS(Response.ok());
-    }
 
     /**
      * Retrieve a device.
@@ -147,21 +122,19 @@ public class PersonREST extends AbstractREST {
      * return <code>null<code> if the device does not exist.
      * @throws java.text.ParseException
      */
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/person/{personId}")
-    public Response person(@PathParam("personId") String deviceId) {
+    @Route(method = HttpMethod.GET, uri = "/person/{personId}")
+    public Result person(@Parameter("personId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return makeCORS(Response.ok(getPersons()));
+            return ok(getPersons()).as(MimeTypes.JSON);
         }
 
         Person foundPerson = findPerson(deviceId);
         if (foundPerson == null) {
-            return makeCORS(Response.status(404));
+            return notFound();
         } else {
             JSONObject foundPersonJSON = IcasaSimulatorJSONUtil.getPersonJSON(foundPerson);
 
-            return makeCORS(Response.ok(foundPersonJSON.toString()));
+            return ok(foundPersonJSON.toString()).as(MimeTypes.JSON);
         }
     }
 
@@ -179,15 +152,18 @@ public class PersonREST extends AbstractREST {
     /**
      * Create a new person.
      *
-     * @param content JSON representation of person to create
-     *
      * @return
      */
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/person/")
-    public Response createPerson(String content) {
+    @Route(method = HttpMethod.POST, uri = "/person")
+    public Result createPerson() {
+
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
 
         PersonJSON personJSON = PersonJSON.fromString(content);
 
@@ -196,32 +172,35 @@ public class PersonREST extends AbstractREST {
 
         Person newPerson = findPerson(personJSON.getName());
         if (newPerson == null)
-            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+            return internalServerError();
 
         JSONObject newPersonJSON = IcasaSimulatorJSONUtil.getPersonJSON(newPerson);
 
-        return makeCORS(Response.ok(newPersonJSON.toString()));
+        return ok(newPersonJSON.toString()).as(MimeTypes.JSON);
     }
 
     /**
      * Update an existing person.
      *
      * @param personId
-     * @param content JSON representation of person to create
      *
      * @return
      */
-    @PUT
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/person/{personId}")
-    public Response updatesPerson(@PathParam("personId") String personId, String content) {
+    @Route(method = HttpMethod.PUT, uri = "/person/{personId}")
+    public Result updatesPerson(@Parameter("personId") String personId) {
 
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
         PersonJSON personJSON = PersonJSON.fromString(content);
 
         Person foundPerson = findPerson(personId);
         if (foundPerson == null)
-      	  return makeCORS(Response.status(Response.Status.NOT_FOUND));
+      	  return notFound();
 
         if ((personJSON.getPositionX() != null) || (personJSON.getPositionY() != null)) {
             Position personPosition = foundPerson.getCenterAbsolutePosition();
@@ -237,7 +216,7 @@ public class PersonREST extends AbstractREST {
         
         JSONObject newPersonJSON = IcasaSimulatorJSONUtil.getPersonJSON(findPerson(personId));
 
-        return makeCORS(Response.ok(newPersonJSON.toString()));
+        return ok(newPersonJSON.toString()).as(MimeTypes.JSON);
     }
 
     /**
@@ -246,22 +225,21 @@ public class PersonREST extends AbstractREST {
      * @param personId person identifier
      * @return ok if person is successful deleted, 404 response if it does not exist.
      */
-    @DELETE
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/person/{personId}")
-    public Response deletePerson(@PathParam("personId") String personId) {
+
+    @Route(method = HttpMethod.DELETE, uri = "/person/{personId}")
+    public Result deletePerson(@Parameter("personId") String personId) {
 
         Person foundPerson = findPerson(personId);
         if (foundPerson == null)
-            return Response.status(404).build();
+            return notFound();
 
         try {
             _simulationMgr.removePerson(foundPerson.getName());
         } catch (Exception e) {
             e.printStackTrace();
-            return makeCORS(Response.status(Response.Status.INTERNAL_SERVER_ERROR));
+            return internalServerError();
         }
 
-        return makeCORS(Response.ok());
+        return ok();
     }
 }

@@ -38,6 +38,12 @@
             <artifactId>distribution.base</artifactId>
             <type>osgi-distribution</type>
         </dependency>
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>wisdom.bundles</artifactId>
+           <version>${project.version}</version>
+           <type>osgi-distribution</type>
+        </dependency>
 
          <!-- RoSe bundles -->
          <dependency>
@@ -106,17 +112,6 @@
            <artifactId>frontend.services</artifactId>
            <version>${project.version}</version>
         </dependency>
-        <dependency>
-           <groupId>com.sun.jersey.contribs</groupId>
-           <artifactId>jersey-multipart</artifactId>
-           <version>${jerseyVersion}</version>
-        </dependency>
-        <dependency>
-           <groupId>org.jvnet</groupId>
-           <artifactId>mimepull</artifactId>
-           <version>${mimepullVersion}</version>
-        </dependency>
-
     </dependencies>
 
     <build>

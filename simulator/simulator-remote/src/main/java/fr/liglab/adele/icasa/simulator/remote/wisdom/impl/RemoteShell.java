@@ -13,62 +13,56 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.remote.impl;
+package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.commands.ICasaCommand;
 import fr.liglab.adele.icasa.commands.Signature;
-import fr.liglab.adele.icasa.remote.AbstractREST;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * User: garciai@imag.fr
  * Date: 9/26/13
  * Time: 3:35 PM
  */
-@Component(name="remote-rest-shell")
-@Instantiate(name="remote-rest-shell-0")
-@Provides(specifications={RemoteShell.class}, properties = {@StaticServiceProperty(name = AbstractREST.ICASA_REST_PROPERTY_NAME, value="true", type="java.lang.Boolean")} )
-@Path(value="/shell/")
-public class RemoteShell extends AbstractREST {
+@Component
+@Provides
+@Instantiate
+@Path("/icasa/shell")
+public class RemoteShell extends DefaultController {
 
     /**
      * Simulator commands added to the platorm
      */
     private Map<String, ICasaCommand> commands = new HashMap<String, ICasaCommand>();
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/execute/{name}")
-    public Response executeCommandOption(@PathParam("name") String name) {
-        return makeCORS(Response.ok());
-    }
 
-    @OPTIONS
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/commands/")
-    public Response getCommandsOption() {
-        return makeCORS(Response.ok());
-    }
-
-    @POST
-    @Produces(MediaType.APPLICATION_JSON)
-    @Consumes(MediaType.APPLICATION_JSON)
-    @Path(value="/execute/{name}")
-    public Response executeCommand(@PathParam("name") String name, String content) {
-
+    @Route(method = HttpMethod.POST, uri = "/execute/{name}")
+    public Result executeCommand(@Parameter("name") String name) {
+        String content = null;
+        try {
+            content = IcasaJSONUtil.getContent(context().getReader());
+        } catch (IOException e) {
+            e.printStackTrace();
+            return internalServerError();
+        }
         //help
         if(name.compareTo("help") == 0){
             return getCommands();
@@ -76,7 +70,7 @@ public class RemoteShell extends AbstractREST {
 
         ICasaCommand command = commands.get(name);
         if (command == null){
-            return makeCORS(Response.status(Response.Status.NOT_FOUND));
+            return notFound();
         }
 
         JSONObject receivedParams;
@@ -90,7 +84,7 @@ public class RemoteShell extends AbstractREST {
             params = getParamsInJSON(command, arguments);
         } catch (JSONException e) {
             e.printStackTrace();
-            return makeCORS(Response.serverError());
+            return internalServerError();
         }
 
         //create OutputStream to retrieve messages.
@@ -110,9 +104,9 @@ public class RemoteShell extends AbstractREST {
             returnedObject.put("result", result.toString());
         } catch (JSONException e) {
             e.printStackTrace();
-            return makeCORS(Response.serverError());
+            return internalServerError();
         }
-        return makeCORS(Response.ok(returnedObject.toString()));
+        return ok(returnedObject.toString()).as(MimeTypes.JSON);
     }
 
     private List getReceivedParams(JSONObject params) throws JSONException {
@@ -126,18 +120,17 @@ public class RemoteShell extends AbstractREST {
         return list;
     }
 
-    @GET
-    @Produces(MediaType.APPLICATION_JSON)
-    @Path(value="/commands/")
-    public Response getCommands() {
+
+    @Route(method = HttpMethod.GET, uri = "/commands")
+    public Result getCommands() {
         JSONObject result;
         try {
             result = getCommandsInJSON();
         } catch (JSONException e) {
             e.printStackTrace();
-            return makeCORS(Response.serverError());
+            return internalServerError();
         }
-        return makeCORS(Response.ok(result.toString()));
+        return ok(result.toString()).as(MimeTypes.JSON);
     }
 
     private JSONObject getCommandsInJSON() throws JSONException {
