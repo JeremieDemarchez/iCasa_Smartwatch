@@ -17,58 +17,44 @@ package fr.liglab.adele.icasa.application.remote;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.OPTIONS;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.application.Application;
 import fr.liglab.adele.icasa.application.ApplicationManager;
 import fr.liglab.adele.icasa.application.remote.util.ApplicationJSONUtil;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
 
 /**
  * @author Gabriel Pedraza Ferreira
  */
-@Component(name = "remote-rest-app")
-@Instantiate(name = "remote-rest-app-0")
-@Provides(specifications = { ApplicationREST.class }, properties = {@StaticServiceProperty(name = "iCasa-REST", value="true", type="java.lang.Boolean")} )
-@Path(value = "/apps/")
-public class ApplicationREST {
+@Component
+@Instantiate
+@Provides
+@Path("/apps/")
+public class ApplicationREST extends DefaultController {
 
 	@Requires
 	private ApplicationManager _applicationMgr;
 
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/apps/")
-	public Response applications() {
-		return makeCORS(Response.ok(getApplications()));
+    @Route(method = HttpMethod.GET, uri = "/apps/")
+	public Result applications() {
+		return ok(getApplications()).as(MimeTypes.JSON);
 	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/apps/{AppId}")
-	public Response updatesAppsOptions(@PathParam("AppId") String zoneId) {
-		return makeCORS(Response.ok());
-	}
 
-	@OPTIONS
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/app/")
-	public Response createsApplicationsOptions() {
-		return makeCORS(Response.ok());
-	}
 
 	/**
 	 * Retrieves a zone.
@@ -77,21 +63,19 @@ public class ApplicationREST {
 	 *           The ID of the zone to retrieve
 	 * @return The required zone
 	 */
-	@GET
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(value = "/app/{appId}")
-	public Response getApplication(@PathParam("appId") String appId) {
+    @Route(method = HttpMethod.GET, uri = "/app/{appId}")
+	public Result getApplication(@Parameter("appId") String appId) {
 		if (appId == null || appId.length() < 1) {
-			return makeCORS(Response.ok());
+			return badRequest();
 		}
 
 		Application app = _applicationMgr.getApplication(appId);
 		
 		if (app == null) {
-			return makeCORS(Response.status(404));
+			return notFound();
 		} else {
 			JSONObject appJSON = ApplicationJSONUtil.getApplicationJSON(app);
-			return makeCORS(Response.ok(appJSON.toString()));
+			return ok(appJSON.toString()).as(MimeTypes.JSON);
 		}
 	}
 
@@ -115,18 +99,5 @@ public class ApplicationREST {
 		return currentApps.toString();
 	}
 
-
-	
-	protected Response makeCORS(Response.ResponseBuilder req) {
-		Response.ResponseBuilder rb = req
-		      .header("Access-Control-Allow-Origin", "*")
-		      .header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS")
-		      .header("Access-Control-Expose-Headers", "X-Cache-Date, X-Atmosphere-tracking-id")
-		      .header("Access-Control-Allow-Headers", "Origin, Content-Type, X-Atmosphere-Framework, X-Cache-Date, X-Atmosphere-Tracking-id, X-Atmosphere-Transport")
-		      .header("Access-Control-Max-Age", "-1")
-		      .header("Pragma", "no-cache");
-
-		return rb.build();
-	}
 
 }

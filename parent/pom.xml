@@ -489,7 +489,7 @@ See the License for the specific language governing permissions and
                     <artifactId>maven-osgi-distribution-plugin</artifactId>
                     <extensions>true</extensions>
                     <configuration>
-                        <generateScripts>true</generateScripts>
+                        <generateScripts>false</generateScripts>
                     </configuration>
                 </plugin>
 

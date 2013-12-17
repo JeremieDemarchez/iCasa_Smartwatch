@@ -59,7 +59,7 @@
   
   <processor name="TimeStampEnricherProcessor" classname="fr.liglab.adele.habits.monitoring.measure.generator.TimeStampEnricher">
     <cilia:method name="process" data.type="fr.liglab.adele.cilia.Data" />
-    <requires field="clock" optional="false" nullable="false" />
+    <requires field="clock" optional="false"  />
   </processor>
   
   <mediator-component name="TimeStampEnricherMediator" category="medical">
@@ -74,7 +74,7 @@
   
   <processor name="LocationEnricherProcessor" classname="fr.liglab.adele.habits.monitoring.measure.generator.LocationEnricher">
     <cilia:method name="process" data.type="fr.liglab.adele.cilia.Data" />
-    <requires field="icasa" optional="false" nullable="false" />
+    <requires field="icasa" optional="false"  />
   </processor>
   
   <mediator-component name="LocationEnricherMediator" category="medical" spec-name="LocationEnricherSpec" spec-namespace="fr.liglab.adele.cilia">

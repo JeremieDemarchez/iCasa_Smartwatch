@@ -55,11 +55,6 @@
             <artifactId>rose-chameleon-deployer-configurator</artifactId>
             <version>${AdeleBaseVersion}</version>
          </dependency>
-         <!-- HTTP Service-->
-         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.http.jetty</artifactId>
-         </dependency>
         <dependency>
             <!-- iCasa Platform -->
             <groupId>fr.liglab.adele.icasa</groupId>

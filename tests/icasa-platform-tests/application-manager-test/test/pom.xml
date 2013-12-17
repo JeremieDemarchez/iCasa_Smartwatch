@@ -182,7 +182,7 @@
           <argLine>-Xms512m -Xmx1024m -XX:MaxPermSize=128m</argLine>
           <systemPropertyVariables>
             <ipojo.processing.synchronous>true</ipojo.processing.synchronous>
-            <org.osgi.framework.bootdelegation>sun.*</org.osgi.framework.bootdelegation>
+            <org.osgi.framework.bootdelegation>sun.reflect</org.osgi.framework.bootdelegation>
             <felix.bootdelegation.implicit>false</felix.bootdelegation.implicit>
             <applications.test.version>${project.version}</applications.test.version>
           </systemPropertyVariables>
