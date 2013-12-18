@@ -1,11 +1,7 @@
 <ipojo>
     <!-- instances for the dashboard -->
-    <instance component="FrontendServlet" name="dashboard-servlet">
-        <property name="servletName" value="/dashboard"/>
-        <property name="servletType" value="dashboard"/>
-    </instance>
-    <instance component="MapServlet" name="dashboard-map-servlet">
-        <property name="alias" value="/dashboard/map"/>
-        <property name="servletType" value="dashboard"/>
-    </instance>
+    <instance component="icasa-dashboard-main-page" />
+
+    <instance component="icasa-dashboard-map-page" />
+
 </ipojo>

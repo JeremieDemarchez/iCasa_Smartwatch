@@ -10,6 +10,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Attribute;
+import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Route;
 import org.wisdom.api.http.*;
 
@@ -112,6 +113,12 @@ public class MapRemoteServiceImpl extends DefaultController {
         String host = context().header("Referer");
         System.out.println("Referer" + host);
         return status(Status.SEE_OTHER).with("host",host);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/icasa/maps/{mapFile}")
+    public Result getMapFile(@Parameter("mapFile") String mapFile){
+        File file = new File("maps", mapFile);
+        return ok(file);
     }
 
     private boolean handleImage(ICasaMap map, InputStream uploadedInputStream){

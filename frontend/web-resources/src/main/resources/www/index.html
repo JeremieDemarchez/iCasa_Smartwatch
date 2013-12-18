@@ -64,7 +64,7 @@
             <!--ko foreach: maps -->
             <li class="span3">
                 <a class="thumbnail" rel="popover" data-content='' data-original-title="" data-bind="attr: {href:'/@servletType/map/' + id(), 'data-content': '' + $root.getLocaleMessage('Id')+ ':' + id() + '<br/>' + $root.getLocaleMessage('Name') +' : ' + name() + '<br/>' + $root.getLocaleMessage('Box.URL')+' : ' + gatewayURL() + '<br/>' + $root.getLocaleMessage('Description')+' : ' + description() , 'data-original-title': $root.getLocaleMessage('Map')}">
-                    <img data-bind="attr:{src: '/dashboard/maps/'+imgFile()}"  class="img-rounded"/>
+                    <img data-bind="attr:{src: '/icasa/maps/'+imgFile()}"  class="img-rounded"/>
                     <p data-bind="text: name"></p>
                 </a>
                 <div class="mapButton mapRemoveButton pull-right" data-bind="attr:{onclick: 'document.remove' + id() + '.submit()'}">
@@ -80,7 +80,7 @@
 
             <div style="width:300px;margin-left:-150px;"  class="modal hide fade" tabindex="-1" role="dialog" data-bind="attr:{id: 'form'+id(),'aria-labelledby': 'ModalLabel'+id()}" aria-hidden="true">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                     <h3 data-bind="text: $root.getLocaleMessage('Edit') + name(), attr:{id: 'ModalLabel' + id()}"></h3>
                 </div>
                 <form action="/icasa/frontend/maps" method="POST" enctype="multipart/form-data">
@@ -120,7 +120,7 @@
                             <div class="controls">
                                 <input type="file" name="picture" data-bind="attr:{id:'picture' + id()}" />
                             </div>
-                            <img  data-bind="attr:{src:'/dashboard/maps/' + imgFile() }" class="img-rounded"/>
+                            <img  data-bind="attr:{src:'/icasa/maps/' + imgFile() }" class="img-rounded"/>
                         </div>
                     </div>
                     <div class="modal-footer">
@@ -140,7 +140,7 @@
 
         <div style="width:300px;margin-left:-150px;" id="addForm" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">x</button>
                 <h3 id="myModalLabel" data-bind="text: getLocaleMessage('Add.a.new.map')"></h3>
             </div>
             <form action="/icasa/frontend/maps" method="POST" enctype="multipart/form-data">

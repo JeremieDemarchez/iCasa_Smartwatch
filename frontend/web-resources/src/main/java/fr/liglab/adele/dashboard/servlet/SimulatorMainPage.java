@@ -23,37 +23,22 @@ import java.net.URL;
  * Time: 4:11 PM
  */
 
-@Component
+@Component(name="icasa-simulator-main-page")
 @Provides
-@Instantiate
-public class FrontendServlet extends DefaultController {
+public class SimulatorMainPage extends DefaultController {
 
 
     private final BundleContext context;
 
-    public FrontendServlet(BundleContext c){
+    public SimulatorMainPage(BundleContext c){
         this.context = c;
-    }
-
-
-
-    @Route(method = HttpMethod.GET, uri = "/dashboard")
-    public Result getDashboard(){
-        String result = null;
-        try {
-            result = getTemplate().toString();
-        } catch (IOException e) {
-            return internalServerError();
-        }
-        result = result.replace("@servletType", "dashboard");//dashboard or simulator.
-        return ok(result).as(MimeTypes.HTML);
     }
 
     @Route(method = HttpMethod.GET, uri = "/simulator")
     public Result getSimulator(){
         String result = null;
         try {
-            result = getTemplate().toString();
+            result = ResourceHandler.getTemplate(context, "www/index.html").toString();
         } catch (IOException e) {
             return internalServerError();
         }
@@ -61,24 +46,6 @@ public class FrontendServlet extends DefaultController {
         return ok(result).as(MimeTypes.HTML);
     }
 
-    private StringBuilder getTemplate() throws IOException {
-        //get template.
-        URL f= context.getBundle().getResource("www/index.html");
 
-        byte[] buf = new byte[8192];
-
-        InputStream is = f.openStream();
-
-        BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-        String line;
-        StringBuilder result = new StringBuilder();
-        while( ( line = reader.readLine() ) != null)
-        {
-            result.append(line).append("\n");
-        }
-        reader.close();
-        return result;
-
-    }
 
 }
