@@ -289,6 +289,7 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 }
                 // Set the dependency to multiple
                 dep.setAggregate(true);
+                dep.setAggregateType(AggregateDependencyInjectionType.ARRAY); //iPOJO 1.11.x
                 type = type.substring(0, type.length() - 2);
             } else if (type.equals(List.class.getName()) || type.equals(Collection.class.getName())) {
                 dep.setAggregateType(AggregateDependencyInjectionType.LIST); //iPOJO 1.11.x
