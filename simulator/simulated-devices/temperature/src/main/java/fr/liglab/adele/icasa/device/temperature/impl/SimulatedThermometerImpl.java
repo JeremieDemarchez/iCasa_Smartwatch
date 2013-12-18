@@ -77,17 +77,27 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
+        boolean atLeaastOne = false;
 		if (!zones.isEmpty()) {
 			for (Zone zone : zones) {
 				if (zone.getVariableValue("Temperature") != null) {
-					m_zone = zone;
-					getTemperatureFromZone();
-					m_zone.addListener(listener);
+					subscribeZone(zone);
+                    atLeaastOne = true;
 					break;
 				}
 			}
+            if (!atLeaastOne){ // if any zone has the Temperature variable.
+                Zone fZone = zones.get(0); // get the first Zone
+                subscribeZone(fZone);
+            }
 		}
 	}
+
+    private void subscribeZone(Zone zone){
+        m_zone = zone;
+        getTemperatureFromZone();
+        m_zone.addListener(listener);
+    }
 
 	@Override
 	public void leavingZones(List<Zone> zones) {
@@ -99,8 +109,11 @@ public class SimulatedThermometerImpl extends AbstractDevice implements Thermome
 	private void getTemperatureFromZone() {
 		if (m_zone != null) {
 			Double currentTemperature = ((Double) m_zone.getVariableValue("Temperature"));
-			if (currentTemperature != null)
+			if (currentTemperature != null){
 				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, currentTemperature);
+            } else {
+                setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, -1.0d);
+            }
 		}
 	}
 
