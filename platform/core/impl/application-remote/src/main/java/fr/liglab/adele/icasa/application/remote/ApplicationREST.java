@@ -43,13 +43,13 @@ import org.wisdom.api.http.Result;
 @Component
 @Instantiate
 @Provides
-@Path("/apps/")
+@Path("/icasa/apps")
 public class ApplicationREST extends DefaultController {
 
 	@Requires
 	private ApplicationManager _applicationMgr;
 
-    @Route(method = HttpMethod.GET, uri = "/apps/")
+    @Route(method = HttpMethod.GET, uri = "/apps")
 	public Result applications() {
 		return ok(getApplications()).as(MimeTypes.JSON);
 	}
