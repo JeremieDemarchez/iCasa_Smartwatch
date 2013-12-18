@@ -94,7 +94,7 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
      * Since iPOJO 1.11.x type has changed from integer to AggregateDependencyInjectionType enum.
      * @param type
      */
-    protected void setType(AggregateDependencyInjectionType type) {
+    protected void setAggregateType(AggregateDependencyInjectionType type) {
         super.setAggregateType(type);
         //super.setType(type);
     }

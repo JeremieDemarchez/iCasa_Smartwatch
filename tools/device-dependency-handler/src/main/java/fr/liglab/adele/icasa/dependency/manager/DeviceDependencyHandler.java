@@ -291,11 +291,11 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 dep.setAggregate(true);
                 type = type.substring(0, type.length() - 2);
             } else if (type.equals(List.class.getName()) || type.equals(Collection.class.getName())) {
-                dep.setType(AggregateDependencyInjectionType.LIST); //iPOJO 1.11.x
+                dep.setAggregateType(AggregateDependencyInjectionType.LIST); //iPOJO 1.11.x
                 //dep.setType(LIST);//iPojo 1.10.x
                 type = null;
             } else if (type.equals(Vector.class.getName())) {
-                dep.setType(AggregateDependencyInjectionType.VECTOR);//iPOJO 1.11.x
+                dep.setAggregateType(AggregateDependencyInjectionType.VECTOR);//iPOJO 1.11.x
                 //dep.setType(VECTOR);
                 if (dep.isProxy()) {
                     warn("Vectors cannot be used for proxied dependencies - Disabling the proxy mode");
@@ -304,7 +304,7 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 }
                 type = null;
             } else if (type.equals(Set.class.getName())) {
-                dep.setType(AggregateDependencyInjectionType.SET);
+                dep.setAggregateType(AggregateDependencyInjectionType.SET);
                 //dep.setType(SET);// iPojo 1.10.x
                 type = null;
             } else {
@@ -330,13 +330,13 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 if (type.endsWith("[]")) {
                     throw new ConfigurationException("Services injected into constructor cannot be arrays");
                 } else if (type.equals(List.class.getName()) || type.equals(Collection.class.getName())) {
-                    dep.setType(AggregateDependencyInjectionType.LIST);//iPOJO 1.11.x
+                    dep.setAggregateType(AggregateDependencyInjectionType.LIST);//iPOJO 1.11.x
                     //dep.setType(LIST);//iPOJO 1.10.x
                     type = null;
                 } else if (type.equals(Vector.class.getName())) {
                     throw new ConfigurationException("Services injected into constructor cannot be Vectors");
                 } else if (type.equals(Set.class.getName())) {
-                    dep.setType(AggregateDependencyInjectionType.SET);//iPOJO 1.11.x
+                    dep.setAggregateType(AggregateDependencyInjectionType.SET);//iPOJO 1.11.x
                     //dep.setType(SET); // iPOJO 1.10.x
                     type = null;
                 } else {
