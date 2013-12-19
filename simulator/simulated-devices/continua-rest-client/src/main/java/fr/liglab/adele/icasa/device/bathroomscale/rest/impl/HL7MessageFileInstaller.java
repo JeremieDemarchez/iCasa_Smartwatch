@@ -25,36 +25,36 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.ow2.chameleon.core.services.AbstractDeployer;
 
 
 @Component(name="hl7-file-install")
 @Instantiate(name="hl7-file-install-0")
 @Provides
-public class HL7MessageFileInstaller implements ArtifactInstaller, IHL7MessageFileInstaller {
+public class HL7MessageFileInstaller extends AbstractDeployer implements IHL7MessageFileInstaller {
 
 	private Set<File> files = new HashSet<File>();
 	
 	@Override
-	public boolean canHandle(File file) {
+	public boolean accept(File file) {
 		return file.getName().endsWith(".hl7");
 	}
 
 	@Override
-	public void install(File file) throws Exception {
+	public void onFileCreate(File file) {
 		files.add(file);
 	}
 
 	@Override
-	public void uninstall(File file) throws Exception {
+	public void onFileDelete(File file) {
 		files.remove(file);
 	}
 
 	@Override
-	public void update(File file) throws Exception {
+	public void onFileChange(File file) {
 		// do nothing
 	}
 	
