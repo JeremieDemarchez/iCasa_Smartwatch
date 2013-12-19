@@ -34,19 +34,79 @@
     <dependencies>
 
         <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>icasa.teaching.distribution.access.enabled</artifactId>
-            <version>${project.version}</version>
+            <groupId>fr.liglab.adele.common</groupId>
+            <artifactId>distribution.base</artifactId>
             <type>osgi-distribution</type>
         </dependency>
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>wisdom.bundles</artifactId>
+           <version>${project.version}</version>
+           <type>osgi-distribution</type>
+        </dependency>
 
-        <!-- Dashboard application-->
+         <!-- RoSe bundles -->
+         <dependency>
+            <groupId>org.ow2.chameleon.rose</groupId>
+            <artifactId>rose-core</artifactId>
+         </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.common</groupId>
+            <artifactId>rose-chameleon-deployer-configurator</artifactId>
+            <version>${AdeleBaseVersion}</version>
+         </dependency>
+        <dependency>
+            <!-- iCasa Platform -->
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.platform.dp</artifactId>
+            <version>${project.version}</version>
+            <type>deployment-package</type>
+        </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.device.hanlder.dp</artifactId>
+            <version>${project.version}</version>
+            <type>deployment-package</type>         
+         </dependency>        
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.simulator.dp</artifactId>
+            <version>${project.version}</version>
+            <type>deployment-package</type>
+        </dependency>
+
+        <!-- Only one clock must be available in the platform-->
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>clock.simulated.impl</artifactId>
+           <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>command.handler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <!-- Simulator application-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>web.resources</artifactId>
+            <version>${project.version}</version>
+        </dependency>
         <dependency>
            <groupId>${project.groupId}</groupId>
             <artifactId>dashboard.web.instance</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        
+        <!-- GUI dependencies-->
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>frontend.services</artifactId>
+           <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

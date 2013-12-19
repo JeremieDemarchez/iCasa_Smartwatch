@@ -91,12 +91,12 @@
 
         <!-- Simulator application-->
         <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>web.resources</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-           <groupId>fr.liglab.adele.icasa</groupId>
+           <groupId>${project.groupId}</groupId>
            <artifactId>simulator.web.instance</artifactId>
            <version>${project.version}</version>
         </dependency>

@@ -1,23 +1,21 @@
-iCasa-Simulator distribution
+iCasa dashboard distribution
 ====================
 
-This is a distribution of iCasa-Simulator.
-You can find more information about the execution platform including source code on the iCasa-Platform website (https://github.com/AdeleResearchGroup/iCasa-Platform).
+This is a distribution of iCasa with access right enabled. 
+So, in order grant access to device, applications must be deployed as a Deployment Package (dp), and acces must be granted using the dashboard
+You can find more information about the execution platform including source code on the iCasa website (https://github.com/AdeleResearchGroup/iCasa).
 
-iCasa-Platform is licensed under Apache V2 license.
-iCasa-Simulator is licensed under a specific end user license (http://adeleresearchgroup.github.com/iCasa-Simulator/snapshot/license.html).
+iCasa  is licensed under Apache V2 license.
 
-To launch the gateway part, execute startGateway.bat on Windows or startGateway.sh file on Unix systems depending on your operating system.
-To launch the web server part, execute startGUI.bat on Windows or startGUI.sh file on Unix systems depending on your operating system.
+
+To launch the platform, execute startGateway.bat on Windows or startGateway.sh file on Unix systems depending on your operating system.
+
 
 Use iCasa-Simulator
 ====================
-
-Recommended browser:
-- Firefox
 
 Supported browsers:
 - Firefox
 - Chrome
 
-Open a web browser on url http://localhost:9000/ to get home simulator screen.
+Open a web browser on url http://localhost:9000/dashboard to get dashboard screen.

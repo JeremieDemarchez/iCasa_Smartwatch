@@ -17,7 +17,7 @@
 
    <properties>
       <distrib.groupId>${project.groupId}</distrib.groupId>
-      <distrib.artifactId>icasa.teaching.distribution.access.enabled</distrib.artifactId>
+      <distrib.artifactId>icasa.dashboard.distribution</distrib.artifactId>
       <distrib.version>${project.version}</distrib.version>
 
    </properties>
