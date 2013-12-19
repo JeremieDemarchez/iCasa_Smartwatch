@@ -25,36 +25,16 @@ public class DBFileParser {
 
 	
 	public static Set<DPInfos> parse(File dbFile) throws SAXException, IOException, ParserConfigurationException {
-		// TODO Auto-generated method stub
-//		SAXReader reader = new SAXReader();
 		
 		SAXParserFactory fabrique = SAXParserFactory.newInstance();
 		SAXParser parseur = fabrique.newSAXParser();
 		DPInfosHandler handler = new DPInfosHandler();
 		parseur.parse(dbFile, handler);
 		
-//		Document doc = reader.read(dbFile);
-//		Set<DPInfos> dps = new HashSet<DPInfos>();
-		
-//		List<Node> list = doc.selectNodes( "//db/id" );
-		
-//		for (Node node : list){
-//			DPInfos infos = new DPInfos();
-//			Element elem = (Element) node;
-//			infos.setUrl(elem.attributeValue("url"));
-//			infos.setName(elem.attributeValue("name"));
-//			for (Element interf : (List<Element>)elem.elements()){
-//				if ("interface".equals(interf.getName())){
-//					infos.getInterfaces().add(Class.forName(interf.getText()));
-//				}
-//			}
-//			dps.add(infos);
-//		}
 		return handler.getListeInfos();
 	}
 
 	public static void unload(File dbFile) {
-		// TODO Auto-generated method stub
 		
 	}
 

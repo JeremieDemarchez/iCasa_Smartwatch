@@ -80,5 +80,10 @@ public class DPInfos {
 		return true;
 	}
 
+	@Override
+	public String toString() {
+		return "DPInfos [url=" + url + ", name=" + name + ", interfaces="
+				+ interfaces + "]";
+	}
 	
 }

@@ -46,6 +46,11 @@
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
 		</dependency>
 		<dependency>
+           <groupId>fr.liglab.adele.icasa</groupId>
+           <artifactId>device.dependency.annotations</artifactId>
+           <version>${project.version}</version>
+       </dependency>
+		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
 			<type>jar</type>

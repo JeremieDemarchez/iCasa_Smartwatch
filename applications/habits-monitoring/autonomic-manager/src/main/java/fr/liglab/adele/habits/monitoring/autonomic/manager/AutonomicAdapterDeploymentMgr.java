@@ -1,21 +1,17 @@
 package fr.liglab.adele.habits.monitoring.autonomic.manager;
 
 import java.net.URL;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.osgi.service.deploymentadmin.DeploymentPackage;
 import org.osgi.service.packageadmin.PackageAdmin;
@@ -25,8 +21,12 @@ import org.slf4j.LoggerFactory;
 import fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter.IDBAdapter;
 import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
 import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfosListener;
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.button.PushButton;
+import fr.liglab.adele.icasa.device.motion.MotionSensor;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 /**
  * Created with IntelliJ IDEA. User: Kettani Mehdi Date: 26/04/13 Time: 11:33 To
@@ -39,7 +39,14 @@ public class AutonomicAdapterDeploymentMgr implements
 
     private static final Logger logger = LoggerFactory
             .getLogger(fr.liglab.adele.icasa.Constants.ICASA_LOG + ".apps.habits-monitoring");
-	private Map<String, GenericDevice> devices = new HashMap<String, GenericDevice>();
+    @RequiresDevice(id = "pushButtonDevices", type = "field", optional = true)
+    private PushButton[] pushButtonDevices;
+    @RequiresDevice(id = "presenceSensorDevices", type = "field", optional = true)
+    private PresenceSensor[] presenceSensorDevices;
+    @RequiresDevice(id = "motionSensorDevices", type = "field", optional = true)
+    private MotionSensor[] motionSensorDevices;
+    
+    private Map<String, GenericDevice> devices = new HashMap<String, GenericDevice>();
 	private Map<String, Set<String>> uninstalledDevices = new HashMap<String, Set<String>>();
 
 	// DP installer
@@ -53,16 +60,12 @@ public class AutonomicAdapterDeploymentMgr implements
 	@Requires
 	private IDBAdapter dbAdapter;
 
-	// bundle context
-	private BundleContext context;
-
 	/**
 	 * Private constructor to get bundleContext.
 	 * 
 	 * @param context
 	 */
 	private AutonomicAdapterDeploymentMgr(BundleContext context) {
-		this.context = context;
 		dbAdapter.addDPInfosListener(this);
 	}
 
@@ -163,12 +166,39 @@ public class AutonomicAdapterDeploymentMgr implements
 	 *            A new GenericDevice (proxy)
 	 * @throws ClassNotFoundException
 	 */
-	@Bind(id = "GenericDeviceDep", specification = "fr.liglab.adele.icasa.device.GenericDevice", aggregate = true)
-	public void bindDevice(ServiceReference detectorRef)
-			throws ClassNotFoundException {
+	@RequiresDevice(id = "pushButtonDevices", type = "bind")
+	public void bindPushButtonDevices(PushButton device, Map properties) throws ClassNotFoundException{
+		bindManagedDevice(device, properties);
+	}
 
-		String[] classNames = (String[]) detectorRef
-				.getProperty(Constants.OBJECTCLASS);
+//	@Unbind(id = "GenericDeviceDep")
+	@RequiresDevice(id = "pushButtonDevices", type = "unbind")
+	public void unbindPushButtonDevice(PushButton device) {
+		unbindManagedDevice(device);
+	}
+	
+	@RequiresDevice(id = "motionSensorDevices", type = "bind")
+	public void bindMotionSensorDevices(MotionSensor device, Map properties) throws ClassNotFoundException{
+		bindManagedDevice(device, properties);
+	}
+
+	@RequiresDevice(id = "motionSensorDevices", type = "unbind")
+	public void unbindMotionSensorDevice(MotionSensor device) {
+		unbindManagedDevice(device);
+	}
+	
+	@RequiresDevice(id="presenceSensorDevices", type="bind")
+	public void bindPresenceSensorDevices(PresenceSensor device, Map properties) throws ClassNotFoundException{
+		bindManagedDevice(device, properties);
+	}
+	
+	@RequiresDevice(id="presenceSensorDevices", type="unbind")
+	public void unbindPresenceSensorDevices(PresenceSensor device){
+		unbindManagedDevice(device);
+	}
+	
+	public void bindManagedDevice(GenericDevice device, Map properties) throws ClassNotFoundException{
+		String[] classNames = (String[]) properties.get(Constants.OBJECTCLASS);
 
 		// removed GenericDevice and SimulatedDevice from list of classes
 		// TODO c'est crade, faut remplacer la chaine SimulatedDevice par autre
@@ -177,32 +207,27 @@ public class AutonomicAdapterDeploymentMgr implements
 		if (classNames != null && classNames.length > 0) {
 			for (String className : classNames) {
 				if (!className.equals(GenericDevice.class.getName())
-						&& !className.contains("SimulatedDevice")) {
+						&& !className.contains("Simulated")) {
 					purifiedClassNames.add(className);
 				}
 			}
 		}
-
-		GenericDevice detectorService = (GenericDevice) context
-				.getService(detectorRef);
 		logger.info("A new device has been found, id "
-				+ detectorService.getSerialNumber());
-		detectorService.addListener(this);
+				+ device.getSerialNumber());
+		device.addListener(this);
+		this.deviceAdded(device);
 		boolean success = this.handleNewDevice(purifiedClassNames);
 		if (!success) {
-			uninstalledDevices.put(detectorService.getSerialNumber(),
+			uninstalledDevices.put(device.getSerialNumber(),
 					purifiedClassNames);
 		}
 	}
-
-	@Unbind(id = "GenericDeviceDep")
-	public void unbindDevice(ServiceReference detectorRef) {
-		GenericDevice detectorService = (GenericDevice) context
-				.getService(detectorRef);
-		logger.info("A device is now outside from the zone, id "
-				+ detectorService.getSerialNumber());
-		detectorService.removeListener(this);
-		this.deviceRemoved(detectorService);
+	
+	public void unbindManagedDevice(GenericDevice device){
+		logger.info("A device has been removed, id "
+				+ device.getSerialNumber());
+		device.removeListener(this);
+		this.deviceRemoved(device);
 	}
 
 	@Override

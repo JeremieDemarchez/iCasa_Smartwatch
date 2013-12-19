@@ -13,8 +13,9 @@ import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
 
 /**
  * XML handler for db config files.
+ * 
  * @author tfqg0024
- *
+ * 
  */
 public class DPInfosHandler extends DefaultHandler {
 
@@ -28,12 +29,10 @@ public class DPInfosHandler extends DefaultHandler {
 	public DPInfosHandler() {
 		super();
 	}
-	
 
 	public Set<DPInfos> getListeInfos() {
 		return listeInfos;
 	}
-
 
 	public void startElement(String uri, String localName, String qName,
 			Attributes attributes) throws SAXException {
