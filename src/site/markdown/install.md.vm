@@ -40,8 +40,8 @@ Gateway Part Launch
 1. Go to the ICASA_HOME directory.
 2. Execute startGateway script on Unix systems or startGateway.bat script on Windows systems.
 
-By default, the gateway port is set to 8080.
-In this case, the platform url would be _http://localhost:8080/_.
+By default, the gateway port is set to 9000.
+In this case, the platform url would be _http://localhost:9000/_.
 
 Web Server Part Launch
 ---------------
@@ -53,8 +53,8 @@ Web Server Part Launch
 
 2. To interact with those applications, go to:
 
-- _http://localhost:8080/simulator_.  for the simulator GUI
-- _http://localhost:8080/dashboard_.  for the dashboard GUI
+- _http://localhost:9000/simulator_.  for the simulator GUI
+- _http://localhost:9000/dashboard_.  for the dashboard GUI
 
 
 
