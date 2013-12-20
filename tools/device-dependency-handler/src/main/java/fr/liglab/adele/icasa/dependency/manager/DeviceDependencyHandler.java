@@ -34,10 +34,7 @@ import org.apache.felix.ipojo.IPojoContext;
 import org.apache.felix.ipojo.PolicyServiceContext;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.handlers.dependency.Dependency;
-import org.apache.felix.ipojo.handlers.dependency.DependencyCallback;
-import org.apache.felix.ipojo.handlers.dependency.DependencyHandler;
-import org.apache.felix.ipojo.handlers.dependency.DependencyHandlerDescription;
+import org.apache.felix.ipojo.handlers.dependency.*;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
@@ -292,12 +289,15 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 }
                 // Set the dependency to multiple
                 dep.setAggregate(true);
+                dep.setAggregateType(AggregateDependencyInjectionType.ARRAY); //iPOJO 1.11.x
                 type = type.substring(0, type.length() - 2);
             } else if (type.equals(List.class.getName()) || type.equals(Collection.class.getName())) {
-                dep.setType(LIST);
+                dep.setAggregateType(AggregateDependencyInjectionType.LIST); //iPOJO 1.11.x
+                //dep.setType(LIST);//iPojo 1.10.x
                 type = null;
             } else if (type.equals(Vector.class.getName())) {
-                dep.setType(VECTOR);
+                dep.setAggregateType(AggregateDependencyInjectionType.VECTOR);//iPOJO 1.11.x
+                //dep.setType(VECTOR);
                 if (dep.isProxy()) {
                     warn("Vectors cannot be used for proxied dependencies - Disabling the proxy mode");
                     // TODO: in Icasa arrays can be proxied
@@ -305,7 +305,8 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 }
                 type = null;
             } else if (type.equals(Set.class.getName())) {
-                dep.setType(SET);
+                dep.setAggregateType(AggregateDependencyInjectionType.SET);
+                //dep.setType(SET);// iPojo 1.10.x
                 type = null;
             } else {
                 if (dep.isAggregate()) {
@@ -330,12 +331,14 @@ public class DeviceDependencyHandler extends DependencyHandler implements Applic
                 if (type.endsWith("[]")) {
                     throw new ConfigurationException("Services injected into constructor cannot be arrays");
                 } else if (type.equals(List.class.getName()) || type.equals(Collection.class.getName())) {
-                    dep.setType(LIST);
+                    dep.setAggregateType(AggregateDependencyInjectionType.LIST);//iPOJO 1.11.x
+                    //dep.setType(LIST);//iPOJO 1.10.x
                     type = null;
                 } else if (type.equals(Vector.class.getName())) {
                     throw new ConfigurationException("Services injected into constructor cannot be Vectors");
                 } else if (type.equals(Set.class.getName())) {
-                    dep.setType(SET);
+                    dep.setAggregateType(AggregateDependencyInjectionType.SET);//iPOJO 1.11.x
+                    //dep.setType(SET); // iPOJO 1.10.x
                     type = null;
                 } else {
                     if (dep.isAggregate()) {

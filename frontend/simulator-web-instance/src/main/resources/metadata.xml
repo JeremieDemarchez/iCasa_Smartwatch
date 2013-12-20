@@ -1,12 +1,7 @@
 <ipojo>
     <!-- instances for the simulator -->
-    <instance component="FrontendServlet" name="simulator-servlet">
-        <property name="servletName" value="/simulator"/>
-        <property name="servletType" value="simulator"/>
-    </instance>
-    <instance component="MapServlet" name="simulator-map-servlet">
-        <property name="alias" value="/simulator/map"/>
-        <property name="servletType" value="simulator"/>
-    </instance>
+    <instance component="icasa-simulator-main-page" />
+
+    <instance component="icasa-simulator-map-page" />
 
 </ipojo>

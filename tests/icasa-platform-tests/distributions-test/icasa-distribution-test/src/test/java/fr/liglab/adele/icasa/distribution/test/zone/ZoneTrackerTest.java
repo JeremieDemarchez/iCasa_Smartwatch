@@ -28,31 +28,31 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.util.ZoneTracker;
 import fr.liglab.adele.icasa.location.util.ZoneTrackerCustomizer;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 /**
  * User: garciai@imag.fr Date: 8/2/13 Time: 3:14 PM
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class ZoneTrackerTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class ZoneTrackerTest {
 
 	@Inject
 	public BundleContext context;
 
+    OSGiHelper helper;
+
 	@Before
 	public void setUp() {
-		waitForStability(context);
+		helper = new OSGiHelper(context);
 	}
 
 	@After
@@ -62,8 +62,9 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void testTrackerZoneAddedRemoved() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
-		Assert.assertNotNull(contextMgr);
+        ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
+
+        Assert.assertNotNull(contextMgr);
 
 		ZoneTracker tracker = new ZoneTracker(context, null);
 		tracker.open();
@@ -82,6 +83,7 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 
 		// no tracked zones
 		Assert.assertEquals(0, tracker.size());
+        contextMgr.removeAllZones();
 
 	}
 
@@ -89,7 +91,7 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void testZoneTrackerWithVariable() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+        ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		String variableName = "needed-variable";
@@ -112,12 +114,13 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 		zone.removeVariable(variableName);
 		// now the tracker must have 0 zones
 		Assert.assertEquals(tracker.size(), 0);// 0 tracked zones 'cause the needed variable has been removed.
+        contextMgr.removeAllZones();
 	}
 
 	
 	@Test
 	public void testZonesCreationThenTracker() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+        ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		contextMgr.createZone("zone-1", 10, 10, 10, 10, 10, 10);
@@ -130,11 +133,12 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 
 		contextMgr.removeZone("zone-1");
 		Assert.assertEquals(1, tracker.size());
+        contextMgr.removeAllZones();
 	}
 
 	@Test
 	public void testZoneTrackerWithCustomizer() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+        ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		ZoneTrackerCustomizer customizer = mock(ZoneTrackerCustomizer.class);
@@ -172,13 +176,14 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
 		
 		contextMgr.removeZone(zone2.getId());
 		
-		verify(customizer, times(1)).removedZone(zone2);		
+		verify(customizer, times(1)).removedZone(zone2);
+        contextMgr.removeAllZones();
 		
 	}
 	
 	@Test
 	public void testZoneTrackerWithCustomizerAndVariables() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		ZoneTrackerCustomizer customizer = mock(ZoneTrackerCustomizer.class);
@@ -224,6 +229,7 @@ public class ZoneTrackerTest extends AbstractDistributionBaseTest {
         Assert.assertEquals(tracker.size(), 0);// 0 tracked zones 'cause the needed variable has been removed.
 
 		verify(customizer, times(1)).removedZone(zone1);
+        contextMgr.removeAllZones();
 		
 	}
 	

@@ -1,19 +1,10 @@
 package fr.liglab.adele.icasa.frontend.services.impl;
 
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.common.xml.utils.XMLUtils;
 import fr.liglab.adele.icasa.frontend.services.MapService;
 import fr.liglab.adele.icasa.frontend.services.utils.AbstractXMLParser;
 import fr.liglab.adele.icasa.frontend.services.utils.ICasaMap;
-import fr.liglab.adele.icasa.remote.AbstractREST;
-import fr.liglab.adele.icasa.remote.impl.iCasaREST;
 import org.apache.felix.ipojo.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xmlpull.v1.XmlPullParserException;
 
-import java.io.*;
-import java.security.cert.CollectionCertStoreParameters;
 import java.util.*;
 
 /**

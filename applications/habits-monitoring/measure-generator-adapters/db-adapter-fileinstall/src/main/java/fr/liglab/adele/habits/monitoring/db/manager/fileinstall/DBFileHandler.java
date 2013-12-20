@@ -4,22 +4,25 @@
 package fr.liglab.adele.habits.monitoring.db.manager.fileinstall;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import javax.swing.event.EventListenerList;
+import javax.xml.parsers.ParserConfigurationException;
 
-import org.apache.felix.fileinstall.ArtifactInstaller;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.ow2.chameleon.core.services.AbstractDeployer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter.IDBAdapter;
 import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfos;
 import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfosListener;
+import org.xml.sax.SAXException;
 
 /**
  * Handler for .db files. 
@@ -27,8 +30,8 @@ import fr.liglab.adele.habits.monitoring.autonomic.manager.listeners.DPInfosList
  */
 @Component(name = "DBFileHandler")
 @Instantiate(name = "DBFileHandler-1")
-@Provides(specifications={fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter.IDBAdapter.class,org.apache.felix.fileinstall.ArtifactInstaller.class})
-public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
+@Provides(specifications={fr.liglab.adele.habits.monitoring.autonomic.manager.dbadapter.IDBAdapter.class,org.ow2.chameleon.core.services.Deployer.class})
+public class DBFileHandler  extends AbstractDeployer implements IDBAdapter {
 	
 	private static final Logger logger = LoggerFactory
 			.getLogger(DBFileHandler.class);
@@ -37,7 +40,7 @@ public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
 	private final EventListenerList listeners = new EventListenerList();
 
 	@Override
-	public boolean canHandle(File dbFile) {
+	public boolean accept(File dbFile) {
 		if (dbFile.getName().endsWith(".hma")){
 			return true;
 		}
@@ -45,10 +48,19 @@ public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
 	}
 
 	@Override
-	public void install(File dbFile) throws Exception {
+	public void onFileCreate(File dbFile)  {
 		logger.info("DBFile handler got a new file : " + dbFile.getName());
-		Set<DPInfos> parsedInfos = DBFileParser.parse(dbFile);
-		if(this.infos.size() > 0){
+        Set<DPInfos> parsedInfos = null;
+        try {
+            parsedInfos = DBFileParser.parse(dbFile);
+        } catch (SAXException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (IOException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        } catch (ParserConfigurationException e) {
+            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+        }
+        if(this.infos.size() > 0){
 			infos.addAll(parsedInfos);
 		} else {
 			this.infos = parsedInfos;
@@ -70,12 +82,12 @@ public class DBFileHandler  implements ArtifactInstaller, IDBAdapter {
 	}
 
 	@Override
-	public void update(File dbFile) throws Exception {
+	public void onFileChange(File dbFile) {
 		DBFileParser.unload(dbFile);
 	}
 
 	@Override
-	public void uninstall(File dbFile) throws Exception {
+	public void onFileDelete(File dbFile) {
 		logger.info("DBFile handler got an uninstall on file : " + dbFile.getName());
 //		parser.unload(dbFile);
 //		parser.load(dbFile);

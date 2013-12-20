@@ -15,47 +15,36 @@
   <name>${productName} :: ${projectName}</name>
 
    <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>application.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.ipojo</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.ow2.chameleon.json</groupId>
-      <artifactId>json-service-json.org</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-       <groupId>org.ow2.chameleon.rose.atmosphere</groupId>
-      <artifactId>atmosgi-service</artifactId>
-    </dependency>
-    <dependency>
-       <groupId>org.ow2.chameleon.rose.atmosphere</groupId>
-      <artifactId>atmosgi-component</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>servlet-api</artifactId>
-    </dependency>    
+       <dependency>
+           <groupId>org.wisdom-framework</groupId>
+           <artifactId>wisdom-api</artifactId>
+       </dependency>
+        <dependency>
+          <groupId>${project.groupId}</groupId>
+          <artifactId>application.api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.felix</groupId>
+          <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.ow2.chameleon.json</groupId>
+          <artifactId>json-service-json.org</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+          <groupId>org.osgi</groupId>
+          <artifactId>org.osgi.core</artifactId>
+        </dependency>
+
   </dependencies>
   
   <build>

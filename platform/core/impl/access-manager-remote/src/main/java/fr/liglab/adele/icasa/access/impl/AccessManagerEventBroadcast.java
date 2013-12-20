@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.access.impl;
 
 import fr.liglab.adele.icasa.access.*;
 import fr.liglab.adele.icasa.access.impl.util.AccessRightJSON;
-import fr.liglab.adele.icasa.remote.RemoteEventBroadcast;
+import fr.liglab.adele.icasa.remote.wisdom.RemoteEventBroadcast;
 import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONException;
 import org.json.JSONObject;

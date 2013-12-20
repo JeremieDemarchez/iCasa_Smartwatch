@@ -17,8 +17,8 @@
 
   <dependencies>
     <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
+      <groupId>org.apache.felix</groupId>
+      <artifactId>org.apache.felix.framework</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.felix</groupId>
@@ -43,10 +43,6 @@
     </dependency>
 
       <!-- OW2 Chameleon handies & annotations -->
-      <dependency>
-          <groupId>org.apache.felix</groupId>
-          <artifactId>org.apache.felix.fileinstall</artifactId>
-      </dependency>
   </dependencies>
 
 

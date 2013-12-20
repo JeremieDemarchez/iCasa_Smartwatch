@@ -21,14 +21,14 @@ import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.InstanceManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
+
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 import test.component.handler.ComponentOnlyRequirePojo;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
+import java.util.UUID;
+
+@RunWith(ChameleonRunner.class)
 public class EnableFlagDeviceHandlerTest extends BaseDeviceHandlerTest {
 
     @Test
@@ -38,16 +38,12 @@ public class EnableFlagDeviceHandlerTest extends BaseDeviceHandlerTest {
         // Component using a requires iPOJO standard
         ComponentOnlyRequirePojo pojo = (ComponentOnlyRequirePojo) manager.getPojoObject();
 
-        createBinaryLigth("BinaryLight-001");
+        createBinaryLigth("BinaryLight-001" + UUID.randomUUID());
         
-        assertEquals(ComponentInstance.INVALID, manager.getState());               
-        
+        assertEquals(ComponentInstance.INVALID, manager.getState());
+
     }
     
-    @Override
-    protected Boolean getAccessPolicyPropertyValue() {
-        return Boolean.FALSE;
-    }
-    
+
 
 }

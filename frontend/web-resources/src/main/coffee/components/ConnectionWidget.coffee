@@ -79,12 +79,12 @@ define(['hubu', 'contracts/GatewayConnectionMgr', 'i18n!locales/nls/locale'], (h
 
         buttonElt = $("#" + @buttonId);
         buttonElt.removeClass("btn-success btn-danger btn-warning");
-        if (modelConnected && notifConnected)
+        if (modelConnected) #&& notifConnected
           buttonElt.text(locale["Connected"]);
           buttonElt.addClass("btn-success");
-        else if (modelConnected)
-          buttonElt.text(locale["Connected.Without.Notifications"]);
-          buttonElt.addClass("btn-warning");
+        #else if (modelConnected)
+        #  buttonElt.text(locale["Connected.Without.Notifications"]);
+        #  buttonElt.addClass("btn-warning");
         else
           buttonElt.text(locale["Not.Connected"]);
           buttonElt.addClass("btn-danger");

@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulation.test.temperature;
 
-import fr.liglab.adele.commons.test.utils.Condition;
 import fr.liglab.adele.icasa.location.Zone;
+import org.ow2.chameleon.runner.test.utils.Condition;
 
 /**
  * Condition is true only if specified zone has temperature variable.

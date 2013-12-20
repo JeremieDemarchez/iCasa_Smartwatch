@@ -139,7 +139,7 @@
                         <include>*Test.*</include>
                     </includes>
                     <systemPropertyVariables>
-                        <geb.build.baseUrl>http://localhost:8080/simulator</geb.build.baseUrl>
+                        <geb.build.baseUrl>http://localhost:9000/simulator</geb.build.baseUrl>
                         <geb.build.reportsDir>target/test-reports/geb</geb.build.reportsDir>
                         <webdriver.chrome.driver>src/test/resources/driver/${os.name}/${browser.driver}</webdriver.chrome.driver>
                     </systemPropertyVariables>

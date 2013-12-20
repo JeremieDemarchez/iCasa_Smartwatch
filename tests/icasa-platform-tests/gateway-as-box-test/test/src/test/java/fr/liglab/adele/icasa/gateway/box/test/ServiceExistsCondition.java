@@ -15,9 +15,9 @@
  */
 package fr.liglab.adele.icasa.gateway.box.test;
 
-import fr.liglab.adele.commons.test.utils.Condition;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.ow2.chameleon.runner.test.utils.Condition;
 
 /**
  * Condition is true only if specified service exists.

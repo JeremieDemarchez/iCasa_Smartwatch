@@ -32,15 +32,12 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.commons.test.utils.TestUtils;
+
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
@@ -49,16 +46,17 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulation.test.temperature.TemperatureDifferentThanCondition.SizeCondition;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
 
 /**
  * Tests for temperature physical model.
  * 
  * @author Thomas Leveque
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
+@RunWith(ChameleonRunner.class)
 @Ignore
-public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
+public class TemperaturePhysicalModelTest  {
 
     public static final String TEMPERATURE_VAR_NAME = "Temperature";
 
@@ -74,7 +72,6 @@ public class TemperaturePhysicalModelTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        waitForStability(context);
         createXMLSharedPreferencesInstance();
     }
 

@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.distribution.test.device.util;
 
-import fr.liglab.adele.commons.test.utils.Condition;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
+import org.ow2.chameleon.runner.test.utils.Condition;
 
 
 /**

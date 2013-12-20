@@ -1,27 +1,6 @@
 # @author Thomas Leveque
-define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/RemoteNotifMgr", 'domReady'], ($, atmosphere, DataModel, hub, RemoteNotifMgr) ->
+define ["jquery", "dataModels/ICasaDataModel", 'hubu', "contracts/RemoteNotifMgr", 'domReady'], ($, DataModel, hub, RemoteNotifMgr) ->
 
-  serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
-
-  socket = atmosphere
-  transport = "sse"
-  # workaround for SECURITY Exception on Chrome while using sse on localhost
-  isChrome = navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
-  #if (isChrome && (serverUrl.indexOf("localhost") > -1))
-  #    transport = "long-polling";
-
-  requestUrl = "#server#/atmosphere/event".replace(/#server#/, serverUrl)
-  request =
-    url: requestUrl
-    contentType: "application/json"
-    logLevel: "debug"
-    shared: true
-    transport: transport
-    trackMessageLength: true
-    enableXDR: true
-    fallbackTransport: "long-polling"
-    dropAtmosphereHeaders: true
-    attachHeadersAsQueryString: true
 
   locateModel = (collection, requiredId, customId)->
       returnedModel = undefined;
@@ -33,9 +12,19 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
         );
       return returnedModel;
 
-  request.onMessage = (response) ->
+  serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
+  console.log serverUrl;
+  if !window.WebSocket
+    window.WebSocket = window.MozWebSocket;
+  if window.WebSocket
+    socket = new WebSocket("#{serverUrl}/icasa/websocket/event".replace("http","ws"))
+
+
+  requestUrl = "#server#/atmosphere/event".replace(/#server#/, serverUrl)
+
+  socket.onmessage = (response) ->
     json = "undefined"
-    message = response.responseBody
+    message = response.data
     try
       json = $.parseJSON(message)
     catch error
@@ -185,35 +174,34 @@ define ["jquery", "atmosphere", "dataModels/ICasaDataModel", 'hubu', "contracts/
 
     reconnect : () =>
       #cleanup state
-      if (@subSocket?)
-        @subSocket.unsubscribe();
+      #if (@subSocket?)
+       #  @subSocket.unsubscribe();
       @setConnected(false);
 
-      request.onOpen = (response) =>
+      socket.onopen = (response) =>
         @setConnected(true);
-        transport = response.transport
-        console.log("Connection opened using " + transport)
+        console.log("Connection opened using ws")
 
-      request.onReconnect = (request, response) =>
+      socket.onreconnect = (request, response) =>
         @setConnected(true);
-        socket.info "Reconnecting"
+        console.log "Reconnecting"
 
-      request.onClose = (response) =>
+      socket.onclose = (response) =>
         @setConnected(false);
         return console.log "Connection closed"
 
-      request.onError = (response) =>
+      socket.onerror = (response) =>
         @setConnected(false);
         return console.log "Connection error"
 
-      subSocket = socket.subscribe(request);
+      #subSocket = socket.subscribe(request);
 
     start : () =>
-      #@reconnect();
+      @reconnect();
 
     stop : () =>
-      if (@subSocket?)
-        @subSocket.unsubscribe();
+      #if (@subSocket?)
+      #  @subSocket.unsubscribe();
       @connected = false;
 
 

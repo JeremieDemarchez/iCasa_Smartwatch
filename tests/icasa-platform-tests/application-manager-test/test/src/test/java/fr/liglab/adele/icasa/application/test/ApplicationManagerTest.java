@@ -18,12 +18,7 @@ package fr.liglab.adele.icasa.application.test;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.ops4j.pax.exam.CoreOptions.frameworkProperty;
-import static org.ops4j.pax.exam.CoreOptions.junitBundles;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.repository;
-import static org.ops4j.pax.exam.CoreOptions.wrappedBundle;
+
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -38,14 +33,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.CompositeOption;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -53,12 +40,12 @@ import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.osgi.service.deploymentadmin.DeploymentException;
 import org.osgi.service.deploymentadmin.DeploymentPackage;
 
-import fr.liglab.adele.commons.test.utils.Condition;
-import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.icasa.application.ApplicationManager;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.Condition;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
+@RunWith(ChameleonRunner.class)
 public class ApplicationManagerTest {
 
 	@Inject
@@ -69,24 +56,7 @@ public class ApplicationManagerTest {
 	
 	private DeploymentAdmin dpAdmin;
 	
-	@Configuration
-	public Option[] config() { 
-		return options(junitBundles(), projectConfiguration());
-	}
 
-	public CompositeOption projectConfiguration() {
-		CompositeOption projectConfig = new DefaultCompositeOption(  
-				mavenBundle().groupId("de.akquinet.gomobile").artifactId("deployment-admin-impl").versionAsInProject(),
-				mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.eventadmin").versionAsInProject(),
-				mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.ipojo").versionAsInProject(),
-                mavenBundle().groupId("org.ow2.chameleon.json").artifactId("json-service-json.org").versionAsInProject(),
-                mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("context.api").versionAsInProject(),
-                mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.api").versionAsInProject(),
-				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("application.impl").versionAsInProject(),
-				mavenBundle().groupId("fr.liglab.adele.icasa").artifactId("common").versionAsInProject(),
-				mavenBundle().groupId("fr.liglab.adele.common").artifactId("base.distribution.test").versionAsInProject());
-		return projectConfig;
-	}
 
 
 	@Before
@@ -102,9 +72,7 @@ public class ApplicationManagerTest {
 
 
 	private URL getDeploymentPackageArtifactURL(String artifactID) throws MalformedURLException  {
-		MavenArtifactProvisionOption option = mavenBundle().groupId("fr.liglab.adele.icasa")
-		      .artifactId(artifactID).type("dp").versionAsInProject(); 
-		return new URL(option.getURL());
+        return new URL("mvn:fr.liglab.adele.icasa/" + artifactID + "/" + System.getProperty("applications.test.version")+"/dp");
 	}
 
 	private DeploymentPackage installDeploymentPackage(String dpName) throws DeploymentException, IOException {
@@ -116,7 +84,7 @@ public class ApplicationManagerTest {
 	public void checkInstallOneApplication() throws DeploymentException, IOException {
 		Assert.assertNotNull(dpAdmin);
 
-		installDeploymentPackage("follow-me-test-app-dp-1");
+        DeploymentPackage fmdp = installDeploymentPackage("follow-me-test-app-dp-1");
 		
 		Assert.assertNotNull(manager);
 		
@@ -130,13 +98,14 @@ public class ApplicationManagerTest {
 
 		// No application containing a test-bundle-2 bundle
 		assertNull(manager.getApplicationOfBundle("test-bundle-2"));
+        fmdp.uninstallForced();
 	}
 
 	@Test
 	public void checkInstallApplicationWithTwoDPs() throws DeploymentException, IOException {
 		Assert.assertNotNull(dpAdmin);
 
-		installDeploymentPackage("gas-alarm-test-app-dp-1");
+        DeploymentPackage gsdp1 = installDeploymentPackage("gas-alarm-test-app-dp-1");
 		
 		Assert.assertNotNull(manager);
 		
@@ -148,7 +117,7 @@ public class ApplicationManagerTest {
 
 		Assert.assertNull(manager.getApplicationOfBundle("test-bundle-3"));
 
-		installDeploymentPackage("gas-alarm-test-app-dp-2");
+        DeploymentPackage gsdp2 = installDeploymentPackage("gas-alarm-test-app-dp-2");
 
 		Assert.assertNotNull(manager.getApplication("gas-alarm-test-app"));
 		
@@ -174,6 +143,8 @@ public class ApplicationManagerTest {
 		Assert.assertEquals("gas-alarm-test-app", manager.getApplicationOfBundle("test-bundle-3").getId());
 
 		Assert.assertEquals(manager.getApplicationOfBundle("test-bundle-2"), manager.getApplicationOfBundle("test-bundle-3"));
+        gsdp1.uninstallForced();
+        gsdp2.uninstallForced();
 
 	}
 	
@@ -317,42 +288,6 @@ public class ApplicationManagerTest {
 		return null;
 	}
 
-	
-	private CompositeOption mockitoBundles() {
-		CompositeOption mockitoConfig = new DefaultCompositeOption(
-		// Repository required to load harmcrest (OSGi-fied version).
-		      repository("http://repository.springsource.com/maven/bundles/external").id(
-		            "com.springsource.repository.bundles.external"),
-
-		      // Repository required to load harmcrest (OSGi-fied version).
-		      repository("http://repo1.maven.org/maven2/").id("central"),
-		      // Mockito without Hamcrest and Objenesis
-		      mavenBundle("org.mockito", "mockito-core", "1.9.5"),
-		      // Hamcrest with a version matching the range expected by Mockito
-		      mavenBundle("org.hamcrest", "com.springsource.org.hamcrest.core", "1.1.0"),
-
-		      // Objenesis with a version matching the range expected by Mockito
-		      wrappedBundle(mavenBundle("org.objenesis", "objenesis", "1.2")).exports("*;version=1.2"),
-
-		      // The default JUnit bundle also exports Hamcrest, but with an (incorrect) version of
-		      // 4.9 which does not match the Mockito import. When deployed after the hamcrest bundles, it gets
-		      // resolved correctly.
-		      /*
-				 * Felix has implicit boot delegation enabled by default. It conflicts with Mockito: java.lang.LinkageError:
-				 * loader constraint violation in interface itable initialization: when resolving method
-				 * "org.osgi.service.useradmin.User$$EnhancerByMockitoWithCGLIB$$dd2f81dc
-				 * .newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;" the class loader (instance of
-				 * org/mockito/internal/creation/jmock/SearchingClassLoader) of the current class,
-				 * org/osgi/service/useradmin/User$$EnhancerByMockitoWithCGLIB$$dd2f81dc, and the class loader (instance of
-				 * org/apache/felix/framework/BundleWiringImpl$BundleClassLoaderJava5) for interface
-				 * org/mockito/cglib/proxy/Factory have different Class objects for the type org/mockito/cglib/
-				 * proxy/Callback used in the signature
-				 * 
-				 * So we disable the bootdelegation. this property has no effect on the other OSGi implementation.
-				 */
-		      frameworkProperty("felix.bootdelegation.implicit").value("false"));
-		return mockitoConfig;
-	}
 	
 	
     class BundleNumberCondition implements Condition {

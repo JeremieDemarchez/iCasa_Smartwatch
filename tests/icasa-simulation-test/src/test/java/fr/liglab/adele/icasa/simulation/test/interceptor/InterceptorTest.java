@@ -15,10 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulation.test.interceptor;
 
-import java.util.Hashtable;
-
-import javax.inject.Inject;
-
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.MissingHandlerException;
 import org.apache.felix.ipojo.UnacceptableConfiguration;
@@ -30,19 +29,15 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulation.test.util.IPojoApiBaseTest;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import javax.inject.Inject;
+import java.util.Hashtable;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class InterceptorTest extends IPojoApiBaseTest {
+@RunWith(ChameleonRunner.class)
+public class InterceptorTest {
 
 	@Inject
 	public BundleContext context;
@@ -51,10 +46,11 @@ public class InterceptorTest extends IPojoApiBaseTest {
 	private SimulationManager simulationMgr;
 	
 	private BinaryLightConsumer consumerApp;
+    private OSGiHelper helper;
 
-	@Before
+    @Before
 	public void setUp() {
-		waitForStability(context);
+        helper = new OSGiHelper(context);
 	}
 
 	@After
@@ -64,48 +60,62 @@ public class InterceptorTest extends IPojoApiBaseTest {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+        helper.dispose();
 	}
 
 	@Test
 	public void contextAddedToServiceReference() {
-		createInstanceConsumer("(location=kitchen)");
-		prepareSimulationEnvironment();
+        String instanceName = "testConsumer1";
+        PrimitiveComponentType consumer = createInstanceConsumer(instanceName,"(location=kitchen)");
+
+        prepareSimulationEnvironment();
 		LocatedDevice lDevice = simulationMgr.createDevice("iCasa.BinaryLight", "12345", new Hashtable<String, Object>());
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "kitchen");
-		
-		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);
+        helper.waitForService(BinaryLightConsumer.class, null, 10000);
+
+		consumerApp = helper.getServiceObject(BinaryLightConsumer.class);
 				
 		Assert.assertNotNull(consumerApp);
-		Assert.assertEquals(consumerApp.getDeviceId(), lDevice.getSerialNumber());		
+		Assert.assertEquals(consumerApp.getDeviceId(), lDevice.getSerialNumber());
+        consumer.disposeInstance(instanceName);
+        consumer.stop();
+
 	}
 	
 	@Test
 	public void serviceReferenceWithOtherContext() {
-		createInstanceConsumer("(location=kitchen)");
-		prepareSimulationEnvironment();
+        String instanceName = "testConsumer2";
+        PrimitiveComponentType component = createInstanceConsumer(instanceName, "(location=kitchen)");
+        prepareSimulationEnvironment();
 		LocatedDevice lDevice = simulationMgr.createDevice("iCasa.BinaryLight", "12345", new Hashtable<String, Object>());
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "livingroom");
-		
-		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);				
+
+		consumerApp = helper.getServiceObject(BinaryLightConsumer.class);
 		Assert.assertNull(consumerApp);
+        component.disposeInstance(instanceName);
+        component.stop();
 	}	
 	
 	
 	@Test
 	public void contextChangedToServiceReference() {
-		createInstanceConsumer("(location=kitchen)");
+        String instanceName ="testconsumer3";
+        PrimitiveComponentType consumer = createInstanceConsumer(instanceName, "(location=kitchen)");
 		prepareSimulationEnvironment();
 		LocatedDevice lDevice = simulationMgr.createDevice("iCasa.BinaryLight", "12345", new Hashtable<String, Object>());
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "kitchen");
-		
-		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);
+
+        helper.waitForService(BinaryLightConsumer.class, null, 10000);
+        consumerApp = helper.getServiceObject(BinaryLightConsumer.class);
 				
 		Assert.assertNotNull(consumerApp);
 		Assert.assertEquals(consumerApp.getDeviceId(), lDevice.getSerialNumber());		
 		
 		simulationMgr.moveDeviceIntoZone(lDevice.getSerialNumber(), "livingroom");
-		consumerApp = (BinaryLightConsumer) getService(context, BinaryLightConsumer.class);
-		Assert.assertNull(consumerApp);		
+		consumerApp = helper.getServiceObject(BinaryLightConsumer.class);
+		Assert.assertNull(consumerApp);
+        consumer.disposeInstance(instanceName);
+        consumer.stop();
 	}
 	
 
@@ -113,12 +123,16 @@ public class InterceptorTest extends IPojoApiBaseTest {
 	 * Creates a component type and instance of class BinaryLightConsumerImpl
 	 * @param filter
 	 */
-	private void createInstanceConsumer(String filter) {
-		PrimitiveComponentType appCT = new PrimitiveComponentType().setBundleContext(context)
-		      .setClassName(BinaryLightConsumerImpl.class.getName())
-		      .addDependency(new Dependency().setField("m_device").setFilter(filter)).addService(new Service());
-		try {
-			appCT.createInstance("Test-Consumer");
+	private PrimitiveComponentType createInstanceConsumer(String instanceName, String filter) {
+        PrimitiveComponentType appCT = new PrimitiveComponentType();
+        appCT.setBundleContext(context);
+        appCT.setClassName(BinaryLightConsumerImpl.class.getName());
+        appCT.setComponentTypeName(instanceName);
+        appCT.addDependency(new Dependency().setField("m_device").setFilter(filter));
+        appCT.addService(new Service().setSpecification(BinaryLightConsumer.class.getName()));
+        appCT.start();
+        try {
+			appCT.createInstance(instanceName);
 		} catch (UnacceptableConfiguration e) {
 			e.printStackTrace();
 		} catch (MissingHandlerException e) {
@@ -126,6 +140,8 @@ public class InterceptorTest extends IPojoApiBaseTest {
 		} catch (ConfigurationException e) {
 			e.printStackTrace();
 		}
+
+        return appCT;
 	}
 
 	/**

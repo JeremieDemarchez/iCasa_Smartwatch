@@ -29,14 +29,11 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.commons.test.utils.TestUtils;
+
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
@@ -47,17 +44,21 @@ import fr.liglab.adele.icasa.distribution.test.device.util.Type1DeviceImpl;
 import fr.liglab.adele.icasa.distribution.test.util.DeviceTestUtil;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class DeviceTrackerTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class DeviceTrackerTest {
 
 	@Inject
 	public BundleContext context;
 
+    OSGiHelper helper;
+
 	@Before
 	public void setUp() {
-		waitForStability(context);
+		helper = new OSGiHelper(context);
 	}
 
 	@After
@@ -67,7 +68,7 @@ public class DeviceTrackerTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void testDevicesFirstThenTracker() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		GenericDevice device1 = new Type1DeviceImpl("dev1");
@@ -93,7 +94,7 @@ public class DeviceTrackerTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void testTrackerWithoutCustomizerAndFilter() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		LocatedDeviceTracker tracker = new LocatedDeviceTracker(context, Type1Device.class, null);
@@ -127,7 +128,7 @@ public class DeviceTrackerTest extends AbstractDistributionBaseTest {
 
 	@Test
 	public void testTrackerWithCustomizerAndFilter() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		LocatedDeviceTrackerCustomizer customizer = mock(LocatedDeviceTrackerCustomizer.class);
@@ -208,7 +209,7 @@ public class DeviceTrackerTest extends AbstractDistributionBaseTest {
 	
 	@Test
 	public void testTrackerUsingProperties() {
-		ContextManager contextMgr = (ContextManager) getService(context, ContextManager.class);
+		ContextManager contextMgr = helper.getServiceObject(ContextManager.class);
 		Assert.assertNotNull(contextMgr);
 
 		LocatedDeviceTracker tracker = new LocatedDeviceTracker(context, Type1Device.class, null, "property1");

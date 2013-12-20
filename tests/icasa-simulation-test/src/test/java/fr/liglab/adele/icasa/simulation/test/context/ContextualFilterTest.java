@@ -25,19 +25,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class ContextualFilterTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class ContextualFilterTest {
 
 	@Inject
 	public BundleContext context;
@@ -49,6 +47,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 	private SimulationManager simulationMgr;
 
 	private ContextSource contextSource;
+    OSGiHelper helper;
 
 	//private ConsumerSimple consumerApp;
 
@@ -56,51 +55,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 
 	@Before
 	public void setUp() {
-		waitForStability(context);
-		/*
-		try {
-			PrimitiveComponentType deviceCT = new PrimitiveComponentType()
-			      .setBundleContext(context)
-			      .setClassName(SimpleDeviceImpl.class.getName())
-			      .addService(
-			            new Service()
-			                  .setSpecification(SimpleDevice.class.getName())
-			                  .addProperty(new ServiceProperty().setName("location").setField("m_location"))
-			                  .addProperty(new ServiceProperty().setName("device.serialNumber").setField("m_serialNumber")));
-
-			Dictionary<String, String> conf = new Hashtable<String, String>();
-
-			// Creation of device in kitchen
-			conf.put("location", "kitchen");
-			conf.put("device.serialNumber", "kitchen-1234");
-			conf.put("instance.name", "TestDevice-kitchen-1234");
-			deviceCT.createInstance(conf);
-
-			// Creation of device in bathroom
-			conf.put("location", "bathroom");
-			conf.put("device.serialNumber", "bathroom-1234");
-			conf.put("instance.name", "TestDevice-bathroom-1234");
-			deviceCT.createInstance(conf);
-
-			// Creation of device in bedroom
-			conf.put("location", "bedroom");
-			conf.put("device.serialNumber", "bedroom-1234");
-			conf.put("instance.name", "TestDevice-bedroom-1234");
-			deviceCT.createInstance(conf);
-
-			appCT = new PrimitiveComponentType().setBundleContext(context)
-			      .setClassName(ConsumerSimpleImpl.class.getName())
-			      .addDependency(new Dependency().setField("m_device").setFilter("(location=${person.paul.location})"))
-			      .addService(new Service());
-
-		} catch (UnacceptableConfiguration e) {
-			e.printStackTrace();
-		} catch (MissingHandlerException e) {
-			e.printStackTrace();
-		} catch (ConfigurationException e) {
-			e.printStackTrace();
-		}
-		*/
+        helper = new OSGiHelper(context);
 	}
 
 	@After
@@ -127,6 +82,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 		contextSource = getContextSource();
 		Assert.assertNotNull(contextSource);
 		Assert.assertEquals(person.getLocation(), contextSource.getProperty("person.paul.location"));
+
 	}
 
 	@Test
@@ -154,7 +110,7 @@ public class ContextualFilterTest extends AbstractDistributionBaseTest {
 	}
 
 	private ContextSource getContextSource() {
-		ContextSource contextSource = (ContextSource) getService(context, ContextSource.class,
+		ContextSource contextSource = helper.getServiceObject(ContextSource.class,
 		      "(factory.name=ICasaContextSourceBuilder)");
 		return contextSource;
 	}

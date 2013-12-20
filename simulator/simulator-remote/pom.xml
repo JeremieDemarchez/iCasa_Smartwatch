@@ -24,6 +24,11 @@
 
 	<!-- Project dependencies -->
 	<dependencies>
+      <dependency>
+         <groupId>org.wisdom-framework</groupId>
+         <artifactId>wisdom-api</artifactId>
+         <version>1.0-SNAPSHOT</version>
+      </dependency>
 		<dependency>
 			<groupId>org.apache.felix</groupId>
 			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
@@ -53,10 +58,6 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.sun.jersey</groupId>
-			<artifactId>jersey-core</artifactId>
-		</dependency>
-		<dependency>
 			<groupId>org.ow2.chameleon.json</groupId>
 			<artifactId>json-service-json.org</artifactId>
 		</dependency>
@@ -64,23 +65,7 @@
 			<groupId>org.osgi</groupId>
 			<artifactId>org.osgi.compendium</artifactId>
 		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
-		</dependency>
 
-		<dependency>
-         <groupId>org.ow2.chameleon.rose.atmosphere</groupId>
-			<artifactId>atmosgi-service</artifactId>
-		</dependency>
-		<dependency>
-         <groupId>org.ow2.chameleon.rose.atmosphere</groupId>
-			<artifactId>atmosgi-component</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>servlet-api</artifactId>
-		</dependency>
 	</dependencies>
 
 	<build>
@@ -90,8 +75,8 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.icasa.simulator.remote.impl, 
-						fr.liglab.adele.icasa.simulator.remote.util</Private-Package>
+						<Private-Package>fr.liglab.adele.icasa.simulator.remote.wisdom.impl, 
+						fr.liglab.adele.icasa.simulator.remote.wisdom.util</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>

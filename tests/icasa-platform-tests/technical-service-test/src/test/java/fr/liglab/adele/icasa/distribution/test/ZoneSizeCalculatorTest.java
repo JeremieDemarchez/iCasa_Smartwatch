@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.service.preferences.Preferences;
@@ -26,11 +25,10 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
-import fr.liglab.adele.commons.test.utils.TestUtils;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 import javax.inject.Inject;
 
@@ -39,12 +37,13 @@ import javax.inject.Inject;
  *
  * @author Thomas Leveque
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class ZoneSizeCalculatorTest {
 
     @Inject
     public BundleContext context;
+
+    OSGiHelper helper;
 
     public ZoneSizeCalculator _zoneSizeCalculator;
 
@@ -54,8 +53,7 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        waitForStability(context);
-
+        helper = new OSGiHelper(context);
         // should wait for these services
         _contextMgr = (ContextManager) waitForService(context, ContextManager.class);
         _zoneSizeCalculator = (ZoneSizeCalculator) waitForService(context, ZoneSizeCalculator.class);
@@ -155,6 +153,6 @@ public class ZoneSizeCalculatorTest extends AbstractDistributionBaseTest {
     public Object waitForService(BundleContext context, Class clazz) {
         TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 20000, 20);
 
-        return getService(context, clazz);
+        return helper.getServiceObject(clazz);
     }
 }

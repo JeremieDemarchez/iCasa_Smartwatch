@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulation.test.scheduled;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
@@ -23,20 +22,17 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.Hashtable;
 
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class SimulatedScheduledTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class SimulatedScheduledTest {
 
     static final long ONE_MINUTE=60000;
 
@@ -48,7 +44,7 @@ public class SimulatedScheduledTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        waitForStability(context);
+
     }
 
     @After

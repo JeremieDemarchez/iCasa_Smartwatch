@@ -19,15 +19,11 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-import java.util.Vector;
+import java.util.*;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.handlers.dependency.AggregateDependencyInjectionType;
 import org.apache.felix.ipojo.handlers.dependency.Dependency;
 import org.apache.felix.ipojo.handlers.dependency.DependencyCallback;
 import org.osgi.framework.BundleContext;
@@ -76,7 +72,7 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
             boolean isOptional, boolean isAggregate, String identity,
             BundleContext context, int policy, Comparator cmp, String mandatoryProps) {
         super(handler, field, spec, filter, isOptional, isAggregate, false, true, identity, context, policy, cmp,
-                null);
+               null,  null);
 
         addMandatoryProperties(mandatoryProps);
         
@@ -88,9 +84,16 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
         return super.getCallbacks();
     }
 
-    protected void setType(int type) {
-        super.setType(type);
+
+    /**
+     * Since iPOJO 1.11.x type has changed from integer to AggregateDependencyInjectionType enum.
+     * @param type
+     */
+    protected void setAggregateType(AggregateDependencyInjectionType type) {
+        super.setAggregateType(type);
+        //super.setType(type);
     }
+
 
     protected void addConstructorInjection(int index) throws ConfigurationException {
         super.addConstructorInjection(index);
@@ -303,8 +306,8 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
         Object currentValue = super.onGet(pojo, fieldName, value);
 
         if (isAggregate()) {
-            int type = getObjectType(); // Getting the type of aggregate dependency (list, set, array, vector)
-            if (type == 0) { // Array case
+            AggregateDependencyInjectionType type = getAggregateType(); // Getting the type of aggregate dependency (list, set, array, vector)
+            if (type == AggregateDependencyInjectionType.ARRAY) { // Array case
                 Object[] currentArray = (Object[]) currentValue;
                 Object[] newArray = (Object[]) Array.newInstance(getSpecification(), currentArray.length);
                 for (int i = 0; i < currentArray.length; i++) {
@@ -313,7 +316,7 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
                     newArray[i] = proxiedObject;
                 }
                 return newArray;
-            } else if (type == 2) { // Vector case - We should use DependencyHandler.VECTOR, but it is a protected field
+            } else if (type == AggregateDependencyInjectionType.VECTOR) { // Vector case - We should use DependencyHandler.VECTOR, but it is a protected field
                 Vector currentVector = (Vector) currentValue;
                 Vector newVector = new Vector();
                 for (Object element : currentVector) {
@@ -328,34 +331,6 @@ public class DeviceDependency extends Dependency implements AccessRightListener 
         return currentValue;
     }
 
-    /*
-     * @Override public void resetLocalCache() { super.resetLocalCache(); }
-     */
-
-    /**
-     * Method added to obtain the m_type field value of class Dependency. This field is used to determine the type of
-     * object to inject (0: Array, 1:List, 2:Vector, 3:Set)
-     * 
-     * @return
-     */
-    protected int getObjectType() {
-        Field field;
-        try {
-            field = this.getClass().getSuperclass().getDeclaredField("m_type");
-            field.setAccessible(true);
-            return (Integer) field.get(this);
-        } catch (SecurityException e) {
-            e.printStackTrace();
-        } catch (NoSuchFieldException e) {
-            e.printStackTrace();
-        } catch (IllegalArgumentException e) {
-            e.printStackTrace();
-        } catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-
-        return 0;
-    }
 
     /**
      * Method overridden to modify m_proxyObject in Depedency with our ProxyFactory functionality: 1. If dependency is

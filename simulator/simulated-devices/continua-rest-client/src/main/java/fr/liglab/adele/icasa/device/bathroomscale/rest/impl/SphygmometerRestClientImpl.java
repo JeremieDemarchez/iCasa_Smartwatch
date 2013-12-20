@@ -38,7 +38,7 @@ import fr.liglab.adele.icasa.device.bathroomscale.rest.api.SphygmometerRestAPI;
 public class SphygmometerRestClientImpl implements SphygmometerRestAPI {
 
 	// 10.194.3.114
-	@Property(name = "url", value = "http://localhost:8080/restAdapter/rest/continua")
+	@Property(name = "url", value = "http://localhost:9000/restAdapter/rest/continua")
 	private String url;
 
 	@Property(name = "hl7templateFile")

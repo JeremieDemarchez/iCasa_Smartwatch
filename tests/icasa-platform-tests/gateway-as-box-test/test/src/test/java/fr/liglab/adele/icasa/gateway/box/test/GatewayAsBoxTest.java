@@ -15,46 +15,23 @@
  */
 package fr.liglab.adele.icasa.gateway.box.test;
 
-import static org.junit.Assert.assertNotNull;
-import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.fail;
-
-import java.io.IOException;
-import java.lang.Exception;
-import java.lang.String;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-
-import javax.inject.Inject;
-
-import org.apache.felix.ipojo.ComponentInstance;
-import org.apache.felix.ipojo.Factory;
+import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.device.box.Box;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.Bundle;
-import org.osgi.framework.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.BundleException;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.box.Box;
-import fr.liglab.adele.icasa.service.preferences.Preferences;
-import fr.liglab.adele.commons.test.utils.TestUtils;
+import javax.inject.Inject;
+
+import static org.junit.Assert.*;
 
 
 /**
@@ -64,20 +41,21 @@ import fr.liglab.adele.commons.test.utils.TestUtils;
  * @author Thomas Leveque
  *
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class GatewayAsBoxTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class GatewayAsBoxTest {
 
     @Inject
     public BundleContext context;
 
     public Preferences _preferences;
+
+    OSGiHelper helper;
     
     protected ContextManager _contextMgr;
 
     @Before
     public void setUp() throws Exception {
-        waitForStability(context);
+        helper = new OSGiHelper(context);
         // should wait for these services
         _contextMgr = (ContextManager) waitForService(context, ContextManager.class);
         _preferences = (Preferences) waitForService(context, Preferences.class);
@@ -136,7 +114,7 @@ public class GatewayAsBoxTest extends AbstractDistributionBaseTest {
     public Object waitForService(BundleContext context, Class clazz) {
         TestUtils.testConditionWithTimeout(new ServiceExistsCondition(context, clazz), 10000, 20);
 
-        return getService(context, clazz);
+        return helper.getServiceObject(clazz);
     }
     
 }

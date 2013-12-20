@@ -34,20 +34,14 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 import org.osgi.service.deploymentadmin.DeploymentAdmin;
 import org.osgi.service.deploymentadmin.DeploymentException;
 import org.osgi.service.deploymentadmin.DeploymentPackage;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
+
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
@@ -56,15 +50,16 @@ import fr.liglab.adele.icasa.device.handler.test.mock.devices.BinaryLightMockImp
 import fr.liglab.adele.icasa.device.handler.test.mock.devices.ThermometerMockImpl;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 /**
  * 
  * @author Gabriel
  *
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class BaseDeviceHandlerTest {
 
     @Inject
     public BundleContext context;
@@ -76,36 +71,24 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
     protected ContextManager contextManager;
     
     protected final String TEST_APPLICATION_NAME = "test-handler-app";
+    private OSGiHelper osgi;
 
     @Before
     public void setUp() throws Exception {
-        waitForStability(context);
-        dpAdmin = (DeploymentAdmin) getService(context, DeploymentAdmin.class);
-        accessManager = (AccessManager) getService(context, AccessManager.class);
-        contextManager = (ContextManager) getService(context, ContextManager.class);
-        installDeploymentPackage("test-handler-app-dp-1");
+        osgi = new OSGiHelper(context);
+        dpAdmin = osgi.getServiceObject(DeploymentAdmin.class);
+        accessManager = osgi.getServiceObject(AccessManager.class);
+        contextManager = osgi.getServiceObject(ContextManager.class);
+        //installDeploymentPackage("test-handler-app-dp-1");
     }
 
     @After
     public void tearDown() {
 
     }
-    
-    @Configuration
-    public Option[] configuration() {
-        List<Option> lst = super.config();
-        lst.add(new DefaultCompositeOption(systemProperty(Constants.DISABLE_ACCESS_POLICY_PROPERTY).value(getAccessPolicyPropertyValue().toString())));
-        Option conf[] = lst.toArray(new Option[0]);
-        return conf;
-    }
-    
-
-    protected Boolean getAccessPolicyPropertyValue() {
-        return Boolean.FALSE;
-    }
 
     protected ComponentInstance createComponentInstance(String factoryName) throws Exception {
-        Factory factory = (Factory) getService(context, Factory.class, "(factory.name=" + factoryName + ")");
+        Factory factory = osgi.getServiceObject(Factory.class, "(factory.name=" + factoryName + ")");
         assertNotNull(factory);
 
         ComponentInstance instance = factory.createComponentInstance(null);
@@ -139,9 +122,7 @@ public class BaseDeviceHandlerTest extends AbstractDistributionBaseTest {
     }
 
     private URL getDeploymentPackageArtifactURL(String artifactID) throws MalformedURLException {
-        MavenArtifactProvisionOption option = mavenBundle().groupId("fr.liglab.adele.icasa").artifactId(artifactID)
-                .type("dp").versionAsInProject();
-        return new URL(option.getURL());
+        return new URL("mvn:fr.liglab.adele.icasa/" + artifactID + "/" + System.getProperty("applications.test.version")+"/dp");
     }
 
     protected DeploymentPackage installDeploymentPackage(String dpName) throws DeploymentException, IOException {

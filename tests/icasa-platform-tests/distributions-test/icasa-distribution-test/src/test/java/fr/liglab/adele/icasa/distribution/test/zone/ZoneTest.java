@@ -25,32 +25,31 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.testing.helpers.OSGiHelper;
 
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class ZoneTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class ZoneTest {
 	
 	@Inject
 	public BundleContext context;
 
+    OSGiHelper helper;
+
 	@Before
 	public void setUp() {
-		waitForStability(context);
-	}
+        helper = new OSGiHelper(context);
+    }
 
 	@After
 	public void tearDown() {
-
 	}
 	
 	/**
@@ -58,7 +57,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void creationZoneTest(){
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		int zone_0_scope = 5;
@@ -67,6 +66,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		//Test the zone and its Id. 
 		Assert.assertNotNull(zone_0);
 		Assert.assertEquals(zone_id_0, zone_0.getId());
+        icasa.removeAllZones();
 	}
 	
 	/**
@@ -74,7 +74,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void creationZoneFailDueToExistentTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		Position positionZone_0 = new Position(0,0);
@@ -86,6 +86,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
         } catch (IllegalArgumentException e) {
             // passed
         }
+        icasa.removeAllZones();
 	}
 	
 	/**
@@ -93,7 +94,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void eventsForRemovedZoneFailTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		String variable = "variable";
@@ -112,13 +113,14 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		Assert.assertNull(icasa.getZone(zone_id_0)); //Zone should not be in ContextManager.
 		zone_0.addVariable(variable);
 		Assert.assertNull(listener.getListenVariable());
+        icasa.removeAllZones();
 	}
 	/**
 	 * Test the the listener event is called when adding a zone.
 	 */
 	@Test
 	public void addZoneTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		int zone_0_scope = 5;
@@ -133,13 +135,14 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		
 		Assert.assertNotNull(listener.getListenZone());//There is an added zone.
 		Assert.assertEquals(zone_0, listener.getListenZone());//added zone is the same as the added.
+        icasa.removeAllZones();
 	}
 	/**
 	 * Test the remove zone and the associated listener.
 	 */
 	@Test
 	public void removeZoneTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		int zone_0_scope = 5;
@@ -157,6 +160,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		Assert.assertNull(icasa.getZone(zone_id_0)); //Zone should not be in ContextManager.
 		Assert.assertEquals(zone_0, listener.getListenZone());//removed zone is the same as the added.
 		Assert.assertEquals(listener.getListenZone(), zone_0);
+        icasa.removeAllZones();
 	}
 	
 	/**
@@ -164,7 +168,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void moveZoneTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		int zone_0_scope = 5;
@@ -184,6 +188,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		Assert.assertEquals(zone_0, listener.getListenZone());//moved zone is the same as the added.
 		Assert.assertEquals(newPosition, listener.getListenZone().getLeftTopRelativePosition());//moved zone is the same as the added.
 		Assert.assertNotSame(positionZone_0,listener.getListenZone().getCenterAbsolutePosition());//Old position is not the initial position
+        icasa.removeAllZones();
 	}
 
 	/**
@@ -191,7 +196,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void resizeZoneTest(){
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		int zone_0_scope = 5;//size of the squared zone is 10
@@ -220,6 +225,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		//Test the new zone size.
 		Assert.assertEquals(20,zone_0.getYLength());
 		Assert.assertEquals(20,zone_0.getXLength());
+        icasa.removeAllZones();
 		//Test the new zone center position.
 		
 	}
@@ -229,7 +235,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void addZoneParentTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		String zone_parent_id_0 = "myParentZone-0";
@@ -246,7 +252,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		} catch (Exception e1) {
 			Assert.fail("Unable to set parent in zone");
 		}
-		
+		icasa.removeAllZones();
 	}
 	
 	/**
@@ -254,9 +260,9 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 	 */
 	@Test
 	public void resizeZoneInParentFailTest() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
-		waitForStability(context);
+
 		String zone_id_0 = "myZone-0";
 		String zone_parent_id_0 = "myParentZone-0";
 		int zone_0_scope = 2;//size of the squared zone is 4
@@ -287,13 +293,14 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		} catch (Exception e) {
 			
 		}
+        icasa.removeAllZones();
 	}
 	/**
 	 * Test the zone variables and its values.
 	 */
 	@Test
 	public void testZoneAddVariables() {
-        ContextManager icasa = (ContextManager)getService(context,ContextManager.class);
+        ContextManager icasa = helper.getServiceObject(ContextManager.class);
         assertNotNull(icasa);
 		String zone_id_0 = "myZone-0";
 		String zone_variable = "variable-0";
@@ -312,6 +319,7 @@ public class ZoneTest extends AbstractDistributionBaseTest {
 		Assert.assertTrue(zone_0.getVariableNames().contains(zone_variable));
 		//Test the variables in the context.
 		Assert.assertTrue(icasa.getZoneVariables(zone_id_0).contains(zone_variable));
+        icasa.removeAllZones();
 	}
 
 }

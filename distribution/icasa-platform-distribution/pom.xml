@@ -38,12 +38,21 @@
             <artifactId>distribution.base</artifactId>
             <type>osgi-distribution</type>
         </dependency>
-
-        <!-- deployed packages -->
+        <dependency>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>wisdom.bundles</artifactId>
+           <version>${project.version}</version>
+           <type>osgi-distribution</type>
+        </dependency>
+        <!-- RoSe bundles -->
         <dependency>
            <groupId>org.ow2.chameleon.rose</groupId>
-           <artifactId>rose.dp</artifactId>
-           <type>deployment-package</type>
+           <artifactId>rose-core</artifactId>
+        </dependency>
+        <dependency>
+           <groupId>fr.liglab.adele.common</groupId>
+           <artifactId>rose-chameleon-deployer-configurator</artifactId>
+           <version>${AdeleBaseVersion}</version>
         </dependency>
         <!-- iCasa Platform -->
         <dependency>
@@ -71,7 +80,8 @@
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
                     <flattenDP>true</flattenDP>
-                </configuration>
+                    <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                 </configuration>
             </plugin>
         </plugins>
     </build>

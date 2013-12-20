@@ -22,17 +22,17 @@ import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.InstanceManager;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 
+
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 import test.component.handler.ComponentPropertiesRequireDevice;
 import test.component.handler.ComponentUsingBindProperties;
 import fr.liglab.adele.icasa.access.DeviceAccessPolicy;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
+import java.util.UUID;
+
+@RunWith(ChameleonRunner.class)
 public class PropertiesDeviceHandlerTest extends BaseDeviceHandlerTest {
 
     @Test
@@ -97,17 +97,20 @@ public class PropertiesDeviceHandlerTest extends BaseDeviceHandlerTest {
         } catch (Exception e) {
             System.out.println(e.getMessage());           
         }
-        
-        
+
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-501", DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "Thermometer-501", DeviceAccessPolicy.HIDDEN);
     }
     
     @Test
     public void mandatoryPropertiesFirstTest() throws Exception {
-        GenericDevice lightDevice = createBinaryLigth("BinaryLight-501");
-        GenericDevice thermometerDevice = createThermometer("Thermometer-501");
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
+        String t1 = "Thermometer-001" + UUID.randomUUID();
+        GenericDevice lightDevice = createBinaryLigth(bl1);
+        GenericDevice thermometerDevice = createThermometer(t1);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-501", DeviceAccessPolicy.TOTAL);
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "Thermometer-501", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, t1, DeviceAccessPolicy.TOTAL);
         
         
         lightDevice.setPropertyValue("test-prop1", "test-value");
@@ -133,20 +136,23 @@ public class PropertiesDeviceHandlerTest extends BaseDeviceHandlerTest {
         } catch (Exception e) {
             System.out.println(e.getMessage());    
             fail(); // The exception has not to be thrown            
-        }  
+        }
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, t1, DeviceAccessPolicy.HIDDEN);
                   
     }
         
     
     @Test
     public void mandatoryPropertiesWithBindCallback() throws Exception {
+        String bl1 = "BinaryLight-001" + UUID.randomUUID();
         InstanceManager manager = (InstanceManager) createComponentInstance("ComponentUsingBindProperties");
 
         ComponentUsingBindProperties pojo = (ComponentUsingBindProperties) manager.getPojoObject();
 
-        GenericDevice lightDevice = createBinaryLigth("BinaryLight-501");
+        GenericDevice lightDevice = createBinaryLigth(bl1);
         
-        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, "BinaryLight-501", DeviceAccessPolicy.TOTAL);
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.TOTAL);
         
         // Service injected when access modified
         assertEquals(0, pojo.lights.size());
@@ -159,8 +165,9 @@ public class PropertiesDeviceHandlerTest extends BaseDeviceHandlerTest {
         lightDevice.removeProperty("test-prop1");
         lightDevice.removeProperty("test-prop2");
         
-        assertEquals(0, pojo.lights.size()); 
-        
+        assertEquals(0, pojo.lights.size());
+        accessManager.setDeviceAccess(TEST_APPLICATION_NAME, bl1, DeviceAccessPolicy.HIDDEN);
+
         
     }
 

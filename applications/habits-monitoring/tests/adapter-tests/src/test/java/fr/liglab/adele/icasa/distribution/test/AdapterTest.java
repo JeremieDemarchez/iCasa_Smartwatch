@@ -17,11 +17,7 @@ package fr.liglab.adele.icasa.distribution.test;
 import fr.liglab.adele.cilia.Data;
 import fr.liglab.adele.cilia.helper.CiliaHelper;
 import fr.liglab.adele.cilia.helper.MediatorTestHelper;
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.commons.test.utils.Condition;
-import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.habits.monitoring.measure.generator.Measure;
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.button.simulated.SimulatedPushButton;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
@@ -33,35 +29,28 @@ import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Configuration;
-import org.ops4j.pax.exam.CoreOptions;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.Condition;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
 
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
 
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.core.IsInstanceOf.instanceOf;
-import static org.junit.Assert.assertThat;
+//import static org.hamcrest.CoreMatchers.equalTo;
+//import static org.hamcrest.core.IsInstanceOf.instanceOf;
+//import static org.junit.Assert.assertThat;
+import static org.junit.Assert.assertTrue;
 import static org.junit.matchers.JUnitMatchers.hasItem;
 import static org.mockito.Mockito.mock;
-import static org.ops4j.pax.exam.CoreOptions.*;
 
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class AdapterTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class AdapterTest {
 
 	@Inject
 	public BundleContext context;
@@ -74,68 +63,12 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
 	@Before
 	public void setUp() {
-		waitForStability(context);
 	}
 
 	@After
 	public void tearDown() {
 
 	}
-
-	public static Option junitAndMockitoBundles() {
-        return new DefaultCompositeOption(
-                // Repository required to load harmcrest (OSGi-fied version).
-                repository("http://repository.springsource.com/maven/bundles/external").id(
-                        "com.springsource.repository.bundles.external"),
-
-                // Repository required to load harmcrest (OSGi-fied version).
-                repository("http://repo1.maven.org/maven2/").id(
-                        "central"),
-
-                // Mockito without Hamcrest and Objenesis
-                mavenBundle("org.mockito", "mockito-core", "1.9.5"),
-
-                // cilia helper
-                mavenBundle().groupId("fr.liglab.adele.cilia").artifactId("cilia-helper").versionAsInProject(),//("1.6.4-SNAPSHOT"),
-                mavenBundle().groupId("org.apache.felix").artifactId("org.apache.felix.ipojo.test.helpers").versionAsInProject(),
-
-                // Hamcrest with a version matching the range expected by Mockito
-                mavenBundle("org.hamcrest", "com.springsource.org.hamcrest.core", "1.1.0"),
-
-                // Objenesis with a version matching the range expected by Mockito
-                wrappedBundle(mavenBundle("org.objenesis", "objenesis", "1.2"))
-                        .exports("*;version=1.2"),
-
-                // The default JUnit bundle also exports Hamcrest, but with an (incorrect) version of
-                // 4.9 which does not match the Mockito import. When deployed after the hamcrest bundles, it gets
-                // resolved correctly.
-                CoreOptions.junitBundles(),
-
-                /*
-                 * Felix has implicit boot delegation enabled by default. It conflicts with Mockito:
-                 * java.lang.LinkageError: loader constraint violation in interface itable initialization:
-                 * when resolving method "org.osgi.service.useradmin.User$$EnhancerByMockitoWithCGLIB$$dd2f81dc
-                 * .newInstance(Lorg/mockito/cglib/proxy/Callback;)Ljava/lang/Object;" the class loader
-                 * (instance of org/mockito/internal/creation/jmock/SearchingClassLoader) of the current class,
-                 * org/osgi/service/useradmin/User$$EnhancerByMockitoWithCGLIB$$dd2f81dc, and the class loader
-                 * (instance of org/apache/felix/framework/BundleWiringImpl$BundleClassLoaderJava5) for interface
-                 * org/mockito/cglib/proxy/Factory have different Class objects for the type org/mockito/cglib/
-                 * proxy/Callback used in the signature
-                 *
-                 * So we disable the bootdelegation. this property has no effect on the other OSGi implementation.
-                 */
-                frameworkProperty("felix.bootdelegation.implicit").value("false")
-        );
-    }
-
-	 @Configuration
-	    public Option[] configuration() {
-
-		 	List<Option> lst = super.config();
-		 	lst.add(junitAndMockitoBundles());
-		 	Option conf[] = lst.toArray(new Option[0]);
-		 	return conf;
-	    }
 
 	/**
 	 * Test the reception of a valid measure.
@@ -257,15 +190,15 @@ public class AdapterTest extends AbstractDistributionBaseTest {
         CiliaHelper.checkReceived(transformer,1,20000);
         Assert.assertTrue(transformer.getAmountData()>0);
         Data lastData = transformer.getLastData();
-        assertThat(lastData.getContent(), instanceOf(Measure.class));
+        assertTrue(lastData.getContent() instanceof Measure);
 
         Measure measure = (Measure) lastData.getContent();
         Assert.assertEquals(measure.getLocalisation(), simulationManager.getPerson("Paul").getLocation());
-        assertThat(devices, hasItem(measure.getDeviceId()));
-        assertThat(true, equalTo(measure.getReliability() >  (float)50));
+        //assertThat(devices, hasItem(measure.getDeviceId()));
+        assertTrue(measure.getReliability() >  (float)50);
         System.out.println("StartDate:" + new Date(scriptExecutor.getStartDate(secondScript)));
         System.out.println("Measure Time:" + new Date(measure.getTimestamp()));
-        assertThat(true, equalTo((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < (1000*scriptExecutor.getFactor(secondScript))));
+        assertTrue((measure.getTimestamp() - scriptExecutor.getStartDate(secondScript)) < (1000*scriptExecutor.getFactor(secondScript)));
     }
 
     private void testAutonomicAdapterCreation(String deviceType, String deviceId, String chainId, String existantCiliaComponent, String expectedCiliaComponent, DeviceActivitySimulator activity){
@@ -304,14 +237,14 @@ public class AdapterTest extends AbstractDistributionBaseTest {
 
         //Get the last message
         Data lastData = transformer.getLastData();
-        assertThat(lastData.getContent(), instanceOf(Measure.class));
+        assertTrue(lastData.getContent() instanceof Measure);
 
         //test value of last message.
         Measure measure = (Measure) lastData.getContent();
-        assertThat(devices, hasItem(measure.getDeviceId()));
-        assertThat(true, equalTo(measure.getReliability() >  (float)50));
+        //assertThat(devices, hasItem(measure.getDeviceId()));
+        assertTrue(measure.getReliability() >  (float)50);
         //dispose chain and simulated devices
-        helper.dispose();
+        //helper.dispose();
         simulationManager.removeAllDevices();
     }
 

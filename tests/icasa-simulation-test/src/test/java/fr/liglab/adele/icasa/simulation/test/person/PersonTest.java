@@ -24,20 +24,17 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class PersonTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class PersonTest  {
 
 	@Inject
 	public BundleContext context;
@@ -50,7 +47,6 @@ public class PersonTest extends AbstractDistributionBaseTest {
 
 	@Before
 	public void setUp() {
-		waitForStability(context);	
 	}
 
 	@After

@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
@@ -25,27 +24,20 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.options.DefaultCompositeOption;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.Hashtable;
-import java.util.List;
 
 import static org.mockito.Mockito.*;
-import static org.ops4j.pax.exam.CoreOptions.systemProperty;
 
 
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class SystemScheduleTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class SystemScheduleTest {
 
     static final long ONE_SECOND=1000;
 
@@ -57,7 +49,6 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
 	
 	@Before
 	public void setUp() {
-		waitForStability(context);
 	}
 
 	@After
@@ -65,23 +56,6 @@ public class SystemScheduleTest extends AbstractDistributionBaseTest {
         // do nothing
 	}
 
-    public static Option addSystemProperties() {
-
-        return new DefaultCompositeOption(
-                systemProperty( "iCasa.ThreadPool.default.maxThread" ).value( "10" ),
-                systemProperty( "iCasa.ThreadPool.group1.maxThread" ).value( "3" ),
-                systemProperty( "iCasa.ThreadPool.group2.maxThread" ).value( "5" )
-        );
-    }
-
-    @org.ops4j.pax.exam.Configuration
-    public Option[] configuration() {
-
-        List<Option> lst = super.config();
-        lst.add(addSystemProperties());
-        Option conf[] = lst.toArray(new Option[0]);
-        return conf;
-    }
 
 	/**
 	 * Test scheduling a periodic task.

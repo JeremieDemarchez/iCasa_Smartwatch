@@ -38,13 +38,23 @@
             <artifactId>distribution.base</artifactId>
             <type>osgi-distribution</type>
         </dependency>
-
-        <!-- deployed packages -->
         <dependency>
-           <groupId>org.ow2.chameleon.rose</groupId>
-           <artifactId>rose.dp</artifactId>
-            <type>deployment-package</type>
+           <groupId>${project.groupId}</groupId>
+           <artifactId>wisdom.bundles</artifactId>
+           <version>${project.version}</version>
+           <type>osgi-distribution</type>
         </dependency>
+
+         <!-- RoSe bundles -->
+         <dependency>
+            <groupId>org.ow2.chameleon.rose</groupId>
+            <artifactId>rose-core</artifactId>
+         </dependency>
+         <dependency>
+            <groupId>fr.liglab.adele.common</groupId>
+            <artifactId>rose-chameleon-deployer-configurator</artifactId>
+            <version>${AdeleBaseVersion}</version>
+         </dependency>
         <dependency>
             <!-- iCasa Platform -->
             <groupId>fr.liglab.adele.icasa</groupId>
@@ -81,12 +91,12 @@
 
         <!-- Simulator application-->
         <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>web.resources</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-           <groupId>fr.liglab.adele.icasa</groupId>
+           <groupId>${project.groupId}</groupId>
            <artifactId>simulator.web.instance</artifactId>
            <version>${project.version}</version>
         </dependency>
@@ -97,17 +107,6 @@
            <artifactId>frontend.services</artifactId>
            <version>${project.version}</version>
         </dependency>
-        <dependency>
-           <groupId>com.sun.jersey.contribs</groupId>
-           <artifactId>jersey-multipart</artifactId>
-           <version>${jerseyVersion}</version>
-        </dependency>
-        <dependency>
-           <groupId>org.jvnet</groupId>
-           <artifactId>mimepull</artifactId>
-           <version>${mimepullVersion}</version>
-        </dependency>
-
     </dependencies>
 
     <build>
@@ -117,6 +116,7 @@
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
                     <flattenDP>true</flattenDP>
+                    <defaultOutputDirectory>runtime</defaultOutputDirectory>
                 </configuration>
             </plugin>
          </plugins>

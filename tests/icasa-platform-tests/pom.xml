@@ -33,6 +33,7 @@
       <module>distributions-test</module>
       <module>technical-service-test</module>
       <module>access-manager-test</module>
+      <module>disabled-access-manager-test</module>
       <module>gateway-as-box-test</module>
 	</modules>
    <build>

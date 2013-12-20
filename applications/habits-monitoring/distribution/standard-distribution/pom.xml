@@ -51,9 +51,8 @@ limitations under the License.
             </dependency>
             <dependency>
                <groupId>fr.liglab.adele.cilia</groupId>
-               <artifactId>cilia-remote.dp</artifactId>
+               <artifactId>cilia-chameleon-deployer</artifactId>
                <version>${ciliaVersion}</version>
-               <type>deployment-package</type>
             </dependency>
             
             <!-- habits monitoring application -->
@@ -69,6 +68,14 @@ limitations under the License.
 			<type>deployment-package</type>
 			<version>${project.version}</version>
 		</dependency>
+      <dependency>
+         <groupId>com.sun.jersey</groupId>
+         <artifactId>jersey-client</artifactId>
+      </dependency>
+      <dependency>
+         <groupId>com.sun.jersey</groupId>
+         <artifactId>jersey-core</artifactId>
+      </dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
 			<artifactId>push.button.adapter.dp</artifactId>
@@ -99,6 +106,10 @@ limitations under the License.
                <plugin>
                   <groupId>fr.liglab.adele.common</groupId>
                   <artifactId>maven-osgi-distribution-plugin</artifactId>
+                  <configuration>
+                     <flattenDP>true</flattenDP>
+                     <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                  </configuration>
                </plugin>
                <plugin>
 				<groupId>de.akquinet.gomobile</groupId>

@@ -24,20 +24,16 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
+
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.commons.test.utils.Condition;
-import fr.liglab.adele.commons.test.utils.TestUtils;
+
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
 
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class ScriptTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class ScriptTest {
 
 	@Inject
 	public BundleContext context;
@@ -53,7 +49,6 @@ public class ScriptTest extends AbstractDistributionBaseTest {
 
 	@Before
 	public void setUp() {
-		waitForStability(context);	
 	}
 
 	@After
@@ -83,22 +78,6 @@ public class ScriptTest extends AbstractDistributionBaseTest {
 
 	}
 
-	
-    class ZoneNameAndNumberCondition implements Condition {
-        private int m_number;
-
-        public ZoneNameAndNumberCondition(int number) {
-            m_number = number;
-        }
-
-        public boolean isChecked() {
-            return (m_number == simulationMgr.getZones().size());
-        }
-
-        public String getDescription() {
-            return "Expected " + m_number + " zones in Simulator Manager";
-        }
-    }
     
 
 }

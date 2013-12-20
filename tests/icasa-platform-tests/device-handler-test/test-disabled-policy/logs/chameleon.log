@@ -1,0 +1,198 @@
+15:15:40.006  5458 [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/runtime
+15:15:40.009  5461 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/application
+15:15:40.010  5462 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+15:15:42.557  8009 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+15:15:42.702  8154 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+15:15:42.730  8182 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.BlockingIOCometSupport running under container: jetty/6.1.x
+15:15:42.734  8186 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using |. 
+15:15:42.739  8191 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptor
+15:15:42.744  8196 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+15:15:42.745  8197 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+15:15:42.746  8198 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+15:15:42.748  8200 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+15:15:42.749  8201 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+15:15:42.751  8203 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+15:15:42.752  8204 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.DefaultHeadersInterceptor : Default Response's Headers Interceptor
+15:15:42.753  8205 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults in your xml to disable them.
+15:15:42.754  8206 [Jetty HTTP Service] WARN  o.a.cpr.AtmosphereFramework - No BroadcasterCache configured. Broadcasted message between client reconnection will be LOST. It is recommended to configure the org.atmosphere.cache.UUIDBroadcasterCache
+15:15:42.760  8212 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+15:15:42.760  8212 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - HttpSession supported: false
+15:15:42.761  8213 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+15:15:42.761  8213 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+15:15:42.761  8213 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Using Broadcaster: org.atmosphere.cpr.DefaultBroadcaster
+15:15:42.763  8215 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Atmosphere Framework 1.1.0.RC1 started.
+15:15:42.763  8215 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - 
+
+	For Commercial Support, visit 
+	http://www.async-io.org/ or send an email to support@async-io.org
+
+15:15:42.857  8309 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast mapped to context-path: /atmosphere/event
+15:15:42.857  8309 [Jetty HTTP Service] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor [Atmosphere LifeCycle] mapped to AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast
+15:16:28.615  5390 [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/runtime
+15:16:28.621  5396 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/application
+15:16:28.622  5397 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+15:16:29.146  5921 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+15:16:33.699  10474 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+15:16:33.707  10482 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.BlockingIOCometSupport running under container: jetty/6.1.x
+15:16:33.709  10484 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using |. 
+15:16:33.709  10484 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptor
+15:16:33.710  10485 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+15:16:33.711  10486 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+15:16:33.711  10486 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+15:16:33.712  10487 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+15:16:33.713  10488 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+15:16:33.717  10492 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+15:16:33.718  10493 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.DefaultHeadersInterceptor : Default Response's Headers Interceptor
+15:16:33.719  10494 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults in your xml to disable them.
+15:16:33.720  10495 [[iPOJO] pool-2-thread-1] WARN  o.a.cpr.AtmosphereFramework - No BroadcasterCache configured. Broadcasted message between client reconnection will be LOST. It is recommended to configure the org.atmosphere.cache.UUIDBroadcasterCache
+15:16:33.722  10497 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+15:16:33.722  10497 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - HttpSession supported: false
+15:16:33.723  10498 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+15:16:33.723  10498 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+15:16:33.723  10498 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using Broadcaster: org.atmosphere.cpr.DefaultBroadcaster
+15:16:33.725  10500 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere Framework 1.1.0.RC1 started.
+15:16:33.725  10500 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 
+
+	For Commercial Support, visit 
+	http://www.async-io.org/ or send an email to support@async-io.org
+
+15:16:34.206  10981 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast mapped to context-path: /atmosphere/event
+15:16:34.207  10982 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor [Atmosphere LifeCycle] mapped to AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast
+15:34:36.389  6389 [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/runtime
+15:34:36.391  6391 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/application
+15:34:36.392  6392 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+15:34:37.119  7119 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+15:41:46.889  4736 [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/runtime
+15:41:46.898  4745 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/application
+15:41:46.899  4746 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+15:41:47.519  5366 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+15:41:52.738  10585 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+15:41:52.744  10591 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.BlockingIOCometSupport running under container: jetty/6.1.x
+15:41:52.746  10593 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using |. 
+15:41:52.746  10593 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptor
+15:41:52.747  10594 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+15:41:52.748  10595 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+15:41:52.748  10595 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+15:41:52.750  10597 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+15:41:52.751  10598 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+15:41:52.752  10599 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+15:41:52.753  10600 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.DefaultHeadersInterceptor : Default Response's Headers Interceptor
+15:41:52.753  10600 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults in your xml to disable them.
+15:41:52.755  10602 [[iPOJO] pool-2-thread-1] WARN  o.a.cpr.AtmosphereFramework - No BroadcasterCache configured. Broadcasted message between client reconnection will be LOST. It is recommended to configure the org.atmosphere.cache.UUIDBroadcasterCache
+15:41:52.756  10603 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+15:41:52.756  10603 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - HttpSession supported: false
+15:41:52.756  10603 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+15:41:52.756  10603 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+15:41:52.757  10604 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using Broadcaster: org.atmosphere.cpr.DefaultBroadcaster
+15:41:52.758  10605 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere Framework 1.1.0.RC1 started.
+15:41:52.758  10605 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 
+
+	For Commercial Support, visit 
+	http://www.async-io.org/ or send an email to support@async-io.org
+
+15:41:53.182  11029 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast mapped to context-path: /atmosphere/event
+15:41:53.183  11030 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor [Atmosphere LifeCycle] mapped to AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast
+15:44:42.826  953  [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/runtime
+15:44:42.833  960  [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test/target/distribution/icasa.platform.handler.distribution/application
+15:44:42.833  960  [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+15:44:43.584  1711 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+15:44:48.512  6639 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+15:44:48.519  6646 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.BlockingIOCometSupport running under container: jetty/6.1.x
+15:44:48.522  6649 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using |. 
+15:44:48.523  6650 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptor
+15:44:48.524  6651 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+15:44:48.525  6652 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+15:44:48.525  6652 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+15:44:48.526  6653 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+15:44:48.527  6654 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+15:44:48.529  6656 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+15:44:48.529  6656 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.DefaultHeadersInterceptor : Default Response's Headers Interceptor
+15:44:48.530  6657 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults in your xml to disable them.
+15:44:48.532  6659 [[iPOJO] pool-2-thread-1] WARN  o.a.cpr.AtmosphereFramework - No BroadcasterCache configured. Broadcasted message between client reconnection will be LOST. It is recommended to configure the org.atmosphere.cache.UUIDBroadcasterCache
+15:44:48.533  6660 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+15:44:48.533  6660 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - HttpSession supported: false
+15:44:48.534  6661 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+15:44:48.534  6661 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+15:44:48.534  6661 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using Broadcaster: org.atmosphere.cpr.DefaultBroadcaster
+15:44:48.536  6663 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere Framework 1.1.0.RC1 started.
+15:44:48.536  6663 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 
+
+	For Commercial Support, visit 
+	http://www.async-io.org/ or send an email to support@async-io.org
+
+15:44:49.129  7256 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast mapped to context-path: /atmosphere/event
+15:44:49.130  7257 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor [Atmosphere LifeCycle] mapped to AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast
+15:44:52.073  10200 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:44:53.360  11487 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:44:55.198  13325 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-501 was already registered
+15:44:55.733  13860 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-501 was already registered
+15:44:55.736  13863 [main] ERROR icasa.platform - A device with the same ID: Thermometer-501 was already registered
+15:44:57.032  15159 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:44:57.571  15698 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:44:58.111  16238 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:44:59.100  17227 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:44:59.651  17778 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:45:00.188  18315 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+15:45:00.192  18319 [main] ERROR icasa.platform - A device with the same ID: Thermometer-001 was already registered
+16:58:48.231  1023 [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test-disabled-policy/target/distribution/icasa.platform.handler.distribution/runtime
+16:58:48.251  1043 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test-disabled-policy/target/distribution/icasa.platform.handler.distribution/application
+16:58:48.252  1044 [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+16:58:49.177  1969 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+16:58:54.021  6813 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+16:58:54.029  6821 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.BlockingIOCometSupport running under container: jetty/6.1.x
+16:58:54.033  6825 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using |. 
+16:58:54.033  6825 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptor
+16:58:54.034  6826 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+16:58:54.036  6828 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+16:58:54.037  6829 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+16:58:54.038  6830 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+16:58:54.040  6832 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+16:58:54.041  6833 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+16:58:54.043  6835 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.DefaultHeadersInterceptor : Default Response's Headers Interceptor
+16:58:54.043  6835 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults in your xml to disable them.
+16:58:54.045  6837 [[iPOJO] pool-2-thread-1] WARN  o.a.cpr.AtmosphereFramework - No BroadcasterCache configured. Broadcasted message between client reconnection will be LOST. It is recommended to configure the org.atmosphere.cache.UUIDBroadcasterCache
+16:58:54.046  6838 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+16:58:54.046  6838 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - HttpSession supported: false
+16:58:54.047  6839 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+16:58:54.047  6839 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+16:58:54.047  6839 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using Broadcaster: org.atmosphere.cpr.DefaultBroadcaster
+16:58:54.049  6841 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere Framework 1.1.0.RC1 started.
+16:58:54.050  6842 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 
+
+	For Commercial Support, visit 
+	http://www.async-io.org/ or send an email to support@async-io.org
+
+16:58:54.881  7673 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast mapped to context-path: /atmosphere/event
+16:58:54.881  7673 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor [Atmosphere LifeCycle] mapped to AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast
+16:58:58.081  10873 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered
+17:04:21.045  915  [main] INFO  o.o.c.c.a.DirectoryMonitor[runtime] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test-disabled-policy/target/distribution/icasa.platform.handler.distribution/runtime
+17:04:21.052  922  [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting installing bundles from /home/torito/workspace/iCasa/https/iCasa/tests/icasa-platform-tests/device-handler-test/test-disabled-policy/target/distribution/icasa.platform.handler.distribution/application
+17:04:21.053  923  [main] INFO  o.o.c.c.a.DirectoryMonitor[application] - Starting file monitoring for application - polling : 2000 ms
+17:04:21.952  1822 [main] INFO  org.mortbay.log - Logging to Logger[org.mortbay.log] via org.mortbay.log.Slf4jLog
+17:04:26.181  6051 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed WebSocketProtocol org.atmosphere.websocket.protocol.SimpleHttpProtocol 
+17:04:26.189  6059 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere is using async support: org.atmosphere.container.BlockingIOCometSupport running under container: jetty/6.1.x
+17:04:26.191  6061 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor  Track Message Size Interceptor using |. 
+17:04:26.192  6062 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installing Default AtmosphereInterceptor
+17:04:26.192  6062 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.OnDisconnectInterceptor : Browser disconnection detection
+17:04:26.193  6063 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JavaScriptProtocol : Atmosphere JavaScript Protocol
+17:04:26.194  6064 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.JSONPAtmosphereInterceptor : JSONP Interceptor Support
+17:04:26.195  6065 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.SSEAtmosphereInterceptor : SSE Interceptor Support
+17:04:26.196  6066 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.AndroidAtmosphereInterceptor : Android Interceptor Support
+17:04:26.197  6067 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.PaddingAtmosphereInterceptor : Browser Padding Interceptor Support
+17:04:26.198  6068 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 	org.atmosphere.interceptor.DefaultHeadersInterceptor : Default Response's Headers Interceptor
+17:04:26.198  6068 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Set org.atmosphere.cpr.AtmosphereInterceptor.disableDefaults in your xml to disable them.
+17:04:26.200  6070 [[iPOJO] pool-2-thread-1] WARN  o.a.cpr.AtmosphereFramework - No BroadcasterCache configured. Broadcasted message between client reconnection will be LOST. It is recommended to configure the org.atmosphere.cache.UUIDBroadcasterCache
+17:04:26.201  6071 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Shared ExecutorService supported: true
+17:04:26.201  6071 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - HttpSession supported: false
+17:04:26.201  6071 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using BroadcasterFactory: org.atmosphere.cpr.DefaultBroadcasterFactory
+17:04:26.201  6071 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using WebSocketProcessor: org.atmosphere.websocket.DefaultWebSocketProcessor
+17:04:26.201  6071 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Using Broadcaster: org.atmosphere.cpr.DefaultBroadcaster
+17:04:26.203  6073 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Atmosphere Framework 1.1.0.RC1 started.
+17:04:26.203  6073 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - 
+
+	For Commercial Support, visit 
+	http://www.async-io.org/ or send an email to support@async-io.org
+
+17:04:26.952  6822 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast mapped to context-path: /atmosphere/event
+17:04:26.952  6822 [[iPOJO] pool-2-thread-1] INFO  o.a.cpr.AtmosphereFramework - Installed AtmosphereInterceptor [Atmosphere LifeCycle] mapped to AtmosphereHandler fr.liglab.adele.icasa.remote.impl.EventBroadcast
+17:04:29.809  9679 [main] ERROR icasa.platform - A device with the same ID: BinaryLight-001 was already registered

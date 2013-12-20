@@ -15,23 +15,20 @@
  */
 package fr.liglab.adele.osgi.shell.install;
 
-import java.io.File;
-
 import fr.liglab.adele.icasa.Constants;
-import org.apache.felix.fileinstall.ArtifactInstaller;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-
 import fr.liglab.adele.osgi.shell.installer.ShellScriptInstaller;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+
+/* NOT supported anymore
 @Component
 @Provides
 @Instantiate
-public class FileInstallShellScriptInstaller implements ArtifactInstaller {
+*/
+public class FileInstallShellScriptInstaller /*implements ArtifactInstaller */{
 
     protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
 

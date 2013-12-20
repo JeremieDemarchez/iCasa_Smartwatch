@@ -15,9 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulation.test.devices;
 
-import fr.liglab.adele.commons.distribution.test.AbstractDistributionBaseTest;
-import fr.liglab.adele.commons.test.utils.Condition;
-import fr.liglab.adele.commons.test.utils.TestUtils;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.button.PushButton;
@@ -30,10 +27,10 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.PaxExam;
-import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
-import org.ops4j.pax.exam.spi.reactors.PerMethod;
 import org.osgi.framework.BundleContext;
+import org.ow2.chameleon.runner.test.ChameleonRunner;
+import org.ow2.chameleon.runner.test.utils.Condition;
+import org.ow2.chameleon.runner.test.utils.TestUtils;
 
 import javax.inject.Inject;
 import java.util.Hashtable;
@@ -50,9 +47,8 @@ import static org.mockito.Mockito.verify;
  * Date: 9/2/13
  * Time: 11:34 AM
  */
-@RunWith(PaxExam.class)
-@ExamReactorStrategy(PerMethod.class)
-public class PushButtonTest extends AbstractDistributionBaseTest {
+@RunWith(ChameleonRunner.class)
+public class PushButtonTest  {
     @Inject
     BundleContext context;
 
@@ -64,7 +60,7 @@ public class PushButtonTest extends AbstractDistributionBaseTest {
 
     @Before
     public void setUp() {
-        waitForStability(context);
+
     }
 
     @After
