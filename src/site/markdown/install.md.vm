@@ -40,7 +40,7 @@ Gateway Part Launch
 1. Go to the ICASA_HOME directory.
 2. Execute startGateway script on Unix systems or startGateway.bat script on Windows systems.
 
-By default, the gateway port is set to 9000.
+By default, the gateway port is set to 9000 as from 1.2.6+ version (8080 for earlier versions).
 In this case, the platform url would be _http://localhost:9000/_.
 
 Web Server Part Launch
