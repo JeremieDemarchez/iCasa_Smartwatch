@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
 	<parent>
 		<groupId>fr.liglab.adele.common</groupId>
 		<artifactId>base</artifactId>
-		<version>1.2.2-SNAPSHOT</version>
+		<version>1.2.2</version>
 		<relativePath />
 	</parent>
 
@@ -38,11 +38,11 @@ See the License for the specific language governing permissions and
 		<productName>iCasa </productName>
 		<productVersion>${project.version}</productVersion>
 		<projectName>${project.artifactId}</projectName>
-        <DistributionTestVersion>1.2.2-SNAPSHOT</DistributionTestVersion>
+        <DistributionTestVersion>1.2.3-SNAPSHOT</DistributionTestVersion>
         <!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.2.2-SNAPSHOT</AdeleBaseVersion>
+        <AdeleBaseVersion>1.2.2</AdeleBaseVersion>
         <ciliaVersion>1.7.4-SNAPSHOT</ciliaVersion>
         <mimepullVersion>1.4</mimepullVersion>
         <netty.version>4.0.12.Final</netty.version>
@@ -500,7 +500,7 @@ See the License for the specific language governing permissions and
                         <autoVersionSubmodules>true</autoVersionSubmodules>
                         <releaseProfiles>release</releaseProfiles>
                         <useReleaseProfile>true</useReleaseProfile>
-                        <goals>deploy</goals>
+                        <goals>deploy site-deploy</goals>
                     </configuration>
                 </plugin>
             </plugins>
