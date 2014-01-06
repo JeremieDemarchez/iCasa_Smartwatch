@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.simulator.script.executor.impl;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Validate;
+import org.apache.felix.ipojo.annotations.Invalidate;
 import org.osgi.framework.BundleContext;
 import org.ow2.chameleon.core.activators.DirectoryMonitor;
 
@@ -53,11 +54,12 @@ public class ScriptMonitor {
         }
     }
 
+    @Invalidate
     public void stop(){
         try {
             monitor.stop(context);
         } catch (Exception e) {
-            e.printStackTrace();  //To change body of catch statement use File | Settings | File Templates.
+            e.printStackTrace();
         }
     }
 }
