@@ -151,7 +151,7 @@
       
       <dependency>
          <groupId>fr.liglab.adele.common</groupId>
-         <artifactId>chameleon-tests</artifactId>
+         <artifactId>chameleon-runner</artifactId>
          <version>${DistributionTestVersion}</version>
          <scope>test</scope>
       </dependency>
@@ -260,7 +260,20 @@
 					<target>1.5</target>
 				</configuration>
 			</plugin>
-			
 		</plugins>
 	</build>
+
+   <profiles>
+  <profile>
+    <activation>
+      <os>
+         <name>mac os x</name>
+      </os>            
+    </activation>
+    <properties>
+      <skipTests>true</skipTests>
+    </properties>  
+  </profile>
+</profiles>
+
 </project>

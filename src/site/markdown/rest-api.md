@@ -24,7 +24,7 @@ Data parameter -> None
 
 #### Example:
 
-    > curl -X GET http://localhost:8080/icasa/zones/zones
+    > curl -X GET http://localhost:9000/icasa/zones/zones
 
 Result:
 
@@ -85,7 +85,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-    > curl -X GET http://localhost:8080/icasa/zones/zone/bathroom
+    > curl -X GET http://localhost:9000/icasa/zones/zone/bathroom
 
 Result:
 
@@ -117,7 +117,7 @@ Data parameter -> the JSON data associated with the new zone
 
 #### Example:  
 
-    > curl -X POST -d "{"zoneId":"hall","name":"hall","isRoom":false,"leftX":1,"topY":1,"rightX":50,"bottomY":50}" http://localhost:8080/icasa/zones/zone
+    > curl -X POST -d "{"zoneId":"hall","name":"hall","isRoom":false,"leftX":1,"topY":1,"rightX":50,"bottomY":50}" http://localhost:9000/icasa/zones/zone
 
 Result:
 
@@ -146,7 +146,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-    > curl -X DELETE http://localhost:8080/icasa/zones/zone/hall
+    > curl -X DELETE http://localhost:9000/icasa/zones/zone/hall
 
    
 ### Updates a zone (PUT)
@@ -162,7 +162,7 @@ Data parameter -> the JSON data associated with new zone
 
 #### Example:  
 
-    > curl -X POST -d "{"id":"hall","isRoom":true,"rightX":316,"leftX":98,"name":"hall","topY":72,"bottomY":277,"variables":{}}" _http://localhost:8080/icasa/zones/zone/hall_
+    > curl -X POST -d "{"id":"hall","isRoom":true,"rightX":316,"leftX":98,"name":"hall","topY":72,"bottomY":277,"variables":{}}" _http://localhost:9000/icasa/zones/zone/hall_
 
 Result:
 
@@ -196,7 +196,7 @@ Data parameter -> None
 
 #### Example:
 
-    > curl -X GET http://localhost:8080/icasa/devices/devices
+    > curl -X GET http://localhost:9000/icasa/devices/devices
 
 Result:
 
@@ -256,7 +256,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-    > curl -X GET _http://localhost:8080/icasa/devices/device/Ther-A3654Q-S_
+    > curl -X GET _http://localhost:9000/icasa/devices/device/Ther-A3654Q-S_
 
 Result:
 
@@ -295,7 +295,7 @@ Data parameter -> the JSON data associated with the new device
 
 #### Example:  
 
-    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCasa.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:8080/icasa/devices/device
+    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCasa.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:9000/icasa/devices/device
 
 Result:
 
@@ -331,7 +331,7 @@ Data parameter -> the JSON data associated with the device
 
 #### Example:  
 
-    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCasa.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:8080/icasa/zones/zone/hall
+    > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCasa.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:9000/icasa/zones/zone/hall
 
 Result:
 
@@ -382,7 +382,7 @@ Data parameter -> None
 
 #### Example:
 
-    curl -X GET http://localhost:8080/icasa/clocks/clock/default
+    curl -X GET http://localhost:9000/icasa/clocks/clock/default
 
 Result:
 
@@ -405,7 +405,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-    curl -X POST -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" http://localhost:8080/icasa/clocks/clock/default
+    curl -X POST -d "{"pause": true, "startDate": 1319666400000, "factor": 1440}" http://localhost:9000/icasa/clocks/clock/default
 
 Result:
 
@@ -436,7 +436,7 @@ Data parameter -> None
 
 #### Example:
 
-    > curl -X GET http://localhost:8080/icasa/persons/personTypes
+    > curl -X GET http://localhost:9000/icasa/persons/personTypes
 
 Result:
 
@@ -471,7 +471,7 @@ Data parameter -> None
 
 #### Example:
 
-    > curl -X GET http://localhost:8080/icasa/persons/persons
+    > curl -X GET http://localhost:9000/icasa/persons/persons
 
 Result:
 
@@ -507,7 +507,7 @@ Data parameter -> _None_
 
 #### Example:  
 
-    > curl -X PUT -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":542,"positionY":294,"id":"Paul","width":50,"height":50,"location":"kitchen"}" http://localhost:8080/icasa/persons/person/Paul
+    > curl -X PUT -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":542,"positionY":294,"id":"Paul","width":50,"height":50,"location":"kitchen"}" http://localhost:9000/icasa/persons/person/Paul
 
 Result:
 
@@ -533,7 +533,7 @@ Data parameter -> the JSON data associated with the new person
 
 #### Example:  
 
-    > curl -X POST -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":1,"positionY":1}" http://localhost:8080/icasa/persons/person
+    > curl -X POST -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":1,"positionY":1}" http://localhost:9000/icasa/persons/person
 
 Result:
 

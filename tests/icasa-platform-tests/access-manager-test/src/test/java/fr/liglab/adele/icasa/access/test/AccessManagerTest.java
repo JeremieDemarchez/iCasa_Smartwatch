@@ -41,6 +41,8 @@ public class AccessManagerTest {
 
     OSGiHelper osgi;
 
+    private Long timeout = 5000L;
+
     @Inject
     public Clock clock;
 	
@@ -54,21 +56,12 @@ public class AccessManagerTest {
 
 	}
 
-	/**
-	 * Test the service availability
-	 */
-	@Test
-	public void testServiceAvailability(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
-        Assert.assertNotNull(service);
-    }
-
     /**
      * Test the access right assignment
      */
     @Test
     public void testAccessRightAssignment(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT1" + generateId();
         String deviceID = "deviceT11" + generateId();
         Assert.assertNotNull(service);
@@ -84,7 +77,7 @@ public class AccessManagerTest {
      */
     @Test
     public void testPartialAccessRightAssignment(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT2" + generateId();
         String deviceID = "deviceT2"  + generateId();
         String method = "pingPong" + generateId();
@@ -107,7 +100,7 @@ public class AccessManagerTest {
      */
     @Test
     public void testVisibleAccessRightAssignment(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT3" + generateId();
         String deviceID = "deviceT3" + generateId();
         String method1 = "pingPongT3_1" + generateId();
@@ -141,7 +134,7 @@ public class AccessManagerTest {
      */
     @Test
     public void testMethodAccessRightAssignment(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT4" + generateId();
         String deviceID = "deviceT4" + generateId();
         String methodName = "getLightT4" + generateId();
@@ -160,7 +153,7 @@ public class AccessManagerTest {
      */
     @Test
     public void testMethodAccessRight(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT5" + generateId();
         String deviceID = "device1" + generateId();
         String methodName = "getLight" + generateId();
@@ -180,7 +173,7 @@ public class AccessManagerTest {
      */
     @Test
     public void testListenerChangedRight(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT6" + generateId();
         String deviceID = "deviceT6" + generateId();
         String methodName = "getLightT6" + generateId();
@@ -198,7 +191,7 @@ public class AccessManagerTest {
      */
     @Test
     public void testListenerChangedMethodRight(){
-        AccessManager service = osgi.getServiceObject(AccessManager.class);
+        AccessManager service  = osgi.waitForService(AccessManager.class, null, timeout);
         String applicationID = "AppT7" + generateId();
         String deviceID = "deviceT7" + generateId();
         String methodName = "getLightT7" + generateId();

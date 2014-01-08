@@ -18,3 +18,16 @@ distribution/icasa-teaching-distribution/start*
 distribution/icasa-teaching-distribution/debug*
 distribution/icasa-dev/start*
 distribution/icasa-dev/debug*
+
+/applications/habits-monitoring/tests/adapter-tests/logs/
+/tests/icasa-platform-tests/access-manager-test/conf/
+/tests/icasa-platform-tests/access-manager-test/logs/
+/tests/icasa-platform-tests/application-manager-test/test/logs/
+/tests/icasa-platform-tests/disabled-access-manager-test/logs/
+/tests/icasa-platform-tests/distributions-test/icasa-distribution-test/logs/
+/tests/icasa-platform-tests/gateway-as-box-test/test/logs/
+/tests/icasa-platform-tests/gateway-as-box-test/test/preferences/
+/tests/icasa-platform-tests/technical-service-test/logs/
+/tests/icasa-platform-tests/technical-service-test/preferences/
+/tests/icasa-simulation-test/logs/
+/tests/icasa-simulation-test/scripts/
