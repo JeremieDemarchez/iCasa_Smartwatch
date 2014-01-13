@@ -373,6 +373,7 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
 						
 			out = new PrintWriter(scriptFile, "UTF-8");
 			
+			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>");
 			out.println("<behavior factor=\"1\">");
 			out.println();
 			out.println("\t<!-- Zone Section -->");
