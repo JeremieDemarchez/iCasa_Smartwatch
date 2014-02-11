@@ -1,6 +1,6 @@
 ZigBee driver port can be set when launching java:
 ```
-java -Dzigbee.driver.port=/dev/USBtty0 -jar bin/felix.jar
+java -Dzigbee.driver.port=/dev/USBtty0 -jar bin/chameleon-core.jar
 ```
 Or in the felix config file:
 ```

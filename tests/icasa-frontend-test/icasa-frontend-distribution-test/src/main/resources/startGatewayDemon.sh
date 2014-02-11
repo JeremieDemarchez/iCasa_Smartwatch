@@ -29,5 +29,5 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 #
-ICASA_COMMAND="java -Dgosh.args=--noi -jar bin/felix.jar"
+ICASA_COMMAND="java -Dgosh.args=--noi -jar bin/chameleon-core.jar"
 nohup bash -c "${ICASA_COMMAND}  &"
