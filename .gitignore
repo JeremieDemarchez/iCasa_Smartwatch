@@ -31,3 +31,14 @@ distribution/icasa-dev/debug*
 /tests/icasa-platform-tests/technical-service-test/preferences/
 /tests/icasa-simulation-test/logs/
 /tests/icasa-simulation-test/scripts/
+
+/applications/follow-me-with-photometer/distribution/start.bat
+/applications/follow-me-with-photometer/distribution/start.sh
+/applications/icasa-teaching-distribution-with-apps/start.bat
+/applications/icasa-teaching-distribution-with-apps/start.sh
+/distribution/icasa-platform-distribution/start.bat
+/distribution/icasa-platform-distribution/start.sh
+/distribution/icasa-platform-handler-distribution/start.bat
+/distribution/icasa-platform-handler-distribution/start.sh
+/distribution/icasa-teaching-distribution-access-enabled/start.bat
+/distribution/icasa-teaching-distribution-access-enabled/start.sh
