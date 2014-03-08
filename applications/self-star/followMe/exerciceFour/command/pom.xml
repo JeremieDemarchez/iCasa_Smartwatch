@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>self.star.follow.me.manager</artifactId>
+            <artifactId>self.star.follow.me.exercice.four.manager</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>

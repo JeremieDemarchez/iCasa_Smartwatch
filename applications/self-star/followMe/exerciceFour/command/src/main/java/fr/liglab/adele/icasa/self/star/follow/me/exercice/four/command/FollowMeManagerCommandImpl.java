@@ -2,8 +2,8 @@ package fr.liglab.adele.icasa.self.star.follow.me.exercice.four.command;
 
 
 import fr.liglab.adele.icasa.command.handler.Command;
-import fr.liglab.adele.icasa.self.star.follow.me.manager.FollowMeAdministration;
-import fr.liglab.adele.icasa.self.star.follow.me.manager.IlluminanceGoal;
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.FollowMeAdministration;
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.IlluminanceGoal;
 
 
 //Use the handler command and declare the command as a command provider. The

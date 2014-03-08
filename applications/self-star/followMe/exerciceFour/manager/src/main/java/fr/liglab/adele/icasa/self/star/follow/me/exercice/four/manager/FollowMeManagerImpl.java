@@ -1,7 +1,7 @@
 package fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager;
 
 
-import fr.liglab.adele.icasa.self.star.follow.me.dimmer.light.follow.me.FollowMeConfiguration;
+import fr.liglab.adele.icasa.self.star.follow.me.exercie.four.dimmer.light.follow.me.FollowMeConfiguration;
 import org.apache.felix.ipojo.annotations.*;
 
 /**
@@ -12,7 +12,7 @@ import org.apache.felix.ipojo.annotations.*;
 @Provides(specifications = FollowMeAdministration.class)
 public class FollowMeManagerImpl implements FollowMeAdministration{
 
-    @Requires(id="FollowMeConfiguration", optional=false)
+    @Requires
     FollowMeConfiguration followMeConfiguration;
 
     IlluminanceGoal illuminanceGoal;

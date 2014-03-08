@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.self.star.follow.me.exercie.three.dimmer.light.follow.me;
+package fr.liglab.adele.icasa.self.star.follow.me.exercice.three.dimmer.light.follow.me;
 
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
@@ -23,7 +23,7 @@ public class DimmerLightFollowMeImpl implements DeviceListener,FollowMeConfigura
     /**
      * The maximum number of lights to turn on when a user enters the room :
      **/
-    private int maxLightsToTurnOnPerRoom = 1;
+    private int maxLightsToTurnOnPerRoom = 2;
 
     /**
      * The name of the LOCATION property
@@ -322,6 +322,57 @@ public class DimmerLightFollowMeImpl implements DeviceListener,FollowMeConfigura
             return false;
         }
     }
+
+    private synchronized List<String> getLocationWherePresence() {
+        List<String> listOfLocationWithPresence= new ArrayList<String>();
+        List<String>  listOfLocationCheck= new ArrayList<String>();
+        for(PresenceSensor presenceSensor : presenceSensors){
+            String location = (String) presenceSensor.getPropertyValue(presenceSensor.LOCATION_PROPERTY_NAME);
+            if (!listOfLocationCheck.contains(location)){
+               if(presenceFromLocation(location)){
+                    listOfLocationWithPresence.add(location);
+                }
+                listOfLocationCheck.add(location);
+            }
+        }
+        return listOfLocationWithPresence;
+    }
+
+    private synchronized void applyMaximumNumberOfLightTurnOn(List<String> locations) {
+        for(String location : locations){
+            // get the related binary lights
+            List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(location);
+            //get the number off light already turn on
+            int countBinaryLightOn = getBinaryLightTurnOn(sameLocationLigths);
+            for (BinaryLight binaryLight : sameLocationLigths) {
+                //check if we can turn off more lights
+                if (countBinaryLightOn < maxLightsToTurnOnPerRoom ){
+                    binaryLight.turnOn();
+                    countBinaryLightOn ++;
+                }else if (countBinaryLightOn > maxLightsToTurnOnPerRoom){
+                    binaryLight.turnOff();
+                    countBinaryLightOn --;
+                }
+                else{
+                    break;
+                }
+            }
+            List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
+            for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
+                //check if we can turn off more lights
+                if (countBinaryLightOn < maxLightsToTurnOnPerRoom ){
+                    dimmerLight.setPowerLevel(1);
+                    countBinaryLightOn ++;
+                }else if (countBinaryLightOn > maxLightsToTurnOnPerRoom){
+                    dimmerLight.setPowerLevel(1);
+                    countBinaryLightOn --;
+                }else{
+                    break;
+                }
+            }
+        }
+    }
+
     private synchronized void dimmerLightModified(DimmerLight changingDimmerLight,String propertyName, Object oldValue, Object newValue) {
         if (propertyName.equals(DimmerLight.LOCATION_PROPERTY_NAME)){
             String dimmerLightLocation = (String) changingDimmerLight.getPropertyValue(LOCATION_PROPERTY_NAME);
@@ -457,6 +508,7 @@ public class DimmerLightFollowMeImpl implements DeviceListener,FollowMeConfigura
     @Override
     public void setMaximumNumberOfLightsToTurnOn(int maximumNumberOfLightsToTurnOn) {
         maxLightsToTurnOnPerRoom = maximumNumberOfLightsToTurnOn;
+        List<String> listOflocation = getLocationWherePresence();
+        applyMaximumNumberOfLightTurnOn(listOflocation);
     }
-
 }

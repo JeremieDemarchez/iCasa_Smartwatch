@@ -1,7 +1,8 @@
 package fr.liglab.adele.icasa.self.star.follow.me.exercice.three.manager;
 
 
-import fr.liglab.adele.icasa.self.star.follow.me.dimmer.light.follow.me.FollowMeConfiguration;
+
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.three.dimmer.light.follow.me.FollowMeConfiguration;
 import org.apache.felix.ipojo.annotations.*;
 
 /**
