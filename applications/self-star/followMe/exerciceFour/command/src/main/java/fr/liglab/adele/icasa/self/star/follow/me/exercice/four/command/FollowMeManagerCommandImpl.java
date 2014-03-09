@@ -2,6 +2,7 @@ package fr.liglab.adele.icasa.self.star.follow.me.exercice.four.command;
 
 
 import fr.liglab.adele.icasa.command.handler.Command;
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.EnergyGoal;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.FollowMeAdministration;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.IlluminanceGoal;
 
@@ -51,6 +52,31 @@ public class FollowMeManagerCommandImpl {
     public void exist(){
         System.out.println("Using Exist");
         m_administrationService.exist();
+    }
+    // Each command should start with a @Command annotation
+    @Command
+    public void setEnergyPreference(String goal) {
+        // The targeted goal
+        EnergyGoal energyGoal;
+
+
+        // goal and fail if the entry is not "SOFT", "MEDIUM" or "HIGH"
+        try{
+            energyGoal = EnergyGoal.valueOf(goal.toUpperCase());
+
+            System.out.println(" ILLUMINANCE "+ energyGoal);
+            //call the administration service to configure it :
+            m_administrationService.setEnergySavingGoal(energyGoal);
+
+        }catch(Exception e){
+            System.out.println("Invalid Argument (must be soft, medium or full");
+        }
+    }
+
+    @Command
+    public void getEnergyPreference(){
+        System.out.println(" Actual Illuminance preference is " + m_administrationService.getEnergyGoal());
+
     }
 
     /** Component Lifecycle Method */

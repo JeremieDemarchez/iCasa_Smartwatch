@@ -21,6 +21,7 @@
         <module>dimmerLightFollowMe</module>
         <module>manager</module>
         <module>command</module>
+        <module>sumSetAlgorithm</module>
     </modules>
 
 

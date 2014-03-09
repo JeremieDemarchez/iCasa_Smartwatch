@@ -1,5 +1,8 @@
-package fr.liglab.adele.icasa.self.star.follow.me.exercie.four.dimmer.light.follow.me;
+package fr.liglab.icasa.self.star.follow.me.exercice.four.sum.set.algorithm;
 
+/**
+ * Created by aygalinc on 09/03/14.
+ */
 import java.util.Arrays;
 import java.util.BitSet;
 

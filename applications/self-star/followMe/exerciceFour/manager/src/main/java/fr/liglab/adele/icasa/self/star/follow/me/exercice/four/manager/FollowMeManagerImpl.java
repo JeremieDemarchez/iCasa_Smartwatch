@@ -17,6 +17,8 @@ public class FollowMeManagerImpl implements FollowMeAdministration{
 
     IlluminanceGoal illuminanceGoal;
 
+    EnergyGoal energyGoal;
+
     /** Component Lifecycle Method */
     @Invalidate
     public void stop() {
@@ -27,17 +29,26 @@ public class FollowMeManagerImpl implements FollowMeAdministration{
     @Validate
     public void start() {
         System.out.println("Component is starting...");
+
         illuminanceGoal = IlluminanceGoal.MEDIUM;
+        energyGoal= EnergyGoal.LOW;
+        applyIlluminanceGoal(illuminanceGoal);
+        applyEnergyGoal(energyGoal);
     }
 
-    public void applyGoal(IlluminanceGoal illuminanceGoal) {
+    public void applyIlluminanceGoal(IlluminanceGoal illuminanceGoal) {
             int numberOfLightToTurnOn = illuminanceGoal.getNumberOfLightsToTurnOn();
             followMeConfiguration.setMaximumNumberOfLightsToTurnOn(numberOfLightToTurnOn);
     }
 
+    public void applyEnergyGoal(EnergyGoal energyGoal) {
+        double energyInRoom = energyGoal.getMaximumEnergyInRoom();
+        followMeConfiguration.setMaximumAllowedEnergyInRoom(195);
+    }
+
     @Override
     public void setIlluminancePreference(IlluminanceGoal illuminanceGoal) {
-        applyGoal(illuminanceGoal);
+        applyIlluminanceGoal(illuminanceGoal);
         this.illuminanceGoal = illuminanceGoal;
     }
 
@@ -49,5 +60,16 @@ public class FollowMeManagerImpl implements FollowMeAdministration{
     @Override
     public void exist() {
         System.out.println("Administration Service exist");
+    }
+
+    @Override
+    public void setEnergySavingGoal(EnergyGoal energyGoal) {
+        applyEnergyGoal(energyGoal);
+        this.energyGoal = energyGoal;
+    }
+
+    @Override
+    public EnergyGoal getEnergyGoal() {
+        return energyGoal;
     }
 }

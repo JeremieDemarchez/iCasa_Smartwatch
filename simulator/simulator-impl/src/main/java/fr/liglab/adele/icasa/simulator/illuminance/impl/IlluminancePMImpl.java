@@ -272,6 +272,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         }
 
         if (activeLightSize != 0)
+         //   returnedIlluminance =( (powerLevelTotal  * LUMENS_CONSTANT_VALUE) / surface) / activeLightSize;
             returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
 
         zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
