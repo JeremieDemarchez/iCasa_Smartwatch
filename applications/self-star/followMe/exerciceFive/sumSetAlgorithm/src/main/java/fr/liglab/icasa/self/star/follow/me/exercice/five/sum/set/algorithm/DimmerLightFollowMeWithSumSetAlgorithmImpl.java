@@ -1,11 +1,15 @@
-package fr.liglab.icasa.self.star.follow.me.exercice.four.sum.set.algorithm;
+package fr.liglab.icasa.self.star.follow.me.exercice.five.sum.set.algorithm;
 
+import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.*;
 
 import java.util.*;
@@ -20,6 +24,19 @@ import java.util.*;
 public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListener,FollowMeConfiguration {
 
     /**
+     * The targeted illuminance in each room
+     **/
+    private double targetedIlluminance = 15000.d;
+
+    /**
+     * Watt to lumens conversion factor
+     * It has been considered that: 1 Watt=680.0 lumens at 555nm.
+     */
+    public final static double ONE_WATT_TO_ONE_LUMEN = 680.0d;
+
+    public static final double ZONE_SCALE_FACTOR = 0.014d;
+
+    /**
      * The maximum number of lights to turn on when a user enters the room :
      **/
     private int maxLightsToTurnOnPerRoom = 2;
@@ -27,7 +44,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The maximum energy consumption allowed in a room in Watt:
      **/
-    private double maximumEnergyConsumptionAllowedInARoom = 155.0d;
+    private double maximumEnergyConsumptionAllowedInARoom = 145.0d;
 
     /**
      * The name of the LOCATION property
@@ -50,6 +67,13 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /** Field for presenceSensors dependency */
     @RequiresDevice(id="dimmerLights", type="field", optional=true)
     private DimmerLight[] dimmerLights;
+
+    /** Field for presenceSensors dependency */
+    @RequiresDevice(id="photometers", type="field", optional=true)
+    private Photometer[] photometers;
+
+    @Requires
+    private ContextManager _contextMgr;
 
     /**
      * Bind Method for binaryLights dependency.
@@ -112,6 +136,23 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
         dimmerLight.removeListener(this);
     }
 
+    /**
+     * Bind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="photometers", type="bind")
+    public void bindPhotometers(Photometer photometer, Map<Object, Object> properties) {
+        System.out.println("bind dimmer light " + photometer.getSerialNumber());
+    }
+
+    /**
+     * Unbind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="photometers", type="unbind")
+    public void unbindPhotometers(Photometer photometer, Map<Object, Object> properties) {
+        System.out.println("unbind dimmer light " + photometer.getSerialNumber());
+    }
 
     /** Component Lifecycle Method */
     @Invalidate
@@ -278,6 +319,39 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
         return presenceSensorLocation;
     }
 
+    private synchronized List<Photometer> getPhotometerFromLocation(String location) {
+        List<Photometer> photometerLocation = new ArrayList<Photometer>();
+        for (Photometer photometer : photometers) {
+            if (photometer.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
+                photometerLocation.add(photometer);
+            }
+        }
+        return photometerLocation;
+    }
+
+    private synchronized double getConsumption(List<BinaryLight> binaryLightList,List<DimmerLight> dimmerLightList) {
+        double sum = 0.0;
+        int count = 0 ;
+        for (DimmerLight dimmerLight : dimmerLightList) {
+            sum +=dimmerLight.getMaxPowerLevel()*dimmerLight.getPowerLevel();
+        }
+        for (BinaryLight binaryLight : binaryLightList) {
+            sum +=binaryLight.getMaxPowerLevel();
+        }
+        return sum;
+    }
+
+    private synchronized double getIlluminanceInRoom(String location) {
+        List<Photometer> photometerLocation = getPhotometerFromLocation(location);
+        double sum = 0.0;
+        int count = 0 ;
+        for (Photometer photometer : photometerLocation) {
+            sum +=photometer.getIlluminance();
+            count ++;
+        }
+        return (sum/count);
+    }
+
     private synchronized int setBinaryLightFromLocation(String location,int lightOn) {
         // get the related binary lights
         List<BinaryLight> oldSameLocationLigths = getBinaryLightFromLocation(location);
@@ -356,10 +430,260 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
         }
     }
 
+    private Set<Zone> getZones(String location) {
+        List<Zone> setZones =  _contextMgr.getZones();
+        Set<Zone> zonesToUpdate = new HashSet<Zone>();
+        System.out.println("LOCATION " + location);
+        for (Zone zone : setZones) {
+            System.out.println("ID " + zone.getId());
+            if (zone.getId().equals(location))
+                zonesToUpdate.add(zone);
+        }
+        return zonesToUpdate;
+    }
+
+    private synchronized void applyMaximumNumberOfLightTurnOn(Set<Zone> zoneToApply) {
+        for(Zone zone : zoneToApply){
+
+        /*    int zoneX = zone.getXLength();
+            int zoneY = zone.getYLength();
+            double zoneSquare = zoneX*ZONE_SCALE_FACTOR*zoneY*ZONE_SCALE_FACTOR;
+            System.out.println("SURFACE " + zoneSquare);
+            List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(zone.getId());
+            List<BinaryLight> sameLocationBinaryLigths = getBinaryLightFromLocation(zone.getId());
+            List<Photometer> sameLocationPhotometer = getPhotometerFromLocation(zone.getId());
+            double valueToAjust = (targetedIlluminance*zoneSquare) / (ONE_WATT_TO_ONE_LUMEN * 100.0);
+            System.out.println("Value to ajust " + valueToAjust);
+            int binaryLightToTurnOnvalueToAjust
+            if (valueToAjust < 1 ){
+                for(DimmerLight dimmerLight: sameLocationDimmerLigths){
+                    dimmerLight.setPowerLevel(valueToAjust);
+                }
+            }else{
+                for(DimmerLight dimmerLight: sameLocationDimmerLigths){
+                    dimmerLight.setPowerLevel(1);
+                }
+            }
+            for(Photometer photometer: sameLocationPhotometer){
+                System.out.println("Photometer " + photometer.getIlluminance());
+                System.out.println("Calculate " + ( 1*100*ONE_WATT_TO_ONE_LUMEN/zoneSquare));
+            } */
+            List<Photometer> sameLocationPhotometer = getPhotometerFromLocation(zone.getId());
+            List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(zone.getId());
+            List<BinaryLight> sameLocationBinaryLigths = getBinaryLightFromLocation(zone.getId());
+            setOffAllLightsInLocation(zone.getId());
+            int maxBinaryOn = sameLocationBinaryLigths.size();
+            int maxDimmerOn = sameLocationDimmerLigths.size();
+            int countLighton = 0;
+            int countDimmerOn = 0;
+            int countbinary = 0;
+
+            boolean tryBinary = true;
+            boolean tryDimmer = false;
+            boolean tryToAjust = false;
+
+            double valueToAjust = 1.0;
+            double valueToAjustBefore = 0.0;
+            List<DimmerLight> listOfDimmerOn = new ArrayList<DimmerLight>();
+            List<BinaryLight> listOfBinaryOn = new ArrayList<BinaryLight>();
+            if (!sameLocationPhotometer.isEmpty()){
+                //while( !(((targetedIlluminance*(0.97)) < getIlluminanceInRoom(zone.getId()))  && (getIlluminanceInRoom(zone.getId()) < (targetedIlluminance*(1.03))) ) ){
+                for(int k = 0; k< 9 ; k++){
+                    System.out.println("Borne Sup" + (targetedIlluminance*(1.03) ));
+                    System.out.println("Current " + getIlluminanceInRoom(zone.getId()));
+                    System.out.println("countLighton " + countLighton);
+                    System.out.println("countBINARYon " + countbinary);
+                    System.out.println("countDimmerOn " + countDimmerOn);
+                    System.out.println("valueToAjust " +valueToAjust );
+                    System.out.println("tryBinary " + tryBinary);
+                    System.out.println("tryDimmer " + tryDimmer);
+                    System.out.println("tryToAjust " + tryToAjust);
+                    System.out.println("getConsumption(listOfBinaryOn,listOfDimmerOn)   " + getConsumption(listOfBinaryOn,listOfDimmerOn));
+
+                    if ( (getIlluminanceInRoom(zone.getId()) > (targetedIlluminance*(1.03)))){
+                        if (tryBinary) {
+                            listOfBinaryOn.get(countLighton-1).turnOff();
+                            listOfBinaryOn.remove(countLighton-1);
+                            countLighton --;
+                        }else if (tryDimmer) {
+                            if (tryToAjust){
+                                System.out.println("On ajuste ");
+                                countDimmerOn --;
+                                countLighton--;
+                                double temp;
+                                temp = valueToAjust;
+                                valueToAjust -= Math.abs(valueToAjust-valueToAjustBefore)/2;
+                                valueToAjustBefore = temp;
+                            }else{
+                                System.out.println("On remove ");
+                                listOfDimmerOn.remove(countDimmerOn-1)   ;
+                            }
+                        }
+                    }
+
+                    if ( (getIlluminanceInRoom(zone.getId()) < (targetedIlluminance*(0.97)))){
+                        if (tryDimmer) {
+                            System.out.println("On ajuste en moins ");
+                            if(valueToAjust != 1.0){
+                                if (tryToAjust){
+                                    System.out.println("Dico -1 ");
+                                    double temp;
+                                    temp = valueToAjust;
+                                    valueToAjust += Math.abs(valueToAjust-valueToAjustBefore)/2;
+                                    valueToAjustBefore = temp;
+                                    countDimmerOn --;
+                                    countLighton--;
+                                }
+                            }
+                        }
+                    }
+
+
+
+                    if (getConsumption(listOfBinaryOn,listOfDimmerOn) >= maximumEnergyConsumptionAllowedInARoom){
+                        System.out.println("Exit : Consumption !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                        if (tryBinary){
+                            System.out.println("Exit : CONSUMPTION B !!!!!!!!!!!!!!!!!!!!");
+                            BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary-1);
+                            binaryLight.turnOff();
+                            listOfBinaryOn.remove(countbinary-1);
+                            countbinary -=1;
+                            tryDimmer = true;
+                            tryBinary = false;
+                        }else if (tryDimmer) {
+                            if (tryToAjust){
+                                System.out.println("Exit : CONSUMPTION D !!!!!!!!!!!!!!!!!!!! " + getConsumption(listOfBinaryOn,listOfDimmerOn) + " count " + maximumEnergyConsumptionAllowedInARoom + " Value " + valueToAjust);
+                                valueToAjust -= (  getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
+                                System.out.println("Exit : CONSUMPTION D !!!!!!!!!!!!!!!!!!!! " + valueToAjust + " count " + countDimmerOn);
+                                DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
+                                dimmerLight.setPowerLevel(valueToAjust);
+                                System.out.println("Exit : CONSUMPTION D !!!!!!!!!!!!!!!!!!!! " + getConsumption(listOfBinaryOn,listOfDimmerOn));
+                                break;
+                            }
+                        }
+                    }
+
+                    if (countLighton == maxLightsToTurnOnPerRoom){
+                        break;
+                    }
+
+                    System.out.println("**********************MEDIUM**************");
+
+                    System.out.println("Borne Sup" + (targetedIlluminance*(1.03) ));
+                    System.out.println("Current " + getIlluminanceInRoom(zone.getId()));
+                    System.out.println("countLighton " + countLighton);
+                    System.out.println("countBINARYon " + countbinary);
+                    System.out.println("countDimmerOn " + countDimmerOn);
+                    System.out.println("valueToAjust " +valueToAjust );
+                    System.out.println("tryBinary " + tryBinary);
+                    System.out.println("tryDimmer " + tryDimmer);
+                    System.out.println("tryToAjust " + tryToAjust);
+                    System.out.println("getConsumption(listOfBinaryOn,listOfDimmerOn)   " + getConsumption(listOfBinaryOn,listOfDimmerOn));
+
+                    if (tryBinary){
+                        System.out.println("TRY BINARY ");
+                        if(countbinary < maxBinaryOn){
+                            System.out.println("on a pas test toute les binary");
+                            BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary);
+                            binaryLight.turnOn();
+                            listOfBinaryOn.add(binaryLight);
+                            countLighton ++;
+                            countbinary ++;
+                        }else{
+                            System.out.println(" On passe au Dimmer");
+                            tryBinary = false;
+                            tryDimmer = true;
+                        }
+                    }else if (tryDimmer){
+                        System.out.println("TRY DIMMER");
+                        if(countDimmerOn < maxDimmerOn){
+                            System.out.println("on a pas test toute les dimers, on est à la " + countDimmerOn );
+                            tryToAjust = true;
+                            DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn);
+                            System.out.println(" VALUE " + valueToAjust);
+                            dimmerLight.setPowerLevel(valueToAjust);
+                            listOfDimmerOn.add(dimmerLight);
+                            countDimmerOn ++;
+                            countLighton++;
+                        }else{
+                            System.out.println("BRECK : toute les lampes check !");
+                            System.out.println(" On a fini les dimmers");
+                            tryDimmer = false;
+                            break;
+                        }
+                    }
+
+                    System.out.println("**********************END**************");
+
+                    System.out.println("Borne Sup" + (targetedIlluminance*(1.03) ));
+                    System.out.println("Current " + getIlluminanceInRoom(zone.getId()));
+                    System.out.println("countLighton " + countLighton);
+                    System.out.println("countBINARYon " + countbinary);
+                    System.out.println("countDimmerOn " + countDimmerOn);
+                    System.out.println("valueToAjust " +valueToAjust );
+                    System.out.println("tryBinary " + tryBinary);
+                    System.out.println("tryDimmer " + tryDimmer);
+                    System.out.println("tryToAjust " + tryToAjust);
+                    System.out.println("getConsumption(listOfBinaryOn,listOfDimmerOn)   " + getConsumption(listOfBinaryOn,listOfDimmerOn));
+
+                    System.out.println(" CONSITION " + ((((targetedIlluminance*(0.97)) < getIlluminanceInRoom(zone.getId()))  && (getIlluminanceInRoom(zone.getId()) < (targetedIlluminance*(1.03))) )));
+                    if((((targetedIlluminance*(0.97)) < getIlluminanceInRoom(zone.getId()))  && (getIlluminanceInRoom(zone.getId()) < (targetedIlluminance*(1.03))) )){
+                        if (countLighton > maxLightsToTurnOnPerRoom){
+                            if (tryBinary){
+                                System.out.println("Exit : BLight ON !!!!!!!!!!!!!!!!!!!!");
+                                BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary-1);
+                                binaryLight.turnOff();
+                                listOfBinaryOn.remove(countLighton-1);
+                                break;
+
+                            }
+                            if (tryDimmer){
+                                System.out.println("Exit : D Light ON !!!!!!!!!!!!!!!!!!!!");
+                                DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
+                                dimmerLight.setPowerLevel(valueToAjust);
+                                break;
+                            }
+
+
+                        }
+
+                        if (getConsumption(listOfBinaryOn,listOfDimmerOn) >= maximumEnergyConsumptionAllowedInARoom){
+                            System.out.println("Exit : Consumption !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
+                            if (tryBinary){
+                                System.out.println("Exit : CONSUMPTION B !!!!!!!!!!!!!!!!!!!!");
+                                BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary-1);
+                                binaryLight.turnOff();
+                                listOfBinaryOn.remove(countbinary-1);
+                                countbinary -=1;
+                                tryDimmer = true;
+                                tryBinary = false;
+                            }else if (tryDimmer) {
+                                if (tryToAjust){
+                                    valueToAjust -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom)/100;
+                                    System.out.println("Exit : CONSUMPTION D !!!!!!!!!!!!!!!!!!!! " + valueToAjust + " count " + countDimmerOn);
+                                    DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
+                                    dimmerLight.setPowerLevel(valueToAjust/100.0);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("");
+                    System.out.println("");
+
+
+                }
+            }
+        }
+    }
+
     private synchronized void applyMaximumNumberOfLightTurnOn(List<String> locations) {
         for(String location : locations){
+
+
             // get the related binary lights
-            List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(location);
+
+    /*        List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(location);
             List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
 
             double[] items = new double[sameLocationLigths.size()] ;
@@ -457,7 +781,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                         dimmerLight.setPowerLevel(0);
                     }
                 }
-            }
+            }*/
 
         }
     }
@@ -506,9 +830,8 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                 if ((Boolean) oldValue){
                     setOffAllLightsInLocation(detectorLocation);
                 }else{
-                    List<String> locations = new ArrayList<String>();
-                    locations.add(detectorLocation);
-                    applyMaximumNumberOfLightTurnOn(locations);
+                    Set<Zone> setOfZone = getZones(detectorLocation);
+                    applyMaximumNumberOfLightTurnOn(setOfZone);
                 }
 
             }

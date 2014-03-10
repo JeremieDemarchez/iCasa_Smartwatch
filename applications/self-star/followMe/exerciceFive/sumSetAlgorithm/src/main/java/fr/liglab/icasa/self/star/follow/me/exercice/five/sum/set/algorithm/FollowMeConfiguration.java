@@ -1,4 +1,4 @@
-package fr.liglab.icasa.self.star.follow.me.exercice.four.sum.set.algorithm;
+package fr.liglab.icasa.self.star.follow.me.exercice.five.sum.set.algorithm;
 
 /**
  * Created by aygalinc on 07/03/14.
