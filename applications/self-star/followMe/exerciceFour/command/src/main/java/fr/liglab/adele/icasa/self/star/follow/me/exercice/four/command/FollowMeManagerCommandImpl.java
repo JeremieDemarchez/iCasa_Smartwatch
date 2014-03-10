@@ -2,17 +2,23 @@ package fr.liglab.adele.icasa.self.star.follow.me.exercice.four.command;
 
 
 import fr.liglab.adele.icasa.command.handler.Command;
+import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.EnergyGoal;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.FollowMeAdministration;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.four.manager.IlluminanceGoal;
+import org.apache.felix.ipojo.annotations.*;
 
-
+//Define this class as an implementation of a component :
+@Component
+//Create an instance of the component
+@Instantiate(name = "follow.me.mananger.command")
 //Use the handler command and declare the command as a command provider. The
 //namespace is used to prevent name collision.
-//@CommandProvider(namespace = "icasa")
+@CommandProvider(namespace = "icasa")
 public class FollowMeManagerCommandImpl {
 
     // Declare a dependency to a FollowMeAdministration service
+    @Requires
     private FollowMeAdministration m_administrationService;
 
 
@@ -80,11 +86,13 @@ public class FollowMeManagerCommandImpl {
     }
 
     /** Component Lifecycle Method */
+    @Validate
     public void stop() {
         System.out.println("Component is stopping...");
     }
 
     /** Component Lifecycle Method */
+    @Invalidate
     public void start() {
         System.out.println("Component is starting...");
     }

@@ -8,19 +8,16 @@ import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.annotations.*;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by aygalinc on 06/03/14.
  */
 
-@Component(name="DimmerLightFollowMe")
+@Component(name="DimmerLightFollowMeWithSumSetAlgorithm")
 @Instantiate
 @Provides(specifications = FollowMeConfiguration.class)
-public class DimmerLightFollowMeImpl implements DeviceListener,FollowMeConfiguration {
+public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListener,FollowMeConfiguration {
 
     /**
      * The maximum number of lights to turn on when a user enters the room :
@@ -359,101 +356,109 @@ public class DimmerLightFollowMeImpl implements DeviceListener,FollowMeConfigura
         }
     }
 
-
     private synchronized void applyMaximumNumberOfLightTurnOn(List<String> locations) {
         for(String location : locations){
             // get the related binary lights
             List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(location);
             List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
+
             double[] items = new double[sameLocationLigths.size()] ;
             int i=0;
-
+            boolean dimmerToAjust = false;
+            Map<String,Double> MapOfBinaryConsumption = new HashMap<String, Double>();
             for (BinaryLight binaryLight : sameLocationLigths) {
                 items[i] = binaryLight.getMaxPowerLevel();
                 i ++;
+                MapOfBinaryConsumption.put(binaryLight.getSerialNumber(),binaryLight.getMaxPowerLevel());
+            }
+
+            List<Double> listOfDimmerConsumption = new ArrayList<Double>();
+            Map<String,Double> MapOfDimmerConsumption = new HashMap<String, Double>();
+            for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
+                listOfDimmerConsumption.add(dimmerLight.getMaxPowerLevel());
+                MapOfDimmerConsumption.put(dimmerLight.getSerialNumber(),dimmerLight.getMaxPowerLevel());
             }
             // Compute the best combination :
             double[] result = ClosestSumAlgorithm.greadySubSetClosestSum(maximumEnergyConsumptionAllowedInARoom, items);
             double sumCalculate = 0.0;
             for (double _double : result) {
-               sumCalculate += _double;
+                sumCalculate += _double;
+            }
+            List<Double> listResults = new ArrayList<Double>();
+            for(double _double : result){
+                if(Double.valueOf(_double) != 0.0)
+                listResults.add((Double.valueOf(_double)));
             }
 
-            ArrayList listResults = new ArrayList(Arrays.asList(result));
+            Collections.sort(listOfDimmerConsumption, Collections.reverseOrder());
+            Collections.sort(listResults, Collections.reverseOrder());
             double valueToAjust = 0.0;
+
             if (listResults.size()<= maxLightsToTurnOnPerRoom){
                 if (sumCalculate != maximumEnergyConsumptionAllowedInARoom ){
                     valueToAjust = maximumEnergyConsumptionAllowedInARoom - sumCalculate;
+                    dimmerToAjust = true;
                 }
             }else{
-                for(int k = 0;(k< (listResults.size() -maxLightsToTurnOnPerRoom ));k ++){
-                    double min = 0;
-                        for(double  consumption : result ){
-
+                int k ;
+                System.out.println(listResults.size() +" - "+ maxLightsToTurnOnPerRoom);
+                for( k =0 ;(k< (listResults.size() - maxLightsToTurnOnPerRoom ));k ++){
+                    listResults.remove(listResults.size() -k );
+                }
+                if(k !=0 ){
+                    if (listResults.get(listResults.size()-1) < sameLocationDimmerLigths.get(0).getMaxPowerLevel()){
+                        listResults.remove(listResults.size()-1);
+                        sumCalculate = 0.0;
+                        for (Double _double : listResults) {
+                            sumCalculate += _double.doubleValue();
                         }
+                        valueToAjust = maximumEnergyConsumptionAllowedInARoom - sumCalculate;
+                        dimmerToAjust = true;
+                    }
                 }
             }
 
-
-
-            boolean dimmerToAjust = false;
-
-            int countTargetLightOneWithConsumption = (int) (maximumEnergyConsumptionAllowedInARoom/100);
-            valueToAjust = (maximumEnergyConsumptionAllowedInARoom % 100) / 100;
-            if (valueToAjust != 0.0) dimmerToAjust = true;
-
-            int numberOfBinaryLightInLocation = sameLocationLigths.size() ;
-            int numberOfDimmerLightInLocation = sameLocationDimmerLigths.size();
-            int numberOfBinaryLightToTurnOn =0;
-            int numberOfDimmerLightToTurnMax=0;
-
-            int numberOfLightToturnOn;
-
-            if (countTargetLightOneWithConsumption < maxLightsToTurnOnPerRoom){
-                numberOfLightToturnOn = countTargetLightOneWithConsumption;
-            }else{
-                numberOfLightToturnOn = maxLightsToTurnOnPerRoom;
-            }
-
-            if (numberOfLightToturnOn <= numberOfBinaryLightInLocation){
-                numberOfBinaryLightToTurnOn = numberOfLightToturnOn;
-            }else{
-                numberOfBinaryLightToTurnOn = numberOfBinaryLightInLocation;
-                if (numberOfDimmerLightInLocation <= (numberOfLightToturnOn - numberOfBinaryLightToTurnOn)){
-                    numberOfDimmerLightToTurnMax = numberOfDimmerLightInLocation ;
-                    dimmerToAjust = false;
-                }else{
-                    numberOfDimmerLightToTurnMax = (numberOfBinaryLightInLocation - numberOfBinaryLightToTurnOn) ;
+            List<BinaryLight> binaryOn = new ArrayList<BinaryLight>();
+            int countLightOn = 0 ;
+            for (Double consumptionDouble : listResults) {
+                double consumption = consumptionDouble.doubleValue();
+                for (BinaryLight binaryLight :sameLocationLigths ){
+                    if (consumption == binaryLight.getMaxPowerLevel()){
+                        countLightOn ++;
+                        binaryLight.turnOn();
+                        binaryOn.add(binaryLight);
+                        break;
+                    }
                 }
             }
 
-            int countBinaryLightOn = 0 ;
-            for (BinaryLight binaryLight : sameLocationLigths) {
-                //check if we can turn off more lights
-                if (countBinaryLightOn < numberOfBinaryLightToTurnOn ){
-                    binaryLight.turnOn();
-                    countBinaryLightOn ++;
-                }else{
+            for (BinaryLight binaryLight :sameLocationLigths ){
+                if (!binaryOn.contains(binaryLight)){
                     binaryLight.turnOff();
                 }
             }
 
-            int countDimmerLightOn = 0 ;
-            for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
 
-                //check if we can turn off more lights
-                if (countDimmerLightOn < numberOfDimmerLightToTurnMax ){
-                    dimmerLight.setPowerLevel(1);
-                    countBinaryLightOn ++;
-                }else{
-                    if (dimmerToAjust == true){
-                        dimmerToAjust = false;
-                        dimmerLight.setPowerLevel(valueToAjust);
+            if (dimmerToAjust){
+                for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
+
+                    //check if we can turn off more lights
+                    if ((countLightOn < maxLightsToTurnOnPerRoom ) || ( valueToAjust != 0.0) ){
+                        if (valueToAjust >= dimmerLight.getMaxPowerLevel()){
+                            dimmerLight.setPowerLevel(1);
+                            countLightOn ++;
+                            valueToAjust -= dimmerLight.getMaxPowerLevel();
+                        }else {
+                            dimmerLight.setPowerLevel(valueToAjust/100);
+                            countLightOn ++;
+                            valueToAjust = 0.0;
+                        }
                     }else{
                         dimmerLight.setPowerLevel(0);
                     }
                 }
             }
+
         }
     }
 

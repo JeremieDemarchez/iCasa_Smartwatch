@@ -19,9 +19,9 @@
 
     <modules>
         <module>dimmerLightFollowMe</module>
+        <module>sumSetAlgorithm</module>
         <module>manager</module>
         <module>command</module>
-        <module>sumSetAlgorithm</module>
     </modules>
 
 

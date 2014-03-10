@@ -47,7 +47,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     /**
      * Rought Constant to establish the correspondance between power & illuminance
      */
-    public static final double LUMENS_CONSTANT_VALUE = 680.0d;
+    public static final double LUMENS_CONSTANT_VALUE = 683.0d;
 
     /**
      * 1px -> 0.014m //TODO
@@ -272,8 +272,8 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         }
 
         if (activeLightSize != 0)
-         //   returnedIlluminance =( (powerLevelTotal  * LUMENS_CONSTANT_VALUE) / surface) / activeLightSize;
-            returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
+            returnedIlluminance +=( (powerLevelTotal  * LUMENS_CONSTANT_VALUE) / surface) ;
+           // returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
 
         zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
     }

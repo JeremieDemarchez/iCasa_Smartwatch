@@ -7,22 +7,20 @@
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
         <version>1.2.6-SNAPSHOT</version>
-        <relativePath>../../../parent</relativePath>
+        <relativePath>../../../../parent</relativePath>
     </parent>
 
     <!-- Project Descrkiption -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>self.star.follow.me</artifactId>
+    <artifactId>self.star.follow.me.exercice.five</artifactId>
     <packaging>pom</packaging>
     <name>${productName} :: ${projectName}</name>
 
+
     <modules>
-        <module>exerciceOne</module>
-        <module>exerciceTwo</module>
-        <module>exerciceThree</module>
-        <module>exerciceFour</module>
-        <module>exerciceFive</module>
+        <module>sumSetAlgorithm</module>
     </modules>
+
 
 </project>
