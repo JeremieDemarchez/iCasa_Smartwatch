@@ -1,13 +1,12 @@
-package fr.liglab.adele.icasa.self.star.follow.me.exercice.five.command;
+package fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.command;
 
 
-import com.sun.org.apache.xpath.internal.SourceTree;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
-import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.EnergyGoal;
-import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.FollowMeAdministration;
 
-import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.IlluminanceGoal;
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.EnergyGoal;
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.FollowMeAdministration;
+import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.IlluminanceGoal;
 import org.apache.felix.ipojo.annotations.*;
 
 
