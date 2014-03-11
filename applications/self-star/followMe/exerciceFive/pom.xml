@@ -20,6 +20,8 @@
 
     <modules>
         <module>sumSetAlgorithm</module>
+        <module>manager</module>
+        <module>command</module>
     </modules>
 
 

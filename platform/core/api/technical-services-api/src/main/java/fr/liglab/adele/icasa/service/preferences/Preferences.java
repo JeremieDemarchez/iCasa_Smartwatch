@@ -70,7 +70,7 @@ public interface Preferences {
 	 * Sets the value of a property for a application preference
 	 * @param applicationId the application Id
 	 * @param name the preference name
-	 * @return the new value associated to the preference
+	 *
 	 */
 	void setApplicationPropertyValue(String applicationId, String name, Object value);
 	

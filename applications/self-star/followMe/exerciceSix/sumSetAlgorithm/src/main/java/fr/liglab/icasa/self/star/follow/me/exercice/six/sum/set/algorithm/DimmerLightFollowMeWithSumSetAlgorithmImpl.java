@@ -1,4 +1,4 @@
-package fr.liglab.icasa.self.star.follow.me.exercice.five.sum.set.algorithm;
+package fr.liglab.icasa.self.star.follow.me.exercice.six.sum.set.algorithm;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
@@ -26,15 +26,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The targeted illuminance in each room
      **/
-    private double targetedIlluminance = 7000.d;
-
-    /**
-     * Watt to lumens conversion factor
-     * It has been considered that: 1 Watt=680.0 lumens at 555nm.
-     */
-    public final static double ONE_WATT_TO_ONE_LUMEN = 680.0d;
-
-    public static final double ZONE_SCALE_FACTOR = 0.014d;
+    private double targetedIlluminance = 2750.d;
 
     /**
      * The maximum number of lights to turn on when a user enters the room :
@@ -44,7 +36,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The maximum energy consumption allowed in a room in Watt:
      **/
-    private double maximumEnergyConsumptionAllowedInARoom = 145.0d;
+    private double maximumEnergyConsumptionAllowedInARoom = 100.0d;
 
     /**
      * The name of the LOCATION property
@@ -331,9 +323,11 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
         double sum = 0.0;
         int count = 0 ;
         for (DimmerLight dimmerLight : dimmerLightList) {
+            System.out.println(" Dimmer " + dimmerLight.getMaxPowerLevel()*dimmerLight.getPowerLevel());
             sum +=dimmerLight.getMaxPowerLevel()*dimmerLight.getPowerLevel();
         }
         for (BinaryLight binaryLight : binaryLightList) {
+            System.out.println(" Dimmer " + binaryLight.getMaxPowerLevel());
             sum +=binaryLight.getMaxPowerLevel();
         }
         return sum;
@@ -477,8 +471,8 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                                 valueToAjust -= Math.abs(valueToAjust-valueToAjustBefore)/2;
                                 valueToAjustBefore = temp;
                             }else{
-                                valueToAjust = 1.0;
-                                valueToAjustBefore = 0.0;
+                                 valueToAjust = 1.0;
+                                 valueToAjustBefore = 0.0;
                                 listOfDimmerOn.remove(countDimmerOn-1)   ;
                             }
                         }
@@ -511,12 +505,12 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                         }else if (tryDimmer) {
                             if (tryToAjust){
                                 System.out.println(getIlluminanceInRoom(location) + " " + (targetedIlluminance*(0.97)) );
-                                System.out.println(valueToAjustBefore + " - " + getConsumption(listOfBinaryOn,listOfDimmerOn) + " -  " + maximumEnergyConsumptionAllowedInARoom );
-                                valueToAjustBefore -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
-                                DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn);
-                                dimmerLight.setPowerLevel(valueToAjustBefore);
-                                System.out.println(" EXIT 1 ");
-                                break;
+                                   System.out.println(valueToAjustBefore + " - " + getConsumption(listOfBinaryOn,listOfDimmerOn) + " -  " + maximumEnergyConsumptionAllowedInARoom );
+                                    valueToAjustBefore -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
+                                    DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn);
+                                    dimmerLight.setPowerLevel(valueToAjustBefore);
+                                    System.out.println(" EXIT 1 ");
+                                    break;
 
                             }
                         }
