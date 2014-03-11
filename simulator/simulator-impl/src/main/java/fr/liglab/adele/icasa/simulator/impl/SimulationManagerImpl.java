@@ -25,7 +25,7 @@ import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.*;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
-import fr.liglab.adele.icasa.simulator.services.PersonLocationService;
+import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.Constants;
