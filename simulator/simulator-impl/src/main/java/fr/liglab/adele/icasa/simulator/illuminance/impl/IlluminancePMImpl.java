@@ -42,7 +42,10 @@ import fr.liglab.adele.icasa.simulator.PhysicalModel;
 @Component(name = "illuminance-model")
 @Instantiate(name = "illuminance-model-1")
 @Provides(specifications = PhysicalModel.class)
-public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
+public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener,MomentOfTheDayListener {
+
+    @Requires
+    private MomentOfTheDayService momentOfTheDayService;
 
     /**
      * Rought Constant to establish the correspondance between power & illuminance
@@ -60,6 +63,16 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     private Object _deviceLock = new Object();
 
+    // There is no need of full illuminance in the morning
+    public static final double  MORNING_EXTERNAL_SOURCE_POWER = 500;
+    // In the afternoon the illuminance can be largely limited
+    public static final double  AFTERNOON_EXTERNAL_SOURCE_POWER = 1500;
+    // In the evening, the illuminance should be the best
+    public static final double  EVENING_EXTERNAL_SOURCE_POWER = 1000;
+    // In the night, there is no need to use the full illuminance
+    public static final double  NIGHT_EXTERNAL_SOURCE_POWER = 300;
+
+    private double currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
     /*
      * @gardedBy(_deviceLock)
      */
@@ -160,6 +173,13 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         updateZones(locatedDevice.getCenterAbsolutePosition());
     }
 
+    private void updateZones() {
+        List<Zone> zones = _contextMgr.getZones();
+        for(Zone zone : zones){
+            updateIlluminance(zone);
+        }
+    }
+
     private void updateZones(Position devicePosition) {
         Set<Zone> zonesToUpdate = getZones(devicePosition);
         for (Zone zone : zonesToUpdate) {
@@ -200,6 +220,9 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     @Validate
     private void start() {
         _contextMgr.addListener(this);
+        momentOfTheDayService.register(this);
+        MomentOfTheDay temp = momentOfTheDayService.getMomentOfTheDay();
+        momentOfTheDayHasChanged(temp);
     }
 
     @Invalidate
@@ -246,11 +269,11 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      */
     private void updateIlluminance(Zone zone) {
         double returnedIlluminance = 0.0; //TODO manage external illuminance
-        int activeLightSize = 0;
+        int activeLightSize = 1;
         int height = zone.getYLength();
         int width = zone.getXLength();
         double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
-        double powerLevelTotal = 0.0d;
+        double powerLevelTotal = currentExternalSource;
 
         Set<GenericDevice> devices = getLightDevicesFromZone(zone);
         for (GenericDevice device : devices) {
@@ -273,7 +296,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
         if (activeLightSize != 0)
             returnedIlluminance +=( (powerLevelTotal  * LUMENS_CONSTANT_VALUE) / surface) ;
-           // returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
+        // returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
 
         zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
     }
@@ -327,4 +350,19 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
         //do nothing //TODO if manage external illuminance, may have impact
     }
+
+    @Override
+    public void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay) {
+        if (newMomentOfTheDay == MomentOfTheDay.AFTERNOON){
+            currentExternalSource = AFTERNOON_EXTERNAL_SOURCE_POWER;
+        }else if (newMomentOfTheDay == MomentOfTheDay.NIGHT){
+            currentExternalSource = NIGHT_EXTERNAL_SOURCE_POWER;
+        }else if(newMomentOfTheDay == MomentOfTheDay.EVENING){
+            currentExternalSource = EVENING_EXTERNAL_SOURCE_POWER;
+        }else if(newMomentOfTheDay == MomentOfTheDay.MORNING){
+            currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
+        }
+        updateZones();
+    }
+
 }
