@@ -43,6 +43,6 @@
 	<move-device-zone deviceId="DL-A0001W-S" zoneId="bathroom" />
 	
 	<create-person id="Alice" type="Grandfather" />
-	</set-user-property user="Alice" name="illuminance" value="MEDIUM" type="String">
+	<set-user-property user="Alice" name="illuminance" value="MEDIUM" type="String"/>
 
 </behavior>

@@ -45,6 +45,11 @@
             <artifactId>technical.services.api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>self.star.follow.me.exercice.seven.time</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

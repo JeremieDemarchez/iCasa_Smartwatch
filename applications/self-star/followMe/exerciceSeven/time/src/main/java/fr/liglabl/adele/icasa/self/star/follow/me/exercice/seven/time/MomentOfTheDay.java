@@ -11,8 +11,8 @@ public enum MomentOfTheDay {
      * @return the corresponding moment of the day
      */
     MomentOfTheDay getCorrespondingMoment(int hour) {
-        assert ((0 <= startHour) && (startHour <= 24));
-        if ((0 <= hour) &&  (hour< 6)){
+        assert ((0 <= hour) && (hour <= 24));
+       /* if ((6 <= hour) &&  (hour< 12)){
             return MomentOfTheDay.MORNING;
         }else if ((6 <= hour) && (hour< 12)){
             return MomentOfTheDay.AFTERNOON;
@@ -20,7 +20,27 @@ public enum MomentOfTheDay {
             return MomentOfTheDay.EVENING;
         }else {
             return MomentOfTheDay.NIGHT;
+        }*/
+        if (MomentOfTheDay.NIGHT.getStartHour() <=hour ){
+            return MomentOfTheDay.NIGHT;
         }
+        else if (MomentOfTheDay.EVENING.getStartHour() <=hour ){
+            return MomentOfTheDay.EVENING;
+        }
+        else if (MomentOfTheDay.AFTERNOON.getStartHour() <=hour ){
+            return MomentOfTheDay.AFTERNOON;
+        }
+        else if (MomentOfTheDay.MORNING.getStartHour() <=hour ){
+            return MomentOfTheDay.MORNING;
+        }else{
+            return MomentOfTheDay.NIGHT;
+        }
+
+    }
+
+    int getStartHour() {
+        assert ((0 <= startHour) && (startHour <= 24));
+        return startHour;
     }
 
     /**

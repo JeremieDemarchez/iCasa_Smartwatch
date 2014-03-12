@@ -7,6 +7,7 @@ import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.EnergyGoal;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.FollowMeAdministration;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.IlluminanceGoal;
+import fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time.MomentOfTheDayService;
 import org.apache.felix.ipojo.annotations.*;
 
 
@@ -24,6 +25,9 @@ public class FollowMeManagerCommandImpl {
     private FollowMeAdministration m_administrationService;
 
 
+    // Declare a dependency to a FollowMeAdministration service
+    @Requires
+    private MomentOfTheDayService m_momentService;
 
     /**
      * Felix shell command implementation to sets the illuminance preference.
@@ -85,7 +89,13 @@ public class FollowMeManagerCommandImpl {
         System.out.println("Using Exist");
         m_administrationService.exist();
     }
-    // Each command should start with a @Command annotation
+
+    @Command
+    public void time(){
+        System.out.println("Using Time");
+        System.out.println("TIME :" + m_momentService.getMomentOfTheDay());
+    }
+     // Each command should start with a @Command annotation
     @Command
     public void setEnergyPreference(String goal) {
         // The targeted goal

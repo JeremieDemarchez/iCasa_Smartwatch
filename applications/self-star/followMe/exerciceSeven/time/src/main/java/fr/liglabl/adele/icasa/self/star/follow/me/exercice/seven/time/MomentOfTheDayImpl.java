@@ -1,11 +1,17 @@
 package fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time;
 
+import com.sun.swing.internal.plaf.synth.resources.synth_sv;
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.service.scheduler.ICasaRunnable;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.*;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeUtils;
+import org.joda.time.DateTimeZone;
+
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Created by aygalinc on 11/03/14.
@@ -20,7 +26,12 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     /**
      * The current moment of the day :
      **/
-    MomentOfTheDay currentMomentOfTheDay;
+    MomentOfTheDay currentMomentOfTheDay = MomentOfTheDay.MORNING;
+
+    /**
+     * The current moment of the day :
+     **/
+    Set<MomentOfTheDayListener> listeners = new HashSet<MomentOfTheDayListener>();
 
     @Requires
     Clock clock;
@@ -29,6 +40,16 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     @Override
     public MomentOfTheDay getMomentOfTheDay(){
         return currentMomentOfTheDay;
+    }
+
+    @Override
+    public void register(MomentOfTheDayListener listener) {
+        listeners.add(listener);
+    }
+
+    @Override
+    public void unregister(MomentOfTheDayListener listener) {
+        listeners.remove(listener);
     }
 
     // Implementation ot the PeriodicRunnable ...
@@ -46,13 +67,35 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     @Override
     public void run() {
         // The method run is called on a regular basis
-
+        System.out.println(" EXEC ");
         // TODO : do something to check the current time of the day and see if
         // it has changed
-
-        System.out.println(clock.currentTimeMillis() );
-        System.out.println(clock.currentTimeMillis()/1000/60/60 );
-        currentMomentOfTheDay = null; // FIXME : change the value
+        DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
+        int hour = dateTimeEli.getHourOfDay();
+        MomentOfTheDay temp = currentMomentOfTheDay;
+        currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
+        if (currentMomentOfTheDay != temp ){
+            for(MomentOfTheDayListener listener : listeners){
+                listener.momentOfTheDayHasChanged(currentMomentOfTheDay);
+            }
+        }
     }
+
+    /** Component Lifecycle Method */
+    @Invalidate
+    public void stop() {
+        System.out.println("Component TIME is stopping...");
+    }
+
+    /** Component Lifecycle Method */
+
+    @Validate
+    public void start() {
+        System.out.println("Component TIME is starting...");
+    }
+
+
+
+
 
 }

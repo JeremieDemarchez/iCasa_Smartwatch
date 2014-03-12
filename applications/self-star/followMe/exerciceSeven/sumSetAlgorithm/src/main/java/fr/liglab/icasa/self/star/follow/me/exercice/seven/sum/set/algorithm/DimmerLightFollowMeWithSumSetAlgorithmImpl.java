@@ -165,12 +165,14 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
         for(DimmerLight dimmerLight  : dimmerLights) {
             dimmerLight.removeListener(this);
         }
+
     }
 
     /** Component Lifecycle Method */
     @Validate
     public void start() {
         System.out.println("Component is starting...");
+
     }
 
     @Override
@@ -469,8 +471,8 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                                 valueToAjust -= Math.abs(valueToAjust-valueToAjustBefore)/2;
                                 valueToAjustBefore = temp;
                             }else{
-                                 valueToAjust = 1.0;
-                                 valueToAjustBefore = 0.0;
+                                valueToAjust = 1.0;
+                                valueToAjustBefore = 0.0;
                                 listOfDimmerOn.remove(countDimmerOn-1)   ;
                             }
                         }
@@ -503,12 +505,12 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                         }else if (tryDimmer) {
                             if (tryToAjust){
                                 System.out.println(getIlluminanceInRoom(location) + " " + (targetedIlluminance*(0.97)) );
-                                   System.out.println(valueToAjustBefore + " - " + getConsumption(listOfBinaryOn,listOfDimmerOn) + " -  " + maximumEnergyConsumptionAllowedInARoom );
-                                    valueToAjustBefore -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
-                                    DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn);
-                                    dimmerLight.setPowerLevel(valueToAjustBefore);
-                                    System.out.println(" EXIT 1 ");
-                                    break;
+                                System.out.println(valueToAjustBefore + " - " + getConsumption(listOfBinaryOn,listOfDimmerOn) + " -  " + maximumEnergyConsumptionAllowedInARoom );
+                                valueToAjustBefore -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
+                                DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn);
+                                dimmerLight.setPowerLevel(valueToAjustBefore);
+                                System.out.println(" EXIT 1 ");
+                                break;
 
                             }
                         }
@@ -711,5 +713,6 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
         List<String> listOflocation = getLocationWherePresence();
         applyMaximumNumberOfLightTurnOn(listOflocation);
     }
+
 
 }

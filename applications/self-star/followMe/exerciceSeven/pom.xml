@@ -19,10 +19,10 @@
 
 
     <modules>
+        <module>time</module>
         <module>sumSetAlgorithm</module>
         <module>manager</module>
         <module>command</module>
-        <module>time</module>
     </modules>
 
 

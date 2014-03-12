@@ -1,4 +1,4 @@
-<behavior startdate="27/10/2011-00:00:00" factor="1440">
+<behavior startdate="27/10/2011-00:00:00" factor="600">
 	 
 	<create-zone id="kitchen"  leftX="410" topY="370" X-Length="245" Y-Length="210" />	 
 	<add-zone-variable zoneId="kitchen" variable="Illuminance" />
@@ -43,6 +43,6 @@
 	<move-device-zone deviceId="DL-A0001W-S" zoneId="bathroom" />
 	
 	<create-person id="Alice" type="Grandfather" />
-	</set-user-property user="Alice" name="illuminance" value="MEDIUM" type="String">
+	<set-user-property user="Alice" name="illuminance" value="MEDIUM" type="String"/>
 
 </behavior>

@@ -27,10 +27,6 @@
 	<artifactId>icasa.reactor</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
-    <modules>
-        <module>time</module>
-        <module>exerciceSeven</module>
-    </modules>
 
     <properties>
         <site.path>snapshot</site.path>
