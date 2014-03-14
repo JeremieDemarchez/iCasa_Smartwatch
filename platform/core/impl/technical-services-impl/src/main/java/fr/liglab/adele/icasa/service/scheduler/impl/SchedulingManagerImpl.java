@@ -221,7 +221,7 @@ public class SchedulingManagerImpl implements SchedulingManager {
     }
 
     @Bind(aggregate = false, optional = true)
-    public void bindClock(Clock clock){
+    public synchronized void bindClock(Clock clock){
         logger.trace("Appear clock");
         this.clock = clock;
         for(ScheduledRunnable runnable: scheduledRunables){
@@ -232,7 +232,7 @@ public class SchedulingManagerImpl implements SchedulingManager {
         }
     }
     @Unbind
-    public void unbindClock(Clock clock){
+    public synchronized void unbindClock(Clock clock){
         logger.trace("Disappear clock");
         this.clock = null;
         //we stop only shared clocked group.

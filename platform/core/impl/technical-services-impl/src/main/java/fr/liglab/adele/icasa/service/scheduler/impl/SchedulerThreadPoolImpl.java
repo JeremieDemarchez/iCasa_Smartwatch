@@ -17,6 +17,8 @@ package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.service.scheduler.TaskReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -24,7 +26,7 @@ import java.util.*;
 import java.util.Map.Entry;
 
 
-public class SchedulerThreadPoolImpl extends Thread {
+public class SchedulerThreadPoolImpl extends Thread implements ClockListener {
 
     protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
@@ -53,6 +55,7 @@ public class SchedulerThreadPoolImpl extends Thread {
         clockService = service;
         m_executors = new ExecutorThreadImpl[poolSize];
         m_tasks = new TreeMap/* <Long, List<TaskReferenceImpl>> */();
+        clockService.addListener(this);
     }
 
     // TODO
@@ -79,13 +82,60 @@ public class SchedulerThreadPoolImpl extends Thread {
             }
         }
     }
+
     public void close() {
         this.running = false;
+    }
+
+    @Override
+    public void factorModified(int oldFactor) {
+        //do nothing
+    }
+
+    @Override
+    public void startDateModified(long oldStartDate) {
+        rescheduleTask();
+    }
+
+    @Override
+    public void clockPaused() {
+        //do nothning
+    }
+
+    @Override
+    public void clockResumed() {
+        //Do nothing
+    }
+
+    @Override
+    public void clockReset() {
+        rescheduleTask();
+    }
+
+    private void rescheduleTask(){
+        // TODO : CHECK WHEN RECSHEDULING IF TASK ARE EXECUTED
+        synchronized (m_lock) {
+            Long now = new Long(clockService.currentTimeMillis());
+            TreeMap temp;
+            temp = new TreeMap(m_tasks);
+            m_tasks.clear();
+
+            for(Object tempObj : temp.keySet()){
+               List list = (List) temp
+                        .get(tempObj);
+                if (list != null) {
+
+                    TaskReferenceImpl task= (TaskReferenceImpl) list.get(0);
+                    long expectedTime = task.computeNextExecutionTime(now);
+                    m_tasks.put(expectedTime, list);
+                }
+            }
+        }
     }
     // TODO
     public void run() {
         boolean isRunning = this.running;
-        while (isRunning) {
+       while (isRunning) {
             Long now = new Long(clockService.currentTimeMillis());
             synchronized (m_lock) {
                 SortedMap toRun = m_tasks.headMap(now, true);
@@ -139,6 +189,7 @@ public class SchedulerThreadPoolImpl extends Thread {
                     executor.interrupt();
                 }
             }
+            clockService.removeListener(this);
         }
     }
 
@@ -193,7 +244,6 @@ public class SchedulerThreadPoolImpl extends Thread {
                         try{
                             m_currentTask.run();
                         }catch(Throwable ex){
-
                         }
                         m_currentTask = null;
                     }
