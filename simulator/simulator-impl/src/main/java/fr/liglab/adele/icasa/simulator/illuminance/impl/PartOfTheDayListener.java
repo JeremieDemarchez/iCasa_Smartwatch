@@ -30,13 +30,13 @@ package fr.liglab.adele.icasa.simulator.illuminance.impl;
  * When the listener is leaving, it must unregister.
  *
  */
-public interface MomentOfTheDayListener {
+public interface PartOfTheDayListener {
 
     /**
      * Notify the listener that moment of the day has changed.
      *
-     * @param newMomentOfTheDay
+     * @param newPartOfTheDay
      *            the new moment of the day
      */
-    void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay);
+    void momentOfTheDayHasChanged(PartOfTheDay newPartOfTheDay);
 }

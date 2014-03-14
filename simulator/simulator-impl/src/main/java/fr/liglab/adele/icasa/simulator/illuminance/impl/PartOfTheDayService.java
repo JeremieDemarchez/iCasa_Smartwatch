@@ -20,14 +20,14 @@ package fr.liglab.adele.icasa.simulator.illuminance.impl;
  * It also supports listeners that are notified when the moment of the day
  * change.
  */
-public interface MomentOfTheDayService {
+public interface PartOfTheDayService {
 
     /**
      * Gets the moment of the day.
      *
      * @return the moment of the day
      */
-    MomentOfTheDay getMomentOfTheDay();
+    PartOfTheDay getMomentOfTheDay();
 
     /**
      * Register a listener that will be notified each time the current moment of the day
@@ -36,7 +36,7 @@ public interface MomentOfTheDayService {
      * @param listener
      *            the listener
      */
-    void register(MomentOfTheDayListener listener);
+    void register(PartOfTheDayListener listener);
 
     /**
      * Unregister a moment of the day listener.
@@ -44,6 +44,6 @@ public interface MomentOfTheDayService {
      * @param listener
      *            the listener
      */
-    void unregister(MomentOfTheDayListener listener);
+    void unregister(PartOfTheDayListener listener);
 
 }

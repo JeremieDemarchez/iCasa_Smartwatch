@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.illuminance.impl;
 
-public enum MomentOfTheDay {
+public enum PartOfTheDay {
     MORNING(6), AFTERNOON(12), EVENING(18), NIGHT(22);
 
     /**
@@ -25,7 +25,7 @@ public enum MomentOfTheDay {
      *            the given hour
      * @return the corresponding moment of the day
      */
-    MomentOfTheDay getCorrespondingMoment(int hour) {
+    PartOfTheDay getCorrespondingMoment(int hour) {
         assert ((0 <= hour) && (hour <= 24));
        /* if ((6 <= hour) &&  (hour< 12)){
             return MomentOfTheDay.MORNING;
@@ -36,19 +36,19 @@ public enum MomentOfTheDay {
         }else {
             return MomentOfTheDay.NIGHT;
         }*/
-        if (MomentOfTheDay.NIGHT.getStartHour() <=hour ){
-            return MomentOfTheDay.NIGHT;
+        if (PartOfTheDay.NIGHT.getStartHour() <=hour ){
+            return PartOfTheDay.NIGHT;
         }
-        else if (MomentOfTheDay.EVENING.getStartHour() <=hour ){
-            return MomentOfTheDay.EVENING;
+        else if (PartOfTheDay.EVENING.getStartHour() <=hour ){
+            return PartOfTheDay.EVENING;
         }
-        else if (MomentOfTheDay.AFTERNOON.getStartHour() <=hour ){
-            return MomentOfTheDay.AFTERNOON;
+        else if (PartOfTheDay.AFTERNOON.getStartHour() <=hour ){
+            return PartOfTheDay.AFTERNOON;
         }
-        else if (MomentOfTheDay.MORNING.getStartHour() <=hour ){
-            return MomentOfTheDay.MORNING;
+        else if (PartOfTheDay.MORNING.getStartHour() <=hour ){
+            return PartOfTheDay.MORNING;
         }else{
-            return MomentOfTheDay.NIGHT;
+            return PartOfTheDay.NIGHT;
         }
 
     }
@@ -69,7 +69,7 @@ public enum MomentOfTheDay {
      * @param startHour
      *            when the moment start.
      */
-    MomentOfTheDay(int startHour) {
+    PartOfTheDay(int startHour) {
         assert ((0 <= startHour) && (startHour <= 24));
         this.startHour = startHour;
     }

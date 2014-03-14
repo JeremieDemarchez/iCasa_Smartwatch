@@ -31,38 +31,38 @@ import java.util.Set;
  * Created by aygalinc on 11/03/14.
  */
 //Define this class as an implementation of a component :
-@Component
+@Component(name = "part-of-the-day")
 //Create an instance of the component
-@Instantiate(name = "follow.me.time")
+@Instantiate(name = "part-of-the-day-1")
 @Provides
-public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnable {
+public class PartOfTheDayImpl implements PartOfTheDayService, PeriodicRunnable {
 
     /**
      * The current moment of the day :
      **/
-    MomentOfTheDay currentMomentOfTheDay = MomentOfTheDay.MORNING;
+    PartOfTheDay currentMomentOfTheDay = PartOfTheDay.MORNING;
 
     /**
      * The current moment of the day :
      **/
-    Set<MomentOfTheDayListener> listeners = new HashSet<MomentOfTheDayListener>();
+    Set<PartOfTheDayListener> listeners = new HashSet<PartOfTheDayListener>();
 
     @Requires
     Clock clock;
 
     // Implementation of the MomentOfTheDayService ....
     @Override
-    public MomentOfTheDay getMomentOfTheDay(){
+    public PartOfTheDay getMomentOfTheDay(){
         return currentMomentOfTheDay;
     }
 
     @Override
-    public void register(MomentOfTheDayListener listener) {
+    public void register(PartOfTheDayListener listener) {
         listeners.add(listener);
     }
 
     @Override
-    public void unregister(MomentOfTheDayListener listener) {
+    public void unregister(PartOfTheDayListener listener) {
         listeners.remove(listener);
     }
 
@@ -74,24 +74,29 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     }
 
     public String getGroup(){
-        return "default"; // you don't need to understand this part.
+        return "default-2"; // you don't need to understand this part.
     }
 
 
     @Override
     public void run() {
-        // The method run is called on a regular basis
-        // TODO : do something to check the current time of the day and see if
-        // it has changed
-        DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
-        int hour = dateTimeEli.getHourOfDay();
-        MomentOfTheDay temp = currentMomentOfTheDay;
-        currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
-        if (currentMomentOfTheDay != temp ){
-            for(MomentOfTheDayListener listener : listeners){
-                listener.momentOfTheDayHasChanged(currentMomentOfTheDay);
+        try{ // The method run is called on a regular basis
+            // TODO : do something to check the current time of the day and see if
+            // it has changed
+            System.out.println("exec ");
+            DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
+            int hour = dateTimeEli.getHourOfDay();
+            PartOfTheDay temp = currentMomentOfTheDay;
+            currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
+            if (currentMomentOfTheDay != temp ){
+                for(PartOfTheDayListener listener : listeners){
+                    listener.momentOfTheDayHasChanged(currentMomentOfTheDay);
+                }
             }
+        }catch(Exception e){
+e.printStackTrace();
         }
+
     }
 
     /** Component Lifecycle Method */

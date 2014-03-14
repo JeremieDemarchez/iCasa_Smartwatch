@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -42,10 +43,10 @@ import fr.liglab.adele.icasa.simulator.PhysicalModel;
 @Component(name = "illuminance-model")
 @Instantiate(name = "illuminance-model-1")
 @Provides(specifications = PhysicalModel.class)
-public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener,MomentOfTheDayListener {
+public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener,PartOfTheDayListener {
 
     @Requires
-    private MomentOfTheDayService momentOfTheDayService;
+    private PartOfTheDayService momentOfTheDayService;
 
     /**
      * Rought Constant to establish the correspondance between power & illuminance
@@ -64,13 +65,13 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     private Object _deviceLock = new Object();
 
     // There is no need of full illuminance in the morning
-    public static final double  MORNING_EXTERNAL_SOURCE_POWER = 500;
+    public static final double  MORNING_EXTERNAL_SOURCE_POWER = 8;
     // In the afternoon the illuminance can be largely limited
-    public static final double  AFTERNOON_EXTERNAL_SOURCE_POWER = 1500;
+    public static final double  AFTERNOON_EXTERNAL_SOURCE_POWER = 15;
     // In the evening, the illuminance should be the best
-    public static final double  EVENING_EXTERNAL_SOURCE_POWER = 1000;
+    public static final double  EVENING_EXTERNAL_SOURCE_POWER = 6;
     // In the night, there is no need to use the full illuminance
-    public static final double  NIGHT_EXTERNAL_SOURCE_POWER = 300;
+    public static final double  NIGHT_EXTERNAL_SOURCE_POWER = 3;
 
     private double currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
     /*
@@ -82,6 +83,9 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     @Requires
     private ContextManager _contextMgr;
+
+    @Requires
+    ZoneSizeCalculator _zoneSizeCalc;
 
     public IlluminancePMImpl() {
         // workaround of ipojo bug of object member initialization
@@ -221,7 +225,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     private void start() {
         _contextMgr.addListener(this);
         momentOfTheDayService.register(this);
-        MomentOfTheDay temp = momentOfTheDayService.getMomentOfTheDay();
+        PartOfTheDay temp = momentOfTheDayService.getMomentOfTheDay();
         momentOfTheDayHasChanged(temp);
     }
 
@@ -268,11 +272,10 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      * @param zone a zone
      */
     private void updateIlluminance(Zone zone) {
-        double returnedIlluminance = 0.0; //TODO manage external illuminance
+        double returnedIlluminance = 0.0;
         int activeLightSize = 1;
-        int height = zone.getYLength();
         int width = zone.getXLength();
-        double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
+        double surface = _zoneSizeCalc.getSurfaceInMeterSquare(zone.getId());;
         double powerLevelTotal = currentExternalSource;
 
         Set<GenericDevice> devices = getLightDevicesFromZone(zone);
@@ -352,14 +355,14 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
     @Override
-    public void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay) {
-        if (newMomentOfTheDay == MomentOfTheDay.AFTERNOON){
+    public void momentOfTheDayHasChanged(PartOfTheDay newMomentOfTheDay) {
+        if (newMomentOfTheDay == PartOfTheDay.AFTERNOON){
             currentExternalSource = AFTERNOON_EXTERNAL_SOURCE_POWER;
-        }else if (newMomentOfTheDay == MomentOfTheDay.NIGHT){
+        }else if (newMomentOfTheDay == PartOfTheDay.NIGHT){
             currentExternalSource = NIGHT_EXTERNAL_SOURCE_POWER;
-        }else if(newMomentOfTheDay == MomentOfTheDay.EVENING){
+        }else if(newMomentOfTheDay == PartOfTheDay.EVENING){
             currentExternalSource = EVENING_EXTERNAL_SOURCE_POWER;
-        }else if(newMomentOfTheDay == MomentOfTheDay.MORNING){
+        }else if(newMomentOfTheDay == PartOfTheDay.MORNING){
             currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
         }
         updateZones();
