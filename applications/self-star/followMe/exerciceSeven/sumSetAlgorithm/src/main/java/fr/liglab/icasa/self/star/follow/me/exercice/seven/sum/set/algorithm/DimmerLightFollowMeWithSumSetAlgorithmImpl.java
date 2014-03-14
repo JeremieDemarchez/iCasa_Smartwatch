@@ -24,7 +24,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The targeted illuminance in each room
      **/
-    private double targetedIlluminance = 2750.d;
+    private double targetedIlluminance = 5674.0d;
 
     /**
      * The maximum number of lights to turn on when a user enters the room :
@@ -34,7 +34,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The maximum energy consumption allowed in a room in Watt:
      **/
-    private double maximumEnergyConsumptionAllowedInARoom = 100.0d;
+    private double maximumEnergyConsumptionAllowedInARoom = 200.0d;
 
     /**
      * The name of the LOCATION property

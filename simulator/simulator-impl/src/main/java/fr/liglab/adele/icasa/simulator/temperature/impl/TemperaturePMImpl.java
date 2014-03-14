@@ -20,20 +20,15 @@ import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
-import fr.liglab.adele.icasa.device.util.LocatedDeviceTracker;
 import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.util.ZoneTracker;
 import fr.liglab.adele.icasa.location.util.ZoneTrackerCustomizer;
-import fr.liglab.adele.icasa.service.scheduler.SpecificClockPeriodicRunnable;
+import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
-
 import java.util.*;
 
 @Component(name = "temperature-model")
@@ -79,27 +74,13 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     @Requires
     ZoneSizeCalculator _zoneSizeCalc;
 
-    private LocatedDeviceTracker _heaterTracker;
-    private LocatedDeviceTracker _coolerTracker;
-    private ZoneTracker _zoneTracker;
-
-    private static final Clock _systemClock = SystemClockImpl.SINGLETON;
-
-    private BundleContext _context;
-
-    private ServiceRegistration _computeTempTaskSRef;
     private boolean _computationIsOn;
 
-    public TemperaturePMImpl(BundleContext context) {
-        _context = context;
+    public TemperaturePMImpl() {
         _computationIsOn = false;
 
         // workaround of ipojo bug of object member initialization
         _zoneModelLock = new Object();
-
-        _heaterTracker = new LocatedDeviceTracker(context, Heater.class, this);
-        _coolerTracker = new LocatedDeviceTracker(context, Cooler.class, this);
-        _zoneTracker = new ZoneTracker(context, this, VOLUME_PROP_NAME);
 
         _computedVariables = new HashSet<Variable>();
         _computedVariables.add(new Variable(TEMPERATURE_PROP_NAME, Double.class, "in Kelvin"));
@@ -111,19 +92,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     @Validate
     private void start() {
         _computationIsOn = true;
-        _heaterTracker.open();
-        _coolerTracker.open();
-        _zoneTracker.open();
 
-        SpecificClockPeriodicRunnable computeTempTask = new SpecificClockPeriodicRunnable() {
+        PeriodicRunnable computeTempTask = new PeriodicRunnable() {
             @Override
             public long getPeriod() {
                 return 10000;//each 10sec will update the temperature.
-            }
-
-            @Override
-            public Clock getClock() {
-                return _systemClock;
             }
 
             @Override
@@ -133,13 +106,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
             @Override
             public void run() {
-                updateTemperatures();
+               updateTemperatures();
             }
         };
         
         m_lastUpdateTime = _clock.currentTimeMillis();
-        _computeTempTaskSRef = _context.registerService(SpecificClockPeriodicRunnable.class.getName(), computeTempTask,
-                new Hashtable());
     }
 
     private void updateTemperatures() {
@@ -174,14 +145,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     @Invalidate
     private void stop() {
         _computationIsOn = false;
-        if (_computeTempTaskSRef != null) {
-            _computeTempTaskSRef.unregister();
-            _computeTempTaskSRef = null;
-        }
 
-        _zoneTracker.close();
-        _heaterTracker.close();
-        _coolerTracker.close();
     }
 
     private boolean propChangeHasImpactOnPower(LocatedDevice locatedDevice, String propName) {

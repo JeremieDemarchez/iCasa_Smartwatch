@@ -31,7 +31,7 @@ public class ZoneModel {
     private Map<String, Double> _wallSurfaceMap = new HashMap<String, Double>();
     private double _totalPower;
     private Zone _zone;
-    private List<LocatedDevice> _devices = new ArrayList<LocatedDevice>();
+    private Set<LocatedDevice> _devices = new HashSet<LocatedDevice>();
 
     public ZoneModel(Zone zone) {
         this._zone = zone;

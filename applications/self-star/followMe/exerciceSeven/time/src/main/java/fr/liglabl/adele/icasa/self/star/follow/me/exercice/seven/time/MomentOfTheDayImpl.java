@@ -2,6 +2,7 @@ package fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time;
 
 import com.sun.swing.internal.plaf.synth.resources.synth_sv;
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clock.ClockListener;
 import fr.liglab.adele.icasa.service.scheduler.ICasaRunnable;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
@@ -93,8 +94,6 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     public void start() {
         System.out.println("Component TIME is starting...");
     }
-
-
 
 
 

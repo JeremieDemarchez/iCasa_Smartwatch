@@ -80,6 +80,7 @@ public class PushButtonTest  {
     @Test
     public void pushAndHoldTest(){
         long holdTime = 100;
+        clock.resume();
         LocatedDevice device = createPushButton("pushButton-2");
         SimulatedPushButton button = (SimulatedPushButton) device.getDeviceObject();
 
