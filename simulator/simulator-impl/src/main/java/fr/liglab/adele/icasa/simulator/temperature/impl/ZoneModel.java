@@ -15,10 +15,20 @@
  */
 package fr.liglab.adele.icasa.simulator.temperature.impl;
 
+
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.temperature.Cooler;
+import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Zone;
 
 import java.util.*;
+
+import static fr.liglab.adele.icasa.simulator.temperature.impl.TemperaturePMImpl.VOLUME_PROP_NAME;
+
+import static fr.liglab.adele.icasa.simulator.temperature.impl.TemperaturePMImpl.AIR_MASS;
+
+import static fr.liglab.adele.icasa.simulator.temperature.impl.TemperaturePMImpl.AIR_MASS_CAPACITY;
 
 /**
  * Model of a zone used to compute thermal properties.
@@ -28,12 +38,30 @@ import java.util.*;
 public class ZoneModel {
 
     private double _thermalCapacity;
-    private Map<String, Double> _wallSurfaceMap = new HashMap<String, Double>();
-    private double _totalPower;
-    private Zone _zone;
-    private List<LocatedDevice> _devices = new ArrayList<LocatedDevice>();
 
-    public ZoneModel(Zone zone) {
+    private Map<String, Double> _wallSurfaceMap = new HashMap<String, Double>();
+
+    private double _totalPower;
+
+    private Zone _zone;
+
+    private boolean updateDevice = true;
+
+    private boolean updateThermalCapacity = true;
+
+    private boolean updatePower = true;
+
+    private Set<LocatedDevice> _temperatureDevices = new HashSet<LocatedDevice>();
+
+    private Set<GenericDevice> _devices = new HashSet<GenericDevice>();
+
+    private Set<Heater> _heaters = new HashSet<Heater>();
+
+    private Set<Cooler> _coolers = new HashSet<Cooler>();
+
+
+    public ZoneModel(Zone zone,Set<LocatedDevice> temperatureDevices) {
+         this._temperatureDevices = temperatureDevices;
         this._zone = zone;
     }
 
@@ -49,25 +77,16 @@ public class ZoneModel {
         return _thermalCapacity;
     }
 
-    public void setThermalCapacity(double thermalCapacity) {
-        this._thermalCapacity = thermalCapacity;
+    public void updateThermalCapacity() {
+        if (updateThermalCapacity){
+            double newVolume = 1.0d; // use this value as default to avoid divide by zero
+            Double zoneVolume = (Double) _zone.getVariableValue(VOLUME_PROP_NAME);
+            if ((zoneVolume != null) && ((zoneVolume) > 0.0d))
+                newVolume =  zoneVolume;
+            _thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
+        }
     }
 
-    public double getTotalPower() {
-        return _totalPower;
-    }
-
-    public void setTotalPower(int totalPower) {
-        this._totalPower = totalPower;
-    }
-
-    public void addPower(double powerToAdd) {
-        this._totalPower += powerToAdd;
-    }
-
-    public void reducePower(double powerToRemove) {
-        this._totalPower -= powerToRemove;
-    }
 
     public Set<Map.Entry<String, Double>> getWallSurfaces() {
         return _wallSurfaceMap.entrySet();
@@ -89,24 +108,60 @@ public class ZoneModel {
         _wallSurfaceMap.remove(zoneId);
     }
 
-    public void clearDevices() {
+
+    public boolean isInTheZone(LocatedDevice device) {
+        if ((device != null) && (_zone.contains(device))) {
+            System.out.println(" DEVICE IN ZONE ");
+            return true;
+        }
+        System.out.println(" CDEVICE NOT IN ZONE ");
+        return false;
+    }
+
+    public void updateTemperatureDevices() {
+        _coolers.clear();
+        _heaters.clear();
         _devices.clear();
+        System.out.println(" UPDATE TEMP  ");
+        for(LocatedDevice device : _temperatureDevices){
+            System.out.println(" CHECK ZONE ");
+            if (isInTheZone(device)){
+
+                Object deviceObj = device.getDeviceObject();
+
+                if (deviceObj instanceof Cooler){
+                    System.out.println(" COOLER ADD ");
+                    _devices.add((GenericDevice)deviceObj);
+                    _coolers.add((Cooler)deviceObj);
+
+                }else if(deviceObj instanceof Heater){
+                    System.out.println(" EATER ADD");
+                    _heaters.add((Heater)deviceObj);
+                    _devices.add((GenericDevice)deviceObj);
+                }
+            }
+        }
     }
 
-    public void addDevice(LocatedDevice device) {
-        _devices.add(device);
+
+    public Set<GenericDevice> getDevices() {
+        return _devices;
     }
 
-    public void removeDevice(LocatedDevice device) {
-        _devices.remove(device);
+
+
+    public void updateTotalPower() {
+        _totalPower = 0;
+        for (Heater heater : _heaters){
+            _totalPower += heater.getPowerLevel() * heater.getMaxPowerLevel();
+        }
+
+        for (Cooler cooler : _coolers){
+            _totalPower -= cooler.getPowerLevel() * cooler.getMaxPowerLevel();
+        }
     }
 
-    /**
-     * Returns a mutable list of all devices into this zone.
-     *
-     * @return all devices into this zone.
-     */
-    public List<LocatedDevice> getDevices() {
-        return new ArrayList(_devices);
+    public double getTotalPower() {
+        return _totalPower;
     }
 }

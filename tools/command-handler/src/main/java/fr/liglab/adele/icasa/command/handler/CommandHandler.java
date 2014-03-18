@@ -54,7 +54,7 @@ public class CommandHandler extends PrimitiveHandler {
 	/**
 	 * the handler namespace :
 	 */
-	public static final String NAMESPACE = "fr.liglab.adele.shell.handler";
+	public static final String NAMESPACE = "fr.liglab.adele.icasa.command.handler";
 
 	/**
 	 * The bundle context used to register the gogo service.

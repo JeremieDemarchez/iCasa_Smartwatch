@@ -30,8 +30,10 @@
     <packaging>pom</packaging>
     <name>Application Project Skeletons</name>
 
-    <!-- Project repositories -->
+    <!-- Project repositories
     <repositories>
+    -->
+
 
     <modules>
         <module>app-skeleton</module>

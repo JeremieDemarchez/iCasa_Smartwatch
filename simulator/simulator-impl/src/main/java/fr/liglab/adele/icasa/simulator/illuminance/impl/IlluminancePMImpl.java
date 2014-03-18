@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
@@ -42,24 +43,36 @@ import fr.liglab.adele.icasa.simulator.PhysicalModel;
 @Component(name = "illuminance-model")
 @Instantiate(name = "illuminance-model-1")
 @Provides(specifications = PhysicalModel.class)
-public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
+public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener,PartOfTheDayListener {
+
+    @Requires
+    private PartOfTheDayService momentOfTheDayService;
 
     /**
      * Rought Constant to establish the correspondance between power & illuminance
      */
-    public static final double LUMENS_CONSTANT_VALUE = 680.0d;
+    public static final double LUMENS_CONSTANT_VALUE = 683.0d;
 
-    /**
-     * 1px -> 0.014m //TODO
-     */
-    public static final double ZONE_SCALE_FACTOR = 0.014d;
+
     public static final String ILLUMINANCE_PROP_NAME = "Illuminance";
+
+    public static final String SURFACE_PROP_NAME = "Surface";
 
     private Set<Variable> _computedVariables;
     private Set<Variable> _requiredZoneVariables;
 
     private Object _deviceLock = new Object();
 
+    // There is no need of full illuminance in the morning
+    public static final double  MORNING_EXTERNAL_SOURCE_POWER = 8;
+    // In the afternoon the illuminance can be largely limited
+    public static final double  AFTERNOON_EXTERNAL_SOURCE_POWER = 15;
+    // In the evening, the illuminance should be the best
+    public static final double  EVENING_EXTERNAL_SOURCE_POWER = 6;
+    // In the night, there is no need to use the full illuminance
+    public static final double  NIGHT_EXTERNAL_SOURCE_POWER = 3;
+
+    private double currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
     /*
      * @gardedBy(_deviceLock)
      */
@@ -70,6 +83,9 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     @Requires
     private ContextManager _contextMgr;
 
+    @Requires
+    ZoneSizeCalculator _zoneSizeCalc;
+
     public IlluminancePMImpl() {
         // workaround of ipojo bug of object member initialization
         _zoneLock = new Object();
@@ -77,7 +93,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         _computedVariables = new HashSet<Variable>();
         _computedVariables.add(new Variable(ILLUMINANCE_PROP_NAME, Double.class, "in lux"));
         _requiredZoneVariables = new HashSet<Variable>();
-        _requiredZoneVariables.add(new Variable("Surface", Double.class, "surface in square meters"));
+        _requiredZoneVariables.add(new Variable(SURFACE_PROP_NAME, Double.class, "surface in square meters"));
     }
 
     @Override
@@ -160,6 +176,13 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         updateZones(locatedDevice.getCenterAbsolutePosition());
     }
 
+    private void updateZones() {
+        List<Zone> zones = _contextMgr.getZones();
+        for(Zone zone : zones){
+            updateIlluminance(zone);
+        }
+    }
+
     private void updateZones(Position devicePosition) {
         Set<Zone> zonesToUpdate = getZones(devicePosition);
         for (Zone zone : zonesToUpdate) {
@@ -200,6 +223,9 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     @Validate
     private void start() {
         _contextMgr.addListener(this);
+        momentOfTheDayService.register(this);
+        PartOfTheDay temp = momentOfTheDayService.getMomentOfTheDay();
+        momentOfTheDayHasChanged(temp);
     }
 
     @Invalidate
@@ -245,12 +271,10 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      * @param zone a zone
      */
     private void updateIlluminance(Zone zone) {
-        double returnedIlluminance = 0.0; //TODO manage external illuminance
-        int activeLightSize = 0;
-        int height = zone.getYLength();
-        int width = zone.getXLength();
-        double surface = ZONE_SCALE_FACTOR * height * ZONE_SCALE_FACTOR * width;
-        double powerLevelTotal = 0.0d;
+        double returnedIlluminance = 0.0;
+        int activeLightSize = 1;
+        double surface = _zoneSizeCalc.getSurfaceInMeterSquare(zone.getId());;
+        double powerLevelTotal = currentExternalSource;
 
         Set<GenericDevice> devices = getLightDevicesFromZone(zone);
         for (GenericDevice device : devices) {
@@ -272,7 +296,8 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         }
 
         if (activeLightSize != 0)
-            returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
+            returnedIlluminance +=( (powerLevelTotal  * LUMENS_CONSTANT_VALUE) / surface) ;
+        // returnedIlluminance += ((powerLevelTotal / activeLightSize) * LUMENS_CONSTANT_VALUE) / surface;
 
         zone.setVariableValue(ILLUMINANCE_PROP_NAME, returnedIlluminance);
     }
@@ -326,4 +351,19 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
         //do nothing //TODO if manage external illuminance, may have impact
     }
+
+    @Override
+    public void momentOfTheDayHasChanged(PartOfTheDay newMomentOfTheDay) {
+        if (newMomentOfTheDay == PartOfTheDay.AFTERNOON){
+            currentExternalSource = AFTERNOON_EXTERNAL_SOURCE_POWER;
+        }else if (newMomentOfTheDay == PartOfTheDay.NIGHT){
+            currentExternalSource = NIGHT_EXTERNAL_SOURCE_POWER;
+        }else if(newMomentOfTheDay == PartOfTheDay.EVENING){
+            currentExternalSource = EVENING_EXTERNAL_SOURCE_POWER;
+        }else if(newMomentOfTheDay == PartOfTheDay.MORNING){
+            currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
+        }
+        updateZones();
+    }
+
 }

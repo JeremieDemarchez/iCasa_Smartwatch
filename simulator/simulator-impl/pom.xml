@@ -5,93 +5,98 @@
   IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language 
   governing permissions and limitations under the License. -->
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-  <modelVersion>4.0.0</modelVersion>
+    <modelVersion>4.0.0</modelVersion>
 
-  <!-- Project parent -->
-  <parent>
-    <groupId>fr.liglab.adele.icasa</groupId>
-    <artifactId>parent</artifactId>
-    <version>1.2.6-SNAPSHOT</version>
-    <relativePath>../../parent</relativePath>
-  </parent>
+    <!-- Project parent -->
+    <parent>
+        <groupId>fr.liglab.adele.icasa</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.2.6-SNAPSHOT</version>
+        <relativePath>../../parent</relativePath>
+    </parent>
 
-  <!-- Project coordinates -->
-  <artifactId>simulator.impl</artifactId>
-  <packaging>bundle</packaging>
-  <name>${productName} :: ${projectName}</name>
+    <!-- Project coordinates -->
+    <artifactId>simulator.impl</artifactId>
+    <packaging>bundle</packaging>
+    <name>${productName} :: ${projectName}</name>
 
-  <!-- Project dependencies -->
-  <dependencies>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.ipojo</artifactId>
-    </dependency>
-    <dependency>
-        <groupId>org.ow2.chameleon</groupId>
-        <artifactId>chameleon-core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.felix</groupId>
-      <artifactId>org.apache.felix.ipojo.annotations</artifactId>
-    </dependency>
-    <dependency>
-       <groupId>${project.groupId}</groupId>
-       <artifactId>context.api</artifactId>
-       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-       <groupId>${project.groupId}</groupId>
-       <artifactId>context.impl</artifactId>
-       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-       <groupId>${project.groupId}</groupId>
-       <artifactId>technical.services.api</artifactId>
-       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-       <groupId>${project.groupId}</groupId>
-       <artifactId>simulator.api</artifactId>
-       <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-  </dependencies>
+    <!-- Project dependencies -->
+    <dependencies>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.chameleon</groupId>
+            <artifactId>chameleon-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>context.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>context.impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>technical.services.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>simulator.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>joda-time</groupId>
+            <artifactId>joda-time</artifactId>
+            <version>2.3</version>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <configuration>
-          <instructions>
-            <Private-Package>fr.liglab.adele.icasa.simulator.context.impl,
-              fr.liglab.adele.icasa.simulator.impl,
-              fr.liglab.adele.icasa.simulator.commands.impl,
-              fr.liglab.adele.icasa.simulator.illuminance.impl,
-              fr.liglab.adele.icasa.simulator.temperature.impl,
-              fr.liglab.adele.icasa.simulator.script.executor.impl,
-              fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
-            <Export-Package />
-          </instructions>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-ipojo-plugin</artifactId>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <configuration>
+                    <instructions>
+                        <Private-Package>fr.liglab.adele.icasa.simulator.context.impl,
+                            fr.liglab.adele.icasa.simulator.impl,
+                            fr.liglab.adele.icasa.simulator.commands.impl,
+                            fr.liglab.adele.icasa.simulator.illuminance.impl,
+                            fr.liglab.adele.icasa.simulator.temperature.impl,
+                            fr.liglab.adele.icasa.simulator.script.executor.impl,
+                            fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
+                        <Export-Package />
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+            </plugin>
+        </plugins>
+    </build>
 
 
 </project>

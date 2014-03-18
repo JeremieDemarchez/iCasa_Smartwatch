@@ -151,7 +151,7 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
 	@Override
 	@Invalidate
 	public void stop() {
-		if (!scriptInExecution())
+       if (!scriptInExecution())
 			return;
 
 		String stoppedScript = currentScript;
@@ -216,10 +216,18 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
 			return;
 
 		executorThread = new Thread(new CommandExecutorRunnable(actions));
-		clock.reset();
-		clock.setStartDate(startDate);
-		clock.setFactor(factor);
-		clock.resume();
+        synchronized (clock) {
+           try{
+               clock.reset();
+               clock.setStartDate(startDate);
+               clock.setFactor(factor);
+               clock.resume();
+           }catch (Exception e){
+               e.printStackTrace();
+           }
+
+        }
+
 		executorThread.start();
 	}
 
@@ -512,6 +520,7 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
 			boolean execute = true;
 			executedPercentage = 0;
 			while (execute) {
+                System.out.println("Executing script with " + Thread.currentThread().getName());
 				long elapsedTime = clock.getElapsedTime();
 
 				List<ActionDescription> toExecute = calculeToExecute(index, elapsedTime);

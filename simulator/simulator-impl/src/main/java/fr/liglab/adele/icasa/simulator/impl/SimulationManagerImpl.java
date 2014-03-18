@@ -17,6 +17,7 @@ package fr.liglab.adele.icasa.simulator.impl;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
+import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
@@ -25,7 +26,7 @@ import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.*;
 import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 import fr.liglab.adele.icasa.simulator.listener.PersonTypeListener;
-import fr.liglab.adele.icasa.simulator.services.PersonLocationService;
+import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.Constants;
@@ -46,6 +47,9 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 
 	@Requires(optional = true)
 	private PhysicalModel[] _physicalModels;
+
+    @Requires
+    private Clock clock;
 
 	private Map<String, Person> persons = new HashMap<String, Person>();
 
@@ -758,6 +762,8 @@ public class SimulationManagerImpl implements SimulationManager, PersonLocationS
 		manager.resetContext();
 		removeAllPersons();
 		removeAllDevices();
+        clock.reset();
+        clock.pause();
 	}
 
 	private List<PersonListener> getPersonListeners() {

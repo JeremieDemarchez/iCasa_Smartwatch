@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.simulation.test.person;
 
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
-import fr.liglab.adele.icasa.simulator.services.PersonLocationService;
+import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
