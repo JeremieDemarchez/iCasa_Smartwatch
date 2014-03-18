@@ -83,7 +83,6 @@ public class PartOfTheDayImpl implements PartOfTheDayService, PeriodicRunnable {
         try{ // The method run is called on a regular basis
             // TODO : do something to check the current time of the day and see if
             // it has changed
-            System.out.println("exec ");
             DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
             int hour = dateTimeEli.getHourOfDay();
             PartOfTheDay temp = currentMomentOfTheDay;
@@ -94,7 +93,7 @@ public class PartOfTheDayImpl implements PartOfTheDayService, PeriodicRunnable {
                 }
             }
         }catch(Exception e){
-e.printStackTrace();
+            e.printStackTrace();
         }
 
     }

@@ -18,23 +18,28 @@ package fr.liglab.adele.icasa.simulator.temperature.impl;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
-import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.util.ZoneTrackerCustomizer;
+import fr.liglab.adele.icasa.location.*;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
 import org.apache.felix.ipojo.annotations.*;
+import org.joda.time.DateTime;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+
+import fr.liglab.adele.icasa.location.LocatedDeviceListener;
+
+import fr.liglab.adele.icasa.location.ZoneListener;
+
 import java.util.*;
 
 @Component(name = "temperature-model")
 @Instantiate(name = "temperature-model-1")
 @Provides(specifications = PhysicalModel.class)
-public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCustomizer, ZoneTrackerCustomizer {
+public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
 
     public static final String TEMPERATURE_PROP_NAME = "Temperature";
     public static final String VOLUME_PROP_NAME = "Volume";
@@ -49,19 +54,33 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     public static final double LOWER_TEMP = 283.16;
     public static final double DEFAULT_TEMP_VALUE = 293.15; // 20 celsius degrees in kelvin
     public static final double MAX_WALL_DIST = 0.3d; // maximum distance in meters between 2 walls to be considered as
-                                                // the same wall
+    // the same wall
 
     private volatile long m_lastUpdateTime;
 
     private Set<Variable> _computedVariables;
     private Set<Variable> _requiredZoneVariables;
 
+
+    // There is no need of full illuminance in the morning
+    public static final double  MORNING_EXTERNAL_TEMPERATUR_FACTOR = -0.5;
+    // In the afternoon the illuminance can be largely limited
+    public static final double  AFTERNOON_EXTERNAL_TEMPERATUR_FACTOR = 2;
+    // In the evening, the illuminance should be the best
+    public static final double  EVENING_EXTERNAL_TEMPERATUR_FACTOR = 0.5;
+    // In the night, there is no need to use the full illuminance
+    public static final double  NIGHT_EXTERNAL_TEMPERATUR_FACTOR = -2;
+
+
+    private double _temperatureFactorMomentOfTheDay = 2.0 ;
     /*
      * @GardedBy(_deviceLock)
      */
     private Set<LocatedDevice> _temperatureDevices = new HashSet<LocatedDevice>();
 
     private Object _zoneModelLock = new Object();
+
+    private Object _timeLock = new Object();
 
     private Map<String /* zone id */, ZoneModel> _zoneModels = new HashMap<String, ZoneModel>();
 
@@ -74,30 +93,42 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     @Requires
     ZoneSizeCalculator _zoneSizeCalc;
 
+
+
+    private BundleContext _context;
+
+    private ServiceRegistration _computeTempTaskSRef;
     private boolean _computationIsOn;
 
-    public TemperaturePMImpl() {
-        _computationIsOn = false;
+    public TemperaturePMImpl(BundleContext context) {
+        this._context = context;
+        this._computationIsOn = false;
 
         // workaround of ipojo bug of object member initialization
-        _zoneModelLock = new Object();
+        this._zoneModelLock = new Object();
 
-        _computedVariables = new HashSet<Variable>();
-        _computedVariables.add(new Variable(TEMPERATURE_PROP_NAME, Double.class, "in Kelvin"));
+        // workaround of ipojo bug of object member initialization
+        this._timeLock = new Object();
 
-        _requiredZoneVariables = new HashSet<Variable>();
-        _requiredZoneVariables.add(new Variable(VOLUME_PROP_NAME, Double.class, "volume in cubic meters"));
+        this._computedVariables = new HashSet<Variable>();
+        this._computedVariables.add(new Variable(TEMPERATURE_PROP_NAME, Double.class, "in Kelvin"));
+
+        this._requiredZoneVariables = new HashSet<Variable>();
+        this._requiredZoneVariables.add(new Variable(VOLUME_PROP_NAME, Double.class, "volume in cubic meters"));
     }
 
     @Validate
     private void start() {
         _computationIsOn = true;
 
+        this._contextMgr.addListener(this);
+
         PeriodicRunnable computeTempTask = new PeriodicRunnable() {
             @Override
             public long getPeriod() {
-                return 10000;//each 10sec will update the temperature.
+                return 60000;//each 10sec will update the temperature.
             }
+
 
             @Override
             public String getGroup() {
@@ -106,33 +137,58 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
             @Override
             public void run() {
-               updateTemperatures();
+                DateTime dateTimeEli =new DateTime(_clock.currentTimeMillis());
+                int hour = dateTimeEli.getHourOfDay();
+                if (22 <=hour ){
+                    _temperatureFactorMomentOfTheDay = NIGHT_EXTERNAL_TEMPERATUR_FACTOR;
+                }
+                else if (18 <=hour ){
+                    _temperatureFactorMomentOfTheDay = EVENING_EXTERNAL_TEMPERATUR_FACTOR;
+                }
+                else if (12 <=hour ){
+                    _temperatureFactorMomentOfTheDay = AFTERNOON_EXTERNAL_TEMPERATUR_FACTOR;
+                }
+                else if (6 <=hour ){
+                    _temperatureFactorMomentOfTheDay = MORNING_EXTERNAL_TEMPERATUR_FACTOR;
+                }else{
+                    _temperatureFactorMomentOfTheDay = NIGHT_EXTERNAL_TEMPERATUR_FACTOR;
+                }
+                updateTemperatures();
             }
         };
-        
+
         m_lastUpdateTime = _clock.currentTimeMillis();
+        _computeTempTaskSRef = _context.registerService(PeriodicRunnable.class.getName(), computeTempTask,
+                new Hashtable());
     }
 
     private void updateTemperatures() {
         // called by only one thread
-
-        if (!_computationIsOn)
+        if (!_computationIsOn){
             return;
-
+        }
         long previousUpdateTS = m_lastUpdateTime;
-         
+
         long newUpdateTS = _clock.currentTimeMillis();
         long timeDiff = newUpdateTS - previousUpdateTS;
-        if (timeDiff <= 0)
+        if (timeDiff <= 0){
+            m_lastUpdateTime = newUpdateTS;
             return; // do not need to recompute
-
+        }
         Map<String, Double> newTemps = new HashMap<String, Double>();
         synchronized (_zoneModelLock) {
             for (ZoneModel zoneModel : _zoneModels.values()) {
-                double newTemp = computeTemperature(zoneModel.getZone(), timeDiff);
-                newTemps.put(zoneModel.getZoneId(), newTemp);
+                if (zoneModel.getDevices() != null){
+                    for(GenericDevice loc : zoneModel.getDevices()){
+                    }
+                }
+                synchronized (_zoneModelLock) {
+                    double newTemp = computeTemperature(zoneModel.getZone(), timeDiff);
+                    newTemps.put(zoneModel.getZoneId(), newTemp);
+                }
             }
         }
+
         for (String zoneId : newTemps.keySet()) {
             Zone zone = _contextMgr.getZone(zoneId);
             if (zone != null)
@@ -146,6 +202,11 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     private void stop() {
         _computationIsOn = false;
 
+        _contextMgr.removeListener(this);
+        if (_computeTempTaskSRef != null) {
+            _computeTempTaskSRef.unregister();
+            _computeTempTaskSRef = null;
+        }
     }
 
     private boolean propChangeHasImpactOnPower(LocatedDevice locatedDevice, String propName) {
@@ -172,7 +233,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     /**
      * Computes the temperature property value of specified zone according to time difference from the last computation.
-     * 
+     *
      * @param zone a zone
      * @param timeDiff time difference in ms from the last computation
      * @return the temperature computed for time t + dt
@@ -184,7 +245,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         synchronized (_zoneModelLock) {
             ZoneModel zoneModel = _zoneModels.get(zoneId);
 
-            double currentTemperature = DEFAULT_TEMP_VALUE; // 20 degrees by default
+            double currentTemperature = DEFAULT_TEMP_VALUE ; // 20 degrees by default
             Object zoneTemperature = zone.getVariableValue(TEMPERATURE_PROP_NAME);
             if (zoneTemperature != null) {
                 try {
@@ -194,14 +255,22 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                 }
             }
 
-            computeTotalPower(zoneModel); // TODO should be computed on the fly
             double powerLevelTotal = zoneModel.getTotalPower();
             double timeDiffInSeconds = timeDiff / 1000.0d;
+            if (powerLevelTotal == 0){
+                if ( currentTemperature > (DEFAULT_TEMP_VALUE + 0.5) ) {
+                    powerLevelTotal = -100.0;
+                } else if ( currentTemperature < (DEFAULT_TEMP_VALUE - 0.5) ){
+                    powerLevelTotal = 100.0;
+                } else {
+                   return DEFAULT_TEMP_VALUE;
+                }
+            }
 
-            double delta = (powerLevelTotal * timeDiffInSeconds) / zoneModel.getThermalCapacity();
-                                 
+            double delta = (powerLevelTotal  * timeDiffInSeconds) / zoneModel.getThermalCapacity();
+
             newTemperature = currentTemperature  + delta;
-            
+
             for (Map.Entry<String, Double> zoneWallSurfaceEntry : zoneModel.getWallSurfaces()) {
                 String otherZoneId = zoneWallSurfaceEntry.getKey();
                 double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
@@ -215,7 +284,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
                     }
                 }
             }
-            
+
 
             /**
              * Clipping function to saturate the temperature at a certain level
@@ -229,128 +298,6 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         return newTemperature;
     }
 
-    private void computeTotalPower(ZoneModel zoneModel) {
-        synchronized (_zoneModelLock) {
-            zoneModel.setTotalPower(0);
-
-            for (LocatedDevice device : zoneModel.getDevices()) {
-                Object deviceObj = device.getDeviceObject();
-                if (deviceObj instanceof Heater) {
-                    Heater heater = (Heater) deviceObj;
-                    zoneModel.addPower(heater.getPowerLevel() * heater.getMaxPowerLevel());
-                } else if (deviceObj instanceof Cooler) {
-                    Cooler cooler = (Cooler) deviceObj;
-                    zoneModel.reducePower(cooler.getPowerLevel() * cooler.getMaxPowerLevel());
-                }
-            }
-        }
-    }
-
-    private void setThermalCapacityFromVolume(ZoneModel zoneModel, Double zoneVolume) {
-
-        double newVolume = 1.0d; // use this value as default to avoid divide by zero
-        if ((zoneVolume != null) && (((Double) zoneVolume) > 0.0d))
-            newVolume = (Double) zoneVolume;
-
-        double thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
-
-        if (zoneModel != null) {
-            zoneModel.setThermalCapacity(thermalCapacity);
-        }
-
-    }
-
-    /*
-     * LocateDeviceTrackerCustomizer
-     */
-
-    @Override
-    public boolean addingDevice(LocatedDevice locatedDevice) {
-        return true;
-    }
-
-    @Override
-    public void addedDevice(LocatedDevice locatedDevice) {
-        synchronized (_zoneModelLock) {
-            _temperatureDevices.add(locatedDevice);
-
-            for (ZoneModel zoneModel : _zoneModels.values()) {
-                if (zoneModel.getZone().contains(locatedDevice))
-                    zoneModel.addDevice(locatedDevice);
-            }
-        }
-    }
-
-    @Override
-    public void modifiedDevice(LocatedDevice locatedDevice, String propName, Object oldValue, Object newValue) {
-        if (!propChangeHasImpactOnPower(locatedDevice, propName))
-            return;
-
-        // do not need to update total power of a zone, already done in temperature computation step
-    }
-
-    @Override
-    public void movedDevice(LocatedDevice locatedDevice, Position oldPosition, Position newPosition) {
-        synchronized (_zoneModelLock) {
-
-            for (ZoneModel zoneModel : _zoneModels.values()) {
-                Zone zone = zoneModel.getZone();
-
-                zoneModel.removeDevice(locatedDevice); // do not need to test if it is contained
-
-                if (zone.contains(locatedDevice))
-                    zoneModel.addDevice(locatedDevice);
-            }
-        }
-    }
-
-    @Override
-    public void removedDevice(LocatedDevice locatedDevice) {
-        synchronized (_zoneModelLock) {
-            _temperatureDevices.remove(locatedDevice);
-
-            for (ZoneModel zoneModel : _zoneModels.values()) {
-                zoneModel.removeDevice(locatedDevice); // do not need to test if it is contained
-            }
-        }
-    }
-
-    /*
-     * ZoneTrackerCustomizer
-     */
-
-    @Override
-    public boolean addingZone(Zone zone) {
-        return true;
-    }
-
-    @Override
-    public void addedZone(Zone zone) {
-        String zoneId = zone.getId();
-        ZoneModel zoneModel = new ZoneModel(zone);
-
-        synchronized (_zoneModelLock) {
-            if (!_zoneModels.containsKey(zoneId)) {
-
-                // init thermal capacity
-                Object zoneVolume = zone.getVariableValue(VOLUME_PROP_NAME);
-                if ((zoneVolume != null) && (zoneVolume instanceof Double))
-                    setThermalCapacityFromVolume(zoneModel, (Double) zoneVolume);
-
-                // init zone surfaces
-                for (ZoneModel curZoneModel : _zoneModels.values())
-                    updateZoneSurface(zoneModel, curZoneModel);
-
-                _zoneModels.put(zoneId, zoneModel);
-            }
-
-            for (LocatedDevice device : _temperatureDevices) {
-                if (zone.contains(device))
-                    zoneModel.addDevice(device);
-            }
-        }
-    }
-
     private void updateZoneSurface(ZoneModel zoneModel1, ZoneModel zoneModel2) {
         synchronized (_zoneModelLock) {
             double wallSurface = getContactWallSurface(zoneModel1.getZone(), zoneModel2.getZone());
@@ -359,63 +306,6 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             String zone2Id = zoneModel2.getZoneId();
             zoneModel1.setWallSurface(zone2Id, wallSurface);
             zoneModel2.setWallSurface(zone1Id, wallSurface);
-        }
-    }
-
-    @Override
-    public void modifiedZone(Zone zone, String variableName, Object oldValue, Object newValue) {
-        if (!VOLUME_PROP_NAME.equals(variableName))
-            return;
-        
-        
-        synchronized (_zoneModelLock) {
-            ZoneModel zoneModel = _zoneModels.get(zone.getId());
-            setThermalCapacityFromVolume(zoneModel, (Double) newValue);    
-        }
-        
-    }
-
-    @Override
-    public void movedZone(Zone zone, Position oldPosition, Position newPosition) {
-        // do not need to update thermal capacity done when volume changes
-
-        updateZoneModelDevices(zone);
-
-        synchronized (_zoneModelLock) {
-            ZoneModel zoneModel = _zoneModels.get(zone.getId());
-
-            for (ZoneModel curZoneModel : _zoneModels.values())
-                updateZoneSurface(zoneModel, curZoneModel);
-        }
-    }
-
-    private void updateZoneModelDevices(Zone zone) {
-        String zoneId = zone.getId();
-
-        synchronized (_zoneModelLock) {
-            ZoneModel zoneModel = _zoneModels.get(zoneId);
-            if (zoneModel == null)
-                return; // ignore it
-
-            zoneModel.clearDevices();
-            for (LocatedDevice device : _temperatureDevices) {
-                if (zone.contains(device))
-                    zoneModel.addDevice(device);
-            }
-        }
-    }
-
-    @Override
-    public void resizedZone(Zone zone) {
-        // do not need to update thermal capacity done when volume changes
-
-        updateZoneModelDevices(zone);
-
-        synchronized (_zoneModelLock) {
-            ZoneModel zoneModel = _zoneModels.get(zone.getId());
-
-            for (ZoneModel curZoneModel : _zoneModels.values())
-                updateZoneSurface(zoneModel, curZoneModel);
         }
     }
 
@@ -464,7 +354,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
         if ((distX*xFactor > MAX_WALL_DIST) || (distY*yFactor > MAX_WALL_DIST) || (distZ*zFactor > MAX_WALL_DIST)) {
             return 0.0d;
         }
-        
+
         // disjoint zones
         if ((interX == 0) && (interY > 0)) {
             return interY * yFactor * interZ * zFactor;
@@ -562,7 +452,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
     /**
      * Prerequisite : Intersection parallelepiped must not be null.
-     * 
+     *
      * @param p1 a parallelepiped
      * @param p2 another parallelepiped
      * @return intersection of the two parallelepiped.
@@ -576,7 +466,7 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
     }
 
     private double getSurfaceOfParallelepipedInMeters(Interval zone1X, Interval zone1Y, Interval zone1Z,
-            double xFactor, double yFactor, double zFactor) {
+                                                      double xFactor, double yFactor, double zFactor) {
         double xySurface = zone1X.getLength() * xFactor * zone1Y.getLength() * yFactor;
         double xzSurface = zone1X.getLength() * xFactor * zone1Z.getLength() * zFactor;
         double yzSurface = zone1Y.getLength() * yFactor * zone1Z.getLength() * zFactor;
@@ -627,9 +517,127 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
 
         return 0;
     }
+    public boolean isTemperatureDevice(GenericDevice device) {
+        return ( (device instanceof Cooler) || (device instanceof Heater));
+    }
 
     @Override
-    public void removedZone(Zone zone) {
+    public void deviceAdded(LocatedDevice locatedDevice) {
+        synchronized (_zoneModelLock) {
+            Object deviceObj = locatedDevice.getDeviceObject();
+            if (isTemperatureDevice((GenericDevice)deviceObj ) ){
+                _temperatureDevices.add(locatedDevice);
+                for (ZoneModel zoneModel : _zoneModels.values()) {
+                    if (zoneModel.isInTheZone(locatedDevice)){
+                        zoneModel.updateTemperatureDevices();
+                        zoneModel.updateTotalPower();
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void deviceRemoved(LocatedDevice locatedDevice) {
+        synchronized (_zoneModelLock) {
+            _temperatureDevices.remove(locatedDevice);
+
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                if (zoneModel.getZone().contains(locatedDevice)){
+                    zoneModel.updateTemperatureDevices();
+                    zoneModel.updateTotalPower();
+                }
+            }
+        }
+
+    }
+
+    @Override
+    public void deviceMoved(LocatedDevice locatedDevice, Position oldPosition, Position newPosition) {
+        synchronized (_zoneModelLock) {
+
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                Zone zone = zoneModel.getZone();
+                if(zone.contains(oldPosition)){
+                    zoneModel.updateTemperatureDevices();
+                    zoneModel.updateTotalPower();
+                }
+
+                if (zone.contains(locatedDevice)){
+                    zoneModel.updateTemperatureDevices();
+                    zoneModel.updateTotalPower();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void devicePropertyModified(LocatedDevice locatedDevice, String propertyName, Object oldValue, Object newValue) {
+        if (!propChangeHasImpactOnPower(locatedDevice, propertyName))
+            return;
+
+        synchronized (_zoneModelLock) {
+
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                if (zoneModel.isInTheZone(locatedDevice)){
+                    zoneModel.updateTotalPower();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void devicePropertyAdded(LocatedDevice device, String propertyName) {
+
+    }
+
+    @Override
+    public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
+
+    }
+
+    @Override
+    public void deviceAttached(LocatedDevice container, LocatedDevice child) {
+
+    }
+
+    @Override
+    public void deviceDetached(LocatedDevice container, LocatedDevice child) {
+
+    }
+
+    @Override
+    public void deviceEvent(LocatedDevice device, Object data) {
+
+    }
+
+    @Override
+    public void zoneAdded(Zone zone) {
+        String zoneId = zone.getId();
+        ZoneModel zoneModel = new ZoneModel(zone,_temperatureDevices);
+
+        synchronized (_zoneModelLock) {
+            if (!_zoneModels.containsKey(zoneId)) {
+                zone.setVariableValue(TEMPERATURE_PROP_NAME, DEFAULT_TEMP_VALUE);
+                // init thermal capacity
+                Object zoneVolume = zone.getVariableValue(VOLUME_PROP_NAME);
+                if ((zoneVolume != null) && (zoneVolume instanceof Double))
+                    zoneModel.updateThermalCapacity();
+
+                // init zone surfaces
+                for (ZoneModel curZoneModel : _zoneModels.values())
+                    updateZoneSurface(zoneModel, curZoneModel);
+
+                _zoneModels.put(zoneId, zoneModel);
+            }
+            zoneModel.updateTemperatureDevices();
+            zoneModel.updateTotalPower();
+        }
+
+    }
+
+    @Override
+    public void zoneRemoved(Zone zone) {
         String zoneId = zone.getId();
 
         synchronized (_zoneModelLock) {
@@ -639,4 +647,71 @@ public class TemperaturePMImpl implements PhysicalModel, LocatedDeviceTrackerCus
             }
         }
     }
+
+    @Override
+    public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
+        // do not need to update thermal capacity done when volume changes
+
+
+
+        synchronized (_zoneModelLock) {
+            ZoneModel zoneModel = _zoneModels.get(zone.getId());
+            zoneModel.updateTemperatureDevices();
+            zoneModel.updateTotalPower();
+            for (ZoneModel curZoneModel : _zoneModels.values())
+                updateZoneSurface(zoneModel, curZoneModel);
+        }
+    }
+
+    @Override
+    public void zoneResized(Zone zone) {
+        // do not need to update thermal capacity done when volume changes
+
+
+        synchronized (_zoneModelLock) {
+            ZoneModel zoneModel = _zoneModels.get(zone.getId());
+            zoneModel.updateTemperatureDevices();
+            zoneModel.updateTotalPower();
+            for (ZoneModel curZoneModel : _zoneModels.values())
+                updateZoneSurface(zoneModel, curZoneModel);
+        }
+    }
+
+    @Override
+    public void zoneParentModified(Zone zone, Zone oldParentZone, Zone newParentZone) {
+
+    }
+
+    @Override
+    public void deviceAttached(Zone container, LocatedDevice child) {
+
+    }
+
+    @Override
+    public void deviceDetached(Zone container, LocatedDevice child) {
+
+    }
+
+    @Override
+    public void zoneVariableAdded(Zone zone, String variableName) {
+
+    }
+
+    @Override
+    public void zoneVariableRemoved(Zone zone, String variableName) {
+
+    }
+
+    @Override
+    public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
+        if (!VOLUME_PROP_NAME.equals(variableName))
+            return;
+
+
+        synchronized (_zoneModelLock) {
+            ZoneModel zoneModel = _zoneModels.get(zone.getId());
+            zoneModel.updateThermalCapacity();
+        }
+    }
+
 }

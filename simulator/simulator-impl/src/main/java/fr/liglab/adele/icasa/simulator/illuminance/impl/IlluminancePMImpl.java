@@ -53,11 +53,10 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      */
     public static final double LUMENS_CONSTANT_VALUE = 683.0d;
 
-    /**
-     * 1px -> 0.014m //TODO
-     */
-    public static final double ZONE_SCALE_FACTOR = 0.014d;
+
     public static final String ILLUMINANCE_PROP_NAME = "Illuminance";
+
+    public static final String SURFACE_PROP_NAME = "Surface";
 
     private Set<Variable> _computedVariables;
     private Set<Variable> _requiredZoneVariables;
@@ -94,7 +93,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         _computedVariables = new HashSet<Variable>();
         _computedVariables.add(new Variable(ILLUMINANCE_PROP_NAME, Double.class, "in lux"));
         _requiredZoneVariables = new HashSet<Variable>();
-        _requiredZoneVariables.add(new Variable("Surface", Double.class, "surface in square meters"));
+        _requiredZoneVariables.add(new Variable(SURFACE_PROP_NAME, Double.class, "surface in square meters"));
     }
 
     @Override
@@ -274,7 +273,6 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     private void updateIlluminance(Zone zone) {
         double returnedIlluminance = 0.0;
         int activeLightSize = 1;
-        int width = zone.getXLength();
         double surface = _zoneSizeCalc.getSurfaceInMeterSquare(zone.getId());;
         double powerLevelTotal = currentExternalSource;
 
