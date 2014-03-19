@@ -8,7 +8,7 @@ iCasa framework provides required support to build digital home applications. Th
 - [iCasa Simulator](#Simulator)
 
 <a name="Architecture"></a>
-## iCasa Architecture
+## 1. iCasa Architecture
 iCasa framework is built on OSGi platform, each device available to be used by applications is presented as a OSGi service into the service register. The platform is divided in two layers: the device layer and application layer. The device layer provides an abstraction of underlying physical devices allowing applications access them avoiding have to be aware of their technical details. On the other hand, application layer must only focus in to provide value added functionality for the digital home. 
 The platform provides a set of technical services used for digital home applications, one of these services is the context service to context-related information representation. In addition, it includes a simulation module for testing digital home applications, the simulator can be accessed using an internet browser with HTML5 support.
    
@@ -17,7 +17,7 @@ The platform provides a set of technical services used for digital home applicat
 
 
 <a name="Model"></a>   
-## iCasa Device Model
+## 2. iCasa Device Model
 
 iCasa framework provides a device model that must be used by device developers to expose device functionality, and by application developers to access that functionality. In iCasa device model, each device has to publish a description based in a Java interface and a set of properties. Device interface is used to expose device functionality, on the other hand properties set is used to known device state. In the next figure we illustrate the model using a Thermometer device with a method _getTemperature()_ and one property _"current_temperature"_
 
@@ -36,13 +36,13 @@ In the next figure we show an example of a typical device implementation using t
 ![Device Typical Implementation](overview/implementation.png "Device Typical Implementation")
    
 <a name="Applications"></a>      
-## iCasa Applications
+## 3. iCasa Applications
 
 iCasa applications are developed following the application model of the OSGi platform, in iCasa each device is exposed as an OSGi service in the its register. In OSGi each service can provide one or more interfaces, in iCasa each device exposes the GenericDevice and also the specific device interface.
 In addition, an iCasa application must be packaged as an OSGi bundle to be deployed on the platform. A tutorial showing how to build a new iCasa application is available [here](tutoIDE.html).
    
 <a name="Simulator"></a>   
-## iCasa Simulator
+## 4. iCasa Simulator
 
 The simulator module allows developers to test their digital home applications. In its GUI there are two sections; the map section presents the home plan and the context tabs section shows information about the execution state of the iCasa platform. 
 

@@ -8,18 +8,20 @@
     - [Command without parameters](#Implementation_No_Parameters)
 	- [Command with parameters](#Implementation_Parameters)
 - [iCasa Command Usage](#Usage)
+    - [OSGi Shell](#Osgi-Shell)
+    - [iCasa Scripts](#iCasa-Scripts)
 - [Project Packaging](#Packaging)
     - [POM](#POM)
   
 <a name="Requirements"></a>
-## Tutorial Requirements
+## 1. Tutorial Requirements
 
 - OSGi & iPOJO : iCasa is built on top of [OSGi](http://www.osgi.org) platform and [iPOJO](http://felix.apache.org/site/apache-felix-ipojo.html) component model. This tutorial is made using [iPOJO annotations](http://felix.apache.org/site/how-to-use-ipojo-annotations.html). 
 - Maven (Optional) : [Maven](http://maven.apache.org/) tool can be used to build new iCasa commands.
 - JSON: The [JSON](http://www.json.org/) format is used to passed parameters to iCasa commands
 
 <a name="Model"></a>
-## iCasa Command Model
+## 2. iCasa Command Model
 
 iCasa platform provides a command architecture allowing extension by third party developers. This architecture is based on the [OSGi whiteboard pattern](http://www.osgi.org/wiki/uploads/Links/whiteboard.pdf). In this tutorial we will show how to add new commands to the iCasa platform.
 
@@ -35,7 +37,7 @@ This benefits the platform in two main ways:
 
 
 <a name="Interface"></a>
-### iCasa Command Interface
+### 2.1. iCasa Command Interface
 
 In order to add a new command to the iCasa platform, an OSGi service must be provided by the developer. This service has to implement the _fr.liglab.adele.icasaICasaCommand_ interface, it is show below
 
@@ -97,7 +99,7 @@ In order to add a new command to the iCasa platform, an OSGi service must be pro
 
 
 <a name="Signature"></a>
-### Command Signature
+### 2.2 Command Signature
 
 A command __signature__ defines number and order of its parameters. When a command is used in the shell arguments are anonymous, iCasa platform determines the parameter correspondence only based in order. On the other hand, if the command is used in a script file, parameters are determined based on their names.
 
@@ -128,7 +130,7 @@ Commands could have more than one signature, however signatures cannot contain t
 
 
 <a name="Implementation"></a>
-## iCasa Command Implementation
+## 3. iCasa Command Implementation
 In order to facilitate the creation of iCasa Commands, the abstract class _fr.liglab.adele.icasa.commands.impl.AbstractCommand_  is provided by the iCasa platform. This class implements the _ICasaCommand_ interface, it implements the _validate_ and _getSignature_ methods.
 
 A command implementation should extend the AbstractCommand and implements the _getName_, _getDescription_ and _execute_ methods. In addition, in the constructor of the implementation class must be defined the signatures of the command using the method _addSignature_. Finally, the implementation class must be annotated with the iPOJO annotations to expose itself as OSGi a service, this service will implement the right interface _ICasaCommand_. 
@@ -136,7 +138,7 @@ A command implementation should extend the AbstractCommand and implements the _g
 In order to illustrate how to create iCasa commands will show to different examples, the first one using no parameters, and other using parameters.
 
 <a name="Implementation_No_Parameters"></a>
-### Command without parameters
+### 3.1 Command without parameters
 
 The following command displays the list of current devices in the iCasa platform. It does not take any parameter.
 
@@ -180,7 +182,7 @@ The following command displays the list of current devices in the iCasa platform
 		}
 
 <a name="Implementation_Parameters"></a>
-### Command with parameters
+### 3.2 Command with parameters
 
 The following command displays the details of a particular device. 
 
@@ -230,11 +232,12 @@ The following command displays the details of a particular device.
 		}
 
 <a name="Usage"></a>
-## iCasa Command Usage
+## 4. iCasa Command Usage
 
 As said before, iCasa Commands has two usages, the first one to be called from the shell, and the other one to be used from an iCasa Script.
 
-###OSGi Shell
+<a name="Osgi-Shell"></a>
+### 4.1. OSGi Shell
 
 To see the parameter order in the shell, we can call the icasa:help command, which will show the commands description, as well as the parameters list.
 
@@ -260,8 +263,8 @@ and
 
     g! move-person Jean 50 50 50
     
-
-###iCasa Scripts
+<a name="iCasa-Scripts"></a>
+### 4.2. iCasa Scripts
 iCasa provides a mechanism to execute scripts. This is presented in the [script](script.html) section. But also, the script language can be extended by using commands. So, new commands could be executed in a given script.
 The command name (the string returned in the getName() method)  must be represented by an XML tag. And the parameters are represented by the attributes contained in those tags.
 
@@ -275,7 +278,7 @@ or
     
    
 <a name="Packaging"></a>
-## Project Packaging
+## 5. Project Packaging
 
 You can use <a href="http://felix.apache.org/site/apache-felix-ipojo.html">maven</a> tool to build a command project. Two iCasa maven artifacts are necessary to build your project, the first one context.api defines the interfaces used in the Command model, the context.impl provides the AbstractCommand class.
 
@@ -313,7 +316,7 @@ Repositories :
 	</repositories>
 
 <a name="POM"></a>	
-### Command Pom Model File
+### 5.1 Command Pom Model File
 
 This is an extract of a maven project using the needed dependencies to build iCasa Commands. Also it shows dependencies for OSGi and iPOJO bundles, as well as their plugins configuration.
 
