@@ -111,10 +111,8 @@ public class ZoneModel {
 
     public boolean isInTheZone(LocatedDevice device) {
         if ((device != null) && (_zone.contains(device))) {
-            System.out.println(" DEVICE IN ZONE ");
             return true;
         }
-        System.out.println(" CDEVICE NOT IN ZONE ");
         return false;
     }
 
@@ -122,20 +120,16 @@ public class ZoneModel {
         _coolers.clear();
         _heaters.clear();
         _devices.clear();
-        System.out.println(" UPDATE TEMP  ");
         for(LocatedDevice device : _temperatureDevices){
-            System.out.println(" CHECK ZONE ");
             if (isInTheZone(device)){
 
                 Object deviceObj = device.getDeviceObject();
 
                 if (deviceObj instanceof Cooler){
-                    System.out.println(" COOLER ADD ");
                     _devices.add((GenericDevice)deviceObj);
                     _coolers.add((Cooler)deviceObj);
 
                 }else if(deviceObj instanceof Heater){
-                    System.out.println(" EATER ADD");
                     _heaters.add((Heater)deviceObj);
                     _devices.add((GenericDevice)deviceObj);
                 }
