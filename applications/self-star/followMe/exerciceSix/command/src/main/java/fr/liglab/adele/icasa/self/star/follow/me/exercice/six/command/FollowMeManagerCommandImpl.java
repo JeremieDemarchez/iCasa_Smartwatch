@@ -1,7 +1,7 @@
 package fr.liglab.adele.icasa.self.star.follow.me.exercice.six.command;
 
 
-import com.sun.org.apache.xpath.internal.SourceTree;
+
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.EnergyGoal;

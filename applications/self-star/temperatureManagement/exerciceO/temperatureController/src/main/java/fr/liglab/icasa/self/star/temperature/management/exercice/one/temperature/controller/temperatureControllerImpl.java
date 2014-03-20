@@ -89,16 +89,12 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
 
     @Override
     public void run() {
-        System.out.println(" TEMP RUN ");
         synchronized (m_lock){
-            System.out.println(" SYNCHRO  " );
             Map<String,Double> temperatureMap = new HashMap<String,Double>();
             temperatureMap = temperatureAverageInAllZone();
             for(String zoneId : temperatureMap.keySet()){
-                System.out.println(" ZONE " + zoneId + " TEMp " + temperatureMap.get(zoneId));
                 double tempInZone = temperatureMap.get(zoneId);
                 if (tempInZone > mapTemperatureTarget.get(zoneId) +1 ){
-                    System.out.println(" TEMP SUP ");
                     Set<Cooler> coolerSet = coolerInZone(zoneId);
                     for(Cooler cooler : coolerSet){
                         cooler.setPowerLevel(1);
@@ -108,7 +104,6 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
                         heater.setPowerLevel(0);
                     }
                 }else if (tempInZone < mapTemperatureTarget.get(zoneId) - 1 ){
-                    System.out.println(" TEMP INF ");
                     Set<Heater> heaterSet = heaterInZone(zoneId);
                     for(Heater heater : heaterSet){
                         heater.setPowerLevel(1);
@@ -118,7 +113,6 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
                         cooler.setPowerLevel(0);
                     }
                 }else if (tempInZone < mapTemperatureTarget.get(zoneId) - 0.5 ){
-                    System.out.println(" TEMP INF ");
                     Set<Heater> heaterSet = heaterInZone(zoneId);
                     for(Heater heater : heaterSet){
                         heater.setPowerLevel(0.1);
@@ -128,7 +122,6 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
                         cooler.setPowerLevel(0);
                     }
                 } else if (tempInZone > mapTemperatureTarget.get(zoneId) + 0.5 ){
-                    System.out.println(" TEMP SUP ");
                     Set<Cooler> coolerSet = coolerInZone(zoneId);
                     for(Cooler cooler : coolerSet){
                         cooler.setPowerLevel(0.1);
@@ -139,7 +132,6 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
                     }
                 }
                 else{
-                    System.out.println(" TEMP IN BORNe ");
                     Set<Heater> heaterSet = heaterInZone(zoneId);
                     Set<Cooler> coolerSet = coolerInZone(zoneId);
                     for(Heater heater : heaterSet){
@@ -155,7 +147,6 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
     }
 
     private Map<String,Double> temperatureAverageInAllZone(){
-        System.out.println(" AVERAGE " );
         Map<String,Double> returnMap= new HashMap<String,Double>();
         Map<String,Integer> countMap= new HashMap<String,Integer>();
         for(Thermometer thermometer : thermometers){
@@ -184,13 +175,10 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
     }
 
     private Set<Cooler> coolerInZone(String zoneId){
-        System.out.println(" COOLER IN ZONE " + coolers.length);
         Set<Cooler> coolerSet= new HashSet<Cooler>();
         for(Cooler cooler : coolers){
             String coolerLocation = (String) cooler.getPropertyValue(LOCATION_PROPERTY_NAME);
-            System.out.println( " Cooler loc " + coolerLocation);
             if(coolerLocation.equals(zoneId)){
-                System.out.println(" ADD COOLER ");
                 coolerSet.add(cooler);
             }
         }
@@ -198,13 +186,10 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
     }
 
     private Set<Heater> heaterInZone(String zoneId){
-        System.out.println(" HEATER IN ZONE  " + heaters.length);
         Set<Heater> heaterSet= new HashSet<Heater>();
         for(Heater heater : heaters){
             String heaterLocation = (String) heater.getPropertyValue(LOCATION_PROPERTY_NAME);
-            System.out.println(" heater loc " + heaterLocation);
             if(heaterLocation.equals(zoneId)){
-                System.out.println(" ADD HEATER ");
                 heaterSet.add(heater);
             }
         }
