@@ -7,17 +7,17 @@
 
 
 <a name="Technical"></a>
-## iCasa technical services
+## 1. iCasa technical services
 
 iCasa provides a set of technical services. In order to use them, it is needed to add the following maven dependency:
 
     <groupId>fr.liglab.adele.icasa</groupId>
-    <artifactId>technical.service.api</artifactId>
+    <artifactId>technical.services.api</artifactId>
     <version>1.1.0</version>
 
 
 <a name="Configuration"></a>
-## iCasa preferences service
+## 2. iCasa preferences service
 
 The iCasa preferences service allows to persist preferences that could be exploited by applications. There are three groups of preferences:
 
@@ -27,7 +27,7 @@ The iCasa preferences service allows to persist preferences that could be exploi
 
 Any configuration could be retrieved and exploited by any running application. 
 
-### Configuration service interface
+### 2.1. Configuration service interface
 
 The service providing such functionality provides the following interface:
 
@@ -111,43 +111,43 @@ The service providing such functionality provides the following interface:
     }
     
 
-###Using the configuration service
+### 2.2. Using the configuration service
 There are three ways to use this service.
-####Using the OSGi service
+#### 2.2.1. Using the OSGi service
 
 Using iPOJ0 it is as simple as adding a service dependency.
 
 	@Requires
 	private Preferences preferenceService;
 
-####Using Gogo commands
+#### 2.2.2. Using Gogo commands
 To see how to use the preferences service, please visit the [Configuration Section](gogo-commands.html#Configuration) in iCasa Gogo Commands.
 
-####Using the iCasa scripts
+#### 2.2.3. Using the iCasa scripts
 There are the following instructions that can be used into the iCasa scripts:
 
 * set a global preference property
 
-        </set-global-property name="period" value="80.8" type="Float">
+        <set-global-property name="period" value="80.8" type="Float"/>
         
         The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
         
 * set an user property
 
-        </set-user-property user="Paul" name="period" value="80.8" type="Float">
+        <set-user-property user="Paul" name="period" value="80.8" type="Float"/>
         
         The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
         
         
 * set an application property
 
-        </set-application app="LightFollowMe" name="period" value="80.8" type="Float">
+        <set-application app="LightFollowMe" name="period" value="80.8" type="Float"/>
         
         The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
   
 
 <a name="PersonLocation"></a>
-## iCasa person location lervice  
+## 3. iCasa person location lervice
 
 In order to retrieve the occupants in a given zone, iCasa provides the following service interface: `fr.liglab.adele.icasa.simulator.services.PersonLocationService`
 
@@ -165,7 +165,7 @@ In order to retrieve the occupants in a given zone, iCasa provides the following
     	
     }
     
-###Using person location service    
+### 3.1. Using person location service
 
 Using iPOJ0 it is as simple as adding a service dependency.
 
@@ -174,7 +174,7 @@ Using iPOJ0 it is as simple as adding a service dependency.
            
 
 <a name="Scheduling"></a>
-## iCasa scheduling service
+## 4. iCasa scheduling service
 
 iCasa provides an scheduling service that provides the execution of tasks. This service allows two different tasks:
 
@@ -207,7 +207,7 @@ Both interfaces inherit from a `fr.liglab.adele.icasa.service.scheduler.ICasaRun
 The group, represents the threadpool wich will handle the iCasa task.
 
 
-### Periodic tasks
+### 4.1. Periodic tasks
 
 In order to build periodic tasks, an OSGi service must provide the `fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable` interface.
 
@@ -224,7 +224,7 @@ In order to build periodic tasks, an OSGi service must provide the `fr.liglab.ad
     
     }
     
-#### Implementing periodic tasks
+#### 4.1.1. Implementing periodic tasks
 
 As said before, in order to register a periodic tasks it is needed to provide the `fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable` interface.
 
@@ -258,7 +258,7 @@ As said before, in order to register a periodic tasks it is needed to provide th
     
 
 
-### Scheduled tasks
+### 4.2. Scheduled tasks
 
 In order to build scheduled tasks, an OSGi service must provide the `fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable` interface.
 
@@ -276,7 +276,7 @@ In order to build scheduled tasks, an OSGi service must provide the `fr.liglab.a
     }
 
     
-#### Implementing periodic tasks
+#### 4.2.1. Implementing periodic tasks
 
 As said before, in order to register a periodic tasks it is needed to provide the `fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable` interface.
 

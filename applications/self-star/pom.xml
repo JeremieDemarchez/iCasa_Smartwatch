@@ -19,6 +19,7 @@
 
     <modules>
         <module>followMe</module>
+        <module>temperatureManagement</module>
     </modules>
 
 </project>

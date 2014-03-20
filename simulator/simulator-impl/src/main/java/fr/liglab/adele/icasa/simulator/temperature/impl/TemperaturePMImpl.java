@@ -259,12 +259,18 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
             double timeDiffInSeconds = timeDiff / 1000.0d;
             if (powerLevelTotal == 0){
                 if ( currentTemperature > (DEFAULT_TEMP_VALUE + 0.5) ) {
-                    powerLevelTotal = -100.0;
+                    powerLevelTotal = -50.0;
                 } else if ( currentTemperature < (DEFAULT_TEMP_VALUE - 0.5) ){
-                    powerLevelTotal = 100.0;
+                    powerLevelTotal = 50.0;
                 } else {
-                   return DEFAULT_TEMP_VALUE;
+                    return DEFAULT_TEMP_VALUE;
                 }
+            }
+
+            if ( (powerLevelTotal > 0) && (currentTemperature < DEFAULT_TEMP_VALUE) ) {
+                powerLevelTotal = 50.0 + zoneModel.getTotalPower();
+            } else if( (powerLevelTotal) < 0 && (currentTemperature > DEFAULT_TEMP_VALUE) ) {
+                powerLevelTotal = -50.0 - zoneModel.getTotalPower();
             }
 
             double delta = (powerLevelTotal  * timeDiffInSeconds) / zoneModel.getThermalCapacity();

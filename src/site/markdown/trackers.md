@@ -2,7 +2,7 @@
 
 iCasa platform provides two different mechanisms to be notified about platform changes: Listeners and Trackers. A _Tracker_ is a very useful and easy-to-use mechanism to be notified when devices or zones are added, removed or changed in iCasa platform. 
 
-## LocatedDeviceTracker 
+## 1. LocatedDeviceTracker
 
 LocatedDeviceTracker allows clients of iCasa platform be notified when a device with some characteristics is added, modified or remove in the platform. These characteristics are passed as arguments in the constructor of a LocatedDeviceTracker constructor as presented in the next code snippet.
 
@@ -56,7 +56,7 @@ In the next code snippet is presented the LocatedDeviceTrackerCustomizer interfa
       
 To start the tracking, the client must call the open method in the tracker instance, on the other hand, the close method stop the tracking.
 
-## ZoneTracker
+## 2. ZoneTracker
 
 ZoneTracker allows clients of iCasa platform be notified when a zone with some characteristics is added, modified or remove in the platform. These characteristics are passed as arguments in the constructor of a ZoneTracker constructor as presented in the next code snippet.
 

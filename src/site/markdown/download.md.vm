@@ -1,39 +1,46 @@
-Download
-==========
+# Download
+
 
 iCasa Platform distribution
-----------
+-------
 
-It contains the iCasa Platform gateway without any application and without simulator.
-<br/><br/>
-<h3>Version=${project.version}</h3>
-<br/>
+The iCasa Platform distribution contains :
+<ul>
+<li>the iCasa Platform gateway</li>
+</ul>
+**Version**= ${project.version}
+
 <a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
-
-<hr/>
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download icasa distribution</a>
 
 iCasa Teaching distribution
-----------
+---------------------------
 
-It contains the iCasa Simulator gateway without any application and the iCasa Simulator Graphical User Interface (GUI).
-<br/><br/>
-<h3>Version=${project.version}</h3>
-<br/>
+The iCasa Teaching distribution contains :
+<ul>
+<li> the iCasa Platform gateway</li>
+<li> <a href="guide.html"> The iCasa Simulator Graphical User Interface (GUI)</a></li>
+</ul>
+**Version**= ${project.version}
+
 <a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download icasa teaching distribution</a>
 
-<hr/>
 iCasa Teaching distribution with Applications
-----------
-
+---------------------------------------------
 The Light Follow Me application automates light up and down according to person presence detection.
 All binary lights in a room are up if at least one person is detected in it.
-It contains the iCasa Simulator gateway with the Light Follow Me application and the iCasa Simulator Graphical User Interface (GUI).
-<br/><br/>
-<h3>Version=${project.version}</h3>
-<br/>
+
+The iCasa Teaching distribution with applications contains :
+<ul>
+<li>  The iCasa Platform gateway</li>
+<li>  <a href="guide.html"> The iCasa Simulator Graphical User Interface (GUI)</a></li>
+<li>  <a href="tutoIDE.html"> The Light Follow Me application</a></li>
+</ul>
+
+**Version**= ${project.version}
+
 <a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution.with.apps/${project.version}/icasa.teaching.distribution.with.apps-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download icasa teaching distribution with apps</a>
 
 
