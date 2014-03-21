@@ -8,11 +8,14 @@ import java.awt.*;
  */
 public interface ColorLight extends BinaryLight,DimmerLight{
 
+    String COLOR_LIGHT_COLOR_LEVEL = "colorLight.colorLevel";
+
+
     /**
      * Changes the colorlight
      * @param color
      */
-    public void setColor(Color color);
+    public Color setColor(Color color);
 
     /**
      * Fetches last color state
