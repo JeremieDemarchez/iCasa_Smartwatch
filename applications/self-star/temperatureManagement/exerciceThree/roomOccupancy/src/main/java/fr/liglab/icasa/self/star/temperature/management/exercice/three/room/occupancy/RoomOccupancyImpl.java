@@ -12,10 +12,7 @@ import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by aygalinc on 20/03/14.
@@ -30,10 +27,13 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
     Map<String,Map<Integer,Double>> mapProbaPerRoomPerMinute =new HashMap<String, Map<Integer, Double>>();
 
+    Set<RoomOccupancyListener> listenerList = new HashSet<RoomOccupancyListener>();
     /**
      * The name of the LOCATION property
      */
     public static final String LOCATION_PROPERTY_NAME = "Location";
+
+    private  double threshold = 0.2;
 
     @Requires
     private Clock clock;
@@ -98,6 +98,16 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     }
 
     @Override
+    public void addListener(RoomOccupancyListener roomOccupancyListener) {
+        listenerList.add(roomOccupancyListener);
+    }
+
+    @Override
+    public void removeListener(RoomOccupancyListener roomOccupancyListener) {
+        listenerList.remove(roomOccupancyListener);
+    }
+
+    @Override
     public long getPeriod() {
         return 60000;
     }
@@ -126,13 +136,55 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
                     if (presenceFromLocation(location)){
                         if ( ponderation != 0){
+                            boolean up;
+                            if (tempMap.get(minuteOfUpdate) >=  threshold ){
+                                up = true;
+                            }else {
+                                up = false;
+                            }
                             double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation) + (1/ponderation);
                             tempMap.put(minuteOfUpdate,newProba);
+
+                            if (newProba >= threshold){
+                                if (!up){
+                                    for(RoomOccupancyListener listener : listenerList){
+                                        listener.occupancyCrossUpThreshold(location);
+                                    }
+                                }
+                            }else{
+                                if (up){
+                                    for(RoomOccupancyListener listener : listenerList){
+                                        listener.occupancyCrossDownThreshold(location);
+                                    }
+                                }
+                            }
                         }
                     }else{
                         if ( ponderation != 0){
+
+                            boolean up;
+                            if (tempMap.get(minuteOfUpdate) >=  threshold ){
+                                up = true;
+                            }else {
+                                up = false;
+                            }
+
                             double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation);
                             tempMap.put(minuteOfUpdate,newProba);
+
+                            if (newProba >= threshold){
+                                if (!up){
+                                    for(RoomOccupancyListener listener : listenerList){
+                                        listener.occupancyCrossUpThreshold(location);
+                                    }
+                                }
+                            }else{
+                                if (up){
+                                    for(RoomOccupancyListener listener : listenerList){
+                                        listener.occupancyCrossDownThreshold(location);
+                                    }
+                                }
+                            }
                         }
                     }
                 }

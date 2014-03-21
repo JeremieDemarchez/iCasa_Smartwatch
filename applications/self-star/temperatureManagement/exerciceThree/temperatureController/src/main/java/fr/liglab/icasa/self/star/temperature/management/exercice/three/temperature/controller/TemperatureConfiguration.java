@@ -29,4 +29,20 @@ public interface TemperatureConfiguration {
      */
     public float getTargetedTemperature(String room);
 
+    /**
+     * Turn on the temperature management in the given room
+     *
+     * @param room
+     *            the given room
+     */
+    public void turnOn(String room);
+
+    /**
+     * Turn off the temperature management in the given room
+     *
+     * @param room
+     *            the given room
+     */
+    public void turnOff(String room);
+
 }

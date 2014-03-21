@@ -36,7 +36,7 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
 
     private  Map<String,Double> mapTemperatureTarget  ;
 
-    private Object m_lock ;
+    private final Object m_lock ;
 
 
     /** Field for thermometer dependency */

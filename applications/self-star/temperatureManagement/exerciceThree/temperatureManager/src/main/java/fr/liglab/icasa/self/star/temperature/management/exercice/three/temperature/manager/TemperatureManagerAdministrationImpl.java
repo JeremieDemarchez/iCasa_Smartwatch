@@ -1,6 +1,7 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager;
 
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.icasa.self.star.temperature.management.exercice.three.room.occupancy.RoomOccupancyListener;
 import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.controller.TemperatureConfiguration;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.Duration;
@@ -15,7 +16,7 @@ import java.util.Map;
 @Component(name="temperatureManager")
 @Instantiate(name="temperatureManagerImpl-0")
 @Provides
-public class TemperatureManagerAdministrationImpl implements TemperatureManagerAdministration {
+public class TemperatureManagerAdministrationImpl implements TemperatureManagerAdministration,RoomOccupancyListener {
 
     @Requires
     private Clock clock;
@@ -28,7 +29,9 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     /**
      * The name of the location for unknown value
      */
-    private Map<String,Float> mapTemperatureTarget  ;
+    private Map<String,Float> mapTemperatureTarget  = new HashMap<String, Float>() ;
+
+    private  boolean energySavingMode = true;
 
 
     private long lastUpdateHight = 0 ;
@@ -96,6 +99,27 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
         }
     }
 
+    @Override
+    public synchronized void turnOnEnergySavingMode() {
+        for(String zoneId : mapTemperatureTarget.keySet()){
+            m_configuration.turnOn(zoneId);
+        }
+        energySavingMode = true;
+    }
+
+    @Override
+    public synchronized void turnOffEnergySavingMode() {
+        for(String zoneId : mapTemperatureTarget.keySet()){
+            m_configuration.turnOff(zoneId);
+        }
+        energySavingMode = false;
+    }
+
+    @Override
+    public boolean isPowerSavingEnabled() {
+        return energySavingMode;
+    }
+
     public TemperatureManagerAdministrationImpl() {
 
 
@@ -114,7 +138,6 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     @Validate
     public void start() {
         System.out.println("Component is starting...");
-        mapTemperatureTarget = new HashMap<String, Float>();
 
         mapTemperatureTarget.put("kitchen",288.15f);
         mapTemperatureTarget.put("livingroom",291.15f);
@@ -125,6 +148,17 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
         }
     }
 
+    @Override
+    public void occupancyCrossDownThreshold(String room) {
+        if (energySavingMode){
+            m_configuration.turnOff(room);
+        }
+    }
 
-
+    @Override
+    public void occupancyCrossUpThreshold(String room) {
+        if (energySavingMode){
+            m_configuration.turnOn(room);
+        }
+    }
 }

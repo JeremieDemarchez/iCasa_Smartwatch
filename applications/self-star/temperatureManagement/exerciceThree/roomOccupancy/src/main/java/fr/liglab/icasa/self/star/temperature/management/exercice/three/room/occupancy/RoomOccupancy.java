@@ -21,4 +21,8 @@ public interface RoomOccupancy {
      */
     public double getRoomOccupancy(int minuteOfTheDay, String room);
 
+    public void addListener(RoomOccupancyListener roomOccupancyListener);
+
+    public void removeListener(RoomOccupancyListener roomOccupancyListener );
+
 }

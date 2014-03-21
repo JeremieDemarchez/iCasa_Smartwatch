@@ -26,4 +26,22 @@ public interface TemperatureManagerAdministration {
      *            the room where the temperature should be reconfigured
      */
     public void temperatureIsTooLow(String roomName);
+
+    /**
+     * Enable the energy saving mode.
+     */
+    public void turnOnEnergySavingMode();
+
+    /**
+     * Disable the energy saving mode.
+     */
+    public void turnOffEnergySavingMode();
+
+    /**
+     * Checks if the energy saving mode is enabled.
+     *
+     * @return true, if the energy saving mode is enabled
+     */
+    public boolean isPowerSavingEnabled();
+
 }
