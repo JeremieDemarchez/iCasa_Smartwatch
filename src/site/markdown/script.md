@@ -13,7 +13,7 @@ ___Outline___
 - [Script Deployment](#Deployment)
    
 <a name="Syntax"></a>
-## Script File Syntax
+## 1. Script File Syntax
 
 Scenarios in iCasa simulation module are specified in a XML file using the tag __behavior__. 
 
@@ -40,9 +40,9 @@ _Example:_
 </table>
     
 <a name="General"></a>
-## General Instructions
+## 2. General Instructions
    
-### Delay
+### 2.1. Delay
    
 Introduces a delay in (virtual) minutes between the previous instruction and the next one.
 
@@ -73,9 +73,9 @@ or
 <br>
 
 <a name="Zone"></a>
-## Zone Instructions
+## 3. Zone Instructions
    
-### Create Zone
+### 3.1. Create Zone
 
 Creates a zone in application context
 
@@ -123,7 +123,7 @@ or
 </tr>
 </table>
    
-### Move Zone
+### 3.2. Move Zone
 
 Move a zone in application context
 
@@ -151,7 +151,7 @@ _Example:_
 </tr>
 </table>
    
-### Resize Zone
+### 3.3. Resize Zone
 
 Resize a zone in application context
 
@@ -187,7 +187,7 @@ or
 </tr>
 </table>
     
-### Add Variable to Zone
+### 3.4. Add Variable to Zone
 
 It adds a simulation variable to a zone
 
@@ -211,7 +211,7 @@ _Example:_
 </tr>
 </table>
    
-### Modify Variable in Zone
+### 3.5. Modify Variable in Zone
 
 It modifies a simulation variable in a zone
 
@@ -240,10 +240,10 @@ _Example:_
 </table>
    
 <a name="Device"></a>
-## Device Instructions
+## 4. Device Instructions
 
    
-### Create Device
+### 4.1. Create Device
 
 It creates a device instance in the application context
 
@@ -267,7 +267,7 @@ _Example:_
 </tr>
 </table>
    
-### Remove Device
+### 4.2. Remove Device
 
 _Example:_
 
@@ -287,7 +287,7 @@ _Example:_
 
 <br>
 
-### Move device into zone
+### 4.3. Move device into zone
 
 Places a device in a zone of application context.
 
@@ -313,7 +313,7 @@ _Example:_
 
 <br>
 
-### Activate Device
+### 4.4. Activate Device
 
 Changes the device's state to __activated__. 
 
@@ -335,7 +335,7 @@ _Example:_
 
 <br>
 
-### Deactivate Device
+### 4.5. Deactivate Device
 
 Changes the device's state to __deactivated__. 
 
@@ -357,7 +357,7 @@ _Example:_
 
 <br>
 
-### Fault Device
+### 4.6. Fault Device
 
 Changes the device's fault state to __yes__. 
 
@@ -379,7 +379,7 @@ _Example:_
 
 <br>
 
-### Repair Device
+### 4.7. Repair Device
 
 Changes the device's fault state to __no__. 
 
@@ -401,7 +401,7 @@ _Example:_
 
 <br>
 
-### Set device property value
+### 4.8. Set device property value
 
 Set the value of the device property
 
@@ -432,10 +432,10 @@ _Example:_
 <br>
 
 <a name="Person"></a>
-## Person Instructions
+## 5. Person Instructions
 
 <br>
-### Create Person
+### 5.1. Create Person
 
 Adds a person to the simulation context
 
@@ -460,7 +460,7 @@ _Example:_
 </table>
 
 <br>
-### Move Person into zone
+### 5.2. Move Person into zone
 
 Places a person in a zone in the application context
 
@@ -487,7 +487,7 @@ _Example:_
 <br>
 
 <a name="Scenario"></a>
-## Scenario Example
+## 6. Scenario Example
 
     <behavior startdate="27/10/2011-00:00:00" factor="1440">
 	   
@@ -538,7 +538,7 @@ _Example:_
     </behavior>
 
 <a name="Deployment"></a>
-## Script Deployment
+## 7. Script Deployment
 
 New scripts have to be deployed to the directory __ICASA_HOME/scripts__ in the gateway. All scripts files must have the .bhv extensions to be recognized by the iCasa platform.
 	

@@ -1,8 +1,17 @@
-<div class="row-fluid page-header">
-    <div class="title span10">
-        <h1 style="text-align: center;">iCasa</h1>
-        <p style="text-align: center;" class="lead">Digital Home Execution Platform and Simulation Tool</p>
-    </div>
+<div style="width: 940px;">
+    <header class="jumbotron subhead">
+        <div class="row" id="banner">
+            <div class="span12">
+                <div class="pull-left">
+                    <a href="index.html" id="bannerLeft"><h1><span class="color-highlight"> iCasa</span> </h1></a>
+                    <p class="lead">Digital Home Execution Platform and Simulation Tool</p>
+                </div>
+                <div class="pull-right">
+                    <img src="icasa-small.png">
+                </div>
+            </div>
+        </div>
+    </header>
 </div>
 
 <div class="span11 well">
@@ -35,8 +44,8 @@
 			<li><strong>Notification facilities:</strong> iCasa is event-based and is able to notify subscribers of any modifications in the environment.</li>
 		</ul>
 
-<a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download</a>
+<a href="download.html" class="btn
+       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Go To Download Page</a>
     </div>
 </div>
 

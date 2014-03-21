@@ -10,7 +10,7 @@ The architecture is composed of several parts:
 - [iCasa Simulator](#SimulatorArchitecture)
 
 <a name="PlatformArchitecture"></a>
-## Platform Architecture
+## 1. Platform Architecture
 
 ![iCasa Architecture](architecture/architecture.png "iCasa Architecture")
 
@@ -27,7 +27,7 @@ It is decomposed with following components:
 - The RemoteAccess component provides a REST like API to web applications. In addition, it provides a notification channel based on Atmosphere framework that allows you to choose a transport communication protocol according to your needs.
 
 <a name="DeviceModel"></a>
-## iCasa Device Model
+## 2. iCasa Device Model
 
 iCasa framework provides a device model that must be used by device developers to expose device functionality, and by application developers to access that functionality.
 In iCasa device model, each device has to publish a description based in a Java interface and a set of properties.
@@ -35,7 +35,7 @@ Device interface is used to expose device functionality, on the other hand prope
 Each device MUST implement the ___fr.liglab.adele.icasa.device.GenericDevice___ interface that requires to expose a unique identifier called serial number.
 
 <a name="ApplicationsArchitecture"></a>
-## iCasa Applications
+## 3. iCasa Applications
 
 iCasa applications are developed following the application model of the OSGi platform, in iCasa each device is exposed as an OSGi service in the its register.
 In OSGi each service can provide one or more interfaces, in iCasa each device exposes the GenericDevice and also the specific device interface.
@@ -43,7 +43,7 @@ In addition, an iCasa application must be packaged as a Deployment package to be
 The platform will automatically compute the devices which are eligible for a specific application and exposes them to it after access will be granted.
 
 <a name="WebApplicationsArchitecture"></a>
-## Web application
+## 4. Web application
 
 The web applications provided by iCasa are Simulator GUI and dashboard GUI.
 Their architecture is the same with following parts:
@@ -73,7 +73,7 @@ The full stack also contains:
 - RequireJS to modularize our web applications as an assembly of modules that precisely define dependencies and the data they export.
 
 <a name="SimulatorArchitecture"></a>
-## iCasa Simulator
+## 5. iCasa Simulator
 
 The simulator module allows developers to test their digital home applications.
 It enriches the platform with simulation functionalities and provides a web application to manage it.

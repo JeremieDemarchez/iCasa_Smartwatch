@@ -9,7 +9,7 @@ Once one platform selected, the simulator main interface is displayed. The main 
 - [Actions Section](#Actions)
 
 <a name="Platform"></a> 
-## Platform Operations
+## 1. Platform Operations
 
 In this page the user can add a simulation platform, edit it or remove it. Platforms will persist in the GUI server and can be reused among different server executions. Each simulation platform has to define an unique ID, a name, the platform URL and a house map (png file). The platform list is presented as in the next image. 
 
@@ -20,14 +20,14 @@ The user picks a platform to start the main interface of the simulator, shown in
 ![Main Interface](guide/main-interface.png "Main Interface")
    
 <a name="Map"></a> 
-## Map Section
+## 2. Map Section
 
 Map section displays a house plan defined by the user, in this plan are localized the different objects of iCasa context as devices, persons and zones. In the map all of these objects can be moved using drag-and-drop operations. In addition, zones surfaces can be also modified graphically.
 
 ![Map section](guide/map-section.png "Map section")
 
 <a name="Actions"></a> 
-## Actions Section
+## 3. Actions Section
 
 This section includes 4 Tabs: Devices, Zones, Persons, Script Player.
 
@@ -46,75 +46,75 @@ This section includes 4 Tabs: Devices, Zones, Persons, Script Player.
   - [Save State in Script](#State)
 
 <a name="Devices"></a> 
-### Devices Tab
+### 3.1. Devices Tab
 
 The device tab presents the list of devices existing in the iCasa platform. Each device is listed with its type and its name as show in the next image. Device details (as properties) are displayed when user clicks on device name. The device tab also presents the list of device types (superior _ComboBox_) deployed in the platform. When a new device type is added, the list is updated automatically.
 
 ![Devices Tab](guide/device-tab.png "Device Tab")
 
 <a name="Create_Device"></a> 
-#### Create Device
+#### 3.1.1. Create Device
 
 To create a device instance the user must select the device type in the type list and then click on _Create_ button. If the device is correctly created, the device is added to the device list and also in the map section at the left of house plan. The user can modify the device position in the map section using drag-and-drop.
 
 <a name="Remove_Device"></a> 
-#### Remove Device
+#### 3.1.2. Remove Device
 
 To remove a device instance, the user must select the device to be removed in the device list and the click in then _Removed Selected Devices_ button. 
 
 <a name="Zones"></a>
-### Zones Tab
+### 3.2. Zones Tab
 
 The zones tab presents the list of zones existing in the platform. Zone details (as variables) are displayed when user clicks on zone name. When the user selects a zone (using the letf checkbox) the zone is displayed with a color in the Map section.
 
 ![Zones Tab](guide/zone-tab.png "Zone Tab")
 
 <a name="Create_Zone"></a> 
-#### Create Zone
+#### 3.2.1. Create Zone
 
 To create a zone the user must provide a name and then click on _Create_ button. If the zone is correctly created the device is added to the device list and in the map section. The user can modify the zone surface or position in the map section.
 
 <a name="Remove_Zone"></a> 
-#### Remove Zone
+#### 3.2.2. Remove Zone
 
 To remove a zone the user must select the zone to be removed in the zone list and the click in then _Removed Selected Zones_ button. 
 
 <a name="Persons"></a>
-### Persons Tab
+### 3.3. Persons Tab
 
 The persons tab presents the list of persons "existing" in the platform. 
 
 ![Persons Tab](guide/person-tab.png "Persons Tab")
 
 <a name="Create_Person"></a> 
-#### Create Person
+#### 3.3.1. Create Person
 
 To create a person the user must provide a name, select a person type and then click on _Create_ button. If the person is correctly created the person is added to the persons list and in the map section. The user can modify the person position in the map section.
 
 <a name="Remove_Person"></a> 
-#### Remove Person
+#### 3.3.2. Remove Person
 
 To remove a person the user select the person to be removed in the persons list and the click in then _Removed Selected Persons_ button. 
 
 <a name="Script"></a>
-### Script Player Tab
+### 3.4. Script Player Tab
 
 This tab allows control of simulated clock, execution of scripts and state persistence.
 
 ![Script Player Tab](guide/script-tab.png "Script Player Tab")
 
 <a name="Clock"></a>
-#### Clock Manipulation
+#### 3.4.1. Clock Manipulation
 
 The clock section displays the (virtual) time in the simulator, and the time factor (time speed) is showed. The user can modified the time in the platform and accelerate time speed using a bigger factor.
 
 <a name="Execution"></a>
-#### Script Execution
+#### 3.4.2. Script Execution
 
 To execute a script select it from the script list and click on _Start_ button. To pause it, the user must click on the _Pause_ button, and to resume it in the _Resume_ button, finally to stop the script execution the user must click on _Stop_ button. The user can change the script date of execution selecting a new date in the left bottom text box.
 The script language is documented [here](script.html)
 
 <a name="State"></a>
-#### Saving State
+#### 3.4.3. Saving State
 
 This operation allows saving the current state of simulator, it creates a new script including instructions to create the current objects and to place them in the right zones. The user must provide a name to the script and the click on the button _Save as_.

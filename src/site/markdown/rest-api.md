@@ -8,11 +8,11 @@ iCasa provides a set of functional and simulation services used by pervasive app
 - <a href="#Person">Person Service</a><br>
 
 <a name="Zone"></a>
-## Zone Service
+## 1. Zone Service
 
 Base URL: _http://host:port/icasa/zone_
 
-### Gets the zone list (GET)
+### 1.1. Gets the zone list (GET)
 
 Gets the list of zones in the iCasa execution platform.
 
@@ -22,7 +22,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### Example:
+#### 1.1.1. Example:
 
     > curl -X GET http://localhost:9000/icasa/zones/zones
 
@@ -72,7 +72,7 @@ Result:
       }
     ]
 
-### Gets a specific zone (GET)
+### 1.2. Gets a specific zone (GET)
 
 Gets the information of a particular zone
 
@@ -83,7 +83,7 @@ Path parameter -> ${zoneId} the id of the zone to be consulted
 Data parameter -> _None_
 
 
-#### Example:  
+#### 1.2.1. Example:
 
     > curl -X GET http://localhost:9000/icasa/zones/zone/bathroom
 
@@ -104,7 +104,7 @@ Result:
         }
     }
     
-### Craete a zone (POST)
+### 1.3. Create a zone (POST)
 
 Creates a new zone in the iCasa execution platform.
 
@@ -115,7 +115,7 @@ Path parameter -> None
 Data parameter -> the JSON data associated with the new zone
 
 
-#### Example:  
+#### 1.3.1. Example:
 
     > curl -X POST -d "{"zoneId":"hall","name":"hall","isRoom":false,"leftX":1,"topY":1,"rightX":50,"bottomY":50}" http://localhost:9000/icasa/zones/zone
 
@@ -133,7 +133,7 @@ Result:
    }
 
    
-### Delete an zone (DELETE)
+### 1.4. Delete an zone (DELETE)
 
 Deletes a zone in the iCasa execution platform.
 
@@ -144,12 +144,12 @@ Path parameter -> ${zoneId} the id of the zone to be deleted
 Data parameter -> _None_
 
 
-#### Example:  
+#### 1.4.1. Example:
 
     > curl -X DELETE http://localhost:9000/icasa/zones/zone/hall
 
    
-### Updates a zone (PUT)
+### 1.5. Updates a zone (PUT)
 
 Updates a zone in the iCasa execution platform.
 
@@ -160,7 +160,7 @@ Path parameter -> ${zoneId} the id of the zone to be created
 Data parameter -> the JSON data associated with new zone
 
 
-#### Example:  
+#### 1.5.1. Example:
 
     > curl -X POST -d "{"id":"hall","isRoom":true,"rightX":316,"leftX":98,"name":"hall","topY":72,"bottomY":277,"variables":{}}" _http://localhost:9000/icasa/zones/zone/hall_
 
@@ -180,11 +180,11 @@ Result:
 <br>
 
 <a name="Device"></a>
-## Device Service
+## 2. Device Service
 
 Base URL: _http://host:port/icasa/devices_
 
-### Gets the device list (GET)
+### 2.1. Gets the device list (GET)
 
 Gets the list of devices in the iCasa execution platform.
 
@@ -194,7 +194,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### Example:
+#### 2.1.1. Example:
 
     > curl -X GET http://localhost:9000/icasa/devices/devices
 
@@ -243,7 +243,7 @@ Result:
     ]
    
 
-### Gets a specific device (GET)
+### 2.2. Gets a specific device (GET)
 
 Gets the information of a particular device
 
@@ -254,7 +254,7 @@ Path parameter -> ${deviceId} the id of the device to be consulted
 Data parameter -> _None_
 
 
-#### Example:  
+#### 2.2.1. Example:
 
     > curl -X GET _http://localhost:9000/icasa/devices/device/Ther-A3654Q-S_
 
@@ -282,7 +282,7 @@ Result:
 
 <br>
       
-### Creates a device (POST)
+### 2.3. Creates a device (POST)
 
 Creates a new device in the iCasa execution platform.
 
@@ -293,7 +293,7 @@ Path parameter -> None
 Data parameter -> the JSON data associated with the new device
 
 
-#### Example:  
+#### 2.3.1. Example:
 
     > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCasa.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:9000/icasa/devices/device
 
@@ -318,7 +318,7 @@ Result:
    }
    
 
-### Updates a device (PUT)
+### 2.4. Updates a device (PUT)
 
 Updates a device in the iCasa execution platform.
 
@@ -329,7 +329,7 @@ Path parameter -> ${deviceId} the id of the device to be consulted
 Data parameter -> the JSON data associated with the device
 
 
-#### Example:  
+#### 2.4.1. Example:
 
     > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCasa.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:9000/icasa/zones/zone/hall
 
@@ -355,7 +355,7 @@ Result:
    }
    
    
-### Deleta a device (DELETE)
+### 2.5. Deleta a device (DELETE)
 
 Deletes a device in the iCasa execution platform.
 
@@ -366,11 +366,11 @@ Path parameter -> ${deviceId} the id of the device to be deleted
 Data parameter -> _None_
 
 <a name="Clock"></a>
-## Clock Service
+## 3. Clock Service
 
 Base URL: _http://host:port/icasa/clocks/clock/default_
 
-### Gets the clock (GET)
+### 3.1. Gets the clock (GET)
 
 Gets the information associated to the default clock service
 
@@ -380,7 +380,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### Example:
+#### 3.1.1. Example:
 
     curl -X GET http://localhost:9000/icasa/clocks/clock/default
 
@@ -395,7 +395,7 @@ Result:
        "factor": 1440
     }
 
-### Updates the clock (PUT)
+### 3.2. Updates the clock (PUT)
 
 Updates the state of the clock service in the execution platform
 
@@ -420,11 +420,11 @@ Result:
 
 
 <a name="Person"></a>   
-## Person Service
+## 4. Person Service
 
 Base URL: _http://host:port/icasa/persons_
 
-### Gets the person type list (GET)
+### 4.1. Gets the person type list (GET)
 
 Gets the list of person types in the iCasa execution platform.
 
@@ -434,7 +434,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### Example:
+#### 4.1.1. Example:
 
     > curl -X GET http://localhost:9000/icasa/persons/personTypes
 
@@ -459,7 +459,7 @@ Result:
        }
     ]
 
-### Gets the person list (GET)
+### 4.2. Gets the person list (GET)
 
 Gets the list of person in the iCasa execution platform.
 
@@ -469,7 +469,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### Example:
+#### 4.2.1. Example:
 
     > curl -X GET http://localhost:9000/icasa/persons/persons
 
@@ -494,7 +494,7 @@ Result:
        }
     ]
 
-### Updates a person (PUT)
+### 4.3. Updates a person (PUT)
 
 Updates the state of a persion service in the execution platform
 
@@ -505,7 +505,7 @@ Path parameter -> ${personId} the id of the person to be updated
 Data parameter -> _None_
 
 
-#### Example:  
+#### 4.3.1. Example:
 
     > curl -X PUT -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":542,"positionY":294,"id":"Paul","width":50,"height":50,"location":"kitchen"}" http://localhost:9000/icasa/persons/person/Paul
 
@@ -520,7 +520,7 @@ Result:
       "type":"Grandfather"
    }
 
-### Creates a person (POST)
+### 4.4. Creates a person (POST)
 
 Creates a new person in the iCasa execution platform.
 
@@ -531,7 +531,7 @@ Path parameter -> None
 Data parameter -> the JSON data associated with the new person
 
 
-#### Example:  
+#### 4.4.1. Example:
 
     > curl -X POST -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":1,"positionY":1}" http://localhost:9000/icasa/persons/person
 
@@ -546,7 +546,7 @@ Result:
       "type":"Grandfather"
    }
    
-### Deletes a person (DELETE)
+### 4.5. Deletes a person (DELETE)
 
 Deletes a person in the iCasa execution platform.
 
