@@ -27,7 +27,7 @@ public class DimmerLightFollowMeImpl implements DeviceListener,FollowMeConfigura
     /**
      * The maximum energy consumption allowed in a room in Watt:
      **/
-    private double maximumEnergyConsumptionAllowedInARoom = 155.0d;
+    private double maximumEnergyConsumptionAllowedInARoom = 200.0d;
 
     /**
      * The name of the LOCATION property
