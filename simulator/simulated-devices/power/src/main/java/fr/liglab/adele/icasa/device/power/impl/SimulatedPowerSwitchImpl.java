@@ -35,15 +35,6 @@ public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwi
 	@ServiceProperty(name = PowerSwitch.DEVICE_SERIAL_NUMBER, mandatory = true)
 	private String m_serialNumber;
 
-	@Requires
-	private SimulationManager manager;
-
-	/**
-	 * Influence zone corresponding to the zone with highest level where the
-	 * device is located
-	 */
-	private volatile Zone m_zone;
-
 	public SimulatedPowerSwitchImpl() {
 		super();
         super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
@@ -68,20 +59,6 @@ public class SimulatedPowerSwitchImpl extends AbstractDevice implements PowerSwi
 	public boolean switchOff() {
 		setPropertyValue(POWER_SWITCH_CURRENT_STATUS, false);
 		return getStatus();
-	}
-
-	@Override
-	public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty()) {
-			m_zone = zones.get(0);
-			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
-		}
-	}
-
-	@Override
-	public void leavingZones(List<Zone> zones) {
-		m_zone = null;
-		setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
 	}
 
 	@Override
