@@ -22,12 +22,12 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The maximum number of lights to turn on when a user enters the room :
      **/
-    private int maxLightsToTurnOnPerRoom = 2;
+    private int maxLightsToTurnOnPerRoom = 3;
 
     /**
      * The maximum energy consumption allowed in a room in Watt:
      **/
-    private double maximumEnergyConsumptionAllowedInARoom = 200.0d;
+    private double maximumEnergyConsumptionAllowedInARoom = 250.0d;
 
     /**
      * The name of the LOCATION property
@@ -387,7 +387,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
             List<Double> listResults = new ArrayList<Double>();
             for(double _double : result){
                 if(Double.valueOf(_double) != 0.0)
-                listResults.add((Double.valueOf(_double)));
+                    listResults.add((Double.valueOf(_double)));
             }
 
             Collections.sort(listOfDimmerConsumption, Collections.reverseOrder());
@@ -423,11 +423,13 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
             for (Double consumptionDouble : listResults) {
                 double consumption = consumptionDouble.doubleValue();
                 for (BinaryLight binaryLight :sameLocationLigths ){
-                    if (consumption == binaryLight.getMaxPowerLevel()){
-                        countLightOn ++;
-                        binaryLight.turnOn();
-                        binaryOn.add(binaryLight);
-                        break;
+                    if (!binaryOn.contains(binaryLight)){
+                        if (consumption == binaryLight.getMaxPowerLevel()){
+                            countLightOn ++;
+                            binaryLight.turnOn();
+                            binaryOn.add(binaryLight);
+                            break;
+                        }
                     }
                 }
             }
@@ -438,12 +440,10 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                 }
             }
 
-
             if (dimmerToAjust){
                 for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
-
                     //check if we can turn off more lights
-                    if ((countLightOn < maxLightsToTurnOnPerRoom ) || ( valueToAjust != 0.0) ){
+                    if ((countLightOn < maxLightsToTurnOnPerRoom ) && ( valueToAjust != 0.0) ){
                         if (valueToAjust >= dimmerLight.getMaxPowerLevel()){
                             dimmerLight.setPowerLevel(1);
                             countLightOn ++;

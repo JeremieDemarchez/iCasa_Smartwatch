@@ -24,17 +24,17 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The targeted illuminance in each room
      **/
-    private double targetedIlluminance = 5674.0d;
+    private double targetedIlluminance = 100.0d;
 
     /**
      * The maximum number of lights to turn on when a user enters the room :
      **/
-    private int maxLightsToTurnOnPerRoom = 2;
+    private int maxLightsToTurnOnPerRoom = 3;
 
     /**
      * The maximum energy consumption allowed in a room in Watt:
      **/
-    private double maximumEnergyConsumptionAllowedInARoom = 200.0d;
+    private double maximumEnergyConsumptionAllowedInARoom = 300.0d;
 
     /**
      * The name of the LOCATION property
@@ -172,7 +172,10 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     @Validate
     public void start() {
         System.out.println("Component is starting...");
-
+        System.out.println(" Follow me target : ");
+        System.out.println("    - Number of light : " + maxLightsToTurnOnPerRoom);
+        System.out.println("    - Energy : " + maximumEnergyConsumptionAllowedInARoom + " in Watt" );
+        System.out.println("    - illuminance : " + targetedIlluminance + " in Lux ");
     }
 
     @Override
@@ -427,8 +430,6 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
 
     private synchronized void applyMaximumNumberOfLightTurnOn(List<String> locations) {
         for(String location : locations){
-
-
             List<Photometer> sameLocationPhotometer = getPhotometerFromLocation(location);
             List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
             List<BinaryLight> sameLocationBinaryLigths = getBinaryLightFromLocation(location);
@@ -445,24 +446,21 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
 
             double valueToAjust = 1.0;
             double valueToAjustBefore = 0.0;
-            double value = 1.0;
             List<DimmerLight> listOfDimmerOn = new ArrayList<DimmerLight>();
             List<BinaryLight> listOfBinaryOn = new ArrayList<BinaryLight>();
             if (!sameLocationPhotometer.isEmpty()){
+                if (getIlluminanceInRoom(location) > (targetedIlluminance)) {
+                    break;
+                }
                 while( !( ( (targetedIlluminance*(0.97)) < getIlluminanceInRoom(location) ) && ((getIlluminanceInRoom(location) < (targetedIlluminance*(1.03)))) ) ){
 
-
-
                     if ( (getIlluminanceInRoom(location) > (targetedIlluminance*(1.03)))){
-
                         if (tryBinary) {
                             listOfBinaryOn.get(countLighton-1).turnOff();
                             listOfBinaryOn.remove(countLighton-1);
                             countLighton --;
                         }else if (tryDimmer) {
                             if (tryToAjust){
-                                System.out.println(" Dimmer " + countDimmerOn);
-                                System.out.println(" LIGHT " + countLighton);
                                 countDimmerOn --;
                                 countLighton--;
                                 listOfDimmerOn.remove(countDimmerOn);
@@ -496,20 +494,24 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
 
                     if (getConsumption(listOfBinaryOn,listOfDimmerOn) >= maximumEnergyConsumptionAllowedInARoom){
                         if (tryBinary){
-                            BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary-1);
-                            binaryLight.turnOff();
-                            listOfBinaryOn.remove(countbinary-1);
-                            countbinary -=1;
-                            tryDimmer = true;
-                            tryBinary = false;
+                            if (maxDimmerOn != 0 ){
+                                BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary-1);
+                                binaryLight.turnOff();
+                                listOfBinaryOn.remove(countbinary-1);
+                                countbinary -=1;
+                                countLighton -=1;
+                                tryDimmer = true;
+                                tryBinary = false;
+                            }else{
+                                break;
+                            }
                         }else if (tryDimmer) {
                             if (tryToAjust){
-                                System.out.println(getIlluminanceInRoom(location) + " " + (targetedIlluminance*(0.97)) );
-                                System.out.println(valueToAjustBefore + " - " + getConsumption(listOfBinaryOn,listOfDimmerOn) + " -  " + maximumEnergyConsumptionAllowedInARoom );
-                                valueToAjustBefore -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
-                                DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn);
+                                DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
                                 dimmerLight.setPowerLevel(valueToAjustBefore);
-                                System.out.println(" EXIT 1 ");
+                                valueToAjustBefore -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom) / 100 ;
+                                dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
+                                dimmerLight.setPowerLevel(valueToAjustBefore);
                                 break;
 
                             }
@@ -517,7 +519,6 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                     }
 
                     if (countLighton == maxLightsToTurnOnPerRoom){
-                        System.out.println(" EXIT 2 ");
                         break;
                     }
 
@@ -542,24 +543,22 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                             countLighton++;
                         }else{
                             tryDimmer = false;
-                            System.out.println(" EXIT 3 ");
                             break;
                         }
                     }
+
                     if((((targetedIlluminance*(0.97)) < getIlluminanceInRoom(location))  && (getIlluminanceInRoom(location) < (targetedIlluminance*(1.03))) )){
                         if (countLighton > maxLightsToTurnOnPerRoom){
                             if (tryBinary){
                                 BinaryLight binaryLight = sameLocationBinaryLigths.get(countbinary-1);
                                 binaryLight.turnOff();
                                 listOfBinaryOn.remove(countLighton-1);
-                                System.out.println(" EXIT 4 ");
                                 break;
 
                             }
                             if (tryDimmer){
                                 DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
                                 dimmerLight.setPowerLevel(valueToAjust);
-                                System.out.println(" EXIT 5 ");
                                 break;
                             }
 
@@ -577,7 +576,6 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                                     valueToAjust -= (getConsumption(listOfBinaryOn,listOfDimmerOn) - maximumEnergyConsumptionAllowedInARoom)/100;
                                     DimmerLight dimmerLight = sameLocationDimmerLigths.get(countDimmerOn-1);
                                     dimmerLight.setPowerLevel(valueToAjust/100.0);
-                                    System.out.println(" EXIT 6 ");
                                     break;
                                 }
                             }
@@ -586,11 +584,116 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
                         }
                     }
                 }
+            }else{
+                applySumSetAlgo( location);
             }
 
         }
     }
 
+    private synchronized void applySumSetAlgo(String location) {
+        // get the related binary lights
+        List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(location);
+        List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
+
+        double[] items = new double[sameLocationLigths.size()] ;
+        int i=0;
+        boolean dimmerToAjust = false;
+        Map<String,Double> MapOfBinaryConsumption = new HashMap<String, Double>();
+        for (BinaryLight binaryLight : sameLocationLigths) {
+            items[i] = binaryLight.getMaxPowerLevel();
+            i ++;
+            MapOfBinaryConsumption.put(binaryLight.getSerialNumber(),binaryLight.getMaxPowerLevel());
+        }
+
+        List<Double> listOfDimmerConsumption = new ArrayList<Double>();
+        Map<String,Double> MapOfDimmerConsumption = new HashMap<String, Double>();
+        for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
+            listOfDimmerConsumption.add(dimmerLight.getMaxPowerLevel());
+            MapOfDimmerConsumption.put(dimmerLight.getSerialNumber(),dimmerLight.getMaxPowerLevel());
+        }
+        // Compute the best combination :
+        double[] result = ClosestSumAlgorithm.greadySubSetClosestSum(maximumEnergyConsumptionAllowedInARoom, items);
+        double sumCalculate = 0.0;
+        for (double _double : result) {
+            sumCalculate += _double;
+        }
+        List<Double> listResults = new ArrayList<Double>();
+        for(double _double : result){
+            if(Double.valueOf(_double) != 0.0)
+                listResults.add((Double.valueOf(_double)));
+        }
+
+        Collections.sort(listOfDimmerConsumption, Collections.reverseOrder());
+        Collections.sort(listResults, Collections.reverseOrder());
+        double valueToAjust = 0.0;
+
+        if (listResults.size()<= maxLightsToTurnOnPerRoom){
+            if (sumCalculate != maximumEnergyConsumptionAllowedInARoom ){
+                valueToAjust = maximumEnergyConsumptionAllowedInARoom - sumCalculate;
+                dimmerToAjust = true;
+            }
+        }else{
+            int k ;
+            System.out.println(listResults.size() +" - "+ maxLightsToTurnOnPerRoom);
+            for( k =0 ;(k< (listResults.size() - maxLightsToTurnOnPerRoom ));k ++){
+                listResults.remove(listResults.size() -k );
+            }
+            if(k !=0 ){
+                if (listResults.get(listResults.size()-1) < sameLocationDimmerLigths.get(0).getMaxPowerLevel()){
+                    listResults.remove(listResults.size()-1);
+                    sumCalculate = 0.0;
+                    for (Double _double : listResults) {
+                        sumCalculate += _double.doubleValue();
+                    }
+                    valueToAjust = maximumEnergyConsumptionAllowedInARoom - sumCalculate;
+                    dimmerToAjust = true;
+                }
+            }
+        }
+
+        List<BinaryLight> binaryOn = new ArrayList<BinaryLight>();
+        int countLightOn = 0 ;
+        for (Double consumptionDouble : listResults) {
+            double consumption = consumptionDouble.doubleValue();
+            for (BinaryLight binaryLight :sameLocationLigths ){
+                if (!binaryOn.contains(binaryLight)){
+                    if (consumption == binaryLight.getMaxPowerLevel()){
+                        countLightOn ++;
+                        binaryLight.turnOn();
+                        binaryOn.add(binaryLight);
+                        break;
+                    }
+                }
+            }
+        }
+
+        for (BinaryLight binaryLight :sameLocationLigths ){
+            if (!binaryOn.contains(binaryLight)){
+                binaryLight.turnOff();
+            }
+        }
+
+        if (dimmerToAjust){
+            for (DimmerLight dimmerLight : sameLocationDimmerLigths) {
+                //check if we can turn off more lights
+                if ((countLightOn < maxLightsToTurnOnPerRoom ) && ( valueToAjust != 0.0) ){
+                    if (valueToAjust >= dimmerLight.getMaxPowerLevel()){
+                        dimmerLight.setPowerLevel(1);
+                        countLightOn ++;
+                        valueToAjust -= dimmerLight.getMaxPowerLevel();
+                    }else {
+                        dimmerLight.setPowerLevel(valueToAjust/100);
+                        countLightOn ++;
+                        valueToAjust = 0.0;
+                    }
+                }else{
+                    dimmerLight.setPowerLevel(0);
+                }
+            }
+        }
+
+    }
 
     private synchronized void dimmerLightModified(DimmerLight changingDimmerLight,String propertyName, Object oldValue, Object newValue) {
 
@@ -687,6 +790,10 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     public void setMaximumNumberOfLightsToTurnOn(int maximumNumberOfLightsToTurnOn) {
         maxLightsToTurnOnPerRoom = maximumNumberOfLightsToTurnOn;
         List<String> listOflocation = getLocationWherePresence();
+        System.out.println(" Follow me target : ");
+        System.out.println("    - Number of light : " + maxLightsToTurnOnPerRoom);
+        System.out.println("    - Energy : " + maximumEnergyConsumptionAllowedInARoom + " in Watt" );
+        System.out.println("    - illuminance : " + targetedIlluminance + " in Lux ");
         applyMaximumNumberOfLightTurnOn(listOflocation);
     }
 
@@ -699,6 +806,10 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     public void setMaximumAllowedEnergyInRoom(double maximumEnergy) {
         maximumEnergyConsumptionAllowedInARoom = maximumEnergy;
         List<String> listOflocation = getLocationWherePresence();
+        System.out.println(" Follow me target : ");
+        System.out.println("    - Number of light : " + maxLightsToTurnOnPerRoom);
+        System.out.println("    - Energy : " + maximumEnergyConsumptionAllowedInARoom + " in Watt" );
+        System.out.println("    - illuminance : " + targetedIlluminance + " in Lux ");
         applyMaximumNumberOfLightTurnOn(listOflocation);
     }
 
@@ -711,6 +822,10 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     public void setTargetedIlluminance(double illuminance) {
         targetedIlluminance = illuminance;
         List<String> listOflocation = getLocationWherePresence();
+        System.out.println(" Follow me target : ");
+        System.out.println("    - Number of light : " + maxLightsToTurnOnPerRoom);
+        System.out.println("    - Energy : " + maximumEnergyConsumptionAllowedInARoom + " in Watt" );
+        System.out.println("    - illuminance : " + targetedIlluminance + " in Lux ");
         applyMaximumNumberOfLightTurnOn(listOflocation);
     }
 
