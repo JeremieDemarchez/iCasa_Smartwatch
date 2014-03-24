@@ -19,13 +19,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import fr.liglab.adele.icasa.device.DeviceListener;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Validate;
 
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
-import fr.liglab.adele.icasa.device.util.EmptyDeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
@@ -33,7 +33,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 
 @Component(name="LightFollowMeApplication")
 @Instantiate
-public class LightFollowMeApplication extends EmptyDeviceListener {
+public class LightFollowMeApplication implements DeviceListener {
 
     /** Field for binaryLights dependency */
     @RequiresDevice(id="binaryLights", type="field", optional=true)
@@ -51,26 +51,35 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
     /** Bind Method for null dependency */
     @RequiresDevice(id="powerSwitches", type="bind")
     public void bindPowerSwitch(PowerSwitch powerSwitch, Map properties) {
+        System.out.println(" BIND OF A POWER SWITCH §§§");
         powerSwitch.addListener(this);
     }
 
     /** Unbind Method for null dependency */
-    @RequiresDevice(id="powerSwitches", type="bind")    
+    @RequiresDevice(id="powerSwitches", type="unbind")
     public void unbindPowerswitch(PowerSwitch powerSwitch, Map properties) {
+        System.out.println(" UNBIND OF A POWER SWITCH §§§");
         powerSwitch.removeListener(this);
     }
 
-    /** Bind Method for null dependency */
-    @RequiresDevice(id="binaryLights", type="bind")    
-    public void bindBinaryLight(BinaryLight binaryLight, Map properties) {
-        //do nothing
+    /**
+     * Bind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="binaryLights", type="bind")
+    public void bindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
+        binaryLight.addListener(this);
     }
 
-    /** Unbind Method for null dependency */
-    @RequiresDevice(id="binaryLights", type="bind")  
-    public void unbindBinaryLight(BinaryLight binaryLight, Map properties) {
-        //do nothing
+    /**
+     * Unbind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="binaryLights", type="unbind")
+    public void unbindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
+        binaryLight.removeListener(this);
     }
+
 
     /** Bind Method for null dependency */
     @RequiresDevice(id="presenceSensors", type="bind")
@@ -102,6 +111,9 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
         for(PowerSwitch powerSwitch : powerSwitches) {
             powerSwitch.removeListener(this);
         }
+        for(BinaryLight binaryLight  : binaryLights) {
+            binaryLight.removeListener(this);
+        }
     }
 
     /** Component Lifecycle Method */
@@ -110,28 +122,14 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
         // do nothing
     }
 
-    /**
-     * Return all BinaryLight from the given location
-     *
-     * @param location
-     *            : the given location
-     * @return the list of matching BinaryLights
-     */
-    private synchronized List<BinaryLight> getBinaryLightFromLocation(String location) {
-        List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
-        for (BinaryLight binLight : binaryLights) {
-            if (binLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
-                binaryLightsLocation.add(binLight);
-            }
-        }
-        return binaryLightsLocation;
-    }
-
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-
+        System.out.println(" PROPERTY CHANGE  §§ " + device.getSerialNumber() + " PROPERTY " + propertyName +" VALUE NEW " +newValue);
+        for(PowerSwitch powerSwitch : powerSwitches){
+            System.out.println(" Power is " + powerSwitch.getSerialNumber());
+        }
         if (device instanceof PowerSwitch) {
-
+            System.out.println(" POWER SWITCH CHANGE §§ ");
             PowerSwitch changingSensor = (PowerSwitch) device;
             // check the change is related to presence sensing
             if (propertyName.equals(PowerSwitch.POWER_SWITCH_CURRENT_STATUS)) {
@@ -149,27 +147,50 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
                     }
                 }
             }
+
         } else if (device instanceof PresenceSensor) {
 
             PresenceSensor changingSensor = (PresenceSensor) device;
-            // check the change is related to presence sensing
-            if (propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {
-                // get the location where the sensor is:
-                String detectorLocation = (String) changingSensor
-                        .getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME);
-                // if the location is known :
-                if (!detectorLocation.equals(BinaryLight.LOCATION_UNKNOWN)) {
-                    // get the related binary lights
-                    List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(detectorLocation);
-                    for (BinaryLight binaryLight : sameLocationLigths) {
+            presencePropertyModified(changingSensor, propertyName, oldValue, newValue);
 
-                        // and switch them on/off depending on the sensed presence
-                        binaryLight.setPowerStatus(!(Boolean) oldValue);
-                    }
+        } else if (device instanceof BinaryLight){
+            BinaryLight changingBinaryLight = (BinaryLight) device;
+            binaryPropertyModified(changingBinaryLight, propertyName, oldValue, newValue);
+        }
+    }
+
+    public synchronized void presencePropertyModified(PresenceSensor changingSensor,String propertyName, Object oldValue, Object newValue) {
+        if (propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {
+            // get the location where the sensor is:
+            String detectorLocation = (String) changingSensor.getPropertyValue(PresenceSensor.LOCATION_PROPERTY_NAME);
+            // if the location is known :
+            if (!detectorLocation.equals(PresenceSensor.LOCATION_UNKNOWN)) {
+                // get the related binary lights
+                List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(detectorLocation);
+                for (BinaryLight binaryLight : sameLocationLigths) {
+                    // and switch them on/off depending on the sensed presence
+                    binaryLight.setPowerStatus(!(Boolean) oldValue);
                 }
             }
         }
     }
+
+    public synchronized void binaryPropertyModified(BinaryLight changingBinaryLight,String propertyName, Object oldValue, Object newValue) {
+        if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
+            String binaryLightLocation = (String) changingBinaryLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME);
+            if (!binaryLightLocation.equals(BinaryLight.LOCATION_UNKNOWN)) {
+                if (presenceFromLocation((String)newValue)){
+                    changingBinaryLight.turnOn();
+                }else{
+                    changingBinaryLight.turnOff();
+                }
+            }
+            else{
+                changingBinaryLight.turnOff();
+            }
+        }
+    }
+
 
     @Override
     public void deviceAdded(GenericDevice device) {
@@ -190,8 +211,61 @@ public class LightFollowMeApplication extends EmptyDeviceListener {
     }
 
     @Override
+    public void deviceEvent(GenericDevice device, Object data) {
+
+    }
+
+    @Override
     public void deviceRemoved(GenericDevice arg0) {
         // This method is not used in this tutorial but has to be implemented to
         // implement DeviceListeners
+    }
+
+    /**
+     * Return all BinaryLight from the given location
+     *
+     * @param location
+     *            : the given location
+     * @return the list of matching BinaryLights
+     */
+    private synchronized List<BinaryLight> getBinaryLightFromLocation(String location) {
+        List<BinaryLight> binaryLightsLocation = new ArrayList<BinaryLight>();
+        for (BinaryLight binLight : binaryLights) {
+            if (binLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
+                binaryLightsLocation.add(binLight);
+            }
+        }
+        return binaryLightsLocation;
+    }
+
+    private synchronized List<PresenceSensor> getPresenceSensorFromLocation(String location) {
+        List<PresenceSensor> presenceSensorLocation = new ArrayList<PresenceSensor>();
+        for (PresenceSensor presenceSensor : presenceSensors) {
+            if (presenceSensor.getPropertyValue(PresenceSensor.LOCATION_PROPERTY_NAME).equals(location)) {
+                presenceSensorLocation.add(presenceSensor);
+            }
+        }
+        return  presenceSensorLocation;
+    }
+
+    private synchronized boolean presenceFromLocation(String location) {
+        int switchOn = 0;
+        int switchOff = 0;
+        List<PresenceSensor> presenceSensorLocation = new ArrayList<PresenceSensor>();
+        presenceSensorLocation = getPresenceSensorFromLocation(location);
+        for (PresenceSensor presenceSensor : presenceSensorLocation) {
+            if (presenceSensor.getSensedPresence()) {
+                switchOn +=1;
+            }
+            else{
+                switchOff +=1;
+            }
+        }
+        if (switchOn > switchOff){
+            return true;
+        }
+        else{
+            return false;
+        }
     }
 }
