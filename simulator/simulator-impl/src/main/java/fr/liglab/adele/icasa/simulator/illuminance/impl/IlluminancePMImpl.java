@@ -61,7 +61,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     private Set<Variable> _computedVariables;
     private Set<Variable> _requiredZoneVariables;
 
-    private Object _deviceLock = new Object();
+    private final Object _deviceLock ;
 
     // There is no need of full illuminance in the morning
     public static final double  MORNING_EXTERNAL_SOURCE_POWER = 8;
@@ -78,7 +78,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      */
     private Set<LocatedDevice> _lights = new HashSet<LocatedDevice>();
 
-    private Object _zoneLock = new Object();
+    private final Object _zoneLock ;
 
     @Requires
     private ContextManager _contextMgr;
