@@ -15,20 +15,19 @@
 
     <dependencies>
         <dependency>
-            <artifactId>hue-sdk-core</artifactId>
             <groupId>philips</groupId>
+            <artifactId>hue-sdk-core</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <artifactId>hue-sdk-resources</artifactId>
             <groupId>philips</groupId>
+            <artifactId>hue-sdk-resources</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
 
 
     <build>
-
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>

@@ -29,10 +29,10 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-		<module>discovery</module>
-		<module>huesdk-core</module>
+        <module>huesdk-core</module>
         <module>huesdk-resources</module>
         <module>huesdk-bundle</module>
+		<module>discovery</module>
 	</modules>
    <build>
       <plugins>

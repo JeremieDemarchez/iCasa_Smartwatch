@@ -9,8 +9,8 @@
         <relativePath>../../../../parent</relativePath>
     </parent>
 
-    <artifactId>philips-hue-sdk-core</artifactId>
     <groupId>org.ow2.chameleon.fuchsia.base.philips-hue</groupId>
+    <artifactId>philips-hue-sdk-core</artifactId>
     <packaging>pom</packaging>
     <name>OW2 Chameleon - Fuchsia Base Philips Hue SDK Core</name>
 
