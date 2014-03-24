@@ -133,58 +133,48 @@ public class LightFollowMeImpl implements DeviceListener {
     @Override
     public void devicePropertyModified(GenericDevice device,String propertyName, Object oldValue, Object newValue) {
 
-        System.out.println("Device Property Modified");
         //we assume that we listen only to presence sensor events (otherwise there is a bug)
         if (device instanceof PresenceSensor ){
 
             PresenceSensor changingSensor = (PresenceSensor) device;
             // check the change is related to presence sensing
-            if (propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {
-                // get the location where the sensor is:
-                String detectorLocation = (String) changingSensor.getPropertyValue(LOCATION_PROPERTY_NAME);
-                // if the location is known :
-                if (!detectorLocation.equals(LOCATION_UNKNOWN)) {
-                    // get the related binary lights
-                    List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(detectorLocation);
-                    for (BinaryLight binaryLight : sameLocationLigths) {
-                        // and switch them on/off depending on the sensed presence
-                        binaryLight.setPowerStatus(!(Boolean) oldValue);
-                    }
-                }
-            }
+            PresencePropertyModified( changingSensor, propertyName,  oldValue,  newValue);
         }
 
         if (device instanceof BinaryLight ){
-
             BinaryLight changingBinaryLight = (BinaryLight) device;
-            if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
-                String binaryLightLocation = (String) changingBinaryLight.getPropertyValue(LOCATION_PROPERTY_NAME);
+            BinaryPropertyModified( changingBinaryLight, propertyName,  oldValue,  newValue);
+        }
+    }
 
-                if (!binaryLightLocation.equals(LOCATION_UNKNOWN)) {
-                    // get the related presence sensor
-                    List<PresenceSensor> sameLocationPresenceSensor = getPresenceSensorFromLocation(binaryLightLocation);
-                    int switchOn = 0;
-                    int switchOff = 0;
-                    for (PresenceSensor presenceSensor : sameLocationPresenceSensor) {
-                        //count number of presence sensor turn off or on
-                        if(presenceSensor.getSensedPresence()){
-                            switchOn += 1;
-                        }
-                        else{
-                            switchOff += 1;
-                        }
-                    }
-                    // decide to change or not the binary light state
-                    if (switchOn > switchOff){
-                        changingBinaryLight.turnOn();
-                    }
-                    else{
-                        changingBinaryLight.turnOff();
-                    }
+    public synchronized void PresencePropertyModified(PresenceSensor changingSensor,String propertyName, Object oldValue, Object newValue) {
+        if (propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {
+            // get the location where the sensor is:
+            String detectorLocation = (String) changingSensor.getPropertyValue(LOCATION_PROPERTY_NAME);
+            // if the location is known :
+            if (!detectorLocation.equals(LOCATION_UNKNOWN)) {
+                // get the related binary lights
+                List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(detectorLocation);
+                for (BinaryLight binaryLight : sameLocationLigths) {
+                    // and switch them on/off depending on the sensed presence
+                    binaryLight.setPowerStatus(!(Boolean) oldValue);
                 }
-                else{
+            }
+        }
+    }
+
+    public synchronized void BinaryPropertyModified(BinaryLight changingBinaryLight,String propertyName, Object oldValue, Object newValue) {
+        if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
+            String binaryLightLocation = (String) changingBinaryLight.getPropertyValue(LOCATION_PROPERTY_NAME);
+            if (!binaryLightLocation.equals(LOCATION_UNKNOWN)) {
+                if (presenceFromLocation((String)newValue)){
+                    changingBinaryLight.turnOn();
+                }else{
                     changingBinaryLight.turnOff();
                 }
+            }
+            else{
+                changingBinaryLight.turnOff();
             }
         }
     }
@@ -226,9 +216,31 @@ public class LightFollowMeImpl implements DeviceListener {
         List<PresenceSensor> presenceSensorLocation = new ArrayList<PresenceSensor>();
         for (PresenceSensor presenceSensor : presenceSensors) {
             if (presenceSensor.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
-                 presenceSensorLocation.add(presenceSensor);
+                presenceSensorLocation.add(presenceSensor);
             }
         }
         return  presenceSensorLocation;
     }
+
+    private synchronized boolean presenceFromLocation(String location) {
+        int switchOn = 0;
+        int switchOff = 0;
+        List<PresenceSensor> presenceSensorLocation = new ArrayList<PresenceSensor>();
+        presenceSensorLocation = getPresenceSensorFromLocation(location);
+        for (PresenceSensor presenceSensor : presenceSensorLocation) {
+            if (presenceSensor.getSensedPresence()) {
+                switchOn +=1;
+            }
+            else{
+                switchOff +=1;
+            }
+        }
+        if (switchOn > switchOff){
+            return true;
+        }
+        else{
+            return false;
+        }
+    }
+
 }
