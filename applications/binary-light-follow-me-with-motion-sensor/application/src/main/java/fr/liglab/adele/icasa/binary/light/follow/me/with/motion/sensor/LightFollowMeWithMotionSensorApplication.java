@@ -74,6 +74,25 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
         motionSensor.removeListener(this);
     }
 
+    /**
+     * Bind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="binaryLights", type="bind")
+    public void bindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
+        binaryLight.addListener(this);
+    }
+
+    /**
+     * Unbind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="binaryLights", type="unbind")
+    public void unbindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
+        binaryLight.removeListener(this);
+    }
+
+
     @Requires
     private Clock clock;
 
@@ -90,13 +109,15 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
         for (MotionSensor motionSensorSensor : motionSensors) {
             motionSensorSensor.removeListener(this);
         }
+        for (BinaryLight binaryLight : binaryLights) {
+            binaryLight.removeListener(this);
+        }
         _contextMgr.removeListener(this);
     }
 
     /** Component Lifecycle Method */
     @Validate
     public void start() {
-        // do nothing
         _contextMgr.addListener(this);
         synchronized (m_lock){
             Set<String> zoneIds = _contextMgr.getZoneIds();
@@ -185,6 +206,14 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
 
+        if (device instanceof BinaryLight){
+            synchronized (m_lock){
+                BinaryLight changingBinaryLight = (BinaryLight) device;
+                if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
+                    changingBinaryLight.turnOff();
+                }
+            }
+        }
     }
 
 
@@ -202,8 +231,8 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     public void run() {
 
         synchronized (m_lock){
-           for(String location : mapOfZone.keySet()){
-              if ((mapOfZone.get(location) + DEFAULT_TIMEOUT) < clock.currentTimeMillis()){
+            for(String location : mapOfZone.keySet()){
+                if ((mapOfZone.get(location) + DEFAULT_TIMEOUT) < clock.currentTimeMillis()){
                     setOffAllLightsInLocation(location);
                 }
             }

@@ -33,7 +33,7 @@
          <modules>
             <module>binary-light-follow-me</module>
             <module>follow-me-with-photometer</module>
-            <module>binary-light-follow-me-with-push-button-and-motion-sensor</module>
+            <module>binary-light-follow-me-with-motion-sensor</module>
             <module>actimetrics</module>
             <module>dimmer-light-follow-me</module>
             <module>gas-alarm-system</module>

@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>bundle</packaging>
   <groupId>fr.liglab.adele.icasa.apps</groupId>
-  <artifactId>binary.light.follow.me.with.push.button.and.motion.sensor.application</artifactId>
+  <artifactId>binary.light.follow.me.with.motion.sensor.application</artifactId>
   <name>${productName} :: ${projectName}</name>
 
    <dependencies>

@@ -18,7 +18,7 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>binary.light.follow.me.with.push.button.and.motion.sensor.application</artifactId>
+            <artifactId>binary.light.follow.me.with.motion.sensor.application</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>
