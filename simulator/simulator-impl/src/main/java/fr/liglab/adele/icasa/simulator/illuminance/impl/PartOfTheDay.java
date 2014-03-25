@@ -25,7 +25,7 @@ public enum PartOfTheDay {
      *            the given hour
      * @return the corresponding moment of the day
      */
-    PartOfTheDay getCorrespondingMoment(int hour) {
+    static PartOfTheDay getCorrespondingMoment(int hour) {
         assert ((0 <= hour) && (hour <= 24));
        /* if ((6 <= hour) &&  (hour< 12)){
             return MomentOfTheDay.MORNING;
