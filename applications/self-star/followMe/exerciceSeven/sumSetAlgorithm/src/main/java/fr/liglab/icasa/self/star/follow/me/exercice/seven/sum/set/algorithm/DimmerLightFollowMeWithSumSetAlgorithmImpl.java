@@ -24,7 +24,7 @@ public class DimmerLightFollowMeWithSumSetAlgorithmImpl implements DeviceListene
     /**
      * The targeted illuminance in each room
      **/
-    private double targetedIlluminance = 100.0d;
+    private double targetedIlluminance = 6000.0d;
 
     /**
      * The maximum number of lights to turn on when a user enters the room :

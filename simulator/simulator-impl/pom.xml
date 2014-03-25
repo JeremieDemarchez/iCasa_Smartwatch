@@ -84,6 +84,7 @@
                             fr.liglab.adele.icasa.simulator.impl,
                             fr.liglab.adele.icasa.simulator.commands.impl,
                             fr.liglab.adele.icasa.simulator.illuminance.impl,
+                            fr.liglab.adele.icasa.simulator.electricity.impl,
                             fr.liglab.adele.icasa.simulator.temperature.impl,
                             fr.liglab.adele.icasa.simulator.script.executor.impl,
                             fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
