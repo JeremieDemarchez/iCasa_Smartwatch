@@ -55,8 +55,8 @@ public class PhilipsHueLight extends AbstractDevice implements
         super();
         super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
         super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
-        super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 255.0d);
-        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 255.0d);
+        super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 8.5d);
+        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 8.5d);
         super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
     }
 
