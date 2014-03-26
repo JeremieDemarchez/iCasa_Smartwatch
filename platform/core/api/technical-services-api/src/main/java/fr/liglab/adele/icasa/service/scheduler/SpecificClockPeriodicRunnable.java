@@ -33,7 +33,7 @@ public interface SpecificClockPeriodicRunnable extends ICasaRunnable {
 
     /**
      * Returns the clock that must be used for scheduling.
-     * All SpecifiClock tasks in a same group must
+     * All SpecifiClock tasks in a same group must have the same clock.
      *
      * @return the clock that must be used for scheduling.
      */
