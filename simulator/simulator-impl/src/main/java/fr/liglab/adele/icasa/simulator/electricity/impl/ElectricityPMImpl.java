@@ -99,7 +99,7 @@ public class ElectricityPMImpl implements PhysicalModel, ZoneListener, LocatedDe
         synchronized ( m_lock ){
             Set<Zone> oldZone = getZones(oldPosition);
             updateZones(oldZone);
-            Set<Zone> newZone  = getZones(oldPosition);
+            Set<Zone> newZone  = getZones(newPosition);
             updateZones(newZone);
         }
     }
