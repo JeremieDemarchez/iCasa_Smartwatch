@@ -55,13 +55,13 @@ The Thermometer java interface is as follows
 
     public interface Thermometer extends GenericDevice {
 
-       static String THERMOMETER_CURRENT_TEMPERATURE = "current_temperature"; // Temperature Property
+       static String THERMOMETER_CURRENT_TEMPERATURE = "thermometer.currentTemperature"; // Temperature Property
 
        double getTemperature();
 
     }
 
-To access device current temperature the client has two options, call the method __getTemperature()__ or ask for the __current_temperature__ property.
+To access device current temperature the client has two options, call the method __getTemperature()__ or ask for the __thermometer.currentTemperature__ property.
    
 <a name="Implementation"></a>
 ### 4.2. Device Implementation
@@ -85,7 +85,10 @@ Once the device interface defined a implementation class to this device must be 
 
 	    public SimulatedThermometerImpl() {
 		    super();
-			
+
+			// Property initialization
+            super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
+
 			// Property initialization
 		    setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0); 
 	    }
@@ -186,13 +189,13 @@ ___Context API - Device interfaces___
 
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>context.api</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>${project.version}</version>
 
 ___Simulation API - Simulated Device interface___
 
     <groupId>fr.liglab.adele.icasa</groupId>
     <artifactId>simulator.api</artifactId>
-    <version>1.2.3-SNAPSHOT</version>
+    <version>${project.version}</version>
 
 Repositories :	
 
@@ -266,12 +269,12 @@ The pom file used in iCasa simulator module to build the simulated Thermometer i
           <dependency>
              <groupId>fr.liglab.adele.icasa</groupId>
              <artifactId>context.api</artifactId>
-	         <version>1.0.0-SNAPSHOT</version>
+	         <version>${project.version}</version>
           </dependency>
           <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>simulator.api</artifactId>
-	        <version>1.0.0-SNAPSHOT</version>
+	        <version>${project.version}</version>
           </dependency>
        </dependencies>
 

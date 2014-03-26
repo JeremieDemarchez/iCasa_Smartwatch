@@ -66,7 +66,7 @@ or
 </tr>
 <tr>
   <td>unit</td>
-  <td>Time unit, value it can be h (hours), m (minuts), s (seconds). Default value is m</td>
+  <td>Time unit, value it can be h (hours), m (minutes), s (seconds). Default value is m</td>
 </tr>
 </table>
 
@@ -407,7 +407,7 @@ Set the value of the device property
 
 _Example:_
 
-    <set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
+    <set-device-property deviceId="BiLi-A7496W-S" property="powerStatus" value="true"/>
 	
 <table cellpadding="2" cellspacing="0" border="1">
 <tr>
@@ -533,7 +533,7 @@ _Example:_
 	   <delay value="100" />
 	   <remove-device deviceId="Pres-A1255D-D" />	
        <delay value="100" />
-	   <set-device-property deviceId="BiLi-A7496W-S" property="power_status" value="true"/>
+	   <set-device-property deviceId="BiLi-A7496W-S" property="powerStatus" value="true"/>
 	
     </behavior>
 
