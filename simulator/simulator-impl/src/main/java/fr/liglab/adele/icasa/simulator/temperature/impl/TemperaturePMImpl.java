@@ -178,10 +178,6 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         Map<String, Double> newTemps = new HashMap<String, Double>();
         synchronized (_zoneModelLock) {
             for (ZoneModel zoneModel : _zoneModels.values()) {
-                if (zoneModel.getDevices() != null){
-                    for(GenericDevice loc : zoneModel.getDevices()){
-                    }
-                }
                 synchronized (_zoneModelLock) {
                     double newTemp = computeTemperature(zoneModel.getZone(), timeDiff);
                     newTemps.put(zoneModel.getZoneId(), newTemp);
@@ -209,7 +205,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         }
     }
 
-    private boolean propChangeHasImpactOnPower(LocatedDevice locatedDevice, String propName) {
+    private boolean propChangeHasImpactOnPower(String propName) {
         return (Heater.HEATER_POWER_LEVEL.equals(propName) || Heater.HEATER_MAX_POWER_LEVEL.equals(propName)
                 || Cooler.COOLER_POWER_LEVEL.equals(propName) || Cooler.COOLER_MAX_POWER_LEVEL.equals(propName));
     }
@@ -239,9 +235,11 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      * @return the temperature computed for time t + dt
      */
     private double computeTemperature(Zone zone, long timeDiff) {
+
         String zoneId = zone.getId();
 
         double newTemperature = DEFAULT_TEMP_VALUE; // 20 degrees by default
+
         synchronized (_zoneModelLock) {
             ZoneModel zoneModel = _zoneModels.get(zoneId);
 
@@ -270,13 +268,15 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
             if ( (powerLevelTotal > 0) && (currentTemperature < DEFAULT_TEMP_VALUE) ) {
                 powerLevelTotal = 50.0 + zoneModel.getTotalPower();
             } else if( (powerLevelTotal) < 0 && (currentTemperature > DEFAULT_TEMP_VALUE) ) {
-                powerLevelTotal = -50.0 - zoneModel.getTotalPower();
+                powerLevelTotal = -50.0 + zoneModel.getTotalPower();
             }
 
             double delta = (powerLevelTotal  * timeDiffInSeconds) / zoneModel.getThermalCapacity();
 
             newTemperature = currentTemperature  + delta;
 
+            /* A ZONE DOESN4NT INFLUENCE TEMPERATURE IN OTHER ZONE */
+            /*
             for (Map.Entry<String, Double> zoneWallSurfaceEntry : zoneModel.getWallSurfaces()) {
                 String otherZoneId = zoneWallSurfaceEntry.getKey();
                 double zoneWallSurface = (Double) zoneWallSurfaceEntry.getValue();
@@ -289,7 +289,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
                                 / zoneModel.getThermalCapacity();
                     }
                 }
-            }
+            }*/
 
 
             /**
@@ -529,15 +529,16 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     @Override
     public void deviceAdded(LocatedDevice locatedDevice) {
+        if (!((locatedDevice != null) && isTemperatureDevice(locatedDevice.getDeviceObject() ) )){
+            return;
+        }
+
         synchronized (_zoneModelLock) {
-            Object deviceObj = locatedDevice.getDeviceObject();
-            if (isTemperatureDevice((GenericDevice)deviceObj ) ){
-                _temperatureDevices.add(locatedDevice);
-                for (ZoneModel zoneModel : _zoneModels.values()) {
-                    if (zoneModel.isInTheZone(locatedDevice)){
-                        zoneModel.updateTemperatureDevices();
-                        zoneModel.updateTotalPower();
-                    }
+            _temperatureDevices.add(locatedDevice);
+            for (ZoneModel zoneModel : _zoneModels.values()) {
+                if (zoneModel.isInTheZone(locatedDevice)){
+                    zoneModel.updateTemperatureDevices();
+                    zoneModel.updateTotalPower();
                 }
             }
         }
@@ -545,6 +546,10 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     @Override
     public void deviceRemoved(LocatedDevice locatedDevice) {
+        if (!((locatedDevice != null) && isTemperatureDevice(locatedDevice.getDeviceObject() ) )){
+            return;
+        }
+
         synchronized (_zoneModelLock) {
             _temperatureDevices.remove(locatedDevice);
 
@@ -579,7 +584,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     @Override
     public void devicePropertyModified(LocatedDevice locatedDevice, String propertyName, Object oldValue, Object newValue) {
-        if (!propChangeHasImpactOnPower(locatedDevice, propertyName))
+        if (!propChangeHasImpactOnPower(propertyName))
             return;
 
         synchronized (_zoneModelLock) {
@@ -657,9 +662,6 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     @Override
     public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
         // do not need to update thermal capacity done when volume changes
-
-
-
         synchronized (_zoneModelLock) {
             ZoneModel zoneModel = _zoneModels.get(zone.getId());
             zoneModel.updateTemperatureDevices();
@@ -672,8 +674,6 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     @Override
     public void zoneResized(Zone zone) {
         // do not need to update thermal capacity done when volume changes
-
-
         synchronized (_zoneModelLock) {
             ZoneModel zoneModel = _zoneModels.get(zone.getId());
             zoneModel.updateTemperatureDevices();
