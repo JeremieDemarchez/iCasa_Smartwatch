@@ -58,6 +58,7 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
     public temperatureControllerImpl() {
         m_lock = new Object();
         mapTemperatureTarget = new HashMap<String, Double>();
+        mapManagementAuto = new HashMap<String, Boolean>();
 
         mapTemperatureTarget.put("kitchen",288.15);
         mapTemperatureTarget.put("livingroom",291.15);
