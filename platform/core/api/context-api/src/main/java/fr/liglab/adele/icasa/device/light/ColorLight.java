@@ -21,7 +21,7 @@ import java.awt.*;
  * Created by jnascimento on 21/03/14.
  * Represents a light device in which its color can be changed
  */
-public interface ColorLight extends BinaryLight,DimmerLight{
+public interface ColorLight extends DimmerLight{
 
     /**
      * Changes the colorlight

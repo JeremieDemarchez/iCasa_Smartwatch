@@ -36,7 +36,7 @@ import java.awt.*;
  * @author Jander Nascimento
  */
 @Component(name = "philipsHueLight")
-@Provides(specifications={GenericDevice.class, BinaryLight.class, DimmerLight.class, ColorLight.class})
+@Provides(specifications={GenericDevice.class, DimmerLight.class, ColorLight.class})
 public class PhilipsHueLight extends AbstractDevice implements
         ColorLight {
 
@@ -54,8 +54,6 @@ public class PhilipsHueLight extends AbstractDevice implements
     public PhilipsHueLight(){
         super();
         super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
-        super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 8.5d);
         super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 8.5d);
         super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
     }
@@ -65,29 +63,6 @@ public class PhilipsHueLight extends AbstractDevice implements
         return serialNumber;
     }
 
-    @Override
-    public boolean getPowerStatus() {
-        return light.getLastKnownLightState().isOn();
-    }
-
-    @Override
-    public boolean setPowerStatus(boolean value) {
-        PHLightState lightState = new PHLightState();
-        lightState.setOn(value);
-        bridge.updateLightState(light, lightState);
-        super.setPropertyValue(BINARY_LIGHT_POWER_STATUS, value);
-        return lightState.isOn();
-    }
-
-    @Override
-    public void turnOn() {
-        setPowerStatus(true);
-    }
-
-    @Override
-    public void turnOff() {
-        setPowerStatus(false);
-    }
 
     @Override
     public double getPowerLevel() {
