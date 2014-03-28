@@ -16,8 +16,6 @@
 package fr.liglab.adele.icasa.electicity.viewer;
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.command.handler.Command;
-import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.PowerObservable;
 
