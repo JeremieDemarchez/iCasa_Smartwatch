@@ -8,7 +8,7 @@ You can download three different distributions of the iCasa project. Each distri
       <div class="panel-heading">Choose your flavour : </div>
 
       <!-- Table -->
-      <table class="table table-bordered table-striped">
+      <table class="table table-bordered table-striped responsive-utilities">
         <thead>
           <tr>
             <th></th>

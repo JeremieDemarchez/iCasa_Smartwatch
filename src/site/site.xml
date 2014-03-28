@@ -45,7 +45,8 @@
                 </name>
                 <href>index.html</href>
             </brand>
-
+             <toc>sidebar</toc>
+             <tocTopMax>2</tocTopMax>
             <highlightJs>true</highlightJs>
             <highlightJsTheme>github</highlightJsTheme>
 
@@ -60,6 +61,13 @@
                 <column>Advanced tutorials</column>
                 <column>Simulated Devices</column>
             </bottomNav>
+
+             <pages>
+                 <index>
+                     <toc>no</toc>
+                 </index>
+             </pages>
+
         </reflowSkin>
     </custom>
 

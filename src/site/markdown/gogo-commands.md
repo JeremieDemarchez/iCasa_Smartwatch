@@ -25,7 +25,7 @@ Parameters:
 - __${deviceType}__ The device type of the new device.
 
 
-#### Example:
+**Example**:
     > g! icasa:create-device iCasa.Thermometer therm-1
    
 ### 1.2. List of devices
@@ -38,7 +38,7 @@ Name -> __show-devices__
 
 Parameters -> __NONE__
 
-#### Example:
+**Example**:
 
     > g! icasa:show-devices
     Devices:
@@ -67,7 +67,7 @@ Parameters->
 - __${deviceId}__  The device ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:activate-device Pres-B1255D-D
     
 ### 1.4. Deactive device
@@ -82,7 +82,7 @@ Parameters->
 - __${deviceId}__ The device ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:deactivate-device Pres-B1255D-D
     
 ### 1.5. List device properties
@@ -97,7 +97,7 @@ Parameters->
 - __${deviceId}__ The device ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:show-device Pres-B1255D-D
     Properties: 
     Property: presenceSensor.sensedPresence - Value: false
@@ -117,7 +117,7 @@ Parameters->
 - __${deviceId}__ the device ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:fault-device Pres-B1255D-D
 
 ### 1.7. Simulate a reparation in device
@@ -132,7 +132,7 @@ Parameters->
 - __${deviceId}__ the device ID to repair.
 
 
-#### Example:
+**Example**:
     > g! icasa:repair-device Pres-B1255D-D
    
 ### 1.8. Move device
@@ -149,7 +149,7 @@ Parameters-
 - __${Y}__  The new Y-coordinate
 
 
-### Example:
+**Example**:
     > g! icasa:move-device Pres-B1255D-D 60 80
     
 ### 1.9. Move device into zone
@@ -166,7 +166,7 @@ Parameters-
 
 
 
-#### Example:
+**Example**:
     > g! icasa:move-device-zone Pres-B1255D-D kitchen
     
    
@@ -184,7 +184,7 @@ Parameters-
 - __${value}__  The property value.
 
 
-#### Example:
+**Example**:
     > g! icasa:set-device-property Pres-B1255D-D newProp newValue
     
 ### 1.11. Remove a device
@@ -200,7 +200,7 @@ Parameters-
 
 
 
-#### Example:
+**Example**:
     > g! icasa:remove-device Pres-A1255D-D
  
 
@@ -218,7 +218,7 @@ Parameters-
 - __${attach}__ true | false. True for attach, False to deatach.
 
 
-#### Example:
+**Example**:
     > g! icasa:attach-device-person Pres-A1255D-D Philippe true
     > g! icasa:attach-device-person Pres-A1255D-D Philippe false
   
@@ -240,7 +240,7 @@ Parameters-
 - __${Y-Length}__ The Y-Length of the new zone.
 
 
-#### Example:
+**Example**:
     > g! icasa:create-zone kitchen  50 50 100 100
 
 ### 2.2. List zones
@@ -255,7 +255,7 @@ Parameters-
 - __NONE__ 
 
 
-#### Example:
+**Example**:
     > g! icasa:show-zones
 	Zones:
 	Zone livingroom : Zone: livingroom X: 410 Y: 20 Z: 0 X-Length: 245 Y-Length: 350 Z-Length: 100 Parent:Unset Use Parent: false
@@ -279,7 +279,7 @@ Parameters-
 - __${topY}__ The topY value.
 
 
-#### Example:
+**Example**:
     > g! icasa:move-zone livingroom 410 25
     
 ### 2.4. Resize zone
@@ -296,7 +296,7 @@ Parameters-
 - __${Y-Length}__ The new Y-Length value.
 
 
-#### Example:
+**Example**:
     > g! icasa:resize-zone livingroom 245 300
     
 ### 2.5. Add parent
@@ -315,7 +315,7 @@ Parameters-
 Throws-> Exception when zone does not fit in the parent.
 
 
-#### Example:
+**Example**:
     > g! icasa:set-zone-parent livingroom chair true
            
   
@@ -332,7 +332,7 @@ Parameters-
 - __${variableName}__ The variable name.
 
 
-#### Example:
+**Example**:
     > g! icasa:add-zone-variable livingroom comfortable
 
 ### 2.7. Modify variable
@@ -349,7 +349,7 @@ Parameters-
 - __${variableValue}__ The numeric value.
 
 
-#### Example:
+**Example**:
     > g! icasa:modify-zone-variable livingroom comfortable 100
      
 ### 2.8. Attach a zone to a device
@@ -366,7 +366,7 @@ Parameters-
 - __${attach}__ True to attach, false to deatach.
 
 
-#### Example:
+**Example**:
     > g! icasa:attach-zone-device Pres-A1255D-D chair true
     > g! icasa:attach-zone-device Pres-A1255D-D chair false
        
@@ -382,7 +382,7 @@ Parameters->
 - __${zoneId}__ The zone ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:show-zone livingroom
     Variables: 
     Variable: Volume - Value: 10.0
@@ -404,7 +404,7 @@ Parameters:
 - __${personType}__ The person type.
 
 
-#### Example:
+**Example**:
     > g! icasa:create-person Pierre Boy
 
 ### 3.2. Get persons in zone
@@ -419,7 +419,7 @@ Parameters:
 - __${personId}__ The person Id.
 
 
-#### Example:
+**Example**:
     > g! icasa:show-person-zones Pierre 
     Zones: 
     Zone : Zone: bedroom X: 55 Y: 370 -- Width: 259 Height: 210 - Parent: Unset - Use parent: false
@@ -436,7 +436,7 @@ Parameters->
 - __${personId}__ The person ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:show-persons
     Persons: 
     Person Person: Pierre - Position: (215:444) - Type: Boy
@@ -453,7 +453,7 @@ Parameters->
 - __${personId}__ The person ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:move-person Pierre 100 100
 
 ### 3.5. Move person to a zone
@@ -469,7 +469,7 @@ Parameters->
 - __${zoneId}__ The zone ID.
 
 
-#### Example:
+**Example**:
     > g! icasa:move-person-zone Pierre kitchen
 
 ### 3.6. Attach person to a zone
@@ -486,7 +486,7 @@ Parameters->
 - __${attach}__ True to attach, false to deatach.
 
 
-#### Example:
+**Example**:
     > g! icasa:attach-person-zone Pierre chair true
     > g! icasa:attach-person-zone Pierre chair false
 
@@ -505,7 +505,7 @@ Parameters->
 - __NONE__ 
 
 
-#### Example:
+**Example**:
     > g! icasa:reset-context
 
 ### 4.2. Show scripts
@@ -520,7 +520,7 @@ Parameters->
 - __NONE__ 
 
 
-#### 4.2.1. Example:
+**Example**:
     > g! icasa:show-scripts
     Scripts: 
     SetupHouse.bhv
@@ -539,7 +539,7 @@ Parameters->
 - __${scriptName}__ script name to execute.
 
 
-#### Example:
+**Example**:
     > g! icasa:execute-script SetupHouseWithLights.bhv
 
 <a name="Configuration"></a>
@@ -556,7 +556,7 @@ Parameters->
 - __${value}__ the property value.
 - __${type}__ the property type. The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
 
-#### Example:
+**Example**:
     > g! icasa:set-global-property period 80.0 Float
 	
 ### 5.2. Set a user configuration property
@@ -571,7 +571,7 @@ Parameters->
 - __${value}__ the property value.
 - __${type}__ the property type. The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
 
-#### Example:
+**Example**:
     > g! icasa:set-user-property john period 80.0 Float
 	
 ### 5.3. Set a application configuration property
@@ -586,7 +586,7 @@ Parameters->
 - __${value}__ the property value.
 - __${type}__ the property type. The type must be one of this [String, Boolean, Integer, Long, Float] (Optional Parameter- Default Value is String)
 
-#### Example:
+**Example**:
     > g! icasa:set-app-property LightFollowMe period 80.0 Float
 	
 ### 5.4. Get a global configuration property value
@@ -598,7 +598,7 @@ Parameters->
 
 - __${name}__ the property name.
 
-#### Example:
+**Example**:
     > g! icasa:get-global-property period
 	  Property: period - Value: 80.0
 	  80
@@ -613,7 +613,7 @@ Parameters->
 - __${user}__ the user name.
 - __${name}__ the property name.
 
-#### Example:
+**Example**:
     > g! icasa:get-user-property jhon period
 	  Property: period - Value: 80.0
 	  80
@@ -628,7 +628,7 @@ Parameters->
 - __${app}__ the application id.
 - __${name}__ the property name.
 
-#### Example:
+**Example**:
     > g! icasa:get-app-property LightFollowMe period
 	  Property: period - Value: 80.0
 	  80
