@@ -111,7 +111,7 @@ The clock section displays the (virtual) time in the simulator, and the time fac
 <a name="Execution"></a>
 #### 3.4.2. Script Execution
 
-To execute a script select it from the script list and click on _Start_ button. To pause it, the user must click on the _Pause_ button, and to resume it in the _Resume_ button, finally to stop the script execution the user must click on _Stop_ button. The user can change the script date of execution selecting a new date in the left bottom text box.
+To execute a script select it from the script list and click on _Start_ button. To pause it, the user must click on the _Pause_ button, and to resume it in the _Resume_ button, finally to stop the script execution the user must click on _Stop_ button.
 The script language is documented [here](script.html)
 
 <a name="State"></a>

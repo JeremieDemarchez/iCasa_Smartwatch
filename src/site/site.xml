@@ -35,11 +35,7 @@
          <reflowSkin>
              <theme>bootswatch-cerulean</theme>
              <sideBarEnabled>true</sideBarEnabled>
-             <googlePlusOne />
-             <googleSearch>
-                     <sitesearch>http://adeleresearchgroup.github.com/iCasa</sitesearch>
-             </googleSearch>
-
+             <navbarInverse>true</navbarInverse>
              <brand>
                  <!-- Brand text in top-left part of the site -->
                 <name>

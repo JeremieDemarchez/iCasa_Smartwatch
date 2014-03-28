@@ -81,8 +81,9 @@ public class ZoneModel {
         if (updateThermalCapacity){
             double newVolume = 1.0d; // use this value as default to avoid divide by zero
             Double zoneVolume = (Double) _zone.getVariableValue(VOLUME_PROP_NAME);
-            if ((zoneVolume != null) && ((zoneVolume) > 0.0d))
+            if ((zoneVolume != null) && ((zoneVolume) > 0.0d)){
                 newVolume =  zoneVolume;
+            }
             _thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
         }
     }
@@ -123,15 +124,15 @@ public class ZoneModel {
         for(LocatedDevice device : _temperatureDevices){
             if (isInTheZone(device)){
 
-                Object deviceObj = device.getDeviceObject();
+                GenericDevice deviceObj = device.getDeviceObject();
 
                 if (deviceObj instanceof Cooler){
-                    _devices.add((GenericDevice)deviceObj);
+                    _devices.add(deviceObj);
                     _coolers.add((Cooler)deviceObj);
 
                 }else if(deviceObj instanceof Heater){
                     _heaters.add((Heater)deviceObj);
-                    _devices.add((GenericDevice)deviceObj);
+                    _devices.add(deviceObj);
                 }
             }
         }

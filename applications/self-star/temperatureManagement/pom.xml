@@ -16,8 +16,9 @@
     <packaging>pom</packaging>
     <name>${productName} :: ${projectName}</name>
 
-<modules>
-    <module>exerciceO</module>
-    <module>exerciceTwo</module>
-</modules>
+    <modules>
+        <module>exerciceO</module>
+        <module>exerciceTwo</module>
+        <module>exerciceThree</module>
+    </modules>
 </project>

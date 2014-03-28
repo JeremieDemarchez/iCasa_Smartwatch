@@ -70,12 +70,13 @@ public class FollowMeManagerCommandImpl {
         try{
             energyGoal = EnergyGoal.valueOf(goal.toUpperCase());
 
-            System.out.println(" ILLUMINANCE "+ energyGoal);
+            System.out.println(" Energy "+ energyGoal);
             //call the administration service to configure it :
             m_administrationService.setEnergySavingGoal(energyGoal);
 
         }catch(Exception e){
-            System.out.println("Invalid Argument (must be soft, medium or full");
+            e.printStackTrace();
+            System.out.println("Invalid Argument (must be soft, medium or high");
         }
     }
 

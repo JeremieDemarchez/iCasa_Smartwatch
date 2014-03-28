@@ -36,12 +36,14 @@
             </activation>
             <modules>
                 <module>zigbee</module>
+                <module>philips</module>
             </modules>
         </profile>
         <profile>
             <id>release</id>
             <modules>
                 <module>zigbee</module>
+                <module>philips</module>
             </modules>
         </profile>
     </profiles>

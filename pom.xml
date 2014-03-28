@@ -28,7 +28,6 @@
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
-
     <properties>
         <site.path>snapshot</site.path>
         <repo_path>snapshot</repo_path>

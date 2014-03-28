@@ -1,46 +1,51 @@
 # Download
 
+You can download three different distributions of the iCasa project. Each distribution contains different features.
 
-iCasa Platform distribution
--------
+<dl>
+<div class="panel panel-default">
+      <!-- Default panel contents -->
+      <div class="panel-heading">Choose your flavour : </div>
 
-The iCasa Platform distribution contains :
-<ul>
-<li>the iCasa Platform gateway</li>
-</ul>
-**Version**= ${project.version}
-
-<a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download icasa distribution</a>
-
-iCasa Teaching distribution
----------------------------
-
-The iCasa Teaching distribution contains :
-<ul>
-<li> the iCasa Platform gateway</li>
-<li> <a href="guide.html"> The iCasa Simulator Graphical User Interface (GUI)</a></li>
-</ul>
-**Version**= ${project.version}
-
-<a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download icasa teaching distribution</a>
-
-iCasa Teaching distribution with Applications
----------------------------------------------
-The Light Follow Me application automates light up and down according to person presence detection.
-All binary lights in a room are up if at least one person is detected in it.
-
-The iCasa Teaching distribution with applications contains :
-<ul>
-<li>  The iCasa Platform gateway</li>
-<li>  <a href="guide.html"> The iCasa Simulator Graphical User Interface (GUI)</a></li>
-<li>  <a href="tutoIDE.html"> The Light Follow Me application</a></li>
-</ul>
-
-**Version**= ${project.version}
-
-<a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution.with.apps/${project.version}/icasa.teaching.distribution.with.apps-${project.version}.zip" class="btn
-       btn-primary btn-large"><i class="fa-icon-download"></i>&nbsp; Download icasa teaching distribution with apps</a>
-
-
+      <!-- Table -->
+      <table class="table table-bordered table-striped">
+        <thead>
+          <tr>
+            <th></th>
+            <th scope="col" class="col-xs-4"><h3>Platform distribution</h3></th>
+            <th scope="col" class="col-xs-4"><h3>Teaching distribution</h3></th>
+            <th scope="col" class="col-xs-4"><h3>Teaching distribution with Apps</h3></th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>The iCasa Platform gateway</td>
+            <td class="text-success"><i class="icon-ok icon-3x"></i></td>
+            <td class="text-success"><i class="icon-ok icon-3x"></i></td>
+            <td class="text-success"><i class="icon-ok icon-3x"></i></td>
+          </tr>
+          <tr>
+            <td><a href="guide.html"> The iCasa Simulator Graphical User Interface (GUI)</a></td>
+            <td class="text-error"><i class="icon-remove icon-3x"></i></td>
+            <td class="text-success"><i class="icon-ok icon-3x"></i></td>
+            <td class="text-success"><i class="icon-ok icon-3x"></i></td>
+          </tr>
+          <tr>
+            <td><a href="tutoIDE.html"> The Light Follow Me application</a></td>
+            <td class="text-error"><i class="icon-remove icon-3x"></i></td>
+            <td class="text-error"><i class="icon-remove icon-3x"></i></td>
+            <td class="text-success"><i class="icon-ok icon-3x"></i></td>
+          </tr>
+             <tr>
+            <td>Download Links</td>
+            <td><a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.platform.distribution/${project.version}/icasa.platform.distribution-${project.version}.zip" class="btn
+       btn-primary btn-large"><i class="icon-download"></i>&nbsp; Download </a></td>
+            <td><a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution/${project.version}/icasa.teaching.distribution-${project.version}.zip" class="btn
+       btn-primary btn-large"><i class="icon-download"></i>&nbsp; Download</a></td>
+            <td><a href="http://repository-icasa.forge.cloudbees.com/${repo_path}/fr/liglab/adele/icasa/icasa.teaching.distribution.with.apps/${project.version}/icasa.teaching.distribution.with.apps-${project.version}.zip" class="btn
+       btn-primary btn-large"><i class="icon-download"></i>&nbsp; Download </a></td>
+          </tr>
+        </tbody>
+      </table>
+ </div>
+</dl>

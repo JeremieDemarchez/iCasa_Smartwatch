@@ -27,7 +27,7 @@ import fr.liglab.adele.icasa.clock.Clock;
 public interface SpecificClockScheduledRunnable extends ICasaRunnable {
 
     /**
-     * Get the date to be scheduled the iCasa tasks using the iCasa Clock.
+     * Get the date to be scheduled the iCasa tasks using the specific Clock.
      * @return the date in milliseconds.
      */
     public long getExecutionDate();
