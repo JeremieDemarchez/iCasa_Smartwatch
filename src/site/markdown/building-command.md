@@ -1,17 +1,5 @@
 # How to build an iCasa Command
 
-- [Tutorial Requirements](#Requirements)
-- [iCasa Command Model](#Model)
-    - [iCasa Command Interface](#Interface)
-    - [Command Signature](#Signature)
-- [iCasa Command Implementation](#Implementation)
-    - [Command without parameters](#Implementation_No_Parameters)
-	- [Command with parameters](#Implementation_Parameters)
-- [iCasa Command Usage](#Usage)
-    - [OSGi Shell](#Osgi-Shell)
-    - [iCasa Scripts](#iCasa-Scripts)
-- [Project Packaging](#Packaging)
-    - [POM](#POM)
   
 <a name="Requirements"></a>
 ## 1. Tutorial Requirements
@@ -35,9 +23,76 @@ This benefits the platform in two main ways:
 * commands allow to introspect the information of the current simulation (usually in the shell mode).
 * commands allow to modify the state of elements in current simulation.
 
+## 3. Create Command with annotations
+
+The easiest way to create iCasa command is to use the annotation and the specific handler provides by iCasa.
+
+### 3.1. The Command Provider handler
+
+The OSGi component mut have the CommandProvider annotation :
+
+    /**
+    *Use the handler command and declare the command as a command provider. The
+    *namespace is used to prevent name collision.
+    */
+    @CommandProvider(namespace = "yournamespace")
+    public class CommandComponent {
+
+        .....
+
+    }
+
+
+### 3.2. The Command annotation
+
+Each methods that you want to be become a command must start with the @Command annotation.
+
+    /**
+    *Use the handler command and declare the command as a command provider. The
+    *namespace is used to prevent name collision.
+    */
+    @CommandProvider(namespace = "yournamespace")
+    public class CommandComponent {
+
+         // Each command should start with a @Command annotation
+          @Command
+          public void yourCommand(String firstArgument){
+           .....
+          }
+
+          // Each command should start with a @Command annotation
+          @Command
+          public void anOtherCommandWithNoArgument(){
+            .....
+          }
+
+    }
+
+### 3.3. Project packaging
+
+You can use <a href="http://felix.apache.org/site/apache-felix-ipojo.html">maven</a> tool to build a command project. Two iCasa maven artifacts are necessary to build your project, the first one context.api defines the interfaces used in the Command model, the command.handler provides the CommandProvider handler and the Command annotation.
+
+Artifacs :
+
+___Context API - iCasa Command interfaces___
+
+    <groupId>fr.liglab.adele.icasa</groupId>
+    <artifactId>context.api</artifactId>
+    <version>${project.version}</version>
+
+___Command Handler - iCasa command handler and annotation___
+
+    <groupId>fr.liglab.adele.icasa</groupId>
+    <artifactId>command.handler</artifactId>
+    <version>${project.version}</version>
+
+
+## 4. Create Command with iCasa Command Interface
+
+### 4.1. Interfaces
 
 <a name="Interface"></a>
-### 2.1. iCasa Command Interface
+#### 4.1.1. iCasa Command Interface
 
 In order to add a new command to the iCasa platform, an OSGi service must be provided by the developer. This service has to implement the _fr.liglab.adele.icasaICasaCommand_ interface, it is show below
 
@@ -99,7 +154,7 @@ In order to add a new command to the iCasa platform, an OSGi service must be pro
 
 
 <a name="Signature"></a>
-### 2.2 Command Signature
+#### 4.1.2. Command Signature
 
 A command __signature__ defines number and order of its parameters. When a command is used in the shell arguments are anonymous, iCasa platform determines the parameter correspondence only based in order. On the other hand, if the command is used in a script file, parameters are determined based on their names.
 
@@ -130,7 +185,8 @@ Commands could have more than one signature, however signatures cannot contain t
 
 
 <a name="Implementation"></a>
-## 3. iCasa Command Implementation
+### 4.2. iCasa Command Implementation
+
 In order to facilitate the creation of iCasa Commands, the abstract class _fr.liglab.adele.icasa.commands.impl.AbstractCommand_  is provided by the iCasa platform. This class implements the _ICasaCommand_ interface, it implements the _validate_ and _getSignature_ methods.
 
 A command implementation should extend the AbstractCommand and implements the _getName_, _getDescription_ and _execute_ methods. In addition, in the constructor of the implementation class must be defined the signatures of the command using the method _addSignature_. Finally, the implementation class must be annotated with the iPOJO annotations to expose itself as OSGi a service, this service will implement the right interface _ICasaCommand_. 
@@ -138,7 +194,7 @@ A command implementation should extend the AbstractCommand and implements the _g
 In order to illustrate how to create iCasa commands will show to different examples, the first one using no parameters, and other using parameters.
 
 <a name="Implementation_No_Parameters"></a>
-### 3.1 Command without parameters
+#### 4.2.1. Command without parameters
 
 The following command displays the list of current devices in the iCasa platform. It does not take any parameter.
 
@@ -182,7 +238,7 @@ The following command displays the list of current devices in the iCasa platform
 		}
 
 <a name="Implementation_Parameters"></a>
-### 3.2 Command with parameters
+#### 4.2.2. Command with parameters
 
 The following command displays the details of a particular device. 
 
@@ -231,54 +287,8 @@ The following command displays the details of a particular device.
 
 		}
 
-<a name="Usage"></a>
-## 4. iCasa Command Usage
-
-As said before, iCasa Commands has two usages, the first one to be called from the shell, and the other one to be used from an iCasa Script.
-
-<a name="Osgi-Shell"></a>
-### 4.1. OSGi Shell
-
-To see the parameter order in the shell, we can call the icasa:help command, which will show the commands description, as well as the parameters list.
-
-    g!icasa:help
-    
-    icasa:show-zones
-        Shows the list of zones.
-        Parameters: 
-        ()
-    icasa:move-person
-        Move a person to a new X,Y position.
-        Parameters: 
-        ( personId  newX  newY )
-        ( personId  newX  newY  newZ )
-    g!
-    
-
-So, for example, to move a person, we have two signatures with three and four parameters respectively:
-
-    g! move-person Jean 40 40
-
-and
-
-    g! move-person Jean 50 50 50
-    
-<a name="iCasa-Scripts"></a>
-### 4.2. iCasa Scripts
-iCasa provides a mechanism to execute scripts. This is presented in the [script](script.html) section. But also, the script language can be extended by using commands. So, new commands could be executed in a given script.
-The command name (the string returned in the getName() method)  must be represented by an XML tag. And the parameters are represented by the attributes contained in those tags.
-
-For example, it is possible to move a person by putting in the script the following:
-
-    <move-person personId="Jean" newX="40" newY="40"/>
-    
-or
-
-    <move-person personId="Jean" newX="50" newY="50" newZ="50"/>
-    
-   
 <a name="Packaging"></a>
-## 5. Project Packaging
+### 4.3. Project Packaging
 
 You can use <a href="http://felix.apache.org/site/apache-felix-ipojo.html">maven</a> tool to build a command project. Two iCasa maven artifacts are necessary to build your project, the first one context.api defines the interfaces used in the Command model, the context.impl provides the AbstractCommand class.
 
@@ -296,7 +306,7 @@ ___Context Impl - iCasa Command abstract class___
     <artifactId>context.impl</artifactId>
     <version>1.1.2-SNAPSHOT</version>
 
-Repositories :	
+Repositories :
 
 	<repositories>
 	  <repository>
@@ -315,8 +325,8 @@ Repositories :
 	  </repository>
 	</repositories>
 
-<a name="POM"></a>	
-### 5.1 Command Pom Model File
+<a name="POM"></a>
+#### 4.3.1. Command Pom Model File
 
 This is an extract of a maven project using the needed dependencies to build iCasa Commands. Also it shows dependencies for OSGi and iPOJO bundles, as well as their plugins configuration.
 
@@ -324,12 +334,12 @@ This is an extract of a maven project using the needed dependencies to build iCa
 
     <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
        <modelVersion>4.0.0</modelVersion>
-  
+
        <!-- Project coordinates -->
        <artifactId>myCommand.project</artifactId>
        <packaging>bundle</packaging>
        <version>1.0.0-SNAPSHOT</version>
-       
+
 	   <!-- Project repositories -->
 	   <repositories>
 	     <repository>
@@ -347,7 +357,7 @@ This is an extract of a maven project using the needed dependencies to build iCa
 		  <url>http://repository-icasa.forge.cloudbees.com/snapshot</url>
 	     </repository>
 	   </repositories>
-  
+
        <!-- Project dependencies -->
        <dependencies>
           <dependency>
@@ -359,7 +369,7 @@ This is an extract of a maven project using the needed dependencies to build iCa
              <groupId>org.apache.felix</groupId>
              <artifactId>org.apache.felix.ipojo</artifactId>
 	         <version>1.10.1</version>
-          </dependency>  
+          </dependency>
           <dependency>
              <groupId>org.apache.felix</groupId>
              <artifactId>org.apache.felix.ipojo.annotations</artifactId>
@@ -396,5 +406,53 @@ This is an extract of a maven project using the needed dependencies to build iCa
          </plugin>
        </plugins>
     </build>
-  
-</project>
+    </project>
+
+
+<a name="Usage"></a>
+## 5. iCasa Command Usage
+
+As said before, iCasa Commands has two usages, the first one to be called from the shell, and the other one to be used from an iCasa Script.
+
+<a name="Osgi-Shell"></a>
+### 5.1. OSGi Shell
+
+To see the parameter order in the shell, we can call the icasa:help command, which will show the commands description, as well as the parameters list.
+
+    g!icasa:help
+    
+    icasa:show-zones
+        Shows the list of zones.
+        Parameters: 
+        ()
+    icasa:move-person
+        Move a person to a new X,Y position.
+        Parameters: 
+        ( personId  newX  newY )
+        ( personId  newX  newY  newZ )
+    g!
+    
+
+So, for example, to move a person, we have two signatures with three and four parameters respectively:
+
+    g! move-person Jean 40 40
+
+and
+
+    g! move-person Jean 50 50 50
+    
+<a name="iCasa-Scripts"></a>
+### 5.2. iCasa Scripts
+iCasa provides a mechanism to execute scripts. This is presented in the [script](script.html) section. But also, the script language can be extended by using commands. So, new commands could be executed in a given script.
+The command name (the string returned in the getName() method)  must be represented by an XML tag. And the parameters are represented by the attributes contained in those tags.
+
+For example, it is possible to move a person by putting in the script the following:
+
+    <move-person personId="Jean" newX="40" newY="40"/>
+    
+or
+
+    <move-person personId="Jean" newX="50" newY="50" newZ="50"/>
+    
+   
+
