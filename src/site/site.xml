@@ -69,6 +69,15 @@
                 <download>
                     <toc>no</toc>
                 </download>
+                <detector>
+                    <toc>no</toc>
+                </detector>
+                <heater>
+                    <toc>no</toc>
+                </heater>
+                <lights>
+                    <toc>no</toc>
+                </lights>
             </pages>
 
         </reflowSkin>
@@ -102,6 +111,7 @@
 
         <links>
             <item name="GitHub project" href="https://github.com/AdeleResearchGroup/iCasa" />
+            <item name="Download" href="download.html" />
         </links>
 
         <menu name="iCasa">
