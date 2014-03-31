@@ -120,7 +120,7 @@ public class DeviceREST extends DefaultController {
 
         String content = null;
         try {
-            content = IcasaJSONUtil.getContent(context().getReader());
+            content = IcasaJSONUtil.getContent(context().reader());
         } catch (IOException e) {
             e.printStackTrace();
             return internalServerError();
@@ -166,7 +166,7 @@ public class DeviceREST extends DefaultController {
     public Result createDevice() {
         String content = null;
         try {
-            BufferedReader reader = context().getReader();
+            BufferedReader reader = context().reader();
             content = IcasaJSONUtil.getContent(reader);
         } catch (IOException e) {
             e.printStackTrace();

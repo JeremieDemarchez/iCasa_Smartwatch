@@ -110,7 +110,7 @@ public class ZoneREST extends DefaultController {
 	public Result updatesZone(@Parameter("zoneId") String zoneId) {
         String content = null;
         try {
-            content = IcasaJSONUtil.getContent(context().getReader());
+            content = IcasaJSONUtil.getContent(context().reader());
         } catch (IOException e) {
             e.printStackTrace();
             return internalServerError();
@@ -155,7 +155,7 @@ public class ZoneREST extends DefaultController {
 	public Result createZone() {
         String content = null;
         try {
-            content = IcasaJSONUtil.getContent(context().getReader());
+            content = IcasaJSONUtil.getContent(context().reader());
         } catch (IOException e) {
             e.printStackTrace();
             return internalServerError();
