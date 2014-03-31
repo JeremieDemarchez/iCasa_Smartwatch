@@ -3,12 +3,6 @@
 iCasa provides a set of functional <a href="http://felix.apache.org/site/apache-felix-gogo.html">gogo</a> commands helping the manipulation of iCasa elements, such as devices, zones and persons.
 
 
-- <a href="#Device">Manipulating devices</a>
-- <a href="#Zone">Manipulating zones</a>
-- <a href="#Persons">Manipulating persons</a>
-- <a href="#General">Manipulating Simulation</a>
-- <a href="#Configuration">Configuration Commands</a>
-
 <a name="Device"></a>
 ## 1. Manipulating Devices
 
