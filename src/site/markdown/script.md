@@ -17,7 +17,7 @@ ___Outline___
 
 Scenarios in iCasa simulation module are specified in a XML file using the tag __behavior__. 
 
-_Example:_
+**Example**:
 
     <behavior startdate="03/10/2011-00:00:00" factor="1440">
        <!-- Scenario instructions -->
@@ -46,7 +46,7 @@ _Example:_
    
 Introduces a delay in (virtual) minutes between the previous instruction and the next one.
 
-_Example:_
+**Example**:
 
     <delay value="60" />
     
@@ -79,7 +79,7 @@ or
 
 Creates a zone in application context
 
-_Example:_
+**Example**:
 
     <create-zone id="kitchen"  leftX="410" topY="370" X-Length="245" Y-Length="210" />	
 
@@ -127,7 +127,7 @@ or
 
 Move a zone in application context
 
-_Example:_
+**Example**:
 
     <move-zone id="kitchen"  leftX="410" topY="370" />	
 
@@ -155,7 +155,7 @@ _Example:_
 
 Resize a zone in application context
 
-_Example:_
+**Example**:
 
     <resize-zone id="kitchen"  X-Length="245" Y-Length="210" />	
 
@@ -191,7 +191,7 @@ or
 
 It adds a simulation variable to a zone
 
-_Example:_
+**Example**:
 
     <add-zone-variable zoneId="livingroom" variable="Temperature" />
 
@@ -215,7 +215,7 @@ _Example:_
 
 It modifies a simulation variable in a zone
 
-_Example:_
+**Example**:
 
     <modify-zone-variable zoneId="kitchen" variable="Temperature" value="296.15"/>
 	
@@ -247,7 +247,7 @@ _Example:_
 
 It creates a device instance in the application context
 
-_Example:_
+**Example**:
 
     <create-device id="Pres-A1255D-D" type="iCasa.PresenceSensor" />
 
@@ -269,7 +269,7 @@ _Example:_
    
 ### 4.2. Remove Device
 
-_Example:_
+**Example**:
 
     <remove-device deviceId="Pres-A1255D-D" />
 
@@ -291,7 +291,7 @@ _Example:_
 
 Places a device in a zone of application context.
 
-_Example:_
+**Example**:
 
     <move-device-zone deviceId="BiLi-A7496W-S" zoneId="kitchen" />
 	
@@ -317,7 +317,7 @@ _Example:_
 
 Changes the device's state to __activated__. 
 
-_Example:_
+**Example**:
     
 	<activate-device deviceId="Pres-A1255D-D" />
 	
@@ -339,7 +339,7 @@ _Example:_
 
 Changes the device's state to __deactivated__. 
 
-_Example:_
+**Example**:
     
 	<deactivate-device deviceId="Pres-A1255D-D" />
 	
@@ -361,7 +361,7 @@ _Example:_
 
 Changes the device's fault state to __yes__. 
 
-_Example:_
+**Example**:
     
 	<fault-device deviceId="Pres-A1255D-D" />
 	
@@ -383,7 +383,7 @@ _Example:_
 
 Changes the device's fault state to __no__. 
 
-_Example:_
+**Example**:
     
 	<repair-device deviceId="Pres-A1255D-D" />
 	
@@ -405,7 +405,7 @@ _Example:_
 
 Set the value of the device property
 
-_Example:_
+**Example**:
 
     <set-device-property deviceId="BiLi-A7496W-S" property="powerStatus" value="true"/>
 	
@@ -439,7 +439,7 @@ _Example:_
 
 Adds a person to the simulation context
 
-_Example:_
+**Example**:
 
     <create-person id="Paul" type="Grandfather" />
 
@@ -464,7 +464,7 @@ _Example:_
 
 Places a person in a zone in the application context
 
-_Example:_
+**Example**:
 
     <move-person-zone personId="Paul" zoneId="bedroom"  />
 

@@ -22,7 +22,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### 1.1.1. Example:
+**Example**:
 
     > curl -X GET http://localhost:9000/icasa/zones/zones
 
@@ -83,7 +83,7 @@ Path parameter -> ${zoneId} the id of the zone to be consulted
 Data parameter -> _None_
 
 
-#### 1.2.1. Example:
+**Example**:
 
     > curl -X GET http://localhost:9000/icasa/zones/zone/bathroom
 
@@ -115,7 +115,7 @@ Path parameter -> None
 Data parameter -> the JSON data associated with the new zone
 
 
-#### 1.3.1. Example:
+**Example**:
 
     > curl -X POST -d "{"zoneId":"hall","name":"hall","isRoom":false,"leftX":1,"topY":1,"rightX":50,"bottomY":50}" http://localhost:9000/icasa/zones/zone
 
@@ -144,7 +144,7 @@ Path parameter -> ${zoneId} the id of the zone to be deleted
 Data parameter -> _None_
 
 
-#### 1.4.1. Example:
+**Example**:
 
     > curl -X DELETE http://localhost:9000/icasa/zones/zone/hall
 
@@ -160,7 +160,7 @@ Path parameter -> ${zoneId} the id of the zone to be created
 Data parameter -> the JSON data associated with new zone
 
 
-#### 1.5.1. Example:
+**Example**:
 
     > curl -X POST -d "{"id":"hall","isRoom":true,"rightX":316,"leftX":98,"name":"hall","topY":72,"bottomY":277,"variables":{}}" _http://localhost:9000/icasa/zones/zone/hall_
 
@@ -194,7 +194,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### 2.1.1. Example:
+**Example**:
 
     > curl -X GET http://localhost:9000/icasa/devices/devices
 
@@ -254,7 +254,7 @@ Path parameter -> ${deviceId} the id of the device to be consulted
 Data parameter -> _None_
 
 
-#### 2.2.1. Example:
+**Example**:
 
     > curl -X GET _http://localhost:9000/icasa/devices/device/Ther-A3654Q-S_
 
@@ -293,7 +293,7 @@ Path parameter -> None
 Data parameter -> the JSON data associated with the new device
 
 
-#### 2.3.1. Example:
+**Example**:
 
     > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"","type":"iCasa.Heater","positionX":1,"positionY":1,"properties":{}}" http://localhost:9000/icasa/devices/device
 
@@ -329,7 +329,7 @@ Path parameter -> ${deviceId} the id of the device to be consulted
 Data parameter -> the JSON data associated with the device
 
 
-#### 2.4.1. Example:
+**Example**:
 
     > curl -X POST -d "{"deviceId":"Heater-970c350695","name":"Heater-970c350695","type":"iCasa.Heater","positionX":182.8000030517578,"positionY":441.8000030517578,"properties":{"heater.updaterThread.period":5000,"state":"activated","fault":"no"},"id":"Heater-970c350695","width":32,"height":32,"state":"activated","fault":"no"}" http://localhost:9000/icasa/zones/zone/hall
 
@@ -355,7 +355,7 @@ Result:
    }
    
    
-### 2.5. Deleta a device (DELETE)
+### 2.5. Deletes a device (DELETE)
 
 Deletes a device in the iCasa execution platform.
 
@@ -380,7 +380,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### 3.1.1. Example:
+**Example**:
 
     curl -X GET http://localhost:9000/icasa/clocks/clock/default
 
@@ -434,7 +434,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### 4.1.1. Example:
+**Example**:
 
     > curl -X GET http://localhost:9000/icasa/persons/personTypes
 
@@ -469,7 +469,7 @@ Path parameter -> None
 
 Data parameter -> None
 
-#### 4.2.1. Example:
+**Example**:
 
     > curl -X GET http://localhost:9000/icasa/persons/persons
 
@@ -505,7 +505,7 @@ Path parameter -> ${personId} the id of the person to be updated
 Data parameter -> _None_
 
 
-#### 4.3.1. Example:
+**Example**:
 
     > curl -X PUT -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":542,"positionY":294,"id":"Paul","width":50,"height":50,"location":"kitchen"}" http://localhost:9000/icasa/persons/person/Paul
 
@@ -531,7 +531,7 @@ Path parameter -> None
 Data parameter -> the JSON data associated with the new person
 
 
-#### 4.4.1. Example:
+**Example**:
 
     > curl -X POST -d "{"personId":"Paul","name":"Paul","type":"Grandfather","positionX":1,"positionY":1}" http://localhost:9000/icasa/persons/person
 

@@ -85,7 +85,7 @@ public class ClockREST  extends DefaultController{
 	public Result updateClock(@Parameter("clockId") String clockId) {
         String content = null;
         try {
-            content = IcasaJSONUtil.getContent(context().getReader());
+            content = IcasaJSONUtil.getContent(context().reader());
         } catch (IOException e) {
             e.printStackTrace();
             return internalServerError();
