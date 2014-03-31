@@ -167,7 +167,33 @@
                 <version>2.9</version>
                 <configuration>
                     <!-- Default configuration for all reports -->
-
+                    <reportPlugins>
+                        <plugins>
+                            <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-project-info-reports-plugin</artifactId>
+                                <version>2.7</version>
+                                <configuration>
+                                    <dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+                                    <dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+                                </configuration>
+                            </plugin>
+                            <plugin>
+                                <groupId>org.nanoko.coffee-mill</groupId>
+                                <artifactId>coffee-mill-maven-plugin</artifactId>
+                                <version>1.0.0</version>
+                                <configuration>
+                                    <jsdocIncludePrivate>true</jsdocIncludePrivate>
+                                    <skipJSDOC>true</skipJSDOC>
+                                </configuration>
+                            </plugin>
+                            <plugin>
+                                <groupId>org.apache.maven.plugins</groupId>
+                                <artifactId>maven-surefire-report-plugin</artifactId>
+                                <version>2.17</version>
+                            </plugin>
+                        </plugins>
+                    </reportPlugins>
                 </configuration>
                 <executions>
                     <execution>
