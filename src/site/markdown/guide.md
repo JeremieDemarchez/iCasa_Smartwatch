@@ -3,10 +3,6 @@
 The simulator module of iCasa platform provides a web interface for interaction with the server side (gateway). In the home page the user can select a simulation platform of the list. To access (locally) the home page in your browser go to this url : [http://localhost:9000/simulator](http://localhost:9000/simulator)  as from 1.2.6+ version  (http://localhost:8080/simulator for earlier versions).
     
 Once one platform selected, the simulator main interface is displayed. The main interface is divided in two sections: the map section presents the house plan, and the actions section shows information about the execution state of the iCasa platform and allows user to modify it.
-    
-- [Platform Operations](#Platform)
-- [Map Section](#Map)
-- [Actions Section](#Actions)
 
 <a name="Platform"></a> 
 ## 1. Platform Operations

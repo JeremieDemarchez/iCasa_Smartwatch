@@ -2,11 +2,6 @@
 
 iCasa framework provides required support to build digital home applications. The main goal of digital home applications is to improve the living experience of people in its habitat, reducing the need for interaction with computers. Most digital home applications have to react to changes in the physical environment in which the system is deployed. They need also sometimes have information provided by the user as their preferences or other contextual information. In addition, third parties as telecom operators should share contextual information useful for digital home applications.
 
-- [iCasa Architecture](#Architecture)
-- [iCasa Device Model](#Model)
-- [iCasa Applications](#Applications)
-- [iCasa Simulator](#Simulator)
-
 <a name="Architecture"></a>
 ## 1. iCasa Architecture
 iCasa framework is built on OSGi platform, each device available to be used by applications is presented as a OSGi service into the service register. The platform is divided in two layers: the device layer and application layer. The device layer provides an abstraction of underlying physical devices allowing applications access them avoiding have to be aware of their technical details. On the other hand, application layer must only focus in to provide value added functionality for the digital home. 

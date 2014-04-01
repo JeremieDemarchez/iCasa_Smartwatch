@@ -1,10 +1,4 @@
 # Technical Service Usage
-- [Technical Services](#Technical)
-- [Configuration Service](#Configuration)
-- [Person Location Service](#PersonLocation)
-- [Scheduling Service](#Scheduling)
-  
-
 
 <a name="Technical"></a>
 ## 1. iCasa technical services

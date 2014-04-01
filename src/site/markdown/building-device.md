@@ -1,17 +1,4 @@
 # How to build an iCasa Device
-
-- [Tutorial Requirements](#Requirements)
-- [iCasa Device Model](#Model)
-- [Simulated Devices](#Simulated)
-- [Device Using Scope Zone](#Device_Scope)
-  - [Device Description](#Description): shows how to describe the device in the iCasa platform 
-  - [Device Implementation](#Implementation): presents the java class implementing the simulated device functionality
-     - [Properties initialization](#Properties)
-	 - [Scope Utilization](#Scope)
-	 - [Zone Listener](#Listener)
-- [Device Component](#Component)
-- [Device Bundle Packaging](#Packaging)
-  - [POM Example](#POM): thermoter device POM file
   
 <a name="Requirements"></a>
 ## 1. Tutorial Requirements

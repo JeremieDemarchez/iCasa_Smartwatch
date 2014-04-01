@@ -25,19 +25,19 @@
          <href>#</href>
      </bannerLeft>-->
 
-     <skin>
-         <groupId>lt.velykis.maven.skins</groupId>
-         <artifactId>reflow-maven-skin</artifactId>
-         <version>1.1.0</version>
-     </skin>
+    <skin>
+        <groupId>lt.velykis.maven.skins</groupId>
+        <artifactId>reflow-maven-skin</artifactId>
+        <version>1.1.0</version>
+    </skin>
 
-     <custom>
-         <reflowSkin>
-             <theme>bootswatch-cerulean</theme>
-             <sideBarEnabled>true</sideBarEnabled>
-             <navbarInverse>true</navbarInverse>
-             <brand>
-                 <!-- Brand text in top-left part of the site -->
+    <custom>
+        <reflowSkin>
+            <theme>bootswatch-cerulean</theme>
+            <sideBarEnabled>true</sideBarEnabled>
+            <navbarInverse>true</navbarInverse>
+            <brand>
+                <!-- Brand text in top-left part of the site -->
                 <name>
                     <![CDATA[
                     <span class="color-highlight">iCasa</span>
@@ -45,8 +45,8 @@
                 </name>
                 <href>index.html</href>
             </brand>
-             <toc>sidebar</toc>
-             <tocTopMax>2</tocTopMax>
+            <toc>sidebar</toc>
+            <tocTopMax>2</tocTopMax>
             <highlightJs>true</highlightJs>
             <highlightJsTheme>github</highlightJsTheme>
 
@@ -62,11 +62,23 @@
                 <column>Simulated Devices</column>
             </bottomNav>
 
-             <pages>
-                 <index>
-                     <toc>no</toc>
-                 </index>
-             </pages>
+            <pages>
+                <index>
+                    <toc>no</toc>
+                </index>
+                <download>
+                    <toc>no</toc>
+                </download>
+                <detector>
+                    <toc>no</toc>
+                </detector>
+                <heater>
+                    <toc>no</toc>
+                </heater>
+                <lights>
+                    <toc>no</toc>
+                </lights>
+            </pages>
 
         </reflowSkin>
     </custom>
@@ -99,6 +111,7 @@
 
         <links>
             <item name="GitHub project" href="https://github.com/AdeleResearchGroup/iCasa" />
+            <item name="Download" href="download.html" />
         </links>
 
         <menu name="iCasa">
@@ -110,40 +123,40 @@
             <item name="Install" href="install.html"/>
             <item name="Device Injection in iCasa" href="requires-device.html"/>
             <item name="iCasa Trackers" href="trackers.html"/>
-            <item name="Technical Services" href="technical-services.html"/>            
+            <item name="Technical Services" href="technical-services.html"/>
             <item name="FAQ" href="faq.html"/>
         </menu>
 
-		<menu name="User Guide">
-		    <item name="Simulator GUI Guide" href="guide.html"/>
+        <menu name="User Guide">
+            <item name="Simulator GUI Guide" href="guide.html"/>
             <item name="First App" href="#">
-              <item name="With iCasa IDE" href="tutoIDE.html"/>
-              <!--item name="With Maven" href="tutoMaven.html"/-->
+                <item name="With iCasa IDE" href="tutoIDE.html"/>
+                <!--item name="With Maven" href="tutoMaven.html"/-->
             </item>
             <item name="Script Language" href="script.html"/>
             <item name="REST API" href="rest-api.html"/>
             <item name="Gogo commands" href="gogo-commands.html"/>
             <item name="Device Building Tutorial" href="building-device.html"/>
             <item name="Javadoc" href="apidocs/index.html"/>
-		</menu>		
-      <menu name="Advanced tutorials">
-         <item name="Building iCasa Commands" href="building-command.html"/>
-       </menu>
-      
+        </menu>
+        <menu name="Advanced tutorials">
+            <item name="Building iCasa Commands" href="building-command.html"/>
+        </menu>
+
         <menu name="Simulated Devices">
-           <item name="Lights" href="lights.html"/>
-           <item name="Heater/Cooler" href="heater.html"/>
-           <!--item name="Multimedia" href="multimedia.html"/>
-           <item name="Health" href="health.html"/>
-           <item name="Electricity" href="electricity.html"/-->
-           <item name="Detectors" href="detectors.html"/>
+            <item name="Lights" href="lights.html"/>
+            <item name="Heater/Cooler" href="heater.html"/>
+            <!--item name="Multimedia" href="multimedia.html"/>
+            <item name="Health" href="health.html"/>
+            <item name="Electricity" href="electricity.html"/-->
+            <item name="Detectors" href="detectors.html"/>
         </menu>
 
 
-		<!--menu name="Advanced Topics">
+        <!--menu name="Advanced Topics">
             <item name="Shell Commands" href="shellCommands.html"/>
 
-		</menu-->
+        </menu-->
 
     </body>
 </project>
