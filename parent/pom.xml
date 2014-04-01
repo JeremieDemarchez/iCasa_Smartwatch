@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
         <!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>1.2.4-SNAPSHOT</AdeleBaseVersion>
+        <AdeleBaseVersion>${parent.version}</AdeleBaseVersion>
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
         <ciliaVersion>1.7.4</ciliaVersion>
         <mimepullVersion>1.4</mimepullVersion>
