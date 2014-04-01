@@ -15,12 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Validate;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.osgi.framework.BundleContext;
-import org.ow2.chameleon.core.activators.DirectoryMonitor;
+import org.apache.felix.ipojo.annotations.*;
+import org.ow2.chameleon.core.services.Watcher;
 
 import java.io.File;
 
@@ -33,33 +29,23 @@ import java.io.File;
 @Instantiate
 public class ScriptMonitor {
 
-    private final BundleContext context;
-
-    private DirectoryMonitor monitor;
+    @Requires
+    Watcher watcher;
 
     private File file;
 
-    public ScriptMonitor(BundleContext context){
-        this.context = context;
+    public ScriptMonitor(){
         file = new File(ScriptExecutorImpl.SCRIPTS_DIRECTORY);
     }
 
     @Validate
     public void start() {
-        monitor = new DirectoryMonitor(file, 2000);
-        try {
-            monitor.start(context);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        watcher.add(file,2000);
     }
 
     @Invalidate
     public void stop(){
-        try {
-            monitor.stop(context);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        watcher.removeAndStopIfNeeded(file);
     }
+
 }
