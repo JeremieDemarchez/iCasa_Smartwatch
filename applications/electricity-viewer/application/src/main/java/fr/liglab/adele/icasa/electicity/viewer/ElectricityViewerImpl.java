@@ -18,21 +18,17 @@ package fr.liglab.adele.icasa.electicity.viewer;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.PowerObservable;
-
-
-import java.util.*;
-
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.location.*;
 import org.apache.felix.ipojo.annotations.*;
+
+import java.util.*;
 
 /**
  * Created by aygalinc on 25/03/14.
  */
 @Component(name = "electricity-viewer")
 @Instantiate(name = "electricity-viewer-1")
-@Provides
+@Provides(specifications = ElectricityViewer.class)
 public class ElectricityViewerImpl implements  ZoneListener, LocatedDeviceListener,ElectricityViewer {
 
 
