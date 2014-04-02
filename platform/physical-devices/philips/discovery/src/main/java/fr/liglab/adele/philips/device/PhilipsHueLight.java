@@ -55,7 +55,7 @@ public class PhilipsHueLight extends AbstractDevice implements
         super();
         super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
         super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 8.5d);
-        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
+        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,((light.getLastKnownLightState().getBrightness())/254.0) );
     }
 
     @Override
@@ -66,17 +66,37 @@ public class PhilipsHueLight extends AbstractDevice implements
 
     @Override
     public double getPowerLevel() {
-
-        return (double)light.getLastKnownLightState().getBrightness();
+        return ((double)(light.getLastKnownLightState().getBrightness())/254.0);
     }
 
     @Override
     public double setPowerLevel(double level) {
-        PHLightState lightState = new PHLightState();
-        lightState.setBrightness((int)level);
-        bridge.updateLightState(light, lightState);
-        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, (int)level);
-        return level;
+        if (level < 0.0d || level > 1.0d || Double.isNaN(level)){
+            throw new IllegalArgumentException("Invalid power level : " + level);
+        }
+
+        if (level != 0.0){
+
+            PHLightState lightState = new PHLightState();
+
+            lightState.setOn(true);
+            bridge.updateLightState(light, lightState);
+
+            lightState.setBrightness((int)(level*254));
+            bridge.updateLightState(light, lightState);
+
+            super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,level);
+
+            return level;
+        }
+        else{
+            PHLightState lightState = new PHLightState();
+            lightState.setBrightness(0);
+            super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,0.0);
+            lightState.setOn(false);
+            bridge.updateLightState(light, lightState);
+            return 0;
+        }
     }
 
     @Override
