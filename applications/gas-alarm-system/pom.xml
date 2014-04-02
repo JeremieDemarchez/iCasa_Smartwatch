@@ -25,7 +25,7 @@
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
    <groupId>fr.liglab.adele.icasa.apps</groupId>
-	<artifactId>gas.alarm.system</artifactId>
+	<artifactId>gas.alarm.sys</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
