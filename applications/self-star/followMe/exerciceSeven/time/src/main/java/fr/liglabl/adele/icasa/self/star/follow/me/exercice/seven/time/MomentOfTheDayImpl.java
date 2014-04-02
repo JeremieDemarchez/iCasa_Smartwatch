@@ -1,18 +1,12 @@
 package fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time;
 
-import com.sun.swing.internal.plaf.synth.resources.synth_sv;
 import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
-import fr.liglab.adele.icasa.service.scheduler.ICasaRunnable;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeUtils;
-import org.joda.time.DateTimeZone;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Created by aygalinc on 11/03/14.
@@ -21,7 +15,7 @@ import java.util.concurrent.TimeUnit;
 @Component
 //Create an instance of the component
 @Instantiate(name = "follow.me.time")
-@Provides
+@Provides(specifications = {PeriodicRunnable.class, MomentOfTheDayService.class} )
 public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnable {
 
     /**
