@@ -34,18 +34,22 @@ public class ScriptMonitor {
 
     private File file;
 
+    private boolean alreadyWatch = false;
+
     public ScriptMonitor(){
         file = new File(ScriptExecutorImpl.SCRIPTS_DIRECTORY);
     }
 
     @Validate
     public void start() {
-        watcher.add(file,2000);
+        alreadyWatch = !(watcher.add(file,2000));
     }
 
     @Invalidate
     public void stop(){
-        watcher.removeAndStopIfNeeded(file);
+        if (!alreadyWatch){
+            watcher.removeAndStopIfNeeded(file);
+        }
     }
 
 }
