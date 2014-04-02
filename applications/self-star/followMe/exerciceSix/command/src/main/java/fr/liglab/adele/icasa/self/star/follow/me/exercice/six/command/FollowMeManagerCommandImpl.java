@@ -1,12 +1,10 @@
 package fr.liglab.adele.icasa.self.star.follow.me.exercice.six.command;
 
 
-
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.EnergyGoal;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.FollowMeAdministration;
-
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager.IlluminanceGoal;
 import org.apache.felix.ipojo.annotations.*;
 

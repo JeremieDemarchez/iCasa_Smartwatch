@@ -15,7 +15,7 @@ import java.util.Map;
  */
 @Component(name="temperatureManager")
 @Instantiate(name="temperatureManagerImpl-0")
-@Provides
+@Provides(specifications = TemperatureManagerAdministration.class)
 public class TemperatureManagerAdministrationImpl implements TemperatureManagerAdministration,RoomOccupancyListener {
 
     @Requires

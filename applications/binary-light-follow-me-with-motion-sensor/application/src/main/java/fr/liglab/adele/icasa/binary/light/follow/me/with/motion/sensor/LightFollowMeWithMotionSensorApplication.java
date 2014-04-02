@@ -15,27 +15,28 @@
  */
 package fr.liglab.adele.icasa.binary.light.follow.me.with.motion.sensor;
 
-import java.util.*;
-
 import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.motion.MotionSensor;
-import fr.liglab.adele.icasa.service.preferences.Preferences;
+
+import java.util.*;
 
 @Component(name = "LightFollowMeWithMotionSensorApplication")
 @Instantiate
-@Provides
+@Provides(specifications = PeriodicRunnable.class)
 public class LightFollowMeWithMotionSensorApplication implements DeviceListener,PeriodicRunnable,ZoneListener,ClockListener {
 
 
@@ -44,6 +45,13 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     private final Object m_lock ;
 
     private Map<String,Long> mapOfZone = new HashMap<String, Long>();
+
+    /**
+     * The name of the location for unknown value
+     */
+    public static final String LOCATION_UNKNOWN = "unknown";
+
+
     @Requires
     private ContextManager _contextMgr;
 
@@ -57,6 +65,10 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     /** Field for binaryLights dependency */
     @RequiresDevice(id = "binaryLights", type = "field", optional = true)
     private BinaryLight[] binaryLights;
+
+    /** Field for binaryLights dependency */
+    @RequiresDevice(id = "dimmerLigths", type = "field", optional = true)
+    private DimmerLight[] dimmerLigths;
 
     /** Field for motionSensors dependency */
     @RequiresDevice(id = "motionSensors", type = "field", optional = true)
@@ -92,6 +104,23 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
         binaryLight.removeListener(this);
     }
 
+    /**
+     * Bind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="dimmerLigths", type="bind")
+    public void bindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
+        dimmerLight.addListener(this);
+    }
+
+    /**
+     * Unbind Method for binaryLights dependency.
+     * This method is not mandatory and implemented for debug purpose only.
+     */
+    @RequiresDevice(id="dimmerLigths", type="unbind")
+    public void unbindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
+        dimmerLight.removeListener(this);
+    }
 
     @Requires
     private Clock clock;
@@ -112,6 +141,11 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
         for (BinaryLight binaryLight : binaryLights) {
             binaryLight.removeListener(this);
         }
+
+        for (DimmerLight dimmerLight : dimmerLigths) {
+            dimmerLight.removeListener(this);
+        }
+
         _contextMgr.removeListener(this);
     }
 
@@ -138,9 +172,11 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
      */
     public void deviceEvent(GenericDevice device, Object data) {
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
-        synchronized (m_lock){
-            setOnAllLightsInLocation(location);
-            mapOfZone.put(location,clock.currentTimeMillis());
+        if (!location.equals(LOCATION_UNKNOWN)){
+            synchronized (m_lock){
+                setOnAllLightsInLocation(location);
+                mapOfZone.put(location,clock.currentTimeMillis());
+            }
         }
     }
 
@@ -161,12 +197,28 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
         return binaryLightsLocation;
     }
 
+    private  List<DimmerLight> getDimmerLightFromLocation(String location) {
+        List<DimmerLight> dimmerLightsLocation = new ArrayList<DimmerLight>();
+        for (DimmerLight dimmerLight : dimmerLigths) {
+            if (dimmerLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
+                dimmerLightsLocation.add(dimmerLight);
+            }
+        }
+        return dimmerLightsLocation;
+    }
+
+
     private  void setOffAllLightsInLocation(String location) {
 
         List<BinaryLight> sameLocationLigths = getBinaryLightFromLocation(location);
         for(BinaryLight binaryLight : sameLocationLigths){
             binaryLight.turnOff();
         }
+        List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
+        for(DimmerLight dimmerLight : sameLocationDimmerLigths){
+            dimmerLight.setPowerLevel(0);
+        }
+
     }
 
     private  void setOnAllLightsInLocation(String location) {
@@ -175,6 +227,12 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
         for(BinaryLight binaryLight : sameLocationLigths){
             binaryLight.turnOn();
         }
+
+        List<DimmerLight> sameLocationDimmerLigths = getDimmerLightFromLocation(location);
+        for(DimmerLight dimmerLight : sameLocationDimmerLigths){
+            dimmerLight.setPowerLevel(1);
+        }
+
     }
 
 
@@ -211,6 +269,14 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
                 BinaryLight changingBinaryLight = (BinaryLight) device;
                 if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
                     changingBinaryLight.turnOff();
+                }
+            }
+        }
+        if (device instanceof DimmerLight){
+            synchronized (m_lock){
+                DimmerLight changingDimmerLight = (DimmerLight) device;
+                if (propertyName.equals(DimmerLight.LOCATION_PROPERTY_NAME)){
+                    changingDimmerLight.setPowerLevel(0);
                 }
             }
         }

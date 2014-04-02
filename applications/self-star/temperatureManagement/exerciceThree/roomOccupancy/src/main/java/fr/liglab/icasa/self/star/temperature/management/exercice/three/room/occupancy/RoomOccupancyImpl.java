@@ -19,7 +19,7 @@ import java.util.*;
  */
 @Component(name="RoomOccupancyImpl")
 @Instantiate(name="RoomOccupancyImpl-0")
-@Provides
+@Provides(specifications = {RoomOccupancy.class,PeriodicRunnable.class})
 @CommandProvider(namespace = "roomOccupancy")
 public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockListener,DeviceListener {
 

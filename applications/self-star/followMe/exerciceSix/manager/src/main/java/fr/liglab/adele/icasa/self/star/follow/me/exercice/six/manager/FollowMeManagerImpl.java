@@ -1,14 +1,10 @@
 package fr.liglab.adele.icasa.self.star.follow.me.exercice.six.manager;
 
 
-
-
-
 import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import fr.liglab.adele.icasa.service.preferences.Preferences;
 import fr.liglab.icasa.self.star.follow.me.exercice.six.sum.set.algorithm.FollowMeConfiguration;
 import org.apache.felix.ipojo.annotations.*;
-
 
 import java.util.HashSet;
 import java.util.Set;

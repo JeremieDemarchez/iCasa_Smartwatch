@@ -15,21 +15,20 @@
  */
 package fr.liglab.adele.icasa.binary.light.follow.me;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.power.PowerSwitch;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Validate;
 
-import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.power.PowerSwitch;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component(name="LightFollowMeApplication")
 @Instantiate

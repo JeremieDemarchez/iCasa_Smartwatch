@@ -1,6 +1,5 @@
 package fr.liglab.icasa.self.star.follow.me.exercice.five.sum.set.algorithm;
 
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -8,8 +7,6 @@ import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.*;
 
 import java.util.*;

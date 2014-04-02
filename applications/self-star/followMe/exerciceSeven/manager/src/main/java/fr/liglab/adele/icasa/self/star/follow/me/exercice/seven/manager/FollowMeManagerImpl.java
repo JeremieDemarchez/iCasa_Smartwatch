@@ -1,9 +1,6 @@
 package fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager;
 
 
-
-
-
 import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import fr.liglab.adele.icasa.service.preferences.Preferences;
 import fr.liglab.icasa.self.star.follow.me.exercice.seven.sum.set.algorithm.FollowMeConfiguration;
@@ -11,7 +8,6 @@ import fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time.MomentOfTh
 import fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time.MomentOfTheDayListener;
 import fr.liglabl.adele.icasa.self.star.follow.me.exercice.seven.time.MomentOfTheDayService;
 import org.apache.felix.ipojo.annotations.*;
-
 
 import java.util.HashSet;
 import java.util.Set;
