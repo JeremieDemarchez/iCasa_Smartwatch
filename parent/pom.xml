@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
         <!-- By default, all sources are UTF-8-encoded. -->
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>${parent.version}</AdeleBaseVersion>
+        <AdeleBaseVersion>1.2.4-SNAPSHOT</AdeleBaseVersion>
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
         <ciliaVersion>1.7.4</ciliaVersion>
         <mimepullVersion>1.4</mimepullVersion>
@@ -276,11 +276,6 @@ See the License for the specific language governing permissions and
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-all</artifactId>
                 <version>1.9.5</version>
-            </dependency>
-            <dependency>
-               <groupId>io.netty</groupId>
-               <artifactId>netty-transport</artifactId>
-               <version>${netty.version}</version>
             </dependency>
             <dependency>
                <groupId>io.netty</groupId>
