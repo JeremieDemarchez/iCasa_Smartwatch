@@ -16,16 +16,18 @@
 package fr.liglab.adele.philips.device;
 
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
-import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHBridge;
+import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.PowerObservable;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.ColorLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,10 +38,11 @@ import java.awt.*;
  * @author Jander Nascimento
  */
 @Component(name = "philipsHueLight")
-@Provides(specifications={GenericDevice.class, DimmerLight.class, ColorLight.class})
+@Provides(specifications={GenericDevice.class, DimmerLight.class, ColorLight.class,PowerObservable.class})
 public class PhilipsHueLight extends AbstractDevice implements
-        ColorLight {
+        ColorLight,PowerObservable {
 
+    private final Object m_lock;
     @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
     private String serialNumber;
 
@@ -55,7 +58,12 @@ public class PhilipsHueLight extends AbstractDevice implements
         super();
         super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
         super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 8.5d);
-        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,((light.getLastKnownLightState().getBrightness())/254.0) );
+        PHLightState lightState = new PHLightState();
+        lightState.setOn(false);
+        bridge.updateLightState(light, lightState);
+        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,0.0d);
+        super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,0.0d );
+        m_lock = new Object();
     }
 
     @Override
@@ -84,17 +92,16 @@ public class PhilipsHueLight extends AbstractDevice implements
 
             lightState.setBrightness((int)(level*254));
             bridge.updateLightState(light, lightState);
-
             super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,level);
-
+            getCurrentConsumption();
             return level;
         }
         else{
             PHLightState lightState = new PHLightState();
-            lightState.setBrightness(0);
-            super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,0.0);
             lightState.setOn(false);
             bridge.updateLightState(light, lightState);
+            super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0);
+            getCurrentConsumption();
             return 0;
         }
     }
@@ -123,4 +130,12 @@ public class PhilipsHueLight extends AbstractDevice implements
         return color;
     }
 
+    @Override
+    public double getCurrentConsumption() {
+        Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
+        Double powerLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL);
+        super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,(double)(powerLevel*maxLevel));
+        System.out.println("CONSUPTION " + super.getPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL));
+        return powerLevel*maxLevel;
+    }
 }
