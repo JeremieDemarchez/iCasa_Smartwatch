@@ -85,10 +85,9 @@ public class ScriptSAXHandler extends DefaultHandler {
                         delta = tempDelay * 1000; // (s * 1000ms) convert into milliseconds
                     }                    
                 } else { // default unit is minutes
-                    logger.warn("value of unit attribute not provided. Default minutes will be used");
+                    //logger.warn("value of unit attribute not provided. Default minutes will be used");
                     delta = tempDelay * 60 * 1000; //(m * 60s * 1000ms) convert into milliseconds
                 }
-                                
                 delay += delta;
             } catch (Exception ex) {
                 logger.error("value of delay attribute must be an integer");
