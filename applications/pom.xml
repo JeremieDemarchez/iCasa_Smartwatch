@@ -31,6 +31,7 @@
 
 
     <modules>
+        <module>mail-service</module>
         <module>binary-light-follow-me</module>
         <module>follow-me-with-photometer</module>
         <module>binary-light-follow-me-with-motion-sensor</module>
