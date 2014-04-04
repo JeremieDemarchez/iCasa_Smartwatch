@@ -14,110 +14,110 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
    -->
-   
-      <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
-         <modelVersion>4.0.0</modelVersion>
-         
-         <!-- Project parent -->
-         <parent>
+
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- Project parent -->
+    <parent>
+        <groupId>fr.liglab.adele.icasa</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.2.6-SNAPSHOT</version>
+        <relativePath>../../../../parent</relativePath>
+    </parent>
+
+    <!-- Project coordinates -->
+    <groupId>fr.liglab.adele.icasa.apps</groupId>
+    <artifactId>habits.monitoring.standard.distribution</artifactId>
+    <packaging>osgi-distribution</packaging>
+    <!-- Project description -->
+    <name>${productName} :: Habits Monitoring :: Distribution :: Standard</name>
+
+
+    <!-- Project dependencies -->
+    <dependencies>
+        <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>parent</artifactId>
-            <version>1.2.6-SNAPSHOT</version>
-            <relativePath>../../../../parent</relativePath>
-         </parent>
-         
-         <!-- Project coordinates -->
-         <groupId>fr.liglab.adele.icasa.apps</groupId>
-         <artifactId>habits.monitoring.standard.distribution</artifactId>
-         <packaging>osgi-distribution</packaging>
-         <!-- Project description -->
-         <name>${productName} :: Habits Monitoring :: Distribution :: Standard</name>
-         
-         
-         <!-- Project dependencies -->
-         <dependencies>
-            <dependency>
-				<groupId>fr.liglab.adele.icasa</groupId>
-				<artifactId>icasa.teaching.distribution</artifactId>
+            <artifactId>icasa.teaching.distribution</artifactId>
             <version>${project.version}</version>
-				<type>osgi-distribution</type>
-			</dependency>
-            <!-- deployed packages -->
-            <dependency>
-               <groupId>fr.liglab.adele.cilia</groupId>
-               <artifactId>cilia.dp</artifactId>
-               <version>${ciliaVersion}</version>
-               <type>deployment-package</type>
-            </dependency>
-            <dependency>
-               <groupId>fr.liglab.adele.cilia</groupId>
-               <artifactId>cilia-chameleon-deployer</artifactId>
-               <version>${ciliaVersion}</version>
-            </dependency>
-            
-            <!-- habits monitoring application -->
-            <dependency>
-               <groupId>${project.groupId}</groupId>
-               <artifactId>measure.generator.dp</artifactId>
-               <type>deployment-package</type>
-               <version>${project.version}</version>
-            </dependency>
-            <dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>presence.sensor.adapter.dp</artifactId>
-			<type>deployment-package</type>
-			<version>${project.version}</version>
-		</dependency>
-      <dependency>
-         <groupId>com.sun.jersey</groupId>
-         <artifactId>jersey-client</artifactId>
-      </dependency>
-      <dependency>
-         <groupId>com.sun.jersey</groupId>
-         <artifactId>jersey-core</artifactId>
-      </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>push.button.adapter.dp</artifactId>
-			<type>deployment-package</type>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
+            <type>osgi-distribution</type>
+        </dependency>
+        <!-- deployed packages -->
+        <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia.dp</artifactId>
+            <version>${ciliaVersion}</version>
+            <type>deployment-package</type>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.cilia</groupId>
+            <artifactId>cilia-chameleon-deployer</artifactId>
+            <version>${ciliaVersion}</version>
+        </dependency>
+
+        <!-- habits monitoring application -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>measure.generator.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>presence.sensor.adapter.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>push.button.adapter.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>photometer.adapter.dp</artifactId>
             <type>deployment-package</type>
             <version>${project.version}</version>
         </dependency>
-		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>motion.sensor.adapter.dp</artifactId>
-			<type>deployment-package</type>
-			<version>${project.version}</version>
-		</dependency>
-		<dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>zigbee.core.dp</artifactId>
-      <type>deployment-package</type>
-      <version>${project.version}</version>
-   </dependency>
-         </dependencies>
-         <build>
-            <plugins>
-               <plugin>
-                  <groupId>fr.liglab.adele.common</groupId>
-                  <artifactId>maven-osgi-distribution-plugin</artifactId>
-                  <configuration>
-                     <flattenDP>true</flattenDP>
-                     <defaultOutputDirectory>runtime</defaultOutputDirectory>
-                  </configuration>
-               </plugin>
-               <plugin>
-				<groupId>de.akquinet.gomobile</groupId>
-				<artifactId>maven-dp-plugin</artifactId>
-				<extensions>true</extensions>
-			</plugin>
-            </plugins>
-         </build>
-           
-      </project>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>motion.sensor.adapter.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.core.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>fr.liglab.adele.common</groupId>
+                <artifactId>maven-osgi-distribution-plugin</artifactId>
+                <configuration>
+                    <flattenDP>true</flattenDP>
+                    <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>de.akquinet.gomobile</groupId>
+                <artifactId>maven-dp-plugin</artifactId>
+                <extensions>true</extensions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
       

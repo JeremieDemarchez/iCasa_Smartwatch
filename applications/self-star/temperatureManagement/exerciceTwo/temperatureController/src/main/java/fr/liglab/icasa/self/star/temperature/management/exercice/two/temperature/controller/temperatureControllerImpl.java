@@ -3,9 +3,8 @@ package fr.liglab.icasa.self.star.temperature.management.exercice.two.temperatur
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
-
+import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
@@ -20,7 +19,7 @@ import java.util.Set;
  */
 @Component(name="temperatureController")
 @Instantiate(name="temperatureControllerImpl-0")
-@Provides
+@Provides(specifications = {PeriodicRunnable.class,TemperatureConfiguration.class})
 public class temperatureControllerImpl implements PeriodicRunnable,DeviceListener,TemperatureConfiguration{
 
     /**

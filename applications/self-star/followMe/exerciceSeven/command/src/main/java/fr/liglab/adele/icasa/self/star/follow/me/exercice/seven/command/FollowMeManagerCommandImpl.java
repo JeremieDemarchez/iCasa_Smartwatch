@@ -3,7 +3,6 @@ package fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.command;
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
-
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.EnergyGoal;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.FollowMeAdministration;
 import fr.liglab.adele.icasa.self.star.follow.me.exercice.seven.manager.IlluminanceGoal;

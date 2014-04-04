@@ -18,9 +18,22 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>actimetrics.application</artifactId>
+            <artifactId>actimetrics.actimetrics.manager</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>actimetrics.event.webservice.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>actimetrics.event.webservice.impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 	</dependencies>
 
 	<build>
@@ -36,7 +49,7 @@
 						<headers>
 							<bundleHeader>
 								<name>ICasa-Application-Id</name>
-                        <value>actimetrics</value>
+                                <value>actimetrics</value>
 							</bundleHeader>
 							<bundleHeader>
 								<name>ICasa-Application-Name</name>

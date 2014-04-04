@@ -1,13 +1,12 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.command;
 
 
+import fr.liglab.adele.icasa.command.handler.Command;
+import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager.TemperatureManagerAdministration;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
-
-import fr.liglab.adele.icasa.command.handler.Command;
-import fr.liglab.adele.icasa.command.handler.CommandProvider;
 
 
 /**
