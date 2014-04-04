@@ -1,7 +1,8 @@
 package fr.liglab.adele.application.actimetrics.manager;
 
-import fr.liglab.adele.habits.monitoring.event.webservice.api.ProcessEventException;
-import fr.liglab.adele.habits.monitoring.event.webservice.api.ProcessEventService;
+
+import fr.liglab.adele.actimetrics.event.webservice.api.ProcessEventException;
+import fr.liglab.adele.actimetrics.event.webservice.api.ProcessEventService;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;

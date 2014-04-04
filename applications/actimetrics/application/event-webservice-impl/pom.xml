@@ -1,69 +1,69 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 
-  <!-- Project parent -->
-	<parent>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>parent</artifactId>
-      <version>1.2.6-SNAPSHOT</version>
-      <relativePath>../../../../parent</relativePath>
-	</parent>
+    <!-- Project parent -->
+    <parent>
+        <groupId>fr.liglab.adele.icasa</groupId>
+        <artifactId>parent</artifactId>
+        <version>1.2.6-SNAPSHOT</version>
+        <relativePath>../../../../parent</relativePath>
+    </parent>
 
-  <!-- Project Description -->
-  <modelVersion>4.0.0</modelVersion>
-  <packaging>bundle</packaging>
-  <groupId>fr.liglab.adele.icasa.apps</groupId>
-  <artifactId>event.webservice.impl</artifactId>
-  <name>${productName} :: Habits Monitoring :: Events Webservice Impl</name>
+    <!-- Project Description -->
+    <modelVersion>4.0.0</modelVersion>
+    <packaging>bundle</packaging>
+    <groupId>fr.liglab.adele.icasa.apps</groupId>
+    <artifactId>actimetrics.event.webservice.impl</artifactId>
+    <name>${productName} :: Habits Monitoring :: Events Webservice Impl</name>
 
-  <dependencies>
-    <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>event.webservice.api</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.sun.jersey</groupId>
-      <artifactId>jersey-client</artifactId>
-    </dependency>
-      <dependency>
-          <groupId>com.sun.jersey</groupId>
-          <artifactId>jersey-core</artifactId>
-      </dependency>
-    <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-api</artifactId>
-    </dependency>
-  </dependencies>
+    <dependencies>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>actimetrics.event.webservice.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.sun.jersey</groupId>
+            <artifactId>jersey-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>mail</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+    </dependencies>
 
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <instructions>
-            <Private-Package>javax.mail.*,com.sun.mail.*</Private-Package>
-            <Import-Package>jcifs.ntlmssp;resolution:=optional,sun.security.util;resolution:=optional,javax.ws.*,com.sun.jersey.*,*</Import-Package>
-            <Export-Package>fr.liglab.adele.habits.monitoring.event.webservice.impl</Export-Package>
-          </instructions>
-        </configuration>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-ipojo-plugin</artifactId>
-        <executions>
-          <execution>
-            <goals>
-              <goal>ipojo-bundle</goal>
-            </goals>
-          </execution>
-        </executions>
-      </plugin>
-    </plugins>
-  </build>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Private-Package>javax.mail.*,com.sun.mail.*</Private-Package>
+                        <Import-Package>jcifs.ntlmssp;resolution:=optional,sun.security.util;resolution:=optional,javax.ws.*,com.sun.jersey.*,*</Import-Package>
+                        <Export-Package>fr.liglab.adele.actimetrics.event.webservice.impl</Export-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-ipojo-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>ipojo-bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

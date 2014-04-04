@@ -12,7 +12,7 @@
     <!-- Project Descrkiption -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>actimetrics.manager</artifactId>
+    <artifactId>actimetrics.actimetrics.manager</artifactId>
     <packaging>bundle</packaging>
     <name>${productName} :: ${projectName}</name>
 
@@ -37,7 +37,7 @@
         </dependency>
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>event.webservice.api</artifactId>
+            <artifactId>actimetrics.event.webservice.api</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

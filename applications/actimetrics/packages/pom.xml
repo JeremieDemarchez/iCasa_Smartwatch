@@ -18,20 +18,20 @@
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>actimetrics.manager</artifactId>
+            <artifactId>actimetrics.actimetrics.manager</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>event.webservice.api</artifactId>
+            <artifactId>actimetrics.event.webservice.api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
 
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>event.webservice.impl</artifactId>
+            <artifactId>actimetrics.event.webservice.impl</artifactId>
             <version>${project.version}</version>
         </dependency>
 	</dependencies>
