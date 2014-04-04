@@ -135,7 +135,6 @@ public class PhilipsHueLight extends AbstractDevice implements
         Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
         Double powerLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL);
         super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,(double)(powerLevel*maxLevel));
-        System.out.println("CONSUPTION " + super.getPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL));
         return powerLevel*maxLevel;
     }
 }
