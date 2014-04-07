@@ -28,7 +28,7 @@ public interface ProcessEventService {
 	 * 
 	 * @param sensorId
 	 *           sensor providing the event
-	 * @param patiendId
+	 * @param patientId
 	 *           concerned patient id
 	 * @param eventType
 	 *           type of event(location, electric,...)

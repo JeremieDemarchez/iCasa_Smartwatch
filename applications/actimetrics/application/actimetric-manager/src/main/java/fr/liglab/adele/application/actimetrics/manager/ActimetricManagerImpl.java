@@ -251,14 +251,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (motionCounter%4 == 0){
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 motionCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 motionCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -271,14 +271,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (pushCounter%4 == 0){
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 pushCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 pushCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -291,14 +291,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (photometerCounter%4 == 0){
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 photometerCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 photometerCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -311,14 +311,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (presenceCounter%4 == 0){
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 presenceCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData(sensor.getSerialNumber(),"unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 presenceCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
