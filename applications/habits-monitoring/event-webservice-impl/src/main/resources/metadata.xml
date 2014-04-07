@@ -16,7 +16,7 @@
 
 -->
 <ipojo xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="org.apache.felix.ipojo http://felix.apache.org/ipojo/schemas/CURRENT/core.xsd"
-  xmlns:ipojo="org.apache.felix.ipojo" xmlns:cilia="fr.liglab.adele.cilia">
+  xmlns:ipojo="org.apache.felix.ipojo" >
 
   <component name="ActimetryRestServiceClient" classname="fr.liglab.adele.habits.monitoring.event.webservice.impl.RestProcessEventService">
     <properties>

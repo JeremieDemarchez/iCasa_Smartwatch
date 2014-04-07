@@ -23,6 +23,10 @@ import javax.ws.rs.core.Response;
 
 import fr.liglab.adele.actimetrics.event.webservice.api.ProcessEventException;
 import fr.liglab.adele.actimetrics.event.webservice.api.ProcessEventService;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Provides;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +40,9 @@ import com.sun.jersey.api.client.WebResource;
  * @author Jean-Pierre Poutcheu
  * 
  */
+@Component(name = "ActimetryRestServiceClient")
+@Instantiate
+@Provides(specifications = ProcessEventService.class)
 public class RestProcessEventService implements ProcessEventService {
 
 	private static final Logger logger = LoggerFactory
@@ -44,6 +51,7 @@ public class RestProcessEventService implements ProcessEventService {
 	/**
 	 * Web service url.
 	 */
+    @Property
 	private String url;
 
 	/**
@@ -69,6 +77,7 @@ public class RestProcessEventService implements ProcessEventService {
 			throws ProcessEventException {
 
 		// log received data
+        logger.info("SEND TO " + url);
 		logger.info("==================================================");
 		logger.info("Patient ID --->" + patientId);
 		logger.info("Sensor ID --->" + sensorId);
@@ -116,6 +125,7 @@ public class RestProcessEventService implements ProcessEventService {
 							.getStatusCode()) {
 						// return true;
 					} else {
+                        logger.info(" STATUS OF RESPONSE " + response.getClientResponseStatus().getReasonPhrase() );
 						throw new ProcessEventException(
 								"Failed to proceed event data, HTTP error code : "
 										+ response.getStatus());

@@ -21,6 +21,8 @@ import java.util.Date;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fr.liglab.adele.habits.monitoring.event.webservice.api.ProcessEventException;
+import fr.liglab.adele.habits.monitoring.event.webservice.api.ProcessEventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,8 +30,6 @@ import com.sun.jersey.api.client.Client;
 import com.sun.jersey.api.client.ClientResponse;
 import com.sun.jersey.api.client.WebResource;
 
-import fr.liglab.adele.habits.monitoring.event.webservice.api.ProcessEventException;
-import fr.liglab.adele.habits.monitoring.event.webservice.api.ProcessEventService;
 
 /**
  * @author Jean-Pierre Poutcheu
