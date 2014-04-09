@@ -102,6 +102,7 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     @RequiresDevice(id="binaryLights", type="unbind")
     public void unbindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
         binaryLight.removeListener(this);
+        binaryLight.turnOff();
     }
 
     /**
@@ -120,6 +121,7 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     @RequiresDevice(id="dimmerLigths", type="unbind")
     public void unbindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
         dimmerLight.removeListener(this);
+        dimmerLight.setPowerLevel(0);
     }
 
     @Requires
