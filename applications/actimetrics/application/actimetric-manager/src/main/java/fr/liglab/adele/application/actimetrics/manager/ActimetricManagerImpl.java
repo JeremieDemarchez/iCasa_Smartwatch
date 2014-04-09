@@ -202,15 +202,24 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (device instanceof PushButton ){
             PushButton sensor = (PushButton)device;
-            if(propertyName.compareTo(PushButton.PUSH_AND_HOLD) == 0){
-                notifyPushButton(sensor);
+            if( !( ( (String)sensor.getPropertyValue(LOCATION_PROPERTY_NAME) ).equals(LOCATION_UNKNOWN) ) ){
+                if(propertyName.compareTo(PushButton.PUSH_AND_HOLD) == 0){
+                    notifyPushButton(sensor);
+                }
             }
         } else if (device instanceof PresenceSensor ){
-
+            PresenceSensor sensor = (PresenceSensor)device;
+            if( !( ( (String)sensor.getPropertyValue(LOCATION_PROPERTY_NAME) ).equals(LOCATION_UNKNOWN) ) ){
+                if (sensor.getSensedPresence()){
+                    notifyPresenceSensor(sensor);
+                }
+            }
         }else if (device instanceof Photometer ){
             Photometer sensor = (Photometer)device;
-            if (Photometer.PHOTOMETER_CURRENT_ILLUMINANCE.equals(propertyName)) {
-                notifyPhotometer(sensor);
+            if( !( ( (String)sensor.getPropertyValue(LOCATION_PROPERTY_NAME) ).equals(LOCATION_UNKNOWN) ) ){
+                if (Photometer.PHOTOMETER_CURRENT_ILLUMINANCE.equals(propertyName)) {
+                    notifyPhotometer(sensor);
+                }
             }
         }
     }
@@ -229,18 +238,23 @@ public class ActimetricManagerImpl implements DeviceListener {
     public void deviceEvent(GenericDevice device, Object data) {
         if (device instanceof MotionSensor ){
             MotionSensor sensor = (MotionSensor) device;
-            if ((data != null) && (data instanceof Boolean)) {
-                boolean movementDetected = (Boolean) data;
-                if (movementDetected)
-                    notifyMotionSensor(sensor);
+            if( !( ( (String)sensor.getPropertyValue(LOCATION_PROPERTY_NAME) ).equals(LOCATION_UNKNOWN) ) ){
+                if ((data != null) && (data instanceof Boolean)) {
+                    boolean movementDetected = (Boolean) data;
+                    if (movementDetected)
+                        notifyMotionSensor(sensor);
+                }
             }
-
         } else if (device instanceof PushButton ){
-            if ((data != null) && (data instanceof Boolean)) {
-                boolean movementDetected = (Boolean) data;
-                PushButton sensor = (PushButton) device;
-                if (movementDetected)
-                    notifyPushButton(sensor);
+            PushButton sensor = (PushButton) device;
+
+            if( !( ( (String)sensor.getPropertyValue(LOCATION_PROPERTY_NAME) ).equals(LOCATION_UNKNOWN) ) ){
+                if ((data != null) && (data instanceof Boolean)) {
+                    boolean movementDetected = (Boolean) data;
+
+                    if (movementDetected)
+                        notifyPushButton(sensor);
+                }
             }
         }
     }
@@ -251,14 +265,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (motionCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 motionCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 motionCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -271,14 +285,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (pushCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 pushCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 pushCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -291,14 +305,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (photometerCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 photometerCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 photometerCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -311,14 +325,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (presenceCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 presenceCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","unknown","Location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 presenceCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
