@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.electicity.viewer;
+package fr.liglab.adele.icasa.electricity.viewer;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
