@@ -38,23 +38,26 @@
             <artifactId>distribution.base</artifactId>
             <type>osgi-distribution</type>
         </dependency>
+
         <dependency>
-           <groupId>${project.groupId}</groupId>
-           <artifactId>wisdom.bundles</artifactId>
-           <version>${project.version}</version>
-           <type>osgi-distribution</type>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>wisdom.bundles</artifactId>
+            <version>${project.version}</version>
+            <type>osgi-distribution</type>
         </dependency>
 
-         <!-- RoSe bundles -->
-         <dependency>
+        <!-- RoSe bundles -->
+        <dependency>
             <groupId>org.ow2.chameleon.rose</groupId>
             <artifactId>rose-core</artifactId>
-         </dependency>
-         <dependency>
+        </dependency>
+
+        <dependency>
             <groupId>fr.liglab.adele.common</groupId>
             <artifactId>rose-chameleon-deployer-configurator</artifactId>
             <version>${AdeleBaseVersion}</version>
-         </dependency>
+        </dependency>
+
         <dependency>
             <!-- iCasa Platform -->
             <groupId>fr.liglab.adele.icasa</groupId>
@@ -62,12 +65,14 @@
             <version>${project.version}</version>
             <type>deployment-package</type>
         </dependency>
-         <dependency>
+
+        <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.device.hanlder.dp</artifactId>
             <version>${project.version}</version>
-            <type>deployment-package</type>         
-         </dependency>        
+            <type>deployment-package</type>
+        </dependency>
+
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.simulator.dp</artifactId>
@@ -77,9 +82,9 @@
 
         <!-- Only one clock must be available in the platform-->
         <dependency>
-           <groupId>${project.groupId}</groupId>
-           <artifactId>clock.simulated.impl</artifactId>
-           <version>${project.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>clock.simulated.impl</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
@@ -95,17 +100,18 @@
             <artifactId>web.resources</artifactId>
             <version>${project.version}</version>
         </dependency>
+
         <dependency>
-           <groupId>${project.groupId}</groupId>
-           <artifactId>simulator.web.instance</artifactId>
-           <version>${project.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>simulator.web.instance</artifactId>
+            <version>${project.version}</version>
         </dependency>
-        
+
         <!-- GUI dependencies-->
         <dependency>
-           <groupId>${project.groupId}</groupId>
-           <artifactId>frontend.services</artifactId>
-           <version>${project.version}</version>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>frontend.services</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
@@ -119,35 +125,35 @@
                     <defaultOutputDirectory>runtime</defaultOutputDirectory>
                 </configuration>
             </plugin>
-         </plugins>
+        </plugins>
     </build>
     <profiles>
-       <profile>
-          <id>all</id>
-          <build>
-             <plugins>
-                <plugin>
-                   <groupId>org.codehaus.mojo</groupId>
-                   <artifactId>wagon-maven-plugin</artifactId>
-                   <executions>
-                      <execution>
-                         <id>upload-snapshot</id>
-                         <phase>deploy</phase>
-                         <goals>
-                            <goal>upload-single</goal>
-                         </goals>
-                         <configuration>
-                            <serverId>icasa-deploy-cloudbees-snapshot</serverId>
-                            <fromFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</fromFile>
-                            <url>https://repository-icasa.forge.cloudbees.com/snapshot</url>
-                            <toFile>fr/liglab/adele/icasa/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}.zip</toFile>
-                         </configuration>
-                      </execution>
-                   </executions>
-                </plugin>  
-             </plugins>
-          </build>
-       </profile>
-       
+        <profile>
+            <id>all</id>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.codehaus.mojo</groupId>
+                        <artifactId>wagon-maven-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <id>upload-snapshot</id>
+                                <phase>deploy</phase>
+                                <goals>
+                                    <goal>upload-single</goal>
+                                </goals>
+                                <configuration>
+                                    <serverId>icasa-deploy-cloudbees-snapshot</serverId>
+                                    <fromFile>${project.build.directory}/${project.artifactId}-${project.version}.zip</fromFile>
+                                    <url>https://repository-icasa.forge.cloudbees.com/snapshot</url>
+                                    <toFile>fr/liglab/adele/icasa/${project.artifactId}/${project.version}/${project.artifactId}-${project.version}.zip</toFile>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
     </profiles>
 </project>
