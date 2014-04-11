@@ -12,7 +12,7 @@
     </parent>
 
     <!-- Project Description -->
-    <artifactId>phillips.hue.dp</artifactId>
+    <artifactId>philips.hue.dp</artifactId>
     <packaging>deployment-package</packaging>
     <name>${productName} :: ${projectName}</name>
 
@@ -42,7 +42,7 @@
                         <resources>
                             <processedResource>
                                 <processor>org.osgi.deployment.rp.autoload</processor>
-                                <filePath>/src/main/resources/rose-conf-phillips_driver.json</filePath>
+                                <filePath>/src/main/resources/rose-conf-philips_driver.json</filePath>
                             </processedResource>
                         </resources>
                     </deploymentPackage>
