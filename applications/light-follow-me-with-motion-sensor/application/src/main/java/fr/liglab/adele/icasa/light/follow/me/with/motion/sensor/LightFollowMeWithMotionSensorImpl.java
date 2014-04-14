@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.binary.light.follow.me.with.motion.sensor;
+package fr.liglab.adele.icasa.light.follow.me.with.motion.sensor;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clock.Clock;
@@ -34,10 +34,10 @@ import org.apache.felix.ipojo.annotations.*;
 
 import java.util.*;
 
-@Component(name = "LightFollowMeWithMotionSensorApplication")
-@Instantiate
+@Component(name = "LightFollowMeWithMotionSensor")
+@Instantiate(name = "LightFollowMeWithMotionSensorImpl-0")
 @Provides(specifications = PeriodicRunnable.class)
-public class LightFollowMeWithMotionSensorApplication implements DeviceListener,PeriodicRunnable,ZoneListener,ClockListener {
+public class LightFollowMeWithMotionSensorImpl implements DeviceListener,PeriodicRunnable,ZoneListener,ClockListener {
 
 
     private static long DEFAULT_TIMEOUT = 600000;
@@ -58,7 +58,7 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     @Requires
     private Preferences preferences;
 
-    public LightFollowMeWithMotionSensorApplication(){
+    public LightFollowMeWithMotionSensorImpl(){
         m_lock = new Object();
     }
 
@@ -121,7 +121,7 @@ public class LightFollowMeWithMotionSensorApplication implements DeviceListener,
     @RequiresDevice(id="dimmerLigths", type="unbind")
     public void unbindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
         dimmerLight.removeListener(this);
-        dimmerLight.setPowerLevel(0);
+       dimmerLight.setPowerLevel(0);
     }
 
     @Requires

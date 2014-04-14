@@ -27,7 +27,7 @@
 
   <!-- Project coordinates -->
   <groupId>fr.liglab.adele.icasa.apps</groupId>
-  <artifactId>binary.light.follow.me.with.motion.sensor.and.icasa</artifactId>
+  <artifactId>light.follow.me.with.motion.sensor.and.icasa</artifactId>
   <packaging>osgi-distribution</packaging>
   <name>${productName} :: ${projectName}</name>
 
@@ -43,11 +43,31 @@
 
 	<dependency>
         <groupId>fr.liglab.adele.icasa.apps</groupId>
-        <artifactId>binary.light.follow.me.with.motion.sensor.application.dp</artifactId>
+        <artifactId>light.follow.me.with.motion.sensor.dp</artifactId>
         <version>${project.version}</version>
         <type>deployment-package</type>
 	</dependency>
-	
+
+      <dependency>
+          <groupId>fr.liglab.adele.icasa</groupId>
+          <artifactId>philips.hue.dp</artifactId>
+          <version>${project.version}</version>
+          <type>deployment-package</type>
+      </dependency>
+
+      <dependency>
+          <groupId>fr.liglab.adele.icasa</groupId>
+          <artifactId>zigbee.core.dp</artifactId>
+          <version>${project.version}</version>
+          <type>deployment-package</type>
+      </dependency>
+
+      <dependency>
+          <groupId>fr.liglab.adele.icasa</groupId>
+          <artifactId>gateway.as.box</artifactId>
+          <version>${project.version}</version>
+      </dependency>
+
   </dependencies>
   <build>
      <plugins>

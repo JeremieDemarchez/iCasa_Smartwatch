@@ -25,7 +25,7 @@
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
    <groupId>fr.liglab.adele.icasa.apps</groupId>
-	<artifactId>binary.light.follow.me.with.motion.sensor.distribution</artifactId>
+	<artifactId>light.follow.me.with.motion.sensor.distribution</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 

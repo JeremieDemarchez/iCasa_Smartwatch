@@ -11,14 +11,14 @@
 
 	<!-- Project Description -->
    <groupId>fr.liglab.adele.icasa.apps</groupId>
-	<artifactId>binary.light.follow.me.with.motion.sensor.application.dp</artifactId>
+	<artifactId>light.follow.me.with.motion.sensor.dp</artifactId>
 	<packaging>deployment-package</packaging>
 	<name>${productName} :: ${projectName}</name>
 
 	<dependencies>
 		<dependency>
 			<groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>binary.light.follow.me.with.motion.sensor.application</artifactId>
+            <artifactId>light.follow.me.with.motion.sensor.application</artifactId>
 			<version>${project.version}</version>
 		</dependency>
 	</dependencies>

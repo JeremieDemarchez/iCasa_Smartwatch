@@ -34,7 +34,7 @@
         <module>mail-service</module>
         <module>binary-light-follow-me</module>
         <module>follow-me-with-photometer</module>
-        <module>binary-light-follow-me-with-motion-sensor</module>
+        <module>light-follow-me-with-motion-sensor</module>
         <module>actimetrics</module>
         <module>dimmer-light-follow-me</module>
         <module>gas-alarm-system</module>
