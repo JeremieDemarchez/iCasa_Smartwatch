@@ -40,7 +40,7 @@ import java.util.*;
 public class LightFollowMeWithMotionSensorImpl implements DeviceListener,PeriodicRunnable,ZoneListener,ClockListener {
 
 
-    private static long DEFAULT_TIMEOUT = 600000;
+    private static long DEFAULT_TIMEOUT = 60000;
 
     private final Object m_lock ;
 
