@@ -170,13 +170,15 @@ public class PhilipsDeviceDiscoveryImpl implements PHSDKListener, Runnable  {
 
         if (PHHueSDK.getInstance().getSelectedBridge() != null) {
             PHBridgeResourcesCache cache = bridge.getResourceCache();
+
             for (PHLight light : cache.getAllLights()) {
                 //generateImportDeclaration(light, bridge);
+
+                if(!light.isReachable()) continue;
 
                 Map props = new Properties();
 
                 String serialNumber = computeSerialNumber(light.getIdentifier());
-
                 props.put(RemoteConstants.ENDPOINT_ID, serialNumber);
                 props.put(RemoteConstants.SERVICE_IMPORTED_CONFIGS, "philips");
                 props.put("objectClass", new String[] { light.getClass().getName() });
