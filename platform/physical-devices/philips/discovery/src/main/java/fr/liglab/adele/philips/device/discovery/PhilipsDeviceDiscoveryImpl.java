@@ -174,7 +174,11 @@ public class PhilipsDeviceDiscoveryImpl implements PHSDKListener, Runnable  {
             for (PHLight light : cache.getAllLights()) {
                 //generateImportDeclaration(light, bridge);
 
-                if(!light.isReachable()) continue;
+                if(!light.isReachable()){
+                    String serialNumber = computeSerialNumber(light.getIdentifier());
+                    roseMachine.removeRemote(serialNumber);
+                    continue;
+                }
 
                 Map props = new Properties();
 
