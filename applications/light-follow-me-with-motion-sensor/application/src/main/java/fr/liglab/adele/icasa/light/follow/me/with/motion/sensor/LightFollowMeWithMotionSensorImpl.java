@@ -28,7 +28,6 @@ import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
-import fr.liglab.adele.icasa.service.preferences.Preferences;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 
@@ -54,9 +53,6 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
 
     @Requires
     private ContextManager _contextMgr;
-
-    @Requires
-    private Preferences preferences;
 
     public LightFollowMeWithMotionSensorImpl(){
         m_lock = new Object();
@@ -102,7 +98,17 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
     @RequiresDevice(id="binaryLights", type="unbind")
     public void unbindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
         binaryLight.removeListener(this);
-        binaryLight.turnOff();
+        String serialNumber = (String)properties.get(DimmerLight.DEVICE_SERIAL_NUMBER);
+        for (LocatedDevice locatedDevice : _contextMgr.getDevices()){
+            if ( locatedDevice.getSerialNumber().equals(serialNumber)){
+                GenericDevice genericDevice = locatedDevice.getDeviceObject();
+                if (genericDevice instanceof BinaryLight){
+                    BinaryLight light = (BinaryLight) genericDevice;
+                    light.turnOff();
+                }
+            }
+        }
+
     }
 
     /**
@@ -121,7 +127,16 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
     @RequiresDevice(id="dimmerLigths", type="unbind")
     public void unbindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
         dimmerLight.removeListener(this);
-       dimmerLight.setPowerLevel(0);
+        String serialNumber = (String)properties.get(DimmerLight.DEVICE_SERIAL_NUMBER);
+        for (LocatedDevice locatedDevice : _contextMgr.getDevices()){
+            if ( locatedDevice.getSerialNumber().equals(serialNumber)){
+                GenericDevice genericDevice = locatedDevice.getDeviceObject();
+                if (genericDevice instanceof DimmerLight){
+                    DimmerLight light = (DimmerLight) genericDevice;
+                    light.setPowerLevel(0.0);
+                }
+            }
+        }
     }
 
     @Requires
@@ -267,16 +282,16 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
 
         if (device instanceof BinaryLight){
+            BinaryLight changingBinaryLight = (BinaryLight) device;
             synchronized (m_lock){
-                BinaryLight changingBinaryLight = (BinaryLight) device;
                 if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
                     changingBinaryLight.turnOff();
                 }
             }
         }
         if (device instanceof DimmerLight){
+            DimmerLight changingDimmerLight = (DimmerLight) device;
             synchronized (m_lock){
-                DimmerLight changingDimmerLight = (DimmerLight) device;
                 if (propertyName.equals(DimmerLight.LOCATION_PROPERTY_NAME)){
                     changingDimmerLight.setPowerLevel(0);
                 }

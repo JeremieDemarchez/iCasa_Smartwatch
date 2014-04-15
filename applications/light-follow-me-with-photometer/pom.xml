@@ -25,7 +25,7 @@ limitations under the License.
    <!-- Project Descrkiption -->
    <modelVersion>4.0.0</modelVersion>
    <groupId>fr.liglab.adele.icasa.apps</groupId>
-   <artifactId>follow.me.with.photometer.reactor</artifactId>
+   <artifactId>light.follow.me.with.photometer.reactor</artifactId>
    <packaging>pom</packaging>
    <name>${productName} :: ${projectName}</name>
    <profiles>

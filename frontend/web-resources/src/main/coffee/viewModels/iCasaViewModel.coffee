@@ -1115,6 +1115,8 @@ define(['jquery',
                     imgName = "follow1"
                 if @id() ==  "LightFollowMeWithMotionSensor"
                     imgName = "follow1"
+                if @id() ==  "FollowMeWithPhotometerApplication"
+                  imgName = "follow1"
                 if @id() ==  "actimetrics"
                     imgName = "actimetrics"
                 if @id() ==  "ActimetricManager"

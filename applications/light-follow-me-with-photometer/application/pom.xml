@@ -12,7 +12,7 @@
   <modelVersion>4.0.0</modelVersion>
   <packaging>bundle</packaging>
   <groupId>fr.liglab.adele.icasa.apps</groupId>
-  <artifactId>binary.light.follow.me.with.photometer.application</artifactId>
+  <artifactId>light.follow.me.with.photometer.application</artifactId>
   <name>${productName} :: ${projectName}</name>
 
    <dependencies>
@@ -37,6 +37,11 @@
        <dependency>
            <groupId>fr.liglab.adele.icasa</groupId>
            <artifactId>technical.services.api</artifactId>
+           <version>${project.version}</version>
+       </dependency>
+       <dependency>
+           <groupId>fr.liglab.adele.icasa</groupId>
+           <artifactId>command.handler</artifactId>
            <version>${project.version}</version>
        </dependency>
    </dependencies>

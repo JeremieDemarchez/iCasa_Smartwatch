@@ -56,6 +56,13 @@
         </dependency>
 
         <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>philips.hue.dp</artifactId>
+            <type>deployment-package</type>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>com.sun.jersey</groupId>
             <artifactId>jersey-client</artifactId>
         </dependency>
