@@ -106,6 +106,24 @@ See the License for the specific language governing permissions and
                 <role>Developer</role>
             </roles>
         </contributor>
+        <contributor>
+            <name>Jeremy Savonet</name>
+            <email>jeremy.savonet @nospam@ gmail.com</email>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </contributor>
+        <contributor>
+            <name>Colin Aygalinc</name>
+            <email>colin.aygalinc @nospam@ gmail.com</email>
+            <organization>Adele | LIG</organization>
+            <organizationUrl>http://adele.imag.fr</organizationUrl>
+            <roles>
+                <role>Developer</role>
+            </roles>
+        </contributor>
     </contributors>
 
     <!-- Project repositories -->

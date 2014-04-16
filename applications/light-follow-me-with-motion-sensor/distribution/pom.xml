@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- Copyright ADELE Research Group, LIG
+ Copyright Adele Team LIG
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.
  You may obtain a copy of the License at
@@ -19,46 +19,19 @@
 		<groupId>fr.liglab.adele.icasa</groupId>
 		<artifactId>parent</artifactId>
       <version>1.2.6-SNAPSHOT</version>
-      <relativePath>../../parent</relativePath>
+      <relativePath>../../../parent</relativePath>
 	</parent>
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>platform.core.packages</artifactId>
+   <groupId>fr.liglab.adele.icasa.apps</groupId>
+	<artifactId>light.follow.me.with.motion.sensor.distribution</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
-    <profiles>
-        <profile>
-            <id>all</id>
-            <activation>
-                <activeByDefault>true</activeByDefault>
-            </activation>
-            <modules>
-                <module>icasa-platform-dp</module>
-                <module>icasa-device-handler-dp</module>
-                <!--
-                Not maintained projects
-                <module>upnp-settopbox-core-dp</module>
-                
-                <module>x10-presence-sensor-core-dp</module>
-                
-                <module>tikitag-core-dp</module>
-                -->
-                <module>zigbee-core-dp</module>
-                <module>philips-hue-dp</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>icasa-platform-dp</module>
-                <module>icasa-device-handler-dp</module>
-                <module>zigbee-core-dp</module>
-                <module>philips-hue-dp</module>
-            </modules>
-        </profile>
-    </profiles>
+	<modules>
+      <module>binary-light-follow-me-with-motion-and-icasa</module>
+	</modules>
    <build>
       <plugins>
          <plugin>

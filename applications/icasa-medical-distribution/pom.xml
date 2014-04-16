@@ -26,93 +26,41 @@
     </parent>
 
     <!-- Project coordinates -->
-    <artifactId>icasa.teaching.distribution</artifactId>
+    <artifactId>icasa.medical.distribution</artifactId>
     <packaging>osgi-distribution</packaging>
     <name>${productName} :: ${projectName}</name>
 
     <!-- Project dependencies -->
     <dependencies>
-
         <dependency>
-            <groupId>fr.liglab.adele.common</groupId>
-            <artifactId>distribution.base</artifactId>
-            <type>osgi-distribution</type>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>wisdom.bundles</artifactId>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>actimetrics.dashboard</artifactId>
             <version>${project.version}</version>
             <type>osgi-distribution</type>
         </dependency>
 
-        <!-- RoSe bundles -->
         <dependency>
-            <groupId>org.ow2.chameleon.rose</groupId>
-            <artifactId>rose-core</artifactId>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>light.follow.me.with.motion.sensor.dp</artifactId>
+            <version>${project.version}</version>
+            <type>deployment-package</type>
         </dependency>
 
-        <dependency>
-            <groupId>fr.liglab.adele.common</groupId>
-            <artifactId>rose-chameleon-deployer-configurator</artifactId>
-            <version>${AdeleBaseVersion}</version>
-        </dependency>
 
         <dependency>
-            <!-- iCasa Platform -->
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.platform.dp</artifactId>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>light.follow.me.with.photometer.dp</artifactId>
             <version>${project.version}</version>
             <type>deployment-package</type>
         </dependency>
 
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.device.hanlder.dp</artifactId>
+            <artifactId>philips.hue.dp</artifactId>
             <version>${project.version}</version>
             <type>deployment-package</type>
         </dependency>
 
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.simulator.dp</artifactId>
-            <version>${project.version}</version>
-            <type>deployment-package</type>
-        </dependency>
-
-        <!-- Only one clock must be available in the platform-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>clock.simulated.impl</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>command.handler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-
-        <!-- Simulator application-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>web.resources</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>simulator.web.instance</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <!-- GUI dependencies-->
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>frontend.services</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -121,8 +69,8 @@
                 <groupId>fr.liglab.adele.common</groupId>
                 <artifactId>maven-osgi-distribution-plugin</artifactId>
                 <configuration>
-                    <flattenDP>true</flattenDP>
-                    <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                    <flattenDP>false</flattenDP>
+                    <defaultOutputDirectory>applications</defaultOutputDirectory>
                 </configuration>
             </plugin>
         </plugins>

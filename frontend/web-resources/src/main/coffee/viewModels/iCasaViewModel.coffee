@@ -43,7 +43,7 @@ define(['jquery',
             ko.applyBindingsToDescendants(innerBindingContext, element);
 
             return { controlsDescendantBindings: true };
-            
+
         update: (element, valueAccessor, allBindingsAccessor, viewModel, bindingContext) ->
 
             # Next, whether or not the supplied model property is observable, get its current value
@@ -541,7 +541,7 @@ define(['jquery',
                 );
 
            @isSizeHighlightEnabled.subscribe(@updateSize);
-           
+
            @updateSelected=()=>
               if (@isSelected())
                   @addHighlight();
@@ -909,7 +909,7 @@ define(['jquery',
                      decorator.height(decoratorDef.height);
                    @decorators.push(decorator);
                  );
-          
+
            @initDeviceImages= () =>
                 if ((@type() == "iCasa.Heater") || @hasService("fr.liglab.adele.icasa.device.temperature.Heater"))
                      @decorators.push(new DecoratorViewModel new Backbone.Model {
@@ -992,7 +992,7 @@ define(['jquery',
                @updateProperties();
 
            @initDeviceImages();
-           
+
            @state.subscribe(@updateWidgetImg);
            @fault.subscribe(@updateWidgetImg);
            @updateWidgetImg();
@@ -1040,7 +1040,7 @@ define(['jquery',
             if ((@type() == "iCasa.CO2GasSensor") || @hasService("fr.liglab.adele.icasa.device.gazSensor.CarbonDioxydeSensor"))
               imgName = "CO2GazSensor";
             if ((@type() == "iCasa.MotionSensor") || @hasService("fr.liglab.adele.icasa.device.motion.MotionSensor"))
-              imgName = "movementDetector";              
+              imgName = "movementDetector";
             if ((@type() == "iCasa.Speaker") || @hasService("fr.liglab.adele.icasa.device.sound.Speaker"))
               imgName = "speaker";
             if (@type() == "iCasa.Power")
@@ -1111,14 +1111,22 @@ define(['jquery',
                     imgName = "follow1"
                 if @id() ==  "light.follow.me.with.motion.sensor"
                     imgName = "follow1"
+                if @id() ==  "light.follow.me.with.motion.sensor.application"
+                    imgName = "follow1"
+                if @id() ==  "LightFollowMeWithMotionSensor"
+                    imgName = "follow1"
+                if @id() ==  "FollowMeWithPhotometerApplication"
+                  imgName = "follow1"
                 if @id() ==  "actimetrics"
                     imgName = "actimetrics"
+                if @id() ==  "ActimetricManager"
+                    imgName = "actimetrie"
                 if @id() ==  "habits.monitoring"
                     imgName = "actimetrics"
                 if @id() ==  "light.follow.me.with.motion.sensor.and.photometer"
                     imgName = "follow1"
                 if @id() == "health.management"
-                	imgName= "gererSante1"
+                	  imgName= "gererSante1"
                 return imgName;
             );
             @imgIcon = ko.computed(() =>
@@ -1629,7 +1637,7 @@ define(['jquery',
               #DataModel.collections.persons.push(newPerson);
               @newPersonName("");
 
-              
+
 
            @removeSelectedPersons = () =>
               toRemoveModels = []
@@ -1671,8 +1679,8 @@ define(['jquery',
               newZone.save();
               #newZone.set(id: @newZoneName());
               #DataModel.collections.zones.push(newZone);
-              
-              
+
+
            @removeSelectedZones = () =>
               toRemoveModels = []
               ko.utils.arrayForEach(@zones(), (zone) =>
@@ -1891,9 +1899,9 @@ define(['jquery',
              @.devices.subscribe(@updateSelectedApplication)
              @updateSelectedApplication();
            #end valid for dashboard
-        
+
         createRandomId:(collection, type)->
-           number = Math.floor((Math.random()*Number.MAX_VALUE)+1); 
+           number = Math.floor((Math.random()*Number.MAX_VALUE)+1);
            hexaNumner = number.toString(16).substr(0,10);
            nid = type.replace("iCasa.", "") + "-" + hexaNumner;
            testExistance = collection.get(nid);

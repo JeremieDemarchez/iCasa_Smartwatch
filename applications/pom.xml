@@ -33,8 +33,8 @@
     <modules>
         <module>mail-service</module>
         <module>binary-light-follow-me</module>
-        <module>follow-me-with-photometer</module>
-        <module>binary-light-follow-me-with-motion-sensor</module>
+        <module>light-follow-me-with-photometer</module>
+        <module>light-follow-me-with-motion-sensor</module>
         <module>actimetrics</module>
         <module>dimmer-light-follow-me</module>
         <module>gas-alarm-system</module>
@@ -42,6 +42,7 @@
         <module>electricity-viewer</module>
         <module>self-star</module>
         <module>icasa-teaching-distribution-with-apps</module>
+        <module>icasa-medical-distribution</module>
     </modules>
 
     <build>

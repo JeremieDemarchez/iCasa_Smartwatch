@@ -157,7 +157,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 	@Override
 	public String getCOMPort() {
         String givenPort = context.getProperty(SERIAL_PORT_PROPERTY);
-        if(givenPort == null || givenPort.length()>0){
+        if(givenPort != null && givenPort.length()>0){
             logger.info("Get port: "+ givenPort+ " from property: " + SERIAL_PORT_PROPERTY);
             return givenPort;
         }
