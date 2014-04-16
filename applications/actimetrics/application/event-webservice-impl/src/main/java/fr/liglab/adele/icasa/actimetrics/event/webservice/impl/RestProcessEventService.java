@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.actimetrics.event.webservice.impl;
+package fr.liglab.adele.icasa.actimetrics.event.webservice.impl;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -21,8 +21,8 @@ import java.util.Date;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import fr.liglab.adele.actimetrics.event.webservice.api.ProcessEventException;
-import fr.liglab.adele.actimetrics.event.webservice.api.ProcessEventService;
+import fr.liglab.adele.icasa.actimetrics.event.webservice.api.ProcessEventException;
+import fr.liglab.adele.icasa.actimetrics.event.webservice.api.ProcessEventService;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Property;

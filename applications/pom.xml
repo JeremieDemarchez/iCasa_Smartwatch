@@ -42,6 +42,7 @@
         <module>electricity-viewer</module>
         <module>self-star</module>
         <module>icasa-teaching-distribution-with-apps</module>
+        <module>icasa-medical-distribution</module>
     </modules>
 
     <build>
