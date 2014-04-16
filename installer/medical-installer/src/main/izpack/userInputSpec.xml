@@ -1,0 +1,16 @@
+<userInput>
+  <!-- Install -->
+	<panel id="panel1">
+        <field type="title" txt="Basic configuration for actimetry server" bold="true" size="1" />
+		<field type="space"/>
+		<field type="staticText" align="left"
+			txt="Insert the url of the Rest service Client"
+			id="staticText.text"/>
+	   <field type="space"/>
+		<!-- COM port -->
+		<field type="text" align="left" variable="url">
+            <spec txt="Url is : http://" size="20" set="localhost:8081/SensorEventService/rest/"/>
+        </field>
+		<field type="space"/>
+    </panel>
+</userInput>	

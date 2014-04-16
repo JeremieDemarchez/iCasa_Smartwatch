@@ -1,0 +1,69 @@
+<installation version="5.0">
+
+    <info>
+        <appname>client-distrib</appname>
+        <appversion>0.0</appversion>
+        <appsubpath>iCasa-Gateway</appsubpath>
+        <javaversion>1.7</javaversion>
+        <run-privileged/>
+    </info>
+
+    <resources>
+        <res id="userInputSpec.xml" src="userInputSpec.xml" parse="yes" type="xml"/>
+        <!--res id="processPanelSpec.xml" src="processPanelSpec.xml" parse="yes" type="xml"/-->
+        <!--res id="ProcessPanel.Spec.xml" src=""/-->
+    </resources>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <guiprefs width="800" height="600" resizable="yes">
+        <modifier key="allXGap" value="0"/>
+        <modifier key="allYGap" value="0"/>
+        <modifier key="useHeadingPanel" value="yes"/>
+        <modifier key="useButtonIcons" value="yes"/>
+        <modifier key="useHeadingForSummary" value="yes"/>
+        <modifier key="headingImageOnLeft" value="yes"/>
+        <modifier key="headingLineCount" value="1"/>
+        <modifier key="headingFontSize" value="1.5"/>
+        <modifier key="headingBackgroundColor" value="0x00ffffff"/>
+        <modifier key="headingPanelCounter" value="text"/>
+        <modifier key="headingPanelCounterPos" value="inHeading"/>
+    </guiprefs>
+
+    <panels>
+        <panel classname="TargetPanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="UserInputPanel" id="panel1"/>
+        <panel classname="InstallPanel"/>
+        <!--panel classname="ProcessPanel"/-->
+        <panel classname="FinishPanel"/>
+    </panels>
+
+    <packs>
+
+        <!-- client distrib -->
+        <pack name="MEDICAL client distribution" required="yes">
+            <description>The MEDICAL client distribution.</description>
+            <file targetdir="${INSTALL_PATH}/" src="distrib/icasa.medical.distribution-1.2.6-SNAPSHOT.zip" override="true" unpack="true">
+                <os family="windows" />
+            </file>
+        </pack>
+
+        <!-- configuration files -->
+        <pack name="Configuration files" required="yes" preselected="yes">
+            <description>Configuration files for this installer.</description>
+            <!--  <singlefile src="conf/ActimetryRestServiceClient-1.cfg" target="${INSTALL_PATH}/icasa.medical.distribution/applications/ActimetryRestServiceClient-1.cfg" override="true"/>-->
+             <!-- windows startup file -->
+            <singlefile src="conf/ActimetryRestServiceClient-1.cfg" target="${INSTALL_PATH}/icasa.medical.distribution/applications/ActimetryRestServiceClient-1.cfg" override="true">
+                <os family="windows" />
+            </singlefile>
+            <parsable targetfile="${INSTALL_PATH}/icasa.medical.distribution/applications/ActimetryRestServiceClient-1.cfg" type="plain">
+                <os family="windows" />
+            </parsable>
+
+        </pack>
+    </packs>
+
+</installation>
