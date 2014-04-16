@@ -66,6 +66,9 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
     @Requires
     private ContextManager _contextMgr;
 
+    @Requires
+    private Clock _clock;
+
     private static long DEFAULT_TIMEOUT = 60000;
 
     private Map<String,TurnOffLightTask> turnOffLightTaskMap = new HashMap<String, TurnOffLightTask>();
@@ -210,6 +213,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
     @Validate
     public void start() {
         _contextMgr.addListener(this);
+        _clock.resume();
     }
 
 

@@ -176,7 +176,7 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
                 mapOfZone.put(location,clock.currentTimeMillis());
             }
         }
-
+        clock.resume();
     }
 
 

@@ -175,6 +175,7 @@ public class ActimetricManagerImpl implements DeviceListener {
     /** Component Lifecycle Method */
     @Validate
     public void start() {
+        clock.resume();
     }
 
     @Override
