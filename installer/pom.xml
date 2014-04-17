@@ -18,6 +18,7 @@
 
     <modules>
         <module>medical-installer</module>
+        <module>teaching-with-apps-installer</module>
     </modules>
 
 
