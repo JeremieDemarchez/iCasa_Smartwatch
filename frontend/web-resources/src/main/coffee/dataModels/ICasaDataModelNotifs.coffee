@@ -12,7 +12,8 @@ define ["jquery", "dataModels/ICasaDataModel", 'hubu', "contracts/RemoteNotifMgr
         );
       return returnedModel;
 
-  serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
+  #serverUrl = $("#map").attr("gatewayURL").replace(/\/$/, "");
+  serverUrl = window.location.origin;
   console.log serverUrl;
   if !window.WebSocket
     window.WebSocket = window.MozWebSocket;

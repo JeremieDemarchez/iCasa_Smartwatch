@@ -9,7 +9,8 @@ define(['jquery','hubu', 'contracts/ICasaShellManager'], ($, hub, contract) ->
 
       hub: null;
       name: null;
-      gatewayUrl: $("#map").attr("gatewayURL").replace(/\/$/, "");
+      #gatewayUrl: $("#map").attr("gatewayURL").replace(/\/$/, "");
+      gatewayUrl: window.location.origin;
       shellResult: "shellOutput";
       historyCallNumber: 0;
       historyCalls: [];
