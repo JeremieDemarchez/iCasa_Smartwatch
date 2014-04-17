@@ -11,10 +11,13 @@ import fr.liglab.adele.icasa.device.button.PushButton;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import org.apache.felix.ipojo.annotations.*;
 
 import java.util.Date;
 import java.util.Map;
+
+
 
 /**
  * Created by aygalinc on 03/04/14.
@@ -23,6 +26,7 @@ import java.util.Map;
 @Instantiate(name="ActimetricManagerImpl-0")
 public class ActimetricManagerImpl implements DeviceListener {
 
+    protected static final String APPLICATION_ID = "actimetrics";
     /**
      * The name of the LOCATION property
      */
@@ -32,6 +36,11 @@ public class ActimetricManagerImpl implements DeviceListener {
      * The name of the location for unknown value
      */
     public static final String LOCATION_UNKNOWN = "unknown";
+
+    /**
+     * The name of the LOCATION property
+     */
+    public static final String USERNAME = "Aurelie";
 
     private int motionCounter = 1 ;
 
@@ -46,6 +55,10 @@ public class ActimetricManagerImpl implements DeviceListener {
 
     @Requires
     private ProcessEventService processEventService;
+
+    @Requires
+    private Preferences preferences;
+
 
     /** Field for presenceSensors dependency */
     @RequiresDevice(id="presenceSensors", type="field", optional=true)
@@ -266,14 +279,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (motionCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 motionCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 motionCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -286,14 +299,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (pushCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 pushCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 pushCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -306,14 +319,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (photometerCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 photometerCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 photometerCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -326,14 +339,14 @@ public class ActimetricManagerImpl implements DeviceListener {
 
         if (presenceCounter%4 == 0){
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)100.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 presenceCounter =1;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
             }
         }else{
             try{
-                processEventService.processEventData("shake","Aurelie","location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
+                processEventService.processEventData("shake",getUsername(),"location",eventDate,(float)60.0,(String) sensor.getPropertyValue(LOCATION_PROPERTY_NAME));
                 presenceCounter ++;
             }catch (ProcessEventException e) {
                 e.printStackTrace();
@@ -341,6 +354,14 @@ public class ActimetricManagerImpl implements DeviceListener {
         }
     }
 
+    private String getUsername() {
+        String tempValue = (String) preferences.getApplicationPropertyValue(APPLICATION_ID, "Username");
+        if (tempValue != null) {
+            return tempValue;
+        } else {
+            return USERNAME;
+        }
+    }
 
 }
 
