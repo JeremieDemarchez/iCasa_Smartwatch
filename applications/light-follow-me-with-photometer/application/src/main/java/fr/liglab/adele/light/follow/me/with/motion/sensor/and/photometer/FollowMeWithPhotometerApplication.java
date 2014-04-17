@@ -84,9 +84,8 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
                 MIN_LUX = lux;
             }
         }else{
-            System.out.println(" Value is < 0 ");
+            logger.info(" SetLux : Value is < 0 , INCORRECT ");
         }
-
     }
     /** Field for binaryLights dependency */
     @RequiresDevice(id = "binaryLights", type = "field", optional = true)
@@ -206,7 +205,10 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
         }
 
         _contextMgr.removeListener(this);
-
+        synchronized (m_lock){
+            turnOffLightTaskMap.clear();
+            serviceRegistrationMap.clear();
+        }
     }
 
     /** Component Lifecycle Method */
