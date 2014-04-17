@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
 <installation version="5.0">
 
     <info>
@@ -37,6 +38,7 @@
         <panel classname="PacksPanel"/>
         <panel classname="UserInputPanel" id="panel1"/>
         <panel classname="InstallPanel"/>
+        <panel classname="ShortcutPanel"/>
         <!--panel classname="ProcessPanel"/-->
         <panel classname="FinishPanel"/>
     </panels>
@@ -62,8 +64,9 @@
             <parsable targetfile="${INSTALL_PATH}/icasa.medical.distribution/applications/ActimetryRestServiceClient-1.cfg" type="plain">
                 <os family="windows" />
             </parsable>
-
         </pack>
     </packs>
+
+
 
 </installation>
