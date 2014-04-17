@@ -50,7 +50,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>{local-packages}</Export-Package>
+                        <Export-Package>fr.liglab.adele.icasa.application.actimetrics.manager</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
