@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.light.follow.me.with.motion.sensor;
 
+import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
@@ -23,62 +24,96 @@ import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
+import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
 @Component(name = "LightFollowMeWithMotionSensor")
 @Instantiate(name = "LightFollowMeWithMotionSensorImpl-0")
-@Provides(specifications = PeriodicRunnable.class)
-public class LightFollowMeWithMotionSensorImpl implements DeviceListener,PeriodicRunnable,ZoneListener,ClockListener {
+public class LightFollowMeWithMotionSensorImpl implements DeviceListener,ClockListener {
 
 
-    private static long DEFAULT_TIMEOUT = 60000;
+
+    protected static final String APPLICATION_ID = "light.follow.me.with.motion.sensor";
+
+    private final BundleContext bundleContext;
 
     private final Object m_lock ;
 
-    private Map<String,Long> mapOfZone = new HashMap<String, Long>();
+    private final Object m_taskLock ;
 
     /**
      * The name of the location for unknown value
      */
     public static final String LOCATION_UNKNOWN = "unknown";
 
+    private ServiceRegistration _computeTempTaskSRef;
 
     @Requires
     private ContextManager _contextMgr;
 
-    public LightFollowMeWithMotionSensorImpl(){
-        m_lock = new Object();
+    @Requires
+    private Clock _clock;
+
+    @Requires
+    private Preferences preferences;
+
+    private static final long DEFAULT_TIMEOUT = 30000;
+
+    private Map<String,TurnOffLightTask> turnOffLightTaskMap = new HashMap<String, TurnOffLightTask>();
+
+    private Map<String,ServiceRegistration> serviceRegistrationMap = new HashMap<String, ServiceRegistration>();
+
+    protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + "." + APPLICATION_ID);
+
+
+    private long getTimeout() {
+        Long tempValue = (Long) preferences.getApplicationPropertyValue(APPLICATION_ID, "Timeout");
+        if (tempValue != null) {
+            return tempValue;
+        } else {
+            return DEFAULT_TIMEOUT;
+        }
     }
+
 
     /** Field for binaryLights dependency */
     @RequiresDevice(id = "binaryLights", type = "field", optional = true)
     private BinaryLight[] binaryLights;
 
-    /** Field for binaryLights dependency */
-    @RequiresDevice(id = "dimmerLigths", type = "field", optional = true)
-    private DimmerLight[] dimmerLigths;
-
     /** Field for motionSensors dependency */
     @RequiresDevice(id = "motionSensors", type = "field", optional = true)
     private MotionSensor[] motionSensors;
 
+
+    /** Field for binaryLights dependency */
+    @RequiresDevice(id = "dimmerLigths", type = "field", optional = true)
+    private DimmerLight[] dimmerLigths;
+
     /** Bind Method for null dependency */
     @RequiresDevice(id = "motionSensors", type = "bind")
     public void bindMotionSensor(MotionSensor motionSensor, Map properties) {
+        logger.trace("Register Listener to MotionSensor" + motionSensor.getSerialNumber());
         motionSensor.addListener(this);
     }
 
     /** Unbind Method for null dependency */
     @RequiresDevice(id = "motionSensors", type = "unbind")
     public void unbindMotionSensor(MotionSensor motionSensor, Map properties) {
+        logger.trace("Remove Listener to MotionSensor" + motionSensor.getSerialNumber());
         motionSensor.removeListener(this);
     }
 
@@ -142,6 +177,11 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
     @Requires
     private Clock clock;
 
+    public LightFollowMeWithMotionSensorImpl(BundleContext context) {
+        this.bundleContext = context;
+        m_lock = new Object();
+        m_taskLock = new Object();
+    }
 
     /** Component Lifecycle Method */
     @Invalidate
@@ -155,6 +195,7 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
         for (MotionSensor motionSensorSensor : motionSensors) {
             motionSensorSensor.removeListener(this);
         }
+
         for (BinaryLight binaryLight : binaryLights) {
             binaryLight.removeListener(this);
         }
@@ -163,36 +204,105 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
             dimmerLight.removeListener(this);
         }
 
-        _contextMgr.removeListener(this);
+        synchronized (m_lock){
+            turnOffLightTaskMap.clear();
+            serviceRegistrationMap.clear();
+        }
     }
 
     /** Component Lifecycle Method */
     @Validate
     public void start() {
-        _contextMgr.addListener(this);
-        synchronized (m_lock){
-            Set<String> zoneIds = _contextMgr.getZoneIds();
-            for(String location : zoneIds){
-                mapOfZone.put(location,clock.currentTimeMillis());
-            }
-        }
-        clock.resume();
+        _clock.resume();
     }
 
 
+    @Override
+    public void factorModified(int oldFactor) {
 
-    /**
-     * Motion sensor will trigger a deviceEvent call.
-     *
-     * @param device the motion sensor detecting the movement.
-     * @param data
-     */
+    }
+
+    @Override
+    public void startDateModified(long oldStartDate) {
+
+    }
+
+    @Override
+    public void clockPaused() {
+
+    }
+
+    @Override
+    public void clockResumed() {
+
+    }
+
+    @Override
+    public void clockReset() {
+
+    }
+
+    @Override
+    public void deviceAdded(GenericDevice device) {
+
+    }
+
+    @Override
+    public void deviceRemoved(GenericDevice device) {
+
+    }
+
+    @Override
+    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
+
+        if (device instanceof BinaryLight){
+            synchronized (m_lock){
+                BinaryLight changingBinaryLight = (BinaryLight) device;
+                if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
+                    changingBinaryLight.turnOff();
+                }
+            }
+        }
+        if (device instanceof DimmerLight){
+            synchronized (m_lock){
+                DimmerLight changingDimmerLight = (DimmerLight) device;
+                if (propertyName.equals(DimmerLight.LOCATION_PROPERTY_NAME)){
+                    changingDimmerLight.setPowerLevel(0);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void devicePropertyAdded(GenericDevice device, String propertyName) {
+
+    }
+
+    @Override
+    public void devicePropertyRemoved(GenericDevice device, String propertyName) {
+
+    }
+
+    @Override
     public void deviceEvent(GenericDevice device, Object data) {
+
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
         if (!location.equals(LOCATION_UNKNOWN)){
             synchronized (m_lock){
                 setOnAllLightsInLocation(location);
-                mapOfZone.put(location,clock.currentTimeMillis());
+            }
+            synchronized (m_taskLock){
+                if (turnOffLightTaskMap.containsKey(location)){
+                    serviceRegistrationMap.get(location).unregister();
+                    serviceRegistrationMap.remove(location);
+                    turnOffLightTaskMap.remove(location);
+                }
+                TurnOffLightTask task = new TurnOffLightTask() ;
+                task.setExecutionDate(clock.currentTimeMillis() + getTimeout());
+                task.setLocation(location);
+                turnOffLightTaskMap.put(location, task);
+                _computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), task,new Hashtable());
+                serviceRegistrationMap.put(location,_computeTempTaskSRef);
             }
         }
     }
@@ -252,147 +362,41 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,Periodi
 
     }
 
+    /**
+     * This task is charged of turn off the light.
+     */
+    public class TurnOffLightTask implements ScheduledRunnable {
 
 
-    @Override
-    public void deviceAdded(GenericDevice device) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
 
-    @Override
-    public void devicePropertyAdded(GenericDevice arg0, String arg1) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
+        private long executionDate ;
 
-    @Override
-    public void devicePropertyRemoved(GenericDevice arg0, String arg1) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
+        private String location;
 
-    @Override
-    public void deviceRemoved(GenericDevice arg0) {
-        // This method is not used in this tutorial but has to be implemented to
-        // implement DeviceListeners
-    }
+        private String groupName = "Light-Follow-Me-With-Motion-Sensor";
 
-    @Override
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
+        public void setExecutionDate(long executionDate) {
+            this.executionDate = executionDate;
+        }
 
-        if (device instanceof BinaryLight){
-            BinaryLight changingBinaryLight = (BinaryLight) device;
+        public void setLocation(String location) {
+            this.location = location;
+            this.groupName =  "Light-Follow-Me-With-Motion-Sensor-"+location;
+        }
+
+        @Override
+        public long getExecutionDate() {
+            return executionDate;
+        }
+
+        @Override
+        public String getGroup() {
+            return groupName;
+        }
+
+        @Override
+        public void run() {
             synchronized (m_lock){
-                if (propertyName.equals(BinaryLight.LOCATION_PROPERTY_NAME)){
-                    changingBinaryLight.turnOff();
-                }
-            }
-        }
-        if (device instanceof DimmerLight){
-            DimmerLight changingDimmerLight = (DimmerLight) device;
-            synchronized (m_lock){
-                if (propertyName.equals(DimmerLight.LOCATION_PROPERTY_NAME)){
-                    changingDimmerLight.setPowerLevel(0);
-                }
-            }
-        }
-    }
-
-
-    @Override
-    public long getPeriod() {
-        return 60000;
-    }
-
-    @Override
-    public String getGroup() {
-        return "LightFollowMeWithMotionSensorApplication-PM";
-    }
-
-    @Override
-    public void run() {
-
-        synchronized (m_lock){
-            for(String location : mapOfZone.keySet()){
-                if ((mapOfZone.get(location) + DEFAULT_TIMEOUT) < clock.currentTimeMillis()){
-                    setOffAllLightsInLocation(location);
-                }
-            }
-        }
-    }
-
-    @Override
-    public void zoneAdded(Zone zone) {
-        synchronized (m_lock){
-            mapOfZone.put(zone.getId(), clock.currentTimeMillis());
-        }
-    }
-
-    @Override
-    public void zoneRemoved(Zone zone) {
-        synchronized (m_lock){
-            mapOfZone.remove(zone);
-        }
-    }
-
-    @Override
-    public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
-    }
-
-    @Override
-    public void zoneResized(Zone zone) {
-    }
-
-    @Override
-    public void zoneParentModified(Zone zone, Zone oldParentZone, Zone newParentZone) {
-    }
-
-    @Override
-    public void deviceAttached(Zone container, LocatedDevice child) {
-    }
-
-    @Override
-    public void deviceDetached(Zone container, LocatedDevice child) {
-    }
-
-    @Override
-    public void zoneVariableAdded(Zone zone, String variableName) {
-    }
-
-    @Override
-    public void zoneVariableRemoved(Zone zone, String variableName) {
-    }
-
-    @Override
-    public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
-    }
-
-    @Override
-    public void factorModified(int oldFactor) {
-
-    }
-
-    @Override
-    public void startDateModified(long oldStartDate) {
-
-    }
-
-    @Override
-    public void clockPaused() {
-
-    }
-
-    @Override
-    public void clockResumed() {
-
-    }
-
-    @Override
-    public void clockReset() {
-        synchronized (m_lock){
-            for(String location : mapOfZone.keySet()){
-                mapOfZone.put(location,clock.currentTimeMillis());
                 setOffAllLightsInLocation(location);
             }
         }

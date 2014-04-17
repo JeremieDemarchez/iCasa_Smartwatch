@@ -19,8 +19,6 @@ import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
-import fr.liglab.adele.icasa.command.handler.Command;
-import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -29,9 +27,7 @@ import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.ZoneListener;
+import fr.liglab.adele.icasa.service.preferences.Preferences;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
@@ -43,19 +39,16 @@ import java.util.*;
 
 @Component(name = "FollowMeWithPhotometerApplication")
 @Instantiate(name = "FollowMeWithPhotometerApplication-0")
-@CommandProvider(namespace = "LightFollowMeWithPhotometer")
-public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneListener,ClockListener {
+public class FollowMeWithPhotometerApplication implements DeviceListener,ClockListener {
 
 
     protected static final String APPLICATION_ID = "light.follow.me.with.motion.sensor.and.photometer";
-
-    protected static double MIN_LUX = 50.0;
 
     private final BundleContext bundleContext;
 
     private final Object m_lock ;
 
-    private final Object m_lockLux ;
+    private final Object m_taskLock ;
     /**
      * The name of the location for unknown value
      */
@@ -69,7 +62,13 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
     @Requires
     private Clock _clock;
 
-    private static long DEFAULT_TIMEOUT = 60000;
+    @Requires
+    private Preferences preferences;
+
+    private static final long DEFAULT_TIMEOUT = 30000;
+
+
+    private  static final double MIN_LUX = 50.0 ;
 
     private Map<String,TurnOffLightTask> turnOffLightTaskMap = new HashMap<String, TurnOffLightTask>();
 
@@ -77,16 +76,26 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
 
     protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG + "."+APPLICATION_ID);
 
-    @Command
-    public void setLux(Double lux){
-        if (lux >  0.0) {
-            synchronized (m_lockLux){
-                MIN_LUX = lux;
-            }
-        }else{
-            logger.info(" SetLux : Value is < 0 , INCORRECT ");
+
+    private long getTimeout() {
+        Long tempValue = (Long) preferences.getApplicationPropertyValue(APPLICATION_ID, "Timeout");
+        if (tempValue != null) {
+            return tempValue;
+        } else {
+            return DEFAULT_TIMEOUT;
         }
     }
+
+    private double getMinLux() {
+        Double tempValue = (Double) preferences.getApplicationPropertyValue(APPLICATION_ID, "Minimum.lux");
+        if (tempValue != null) {
+            return tempValue;
+        } else {
+            return MIN_LUX;
+        }
+    }
+
+
     /** Field for binaryLights dependency */
     @RequiresDevice(id = "binaryLights", type = "field", optional = true)
     private BinaryLight[] binaryLights;
@@ -180,7 +189,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
     public FollowMeWithPhotometerApplication(BundleContext context) {
         this.bundleContext = context;
         m_lock = new Object();
-        m_lockLux = new Object();
+        m_taskLock= new Object();
     }
 
     /** Component Lifecycle Method */
@@ -204,7 +213,6 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
             dimmerLight.removeListener(this);
         }
 
-        _contextMgr.removeListener(this);
         synchronized (m_lock){
             turnOffLightTaskMap.clear();
             serviceRegistrationMap.clear();
@@ -214,7 +222,6 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
     /** Component Lifecycle Method */
     @Validate
     public void start() {
-        _contextMgr.addListener(this);
         _clock.resume();
     }
 
@@ -287,20 +294,22 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
 
     @Override
     public void deviceEvent(GenericDevice device, Object data) {
+        //  logger.info(" Detection Event ");
+        System.out.println(" Detection Event ");
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
         if (!location.equals(LOCATION_UNKNOWN)){
-            synchronized (m_lockLux){
-                if(getMediaIlluminance(location) < MIN_LUX ){
-                    synchronized (m_lock){
-                        setOnAllLightsInLocation(location);
-                    }
+            if(getMediaIlluminance(location) < getMinLux() ){
+                synchronized (m_lock){
+                    setOnAllLightsInLocation(location);
+                }
+                synchronized (m_taskLock){
                     if (turnOffLightTaskMap.containsKey(location)){
                         serviceRegistrationMap.get(location).unregister();
                         serviceRegistrationMap.remove(location);
                         turnOffLightTaskMap.remove(location);
                     }
                     TurnOffLightTask task = new TurnOffLightTask() ;
-                    task.setExecutionDate(clock.currentTimeMillis() + DEFAULT_TIMEOUT);
+                    task.setExecutionDate(clock.currentTimeMillis() + getTimeout());
                     task.setLocation(location);
                     turnOffLightTaskMap.put(location, task);
                     _computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), task,new Hashtable());
@@ -308,56 +317,6 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
                 }
             }
         }
-    }
-
-    @Override
-    public void zoneAdded(Zone zone) {
-
-    }
-
-    @Override
-    public void zoneRemoved(Zone zone) {
-
-    }
-
-    @Override
-    public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
-
-    }
-
-    @Override
-    public void zoneResized(Zone zone) {
-
-    }
-
-    @Override
-    public void zoneParentModified(Zone zone, Zone oldParentZone, Zone newParentZone) {
-
-    }
-
-    @Override
-    public void deviceAttached(Zone container, LocatedDevice child) {
-
-    }
-
-    @Override
-    public void deviceDetached(Zone container, LocatedDevice child) {
-
-    }
-
-    @Override
-    public void zoneVariableAdded(Zone zone, String variableName) {
-
-    }
-
-    @Override
-    public void zoneVariableRemoved(Zone zone, String variableName) {
-
-    }
-
-    @Override
-    public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
-
     }
 
     /**
@@ -466,7 +425,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
 
         private String location;
 
-        private String groupName = "Light-Follow-Me-With-Photometer";
+        private String groupName = "Light-Follow-Me-With-Motion-Sensor-And-Photometer";
 
         public void setExecutionDate(long executionDate) {
             this.executionDate = executionDate;
@@ -474,7 +433,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
 
         public void setLocation(String location) {
             this.location = location;
-            this.groupName =  "Light-Follow-Me-With-Photometer-"+location;
+            this.groupName =  "Light-Follow-Me-With-Motion-Sensor-And-Photometer-"+location;
         }
 
         @Override
@@ -493,7 +452,6 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ZoneLis
                 setOffAllLightsInLocation(location);
             }
         }
-
     }
 
 
