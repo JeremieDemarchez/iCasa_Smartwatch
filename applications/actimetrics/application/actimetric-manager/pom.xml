@@ -36,6 +36,11 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>technical.services.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>actimetrics.event.webservice.api</artifactId>
             <version>${project.version}</version>
