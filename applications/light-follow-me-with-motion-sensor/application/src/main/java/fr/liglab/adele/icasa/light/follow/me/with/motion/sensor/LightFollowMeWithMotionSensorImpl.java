@@ -60,8 +60,6 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,ClockLi
      */
     public static final String LOCATION_UNKNOWN = "unknown";
 
-    private ServiceRegistration _computeTempTaskSRef;
-
     @Requires
     private ContextManager _contextMgr;
 
@@ -71,7 +69,7 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,ClockLi
     @Requires
     private Preferences preferences;
 
-    private static final long DEFAULT_TIMEOUT = 30000;
+    private static final long DEFAULT_TIMEOUT = 5000;
 
     private Map<String,TurnOffLightTask> turnOffLightTaskMap = new HashMap<String, TurnOffLightTask>();
 
@@ -301,8 +299,8 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,ClockLi
                 task.setExecutionDate(clock.currentTimeMillis() + getTimeout());
                 task.setLocation(location);
                 turnOffLightTaskMap.put(location, task);
-                _computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), task,new Hashtable());
-                serviceRegistrationMap.put(location,_computeTempTaskSRef);
+                ServiceRegistration computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), task,new Hashtable());
+                serviceRegistrationMap.put(location,computeTempTaskSRef);
             }
         }
     }

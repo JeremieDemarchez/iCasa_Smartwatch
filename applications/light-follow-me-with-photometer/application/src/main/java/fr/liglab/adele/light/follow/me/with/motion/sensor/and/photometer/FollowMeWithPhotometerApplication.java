@@ -54,8 +54,6 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
      */
     public static final String LOCATION_UNKNOWN = "unknown";
 
-    private ServiceRegistration _computeTempTaskSRef;
-
     @Requires
     private ContextManager _contextMgr;
 
@@ -65,7 +63,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
     @Requires
     private Preferences preferences;
 
-    private static final long DEFAULT_TIMEOUT = 30000;
+    private static final long DEFAULT_TIMEOUT = 5000;
 
 
     private  static final double MIN_LUX = 50.0 ;
@@ -298,6 +296,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
         System.out.println(" Detection Event ");
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
         if (!location.equals(LOCATION_UNKNOWN)){
+            System.out.println(" ILLUMINANCE FROM LOCATION : " + getMediaIlluminance(location) + " < " + getMinLux() + " !!!!!!!!!");
             if(getMediaIlluminance(location) < getMinLux() ){
                 synchronized (m_lock){
                     setOnAllLightsInLocation(location);
@@ -312,8 +311,8 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
                     task.setExecutionDate(clock.currentTimeMillis() + getTimeout());
                     task.setLocation(location);
                     turnOffLightTaskMap.put(location, task);
-                    _computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), task,new Hashtable());
-                    serviceRegistrationMap.put(location,_computeTempTaskSRef);
+                    ServiceRegistration computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), task,new Hashtable());
+                    serviceRegistrationMap.put(location,computeTempTaskSRef);
                 }
             }
         }
