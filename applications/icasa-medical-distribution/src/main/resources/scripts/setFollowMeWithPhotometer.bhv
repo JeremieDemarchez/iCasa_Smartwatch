@@ -2,6 +2,6 @@
 <behavior factor="1">
 
     <set-app-property applicationId="light.follow.me.with.motion.sensor.and.photometer" name="Timeout" value="5000" type="Long" />
-    <set-app-property applicationId="light.follow.me.with.motion.sensor.and.photometer" name="Minimum.lux" value="50.0" type="Double" />
+    <set-app-property applicationId="light.follow.me.with.motion.sensor.and.photometer" name="Minimum.lux" value="50.0" type="Float" />
 
 </behavior>
