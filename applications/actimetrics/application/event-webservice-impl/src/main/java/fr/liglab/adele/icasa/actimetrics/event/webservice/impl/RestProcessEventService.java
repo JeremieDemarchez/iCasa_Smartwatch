@@ -21,19 +21,18 @@ import com.sun.jersey.api.client.WebResource;
 import fr.liglab.adele.icasa.actimetrics.event.webservice.api.ProcessEventException;
 import fr.liglab.adele.icasa.actimetrics.event.webservice.api.ProcessEventService;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wisdom.akka.AkkaSystemService;
 
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.Callable;
 
 
 /**
@@ -54,14 +53,12 @@ public class RestProcessEventService implements ProcessEventService {
     @Property
     private String url;
 
-    private Map<SendTask,ServiceRegistration> serviceRegistrationSet = new HashMap<SendTask, ServiceRegistration>();
 
-    private final BundleContext bundleContext;
+    @Requires
+    AkkaSystemService akka;
 
-    private final Object m_lock;
-    public RestProcessEventService(BundleContext bundleContext) {
-        this.bundleContext = bundleContext;
-        m_lock = new Object();
+    public RestProcessEventService() {
+
     }
 
     /**
@@ -83,10 +80,10 @@ public class RestProcessEventService implements ProcessEventService {
      */
     public synchronized boolean processEventData(final String sensorId,
                                                  final String patientId, final String eventType,
-                                                 final Date dateTime, final float reliability, final String value) {
+                                                 final Date dateTime, final float reliability, final String value)
+            throws ProcessEventException {
 
         // log received data
-        logger.info("SEND TO " + url);
         logger.info("==================================================");
         logger.info("Patient ID --->" + patientId);
         logger.info("Sensor ID --->" + sensorId);
@@ -94,12 +91,62 @@ public class RestProcessEventService implements ProcessEventService {
         logger.info("Localisation  --->" + value);
         logger.info("==================================================");
 
-        SendTask sendTask = new SendTask(sensorId,patientId,eventType,dateTime,reliability,value);
-        sendTask.setExecutionDate(dateTime.getTime());
-        ServiceRegistration computeTempTaskSRef = bundleContext.registerService(ScheduledRunnable.class.getName(), sendTask,new Hashtable());
-        synchronized (m_lock){
-            serviceRegistrationSet.put(sendTask, computeTempTaskSRef);
-        }
+        Runnable runWSCall = new Runnable() {
+
+            public void run() {
+                if (sensorId == null || sensorId.length() == 0) {
+                    throw new IllegalArgumentException(
+                            "sensor id is null or empty");
+                }
+                if (patientId == null || patientId.length() == 0) {
+                    throw new IllegalArgumentException(
+                            "patient id is null or empty");
+                }
+                if (eventType == null || eventType.length() == 0) {
+                    throw new IllegalArgumentException(
+                            "event type is null or empty");
+                }
+                if (dateTime == null) {
+                    throw new IllegalArgumentException("date time is null");
+                }
+                if (value == null || value.length() == 0) {
+                    throw new IllegalArgumentException(
+                            "event value is null or empty");
+                }
+                try {
+                    Client client = Client.create();
+                    WebResource webResource = client.resource(url + eventType);
+                    String xmlData = "<locationEvent><patientId>" + patientId
+                            + "</patientId><reliability>" + reliability
+                            + "</reliability><sensorId>" + sensorId
+                            + "</sensorId><timeStamp>"
+                            + formatDateTime(dateTime)
+                            + "</timeStamp><location>" + value
+                            + "</location><x>0.0</x><y>0.0</y></locationEvent>";
+                    ClientResponse response = (ClientResponse) webResource
+                            .type(MediaType.APPLICATION_XML).put(
+                                    ClientResponse.class, xmlData);
+
+                    if (response.getStatus() == Response.Status.OK
+                            .getStatusCode()) {
+                        // return true;
+                    } else {
+                        throw new ProcessEventException(
+                                "Failed to proceed event data, HTTP error code : "
+                                        + response.getStatus());
+                    }
+                } catch (Exception ex) {
+                    logger.error("An error occured when proceeding event data : "
+                            + ex.toString());
+                    // return false;
+                }
+
+            }
+        };
+
+        Thread exeThread = new Thread(runWSCall);
+        exeThread.start();
+
         return true;
     }
 
@@ -127,12 +174,7 @@ public class RestProcessEventService implements ProcessEventService {
     /**
      * This task is charged of turn off the light.
      */
-    public class SendTask implements ScheduledRunnable {
-
-        private long executionDate ;
-
-        private String groupName = "Actimetrics-Sender";
-
+    public class SendTask implements Callable<Void> {
         final String sensorId;
         final String patientId;
         final String eventType;
@@ -150,22 +192,8 @@ public class RestProcessEventService implements ProcessEventService {
         }
 
 
-        public void setExecutionDate(long executionDate) {
-            this.executionDate = executionDate;
-        }
-
         @Override
-        public long getExecutionDate() {
-            return executionDate;
-        }
-
-        @Override
-        public String getGroup() {
-            return groupName;
-        }
-
-        @Override
-        public void run() {
+        public Void call() {
             if (sensorId == null || sensorId.length() == 0) {
                 throw new IllegalArgumentException(
                         "sensor id is null or empty");
@@ -213,9 +241,7 @@ public class RestProcessEventService implements ProcessEventService {
                         + ex.toString());
                 // return false;
             }
-            synchronized (m_lock){
-                serviceRegistrationSet.remove(this);
-            }
+            return null;
         }
     }
 }

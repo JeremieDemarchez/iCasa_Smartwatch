@@ -46,6 +46,11 @@
             <artifactId>technical.services.api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>akka-system</artifactId>
+            <version>0.4</version>
+        </dependency>
     </dependencies>
 
     <build>
