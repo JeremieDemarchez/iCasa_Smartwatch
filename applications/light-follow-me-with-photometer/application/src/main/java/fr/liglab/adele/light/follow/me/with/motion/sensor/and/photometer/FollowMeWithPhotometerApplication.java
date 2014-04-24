@@ -66,7 +66,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
     private static final long DEFAULT_TIMEOUT = 5000;
 
 
-    private  static final double MIN_LUX = 50.0 ;
+    private  static final float MIN_LUX = (float)50.0 ;
 
     private Map<String,TurnOffLightTask> turnOffLightTaskMap = new HashMap<String, TurnOffLightTask>();
 
@@ -85,7 +85,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
     }
 
     private double getMinLux() {
-        Double tempValue = (Double) preferences.getApplicationPropertyValue(APPLICATION_ID, "Minimum.lux");
+        Float tempValue = (Float) preferences.getApplicationPropertyValue(APPLICATION_ID, "Minimum.lux");
         if (tempValue != null) {
             return tempValue;
         } else {
@@ -112,14 +112,14 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
 
     /** Bind Method for null dependency */
     @RequiresDevice(id = "motionSensors", type = "bind")
-    public void bindMotionSensor(MotionSensor motionSensor, Map properties) {
+    public synchronized void bindMotionSensor(MotionSensor motionSensor, Map properties) {
         logger.trace("Register Listener to MotionSensor" + motionSensor.getSerialNumber());
         motionSensor.addListener(this);
     }
 
     /** Unbind Method for null dependency */
     @RequiresDevice(id = "motionSensors", type = "unbind")
-    public void unbindMotionSensor(MotionSensor motionSensor, Map properties) {
+    public synchronized void unbindMotionSensor(MotionSensor motionSensor, Map properties) {
         logger.trace("Remove Listener to MotionSensor" + motionSensor.getSerialNumber());
         motionSensor.removeListener(this);
     }
@@ -129,7 +129,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
      * This method is not mandatory and implemented for debug purpose only.
      */
     @RequiresDevice(id="binaryLights", type="bind")
-    public void bindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
+    public synchronized void bindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
         binaryLight.addListener(this);
     }
 
@@ -138,7 +138,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
      * This method is not mandatory and implemented for debug purpose only.
      */
     @RequiresDevice(id="binaryLights", type="unbind")
-    public void unbindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
+    public synchronized void unbindBinaryLight(BinaryLight binaryLight, Map<Object, Object> properties) {
         binaryLight.removeListener(this);
         String serialNumber = (String)properties.get(DimmerLight.DEVICE_SERIAL_NUMBER);
         for (LocatedDevice locatedDevice : _contextMgr.getDevices()){
@@ -158,7 +158,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
      * This method is not mandatory and implemented for debug purpose only.
      */
     @RequiresDevice(id="dimmerLigths", type="bind")
-    public void bindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
+    public synchronized void bindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
         dimmerLight.addListener(this);
     }
 
@@ -167,7 +167,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
      * This method is not mandatory and implemented for debug purpose only.
      */
     @RequiresDevice(id="dimmerLigths", type="unbind")
-    public void unbindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
+    public synchronized void unbindDimmerLight(DimmerLight dimmerLight, Map<Object, Object> properties) {
         dimmerLight.removeListener(this);
         String serialNumber = (String)properties.get(DimmerLight.DEVICE_SERIAL_NUMBER);
         for (LocatedDevice locatedDevice : _contextMgr.getDevices()){
@@ -211,7 +211,10 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
             dimmerLight.removeListener(this);
         }
 
-        synchronized (m_lock){
+        synchronized (m_taskLock){
+            for(String key : serviceRegistrationMap.keySet()){
+                serviceRegistrationMap.get(key).unregister();
+            }
             turnOffLightTaskMap.clear();
             serviceRegistrationMap.clear();
         }
@@ -292,11 +295,9 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
 
     @Override
     public void deviceEvent(GenericDevice device, Object data) {
-        //  logger.info(" Detection Event ");
-        System.out.println(" Detection Event ");
+        logger.info(" Detection Event ");
         String location = String.valueOf(device.getPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME));
         if (!location.equals(LOCATION_UNKNOWN)){
-            System.out.println(" ILLUMINANCE FROM LOCATION : " + getMediaIlluminance(location) + " < " + getMinLux() + " !!!!!!!!!");
             if(getMediaIlluminance(location) < getMinLux() ){
                 synchronized (m_lock){
                     setOnAllLightsInLocation(location);
@@ -330,6 +331,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
         for (BinaryLight binLight : binaryLights) {
             if (binLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
                 binaryLightsLocation.add(binLight);
+                logger.info(" light " + binLight.getSerialNumber() + " turnOn");
             }
         }
         return binaryLightsLocation;
@@ -340,6 +342,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
         for (DimmerLight dimmerLight : dimmerLigths) {
             if (dimmerLight.getPropertyValue(BinaryLight.LOCATION_PROPERTY_NAME).equals(location)) {
                 dimmerLightsLocation.add(dimmerLight);
+                logger.info(" light " + dimmerLight.getSerialNumber() + " turnOn");
             }
         }
         return dimmerLightsLocation;
@@ -384,7 +387,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
         Set<Photometer> photometersLocation = new HashSet<Photometer>();
 
         //if zone does nor exist, return an empty list.
-        if(_contextMgr.getZone(location) == null) {
+        if(location.equals(LOCATION_UNKNOWN)) {
             return photometersLocation;
         }
         //if zone exists, we get the BinaryLight objects by its location
@@ -404,11 +407,13 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
         Set<Photometer> photometers = getPhotometerFromLocation(location);
         double illuminance = 0;
         if(photometers.size()<1){
+            logger.info(" No photometer in zone ");
             return 0;//we don't have information.
         }
         for(Photometer photometer: photometers){
             illuminance += photometer.getIlluminance();
         }
+        logger.info(" Medium Illuminance is  " + illuminance/photometers.size());
         return illuminance/photometers.size();
     }
 
