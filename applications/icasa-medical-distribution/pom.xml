@@ -41,14 +41,6 @@
 
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>light.follow.me.with.motion.sensor.dp</artifactId>
-            <version>${project.version}</version>
-            <type>deployment-package</type>
-        </dependency>
-
-
-        <dependency>
-            <groupId>fr.liglab.adele.icasa.apps</groupId>
             <artifactId>light.follow.me.with.photometer.dp</artifactId>
             <version>${project.version}</version>
             <type>deployment-package</type>

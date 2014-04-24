@@ -63,6 +63,10 @@ public class PhilipsHueLight extends AbstractDevice implements
         bridge.updateLightState(light, lightState);
         super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,0.0d);
         super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,0.0d );
+        float[] xy = PHUtilities.calculateXYFromRGB(Color.RED.getRed(),Color.RED.getGreen(),Color.RED.getBlue(), light.getIdentifier());
+        lightState.setX(xy[0]);
+        lightState.setY(xy[1]);
+        bridge.updateLightState(light, lightState);
         m_lock = new Object();
     }
 

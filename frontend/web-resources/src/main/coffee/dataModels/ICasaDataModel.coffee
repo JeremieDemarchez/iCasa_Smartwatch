@@ -2,8 +2,8 @@
 define(['jquery', 'backbone', 'underscore', 'hubu', 'contracts/DataModelConnectionMgr','contracts/RemoteNotifMgr', 'domReady'],
      ($, Backbone, _, hub, DataModelConnectionMgr, RemoteNotifMgr) ->
 
-         gatewayURL = $("#map").attr("gatewayURL").replace(/\/$/, "");
-
+        # gatewayURL = $("#map").attr("gatewayURL").replace(/\/$/, "");
+         gatewayURL = window.location.origin;
          serverUrl = gatewayURL + "/icasa";
 
          DataModel =

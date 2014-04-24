@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<installation version="5.0">
+
+    <info>
+        <appname>icasa-teaching-distribution-with-apps</appname>
+        <appversion>0.0</appversion>
+        <appsubpath>iCasa-Gateway</appsubpath>
+        <javaversion>1.7</javaversion>
+        <run-privileged/>
+    </info>
+
+    <resources>
+    </resources>
+
+    <locale>
+        <langpack iso3="eng"/>
+    </locale>
+
+    <guiprefs width="800" height="600" resizable="yes">
+        <modifier key="allXGap" value="0"/>
+        <modifier key="allYGap" value="0"/>
+        <modifier key="useHeadingPanel" value="yes"/>
+        <modifier key="useButtonIcons" value="yes"/>
+        <modifier key="useHeadingForSummary" value="yes"/>
+        <modifier key="headingImageOnLeft" value="yes"/>
+        <modifier key="headingLineCount" value="1"/>
+        <modifier key="headingFontSize" value="1.5"/>
+        <modifier key="headingBackgroundColor" value="0x00ffffff"/>
+        <modifier key="headingPanelCounter" value="text"/>
+        <modifier key="headingPanelCounterPos" value="inHeading"/>
+    </guiprefs>
+
+    <panels>
+        <panel classname="TargetPanel"/>
+        <panel classname="PacksPanel"/>
+        <panel classname="InstallPanel"/>
+        <!--panel classname="ProcessPanel"/-->
+        <panel classname="FinishPanel"/>
+    </panels>
+
+    <packs>
+
+        <!-- client distrib -->
+        <pack name="MEDICAL client distribution" required="yes">
+            <description>The icasa teaching with apps distribution.</description>
+            <file targetdir="${INSTALL_PATH}/" src="distrib/icasa.teaching.distribution.with.apps-1.2.6-SNAPSHOT.zip" override="true" unpack="true">
+                <os family="windows" />
+            </file>
+        </pack>
+
+    </packs>
+
+</installation>
