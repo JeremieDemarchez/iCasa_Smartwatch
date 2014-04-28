@@ -20,6 +20,7 @@
     <modules>
         <module>temperatureController</module>
         <module>roomOccupancy</module>
+        <module>momentOfTheDay</module>
         <module>temperatureManager</module>
         <module>temperatureCommand</module>
     </modules>
