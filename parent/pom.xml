@@ -447,7 +447,7 @@ See the License for the specific language governing permissions and
                         <instructions>
                             <Include-Resource>
                                 {maven-resources},
-                                META-INF/LICENSE = ${project.basedir}/LICENSE,
+                                META-INF/LICENSE = ${project.parent.basedir}/LICENSE,
                                 META-INF/NOTICE = NOTICE
                             </Include-Resource>
                             <!-- Default bundle headers -->
