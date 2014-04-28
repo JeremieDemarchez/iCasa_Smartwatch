@@ -2,24 +2,27 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <!-- Project parent -->
     <parent>
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
         <version>1.2.6-SNAPSHOT</version>
-        <relativePath>../../../parent</relativePath>
+        <relativePath>../../../../parent</relativePath>
     </parent>
 
     <!-- Project Descrkiption -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>self.star.temperature.management</artifactId>
+    <artifactId>self.star.temperature.management.exercice.four</artifactId>
     <packaging>pom</packaging>
     <name>${productName} :: ${projectName}</name>
 
     <modules>
-        <module>exerciceO</module>
-        <module>exerciceTwo</module>
-        <module>exerciceThree</module>
-        <module>exerciceFour</module>
+        <module>temperatureController</module>
+        <module>roomOccupancy</module>
+        <module>temperatureManager</module>
+        <module>temperatureCommand</module>
     </modules>
+
+
 </project>
