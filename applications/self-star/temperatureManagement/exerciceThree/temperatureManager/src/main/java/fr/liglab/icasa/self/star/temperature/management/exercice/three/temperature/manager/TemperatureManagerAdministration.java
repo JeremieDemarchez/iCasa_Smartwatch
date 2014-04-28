@@ -44,4 +44,26 @@ public interface TemperatureManagerAdministration {
      */
     public boolean isPowerSavingEnabled();
 
+
+    /**
+     * Set the maximum energy goal
+     *
+     */
+    public void setTemperatureEnergyGoal(EnergyGoal goal);
+
+    /**
+     * Get the maximum energy goal
+     *
+     * @return The energy goal Policy
+     */
+    public EnergyGoal getTemperatureEnergyGoal();
+
+    /**
+     * Get the room occupancy
+     *
+     * @return The probability of the occupance of the room
+     */
+    public double getRoomOccupancy(String room,int minute);
+
+
 }

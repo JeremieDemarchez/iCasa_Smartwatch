@@ -45,4 +45,14 @@ public interface TemperatureConfiguration {
      */
     public void turnOff(String room);
 
+    /**
+     * Sets the maximum allowed energy consumption in Watts in each room
+     *
+     * @param maximumEnergy
+     *            the maximum allowed energy consumption in Watts in each room
+     */
+    public void setMaximumAllowedEnergyInRoom(double maximumEnergy);
+
+
+
 }

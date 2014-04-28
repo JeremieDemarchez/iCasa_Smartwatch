@@ -37,10 +37,11 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
 
     private  Map<String,Boolean> mapManagementAuto  ;
 
-    public static double ROOM_OCCUPANCY_THRESHOLD = 0.2;
-
     private final Object m_lock ;
 
+    private final Object m_Energylock ;
+
+    private double maximumEnergyAllowed = 1;
 
     /** Field for thermometer dependency */
     @RequiresDevice(id="thermometers", type="field", optional=true)
@@ -56,6 +57,7 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
 
     public temperatureControllerImpl() {
         m_lock = new Object();
+        m_Energylock = new Object();
         mapTemperatureTarget = new HashMap<String, Double>();
         mapManagementAuto = new HashMap<String, Boolean>();
 
@@ -102,52 +104,53 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
             for(String zoneId : temperatureMap.keySet()){
                 if (mapManagementAuto.get(zoneId)){
                     double tempInZone = temperatureMap.get(zoneId);
-                    if (tempInZone > mapTemperatureTarget.get(zoneId) +1 ){
-                        Set<Cooler> coolerSet = coolerInZone(zoneId);
-                        for(Cooler cooler : coolerSet){
-                            cooler.setPowerLevel(1);
+                    synchronized (m_Energylock){
+                        if (tempInZone > mapTemperatureTarget.get(zoneId) +1 ){
+                            Set<Cooler> coolerSet = coolerInZone(zoneId);
+                            for(Cooler cooler : coolerSet){
+                                cooler.setPowerLevel(maximumEnergyAllowed);
+                            }
+                            Set<Heater> heaterSet = heaterInZone(zoneId);
+                            for(Heater heater : heaterSet){
+                                heater.setPowerLevel(0);
+                            }
+                        }else if (tempInZone < mapTemperatureTarget.get(zoneId) - 1 ){
+                            Set<Heater> heaterSet = heaterInZone(zoneId);
+                            for(Heater heater : heaterSet){
+                                heater.setPowerLevel(maximumEnergyAllowed);
+                            }
+                            Set<Cooler> coolerSet = coolerInZone(zoneId);
+                            for(Cooler cooler : coolerSet){
+                                cooler.setPowerLevel(0);
+                            }
+                        }else if (tempInZone < mapTemperatureTarget.get(zoneId) - 0.5 ){
+                            Set<Heater> heaterSet = heaterInZone(zoneId);
+                            for(Heater heater : heaterSet){
+                                heater.setPowerLevel(0.03);
+                            }
+                            Set<Cooler> coolerSet = coolerInZone(zoneId);
+                            for(Cooler cooler : coolerSet){
+                                cooler.setPowerLevel(0);
+                            }
+                        } else if (tempInZone > mapTemperatureTarget.get(zoneId) + 0.5 ){
+                            Set<Cooler> coolerSet = coolerInZone(zoneId);
+                            for(Cooler cooler : coolerSet){
+                                cooler.setPowerLevel(0.03);
+                            }
+                            Set<Heater> heaterSet = heaterInZone(zoneId);
+                            for(Heater heater : heaterSet){
+                                heater.setPowerLevel(0);
+                            }
+                        } else{
+                            Set<Heater> heaterSet = heaterInZone(zoneId);
+                            Set<Cooler> coolerSet = coolerInZone(zoneId);
+                            for(Heater heater : heaterSet){
+                                heater.setPowerLevel(0);
+                            }
+                            for(Cooler cooler : coolerSet){
+                                cooler.setPowerLevel(0);
+                            }
                         }
-                        Set<Heater> heaterSet = heaterInZone(zoneId);
-                        for(Heater heater : heaterSet){
-                            heater.setPowerLevel(0);
-                        }
-                    }else if (tempInZone < mapTemperatureTarget.get(zoneId) - 1 ){
-                        Set<Heater> heaterSet = heaterInZone(zoneId);
-                        for(Heater heater : heaterSet){
-                            heater.setPowerLevel(1);
-                        }
-                        Set<Cooler> coolerSet = coolerInZone(zoneId);
-                        for(Cooler cooler : coolerSet){
-                            cooler.setPowerLevel(0);
-                        }
-                    }else if (tempInZone < mapTemperatureTarget.get(zoneId) - 0.5 ){
-                        Set<Heater> heaterSet = heaterInZone(zoneId);
-                        for(Heater heater : heaterSet){
-                            heater.setPowerLevel(0.1);
-                        }
-                        Set<Cooler> coolerSet = coolerInZone(zoneId);
-                        for(Cooler cooler : coolerSet){
-                            cooler.setPowerLevel(0);
-                        }
-                    } else if (tempInZone > mapTemperatureTarget.get(zoneId) + 0.5 ){
-                        Set<Cooler> coolerSet = coolerInZone(zoneId);
-                        for(Cooler cooler : coolerSet){
-                            cooler.setPowerLevel(0.1);
-                        }
-                        Set<Heater> heaterSet = heaterInZone(zoneId);
-                        for(Heater heater : heaterSet){
-                            heater.setPowerLevel(0);
-                        }
-                    } else{
-                        Set<Heater> heaterSet = heaterInZone(zoneId);
-                        Set<Cooler> coolerSet = coolerInZone(zoneId);
-                        for(Heater heater : heaterSet){
-                            heater.setPowerLevel(0);
-                        }
-                        for(Cooler cooler : coolerSet){
-                            cooler.setPowerLevel(0);
-                        }
-
                     }
                 }
             }
@@ -264,6 +267,21 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
     public void turnOff(String room) {
         synchronized (m_lock){
             mapManagementAuto.put(room,false);
+            Set<Heater> heaterSet = heaterInZone(room);
+            Set<Cooler> coolerSet = coolerInZone(room);
+            for(Heater heater : heaterSet){
+                heater.setPowerLevel(0);
+            }
+            for(Cooler cooler : coolerSet){
+                cooler.setPowerLevel(0);
+            }
+        }
+    }
+
+    @Override
+    public void setMaximumAllowedEnergyInRoom(double maximumEnergy) {
+        synchronized (m_Energylock){
+            maximumEnergyAllowed = maximumEnergy;
         }
     }
 

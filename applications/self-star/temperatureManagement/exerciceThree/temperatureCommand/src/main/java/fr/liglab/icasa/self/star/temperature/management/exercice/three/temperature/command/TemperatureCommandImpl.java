@@ -3,6 +3,7 @@ package fr.liglab.icasa.self.star.temperature.management.exercice.three.temperat
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
+import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager.EnergyGoal;
 import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager.TemperatureManagerAdministration;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -34,13 +35,64 @@ public class TemperatureCommandImpl {
 
     // Each command should start with a @Command annotation
     @Command
-    public void tempTooHigh(String room) {
-       m_administrationService.temperatureIsTooHigh(room);
+    public synchronized void tempTooHigh(String room) {
+        m_administrationService.temperatureIsTooHigh(room);
     }
 
     @Command
-    public void tempTooLow(String room){
+    public synchronized void tempTooLow(String room){
         m_administrationService.temperatureIsTooHigh(room);
+    }
+
+    @Command
+    public synchronized void setTemperatureEnergyLevel(String room){
+
+        EnergyGoal energyGoal;
+
+        energyGoal = EnergyGoal.valueOf(room.toUpperCase());
+
+        m_administrationService.setTemperatureEnergyGoal(energyGoal);
+    }
+
+    @Command
+    public synchronized void getTemperatureEnergyLevel(){
+        EnergyGoal energyGoal = m_administrationService.getTemperatureEnergyGoal();
+        System.out.println(" Temperature energy policy is : " + energyGoal.name() );
+    }
+
+    @Command
+    public synchronized void getStatutSavingMode(){
+        System.out.println(" Energy saving mode enable ? " + m_administrationService.isPowerSavingEnabled());
+    }
+
+    @Command
+    public synchronized void setStatutSavingMode(boolean stateSavingMode){
+
+    }
+
+    @Command
+    public synchronized void enableSavingMode(){
+        if ( !m_administrationService.isPowerSavingEnabled()){
+            m_administrationService.turnOnEnergySavingMode();
+        }else {
+            System.out.println(" Saving mode is already enable ");
+        }
+    }
+
+    @Command
+    public synchronized void disableSavingMode(){
+        if (m_administrationService.isPowerSavingEnabled()){
+            m_administrationService.turnOffEnergySavingMode();
+        }else {
+            System.out.println(" Saving mode is already disable");
+        }
+    }
+
+    @Command
+    public synchronized void roomOccupancy(String room){
+        for(int i = 0 ; i <= 1439 ; i++ ){
+            System.out.println(" At " + (i/60) + " : " + (i - (int)(i/60) * 60) + " proba is " + m_administrationService.getRoomOccupancy(room,i));
+        }
     }
 
 }
