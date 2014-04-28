@@ -25,4 +25,5 @@ public interface RoomOccupancy {
 
     public void removeListener(RoomOccupancyListener roomOccupancyListener );
 
+    public void setThreshold(double threshold);
 }

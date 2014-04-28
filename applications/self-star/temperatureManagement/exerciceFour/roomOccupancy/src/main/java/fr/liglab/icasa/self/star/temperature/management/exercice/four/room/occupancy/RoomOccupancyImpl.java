@@ -115,6 +115,11 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     }
 
     @Override
+    public synchronized void setThreshold(double threshold) {
+        this.threshold = threshold;
+    }
+
+    @Override
     public long getPeriod() {
         return 40000;
     }

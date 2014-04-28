@@ -1,6 +1,9 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.four.temperature.manager;
 
 import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day.MomentOfTheDay;
+import fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day.MomentOfTheDayListener;
+import fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day.MomentOfTheDayService;
 import fr.liglab.icasa.self.star.temperature.management.exercice.four.room.occupancy.RoomOccupancy;
 import fr.liglab.icasa.self.star.temperature.management.exercice.four.room.occupancy.RoomOccupancyListener;
 import fr.liglab.icasa.self.star.temperature.management.exercice.four.temperature.controller.TemperatureConfiguration;
@@ -18,7 +21,7 @@ import java.util.Map;
 @Component(name="temperatureManager")
 @Instantiate(name="temperatureManagerImpl-0")
 @Provides(specifications = TemperatureManagerAdministration.class)
-public class TemperatureManagerAdministrationImpl implements TemperatureManagerAdministration,RoomOccupancyListener {
+public class TemperatureManagerAdministrationImpl implements TemperatureManagerAdministration,RoomOccupancyListener,MomentOfTheDayListener {
 
     @Requires
     private Clock clock;
@@ -28,6 +31,10 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
 
     @Requires
     private RoomOccupancy m_roomOccupancy;
+
+    @Requires
+    private MomentOfTheDayService m_momentOfTheDay;
+
 
     private Duration duration = Duration.millis(5*60*1000); //Five minutes
 
@@ -46,6 +53,8 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     private double occupancyThreshold = 0.2 ;
 
     private EnergyGoal energyGoal = EnergyGoal.HIGH ;
+
+    private MomentOfTheDay momentOfTheDay ;
 
 
     @Override
@@ -158,15 +167,18 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     public void stop() {
         System.out.println("Component is stopping...");
         m_roomOccupancy.removeListener(this);
-
-
+        m_momentOfTheDay.unregister(this);
     }
 
     /** Component Lifecycle Method */
     @Validate
     public void start() {
         System.out.println("Component is starting...");
+
+        m_roomOccupancy.setThreshold(this.occupancyThreshold);
         m_roomOccupancy.addListener(this);
+        m_momentOfTheDay.register(this);
+        momentOfTheDay = m_momentOfTheDay.getMomentOfTheDay();
     }
 
     @Override
@@ -182,6 +194,27 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
         System.out.println(" CROSS UP IN " + room);
         if (energySavingMode){
             m_configuration.turnOn(room);
+        }
+    }
+
+    @Override
+    public synchronized void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay) {
+        if(newMomentOfTheDay == MomentOfTheDay.AFTERNOON ){
+            for (String room : mapTemperatureTarget.keySet()){
+                temperatureIsTooHigh(room);
+            }
+        }else if (newMomentOfTheDay == MomentOfTheDay.MORNING){
+            for (String room : mapTemperatureTarget.keySet()){
+                temperatureIsTooLow(room);
+            }
+        }else if (newMomentOfTheDay == MomentOfTheDay.NIGHT){
+            for (String room : mapTemperatureTarget.keySet()){
+                temperatureIsTooLow(room);
+            }
+        }else if (newMomentOfTheDay == MomentOfTheDay.EVENING){
+            for (String room : mapTemperatureTarget.keySet()){
+                temperatureIsTooHigh(room);
+            }
         }
     }
 }

@@ -62,9 +62,7 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     @Override
     public void run() {
         // The method run is called on a regular basis
-        System.out.println(" EXEC ");
-        // TODO : do something to check the current time of the day and see if
-        // it has changed
+
         DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
         int hour = dateTimeEli.getHourOfDay();
         MomentOfTheDay temp = currentMomentOfTheDay;
