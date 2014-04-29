@@ -59,6 +59,7 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
                     float currentTemp = mapTemperatureTarget.get(roomName);
                     mapTemperatureTarget.put(roomName,(currentTemp + 1));
                     lastUpdateHight = time;
+                    m_configuration.turnOn(roomName);
                     m_configuration.setTargetedTemperature(roomName,mapTemperatureTarget.get(roomName));
                     System.out.println(" Preferences are now set to " + (currentTemp + 1) + " for " + roomName);
                 }else {
@@ -85,6 +86,7 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
                     float currentTemp = mapTemperatureTarget.get(roomName);
                     mapTemperatureTarget.put(roomName,(currentTemp-1));
                     lastUpdateHight = time;
+                    m_configuration.turnOn(roomName);
                     m_configuration.setTargetedTemperature(roomName,mapTemperatureTarget.get(roomName));
                     System.out.println(" Preferences are now set to " + (currentTemp-1) + " for " + roomName);
                 }else{
