@@ -11,7 +11,7 @@ public interface RoomOccupancyListener {
      * @param room
      *           room where it happened
      */
-    void occupancyCrossDownThreshold(String room);
+    void occupancyCrossDownThreshold(String room,String user);
 
     /**
      * Notify the listener that roomOccupancy cross up the threshold
@@ -19,5 +19,5 @@ public interface RoomOccupancyListener {
      * @param room
      *           room where it happened
      */
-    void occupancyCrossUpThreshold(String room);
+    void occupancyCrossUpThreshold(String room,String user);
 }

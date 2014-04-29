@@ -8,6 +8,7 @@ import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
@@ -22,13 +23,16 @@ import java.util.*;
 @Instantiate(name="RoomOccupancyImpl-0")
 @Provides(specifications = {RoomOccupancy.class,PeriodicRunnable.class})
 @CommandProvider(namespace = "roomOccupancy")
-public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockListener,DeviceListener {
+public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockListener {
 
     private List<String> listOfZone ;
 
-    Map<String,Map<Integer,Double>> mapProbaPerRoomPerMinute =new HashMap<String, Map<Integer, Double>>();
+    private List<String> listOfUser ;
+
+    Map<String,Map<String,Map<Integer,Double>>> mapProbaPerRoomPerUser =new HashMap<String, Map<String,Map<Integer,Double>>>();
 
     Set<RoomOccupancyListener> listenerList = new HashSet<RoomOccupancyListener>();
+
     /**
      * The name of the LOCATION property
      */
@@ -44,10 +48,8 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     @Requires
     private Clock clock;
 
-    /** Field for presenceSensors dependency */
-    @RequiresDevice(id="presenceSensors", type="field", optional=true)
-    private PresenceSensor[] presenceSensors;
-
+    @Requires
+    private PersonLocationService m_personLocationService;
 
     private DateTime startDate;
 
@@ -65,18 +67,29 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     RoomOccupancyImpl(){
         m_lock = new Object();
         m_clockLock = new Object();
+
         listOfZone = new ArrayList<String>();
         listOfZone.add("kitchen");
         listOfZone.add("bedroom");
         listOfZone.add("livingroom");
         listOfZone.add("bathroom");
 
-        for(String location : listOfZone){
-            Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
-            for(int i = 0 ; i <= NUMBER_OF_MINUTE ; i ++){
-                tempMap.put(i,0.0d);
+        listOfUser = new ArrayList<String>();
+        listOfUser.add("Aurelie");
+        listOfUser.add("Paul");
+        listOfUser.add("Pierre");
+        listOfUser.add("Lea");
+
+        for(String user : listOfUser){
+            Map<String,Map<Integer,Double>> tempLocationMap = new HashMap<String, Map<Integer,Double>>();
+            for(String location : listOfZone){
+                Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
+                for(int i = 0 ; i <= NUMBER_OF_MINUTE ; i ++){
+                    tempMap.put(i,0.0d);
+                }
+                tempLocationMap.put(location,tempMap);
             }
-            mapProbaPerRoomPerMinute.put(location,tempMap);
+            mapProbaPerRoomPerUser.put(user,tempLocationMap);
         }
     }
 
@@ -100,11 +113,6 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     }
 
     @Override
-    public synchronized double getRoomOccupancy( String room,int minuteOfTheDay) {
-        return mapProbaPerRoomPerMinute.get(room).get(minuteOfTheDay);
-    }
-
-    @Override
     public void addListener(RoomOccupancyListener roomOccupancyListener) {
         listenerList.add(roomOccupancyListener);
     }
@@ -117,6 +125,11 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     @Override
     public synchronized void setThreshold(double threshold) {
         this.threshold = threshold;
+    }
+
+    @Override
+    public synchronized double getRoomOccupancy( String room,double minuteOfTheDay,String user) {
+        return mapProbaPerRoomPerUser.get(user).get(room).get(minuteOfTheDay);
     }
 
     @Override
@@ -140,113 +153,85 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
                 int yearOfUpdate = date.getYear();
 
-
                 synchronized (m_lock){
                     double ponderation = 1 + ((dayOfUpdate - dayOfStart) + 360*(yearOfUpdate-yearOfStart)) ;
-                    for(String location : mapProbaPerRoomPerMinute.keySet()){
+                    for(String location : listOfZone){
 
-                        Map<Integer,Double> tempMap = mapProbaPerRoomPerMinute.get(location);
+                        Set<String> userInRoom = m_personLocationService.getPersonInZone(location);
 
-                        if (presenceFromLocation(location)){
+                        for(String user : userInRoom){
+                            Map<Integer,Double> tempMap = mapProbaPerRoomPerUser.get(user).get(location);
                             if ( ponderation != 0){
-                                boolean up = false;
-                                if(lastUpdate >= 0 ){
-                                    if (tempMap.get(lastUpdate) >= threshold){
-                                        up = true;
-                                    }else{
-                                        up = false;
-                                    }
-                                }
                                 double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation) + (1/ponderation);
                                 tempMap.put(minuteOfUpdate,newProba);
+                            }
 
+                        }
 
-                                if (newProba >= threshold){
-                                    if (!up){
-                                        for(RoomOccupancyListener listener : listenerList){
-                                            listener.occupancyCrossUpThreshold(location);
-                                        }
-                                    }
-                                }else{
-                                    if (up){
-                                        for(RoomOccupancyListener listener : listenerList){
-                                            listener.occupancyCrossDownThreshold(location);
-                                        }
-                                    }
+                        for(String user : listOfUser){
+                            boolean userPresent = userInRoom.contains(user);
+                            if(!userPresent){
+                                Map<Integer,Double> tempMap = mapProbaPerRoomPerUser.get(user).get(location);
+                                if ( ponderation != 0){
+                                    // COMPUTE NEW PROBA
+                                    double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation);
+                                    tempMap.put(minuteOfUpdate,newProba);
+
+                                }
+                                userInRoom.remove(user);
+                            }
+                        }
+
+                        boolean precedentProbaAboveThreshold = false;
+                        double maxPrecedentProba = threshold;
+                        String precedentMaxUser = new String();
+                        if(!(lastUpdate <0)){
+                            for (String user : listOfUser){
+                                if(mapProbaPerRoomPerUser.get(user).get(location).get(lastUpdate)>maxPrecedentProba){
+                                    precedentProbaAboveThreshold = true;
+                                    maxPrecedentProba = mapProbaPerRoomPerUser.get(user).get(location).get(lastUpdate);
+                                    precedentMaxUser = new String(user);
+                                }
+                            }
+                        }
+
+                        boolean probaAboveThreshold = false;
+                        double maxProba = threshold;
+                        String maxUser = new String();
+                        for (String user : listOfUser){
+                            if(mapProbaPerRoomPerUser.get(user).get(location).get(minuteOfUpdate)>maxProba){
+                                probaAboveThreshold = true;
+                                maxProba = mapProbaPerRoomPerUser.get(user).get(location).get(minuteOfUpdate);
+                                maxUser = new String(user);
+                            }
+                        }
+
+                        if((!precedentProbaAboveThreshold) && (probaAboveThreshold) ){
+                            // Cross up the threshold
+                            for(RoomOccupancyListener listener : listenerList){
+                                listener.occupancyCrossUpThreshold(location,maxUser);
+                            }
+                        }else if((precedentProbaAboveThreshold) && (!probaAboveThreshold) ){
+                            // cross down
+                            for(RoomOccupancyListener listener : listenerList){
+                                listener.occupancyCrossDownThreshold(location, maxUser);
+                            }
+                        }else if((precedentProbaAboveThreshold) && (probaAboveThreshold) ){
+                            // Already cross
+                            if (maxPrecedentProba > maxProba ){
+                                //DO NOTHING
+                            }else{
+                                for(RoomOccupancyListener listener : listenerList){
+                                    listener.occupancyCrossUpThreshold(location,maxUser);
                                 }
                             }
                         }else{
-                            if ( ponderation != 0){
-
-                                // CHECK IF LAST PROBA IS UNDER OR ABOVE THE THRESHOLD
-
-                                boolean up = false;
-                                if(lastUpdate >= 0 ){
-                                    if (tempMap.get(lastUpdate) >= threshold){
-                                        up = true;
-                                    }else{
-                                        up = false;
-                                    }
-                                }
-
-                                // COMPUTE NEW PROBA
-                                double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation);
-                                tempMap.put(minuteOfUpdate,newProba);
-
-                                //NOTIFY IF CROSS
-                                if (newProba >= threshold){
-                                    if (!up){
-                                        for(RoomOccupancyListener listener : listenerList){
-                                            listener.occupancyCrossUpThreshold(location);
-                                        }
-                                    }
-                                }else{
-                                    if (up){
-                                        for(RoomOccupancyListener listener : listenerList){
-                                            listener.occupancyCrossDownThreshold(location);
-                                        }
-                                    }
-                                }
-                            }
+                            // DO NOTHING
                         }
                     }
                     lastUpdate = minuteOfUpdate;
                 }
             }
-        }
-    }
-
-
-
-
-    private synchronized List<PresenceSensor> getPresenceSensorFromLocation(String location) {
-        List<PresenceSensor> presenceSensorLocation = new ArrayList<PresenceSensor>();
-        for (PresenceSensor presenceSensor : presenceSensors) {
-            if (presenceSensor.getPropertyValue(LOCATION_PROPERTY_NAME).equals(location)) {
-                presenceSensorLocation.add(presenceSensor);
-            }
-        }
-        return presenceSensorLocation;
-    }
-
-    private synchronized boolean presenceFromLocation(String location) {
-        int switchOn = 0;
-        int switchOff = 0;
-        List<PresenceSensor> presenceSensorLocation = new ArrayList<PresenceSensor>();
-        presenceSensorLocation = getPresenceSensorFromLocation(location);
-        for (PresenceSensor presenceSensor : presenceSensorLocation) {
-            if (presenceSensor.getSensedPresence()) {
-                switchOn +=1;
-            }
-            else{
-                switchOff +=1;
-            }
-        }
-        if (switchOn > switchOff){
-            return true;
-        }
-        else{
-            return false;
         }
     }
 
@@ -283,45 +268,20 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
             dayOfStart = startDate.getDayOfYear();
             lastUpdate = -1;
             synchronized (m_lock){
-                for(String location : listOfZone){
-                    Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
-                    for(int i = 0 ; i <= NUMBER_OF_MINUTE ; i ++){
-                        tempMap.put(i,0.0d);
+                for(String user : listOfUser){
+                    Map<String,Map<Integer,Double>> tempLocationMap = new HashMap<String, Map<Integer,Double>>();
+                    for(String location : listOfZone){
+                        Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
+                        for(int i = 0 ; i <= NUMBER_OF_MINUTE ; i ++){
+                            tempMap.put(i,0.0d);
+                        }
+                        tempLocationMap.put(location,tempMap);
                     }
-                    mapProbaPerRoomPerMinute.put(location,tempMap);
+                    mapProbaPerRoomPerUser.put(user,tempLocationMap);
                 }
             }
         }
     }
 
-    @Override
-    public void deviceAdded(GenericDevice device) {
-
-    }
-
-    @Override
-    public void deviceRemoved(GenericDevice device) {
-
-    }
-
-    @Override
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-
-    }
-
-    @Override
-    public void devicePropertyAdded(GenericDevice device, String propertyName) {
-
-    }
-
-    @Override
-    public void devicePropertyRemoved(GenericDevice device, String propertyName) {
-
-    }
-
-    @Override
-    public void deviceEvent(GenericDevice device, Object data) {
-
-    }
 
 }

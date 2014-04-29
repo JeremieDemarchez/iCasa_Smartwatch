@@ -16,7 +16,7 @@ public interface TemperatureManagerAdministration {
      * @param roomName
      *            the room where the temperature should be reconfigured
      */
-    public void temperatureIsTooHigh(String roomName);
+    public void temperatureIsTooHigh(String roomName,String user);
 
     /**
      * This method is called every time a user think the temperature is too high
@@ -25,7 +25,7 @@ public interface TemperatureManagerAdministration {
      * @param roomName
      *            the room where the temperature should be reconfigured
      */
-    public void temperatureIsTooLow(String roomName);
+    public void temperatureIsTooLow(String roomName,String user);
 
     /**
      * Enable the energy saving mode.
@@ -63,7 +63,7 @@ public interface TemperatureManagerAdministration {
      *
      * @return The probability of the occupance of the room
      */
-    public double getRoomOccupancy(String room,int minute);
+    public double getRoomOccupancy(String room,int minute,String user);
 
 
 }

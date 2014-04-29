@@ -35,13 +35,13 @@ public class TemperatureCommandImpl {
 
     // Each command should start with a @Command annotation
     @Command
-    public synchronized void tempTooHigh(String room) {
-        m_administrationService.temperatureIsTooHigh(room);
+    public synchronized void tempTooHigh(String room,String name) {
+        m_administrationService.temperatureIsTooHigh(room,name);
     }
 
     @Command
-    public synchronized void tempTooLow(String room){
-        m_administrationService.temperatureIsTooHigh(room);
+    public synchronized void tempTooLow(String room,String name){
+        m_administrationService.temperatureIsTooHigh(room,name);
     }
 
     @Command
@@ -89,9 +89,9 @@ public class TemperatureCommandImpl {
     }
 
     @Command
-    public synchronized void roomOccupancy(String room){
+    public synchronized void roomOccupancy(String room,String user){
         for(int i = 0 ; i <= 1439 ; i++ ){
-            System.out.println(" At " + (i/60) + " : " + (i - (int)(i/60) * 60) + " proba is " + m_administrationService.getRoomOccupancy(room,i));
+            System.out.println(" At " + (i/60) + " : " + (i - (int)(i/60) * 60) + " proba is " + m_administrationService.getRoomOccupancy(room,i,user));
         }
     }
 

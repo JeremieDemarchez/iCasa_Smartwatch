@@ -11,7 +11,9 @@ import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
 import org.joda.time.Duration;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 
@@ -36,71 +38,169 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     private MomentOfTheDayService m_momentOfTheDay;
 
 
-    private Duration duration = Duration.millis(5*60*1000); //Five minutes
+    private static final Duration duration = Duration.millis(5*60*1000); //Five minutes
 
-    /**
-     * The name of the location for unknown value
-     */
-    private Map<String,Float> mapTemperatureTarget  = new HashMap<String, Float>() ;
+    private Map<String, Map<String,Float>> mapTemperatureTarget  = new HashMap<String,  Map<String,Float>>() ;
+
+    private Map<String,Float> mapOfPreferenceUse  = new HashMap<String,Float>() ;
+
+    private Map<String,Long> mapOfUpdate  = new HashMap<String,Long>() ;
+
+    private List<String> listOfUser ;
+
+    private List<String> listOfZone ;
 
     private  boolean energySavingMode = false;
 
-
-    private long lastUpdateHight = 0 ;
-
-    private long lastUpdatelow =0 ;
-
     private double occupancyThreshold = 0.2 ;
+
+    private float momentOfTheDayFactor ;
 
     private EnergyGoal energyGoal = EnergyGoal.HIGH ;
 
     private MomentOfTheDay momentOfTheDay ;
 
+    public TemperatureManagerAdministrationImpl() {
+
+        m_configuration.setMaximumAllowedEnergyInRoom(energyGoal.getMaximumEnergyInRoom());
+
+         /*
+        *Init
+        */
+        listOfZone = new ArrayList<String>();
+        listOfZone.add("kitchen");
+        listOfZone.add("bedroom");
+        listOfZone.add("livingroom");
+        listOfZone.add("bathroom");
+
+        listOfUser = new ArrayList<String>();
+        listOfUser.add("Aurelie");
+        listOfUser.add("Paul");
+        listOfUser.add("Pierre");
+        listOfUser.add("Lea");
+
+        for(String user : listOfUser){
+            Map<String,Float> temp = new HashMap<String, Float>();
+            for(String location : listOfZone){
+                if (location.equals("kitchen")){
+                    temp.put(location,288.15f);
+                }else if (location.equals("livingroom")){
+                    temp.put(location,291.15f);
+                }else if(location.equals("bedroom")){
+                    temp.put(location,293.15f);
+                }else if (location.equals("bathroom")){
+                    temp.put(location,296.15f);
+                }
+            }
+            mapTemperatureTarget.put(user,temp);
+        }
+        for(String zone : listOfZone){
+            mapOfUpdate.put(zone,(long)0);
+        }
+
+        for (String stringLocation : mapTemperatureTarget.get("Aurelie").keySet()){
+            m_configuration.setTargetedTemperature(stringLocation,mapTemperatureTarget.get("Aurelie").get(stringLocation));
+            m_configuration.turnOn(stringLocation);
+        }
+    }
+
+    /** Component Lifecycle Method */
+    @Invalidate
+    public void stop() {
+        System.out.println("Component is stopping...");
+        m_roomOccupancy.removeListener(this);
+        m_momentOfTheDay.unregister(this);
+    }
+
+    /** Component Lifecycle Method */
+    @Validate
+    public void start() {
+        System.out.println("Component is starting...");
+
+        m_roomOccupancy.setThreshold(this.occupancyThreshold);
+        m_roomOccupancy.addListener(this);
+        m_momentOfTheDay.register(this);
+        momentOfTheDay = m_momentOfTheDay.getMomentOfTheDay();
+        if(momentOfTheDay == MomentOfTheDay.AFTERNOON ){
+            momentOfTheDayFactor = (float)-1;
+        }else if (momentOfTheDay == MomentOfTheDay.MORNING){
+            momentOfTheDayFactor = (float)-0.5;
+        }else if (momentOfTheDay == MomentOfTheDay.NIGHT){
+            momentOfTheDayFactor = (float) 1;
+        }else if (momentOfTheDay == MomentOfTheDay.EVENING){
+            momentOfTheDayFactor = (float)0.5;
+        }
+    }
 
     @Override
-    public synchronized void temperatureIsTooHigh(String roomName) {
-        if (mapTemperatureTarget.containsKey(roomName)){
-            long time = clock.currentTimeMillis();
-            if (time >= lastUpdateHight){
-                long periodOfUpdate =  (time - lastUpdateHight);
-                Duration durationTemp = Duration.millis(periodOfUpdate);
-                if (durationTemp.isLongerThan(duration)){
-                    float currentTemp = mapTemperatureTarget.get(roomName);
-                    mapTemperatureTarget.put(roomName,(currentTemp + 1));
-                    lastUpdateHight = time;
-                    m_configuration.setTargetedTemperature(roomName,mapTemperatureTarget.get(roomName));
-                    System.out.println(" Preferences are now set to " + (currentTemp + 1) + " for " + roomName);
-                }else {
-                    System.out.println(" Waiting period");
+    public synchronized void temperatureIsTooHigh(String roomName,String user) {
+        if (listOfZone.contains(roomName)){
+            if(listOfUser.contains(user)){
+                long time = clock.currentTimeMillis();
+                long lastUpdate = mapOfUpdate.get(roomName);
+
+                if (time >= mapOfUpdate.get(roomName)){
+                    long periodOfUpdate =  (time - lastUpdate);
+                    Duration durationTemp = Duration.millis(periodOfUpdate);
+
+                    if (durationTemp.isLongerThan(duration)){
+
+                        float currentUserTemp = mapTemperatureTarget.get(user).get(roomName);
+
+                        m_configuration.turnOn(roomName);
+                        if(mapOfPreferenceUse.get(roomName) < currentUserTemp){
+                            mapOfPreferenceUse.put(roomName,currentUserTemp);
+                            setTargetedTemperature(roomName);
+                        }else {
+                            float temperature = mapOfPreferenceUse.get(roomName);
+                            mapOfPreferenceUse.put(roomName,temperature+1);
+                            mapTemperatureTarget.get(user).put(roomName,temperature+1);
+                            setTargetedTemperature(roomName);
+                        }
+                    }else {
+                        System.out.println(" Waiting period");
+                    }
                 }
             }else{
-                lastUpdateHight = time;
+                System.out.println(" INVALID USER !");
             }
         }else {
             System.out.println(" INVALID ZONE !");
         }
     }
 
-    @Override
-    public synchronized void temperatureIsTooLow(String roomName) {
-        if (mapTemperatureTarget.containsKey(roomName)){
-            long time = clock.currentTimeMillis();
-            if (time >= lastUpdatelow){
 
-                long periodOfUpdate =  (time - lastUpdatelow);
-                Duration durationTemp = Duration.millis(periodOfUpdate);
-                System.out.println(" DUR TEMP " + durationTemp.getStandardSeconds());
-                if (durationTemp.isLongerThan(duration)){
-                    float currentTemp = mapTemperatureTarget.get(roomName);
-                    mapTemperatureTarget.put(roomName,(currentTemp-1));
-                    lastUpdateHight = time;
-                    m_configuration.setTargetedTemperature(roomName,mapTemperatureTarget.get(roomName));
-                    System.out.println(" Preferences are now set to " + (currentTemp-1) + " for " + roomName);
-                }else{
-                    System.out.println(" Waiting period");
+    @Override
+    public synchronized void temperatureIsTooLow(String roomName,String user) {
+        if (listOfZone.contains(roomName)){
+            if(listOfUser.contains(user)){
+                long time = clock.currentTimeMillis();
+                long lastUpdate = mapOfUpdate.get(roomName);
+
+                if (time >= mapOfUpdate.get(roomName)){
+                    long periodOfUpdate =  (time - lastUpdate);
+                    Duration durationTemp = Duration.millis(periodOfUpdate);
+
+                    if (durationTemp.isLongerThan(duration)){
+
+                        float currentUserTemp = mapTemperatureTarget.get(user).get(roomName);
+
+                        m_configuration.turnOn(roomName);
+                        if(mapOfPreferenceUse.get(roomName) > currentUserTemp){
+                            mapOfPreferenceUse.put(roomName,currentUserTemp);
+                            setTargetedTemperature(roomName);
+                        }else {
+                            float temperature = mapOfPreferenceUse.get(roomName);
+                            mapOfPreferenceUse.put(roomName,temperature-1);
+                            mapTemperatureTarget.get(user).put(roomName,temperature-1);
+                            setTargetedTemperature(roomName);
+                        }
+                    }else {
+                        System.out.println(" Waiting period");
+                    }
                 }
             }else{
-                lastUpdatelow = time;
+                System.out.println(" INVALID USER !");
             }
         }else {
             System.out.println(" INVALID ZONE !");
@@ -112,8 +212,10 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
         for(String zoneId : mapTemperatureTarget.keySet()){
             long time = clock.currentTimeMillis();
             DateTime date = new DateTime(time);
-            if (m_roomOccupancy.getRoomOccupancy(zoneId,date.getMinuteOfDay()) < occupancyThreshold ){
-                m_configuration.turnOn(zoneId);
+            for(String user : listOfUser){
+                if (m_roomOccupancy.getRoomOccupancy(zoneId,date.getMinuteOfDay(),user) > occupancyThreshold ){
+                    m_configuration.turnOn(zoneId);
+                }
             }
         }
         energySavingMode = true;
@@ -143,46 +245,12 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     }
 
     @Override
-    public synchronized double getRoomOccupancy(String room, int minute) {
-        return m_roomOccupancy.getRoomOccupancy(room,minute);
-    }
-
-    public TemperatureManagerAdministrationImpl() {
-
-        m_configuration.setMaximumAllowedEnergyInRoom(energyGoal.getMaximumEnergyInRoom());
-
-
-        mapTemperatureTarget.put("kitchen",288.15f);
-        mapTemperatureTarget.put("livingroom",291.15f);
-        mapTemperatureTarget.put("bedroom",293.15f);
-        mapTemperatureTarget.put("bathroom",296.15f);
-        for (String stringLocation : mapTemperatureTarget.keySet()){
-            m_configuration.setTargetedTemperature(stringLocation,mapTemperatureTarget.get(stringLocation));
-            m_configuration.turnOn(stringLocation);
-        }
-    }
-
-    /** Component Lifecycle Method */
-    @Invalidate
-    public void stop() {
-        System.out.println("Component is stopping...");
-        m_roomOccupancy.removeListener(this);
-        m_momentOfTheDay.unregister(this);
-    }
-
-    /** Component Lifecycle Method */
-    @Validate
-    public void start() {
-        System.out.println("Component is starting...");
-
-        m_roomOccupancy.setThreshold(this.occupancyThreshold);
-        m_roomOccupancy.addListener(this);
-        m_momentOfTheDay.register(this);
-        momentOfTheDay = m_momentOfTheDay.getMomentOfTheDay();
+    public synchronized double getRoomOccupancy(String room, int minute,String user) {
+        return m_roomOccupancy.getRoomOccupancy(room,minute,user);
     }
 
     @Override
-    public synchronized void occupancyCrossDownThreshold(String room) {
+    public synchronized void occupancyCrossDownThreshold(String room,String user) {
         System.out.println(" CROSS DOWN IN " + room);
         if (energySavingMode){
             m_configuration.turnOff(room);
@@ -190,9 +258,19 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     }
 
     @Override
-    public synchronized void occupancyCrossUpThreshold(String room) {
+    public synchronized void occupancyCrossUpThreshold(String room,String user) {
         System.out.println(" CROSS UP IN " + room);
         if (energySavingMode){
+            long time = clock.currentTimeMillis();
+            long lastUpdate = mapOfUpdate.get(room);
+            if (time >= mapOfUpdate.get(room)){
+                long periodOfUpdate =  (time - lastUpdate);
+                Duration durationTemp = Duration.millis(periodOfUpdate);
+                if (durationTemp.isLongerThan(duration)){
+                    mapOfPreferenceUse.put(room,mapTemperatureTarget.get(user).get(room));
+                    setTargetedTemperature(room);
+                }
+            }
             m_configuration.turnOn(room);
         }
     }
@@ -200,21 +278,30 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
     @Override
     public synchronized void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay) {
         if(newMomentOfTheDay == MomentOfTheDay.AFTERNOON ){
-            for (String room : mapTemperatureTarget.keySet()){
-                temperatureIsTooHigh(room);
-            }
+            momentOfTheDayFactor = (float)-1;
         }else if (newMomentOfTheDay == MomentOfTheDay.MORNING){
-            for (String room : mapTemperatureTarget.keySet()){
-                temperatureIsTooLow(room);
-            }
+            momentOfTheDayFactor = (float)-0.5;
         }else if (newMomentOfTheDay == MomentOfTheDay.NIGHT){
-            for (String room : mapTemperatureTarget.keySet()){
-                temperatureIsTooLow(room);
-            }
+            momentOfTheDayFactor = (float) 1;
         }else if (newMomentOfTheDay == MomentOfTheDay.EVENING){
-            for (String room : mapTemperatureTarget.keySet()){
-                temperatureIsTooHigh(room);
-            }
+            momentOfTheDayFactor = (float)0.5;
+        }
+        momentOfTheDay = newMomentOfTheDay;
+        setTargetedTemperature();
+    }
+
+    private  void setTargetedTemperature(String roomName) {
+        long time = clock.currentTimeMillis();
+        mapOfUpdate.put(roomName,time);
+        m_configuration.setTargetedTemperature(roomName,mapOfPreferenceUse.get(roomName) + momentOfTheDayFactor);
+    }
+
+    private void setTargetedTemperature() {
+        for(String zone : listOfZone){
+            long time = clock.currentTimeMillis();
+            mapOfUpdate.put(zone,time);
+            m_configuration.setTargetedTemperature(zone,mapOfPreferenceUse.get(zone) + momentOfTheDayFactor);
         }
     }
+
 }
