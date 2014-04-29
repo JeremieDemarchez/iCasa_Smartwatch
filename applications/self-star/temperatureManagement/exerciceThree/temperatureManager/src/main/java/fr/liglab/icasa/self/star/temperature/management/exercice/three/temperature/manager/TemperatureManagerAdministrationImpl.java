@@ -105,7 +105,7 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
         for(String zoneId : mapTemperatureTarget.keySet()){
             long time = clock.currentTimeMillis();
             DateTime date = new DateTime(time);
-            if (m_roomOccupancy.getRoomOccupancy(zoneId,date.getMinuteOfDay()) < occupancyThreshold ){
+            if (m_roomOccupancy.getRoomOccupancy(zoneId,date.getMinuteOfDay()) > occupancyThreshold ){
                 m_configuration.turnOn(zoneId);
             }
         }
