@@ -1,10 +1,10 @@
-package fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.command;
+package fr.liglab.icasa.self.star.temperature.management.exercice.four.temperature.command;
 
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
-import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager.EnergyGoal;
-import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager.TemperatureManagerAdministration;
+import fr.liglab.icasa.self.star.temperature.management.exercice.four.temperature.manager.EnergyGoal;
+import fr.liglab.icasa.self.star.temperature.management.exercice.four.temperature.manager.TemperatureManagerAdministration;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -35,13 +35,13 @@ public class TemperatureCommandImpl {
 
     // Each command should start with a @Command annotation
     @Command
-    public synchronized void tempTooHigh(String room) {
-        m_administrationService.temperatureIsTooHigh(room);
+    public synchronized void tempTooHigh(String room,String name) {
+        m_administrationService.temperatureIsTooHigh(room,name);
     }
 
     @Command
-    public synchronized void tempTooLow(String room){
-        m_administrationService.temperatureIsTooHigh(room);
+    public synchronized void tempTooLow(String room,String name){
+        m_administrationService.temperatureIsTooHigh(room,name);
     }
 
     @Command
@@ -65,10 +65,6 @@ public class TemperatureCommandImpl {
         System.out.println(" Energy saving mode enable ? " + m_administrationService.isPowerSavingEnabled());
     }
 
-    @Command
-    public synchronized void setStatutSavingMode(boolean stateSavingMode){
-
-    }
 
     @Command
     public synchronized void enableSavingMode(){
@@ -89,9 +85,9 @@ public class TemperatureCommandImpl {
     }
 
     @Command
-    public synchronized void roomOccupancy(String room){
+    public synchronized void roomOccupancy(String room,String user){
         for(int i = 0 ; i <= 1439 ; i++ ){
-            System.out.println(" At " + (i/60) + " : " + (i - (int)(i/60) * 60) + " proba is " + m_administrationService.getRoomOccupancy(room,i));
+            System.out.println(" At " + (i/60) + " : " + (i - (int)(i/60) * 60) + " proba is " + m_administrationService.getRoomOccupancy(room,i,user));
         }
     }
 

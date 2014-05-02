@@ -11,6 +11,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import java.util.*;
 
@@ -33,6 +34,11 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
      */
     public static final String LOCATION_PROPERTY_NAME = "Location";
 
+    /**
+     * The name of the LOCATION property
+     */
+    public static final int NUMBER_OF_MINUTE = 1439;
+
     private  double threshold = 0.2;
 
     @Requires
@@ -42,7 +48,6 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     @RequiresDevice(id="presenceSensors", type="field", optional=true)
     private PresenceSensor[] presenceSensors;
 
-    private long startCurrentMilli ;
 
     private DateTime startDate;
 
@@ -50,33 +55,16 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
     private int dayOfStart;
 
-    private int minuteOfStart;
-
     private int lastUpdate = -1 ;
 
     private final Object m_lock ;
 
+    private final Object m_clockLock ;
+
+
     RoomOccupancyImpl(){
         m_lock = new Object();
-    }
-
-    /** Component Lifecycle Method */
-    @Invalidate
-    public void stop() {
-        System.out.println("Component is stopping...");
-
-
-    }
-
-    /** Component Lifecycle Method */
-    @Validate
-    public void start() {
-        System.out.println("Component is starting...");
-
-        startDate = new DateTime(clock.currentTimeMillis());
-        yearOfStart = startDate.getYear();
-        dayOfStart = startDate.getDayOfYear();
-        minuteOfStart = startDate.getMinuteOfDay();
+        m_clockLock = new Object();
         listOfZone = new ArrayList<String>();
         listOfZone.add("kitchen");
         listOfZone.add("bedroom");
@@ -85,15 +73,34 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
         for(String location : listOfZone){
             Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
-            for(int i = 0 ; i < 1439 ; i ++){
+            for(int i = 0 ; i <= NUMBER_OF_MINUTE ; i ++){
                 tempMap.put(i,0.0d);
             }
             mapProbaPerRoomPerMinute.put(location,tempMap);
         }
     }
 
+    /** Component Lifecycle Method */
+    @Invalidate
+    public void stop() {
+        System.out.println("Component is stopping...");
+        clock.removeListener(this);
+    }
+
+    /** Component Lifecycle Method */
+    @Validate
+    public void start() {
+        System.out.println("Component is starting...");
+        clock.addListener(this);
+        synchronized (m_clockLock){
+            startDate = new DateTime(clock.currentTimeMillis());
+            yearOfStart = startDate.getYear();
+            dayOfStart = startDate.getDayOfYear();
+        }
+    }
+
     @Override
-    public double getRoomOccupancy(int minuteOfTheDay, String room) {
+    public synchronized double getRoomOccupancy( String room,int minuteOfTheDay) {
         return mapProbaPerRoomPerMinute.get(room).get(minuteOfTheDay);
     }
 
@@ -109,7 +116,7 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
     @Override
     public long getPeriod() {
-        return 60000;
+        return 40000;
     }
 
     @Override
@@ -122,73 +129,84 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
         long updateTime = clock.currentTimeMillis();
         DateTime date = new DateTime(updateTime);
         int minuteOfUpdate = date.getMinuteOfDay();
-        if(lastUpdate != minuteOfUpdate){
-            int dayOfUpdate = date.getDayOfYear();
+        synchronized (m_clockLock){
+            if(lastUpdate != minuteOfUpdate){
+                int dayOfUpdate = date.getDayOfYear();
 
-            int yearOfUpdate = date.getYear();
+                int yearOfUpdate = date.getYear();
 
 
-            synchronized (m_lock){
+                synchronized (m_lock){
+                    double ponderation = 1 + ((dayOfUpdate - dayOfStart) + 360*(yearOfUpdate-yearOfStart)) ;
+                    for(String location : mapProbaPerRoomPerMinute.keySet()){
 
-                double ponderation = 1 + ((dayOfUpdate - dayOfStart) + 360*(yearOfUpdate-yearOfStart)) ;
-                for(String location : mapProbaPerRoomPerMinute.keySet()){
-                    Map<Integer,Double> tempMap = mapProbaPerRoomPerMinute.get(location);
+                        Map<Integer,Double> tempMap = mapProbaPerRoomPerMinute.get(location);
 
-                    if (presenceFromLocation(location)){
-                        if ( ponderation != 0){
-                            boolean up;
-                            if (tempMap.get(minuteOfUpdate) >=  threshold ){
-                                up = true;
-                            }else {
-                                up = false;
-                            }
-                            double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation) + (1/ponderation);
-                            tempMap.put(minuteOfUpdate,newProba);
-
-                            if (newProba >= threshold){
-                                if (!up){
-                                    for(RoomOccupancyListener listener : listenerList){
-                                        listener.occupancyCrossUpThreshold(location);
+                        if (presenceFromLocation(location)){
+                            if ( ponderation != 0){
+                                boolean up = false;
+                                if(lastUpdate >= 0 ){
+                                    if (tempMap.get(lastUpdate) >= threshold){
+                                        up = true;
+                                    }else{
+                                        up = false;
                                     }
                                 }
-                            }else{
-                                if (up){
-                                    for(RoomOccupancyListener listener : listenerList){
-                                        listener.occupancyCrossDownThreshold(location);
+                                double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation) + (1/ponderation);
+                                tempMap.put(minuteOfUpdate,newProba);
+
+
+                                if (newProba >= threshold){
+                                    if (!up){
+                                        for(RoomOccupancyListener listener : listenerList){
+                                            listener.occupancyCrossUpThreshold(location);
+                                        }
+                                    }
+                                }else{
+                                    if (up){
+                                        for(RoomOccupancyListener listener : listenerList){
+                                            listener.occupancyCrossDownThreshold(location);
+                                        }
                                     }
                                 }
                             }
-                        }
-                    }else{
-                        if ( ponderation != 0){
+                        }else{
+                            if ( ponderation != 0){
 
-                            boolean up;
-                            if (tempMap.get(minuteOfUpdate) >=  threshold ){
-                                up = true;
-                            }else {
-                                up = false;
-                            }
+                                // CHECK IF LAST PROBA IS UNDER OR ABOVE THE THRESHOLD
 
-                            double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation);
-                            tempMap.put(minuteOfUpdate,newProba);
-
-                            if (newProba >= threshold){
-                                if (!up){
-                                    for(RoomOccupancyListener listener : listenerList){
-                                        listener.occupancyCrossUpThreshold(location);
+                                boolean up = false;
+                                if(lastUpdate >= 0 ){
+                                    if (tempMap.get(lastUpdate) >= threshold){
+                                        up = true;
+                                    }else{
+                                        up = false;
                                     }
                                 }
-                            }else{
-                                if (up){
-                                    for(RoomOccupancyListener listener : listenerList){
-                                        listener.occupancyCrossDownThreshold(location);
+
+                                // COMPUTE NEW PROBA
+                                double newProba = tempMap.get(minuteOfUpdate)*((ponderation-1)/ponderation);
+                                tempMap.put(minuteOfUpdate,newProba);
+
+                                //NOTIFY IF CROSS
+                                if (newProba >= threshold){
+                                    if (!up){
+                                        for(RoomOccupancyListener listener : listenerList){
+                                            listener.occupancyCrossUpThreshold(location);
+                                        }
+                                    }
+                                }else{
+                                    if (up){
+                                        for(RoomOccupancyListener listener : listenerList){
+                                            listener.occupancyCrossDownThreshold(location);
+                                        }
                                     }
                                 }
                             }
                         }
                     }
+                    lastUpdate = minuteOfUpdate;
                 }
-                lastUpdate = minuteOfUpdate;
             }
         }
     }
@@ -253,18 +271,21 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     }
 
     private synchronized void resetClock(){
-        startDate = new DateTime(clock.currentTimeMillis());
-        yearOfStart = startDate.getYear();
-        dayOfStart = startDate.getDayOfYear();
-        minuteOfStart = startDate.getMinuteOfDay();
-        lastUpdate = -10;
-
-        for(String location : listOfZone){
-            Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
-            for(int i = 0 ; i < 1439 ; i ++){
-                tempMap.put(i,0.0d);
+        System.out.println(" Reset Clock ! ");
+        synchronized (m_clockLock){
+            startDate = new DateTime(clock.currentTimeMillis());
+            yearOfStart = startDate.getYear();
+            dayOfStart = startDate.getDayOfYear();
+            lastUpdate = -1;
+            synchronized (m_lock){
+                for(String location : listOfZone){
+                    Map<Integer,Double> tempMap = new HashMap<Integer, Double>();
+                    for(int i = 0 ; i <= NUMBER_OF_MINUTE ; i ++){
+                        tempMap.put(i,0.0d);
+                    }
+                    mapProbaPerRoomPerMinute.put(location,tempMap);
+                }
             }
-            mapProbaPerRoomPerMinute.put(location,tempMap);
         }
     }
 
@@ -297,8 +318,5 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     public void deviceEvent(GenericDevice device, Object data) {
 
     }
-    @Command
-    public void roomOccupancy(String location , int minute ) {
-        System.out.println(" OCCUPANCY OF  " + location + " IS " + getRoomOccupancy(minute, location));
-    }
+
 }
