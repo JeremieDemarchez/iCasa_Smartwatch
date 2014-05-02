@@ -45,6 +45,20 @@ public interface ApplicationDeploymentService {
     /**
      *
      * @param ApplicationId : the application unique Id (concatenation of name and version)
+     * @return the name of the application category
+     */
+    public String getApplicationCategory(String ApplicationId);
+
+    /**
+     *
+     * @param ApplicationId : the application unique Id (concatenation of name and version)
+     * @return the name of the application vendor
+     */
+    public String getApplicationVendor(String ApplicationId);
+
+    /**
+     *
+     * @param ApplicationId : the application unique Id (concatenation of name and version)
      * @return A set of bundle ids  involve in the application
      */
     public Set<Long> getBundlesIdsFromApplicationId(String ApplicationId);
