@@ -2,17 +2,11 @@ package fr.liglab.icasa.self.star.temperature.management.exercice.four.room.occu
 
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
-import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
-import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
-import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
-import org.joda.time.Period;
 
 import java.util.*;
 
@@ -128,7 +122,7 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
     }
 
     @Override
-    public synchronized double getRoomOccupancy( String room,double minuteOfTheDay,String user) {
+    public synchronized double getRoomOccupancy( String room,int minuteOfTheDay,String user) {
         return mapProbaPerRoomPerUser.get(user).get(room).get(minuteOfTheDay);
     }
 

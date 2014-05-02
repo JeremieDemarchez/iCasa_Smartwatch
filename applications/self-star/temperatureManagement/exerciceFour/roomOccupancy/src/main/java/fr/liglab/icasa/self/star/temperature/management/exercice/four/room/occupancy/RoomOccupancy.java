@@ -29,6 +29,6 @@ public interface RoomOccupancy {
      *         that there the room is always empty and 1 indicates that the room
      *         is always occupied at the given moment of the day.
      */
-    public double getRoomOccupancy(String room,double minuteOfTheDay, String user);
+    public double getRoomOccupancy(String room,int minuteOfTheDay, String user);
 
 }

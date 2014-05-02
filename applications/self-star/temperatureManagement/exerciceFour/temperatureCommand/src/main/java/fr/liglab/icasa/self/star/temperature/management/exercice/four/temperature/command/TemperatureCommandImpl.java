@@ -65,10 +65,6 @@ public class TemperatureCommandImpl {
         System.out.println(" Energy saving mode enable ? " + m_administrationService.isPowerSavingEnabled());
     }
 
-    @Command
-    public synchronized void setStatutSavingMode(boolean stateSavingMode){
-
-    }
 
     @Command
     public synchronized void enableSavingMode(){

@@ -21,29 +21,37 @@
 	<!-- Person Section -->
 
 	<create-person id="Aurelie" type="Grandmother" />
+
+
+	<create-person id="Paul" type="Man" />
 	
 	<move-person-zone  personId="Aurelie" zoneId="bedroom"/>
+	<move-person-zone  personId="Paul" zoneId="bedroom"/>
 	<delay value="8" unit="h" />
 	
     <move-person-zone  personId="Aurelie" zoneId="bathroom"/>
+    <move-person-zone  personId="Paul" zoneId="livingroom"/>
 	<delay value="30" unit="m" />
 
     <move-person-zone  personId="Aurelie" zoneId="kitchen"/>
+    <move-person-zone  personId="Paul" zoneId="kitchen"/>
 	<delay value="30" unit="m" />
 
 	<move-person-zone  personId="Aurelie" zoneId="livingroom"/>
-    <delay value="8" unit="h" />
-
-    <move-person-zone  personId="Aurelie" zoneId="livingroom"/>
-    <delay value="3" unit="h" />
+	<move-person-zone  personId="Paul" zoneId="livingroom"/>
+    <delay value="11" unit="h" />
 
     <move-person-zone  personId="Aurelie" zoneId="kitchen"/>
+    <move-person-zone  personId="Paul" zoneId="kitchen"/>
+
     <delay value="1" unit="h" />
 
      <move-person-zone  personId="Aurelie" zoneId="livingroom"/>
+     <move-person-zone  personId="Paul" zoneId="bathroom"/>
      <delay value="1" unit="h" />
 
      <move-person-zone  personId="Aurelie" zoneId="bedroom"/>
+     <move-person-zone  personId="Paul" zoneId="bedroom"/>
      <delay value="2" unit="h" />
 
 

@@ -23,6 +23,7 @@
         <module>momentOfTheDay</module>
         <module>temperatureManager</module>
         <module>temperatureCommand</module>
+        <module>distribution</module>
     </modules>
 
 

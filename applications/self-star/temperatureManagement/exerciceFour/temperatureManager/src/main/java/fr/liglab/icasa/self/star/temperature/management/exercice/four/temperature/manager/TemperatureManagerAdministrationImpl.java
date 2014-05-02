@@ -209,7 +209,7 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
 
     @Override
     public synchronized void turnOnEnergySavingMode() {
-        for(String zoneId : mapTemperatureTarget.keySet()){
+        for(String zoneId : listOfZone){
             long time = clock.currentTimeMillis();
             DateTime date = new DateTime(time);
             for(String user : listOfUser){
@@ -223,7 +223,7 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
 
     @Override
     public synchronized void turnOffEnergySavingMode() {
-        for(String zoneId : mapTemperatureTarget.keySet()){
+        for(String zoneId : listOfZone){
             m_configuration.turnOff(zoneId);
         }
         energySavingMode = false;
@@ -251,7 +251,6 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
 
     @Override
     public synchronized void occupancyCrossDownThreshold(String room,String user) {
-        System.out.println(" CROSS DOWN IN " + room);
         if (energySavingMode){
             m_configuration.turnOff(room);
         }
@@ -259,7 +258,6 @@ public class TemperatureManagerAdministrationImpl implements TemperatureManagerA
 
     @Override
     public synchronized void occupancyCrossUpThreshold(String room,String user) {
-        System.out.println(" CROSS UP IN " + room);
         if (energySavingMode){
             long time = clock.currentTimeMillis();
             long lastUpdate = mapOfUpdate.get(room);
