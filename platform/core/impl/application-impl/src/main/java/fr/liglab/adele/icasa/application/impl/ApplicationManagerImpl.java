@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 @Component(name = "Application-Manager-Impl")
-@Instantiate(name = "Application-Manager-Impl-1")
+@Instantiate(name = "Application-Manager-Impl-0")
 @Provides(specifications = { ApplicationManager.class, EventHandler.class }, properties = { @StaticServiceProperty(name = EventConstants.EVENT_TOPIC, type = "java.lang.String[]", value = "{org/osgi/service/deployment/COMPLETE}") })
 public class ApplicationManagerImpl implements ApplicationManager, EventHandler {
 
