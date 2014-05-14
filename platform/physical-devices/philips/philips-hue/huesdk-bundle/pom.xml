@@ -1,33 +1,34 @@
-<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
+    <!-- Project parent -->
     <parent>
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
         <version>1.2.6-SNAPSHOT</version>
-        <relativePath>../../../../parent</relativePath>
+        <relativePath>../../../../../parent</relativePath>
     </parent>
 
-    <artifactId>org.ow2.chameleon.fuchsia.base.philips-hue.huedsk-bundle</artifactId>
+    <artifactId>philips.physical.devices.philips.hue.huedsk.bundle</artifactId>
     <packaging>bundle</packaging>
-    <name>OW2 Chameleon - Philips Hue SDK Bundle</name>
+    <name>Philips Hue SDK Bundle</name>
 
     <dependencies>
         <dependency>
-            <groupId>philips</groupId>
             <artifactId>hue-sdk-core</artifactId>
+            <groupId>philips</groupId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>philips</groupId>
             <artifactId>hue-sdk-resources</artifactId>
+            <groupId>philips</groupId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
 
 
     <build>
+
         <plugins>
             <plugin>
                 <groupId>org.apache.felix</groupId>
@@ -38,8 +39,9 @@
                         <Bundle-SymbolicName>
                             ${project.artifactId}
                         </Bundle-SymbolicName>
-                        <Export-Package>*</Export-Package>
+                        <Export-Package>!org.json,*</Export-Package>
                         <Embed-Dependency>*;scope=compile|runtime;inline=true</Embed-Dependency>
+                        <Privage-Package>org.json</Privage-Package>
                     </instructions>
                 </configuration>
             </plugin>
