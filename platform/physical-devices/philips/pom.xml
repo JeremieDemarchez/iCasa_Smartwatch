@@ -29,11 +29,11 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-        <module>philips-hue</module>
-
-        <module>discovery</module>
+        <module>huesdk-core</module>
+        <module>huesdk-resources</module>
+        <module>huesdk-bundle</module>
+		<module>discovery</module>
 	</modules>
-
    <build>
       <plugins>
          <plugin>
