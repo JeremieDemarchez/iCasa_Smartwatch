@@ -68,7 +68,7 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
     private static final long DEFAULT_TIMEOUT = 5000;
 
 
-    private  static final float MIN_LUX = (float)50.0 ;
+    private  static final float MIN_LUX = (float)20.0 ;
 
     private final Map<String,TurnOffLightTask> turnOffLightTaskMap = new HashMap<String, TurnOffLightTask>();
 
