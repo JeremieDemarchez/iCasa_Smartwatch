@@ -44,7 +44,6 @@ See the License for the specific language governing permissions and
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.2.4-SNAPSHOT</AdeleBaseVersion>
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
-        <ciliaVersion>1.7.4</ciliaVersion>
         <mimepullVersion>1.4</mimepullVersion>
         <netty.version>4.0.12.Final</netty.version>
         <wisdom.version>0.5.1</wisdom.version>
@@ -148,21 +147,6 @@ See the License for the specific language governing permissions and
             <releases>
                 <enabled>true</enabled>
             </releases>
-        </repository>
-        <!-- Cilia -->
-        <repository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>cilia-release</id>
-            <name>cilia-release</name>
-            <url>http://repository-cilia.forge.cloudbees.com/release</url>
-        </repository>
-        <repository>
-            <snapshots />
-            <id>cilia-snapshot</id>
-            <name>cilia-snapshot</name>
-            <url>http://repository-cilia.forge.cloudbees.com/snapshot</url>
         </repository>
         <!-- ADELE repositories -->
         <repository>
