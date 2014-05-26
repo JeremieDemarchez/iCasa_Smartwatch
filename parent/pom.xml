@@ -182,19 +182,6 @@ See the License for the specific language governing permissions and
             <url>http://repository-icasa.forge.cloudbees.com/snapshot</url>
         </pluginRepository>
 
-        <!-- Cilia -->
-        <pluginRepository>
-            <snapshots>
-                <enabled>false</enabled>
-            </snapshots>
-            <id>cilia-pl-release</id>
-            <url>http://repository-cilia.forge.cloudbees.com/release</url>
-        </pluginRepository>
-        <pluginRepository>
-            <snapshots />
-            <id>cilia-pl-snapshot</id>
-            <url>http://repository-cilia.forge.cloudbees.com/snapshot</url>
-        </pluginRepository>
     </pluginRepositories>
 
     <scm>
