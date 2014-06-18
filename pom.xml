@@ -27,6 +27,9 @@
 	<artifactId>icasa.reactor</artifactId>
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
+    <modules>
+        <module>electricity-monitor</module>
+    </modules>
 
     <properties>
         <site.path>snapshot</site.path>
