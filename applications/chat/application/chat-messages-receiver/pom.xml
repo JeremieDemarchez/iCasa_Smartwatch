@@ -24,7 +24,7 @@
 
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>jabber.chat.message-receiver</artifactId>
+    <artifactId>jabber.chat.message.receiver</artifactId>
     <name>ICasa :: Jabber chat messages receiver</name>
     <packaging>bundle</packaging>
 

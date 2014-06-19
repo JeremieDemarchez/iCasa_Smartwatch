@@ -24,8 +24,8 @@
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
-    <artifactId>fr.liglab.adele.icasa.apps</artifactId>
-    <groupId>jabber.chat</groupId>
+    <groupId>fr.liglab.adele.icasa.apps</groupId>
+    <artifactId>jabber.chat.commands</artifactId>
     <name>Icasa :: jabber - chat commands</name>
     <packaging>pom</packaging>
 

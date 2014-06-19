@@ -24,7 +24,7 @@
     </parent>
 
     <groupId>fr.liglab.adele.icasa.apps.jabber.chat.config</groupId>
-    <artifactId>fr.liglab.adele.icasa.apps.jabber.chat.config.command</artifactId>
+    <artifactId>jabber.chat.config.command</artifactId>
     <packaging>bundle</packaging>
     <name>OW2 Shelbie :: Config Command</name>
 
