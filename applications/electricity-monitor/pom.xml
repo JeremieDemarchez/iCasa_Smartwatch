@@ -26,7 +26,7 @@
     <!-- Project Description -->
     <modelVersion>4.0.0</modelVersion>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>applications-reactor</artifactId>
+    <artifactId>electricity.monitor</artifactId>
     <packaging>pom</packaging>
     <name>${productName} :: ${projectName}</name>
 
