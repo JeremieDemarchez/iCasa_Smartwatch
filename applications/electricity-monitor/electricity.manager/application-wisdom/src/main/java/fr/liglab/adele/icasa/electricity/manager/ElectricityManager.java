@@ -9,6 +9,4 @@ public interface ElectricityManager {
 
     public int filterSample();
 
-    public int filterSample();
-
 }

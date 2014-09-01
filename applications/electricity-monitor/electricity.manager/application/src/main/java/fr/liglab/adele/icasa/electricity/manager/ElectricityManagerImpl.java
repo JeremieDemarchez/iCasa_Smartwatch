@@ -197,16 +197,6 @@ public class ElectricityManagerImpl implements ElectricityManager, ClockListener
     }
 
     @Override
-    public void addListener(ElectricityManagerListener listener) {
-        _listener.add(listener);
-    }
-
-    @Override
-    public void removeListener(ElectricityManagerListener listener) {
-        _listener.remove(listener);
-    }
-
-    @Override
     public void zoneAdded(Zone zone) {
         if(!_listener.isEmpty()){
             for(ElectricityManagerListener listener : _listener){
@@ -263,5 +253,10 @@ public class ElectricityManagerImpl implements ElectricityManager, ClockListener
     @Override
     public void zoneVariableModified(Zone zone, String s, Object o, Object o2) {
 
+    }
+
+    @Override
+    public int filterSample() {
+        return 14;
     }
 }

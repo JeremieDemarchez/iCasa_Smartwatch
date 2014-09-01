@@ -33,7 +33,7 @@
 
     <modules>        
         <module>electricity.manager</module>
-        <module>electricity.graph</module>
+        <!--<module>electricity.graph</module>-->
     </modules>
 
     <build>

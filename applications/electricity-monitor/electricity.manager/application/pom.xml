@@ -65,6 +65,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.electricity.manager</Export-Package>
+                        <Import-Package>javassist.util.proxy,javax.persistence</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -5,10 +5,6 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.validation.constraints.NotNull;
 
-/**
- * Created by horakm on 4/17/14.
- */
-
 @Entity
 public class ConsumptionSampleZone implements ConsumptionSample{
 
