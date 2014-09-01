@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
         <mimepullVersion>1.4</mimepullVersion>
         <netty.version>4.0.12.Final</netty.version>
-        <wisdom.version>0.5.1</wisdom.version>
+        <wisdom.version>0.6.2</wisdom.version>
         <jackson.version>2.3.2</jackson.version>
     </properties>
 

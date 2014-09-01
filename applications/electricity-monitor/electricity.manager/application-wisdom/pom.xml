@@ -39,20 +39,7 @@
             <artifactId>device.dependency.annotations</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>fr.liglab.adele.icasa.apps</groupId>
-            <artifactId>electricity.viewer.application</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>wisdom-orientdb-object</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish</groupId>
-            <artifactId>javax.persistence</artifactId>
-            <version>3.0-Prelude</version>
-        </dependency>
+
     </dependencies>
 
 
@@ -65,7 +52,6 @@
                 <configuration>
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.electricity.manager</Export-Package>
-                        <Import-Package>javassist.util.proxy,javax.persistence</Import-Package>
                     </instructions>
                 </configuration>
             </plugin>
@@ -79,6 +65,12 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.wisdom-framework</groupId>
+                <artifactId>wisdom-maven-plugin</artifactId>
+                <version>${wisdom.version}</version>
+                <extensions>true</extensions>
             </plugin>
         </plugins>
     </build>

@@ -19,18 +19,10 @@
 
     <modules>
         <module>application</module>
+        <module>application-wisdom</module>
         <module>distribution</module>
         <module>packages</module>
     </modules>
-
-    <repositories>
-        <repository>
-            <snapshots />
-            <id>adele-central-snapshots</id>
-            <name>adele-central-snapshot</name>
-            <url>http://repository-icasa.forge.cloudbees.com/snapshot</url>
-        </repository>
-    </repositories>
 
     <build>
         <plugins>
