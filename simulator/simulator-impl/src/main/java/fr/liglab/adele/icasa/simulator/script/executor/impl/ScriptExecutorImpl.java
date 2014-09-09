@@ -15,36 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.xml.parsers.ParserConfigurationException;
-import javax.xml.parsers.SAXParser;
-import javax.xml.parsers.SAXParserFactory;
-
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
-import org.ow2.chameleon.core.services.AbstractDeployer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
-
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.util.DateTextUtil;
 import fr.liglab.adele.icasa.commands.ICasaCommand;
@@ -57,9 +27,25 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
+import org.apache.felix.ipojo.annotations.*;
+import org.ow2.chameleon.core.services.AbstractDeployer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.wisdom.akka.AkkaSystemService;
+import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
+import scala.concurrent.Future;
+import scala.concurrent.Promise;
+
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import java.io.*;
+import java.util.*;
+import java.util.concurrent.Callable;
 
 /**
- * 
+ *
  *         Implementation of the ScriptExecutor specification
  */
 @Component(name = "script-executor")
@@ -67,332 +53,333 @@ import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 @Provides
 public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecutor{
 
-	private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
-	protected static final String SCRIPTS_DIRECTORY = "scripts";
-	/**
-	 * The clock use for simulation
-	 */
-	@Requires
-	private Clock clock;
+    private static final Logger logger = LoggerFactory.getLogger(ScriptExecutorImpl.class);
+    protected static final String SCRIPTS_DIRECTORY = "scripts";
+    /**
+     * The clock use for simulation
+     */
+    @Requires
+    private Clock clock;
 
-	@Requires
-	private SimulationManager simulationManager;
+    @Requires
+    private SimulationManager simulationManager;
 
-	/**
-	 * Simulator commands added to the platorm
-	 */
-	private Map<String, ICasaCommand> commands;
+    @Requires
+    AkkaSystemService akka;
+    /**
+     * Simulator commands added to the platorm
+     */
+    private Map<String, ICasaCommand> commands;
 
-	/**
-	 * Scripts added to the platform
-	 */
-	private Map<String, ScriptSAXHandler> scriptMap = new HashMap<String, ScriptSAXHandler>();
+    /**
+     * Scripts added to the platform
+     */
+    private Map<String, ScriptSAXHandler> scriptMap = new HashMap<String, ScriptSAXHandler>();
 
-	/**
-	 * Simulation Execution Thread
-	 */
-	private Thread executorThread;
+    /**
+     * Simulation Execution Thread
+     */
 
-	private float executedPercentage;
+    private Future<Void> scriptTaskState ;
 
-	private String currentScript;
+    private CommandExecutorCallable scriptTaskCallable ;
 
-	private List<ScriptExecutorListener> listeners = new ArrayList<ScriptExecutorListener>();
+    private float executedPercentage;
 
-	
-	@Override
-	public State getCurrentScriptState() {
-		if (executorThread != null && getCurrentScript()!= null){
-			if (executorThread.isAlive()){
-				if (!clock.isPaused())
-					return ScriptExecutor.State.STARTED;
-				else
-					return ScriptExecutor.State.PAUSED;
+    private String currentScript;
+
+    private List<ScriptExecutorListener> listeners = new ArrayList<ScriptExecutorListener>();
+
+    @Override
+    public State getCurrentScriptState() {
+        if (scriptTaskState != null && getCurrentScript()!= null){
+            if (!scriptTaskState.isCompleted()){
+                if (!clock.isPaused())
+                    return ScriptExecutor.State.STARTED;
+                else
+                    return ScriptExecutor.State.PAUSED;
             }
         }
-		return ScriptExecutor.State.STOPPED;
-	}
+        return ScriptExecutor.State.STOPPED;
+    }
 
-	@Override
-	public void execute(String scriptName) {
-		internalExecute(scriptName, 0, 0, true);
-	}
+    @Override
+    public void execute(String scriptName) {
+        internalExecute(scriptName, 0, 0, true);
+    }
 
-	@Override
-	public void execute(String scriptName, final Date startDate, final int factor) {
-		internalExecute(scriptName, startDate.getTime(), factor, false);
-	}
+    @Override
+    public void execute(String scriptName, final Date startDate, final int factor) {
+        internalExecute(scriptName, startDate.getTime(), factor, false);
+    }
 
-	private void internalExecute(String scriptName, long startDate, int factor, boolean useInternal) {
-		if (scriptInExecution())
-			return;
+    private void internalExecute(String scriptName, long startDate, int factor, boolean useInternal) {
+        if (scriptInExecution())
+            return;
 
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null) {
-			if (useInternal){
+        ScriptSAXHandler handler = scriptMap.get(scriptName);
+        if (handler != null) {
+            if (useInternal){
                 Long execDate = handler.getStartDate();
                 if (handler.useClockDateToStart){
                     execDate = clock.currentTimeMillis();
                 }
-				startExecutionThread(handler.getActionList(), execDate, handler.getFactor());
+                startExecutionThread(handler.getActionList(), execDate, handler.getFactor());
             }
-			else{
-				startExecutionThread(handler.getActionList(), startDate, factor);
+            else{
+                startExecutionThread(handler.getActionList(), startDate, factor);
             }
-			currentScript = scriptName;
+            currentScript = scriptName;
 
-			for (ScriptExecutorListener listener : getListenersCopy()) {
-				listener.scriptStarted(getCurrentScript());
-			}
-		}
-	}
-
-	@Override
-	@Invalidate
-	public void stop() {
-       if (!scriptInExecution())
-			return;
-
-		String stoppedScript = currentScript;
-
-		currentScript = null;
-		stopExecutionThread();
-
-		for (ScriptExecutorListener listener : getListenersCopy()) {
-			listener.scriptStopped(stoppedScript);
-		}
-	}
-
-	@Override
-	public void pause() {
-		if (!scriptInExecution())
-			return;
-
-		synchronized (clock) {
-			clock.pause();
-		}
-
-		for (ScriptExecutorListener listener : getListenersCopy()) {
-            try{
-			    listener.scriptPaused(getCurrentScript());
-            }catch(Exception ex){
-                ex.printStackTrace();
+            for (ScriptExecutorListener listener : getListenersCopy()) {
+                listener.scriptStarted(getCurrentScript());
             }
-		}
-	}
+        }
+    }
 
-	@Override
-	public void resume() {
-		if (!scriptInExecution())
-			return;
+    @Override
+    @Invalidate
+    public void stop() {
+        if (!scriptInExecution())
+            return;
 
-		synchronized (clock) {
-			clock.resume();
-		}
+        String stoppedScript = currentScript;
 
-		for (ScriptExecutorListener listener : getListenersCopy()) {
-            try{
-			    listener.scriptResumed(getCurrentScript());
-            }catch(Exception ex){
-                ex.printStackTrace();
-            }
-		}
-	}
+        currentScript = null;
+        stopExecutionThread();
 
-	@Override
-	public String getCurrentScript() {
-		return currentScript;
-	}
+        for (ScriptExecutorListener listener : getListenersCopy()) {
+            listener.scriptStopped(stoppedScript);
+        }
+    }
 
-	@Override
-	public List<String> getScriptList() {
-		List<String> list = new ArrayList<String>(scriptMap.keySet());
-		return list;
-	}
+    @Override
+    public void pause() {
+        if (!scriptInExecution())
+            return;
 
-	private void startExecutionThread(List<ActionDescription> actions, final long startDate, final int factor) {
-		if (actions.isEmpty()) // Nothing to execute
-			return;
-
-		executorThread = new Thread(new CommandExecutorRunnable(actions));
         synchronized (clock) {
-           try{
-               clock.reset();
-               clock.setStartDate(startDate);
-               clock.setFactor(factor);
-               clock.resume();
-           }catch (Exception e){
-               e.printStackTrace();
-           }
-
+            clock.pause();
         }
 
-		executorThread.start();
-	}
+        for (ScriptExecutorListener listener : getListenersCopy()) {
+            try{
+                listener.scriptPaused(getCurrentScript());
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
 
-	private void stopExecutionThread() {
-		logger.info("Stopping Executor Thread");
-		try {
-			executorThread.interrupt();
-			executorThread.join();
-			clock.reset(); // Stop the clock
-		} catch (InterruptedException e) {
-			e.printStackTrace();
-		}
-	}
+    @Override
+    public void resume() {
+        if (!scriptInExecution())
+            return;
 
-	// -- Component bind methods -- //
-	@Bind(id = "commands", aggregate = true, optional = true)
-	public void bindCommand(ICasaCommand commandService) {
-		String name = commandService.getName();
-		if (commands == null)
-			commands = new HashMap<String, ICasaCommand>();
-		commands.put(name, commandService);
-	}
+        synchronized (clock) {
+            clock.resume();
+        }
 
-	@Unbind(id = "commands")
-	public void unbindCommand(ICasaCommand commandService) {
-		String name = commandService.getName();
-		commands.remove(name);
-	}
+        for (ScriptExecutorListener listener : getListenersCopy()) {
+            try{
+                listener.scriptResumed(getCurrentScript());
+            }catch(Exception ex){
+                ex.printStackTrace();
+            }
+        }
+    }
 
-	// -- File Install methods -- //
+    @Override
+    public String getCurrentScript() {
+        return currentScript;
+    }
 
-	@Override
-	public boolean accept(File artifact) {
-		if (artifact.getName().endsWith(".bhv")) {
-			return true;
-		}
-		return false;
-	}
+    @Override
+    public List<String> getScriptList() {
+        List<String> list = new ArrayList<String>(scriptMap.keySet());
+        return list;
+    }
 
-	@Override
-	public void onFileCreate(File artifact) {
-		ScriptSAXHandler handler = parseFile(artifact);
-		if (handler != null) {
-			String scriptName = artifact.getName();
-			scriptMap.put(scriptName, handler);
-			for (ScriptExecutorListener listener : getListenersCopy()) {
-				try {
-					listener.scriptAdded(scriptName);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+    private void startExecutionThread(List<ActionDescription> actions, final long startDate, final int factor) {
+        if (actions.isEmpty()) // Nothing to execute
+            return;
 
-	@Override
-	public void onFileChange(File artifact) {
-		ScriptSAXHandler handler = parseFile(artifact);
-		if (handler != null) {
-			String scriptName = artifact.getName();
-			scriptMap.put(scriptName, handler);
-			for (ScriptExecutorListener listener : getListenersCopy()) {
-				try {
-					listener.scriptUpdated(scriptName);
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}
-		}
-	}
+        synchronized (clock) {
+            try{
+                clock.reset();
+                clock.setStartDate(startDate);
+                clock.setFactor(factor);
+                clock.resume();
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+        }
 
-	@Override
-	public void onFileDelete(File artifact) {
-		String scriptName = artifact.getName();
-		scriptMap.remove(scriptName);
-		for (ScriptExecutorListener listener : getListenersCopy()) {
-			try {
-				listener.scriptRemoved(scriptName);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        scriptTaskCallable = new CommandExecutorCallable(actions);
+        scriptTaskState = akka.dispatch(scriptTaskCallable,akka.fromThread());
 
-	@Override
-	public float getExecutedPercentage() {
-		return executedPercentage;
-	}
+    }
 
-	@Override
-	public int getFactor(String scriptName) {
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null)
-			return handler.getFactor();
-		return 1;
-	}
+    private void stopExecutionThread() {
+        logger.info("Stopping Executor Thread");
+        if (scriptInExecution()){
+            scriptTaskCallable.stop();
+        }
+        clock.reset(); // Stop the clock
+    }
 
-	@Override
-	public long getStartDate(String scriptName) {
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null)
-			return handler.getStartDate();
-		return 0;
-	}
+    // -- Component bind methods -- //
+    @Bind(id = "commands", aggregate = true, optional = true)
+    public void bindCommand(ICasaCommand commandService) {
+        String name = commandService.getName();
+        if (commands == null)
+            commands = new HashMap<String, ICasaCommand>();
+        commands.put(name, commandService);
+    }
 
-	@Override
-	public int getActionsNumber(String scriptName) {
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null)
-			if (handler.getActionList() != null)
-				return handler.getActionList().size();
-		return 0;
-	}
+    @Unbind(id = "commands")
+    public void unbindCommand(ICasaCommand commandService) {
+        String name = commandService.getName();
+        commands.remove(name);
+    }
 
-	@Override
-	public int getExecutionTime(String scriptName) {
-		ScriptSAXHandler handler = scriptMap.get(scriptName);
-		if (handler != null)
-			return handler.getExecutionTime();
-		return 0;
-	}
+    // -- File Install methods -- //
 
-	@Override
-	public State getState(String scriptName) {
+    @Override
+    public boolean accept(File artifact) {
+        if (artifact.getName().endsWith(".bhv")) {
+            return true;
+        }
+        return false;
+    }
+
+    @Override
+    public void onFileCreate(File artifact) {
+        ScriptSAXHandler handler = parseFile(artifact);
+        if (handler != null) {
+            String scriptName = artifact.getName();
+            scriptMap.put(scriptName, handler);
+            for (ScriptExecutorListener listener : getListenersCopy()) {
+                try {
+                    listener.scriptAdded(scriptName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFileChange(File artifact) {
+        ScriptSAXHandler handler = parseFile(artifact);
+        if (handler != null) {
+            String scriptName = artifact.getName();
+            scriptMap.put(scriptName, handler);
+            for (ScriptExecutorListener listener : getListenersCopy()) {
+                try {
+                    listener.scriptUpdated(scriptName);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onFileDelete(File artifact) {
+        String scriptName = artifact.getName();
+        scriptMap.remove(scriptName);
+        for (ScriptExecutorListener listener : getListenersCopy()) {
+            try {
+                listener.scriptRemoved(scriptName);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @Override
+    public float getExecutedPercentage() {
+        return executedPercentage;
+    }
+
+    @Override
+    public int getFactor(String scriptName) {
+        ScriptSAXHandler handler = scriptMap.get(scriptName);
+        if (handler != null)
+            return handler.getFactor();
+        return 1;
+    }
+
+    @Override
+    public long getStartDate(String scriptName) {
+        ScriptSAXHandler handler = scriptMap.get(scriptName);
+        if (handler != null)
+            return handler.getStartDate();
+        return 0;
+    }
+
+    @Override
+    public int getActionsNumber(String scriptName) {
+        ScriptSAXHandler handler = scriptMap.get(scriptName);
+        if (handler != null)
+            if (handler.getActionList() != null)
+                return handler.getActionList().size();
+        return 0;
+    }
+
+    @Override
+    public int getExecutionTime(String scriptName) {
+        ScriptSAXHandler handler = scriptMap.get(scriptName);
+        if (handler != null)
+            return handler.getExecutionTime();
+        return 0;
+    }
+
+    @Override
+    public State getState(String scriptName) {
         if(scriptName == null){
             return null;
         }
-		if (scriptName.equals(this.currentScript)) {
-			return getCurrentScriptState();
+        if (scriptName.equals(this.currentScript)) {
+            return getCurrentScriptState();
         }
-		return ScriptExecutor.State.STOPPED;
-	}
+        return ScriptExecutor.State.STOPPED;
+    }
 
-	@Override
-	public void saveSimulationScript(String fileName) {
-		PrintWriter out;
+    @Override
+    public void saveSimulationScript(String fileName) {
+        PrintWriter out;
 
-		try {
+        try {
 
-			String dateStr = DateTextUtil.getTextDate(System.currentTimeMillis());
-			File scriptsDir = new File(SCRIPTS_DIRECTORY);
-			if (!scriptsDir.exists()) {
-				logger.info("creating directory: " + SCRIPTS_DIRECTORY);
-				boolean result = scriptsDir.mkdir();
-				if (!result) {
-					logger.error("Unable to create directory: " + SCRIPTS_DIRECTORY);
-				}
-			}
-			
-			File scriptFile = new File(SCRIPTS_DIRECTORY + System.getProperty("file.separator") + fileName);
-						
-			out = new PrintWriter(scriptFile, "UTF-8");
-			
-			out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>");
-			out.println("<behavior factor=\"1\">");
-			out.println();
-			out.println("\t<!-- Zone Section -->");
-			out.println();
+            String dateStr = DateTextUtil.getTextDate(System.currentTimeMillis());
+            File scriptsDir = new File(SCRIPTS_DIRECTORY);
+            if (!scriptsDir.exists()) {
+                logger.info("creating directory: " + SCRIPTS_DIRECTORY);
+                boolean result = scriptsDir.mkdir();
+                if (!result) {
+                    logger.error("Unable to create directory: " + SCRIPTS_DIRECTORY);
+                }
+            }
 
-			for (Zone zone : simulationManager.getZones()) {
-				String id = zone.getId();
-				int leftX = zone.getLeftTopAbsolutePosition().x;
-				int topY = zone.getLeftTopAbsolutePosition().y;
+            File scriptFile = new File(SCRIPTS_DIRECTORY + System.getProperty("file.separator") + fileName);
+
+            out = new PrintWriter(scriptFile, "UTF-8");
+
+            out.println("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>");
+            out.println("<behavior factor=\"1\">");
+            out.println();
+            out.println("\t<!-- Zone Section -->");
+            out.println();
+
+            for (Zone zone : simulationManager.getZones()) {
+                String id = zone.getId();
+                int leftX = zone.getLeftTopAbsolutePosition().x;
+                int topY = zone.getLeftTopAbsolutePosition().y;
                 int bottomZ = zone.getLeftTopAbsolutePosition().z;
-				int width = zone.getXLength();
-				int height = zone.getYLength();
+                int width = zone.getXLength();
+                int height = zone.getYLength();
                 int depth = zone.getZLength();
                 StringBuilder instruction = new StringBuilder();
                 instruction.append("\t<create-zone ").
@@ -412,69 +399,69 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
                         append(ScriptLanguage.Z_LENGTH).append(" =\"").append(depth).append("\"");
                 instruction.append("/>");
 
-				out.println(instruction.toString());
+                out.println(instruction.toString());
 
-				for (String variable : zone.getVariableNames()) {
-					Object value = zone.getVariableValue(variable);
+                for (String variable : zone.getVariableNames()) {
+                    Object value = zone.getVariableValue(variable);
 
-					out.println("\t<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
-					out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\""
-					      + value + "\" />");
-				}
-				out.println();
-			}
+                    out.println("\t<add-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" />");
+                    out.println("\t<modify-zone-variable zoneId=\"" + id + "\" variable=\"" + variable + "\" value=\""
+                            + value + "\" />");
+                }
+                out.println();
+            }
 
-			out.println("\t<!-- Device Section -->");
-			out.println();
+            out.println("\t<!-- Device Section -->");
+            out.println();
 
-			for (LocatedDevice device : simulationManager.getDevices()) {
-				String id = device.getSerialNumber();
-				String type = device.getType();
+            for (LocatedDevice device : simulationManager.getDevices()) {
+                String id = device.getSerialNumber();
+                String type = device.getType();
 
-				out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
+                out.println("\t<create-device id=\"" + id + "\" type=\"" + type + "\" />");
 
-				String location = (String) device.getPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME);
-				if (location != null && !(location.equals(SimulatedDevice.LOCATION_UNKNOWN)))
-					out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
+                String location = (String) device.getPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME);
+                if (location != null && !(location.equals(SimulatedDevice.LOCATION_UNKNOWN)))
+                    out.println("\t<move-device-zone deviceId=\"" + id + "\" zoneId=\"" + location + "\" />");
 
-				out.println();
+                out.println();
 
-			}
+            }
 
-			out.println();
-			out.println("\t<!-- Person Section -->");
-			out.println();
+            out.println();
+            out.println("\t<!-- Person Section -->");
+            out.println();
 
-			for (Person person : simulationManager.getPersons()) {
-				String id = person.getName();
-				PersonType type = person.getPersonType();
+            for (Person person : simulationManager.getPersons()) {
+                String id = person.getName();
+                PersonType type = person.getPersonType();
 
-				out.println("\t<create-person id=\"" + id + "\" type=\"" + type.getName() + "\" />");
+                out.println("\t<create-person id=\"" + id + "\" type=\"" + type.getName() + "\" />");
 
-				Zone zone = simulationManager.getZoneFromPosition(person.getCenterAbsolutePosition());
+                Zone zone = simulationManager.getZoneFromPosition(person.getCenterAbsolutePosition());
 
-				if (zone != null)
-					out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
+                if (zone != null)
+                    out.println("\t<move-person-zone personId=\"" + id + "\" zoneId=\"" + zone.getId() + "\" />");
 
-				out.println();
+                out.println();
 
-			}
+            }
 
-			out.println("</behavior>");
+            out.println("</behavior>");
 
-			out.close();
-		} catch (IOException e1) {
-			e1.printStackTrace();
-		}
-	}
+            out.close();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+    }
 
 
-	/**
-	 * Parses the script file
-	 * 
-	 * @param file
-	 * @return
-	 */
+    /**
+     * Parses the script file
+     *
+     * @param file
+     * @return
+     */
     private ScriptSAXHandler parseFile(File file) {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         try {
@@ -499,125 +486,136 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
         return null;
     }
 
-	/**
-	 * Command executor Thread (Runnable) class
-	 *
-	 * 
-	 */
-	private final class CommandExecutorRunnable implements Runnable {
+    /**
+     * Command executor Thread (Runnable) class
+     *
+     *
+     */
+    private final class CommandExecutorCallable implements Callable<Void> {
 
-		private List<ActionDescription> actionDescriptions;
+        private final List<ActionDescription> actionDescriptions;
 
-		public CommandExecutorRunnable(List<ActionDescription> actionDescriptions) {
-			this.actionDescriptions = actionDescriptions;
-		}
+        private final int numberOfAction;
 
-		@Override
-		public void run() {
-			int index = 0;
-			boolean execute = true;
-			executedPercentage = 0;
-			while (execute) {
-				long elapsedTime = clock.getElapsedTime();
+        private volatile boolean cancel = false;
 
-				List<ActionDescription> toExecute = calculeToExecute(index, elapsedTime);
-				index += toExecute.size();
+        public CommandExecutorCallable(List<ActionDescription> actionDescriptions) {
+            this.actionDescriptions =  new ArrayList<ActionDescription>(actionDescriptions);
+            numberOfAction = actionDescriptions.size();
+        }
 
-				if (index >= actionDescriptions.size())
-					execute = false;
+        @Override
+        public Void call() {
+            int index = 0;
+            executedPercentage = 0;
+            try{
+                while ((!Thread.currentThread().isInterrupted()) && !actionDescriptions.isEmpty() && !cancel ) {
+                    long elapsedTime = 0;
+                    synchronized (clock)
+                    {
+                        elapsedTime = clock.getElapsedTime();
+                    }
 
-				executeActions(toExecute);
+                    List<ActionDescription> toExecute = calculeToExecute(index, elapsedTime);
+                    index += toExecute.size();
 
-				// Computes the execution percentage
-				executedPercentage = index / actionDescriptions.size();
-				try {
-					Thread.sleep(20);
-				} catch (InterruptedException e) {
-					execute = false;
-				}
-			}
-            String oldScript = currentScript;
-			currentScript = null; // Script execution finished
-            List<ScriptExecutorListener> listeners =  getListenersCopy();
-            for(ScriptExecutorListener listener: listeners){
-                listener.scriptStopped(oldScript);
+                    executeActions(toExecute);
+
+                    // Computes the execution percentage
+                    executedPercentage = index /numberOfAction;
+                    Thread.sleep(20);
+                }
+                String oldScript = currentScript;
+                currentScript = null; // Script execution finished
+                List<ScriptExecutorListener> listeners =  getListenersCopy();
+                for(ScriptExecutorListener listener: listeners){
+                    listener.scriptStopped(oldScript);
+                }
             }
-		}
+            catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
+            }finally {
+                return null;
+            }
+        }
 
-		private List<ActionDescription> calculeToExecute(int index, long elapsedTime) {
-			List<ActionDescription> toExecute = new ArrayList<ActionDescription>();
+        private List<ActionDescription> calculeToExecute(int index, long elapsedTime) {
+            List<ActionDescription> toExecute = new ArrayList<ActionDescription>();
 
-			for (int i = index; i < actionDescriptions.size(); i++) {
-				ActionDescription action = actionDescriptions.get(i);
-				int actionDelay = action.getDelay() ; // action delay in
-				                                                 // virtual
-				                                                 // milliseconds
-				if (elapsedTime >= actionDelay)
-					toExecute.add(action);
-				else
-					break;
-			}
-			return toExecute;
-		}
+            for (ActionDescription actionDescription : actionDescriptions) {
+                int actionDelay = actionDescription.getDelay() ; // action delay in virtual milliseconds
+                if (elapsedTime >= actionDelay){
+                    toExecute.add(actionDescription);
+                }
+            }
+            for(ActionDescription action : toExecute){
+                actionDescriptions.remove(action);
+            }
+            return toExecute;
+        }
 
-		private void executeActions(List<ActionDescription> toExecute) {
-			if (!toExecute.isEmpty()) {
-				synchronized (clock) {
-					clock.pause(false); //false to not notify listeners.
-					for (ActionDescription actionDescription : toExecute) {
-						ICasaCommand command = commands.get(actionDescription.getCommandName());
-						if (command != null) {
-							try {
-								command.execute(System.in, System.out, actionDescription.getConfiguration());
-							} catch (Exception e) {
-								e.printStackTrace();
-							}
-						}
-					}
-					clock.resume(false);//false to not notify listeners.
-				}
-			}
-		}
-	}
+        private void executeActions(List<ActionDescription> toExecute) {
+            if (!toExecute.isEmpty()) {
+                synchronized (clock) {
+                    clock.pause(false); //false to not notify listeners.
+                    for (ActionDescription actionDescription : toExecute) {
+                        ICasaCommand command = commands.get(actionDescription.getCommandName());
+                        if (command != null) {
+                            try {
+                                command.execute(System.in, System.out, actionDescription.getConfiguration());
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                    clock.resume(false);//false to not notify listeners.
+                }
+            }
+        }
 
-	@Override
-	public void addListener(ScriptExecutorListener listener) {
-		if (listener == null) {
-			throw new NullPointerException("listener");
-		}
-		synchronized (listeners) {
-			try {
-				listeners.add(listener);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+        public void stop(){
+            cancel = true;
+        }
+    }
 
-	@Override
-	public void removeListener(ScriptExecutorListener listener) {
-		if (listener == null) {
-			throw new NullPointerException("listener");
-		}
-		synchronized (listeners) {
-			try {
-				listeners.remove(listener);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-	}
+    @Override
+    public void addListener(ScriptExecutorListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        synchronized (listeners) {
+            try {
+                listeners.add(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	private List<ScriptExecutorListener> getListenersCopy() {
-		List<ScriptExecutorListener> listenersCopy;
-		synchronized (listeners) {
-			listenersCopy = Collections.unmodifiableList(new ArrayList<ScriptExecutorListener>(listeners));
-		}
-		return listenersCopy;
-	}
+    @Override
+    public void removeListener(ScriptExecutorListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        synchronized (listeners) {
+            try {
+                listeners.remove(listener);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
 
-	private boolean scriptInExecution() {
-		return (currentScript != null && getCurrentScriptState() != ScriptExecutor.State.STOPPED);
-	}
+    private List<ScriptExecutorListener> getListenersCopy() {
+        List<ScriptExecutorListener> listenersCopy;
+        synchronized (listeners) {
+            listenersCopy = Collections.unmodifiableList(new ArrayList<ScriptExecutorListener>(listeners));
+        }
+        return listenersCopy;
+    }
+
+    private boolean scriptInExecution() {
+        return (currentScript != null && getCurrentScriptState() != ScriptExecutor.State.STOPPED);
+    }
 
 }
