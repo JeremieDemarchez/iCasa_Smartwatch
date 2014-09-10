@@ -255,12 +255,6 @@ See the License for the specific language governing permissions and
                 <version>${wisdom.version}</version>
             </dependency>
 
-            <dependency>
-                <groupId>org.wisdom-framework</groupId>
-                <artifactId>wisdom-orientdb-object</artifactId>
-                <version>1.0-SNAPSHOT</version>
-            </dependency>
-
             <!-- end of wisdom  -->
 
             <!-- Distribution Base-->
