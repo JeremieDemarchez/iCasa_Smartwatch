@@ -28,10 +28,6 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>akka-system</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

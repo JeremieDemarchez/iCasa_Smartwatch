@@ -18,15 +18,15 @@ package fr.liglab.adele.icasa.clock.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-import akka.actor.Cancellable;
-import com.sun.swing.internal.plaf.synth.resources.synth_sv;
-import org.apache.felix.ipojo.annotations.*;
-import org.wisdom.akka.AkkaSystemService;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Validate;
+
 import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
-import scala.concurrent.duration.Duration;
 
 /**
  *
@@ -35,11 +35,6 @@ import scala.concurrent.duration.Duration;
 @Provides
 @Instantiate(name="simulated-clock")
 public class SimulatedClockImpl implements Clock {
-
-    @Requires
-    AkkaSystemService akka;
-
-    private Cancellable timerTask;
 
     /**
      * Initial date
@@ -216,12 +211,18 @@ public class SimulatedClockImpl implements Clock {
         initDate = System.currentTimeMillis();
         factor = 1;
         pause = true;
-        timerTask = akka.system().scheduler().schedule(Duration.create(0, TimeUnit.MILLISECONDS), Duration.create(TIME_THREAD_STEEP, TimeUnit.MILLISECONDS),new ClockTimeMover(),akka.system().dispatcher());
+        timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
+        timeThread.start();
     }
 
     @Invalidate
     public void stop() {
-        timerTask.cancel();
+        try {
+            timeThread.interrupt();
+            timeThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -264,11 +265,19 @@ public class SimulatedClockImpl implements Clock {
 
         @Override
         public void run() {
-            long enterTime = System.currentTimeMillis();
-                if (!pause) {
-                    long realElapsedTime = System.currentTimeMillis() - enterTime;
-                    elapsedTime += realElapsedTime * factor;
+            boolean execute = true;
+            while (execute) {
+                try {
+                    long enterTime = System.currentTimeMillis();
+                    Thread.sleep(TIME_THREAD_STEEP);
+                    if (!pause) {
+                        long realElapsedTime = System.currentTimeMillis() - enterTime;
+                        elapsedTime += realElapsedTime * factor;
+                    }
+                } catch (InterruptedException e) {
+                    execute = false;
                 }
+            }
         }
     }
 
