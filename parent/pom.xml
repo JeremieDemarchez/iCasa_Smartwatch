@@ -18,7 +18,7 @@ See the License for the specific language governing permissions and
     <parent>
         <groupId>fr.liglab.adele.common</groupId>
         <artifactId>base</artifactId>
-        <version>1.2.4-SNAPSHOT</version>
+        <version>1.2.4</version>
         <relativePath />
     </parent>
 
@@ -46,7 +46,7 @@ See the License for the specific language governing permissions and
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
         <mimepullVersion>1.4</mimepullVersion>
         <netty.version>4.0.12.Final</netty.version>
-        <wisdom.version>0.6.2</wisdom.version>
+        <wisdom.version>0.6.3</wisdom.version>
         <jackson.version>2.3.2</jackson.version>
     </properties>
 
@@ -203,7 +203,7 @@ See the License for the specific language governing permissions and
             <!-- wisdom -->
             <dependency>
                 <groupId>org.wisdom-framework</groupId>
-                <artifactId>wisdom-engine</artifactId>
+                <artifactId>wisdom-netty-engine</artifactId>
                 <version>${wisdom.version}</version>
             </dependency>
             <dependency>
@@ -253,12 +253,6 @@ See the License for the specific language governing permissions and
                 <groupId>org.wisdom-framework</groupId>
                 <artifactId>thymeleaf-template-engine</artifactId>
                 <version>${wisdom.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.wisdom-framework</groupId>
-                <artifactId>wisdom-orientdb-object</artifactId>
-                <version>1.0-SNAPSHOT</version>
             </dependency>
 
             <!-- end of wisdom  -->

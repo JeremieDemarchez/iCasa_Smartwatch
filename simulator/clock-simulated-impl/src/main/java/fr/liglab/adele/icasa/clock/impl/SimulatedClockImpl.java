@@ -29,68 +29,68 @@ import fr.liglab.adele.icasa.clock.Clock;
 import fr.liglab.adele.icasa.clock.ClockListener;
 
 /**
- * 
+ *
  */
 @Component(name="SimulatedClock")
 @Provides
 @Instantiate(name="simulated-clock")
 public class SimulatedClockImpl implements Clock {
 
-	/**
-	 * Initial date
-	 */
-	private volatile long initDate;
+    /**
+     * Initial date
+     */
+    private volatile long initDate;
 
-	/**
-	 * Time elapsed from initial date
-	 */
-	private volatile long elapsedTime;
+    /**
+     * Time elapsed from initial date
+     */
+    private volatile long elapsedTime;
 
-	/**
-	 * Factor of virtual time
-	 */
-	private volatile int factor;
+    /**
+     * Factor of virtual time
+     */
+    private volatile int factor;
 
-	/**
-	 * Indicates if the clock has been paused
-	 */
-	private volatile boolean pause = true;
-	
-	private static final int TIME_THREAD_STEEP = 20;
-	
-	private final List<ClockListener> listeners = new ArrayList<ClockListener>();
+    /**
+     * Indicates if the clock has been paused
+     */
+    private volatile boolean pause = true;
 
-	/**
-	 * Thread used to increment the clock
-	 */
-	private Thread timeThread;
+    private static final int TIME_THREAD_STEEP = 20;
+
+    private final List<ClockListener> listeners = new ArrayList<ClockListener>();
+
+    /**
+     * Thread used to increment the clock
+     */
+    private Thread timeThread;
 
     @Override
     public String getId() {
         return "simulatedClock";
     }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#currentTimeMillis()
-	 */
-	public long currentTimeMillis() {
-		return initDate + elapsedTime;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#currentTimeMillis()
+     */
+    public long currentTimeMillis() {
+        return initDate + elapsedTime;
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#getFactor()
-	 */
-	public int getFactor() {
-		return factor;
-	}
+    /*
+     * (non-Javadoc)
+     *
+     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#getFactor()
+     */
+    public int getFactor() {
+        return factor;
+    }
 
     @Override
     public long getStartDate() {
-   	 return initDate;
+        return initDate;
     }
 
     /*
@@ -98,48 +98,48 @@ public class SimulatedClockImpl implements Clock {
       *
       * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setFactor(int)
       */
-	public void setFactor(int factor) {
-		if (factor == this.factor) 
-			return;
-		
-		int oldFactor = this.factor;
-				
-		this.factor = factor;
-		
-		// Call all listeners sequentially
-		for (ClockListener listener : getListenersCopy()) {
+    public void setFactor(int factor) {
+        if (factor == this.factor)
+            return;
+
+        int oldFactor = this.factor;
+
+        this.factor = factor;
+
+        // Call all listeners sequentially
+        for (ClockListener listener : getListenersCopy()) {
             try {
                 listener.factorModified(oldFactor);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-	}
+    }
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setStartDate(long)
-	 */
-	public void setStartDate(long startDate) {
-		long oldDate = initDate;
-		initDate = startDate;
-		
+    /*
+     * (non-Javadoc)
+     *
+     * @see fr.liglab.adele.icasa.clock.api.SimulatedClock#setStartDate(long)
+     */
+    public void setStartDate(long startDate) {
+        long oldDate = initDate;
+        initDate = startDate;
 
-		// Call all listeners sequentially
-		for (ClockListener listener : getListenersCopy()) {
+
+        // Call all listeners sequentially
+        for (ClockListener listener : getListenersCopy()) {
             try {
                 listener.startDateModified(oldDate);
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-	}
+    }
 
-	@Override
-	public void pause() {
-		pause(true);
-	}
+    @Override
+    public void pause() {
+        pause(true);
+    }
 
     @Override
     public void pause(boolean notify) {
@@ -160,13 +160,13 @@ public class SimulatedClockImpl implements Clock {
         resume(true);
     }
 
-	@Override
-	public void resume(boolean notify) {
-		if (!pause)
-			return;
-		
-		pause = false;		
-		if(notify){
+    @Override
+    public void resume(boolean notify) {
+        if (!pause)
+            return;
+
+        pause = false;
+        if(notify){
             // Call all listeners sequentially
             for (ClockListener listener : getListenersCopy()) {
                 try {
@@ -176,110 +176,110 @@ public class SimulatedClockImpl implements Clock {
                 }
             }
         }
-		
-	}
-		
 
-	@Override
-	public void reset(){		
-		pause(false);
+    }
+
+
+    @Override
+    public void reset(){
+        pause(false);
         initDate = System.currentTimeMillis();
-		elapsedTime = 0;
-		
-		// Call all listeners sequentially
-		for (ClockListener listener : getListenersCopy()) {
+        elapsedTime = 0;
+
+        // Call all listeners sequentially
+        for (ClockListener listener : getListenersCopy()) {
             try {
                 listener.clockReset();
             } catch (Exception e) {
                 e.printStackTrace();
             }
         }
-	}
-	
-	@Override
-	public long getElapsedTime() {
-	   return elapsedTime;
-	}
-	
-	@Override
-   public boolean isPaused() {
-	   return pause;
-   }
-	
-	@Validate
-	public void start() {
-		initDate = System.currentTimeMillis();
-		factor = 1;
-		pause = true;
-		timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
-		timeThread.start();
-	}
-	
-	@Invalidate
-	public void stop() {
-		try {
-			timeThread.interrupt();
-	      timeThread.join();
-      } catch (InterruptedException e) {
-	      e.printStackTrace();
-      }
-	}
+    }
+
+    @Override
+    public long getElapsedTime() {
+        return elapsedTime;
+    }
+
+    @Override
+    public boolean isPaused() {
+        return pause;
+    }
+
+    @Validate
+    public void start() {
+        initDate = System.currentTimeMillis();
+        factor = 1;
+        pause = true;
+        timeThread = new Thread(new ClockTimeMover(), "Clock-Thread");
+        timeThread.start();
+    }
+
+    @Invalidate
+    public void stop() {
+        try {
+            timeThread.interrupt();
+            timeThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
 
 
-	@Override
-   public void addListener(final ClockListener listener) {
-		if (listener == null) {
-			throw new NullPointerException("listener");
-		}
-		synchronized (listeners) {
-			listeners.add(listener);
-		}	   
-   }
+    @Override
+    public void addListener(final ClockListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        synchronized (listeners) {
+            listeners.add(listener);
+        }
+    }
 
-	
-	@Override
-	public void removeListener(ClockListener listener) {
-		if (listener == null) {
-			throw new NullPointerException("listener");
-		}
-		synchronized (listeners) {
-			listeners.remove(listener);
-		}	 	   
-	}
-	
-	
-	private List<ClockListener> getListenersCopy() {
-		List<ClockListener> listenersCopy;
-		synchronized (listeners) {
-			listenersCopy = Collections.unmodifiableList(new ArrayList<ClockListener>(listeners));
-		}
-		return listenersCopy;
-	}
-	
-	/**
-	 * Clock Time mover Thread (Runnable) class
-	 *
-	 *
-	 */
-	private final class ClockTimeMover implements Runnable {
-		
-		@Override
-		public void run() {
-			boolean execute = true;
-			while (execute) {					
-				try {						
-					long enterTime = System.currentTimeMillis();						
-					Thread.sleep(TIME_THREAD_STEEP);						
-					if (!pause) {
-						long realElapsedTime = System.currentTimeMillis() - enterTime;
-						elapsedTime += realElapsedTime * factor;
-					}							
-				} catch (InterruptedException e) {
-					execute = false;
-				}
-			}
-		}
-	}
+
+    @Override
+    public void removeListener(ClockListener listener) {
+        if (listener == null) {
+            throw new NullPointerException("listener");
+        }
+        synchronized (listeners) {
+            listeners.remove(listener);
+        }
+    }
+
+
+    private List<ClockListener> getListenersCopy() {
+        List<ClockListener> listenersCopy;
+        synchronized (listeners) {
+            listenersCopy = Collections.unmodifiableList(new ArrayList<ClockListener>(listeners));
+        }
+        return listenersCopy;
+    }
+
+    /**
+     * Clock Time mover Thread (Runnable) class
+     *
+     *
+     */
+    private final class ClockTimeMover implements Runnable {
+
+        @Override
+        public void run() {
+            boolean execute = true;
+            while (execute) {
+                try {
+                    long enterTime = System.currentTimeMillis();
+                    Thread.sleep(TIME_THREAD_STEEP);
+                    if (!pause) {
+                        long realElapsedTime = System.currentTimeMillis() - enterTime;
+                        elapsedTime += realElapsedTime * factor;
+                    }
+                } catch (InterruptedException e) {
+                    execute = false;
+                }
+            }
+        }
+    }
 
 
 }

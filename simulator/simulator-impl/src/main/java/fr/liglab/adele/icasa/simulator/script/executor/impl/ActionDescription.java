@@ -17,11 +17,12 @@ package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
 import org.json.JSONObject;
 
+/*Immutable*/
 public class ActionDescription {
 	
-	private int delay;
-	private String commandName;
-	private JSONObject configuration;
+	private final  int delay;
+	private final String commandName;
+	private final JSONObject configuration;
 	
 	public ActionDescription(int delay, String commandName, JSONObject configuration) {
 	   this.delay = delay;
