@@ -184,9 +184,9 @@ See the License for the specific language governing permissions and
     </pluginRepositories>
 
     <scm>
-        <connection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</connection>
-        <url>http://github.com/AdeleResearchGroup/iCasa-Simulator/</url>
-        <developerConnection>scm:git:ssh://git@github.com/AdeleResearchGroup/iCasa-Simulator.git</developerConnection>
+        <connection>scm:git:git@github.com:AdeleResearchGroup/iCasa.git</connection>
+        <url>https://github.com/AdeleResearchGroup/iCasa.git</url>
+        <developerConnection>scm:git:git@github.com:AdeleResearchGroup/iCasa.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
 
