@@ -93,7 +93,6 @@
             <module>frontend</module>
             <module>distribution</module>
             <module>applications</module>
-             <module>installer</module>
          </modules>
          <build>
             <plugins>
