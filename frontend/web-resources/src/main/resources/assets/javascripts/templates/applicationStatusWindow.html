@@ -23,7 +23,7 @@
             <input type="checkbox" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch" data-bind="attr:{checked: isRunning}" style="display:none;">
             <label class="onoffswitch-label" for="myonoffswitch">
                 <div class="onoffswitch-inner" data-bind="attr: {'disabled-caption': $root.getLocaleMessage('Stopped'), 'enabled-caption': $root.getLocaleMessage('Started')}" ></div>
-                     <!--disabled-caption="Stopped" enabled-caption="Started"></div>-->
+                <!--disabled-caption="Stopped" enabled-caption="Started"></div>-->
                 <div class="onoffswitch-switch"></div>
             </label>
         </div>
@@ -52,4 +52,72 @@
         </div>
     </div>
 
+    <!-- Remove this last part ASAP because it is not generic-->
+    <div data-bind="if:isActimetrics(id())">
+
+        <div class="control-group" >
+            <label class="control-label" for="inputName" data-bind="text: 'Actimetry Serveur'"></label>
+            <div class="controls" >
+                <div class="input-append">
+                    <input type="text" id="link" disabled="disabled" href="http://lecarologeek.com" target="_blank" data-bind="value: 'www.actimetrics.fr'" />
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div data-bind="if:islightFollowMe(id())">
+
+        <div class="control-group" >
+            <label class="control-label" for="inputName" data-bind="text: 'Time Out'"></label>
+            <div class="controls" >
+                <div class="input-append">
+                    <input type="text" id="temporisation" disabled="disabled" data-bind="value: '5 s'" />
+                </div>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="myonoffswitch1" data-bind="text: 'Elderly people'"></label>
+            <div class="controls onoffswitch" >
+                <input type="checkbox" disabled="disabled" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch1" style="display:none;" checked>
+                <label class="onoffswitch-label" for="myonoffswitch1">
+                    <div class="onoffswitch-inner"  data-bind="attr: {'disabled-caption': 'Stopped', 'enabled-caption': 'Started'}" ></div>
+                    <!--disabled-caption="Stopped" enabled-caption="Started"></div>-->
+                    <div class="onoffswitch-switch"></div>
+                </label>
+            </div>
+        </div>
+
+        <div class="control-group">
+            <label class="control-label" for="myonoffswitch1" data-bind="text: 'Family'"></label>
+            <div class="controls onoffswitch" >
+                <input type="checkbox" disabled="disabled" name="onoffswitch" class="onoffswitch-checkbox" id="myonoffswitch2" style="display:none;"  >
+                <label class="onoffswitch-label" for="myonoffswitch2">
+                    <div class="onoffswitch-inner" data-bind="attr: {'disabled-caption': 'Stopped', 'enabled-caption': 'Started'}" ></div>
+                    <!--disabled-caption="Stopped" enabled-caption="Started"></div>-->
+                    <div class="onoffswitch-switch"></div>
+                </label>
+            </div>
+        </div>
+    </div>
+
 </form>
+
+<!-- Remove this last part ASAP because it is not generic-->
+<script type="text/javascript">
+    function isActimetrics(arg) {
+        if (arg == 'actimetrics') {
+            return true;
+        }else {
+            return false;
+        }
+    }
+    function islightFollowMe(arg) {
+        if (arg == 'light.follow.me.with.motion.sensor.and.photometer') {
+            return true;
+        }else {
+            return false;
+        }
+    }
+</script>
