@@ -33,8 +33,8 @@
         <!-- ADELE Projects -->
         <AdeleBaseVersion>1.2.0</AdeleBaseVersion>
         <roseVersion>1.2.2</roseVersion>
-        <iCasaPlatformVersion>1.2.6-SNAPSHOT</iCasaPlatformVersion>
-        <iCasaSimulatorVersion>1.2.6-SNAPSHOT</iCasaSimulatorVersion>
+        <iCasaPlatformVersion>1.2.7-SNAPSHOT</iCasaPlatformVersion>
+        <iCasaSimulatorVersion>1.2.7-SNAPSHOT</iCasaSimulatorVersion>
         <DistributionTestVersion>1.2.1-SNAPSHOT</DistributionTestVersion>
 
     </properties>
