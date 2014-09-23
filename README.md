@@ -5,7 +5,7 @@ This project aims at providing a simulator to do functional testing of digital h
 The home page of the project is <http://adeleresearchgroup.github.com/iCasa/>.
 The project websites are:
  * Development version <http://adeleresearchgroup.github.com/iCasa/snapshot/>
- * Last stable release version <http://adeleresearchgroup.github.com/iCasa/1.2.5/>
+ * Last stable release version <http://adeleresearchgroup.github.com/iCasa/1.2.6/>
 
 License
 =====
