@@ -48,7 +48,7 @@
         <!-- client distrib -->
         <pack name="MEDICAL client distribution" required="yes">
             <description>The MEDICAL client distribution.</description>
-            <file targetdir="${INSTALL_PATH}/" src="distrib/icasa.medical.distribution-1.2.6-SNAPSHOT.zip" override="true" unpack="true">
+            <file targetdir="${INSTALL_PATH}/" src="distrib/icasa.medical.distribution-1.2.7-SNAPSHOT.zip" override="true" unpack="true">
                 <os family="windows" />
             </file>
         </pack>

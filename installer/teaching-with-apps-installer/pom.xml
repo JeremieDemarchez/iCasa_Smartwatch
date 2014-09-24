@@ -5,7 +5,7 @@
     <parent>
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
-        <version>1.2.6-SNAPSHOT</version>
+        <version>1.2.7-SNAPSHOT</version>
         <relativePath>../../parent</relativePath>
     </parent>
 
@@ -21,7 +21,7 @@
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.teaching.distribution.with.apps</artifactId>
-            <version>1.2.6-SNAPSHOT</version>
+            <version>1.2.7-SNAPSHOT</version>
             <type>osgi-distribution</type>
         </dependency>
 
