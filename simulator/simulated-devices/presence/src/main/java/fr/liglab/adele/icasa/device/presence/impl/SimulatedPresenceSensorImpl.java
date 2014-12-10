@@ -91,6 +91,7 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 		m_zone = null;
 		// setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME,
 		// SimulatedDevice.LOCATION_UNKNOWN);
+        updateState();
 	}
 
 	@Override
@@ -122,11 +123,12 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 	 * Calculates if a person is found in the detection zone of this device. When
 	 * there is a change of previous detection a event is sent to listeners
 	 */
-	private void updateState() {
-		if (m_zone != null) {
+	private synchronized void updateState() {
+        boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
+
+        if (m_zone != null) {
 
 			boolean personFound = personInZone();
-			boolean previousDetection = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
 
 			if (!previousDetection) { // New person in Zone
 				if (personFound) {
@@ -137,7 +139,11 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 					setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
 				}
 			}
-		}
+		}else{
+            if (previousDetection) { // New person in Zone
+                    setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
+            }
+        }
 	}
 
 	private boolean personInZone() {
