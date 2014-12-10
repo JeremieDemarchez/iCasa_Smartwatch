@@ -197,6 +197,39 @@
             <version>3.0.1</version>
         </dependency>
 
+        <!--webjar Dependency for monitor-->
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>bootstrap</artifactId>
+            <version>3.3.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>handlebars</artifactId>
+            <version>2.0.0-1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery</artifactId>
+            <version>2.1.1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>jquery-mousewheel</artifactId>
+            <version>3.1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>momentjs</artifactId>
+            <version>2.8.3</version>
+        </dependency>
+        <dependency>
+            <groupId>org.webjars</groupId>
+            <artifactId>tablesorter</artifactId>
+            <version>2.17.8</version>
+        </dependency>
+
+
     </dependencies>
 
     <build>
@@ -207,6 +240,36 @@
                 <configuration>
                     <flattenDP>true</flattenDP>
                     <defaultOutputDirectory>runtime</defaultOutputDirectory>
+                    <outputs>
+                        <!-- bin directory -->
+                        <output>
+                            <IncludesArtifactId>tablesorter</IncludesArtifactId>
+                            <directory>applications</directory>
+                        </output>
+                        <!-- bin directory -->
+                        <output>
+                            <IncludesArtifactId>momentjs</IncludesArtifactId>
+                            <directory>applications</directory>
+                        </output>
+                        <!-- bin directory -->
+                        <output>
+                            <IncludesArtifactId>jquery-mousewhee</IncludesArtifactId>
+                            <directory>applications</directory>
+                        </output>
+                        <!-- bin directory -->
+                        <output>
+                            <IncludesArtifactId>jquery</IncludesArtifactId>
+                            <directory>applications</directory>
+                        </output>
+                        <output>
+                            <IncludesArtifactId>handlebars</IncludesArtifactId>
+                            <directory>applications</directory>
+                        </output>
+                        <output>
+                            <IncludesArtifactId>bootstrap</IncludesArtifactId>
+                            <directory>applications</directory>
+                        </output>
+                    </outputs>
                 </configuration>
             </plugin>
         </plugins>
