@@ -89,7 +89,12 @@ public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSens
     public void deviceDataChanged(String address, Data oldData, Data newData) {
         if(address.compareTo(this.moduleAddress) == 0){
             String data = newData.getData();
-            boolean status = data.compareTo("1")==0? true : false;
+            boolean status;
+            if( data.compareTo("1") == 0){
+                status = true;
+            }else{
+                status = false;
+            }
             setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, status);
         }
     }
