@@ -73,6 +73,9 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 	@Requires(filter = "(factory.name=zigbeeThermometer)")
 	private Factory thermometerFactory;
 
+    @Requires(filter = "(factory.name=zigbeePresenceSensor)")
+    private Factory presenceSensorFactory;
+
 	@Requires(id = "rose.machine")
 	private RoseMachine roseMachine;
 
@@ -120,7 +123,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 				} else if (TypeCode.C003.toString().equals(deviceType)) {
 					factory = motionSensorFactory;
 				} else if (TypeCode.C005.toString().equals(deviceType)) {
-					factory = thermometerFactory;
+					factory = presenceSensorFactory;
 				} else {
 					// device type not supported
 					return null;
