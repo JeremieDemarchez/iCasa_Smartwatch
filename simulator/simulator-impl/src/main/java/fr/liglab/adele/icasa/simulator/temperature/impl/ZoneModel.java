@@ -78,7 +78,7 @@ public class ZoneModel {
 
     public void updateThermalCapacity() {
         if (updateThermalCapacity){
-            double newVolume = 1.0d; // use this value as default to avoid divide by zero
+            double newVolume = 2.5d; // use this value as default to avoid divide by zero
             Double zoneVolume = (Double) _zone.getVariableValue(VOLUME_PROP_NAME);
             if ((zoneVolume != null) && ((zoneVolume) > 0.0d)){
                 newVolume =  zoneVolume;
