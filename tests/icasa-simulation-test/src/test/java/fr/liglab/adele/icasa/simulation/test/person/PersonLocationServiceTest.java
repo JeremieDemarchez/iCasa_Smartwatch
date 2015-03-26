@@ -45,7 +45,11 @@ public class PersonLocationServiceTest {
 
 	@Before
 	public void setUp() {
-
+		try {
+			simulationMgr.resetContext();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 
 	@After
