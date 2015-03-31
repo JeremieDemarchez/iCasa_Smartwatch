@@ -228,7 +228,7 @@ public class ElectricityViewerImpl implements  ZoneListener, LocatedDeviceListen
             if(zoneConsumption != mapOfConsumption.get(zone)){
                 double oldConsumption = mapOfConsumption.get(zone);
                 mapOfConsumption.put(zone, zoneConsumption);
-                notifyListener(zone.getId(),zoneConsumption,-1);
+                notifyListener(zone.getId(),zoneConsumption,oldConsumption);
             }
         }else{
             mapOfConsumption.put(zone, zoneConsumption);
@@ -271,6 +271,17 @@ public class ElectricityViewerImpl implements  ZoneListener, LocatedDeviceListen
         synchronized (m_lock) {
             return mapOfConsumption.get(zoneId);
         }
+    }
+
+    @Override
+    public List<String> getZonesView() {
+        List<String> zoneName = new ArrayList<String>();
+        synchronized (m_lock) {
+            for (Zone zone : mapOfConsumption.keySet()){
+                zoneName.add(zone.getId());
+            }
+        }
+        return zoneName;
     }
 
     @Override

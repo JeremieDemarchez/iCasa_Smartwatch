@@ -17,7 +17,7 @@
 
     <modules>
         <module>application</module>
-        <module>distribution</module>
+        <module>monitor</module>
         <module>packages</module>
     </modules>
     <build>

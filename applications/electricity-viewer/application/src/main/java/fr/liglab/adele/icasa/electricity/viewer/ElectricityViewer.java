@@ -2,6 +2,8 @@ package fr.liglab.adele.icasa.electricity.viewer;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 
+import java.util.List;
+
 /**
  *
  */
@@ -21,6 +23,10 @@ public interface ElectricityViewer {
      * @return the consumption of the all the device present in the zone in Watt.
      */
     public double getZoneConsumption(String zoneId);
+
+
+    public List<String> getZonesView();
+
 
     /**
      * Get the consumption of a group of device.
