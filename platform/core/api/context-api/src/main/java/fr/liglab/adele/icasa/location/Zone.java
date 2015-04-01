@@ -28,7 +28,7 @@ import java.util.Set;
  */
 public interface Zone extends LocatedObject {
 
-    static final int DEFAULT_Z_LENGTH = 100;
+    static final int DEFAULT_Z_LENGTH = 179;
 
     static final int DEFAULT_Z_BOTTOM = 0;
 
