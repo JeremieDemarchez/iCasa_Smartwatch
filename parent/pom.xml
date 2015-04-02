@@ -423,6 +423,12 @@ See the License for the specific language governing permissions and
         <pluginManagement>
             <plugins>
                 <plugin>
+                    <groupId>org.wisdom-framework</groupId>
+                    <artifactId>wisdom-maven-plugin</artifactId>
+                    <version>${wisdom.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
+                <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
                     <version>3.3</version>
