@@ -269,7 +269,14 @@ public class ElectricityViewerImpl implements  ZoneListener, LocatedDeviceListen
     @Override
     public double getZoneConsumption(String zoneId) {
         synchronized (m_lock) {
-            return mapOfConsumption.get(zoneId);
+            Double value = new Double(-1);
+            for (Zone zone : mapOfConsumption.keySet()){
+                if(zone.getId().equals(zoneId)){
+                    value = mapOfConsumption.get(zone);
+                    break;
+                }
+            }
+            return value;
         }
     }
 

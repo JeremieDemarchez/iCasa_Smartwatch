@@ -21,7 +21,7 @@ package sample;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.electricity.viewer.ElectricityViewer;
 import fr.liglab.adele.icasa.electricity.viewer.ElectricityViewerListener;
@@ -45,6 +45,7 @@ import org.wisdom.api.templates.Template;
 @Controller
 public class ElectricityMonitorController extends DefaultController implements ElectricityViewerListener,Scheduled {
 
+    private final String GLOBAL_LOCATION = "global";
     @Requires
     ElectricityViewer viewer;
 
@@ -83,19 +84,13 @@ public class ElectricityMonitorController extends DefaultController implements E
 
     @Route(method = HttpMethod.GET, uri = "/electricity/current")
     public Result current() {
-        return ok(new Sample(viewer.getTotalConsumption()).toJson());
+        return ok(new Sample(viewer.getTotalConsumption(),GLOBAL_LOCATION).toJson());
     }
 
     @Opened("/electricityws")
     public void opened(@Parameter("client") String client) {
         logger().info("Client connection on web socket {}", client);
-        publisher.send("/electricityws", client, (new Sample(viewer.getTotalConsumption())).toJson());
-        /**ObjectNode node = json.newObject();
-         for (String string : viewer.getZonesView()){
-         node.put(string, viewer.getZoneConsumption(string));
-         }
-         publisher.publish("/electricity", node);
-         **/
+        publisher.send("/electricityws", client, (new Sample(viewer.getTotalConsumption(),GLOBAL_LOCATION)).toJson());
     }
 
     @Override
@@ -106,13 +101,24 @@ public class ElectricityMonitorController extends DefaultController implements E
     @Override
     public void zoneConsumptionModified(String zoneId, double newConsumption, double oldConsumption) {
         logger().info("publish " + viewer.getTotalConsumption());
-        publisher.publish("/electricityws",(new Sample(viewer.getTotalConsumption())).toJson());
+        publisher.publish("/electricityws",(new Sample(viewer.getTotalConsumption(),GLOBAL_LOCATION)).toJson());
+        if (oldConsumption == -1){
+            publisher.publish("/electricityws",(new Sample(-2,zoneId)).toJson());
+        }else {
+            publisher.publish("/electricityws",(new Sample(newConsumption,zoneId)).toJson());
+        }
     }
 
-    @Every("5s")
+    @Every("10s")
     public void update() {
         logger().info("publish " + viewer.getTotalConsumption());
-        publisher.publish("/electricityws",(new Sample(viewer.getTotalConsumption())).toJson());
+        if(clock.isPaused()){
+            publisher.publish("/electricityws", (new Sample(viewer.getTotalConsumption(), GLOBAL_LOCATION)).toJson());
+            for (String zone : viewer.getZonesView()){
+                logger().info(" Value " + viewer.getZoneConsumption(zone) + " in " + zone);
+                publisher.publish("/electricityws",(new Sample(viewer.getZoneConsumption(zone),zone)).toJson());
+            }
+        }
     }
 
     private class Sample{
@@ -121,16 +127,20 @@ public class ElectricityMonitorController extends DefaultController implements E
 
         private final String value;
 
-        private Sample(double value){
+        private final String zone;
+
+        private Sample(double value,String zone){
             this.value = String.valueOf(value);
             DateTime dateTime = new DateTime(clock.currentTimeMillis());
             date = new String(dateTime.getHourOfDay()+":"+dateTime.getMinuteOfHour()+":"+dateTime.getSecondOfMinute());
+            this.zone = zone;
         }
 
         private JsonNode toJson(){
             ObjectNode result = json.newObject();
             result.put("date", date);
             result.put("value", value);
+            result.put("zone", zone);
             return result;
         }
     }
