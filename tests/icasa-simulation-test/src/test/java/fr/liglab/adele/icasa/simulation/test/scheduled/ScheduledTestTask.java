@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulation.test.scheduled;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 
 import java.util.Date;

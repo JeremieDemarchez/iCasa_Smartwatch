@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.access.test;
 
 import fr.liglab.adele.icasa.access.*;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import junit.framework.Assert;
 import org.junit.After;
 import org.junit.Before;

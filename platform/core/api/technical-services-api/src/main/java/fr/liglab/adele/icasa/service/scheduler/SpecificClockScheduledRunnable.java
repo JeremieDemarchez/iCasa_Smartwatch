@@ -15,12 +15,12 @@
  */
 package fr.liglab.adele.icasa.service.scheduler;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 
 
 /**
  * An OSGi service providing this interface will allow to schedule a task at a specified time using the
- * a provided Clock {@link fr.liglab.adele.icasa.clock.Clock}.
+ * a provided Clock {@link fr.liglab.adele.icasa.clockservice.Clock}.
  *
  */
 public interface SpecificClockScheduledRunnable extends ICasaRunnable {

@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.TaskExecutionReport;
 import fr.liglab.adele.icasa.service.scheduler.TaskReference;
 import org.slf4j.Logger;
@@ -24,7 +24,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 /**
  *

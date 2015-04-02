@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.service.scheduler;
 
 /**
  * An OSGi service providing this interface will allow to schedule periodic tasks using the
- * iCasa Clock {@link fr.liglab.adele.icasa.clock.Clock}
+ * iCasa Clock {@link fr.liglab.adele.icasa.clockservice.Clock}
  */
 public interface PeriodicRunnable extends ICasaRunnable {
     /**

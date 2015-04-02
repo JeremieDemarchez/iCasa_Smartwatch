@@ -46,11 +46,17 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Export-Package>fr.liglab.adele.icasa, fr.liglab.adele.icasa.device,
-							fr.liglab.adele.icasa.device.*, fr.liglab.adele.icasa.clock,
-							fr.liglab.adele.icasa.clock.util, fr.liglab.adele.icasa.location,
-                     fr.liglab.adele.icasa.location.util, fr.liglab.adele.icasa.listener,
-                     fr.liglab.adele.icasa.exception, fr.liglab.adele.icasa.commands</Export-Package>
+						<Export-Package>
+							fr.liglab.adele.icasa,
+							fr.liglab.adele.icasa.device,
+							fr.liglab.adele.icasa.device.*,
+							fr.liglab.adele.icasa.clockservice,
+							fr.liglab.adele.icasa.clockservice.util,
+							fr.liglab.adele.icasa.location,
+							fr.liglab.adele.icasa.location.util,
+							fr.liglab.adele.icasa.listener,
+                     		fr.liglab.adele.icasa.exception,
+							fr.liglab.adele.icasa.commands</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>

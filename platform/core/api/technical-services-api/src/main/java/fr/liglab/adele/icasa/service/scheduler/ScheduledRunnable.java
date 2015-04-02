@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.service.scheduler;
 
 /**
  * An OSGi service providing this interface will allow to schedule tasks at a fixed date using the
- * iCasa Clock {@link fr.liglab.adele.icasa.clock.Clock}
+ * iCasa Clock {@link fr.liglab.adele.icasa.clockservice.Clock}
  */
 public interface ScheduledRunnable extends ICasaRunnable {
     /**

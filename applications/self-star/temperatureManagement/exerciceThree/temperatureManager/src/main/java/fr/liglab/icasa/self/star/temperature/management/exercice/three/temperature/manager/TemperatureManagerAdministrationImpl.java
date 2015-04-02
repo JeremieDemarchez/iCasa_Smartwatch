@@ -1,6 +1,6 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.manager;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.icasa.self.star.temperature.management.exercice.three.room.occupancy.RoomOccupancy;
 import fr.liglab.icasa.self.star.temperature.management.exercice.three.room.occupancy.RoomOccupancyListener;
 import fr.liglab.icasa.self.star.temperature.management.exercice.three.temperature.controller.TemperatureConfiguration;

@@ -39,7 +39,7 @@
         <configuration>
           <instructions>
             <Bundle-SymbolicName>${project.artifactId}</Bundle-SymbolicName>
-            <Private-Package>fr.liglab.adele.icasa.clock.system.impl</Private-Package>
+            <Private-Package>fr.liglab.adele.icasa.clockservice.system.impl</Private-Package>
             <Export-Package /> <!-- YOUR_EXPORTED_PACKAGES -->
           </instructions>
         </configuration>

@@ -3,12 +3,11 @@ package fr.liglab.adele.icasa.application.actimetrics.manager;
 
 import fr.liglab.adele.icasa.actimetrics.event.webservice.api.ProcessEventException;
 import fr.liglab.adele.icasa.actimetrics.event.webservice.api.ProcessEventService;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.button.PushButton;
-import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.service.preferences.Preferences;

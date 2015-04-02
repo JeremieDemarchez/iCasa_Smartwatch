@@ -16,9 +16,8 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
-import fr.liglab.adele.icasa.service.scheduler.TaskReference;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.ClockListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
