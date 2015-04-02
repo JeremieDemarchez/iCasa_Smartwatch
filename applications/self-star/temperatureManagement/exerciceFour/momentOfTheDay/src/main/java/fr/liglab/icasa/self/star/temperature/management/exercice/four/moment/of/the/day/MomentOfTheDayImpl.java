@@ -1,6 +1,6 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;

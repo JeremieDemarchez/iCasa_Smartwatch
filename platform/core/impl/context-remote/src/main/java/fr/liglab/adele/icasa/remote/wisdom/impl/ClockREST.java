@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
@@ -24,7 +24,6 @@ import org.json.JSONObject;
 
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.*;
-import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.MimeTypes;
 import org.wisdom.api.http.Result;

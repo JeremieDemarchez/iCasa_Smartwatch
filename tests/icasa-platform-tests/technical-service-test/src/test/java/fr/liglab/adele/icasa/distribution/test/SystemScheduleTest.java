@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 import fr.liglab.adele.icasa.service.scheduler.SpecificClockPeriodicRunnable;

@@ -20,7 +20,7 @@ import java.util.Date;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 
 public class ScriptJSON {
 

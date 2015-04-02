@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.simulator.illuminance.impl;
 
 import java.util.*;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
 import org.apache.felix.ipojo.annotations.Component;
@@ -39,8 +39,6 @@ import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.ZoneListener;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
 import org.joda.time.DateTime;
-import org.joda.time.Duration;
-import org.joda.time.Period;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 

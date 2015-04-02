@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.clock.util;
+package fr.liglab.adele.icasa.clockservice.util;
 
 import fr.liglab.adele.icasa.Constants;
 import org.slf4j.Logger;

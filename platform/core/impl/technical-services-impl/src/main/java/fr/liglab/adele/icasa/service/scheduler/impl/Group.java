@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.*;
 import fr.liglab.adele.icasa.service.scheduler.impl.task.OneShotTaskImpl;
 import fr.liglab.adele.icasa.service.scheduler.impl.task.PeriodicTaskImpl;

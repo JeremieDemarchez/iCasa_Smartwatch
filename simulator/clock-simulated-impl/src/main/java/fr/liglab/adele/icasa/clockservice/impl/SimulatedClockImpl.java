@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.clock.impl;
+package fr.liglab.adele.icasa.clockservice.impl;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -25,8 +25,8 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Validate;
 
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.ClockListener;
 
 /**
  *

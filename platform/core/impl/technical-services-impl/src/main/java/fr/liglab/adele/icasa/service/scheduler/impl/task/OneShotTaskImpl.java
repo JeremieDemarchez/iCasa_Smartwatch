@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.service.scheduler.impl.task;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.impl.TaskReferenceImpl;
 
 public class OneShotTaskImpl extends TaskReferenceImpl {

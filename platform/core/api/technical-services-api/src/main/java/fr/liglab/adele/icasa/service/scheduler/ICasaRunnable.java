@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.service.scheduler;
 
 /**
  * This Interface is the parent interface allowing to schedule tasks using the
- * iCasa Clock {@link fr.liglab.adele.icasa.clock.Clock}
+ * iCasa Clock {@link fr.liglab.adele.icasa.clockservice.Clock}
  */
 public interface ICasaRunnable extends Runnable{
     /**

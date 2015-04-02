@@ -1,7 +1,7 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.four.room.occupancy;
 
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.ClockListener;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.service.location.PersonLocationService;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;

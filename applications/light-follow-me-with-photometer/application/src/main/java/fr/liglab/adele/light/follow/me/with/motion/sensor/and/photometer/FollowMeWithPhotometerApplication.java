@@ -17,8 +17,8 @@ package fr.liglab.adele.light.follow.me.with.motion.sensor.and.photometer;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.ClockListener;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;

@@ -15,11 +15,10 @@
  */
 package fr.liglab.adele.icasa.distribution.test;
 
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.ClockListener;
 
 import java.util.Date;
-import java.util.concurrent.atomic.AtomicLong;
 
 
 /**

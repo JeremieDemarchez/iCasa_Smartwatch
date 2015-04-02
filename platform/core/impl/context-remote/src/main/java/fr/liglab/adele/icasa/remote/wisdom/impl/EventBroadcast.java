@@ -17,8 +17,8 @@ package fr.liglab.adele.icasa.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.ClockListener;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.ClockListener;
 import fr.liglab.adele.icasa.listener.MultiEventListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
@@ -28,7 +28,6 @@ import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONException;
 import org.json.JSONObject;
-import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wisdom.api.Controller;
@@ -40,8 +39,6 @@ import org.wisdom.api.http.websockets.Publisher;
 
 import java.util.Date;
 import java.util.UUID;
-
-import org.wisdom.api.Controller;
 
 @Component
 @Provides(specifications = {RemoteEventBroadcast.class, Controller.class})

@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;

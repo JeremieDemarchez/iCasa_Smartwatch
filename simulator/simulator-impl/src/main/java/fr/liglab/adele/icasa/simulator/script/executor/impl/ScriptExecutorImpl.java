@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulator.script.executor.impl;
 
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 import fr.liglab.adele.icasa.commands.ICasaCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.location.LocatedDevice;
@@ -35,7 +35,6 @@ import org.wisdom.akka.AkkaSystemService;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 import scala.concurrent.Future;
-import scala.concurrent.Promise;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParser;

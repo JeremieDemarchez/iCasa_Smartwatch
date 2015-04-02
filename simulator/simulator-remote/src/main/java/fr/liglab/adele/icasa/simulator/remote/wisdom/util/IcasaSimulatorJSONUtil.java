@@ -20,7 +20,7 @@ import fr.liglab.adele.icasa.simulator.PersonType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.Person;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;

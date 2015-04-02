@@ -1,6 +1,6 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.four.temperature.manager;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day.MomentOfTheDay;
 import fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day.MomentOfTheDayListener;
 import fr.liglab.icasa.self.star.temperature.management.exercice.four.moment.of.the.day.MomentOfTheDayService;

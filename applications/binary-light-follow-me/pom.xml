@@ -31,7 +31,6 @@
 
 	<modules>
 		<module>application</module>
-        <module>distribution</module>
         <module>packages</module>		
 	</modules>
    <build>

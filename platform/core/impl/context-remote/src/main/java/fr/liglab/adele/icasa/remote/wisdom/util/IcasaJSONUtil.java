@@ -16,8 +16,8 @@
 package fr.liglab.adele.icasa.remote.wisdom.util;
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.clock.Clock;
-import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;

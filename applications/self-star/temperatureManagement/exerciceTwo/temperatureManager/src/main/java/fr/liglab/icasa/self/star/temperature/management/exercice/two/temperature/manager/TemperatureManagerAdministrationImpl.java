@@ -1,6 +1,6 @@
 package fr.liglab.icasa.self.star.temperature.management.exercice.two.temperature.manager;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.icasa.self.star.temperature.management.exercice.two.temperature.controller.TemperatureConfiguration;
 import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.Duration;

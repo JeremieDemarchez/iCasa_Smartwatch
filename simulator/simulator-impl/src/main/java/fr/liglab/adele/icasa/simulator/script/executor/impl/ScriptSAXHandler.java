@@ -28,7 +28,7 @@ import org.xml.sax.SAXException;
 import org.xml.sax.helpers.DefaultHandler;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.clock.util.DateTextUtil;
+import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 
 public class ScriptSAXHandler extends DefaultHandler {
 

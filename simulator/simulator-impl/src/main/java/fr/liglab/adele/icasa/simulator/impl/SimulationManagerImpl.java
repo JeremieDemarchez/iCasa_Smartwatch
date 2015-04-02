@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.simulator.impl;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.listener.IcasaListener;
 import fr.liglab.adele.icasa.location.LocatedDevice;

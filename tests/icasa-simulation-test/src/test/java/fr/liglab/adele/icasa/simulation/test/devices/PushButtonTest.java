@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulation.test.devices;
 
-import fr.liglab.adele.icasa.clock.Clock;
+import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.button.PushButton;
 import fr.liglab.adele.icasa.device.button.simulated.SimulatedPushButton;
