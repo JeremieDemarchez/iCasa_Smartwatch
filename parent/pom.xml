@@ -217,6 +217,11 @@ See the License for the specific language governing permissions and
             </dependency>
             <dependency>
                 <groupId>org.wisdom-framework</groupId>
+                <artifactId>wisdom-executors</artifactId>
+                <version>${wisdom.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.wisdom-framework</groupId>
                 <artifactId>router</artifactId>
                 <version>${wisdom.version}</version>
             </dependency>
