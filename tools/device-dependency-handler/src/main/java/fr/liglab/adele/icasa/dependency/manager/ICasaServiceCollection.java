@@ -20,6 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.ListIterator;
 import java.util.Set;
+import java.util.Spliterator;
 
 import fr.liglab.adele.icasa.dependency.manager.proxy.ICasaAggregateProxyFactory;
 
@@ -324,6 +325,9 @@ public class ICasaServiceCollection implements Collection, List, Set {
 		return list.subList(fromIndex, toIndex);
 	}
 
+	public Spliterator spliterator(){
+		return List.super.spliterator();
+	}
 	/**
 	 * Iterator on a set of service objects. This iterator iterates on a cached copy of service objects.
 	 */
