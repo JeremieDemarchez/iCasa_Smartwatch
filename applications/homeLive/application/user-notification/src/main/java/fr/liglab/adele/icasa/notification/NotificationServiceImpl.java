@@ -19,7 +19,8 @@ import org.slf4j.LoggerFactory;
 @Provides
 public class NotificationServiceImpl implements NotificationService {
 
-    private String currentAddress;
+    //TODO : Default Adress
+    private String currentAddress = "";
 
     private final Object m_lock = new Object();
 
