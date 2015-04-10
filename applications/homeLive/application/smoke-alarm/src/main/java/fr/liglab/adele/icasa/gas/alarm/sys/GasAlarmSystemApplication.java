@@ -7,41 +7,30 @@ import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.gasSensor.CarbonDioxydeSensor;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.mail.service.MailSender;
+import fr.liglab.adele.icasa.notification.NotificationService;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 
 @Component(name = "GasAlarmSystemApplication")
 @Instantiate(name = "GasAlarmSystemApplicationImpl-0")
-@Provides(specifications = {PeriodicRunnable.class,GasAlarmService.class})
+@Provides(specifications = {PeriodicRunnable.class})
 @CommandProvider(namespace = "GasAlarm")
-public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnable,GasAlarmService {
+public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnable {
 
+    private  final Logger m_logger = LoggerFactory
+            .getLogger(GasAlarmSystemApplication.class);
 
     private double _CO2Threshold = 3.8;
 
-    private boolean state = false;
-
     private final Object m_lock;
 
-    private boolean alarmRunning = false;
-
-    private Set<GasAlarmListener> setOfListener = new HashSet<GasAlarmListener>();
-
-
-
-    @RequiresDevice(id="binaryLights", type="field", optional=true)
-    private BinaryLight[] binaryLights;
-
-    @RequiresDevice(id="dimmerLights", type="field", optional=true)
-    private DimmerLight[] dimmerLights;
+    @Requires
+    NotificationService notificationService;
 
     @RequiresDevice(id="carbonDioxydeSensors", type="field", optional=true)
     private CarbonDioxydeSensor[] carbonDioxydeSensors;
@@ -132,39 +121,9 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
 
     @Override
     public void run() {
-        if (checkCo2()){
-            if (!state){
-                for(BinaryLight light : binaryLights){
-                    light.turnOn();
-                }
-                for(DimmerLight light : dimmerLights){
-                    light.setPowerLevel(1);
-                }
-                state = true;
-            }else{
-                for(BinaryLight light : binaryLights){
-                    light.turnOff();
-                }
-                for(DimmerLight light : dimmerLights){
-                    light.setPowerLevel(0);
-                }
-                state = false;
-            }
-            if(alarmRunning == false){
-                for(GasAlarmListener listener:setOfListener){
-                    listener.thresholdCrossUp();
-                }
-                alarmRunning = true;
-            }
-        }else{
-            if(alarmRunning == true){
-
-                for(GasAlarmListener listener:setOfListener){
-                    listener.thresholdCrossUp();
-                }
-                ;
-                alarmRunning = false;
-            }
+        if (checkCo2()) {
+            m_logger.info("CO2 is too hight !  ");
+            notificationService.sendNotification("[ICASA] CO2 Alert", " CO2 is too hight in the house.");
         }
     }
 
@@ -173,17 +132,9 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
     public  void setGasLimit(double value) {
         synchronized (m_lock){
             _CO2Threshold = value;
+            m_logger.info(" New Threshold gas value " + _CO2Threshold);
         }
-        System.out.println(" New Threshold gas value " + _CO2Threshold);
+
     }
 
-    @Override
-    public synchronized void addListener(GasAlarmListener listener) {
-        setOfListener.add(listener);
-    }
-
-    @Override
-    public synchronized void removeListener(GasAlarmListener listener) {
-        setOfListener.remove(listener);
-    }
 }
