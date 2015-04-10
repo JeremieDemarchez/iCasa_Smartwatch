@@ -42,7 +42,7 @@ See the License for the specific language governing permissions and
         <!-- By default, all sources are UTF-8-encoded. -->
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <!-- ADELE Projects -->
-        <AdeleBaseVersion>${parent.version}</AdeleBaseVersion>
+        <AdeleBaseVersion>${project.parent.version}</AdeleBaseVersion>
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
         <mimepullVersion>1.4</mimepullVersion>
         <netty.version>4.0.12.Final</netty.version>
@@ -422,6 +422,12 @@ See the License for the specific language governing permissions and
     <build>
         <pluginManagement>
             <plugins>
+                <plugin>
+                    <groupId>org.wisdom-framework</groupId>
+                    <artifactId>wisdom-maven-plugin</artifactId>
+                    <version>${wisdom.version}</version>
+                    <extensions>true</extensions>
+                </plugin>
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-site-plugin</artifactId>
