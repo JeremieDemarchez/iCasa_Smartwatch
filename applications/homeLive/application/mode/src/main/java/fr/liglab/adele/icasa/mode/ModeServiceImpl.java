@@ -32,22 +32,25 @@ public class ModeServiceImpl implements ModeService {
 
     @Override
     public String getCurrentMode() {
-        return new String(currentMode);
+        synchronized (m_lock){
+            return new String(currentMode);
+        }
     }
 
     @Override
     public void setCurrentMode(String modeName) {
-        if (modeName.equalsIgnoreCase(ModeUtils.HOME)){
-            currentMode = ModeUtils.HOME;
-        }else if (modeName.equalsIgnoreCase(ModeUtils.AWAY)){
-            currentMode = ModeUtils.AWAY;
-        }else if (modeName.equalsIgnoreCase(ModeUtils.HOLIDAYS)) {
-            currentMode = ModeUtils.HOLIDAYS;
-        }
-        else if (modeName.equalsIgnoreCase(ModeUtils.NIGHT)) {
-            currentMode = ModeUtils.NIGHT;
-        }else{
-            m_logger.error("Invalid ModeName");
+        synchronized (m_lock) {
+            if (modeName.equalsIgnoreCase(ModeUtils.HOME)) {
+                currentMode = ModeUtils.HOME;
+            } else if (modeName.equalsIgnoreCase(ModeUtils.AWAY)) {
+                currentMode = ModeUtils.AWAY;
+            } else if (modeName.equalsIgnoreCase(ModeUtils.HOLIDAYS)) {
+                currentMode = ModeUtils.HOLIDAYS;
+            } else if (modeName.equalsIgnoreCase(ModeUtils.NIGHT)) {
+                currentMode = ModeUtils.NIGHT;
+            } else {
+                m_logger.error("Invalid ModeName");
+            }
         }
     }
 }
