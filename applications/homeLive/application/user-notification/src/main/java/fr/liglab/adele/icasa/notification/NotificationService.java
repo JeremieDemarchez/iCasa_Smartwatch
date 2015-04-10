@@ -5,7 +5,7 @@ package fr.liglab.adele.icasa.notification;
  */
 public interface NotificationService {
 
-    void sendNotification();
+    void sendNotification(String subject, String body);
 
-    void setUserAdress(String Adress);
+    void setUserAddress(String address);
 }

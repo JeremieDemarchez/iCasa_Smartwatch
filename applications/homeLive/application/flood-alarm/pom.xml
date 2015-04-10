@@ -44,10 +44,6 @@
             <artifactId>command.handler</artifactId>
             <version>${project.version}</version>
         </dependency>
-        <dependency>
-            <groupId>joda-time</groupId>
-            <artifactId>joda-time</artifactId>
-        </dependency>
     </dependencies>
 
     <build>
