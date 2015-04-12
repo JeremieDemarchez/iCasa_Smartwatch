@@ -1,5 +1,8 @@
-package fr.liglab.adele.icasa.mode;
+package fr.liglab.adele.icasa.home.live.configurator;
 
+import fr.liglab.adele.icasa.mode.ModeService;
+import fr.liglab.adele.icasa.mode.ModeServiceImpl;
+import fr.liglab.adele.icasa.notification.NotificationService;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +23,9 @@ public class HomeLiveConfigurator extends DefaultController {
     @Requires
     ModeService modeService;
 
+    @Requires
+    NotificationService notificationService;
+
     public HomeLiveConfigurator(){
 
     }
@@ -38,6 +44,12 @@ public class HomeLiveConfigurator extends DefaultController {
     public Result setMode(@FormParameter("mode") String modeName){
         modeService.setCurrentMode(modeName);
         return ok(modeService.getCurrentMode()).json();
+    }
+
+    @Route(method = HttpMethod.POST,uri = "/homelive/notification")
+    public Result setMode(@FormParameter("mode") String userAdress){
+        notificationService.setUserAddress(userAdress);
+        return ok(notificationService.getUserAddress()).json();
     }
 
 }

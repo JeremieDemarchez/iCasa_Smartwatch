@@ -68,6 +68,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
+                        <Export-Package>fr.liglab.adele.icasa.home.live.configurator</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
