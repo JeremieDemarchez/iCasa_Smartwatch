@@ -1,5 +1,6 @@
 package fr.liglab.adele.icasa.home.live.configurator;
 
+import fr.liglab.adele.icasa.alarm.AlarmService;
 import fr.liglab.adele.icasa.mode.ModeService;
 import fr.liglab.adele.icasa.mode.ModeServiceImpl;
 import fr.liglab.adele.icasa.notification.NotificationService;
@@ -26,6 +27,9 @@ public class HomeLiveConfigurator extends DefaultController {
     @Requires
     NotificationService notificationService;
 
+    @Requires
+    AlarmService alarmService;
+
     public HomeLiveConfigurator(){
 
     }
@@ -50,6 +54,18 @@ public class HomeLiveConfigurator extends DefaultController {
     public Result setUserAddress(@FormParameter("mode") String userAdress){
         notificationService.setUserAddress(userAdress);
         return ok(notificationService.getUserAddress()).json();
+    }
+
+    @Route(method = HttpMethod.POST,uri = "/homelive/alarm/camera")
+    public Result setAlarmCamera(@FormParameter("mode") Boolean cameraStatus){
+        alarmService.setAlarmCameraStatus(cameraStatus);
+        return ok(alarmService.getAlarmCameraStatus()).json();
+    }
+
+    @Route(method = HttpMethod.POST,uri = "/homelive/alarm/sound")
+    public Result setAlarmSound(@FormParameter("mode") Boolean soundStatus){
+        alarmService.setAlarmSoundStatus(soundStatus);
+        return ok(alarmService.getAlarmSoundStatus()).json();
     }
 
 }
