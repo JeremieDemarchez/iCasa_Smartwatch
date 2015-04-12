@@ -47,7 +47,7 @@ public class HomeLiveConfigurator extends DefaultController {
     }
 
     @Route(method = HttpMethod.POST,uri = "/homelive/notification")
-    public Result setMode(@FormParameter("mode") String userAdress){
+    public Result setUserAddress(@FormParameter("mode") String userAdress){
         notificationService.setUserAddress(userAdress);
         return ok(notificationService.getUserAddress()).json();
     }
