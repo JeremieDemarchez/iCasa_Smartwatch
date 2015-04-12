@@ -51,7 +51,6 @@ public class ModeServiceImpl extends DefaultController implements ModeService {
             String oldMode = getCurrentMode() ;
             if (modeName.equalsIgnoreCase(ModeUtils.HOME)) {
                 currentMode = ModeUtils.HOME;
-                notifyListener()
             } else if (modeName.equalsIgnoreCase(ModeUtils.AWAY)) {
                 currentMode = ModeUtils.AWAY;
             } else if (modeName.equalsIgnoreCase(ModeUtils.HOLIDAYS)) {
