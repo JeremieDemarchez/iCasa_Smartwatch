@@ -8,4 +8,6 @@ public interface NotificationService {
     void sendNotification(String subject, String body);
 
     void setUserAddress(String address);
+
+    String getUserAddress();
 }

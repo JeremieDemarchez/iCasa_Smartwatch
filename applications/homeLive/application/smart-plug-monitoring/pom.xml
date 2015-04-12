@@ -40,8 +40,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>command.handler</artifactId>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>mode.service.technical</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>
@@ -54,7 +54,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.gas.alarm.sys</Export-Package>
+                        <Export-Package>fr.liglab.adele.icasa.smart.plug.monitoring</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

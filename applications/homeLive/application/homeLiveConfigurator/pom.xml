@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>bundle</packaging>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>alarm.technical.service</artifactId>
+    <artifactId>home.live.configurator</artifactId>
     <name>${productName} :: ${projectName}</name>
 
     <dependencies>
@@ -39,6 +39,30 @@
             <artifactId>technical.services.api</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>command.handler</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>wisdom-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>user.notification.service.technical</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>mode.service.technical</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>alarm.technical.service</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -49,7 +73,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.alarm</Export-Package>
+                        <Export-Package>fr.liglab.adele.icasa.home.live.configurator</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
