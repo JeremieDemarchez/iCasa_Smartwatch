@@ -59,4 +59,9 @@ public class NotificationServiceImpl implements NotificationService {
             currentAddress = address;
         }
     }
+
+    @Override
+    public String getUserAddress() {
+        return currentAddress;
+    }
 }
