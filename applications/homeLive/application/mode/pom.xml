@@ -44,6 +44,10 @@
             <artifactId>command.handler</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>wisdom-api</artifactId>
+        </dependency>
     </dependencies>
 
     <build>
