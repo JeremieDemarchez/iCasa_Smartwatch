@@ -19,6 +19,9 @@ public class ModeServiceImpl extends DefaultController implements ModeService {
 
     private  String currentMode = ModeUtils.HOME;
 
+    @Requires(optional = true)
+    ModeListener[] modeListeners;
+
     private final Object m_lock = new Object();
 
     public ModeServiceImpl(){
@@ -45,8 +48,10 @@ public class ModeServiceImpl extends DefaultController implements ModeService {
     @Override
     public void setCurrentMode(String modeName) {
         synchronized (m_lock) {
+            String oldMode = getCurrentMode() ;
             if (modeName.equalsIgnoreCase(ModeUtils.HOME)) {
                 currentMode = ModeUtils.HOME;
+                notifyListener()
             } else if (modeName.equalsIgnoreCase(ModeUtils.AWAY)) {
                 currentMode = ModeUtils.AWAY;
             } else if (modeName.equalsIgnoreCase(ModeUtils.HOLIDAYS)) {
@@ -55,7 +60,15 @@ public class ModeServiceImpl extends DefaultController implements ModeService {
                 currentMode = ModeUtils.NIGHT;
             } else {
                 m_logger.error("Invalid ModeName");
+                return;
             }
+            notifyListener(oldMode,getCurrentMode());
+        }
+    }
+
+    private void notifyListener(String newModeName,String oldModeName){
+        for (ModeListener listener : modeListeners){
+            listener.modeChange(newModeName,oldModeName);
         }
     }
 
