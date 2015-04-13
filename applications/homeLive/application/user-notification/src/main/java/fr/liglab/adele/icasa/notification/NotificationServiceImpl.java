@@ -28,7 +28,7 @@ public class NotificationServiceImpl implements NotificationService {
             .getLogger(NotificationServiceImpl.class);
 
     @Requires
-    private MailSenderService m_sender;
+    MailSenderService mailer;
 
     @Validate
     public void start() {
@@ -44,7 +44,7 @@ public class NotificationServiceImpl implements NotificationService {
     public void sendNotification(String subject, String body) {
         try {
             synchronized (m_lock) {
-                m_sender.send(new Mail().to(currentAddress)
+                mailer.send(new Mail().to(currentAddress)
                         .subject("This is an alert mail")
                         .body("This is an alert mail to inform you that there is a pb in your house. iCasa Platform Team."));
             }
@@ -64,4 +64,6 @@ public class NotificationServiceImpl implements NotificationService {
     public String getUserAddress() {
         return currentAddress;
     }
+
+
 }
