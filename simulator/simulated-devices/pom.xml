@@ -31,7 +31,7 @@
 	<modules>
 		<module>light</module>
 		<module>power</module>
-      <module>button</module>
+      	<module>button</module>
 		<module>presence</module>
 		<module>motion</module>
 		<module>sprinkler</module>
@@ -41,6 +41,7 @@
 		<module>personal</module>
 		<module>continua-rest-client</module>
 		<module>bathroom-scale</module>
+		<module>security</module>
 	</modules>
    <build>
       <plugins>
