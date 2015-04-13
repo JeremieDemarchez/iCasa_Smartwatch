@@ -1055,7 +1055,7 @@ define(['jquery',
               imgName = "liveBox";
             if (@type() == "iCasa.RollingShutter")
               imgName = "rollingShutter";
-            if (@type() == "iCasa.LiquidDetector")
+            if (@type() == "iCasa.FloodSensor")
               imgName = "liquidDetector";
             if (@type() == "iCasa.SmartPhone")
               imgName = "smartPhone";
