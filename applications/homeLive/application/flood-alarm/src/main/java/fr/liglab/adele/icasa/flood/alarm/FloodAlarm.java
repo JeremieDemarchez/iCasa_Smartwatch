@@ -21,6 +21,8 @@ public class FloodAlarm implements DeviceListener{
 
     private  final Logger m_logger = LoggerFactory.getLogger(FloodAlarm.class);
 
+    protected static final String APPLICATION_ID = "flood.alarm";
+
     @Requires
     AlarmService alarmService;
 
@@ -72,7 +74,7 @@ public class FloodAlarm implements DeviceListener{
             if (propertyName.equals(FloodSensor.FLOOD_SENSOR_ALARM)){
                 if (sensor.getAlarmStatus()){
                     alarmService.fireAlarm();
-                    notificationService.sendNotification("[iCasa] Flood Alarm "," Flood Detected in " + sensor.getPropertyValue(FloodSensor.LOCATION_PROPERTY_NAME));
+                    notificationService.sendNotification("[iCasa] Flood Alarm ", " Flood Detected in " + sensor.getPropertyValue(FloodSensor.LOCATION_PROPERTY_NAME));
                 }
             }
         }
