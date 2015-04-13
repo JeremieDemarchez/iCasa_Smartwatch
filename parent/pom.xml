@@ -261,7 +261,11 @@ See the License for the specific language governing permissions and
                 <artifactId>wisdom-monitor</artifactId>
                 <version>${wisdom.version}</version>
             </dependency>
-
+            <dependency>
+                <groupId>org.wisdom-framework</groupId>
+                <artifactId>wisdom-mailer</artifactId>
+                <version>0.5</version>
+            </dependency>
 
             <dependency>
                 <groupId>org.wisdom-framework</groupId>

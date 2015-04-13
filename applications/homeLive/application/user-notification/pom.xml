@@ -45,9 +45,8 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.ow2.chameleon.mail</groupId>
-            <artifactId>mail-service</artifactId>
-            <version>1.0.0</version>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>wisdom-mailer</artifactId>
         </dependency>
     </dependencies>
 

@@ -1,6 +1,7 @@
 package fr.liglab.adele.icasa.gas.alarm.sys;
 
 
+import fr.liglab.adele.icasa.alarm.AlarmService;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
@@ -32,6 +33,9 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
     @Requires
     NotificationService notificationService;
 
+    @Requires
+    AlarmService alarmService;
+
     @RequiresDevice(id="carbonDioxydeSensors", type="field", optional=true)
     private CarbonDioxydeSensor[] carbonDioxydeSensors;
 
@@ -42,7 +46,7 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
 
     @Invalidate
     public void stop() {
-        System.out.println(" Gas alarm component stop ... ");
+       m_logger.info(" Gas alarm component stop ... ");
         for (CarbonDioxydeSensor sensor : carbonDioxydeSensors) {
             sensor.removeListener(this);
         }
@@ -51,7 +55,7 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
 
     @Validate
     public void start() {
-        System.out.println(" Gas alarm component start ... ");
+        m_logger.info(" Gas alarm component start ... ");
     }
 
     @RequiresDevice(id="carbonDioxydeSensors", type="bind")
@@ -124,6 +128,7 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
         if (checkCo2()) {
             m_logger.info("CO2 is too hight !  ");
             notificationService.sendNotification("[ICASA] CO2 Alert", " CO2 is too hight in the house.");
+            alarmService.fireAlarm();
         }
     }
 

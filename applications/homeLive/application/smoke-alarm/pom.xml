@@ -12,7 +12,7 @@
     <modelVersion>4.0.0</modelVersion>
     <packaging>bundle</packaging>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
-    <artifactId>smoke.alarm.sys.application</artifactId>
+    <artifactId>smoke.alarm.application</artifactId>
     <name>${productName} :: ${projectName}</name>
 
     <dependencies>
@@ -47,6 +47,11 @@
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
             <artifactId>user.notification.service.technical</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>alarm.technical.service</artifactId>
             <version>${project.version}</version>
         </dependency>
     </dependencies>

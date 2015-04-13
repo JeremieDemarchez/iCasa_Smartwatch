@@ -1055,7 +1055,7 @@ define(['jquery',
               imgName = "liveBox";
             if (@type() == "iCasa.RollingShutter")
               imgName = "rollingShutter";
-            if (@type() == "iCasa.LiquidDetector")
+            if (@type() == "iCasa.FloodSensor")
               imgName = "liquidDetector";
             if (@type() == "iCasa.SmartPhone")
               imgName = "smartPhone";
@@ -1075,6 +1075,10 @@ define(['jquery',
               imgName = "sphygmometer";
             if ((@type() == "iCasa.PushButton") || @hasService("fr.liglab.adele.icasa.device.button.PushButton"))
               imgName = "pushButton";
+            if (@type() == "iCasa.Camera")
+              imgName = "camera";
+            if (@type() == "iCasa.Siren")
+              imgName = "siren";
             if (@hasService("fr.liglab.adele.icasa.device.presence.PresenceSensor"))
               imgName = "movementDetector";
           return "/assets/images/devices/" + imgName + ".png";
