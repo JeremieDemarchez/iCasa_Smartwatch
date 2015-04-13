@@ -29,8 +29,8 @@ public class SmartPlugMonitoring  implements ModeListener{
 
     private final Object m_lock = new Object();
 
-    @RequiresDevice(id="carbonDioxydeSensors", type="bind")
-    public void bindCarbonDioxydeSensor(PowerSwitch powerSwitch, Map properties) {
+    @RequiresDevice(id="powerSwitch", type="bind")
+    public void bindPowerSwitch(PowerSwitch powerSwitch, Map properties) {
         synchronized (m_lock){
             if (modeService.getCurrentMode().equals(ModeUtils.AWAY)){
                 powerSwitch.switchOff();
@@ -44,8 +44,8 @@ public class SmartPlugMonitoring  implements ModeListener{
         }
     }
 
-    @RequiresDevice(id="carbonDioxydeSensors", type="unbind")
-    public void unbindCarbonDioxydeSensor(PowerSwitch powerSwitch, Map properties) {
+    @RequiresDevice(id="powerSwitch", type="unbind")
+    public void unbindPowerSwitch(PowerSwitch powerSwitch, Map properties) {
         synchronized (m_lock){
 
         }
