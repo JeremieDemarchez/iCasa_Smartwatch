@@ -46,7 +46,7 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
 
     @Invalidate
     public void stop() {
-        System.out.println(" Gas alarm component stop ... ");
+       m_logger.info(" Gas alarm component stop ... ");
         for (CarbonDioxydeSensor sensor : carbonDioxydeSensors) {
             sensor.removeListener(this);
         }
@@ -55,7 +55,7 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
 
     @Validate
     public void start() {
-        System.out.println(" Gas alarm component start ... ");
+        m_logger.info(" Gas alarm component start ... ");
     }
 
     @RequiresDevice(id="carbonDioxydeSensors", type="bind")
