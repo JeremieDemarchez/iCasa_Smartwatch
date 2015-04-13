@@ -16,7 +16,6 @@ import java.util.Map;
 
 @Component
 @Instantiate
-@Provides
 public class FloodAlarm implements DeviceListener{
 
     private  final Logger m_logger = LoggerFactory.getLogger(FloodAlarm.class);
