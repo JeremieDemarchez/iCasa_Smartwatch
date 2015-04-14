@@ -55,6 +55,15 @@ public class HomeLiveApplicationConfiguration {
         return deviceUsed;
     }
 
+    public synchronized String getPermissionAssociatedToDevice(String deviceId,String mode){
+        String string = "NONE";
+        if (mode.equals(ModeUtils.AWAY) || mode.equals(ModeUtils.NIGHT) ||mode.equals(ModeUtils.HOLIDAYS) ||mode.equals(ModeUtils.HOME) ) {
+            string = m_permissionByMode.get(mode).get(deviceId);
+        }else {
+            m_logger.error(" MODE INVALID IN UPDATE PERMISSION" + mode);
+        }
+        return string;
+    }
 
     private synchronized AccessRight updatePermission(String deviceId,String permission) {
         AccessRight[] appliRights = accessManager.getAccessRight(this.m_applicationId);
