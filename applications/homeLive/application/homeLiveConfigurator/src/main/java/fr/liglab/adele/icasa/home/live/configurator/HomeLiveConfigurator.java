@@ -29,6 +29,7 @@ import org.wisdom.api.http.websockets.Publisher;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Component
 @Instantiate
@@ -40,7 +41,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     private  final Logger m_logger = LoggerFactory
             .getLogger(ModeServiceImpl.class);
 
-    private final Map<String,HomeLiveApplicationConfiguration> homeLiveConfigurationAppMap = new HashMap<>();
+    private final Map<String,HomeLiveApplicationConfiguration> homeLiveConfigurationAppMap = new ConcurrentHashMap<>();
 
     private final Object m_lock = new Object();
 
