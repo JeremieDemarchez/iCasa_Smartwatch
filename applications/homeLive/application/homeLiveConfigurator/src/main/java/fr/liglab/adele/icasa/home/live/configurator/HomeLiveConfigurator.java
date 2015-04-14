@@ -1,5 +1,6 @@
 package fr.liglab.adele.icasa.home.live.configurator;
 
+import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.alarm.AlarmService;
 import fr.liglab.adele.icasa.mode.ModeService;
 import fr.liglab.adele.icasa.mode.ModeServiceImpl;
@@ -29,6 +30,9 @@ public class HomeLiveConfigurator extends DefaultController {
 
     @Requires
     AlarmService alarmService;
+
+    @Requires
+    AccessManager accessManager;
 
     public HomeLiveConfigurator(){
 

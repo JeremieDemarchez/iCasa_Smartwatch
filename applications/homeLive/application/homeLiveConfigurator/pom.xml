@@ -63,6 +63,16 @@
             <artifactId>alarm.technical.service</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>access.manager.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>context.remote</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
