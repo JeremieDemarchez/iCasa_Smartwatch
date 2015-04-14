@@ -46,6 +46,11 @@ public class HomeLiveApplicationConfiguration {
         m_permissionByMode.put(ModeUtils.NIGHT,new HashMap<>(permission));
     }
 
+    public synchronized void updateCurrentMode(){
+        Map<String,String> deviceUsed = getDeviceWithPermissions();
+        m_permissionByMode.put(m_currentMode,deviceUsed);
+    }
+
     public synchronized Map<String,String> getDeviceWithPermissions(){
         Map<String,String> deviceUsed = new HashMap<>();
         AccessRight[] appliRights = accessManager.getAccessRight(this.m_applicationId);

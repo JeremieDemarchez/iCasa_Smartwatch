@@ -208,6 +208,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             if (homeLiveConfigurationAppMap.containsKey(appId)){
                 String policy = accessRight.getPolicy().toString();
                 String deviceId = accessRight.getDeviceId();
+                homeLiveConfigurationAppMap.get(appId).updateCurrentMode();
                 publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
             }else {
                 homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, m_logger,modeService.getCurrentMode()));
@@ -228,6 +229,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             if (homeLiveConfigurationAppMap.containsKey(appId)){
                 String policy = accessRight.getPolicy().toString();
                 String deviceId = accessRight.getDeviceId();
+                homeLiveConfigurationAppMap.get(appId).updateCurrentMode();
                 publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
             }else {
                 homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, m_logger,modeService.getCurrentMode()));
