@@ -9,6 +9,7 @@ import fr.liglab.adele.icasa.alarm.AlarmService;
 import fr.liglab.adele.icasa.application.Application;
 import fr.liglab.adele.icasa.application.ApplicationManager;
 import fr.liglab.adele.icasa.application.ApplicationTracker;
+import fr.liglab.adele.icasa.mode.ModeListener;
 import fr.liglab.adele.icasa.mode.ModeService;
 import fr.liglab.adele.icasa.mode.ModeServiceImpl;
 import fr.liglab.adele.icasa.notification.NotificationService;
@@ -32,7 +33,7 @@ import java.util.Map;
 @Component
 @Instantiate
 @Provides
-public class HomeLiveConfigurator extends DefaultController implements ApplicationTracker,AccessRightManagerListener {
+public class HomeLiveConfigurator extends DefaultController implements ApplicationTracker,AccessRightManagerListener,ModeListener {
 
     public final static String HOMELIVE_WEB_SOCKET = "/homelive/ws";
 
@@ -238,6 +239,16 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Override
     public void onMethodAccessRightModified(AccessRight accessRight, String methodName) {
 
+    }
+
+    @Override
+    public void modeChange(String newMode, String oldMode) {
+
+        synchronized (m_lock){
+            for (String id : homeLiveConfigurationAppMap.keySet()){
+                homeLiveConfigurationAppMap.get(id).changeCurrentMode(newMode);
+            }
+        }
     }
 
 
