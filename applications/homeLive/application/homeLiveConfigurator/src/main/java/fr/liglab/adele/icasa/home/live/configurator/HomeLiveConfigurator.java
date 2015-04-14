@@ -122,7 +122,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Route(method = HttpMethod.POST,uri = "/homelive/notification")
-    public Result setUserAddress(@FormParameter("mode") String userAdress){
+    public Result setUserAddress(@FormParameter("userAddress") String userAdress){
         notificationService.setUserAddress(userAdress);
         return ok(notificationService.getUserAddress()).json();
     }
@@ -133,7 +133,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Route(method = HttpMethod.POST,uri = "/homelive/alarm/camera")
-    public Result setAlarmCamera(@FormParameter("mode") Boolean cameraStatus){
+    public Result setAlarmCamera(@FormParameter("cameraStatus") Boolean cameraStatus){
         alarmService.setAlarmCameraStatus(cameraStatus);
         return ok(alarmService.getAlarmCameraStatus()).json();
     }
@@ -144,7 +144,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Route(method = HttpMethod.POST,uri = "/homelive/alarm/sound")
-    public Result setAlarmSound(@FormParameter("mode") Boolean soundStatus){
+    public Result setAlarmSound(@FormParameter("soundStatus") Boolean soundStatus){
         alarmService.setAlarmSoundStatus(soundStatus);
         return ok(alarmService.getAlarmSoundStatus()).json();
     }
