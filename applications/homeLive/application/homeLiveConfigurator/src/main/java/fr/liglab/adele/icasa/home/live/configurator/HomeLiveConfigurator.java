@@ -298,7 +298,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             if (homeLiveConfigurationAppMap.containsKey(appId)){
                 Map<String,String> result = homeLiveConfigurationAppMap.get(appId).getDeviceWithPermissions();
                 for (String deviceId : result.keySet()){
-                    m_logger.info("In : " + modeService.getCurrentMode() + " Device : " + deviceId + " : " + result.keySet() +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId,modeService.getCurrentMode()));
+                    m_logger.info("In : " + modeService.getCurrentMode() + " Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId,modeService.getCurrentMode()));
                 }
             }else {
                 m_logger.error(" NOT FOUND " + appId);
