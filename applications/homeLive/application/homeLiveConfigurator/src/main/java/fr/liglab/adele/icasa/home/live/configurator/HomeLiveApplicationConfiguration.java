@@ -21,14 +21,14 @@ public class HomeLiveApplicationConfiguration {
     }
 
     public void addDeviceWithPermission(String deviceId,boolean permission){
-        try {
+      /*  try {
             jsonAccessRight = AccessRightJSON.fromString(content);
             if (permission){
                 right = manager.setDeviceAccess(m_applicationId,deviceId, DeviceAccessPolicy.fromString(jsonAccessRight.getString("policy")));
             }
         } catch (Exception e) {
 
-        }
+        }*/
     }
 
 
