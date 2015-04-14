@@ -9,6 +9,8 @@ import fr.liglab.adele.icasa.alarm.AlarmService;
 import fr.liglab.adele.icasa.application.Application;
 import fr.liglab.adele.icasa.application.ApplicationManager;
 import fr.liglab.adele.icasa.application.ApplicationTracker;
+import fr.liglab.adele.icasa.command.handler.Command;
+import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.mode.ModeListener;
 import fr.liglab.adele.icasa.mode.ModeService;
 import fr.liglab.adele.icasa.mode.ModeServiceImpl;
@@ -34,6 +36,7 @@ import java.util.concurrent.ConcurrentHashMap;
 @Component
 @Instantiate
 @Provides
+@CommandProvider(namespace = "HomeLive")
 public class HomeLiveConfigurator extends DefaultController implements ApplicationTracker,AccessRightManagerListener,ModeListener {
 
     public final static String HOMELIVE_WEB_SOCKET = "/homelive/ws";
@@ -277,6 +280,24 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             result.put("permission", m_permission);
             result.put("mode", m_mode);
             return result;
+        }
+    }
+
+    @Command
+    public void getHomeLiveApp(){
+        synchronized (m_lock){
+            for(String id : homeLiveConfigurationAppMap.keySet()){
+                m_logger.info(" ID " + id );
+            }
+        }
+    }
+
+    @Command
+    public void getHomeLiveAppRight(){
+        synchronized (m_lock){
+            for(String id : homeLiveConfigurationAppMap.keySet()){
+                m_logger.info(" ID " + id );
+            }
         }
     }
 }
