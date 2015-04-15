@@ -3,12 +3,16 @@ package fr.liglab.adele.icasa.alarm;
 
 import fr.liglab.adele.icasa.device.security.Camera;
 import fr.liglab.adele.icasa.device.security.Siren;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
+import org.osgi.util.tracker.ServiceTracker;
+import org.osgi.util.tracker.ServiceTrackerCustomizer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Component
@@ -31,12 +35,40 @@ public class AlarmServiceImpl implements AlarmService {
 
     private final Object m_lockAlarm = new Object();
 
+    private ServiceTracker m_cameraServiceTracker;
 
-    @Requires(optional = true)
-    private Siren[] sirens;
+    private  final ServiceTrackerCustomizer m_cameraServiceTrackerCustomizer = new CameraServiceTrackerCustomizer();
 
-    @Requires(optional = true)
-    private Camera[] cameras;
+    private ServiceTracker m_sirenServiceTracker;
+
+    private final ServiceTrackerCustomizer m_sirenServiceTrackerCustomizer = new SirenServiceTrackerCustomizer();
+
+    private final BundleContext m_context;
+
+    private List<Siren> sirens = new ArrayList<Siren>();
+
+    private final Object m_sirenLock = new Object();
+
+    private List<Camera> cameras = new ArrayList<Camera>();
+
+    private final Object m_camerasLock = new Object();
+
+    public AlarmServiceImpl(BundleContext context){
+        m_context = context;
+    }
+    @Validate
+    public void start(){
+        m_cameraServiceTracker = new ServiceTracker(m_context,Camera.class.getName(),m_cameraServiceTrackerCustomizer);
+        m_sirenServiceTracker = new ServiceTracker(m_context,Siren.class.getName(),m_sirenServiceTrackerCustomizer);
+        m_cameraServiceTracker.open();
+        m_sirenServiceTracker.open();
+    }
+
+    @Invalidate
+    public void stop(){
+        m_cameraServiceTracker.close();
+        m_sirenServiceTracker.close();
+    }
 
     @Override
     public void setAlarmCameraStatus(boolean status) {
@@ -46,12 +78,16 @@ public class AlarmServiceImpl implements AlarmService {
                 synchronized (m_lockCamera){
                     cameraStatus = status;
                     if (cameraStatus) {
+                        synchronized (m_camerasLock){
                         for (Camera camera : cameras) {
                             camera.startRecording();
                         }
+                        }
                     }else {
-                        for (Camera camera : cameras) {
-                            camera.stopRecording();
+                        synchronized (m_camerasLock) {
+                            for (Camera camera : cameras) {
+                                camera.stopRecording();
+                            }
                         }
                     }
                 }
@@ -71,12 +107,16 @@ public class AlarmServiceImpl implements AlarmService {
                 synchronized (m_lockSound){
                     soundStatus = status;
                     if (soundStatus){
-                        for (Siren siren : sirens) {
-                            siren.turnOn();
+                        synchronized (m_sirenLock) {
+                            for (Siren siren : sirens) {
+                                siren.turnOn();
+                            }
                         }
                     }else {
-                        for (Siren siren : sirens) {
-                            siren.turnOff();
+                        synchronized (m_sirenLock){
+                            for (Siren siren : sirens) {
+                                siren.turnOff();
+                            }
                         }
                     }
                 }
@@ -91,7 +131,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public boolean getAlarmCameraStatus() {
         synchronized (m_lockCamera){
-            m_logger.info("Nbr of Camera " + cameras.length);
+            m_logger.info("Nbr of Camera " + cameras.size());
             return cameraStatus;
         }
     }
@@ -99,7 +139,7 @@ public class AlarmServiceImpl implements AlarmService {
     @Override
     public boolean getAlarmSoundStatus() {
         synchronized (m_lockSound){
-            m_logger.info("Nbr of Siren " + sirens.length);
+            m_logger.info("Nbr of Siren " + sirens.size());
             return soundStatus;
         }
     }
@@ -152,4 +192,62 @@ public class AlarmServiceImpl implements AlarmService {
             }
         }
     }
+
+    private class CameraServiceTrackerCustomizer implements ServiceTrackerCustomizer{
+        public CameraServiceTrackerCustomizer(){
+
+        }
+        @Override
+        public Object addingService(ServiceReference serviceReference) {
+            Camera camera = (Camera) m_context.getService(serviceReference);
+            synchronized (m_camerasLock){
+                cameras.add(camera);
+            }
+            return camera.getSerialNumber();
+        }
+
+        @Override
+        public void modifiedService(ServiceReference serviceReference, Object o) {
+
+        }
+
+        @Override
+        public void removedService(ServiceReference serviceReference, Object o) {
+            Camera camera = (Camera) m_context.getService(serviceReference);
+            synchronized (m_camerasLock){
+                cameras.remove(camera);
+            }
+        }
+    }
+
+    private class SirenServiceTrackerCustomizer implements ServiceTrackerCustomizer{
+
+        public SirenServiceTrackerCustomizer(){
+
+        }
+
+        @Override
+        public Object addingService(ServiceReference serviceReference) {
+            Siren siren = (Siren) m_context.getService(serviceReference);
+            synchronized (m_sirenLock){
+                sirens.add(siren);
+            }
+            return siren.getSerialNumber();
+        }
+
+        @Override
+        public void modifiedService(ServiceReference serviceReference, Object o) {
+
+        }
+
+        @Override
+        public void removedService(ServiceReference serviceReference, Object o) {
+            Siren siren = (Siren) m_context.getService(serviceReference);
+            synchronized (m_sirenLock){
+                sirens.remove(siren);
+            }
+        }
+    }
+
+
 }
