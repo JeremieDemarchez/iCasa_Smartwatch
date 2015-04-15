@@ -48,28 +48,28 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
 
     private final Object m_lock = new Object();
 
-    @Requires
+    @Requires(optional = false)
     Json json;
 
-    @Requires
+    @Requires(optional = false)
     Publisher publisher;
 
-    @Requires
+    @Requires(optional = false)
     ModeService modeService;
 
-    @Requires
+    @Requires(optional = false)
     NotificationService notificationService;
 
-    @Requires
+    @Requires(optional = false)
     AlarmService alarmService;
 
-    @Requires
+    @Requires(optional = false)
     AccessManager accessManager;
 
-    @Requires
+    @Requires(optional = false)
     ApplicationManager applicationManager;
 
-    @Requires
+    @Requires(optional = false)
     ContextManager contextManager;
 
     public HomeLiveConfigurator(){
