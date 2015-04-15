@@ -2,6 +2,7 @@ package fr.liglab.adele.icasa.home.live.configurator;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.access.AccessRightManagerListener;
@@ -68,8 +69,11 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Requires
     ApplicationManager applicationManager;
 
-    public HomeLiveConfigurator(){
+    @Requires
+    ContextManager contextManager;
 
+    public HomeLiveConfigurator(){
+        homeLiveConfigurationAppMap.clear();
     }
 
     @Validate
@@ -194,7 +198,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             if (homeLiveConfigurationAppMap.containsKey(app.getId())){
                 //APP DEJA ENREGISTRE
             }else {
-                homeLiveConfigurationAppMap.put(app.getId(),new HomeLiveApplicationConfiguration(app.getId(),accessManager,m_logger,modeService.getCurrentMode()));
+                homeLiveConfigurationAppMap.put(app.getId(),new HomeLiveApplicationConfiguration(app.getId(),accessManager,contextManager,m_logger,modeService.getCurrentMode()));
                 HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(app.getId());
                 Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
                 for (String deviceId : devicePermissions.keySet()){
@@ -217,44 +221,51 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Override
     public void onAccessRightAdded(AccessRight accessRight) {
         String appId = accessRight.getApplicationId();
-        synchronized (m_lock){
-            if (homeLiveConfigurationAppMap.containsKey(appId)){
-                String policy = accessRight.getPolicy().toString();
-                String deviceId = accessRight.getDeviceId();
-                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.AWAY);
-                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.HOME);
-                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.NIGHT);
-                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.HOLIDAYS);
-                publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
-            }else {
-                homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, m_logger,modeService.getCurrentMode()));
-                HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
-                Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                for (String deviceId : devicePermissions.keySet()){
-                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId),modeService.getCurrentMode())).toJson());
+        if (checkIfDeviceIsInIcasa(accessRight.getDeviceId())) {
+            synchronized (m_lock) {
+                if (homeLiveConfigurationAppMap.containsKey(appId)) {
+                    String policy = accessRight.getPolicy().toString();
+                    String deviceId = accessRight.getDeviceId();
+                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.AWAY);
+                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.HOME);
+                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.NIGHT);
+                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.HOLIDAYS);
+                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, policy, modeService.getCurrentMode())).toJson());
+                } else {
+                    homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager,contextManager, m_logger, modeService.getCurrentMode()));
+                    HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
+                    Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
+                    for (String deviceId : devicePermissions.keySet()) {
+                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
+                    }
                 }
             }
+        }else {
+            m_logger.info(" Device is not in context");
         }
-
     }
 
     @Override
     public void onAccessRightModified(AccessRight accessRight) {
         String appId = accessRight.getApplicationId();
-        synchronized (m_lock){
-            if (homeLiveConfigurationAppMap.containsKey(appId)){
-                String policy = accessRight.getPolicy().toString();
-                String deviceId = accessRight.getDeviceId();
-                homeLiveConfigurationAppMap.get(appId).updatePermission(deviceId,policy,modeService.getCurrentMode());
-                publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
-            }else {
-                homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, m_logger,modeService.getCurrentMode()));
-                HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
-                Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                for (String deviceId : devicePermissions.keySet()){
-                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId),modeService.getCurrentMode())).toJson());
+        if (checkIfDeviceIsInIcasa(accessRight.getDeviceId())) {
+            synchronized (m_lock){
+                if (homeLiveConfigurationAppMap.containsKey(appId)){
+                    String policy = accessRight.getPolicy().toString();
+                    String deviceId = accessRight.getDeviceId();
+                    homeLiveConfigurationAppMap.get(appId).updatePermission(deviceId, policy, modeService.getCurrentMode());
+                    publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
+                }else {
+                    homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, contextManager,m_logger,modeService.getCurrentMode()));
+                    HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
+                    Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
+                    for (String deviceId : devicePermissions.keySet()){
+                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId),modeService.getCurrentMode())).toJson());
+                    }
                 }
             }
+        }else {
+            m_logger.info(" Device is not in context");
         }
     }
 
@@ -370,5 +381,14 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Command
     public void getCurrentMode(String mode) {
         m_logger.info( modeService.getCurrentMode());
+    }
+
+    @Command
+    public void getAlarmStatus(String mode) {
+        m_logger.info("Camera Status " + alarmService.getAlarmCameraStatus() + " Sound Status "+alarmService.getAlarmSoundStatus());
+    }
+
+    public boolean checkIfDeviceIsInIcasa(String deviceId){
+        return contextManager.getDeviceIds().contains(deviceId);
     }
 }
