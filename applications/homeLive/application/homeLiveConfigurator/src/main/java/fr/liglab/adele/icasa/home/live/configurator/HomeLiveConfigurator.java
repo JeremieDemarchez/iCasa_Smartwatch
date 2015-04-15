@@ -388,6 +388,19 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
         m_logger.info("Camera Status " + alarmService.getAlarmCameraStatus() + " Sound Status "+alarmService.getAlarmSoundStatus());
     }
 
+    @Command
+    public void getUserToNotify() {
+        m_logger.info("Current User is " + notificationService.getUserAddress());
+    }
+
+
+    @Command
+    public void setUserToNotify(String userAddress) {
+        notificationService.setUserAddress(userAddress);
+        m_logger.info("Now Current User is " + notificationService.getUserAddress() + " . He/She will receive a confirmation mail.");
+        notificationService.sendNotification("[iCasa] New User ","You are the new thug in the House ! ");
+    }
+
     public boolean checkIfDeviceIsInIcasa(String deviceId){
         return contextManager.getDeviceIds().contains(deviceId);
     }
