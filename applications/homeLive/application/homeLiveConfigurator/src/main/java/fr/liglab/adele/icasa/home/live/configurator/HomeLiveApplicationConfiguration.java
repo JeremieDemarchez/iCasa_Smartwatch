@@ -47,11 +47,31 @@ public class HomeLiveApplicationConfiguration {
     }
 
     public synchronized void updateCurrentMode(){
+        m_logger.info("updateCurrentMode  " );
+
         Map<String,String> deviceUsed = getDeviceWithPermissions();
         m_permissionByMode.put(m_currentMode,deviceUsed);
     }
 
+    public synchronized void updateModeWithNewDevice(String deviceId,String permission,String mode) {
+        m_logger.info("updateModeWithNewDevice  " + deviceId + permission + mode );
+        if (m_currentMode.equals(mode)) {
+            updateCurrentMode();
+        } else {
+            if (mode.equals(ModeUtils.AWAY) || mode.equals(ModeUtils.NIGHT) || mode.equals(ModeUtils.HOLIDAYS) || mode.equals(ModeUtils.HOME)) {
+                if (permission.equals("total") ||permission.equals("hidden") ){
+                    m_permissionByMode.get(mode).put(deviceId,permission);
+                }else {
+                    m_logger.error(" POLICY INVALID" + permission);
+                }
+            }else {
+                m_logger.error(" MODE NAME INVALID" + mode);
+            }
+        }
+    }
+
     public synchronized Map<String,String> getDeviceWithPermissions(){
+        m_logger.info("getDeviceWithPermissions  " );
         Map<String,String> deviceUsed = new HashMap<>();
         AccessRight[] appliRights = accessManager.getAccessRight(this.m_applicationId);
         for (AccessRight accessRight : appliRights){
@@ -60,7 +80,8 @@ public class HomeLiveApplicationConfiguration {
         return deviceUsed;
     }
 
-    public synchronized String getPermissionAssociatedToDevice(String deviceId,String mode){
+    public synchronized String getPermissionAssociatedToDevice(String deviceId, String mode) {
+        m_logger.info("getPermissionAssociatedToDevice  " + deviceId + mode);
         String string = "NONE";
         if (mode.equals(ModeUtils.AWAY) || mode.equals(ModeUtils.NIGHT) ||mode.equals(ModeUtils.HOLIDAYS) ||mode.equals(ModeUtils.HOME) ) {
             string = m_permissionByMode.get(mode).get(deviceId);
@@ -71,34 +92,37 @@ public class HomeLiveApplicationConfiguration {
     }
 
     private synchronized AccessRight updatePermission(String deviceId,String permission) {
-        AccessRight[] appliRights = accessManager.getAccessRight(this.m_applicationId);
-        for (AccessRight appliRight : appliRights) {
-            if(appliRight.getDeviceId().equals(deviceId)){
-                try {
-                    AccessRight right = null;
-                    if (permission.equals("total") ||permission.equals("hidden") ){
-                        right = accessManager.setDeviceAccess(m_applicationId, deviceId,DeviceAccessPolicy.fromString(permission));
+        m_logger.info("Update Permission " + deviceId + permission);
+        if (!(accessManager.getAccessRight(m_applicationId,deviceId).getPolicy().toString().equals(permission))) {
+            AccessRight[] appliRights = accessManager.getAccessRight(this.m_applicationId);
+            for (AccessRight appliRight : appliRights) {
+                if (appliRight.getDeviceId().equals(deviceId)) {
+                    try {
+                        AccessRight right = null;
+                        if (permission.equals("total") || permission.equals("hidden")) {
+                            right = accessManager.setDeviceAccess(m_applicationId, deviceId, DeviceAccessPolicy.fromString(permission));
+                        }
+                        return right;
+                    } catch (Exception e) {
+                        m_logger.error("Update permission Fail ! ");
                     }
-                    return right;
-                } catch (Exception e) {
-                    m_logger.error("Update permission Fail ! ");
                 }
             }
+            return null;
+        }else {
+            m_logger.info("Policy not need To be update " + m_applicationId + " device " + deviceId);
+            return accessManager.getAccessRight(m_applicationId,deviceId);
         }
-        return null;
     }
 
     public synchronized Map<String,String> updatePermission(String deviceId,String permission,String Mode) {
+        m_logger.error("Update WITH MODE " + deviceId + permission + Mode);
         Map<String,String> returnMap = new HashMap<String,String>();
         if (m_currentMode.equals(Mode)) {
             AccessRight right = updatePermission(deviceId,permission);
+            m_permissionByMode.get(m_currentMode).put(right.getDeviceId(),right.getPolicy().toString());
             returnMap.put(right.getDeviceId(),right.getPolicy().toString());
-            Map<String, String> permissionByDevice = new HashMap<String, String>();
-            AccessRight[] appliRights = accessManager.getAccessRight(this.m_applicationId);
-            for (AccessRight accessRight : appliRights) {
-                permissionByDevice.put(accessRight.getDeviceId(), accessRight.getPolicy().toString());
-            }
-            m_permissionByMode.put(Mode, permissionByDevice);
+
             return returnMap;
         }
         if (Mode.equals(ModeUtils.AWAY) || Mode.equals(ModeUtils.NIGHT) ||Mode.equals(ModeUtils.HOLIDAYS) ||Mode.equals(ModeUtils.HOME) ){
@@ -120,12 +144,16 @@ public class HomeLiveApplicationConfiguration {
     }
 
     public synchronized void changeCurrentMode(String mode) {
+        m_logger.info("Enter in new Mode : " + mode + " will change permission");
         if (mode.equals(ModeUtils.AWAY) || mode.equals(ModeUtils.NIGHT) ||mode.equals(ModeUtils.HOLIDAYS) ||mode.equals(ModeUtils.HOME) ){
             m_currentMode = mode;
             for (String deviceId : m_permissionByMode.get(mode).keySet()){
-                updatePermission(deviceId,m_permissionByMode.get(mode).get(deviceId));
+                m_logger.info("Permission will be update on device " + deviceId + " with policy " + m_permissionByMode.get(mode).get(deviceId));
+                updatePermission(deviceId, m_permissionByMode.get(mode).get(deviceId));
             }
+            return;
+        }else {
+            m_logger.error(" INVALID MODE NAME IN CHANGE MODE " + mode);
         }
-        m_logger.error(" INVALID MODE NAME IN CHANGE MODE " + mode);
     }
 }

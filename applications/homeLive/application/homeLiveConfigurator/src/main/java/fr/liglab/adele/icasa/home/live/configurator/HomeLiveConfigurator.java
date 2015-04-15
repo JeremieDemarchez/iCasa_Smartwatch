@@ -84,8 +84,20 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Invalidate
     public void stop(){
         m_logger.info("HOME LIVE CONFIGURATOR Service STOPPING");
-        accessManager.removeListener(this);
-        applicationManager.removeApplicationListener(this);
+        try{
+            accessManager.removeListener(this);
+        }catch (Exception e){
+            m_logger.error(e.toString());
+        }
+        try{
+            applicationManager.removeApplicationListener(this);
+        }catch (Exception e){
+            m_logger.error(e.toString());
+        }
+
+        synchronized (m_lock){
+            homeLiveConfigurationAppMap.clear();
+        }
     }
 
     @Opened("/homelive/ws")
@@ -209,7 +221,10 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             if (homeLiveConfigurationAppMap.containsKey(appId)){
                 String policy = accessRight.getPolicy().toString();
                 String deviceId = accessRight.getDeviceId();
-                homeLiveConfigurationAppMap.get(appId).updateCurrentMode();
+                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.AWAY);
+                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.HOME);
+                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.NIGHT);
+                homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId,policy,ModeUtils.HOLIDAYS);
                 publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
             }else {
                 homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, m_logger,modeService.getCurrentMode()));
@@ -230,7 +245,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             if (homeLiveConfigurationAppMap.containsKey(appId)){
                 String policy = accessRight.getPolicy().toString();
                 String deviceId = accessRight.getDeviceId();
-                homeLiveConfigurationAppMap.get(appId).updateCurrentMode();
+                homeLiveConfigurationAppMap.get(appId).updatePermission(deviceId,policy,modeService.getCurrentMode());
                 publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
             }else {
                 homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, m_logger,modeService.getCurrentMode()));
