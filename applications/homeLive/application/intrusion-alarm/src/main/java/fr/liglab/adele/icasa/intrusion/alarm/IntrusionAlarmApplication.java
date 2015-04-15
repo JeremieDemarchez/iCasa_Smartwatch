@@ -53,12 +53,12 @@ public class IntrusionAlarmApplication implements DeviceListener {
 		}
 	}
 
-	@RequiresDevice(id="motionSensors", type="bind")
+	@RequiresDevice(id="MotionSensors", type="bind")
 	public void bindMotionSensor(MotionSensor motionSensor, Map properties) {
 		motionSensor.addListener(this);
 	}
 
-	@RequiresDevice(id="motionSensors", type="unbind")
+	@RequiresDevice(id="MotionSensors", type="unbind")
 	public void unbindMotionSensor(MotionSensor motionSensor, Map properties) {
 		motionSensor.removeListener(this);
 	}
@@ -68,6 +68,7 @@ public class IntrusionAlarmApplication implements DeviceListener {
 		presenceSensor.addListener(this);
 	}
 
+	@RequiresDevice(id="PresenceSensors", type="unbind" )
 	public void unbindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
 		presenceSensor.removeListener(this);
 	}
