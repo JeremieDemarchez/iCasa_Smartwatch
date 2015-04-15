@@ -14,6 +14,7 @@ import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.mode.ModeListener;
 import fr.liglab.adele.icasa.mode.ModeService;
 import fr.liglab.adele.icasa.mode.ModeServiceImpl;
+import fr.liglab.adele.icasa.mode.ModeUtils;
 import fr.liglab.adele.icasa.notification.NotificationService;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
@@ -252,6 +253,19 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             for (String id : homeLiveConfigurationAppMap.keySet()){
                 homeLiveConfigurationAppMap.get(id).changeCurrentMode(newMode);
             }
+        }
+        if (newMode.equals(ModeUtils.HOME)){
+            alarmService.setAlarmSoundStatus(false);
+            alarmService.setAlarmCameraStatus(true);
+        }else if (newMode.equals((ModeUtils.AWAY))){
+            alarmService.setAlarmSoundStatus(true);
+            alarmService.setAlarmCameraStatus(true);
+        }else if (newMode.equals(ModeUtils.NIGHT)){
+            alarmService.setAlarmSoundStatus(true);
+            alarmService.setAlarmCameraStatus(true);
+        }else if(newMode.equals(ModeUtils.HOLIDAYS)){
+            alarmService.setAlarmSoundStatus(true);
+            alarmService.setAlarmCameraStatus(true);
         }
     }
 
