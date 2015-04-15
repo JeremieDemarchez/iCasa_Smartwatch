@@ -379,12 +379,12 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Command
-    public void getCurrentMode(String mode) {
+    public void getCurrentMode() {
         m_logger.info( modeService.getCurrentMode());
     }
 
     @Command
-    public void getAlarmStatus(String mode) {
+    public void getAlarmStatus() {
         m_logger.info("Camera Status " + alarmService.getAlarmCameraStatus() + " Sound Status "+alarmService.getAlarmSoundStatus());
     }
 
