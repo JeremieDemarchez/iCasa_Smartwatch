@@ -77,6 +77,8 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
         m_logger.info("HOME LIVE CONFIGURATOR Service STARTING");
         applicationManager.addApplicationListener(this);
         accessManager.addListener(this);
+        String mode = modeService.getCurrentMode();
+        changeAlarmStatusAccordingToMode(mode);
     }
 
     @Invalidate
@@ -254,16 +256,21 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
                 homeLiveConfigurationAppMap.get(id).changeCurrentMode(newMode);
             }
         }
-        if (newMode.equals(ModeUtils.HOME)){
+
+        changeAlarmStatusAccordingToMode(newMode);
+    }
+
+    private void changeAlarmStatusAccordingToMode(String mode){
+        if (mode.equals(ModeUtils.HOME)){
             alarmService.setAlarmSoundStatus(false);
             alarmService.setAlarmCameraStatus(true);
-        }else if (newMode.equals((ModeUtils.AWAY))){
+        }else if (mode.equals((ModeUtils.AWAY))){
             alarmService.setAlarmSoundStatus(true);
             alarmService.setAlarmCameraStatus(true);
-        }else if (newMode.equals(ModeUtils.NIGHT)){
+        }else if (mode.equals(ModeUtils.NIGHT)){
             alarmService.setAlarmSoundStatus(true);
             alarmService.setAlarmCameraStatus(true);
-        }else if(newMode.equals(ModeUtils.HOLIDAYS)){
+        }else if(mode.equals(ModeUtils.HOLIDAYS)){
             alarmService.setAlarmSoundStatus(true);
             alarmService.setAlarmCameraStatus(true);
         }
@@ -311,12 +318,42 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
         synchronized (m_lock){
             if (homeLiveConfigurationAppMap.containsKey(appId)){
                 Map<String,String> result = homeLiveConfigurationAppMap.get(appId).getDeviceWithPermissions();
+                m_logger.info( "In  " + ModeUtils.AWAY + " isCurrent " + ModeUtils.AWAY.equals(modeService.getCurrentMode()));
                 for (String deviceId : result.keySet()){
-                    m_logger.info("In : " + modeService.getCurrentMode() + " Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId,modeService.getCurrentMode()));
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.AWAY));
+                }
+
+                m_logger.info( "In  " + ModeUtils.HOME + " isCurrent " + ModeUtils.HOME.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()){
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.HOME));
+                }
+
+                m_logger.info( "In  " + ModeUtils.NIGHT + " isCurrent " + ModeUtils.NIGHT.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()){
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.NIGHT));
+                }
+
+                m_logger.info( "In  " + ModeUtils.HOLIDAYS + " isCurrent " + ModeUtils.HOLIDAYS.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()){
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.HOLIDAYS));
                 }
             }else {
                 m_logger.error(" NOT FOUND " + appId);
             }
         }
+    }
+
+    @Command
+    public void changeMode(String mode) {
+        if (mode.equals(ModeUtils.AWAY) || mode.equals(ModeUtils.NIGHT) || mode.equals(ModeUtils.HOLIDAYS) || mode.equals(ModeUtils.HOME)) {
+            modeService.setCurrentMode(mode);
+        }else {
+            m_logger.error(" INVALID MODE NAME " + mode);
+        }
+    }
+
+    @Command
+    public void getCurrentMode(String mode) {
+        m_logger.info( modeService.getCurrentMode());
     }
 }
