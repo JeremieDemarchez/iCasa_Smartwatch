@@ -14,6 +14,7 @@ import fr.liglab.adele.icasa.alarm.AlarmService;
 import fr.liglab.adele.icasa.dependency.handler.annotations.RequiresDevice;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.notification.NotificationService;
@@ -37,6 +38,9 @@ public class IntrusionAlarmApplication implements DeviceListener {
 	@RequiresDevice(id="PresenceSensors", type="field", optional=true)
 	private PresenceSensor[] presenceSensors;
 
+	@RequiresDevice(id="DoorWindowSensors", type="field", optional=true)
+	private DoorWindowSensor[] doorWindowSensors;
+
 	@Validate
 	public void start() {
 		m_logger.info(" Intrusion Alarm Component  start ... ");
@@ -49,6 +53,9 @@ public class IntrusionAlarmApplication implements DeviceListener {
 			sensor.removeListener(this);
 		}
 		for (PresenceSensor sensor :presenceSensors) {
+			sensor.removeListener(this);
+		}
+		for (DoorWindowSensor sensor :doorWindowSensors) {
 			sensor.removeListener(this);
 		}
 	}
@@ -66,13 +73,34 @@ public class IntrusionAlarmApplication implements DeviceListener {
 	@RequiresDevice(id="PresenceSensors", type="bind")
 	public void bindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
 		presenceSensor.addListener(this);
+		if (presenceSensor.getSensedPresence()){
+			alarmService.fireAlarm();
+			notificationService.sendNotification("[iCasa] Intrusion Alarm ", " Intrusion is detected ");
+		}
 	}
 
 	@RequiresDevice(id="PresenceSensors", type="unbind" )
 	public void unbindPresenceSensor(PresenceSensor presenceSensor, Map properties) {
 		presenceSensor.removeListener(this);
+
 	}
 
+	@RequiresDevice(id="DoorWindowSensors", type="bind")
+	public void bindDoorWindowSensor(DoorWindowSensor doorWindowSensor, Map properties) {
+		doorWindowSensor.addListener(this);
+		if (doorWindowSensor.isOpened()){
+			alarmService.fireAlarm();
+			notificationService.sendNotification("[iCasa] Intrusion Alarm ", " Intrusion is detected ");
+		}
+
+	}
+
+	@RequiresDevice(id="DoorWindowSensors", type="unbind")
+	public void unbindDoorWindowSensor(DoorWindowSensor doorWindowSensor, Map properties) {
+		doorWindowSensor.removeListener(this);
+		
+	}
+	
 	@Override
 	public void deviceAdded(GenericDevice arg0) {
 		// do nothing
@@ -89,13 +117,23 @@ public class IntrusionAlarmApplication implements DeviceListener {
 			PresenceSensor activSensor = (PresenceSensor) device;;
 			if(activSensor != null && propertyName.equals(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)) {
 				if (activSensor.getSensedPresence()){
-					System.out.println("Alarm Presence Intrusion");
 					alarmService.fireAlarm();
 					notificationService.sendNotification("[iCasa] Intrusion Alarm ", " Intrusion is detected ");
 
 				}
 			}
 		}
+		else if (device instanceof DoorWindowSensor) {
+			DoorWindowSensor sensor = (DoorWindowSensor) device;;
+			if(sensor != null && propertyName.equals(DoorWindowSensor.DOOR_WINDOW_SENSOR_OPENING_DETECTCION)) {
+				if (sensor.isOpened()){
+					alarmService.fireAlarm();
+					notificationService.sendNotification("[iCasa] Intrusion Alarm ", " Intrusion is detected ");
+
+				}
+			}
+		}
+
 	}
 	@Override
 	public void devicePropertyRemoved(GenericDevice arg0, String arg1) {
@@ -108,7 +146,6 @@ public class IntrusionAlarmApplication implements DeviceListener {
 			if ((data != null) && (data instanceof Boolean)) {
 				boolean movementDetected = (Boolean) data;
 				if (movementDetected){
-					System.out.println("Alarm Motion Intrusion");
 					alarmService.fireAlarm();
 					notificationService.sendNotification("[iCasa] Intrusion Alarm ", " Intrusion is detected ");
 				}
