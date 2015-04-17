@@ -10,7 +10,7 @@
 
     <!-- Project description -->
     <modelVersion>4.0.0</modelVersion>
-    <packaging>bundle</packaging>
+    <packaging>wisdom</packaging>
     <groupId>fr.liglab.adele.icasa.apps</groupId>
     <artifactId>home.live.configurator</artifactId>
     <name>${productName} :: ${projectName}</name>
@@ -20,29 +20,29 @@
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>context.api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo</artifactId>
-        </dependency>
-        <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>device.dependency.annotations</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>technical.services.api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>command.handler</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.wisdom-framework</groupId>
@@ -52,51 +52,51 @@
             <groupId>fr.liglab.adele.icasa.apps</groupId>
             <artifactId>user.notification.service.technical</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
             <artifactId>mode.service.technical</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
             <artifactId>alarm.technical.service</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>access.manager.api</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>command.handler</artifactId>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>context.remote</artifactId>
             <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
             <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-bundle-plugin</artifactId>
+                <groupId>org.wisdom-framework</groupId>
+                <artifactId>wisdom-maven-plugin</artifactId>
+                <version>0.8.0</version>
                 <extensions>true</extensions>
                 <configuration>
-                    <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.home.live.configurator</Export-Package>
-                    </instructions>
+                    <attachDistribution>false</attachDistribution>
+                    <skipGoogleClosure>true</skipGoogleClosure>
                 </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.felix</groupId>
-                <artifactId>maven-ipojo-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>ipojo-bundle</goal>
-                        </goals>
-                    </execution>
-                </executions>
             </plugin>
         </plugins>
     </build>

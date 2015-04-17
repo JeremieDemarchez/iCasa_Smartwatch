@@ -45,8 +45,8 @@ public class NotificationServiceImpl implements NotificationService {
         try {
             synchronized (m_lock) {
                 mailer.send(new Mail().to(currentAddress)
-                        .subject("This is an alert mail")
-                        .body("This is an alert mail to inform you that there is a pb in your house. iCasa Platform Team."));
+                        .subject(subject)
+                        .body(body));
             }
         } catch (Exception e) {
             m_logger.error(e.toString());

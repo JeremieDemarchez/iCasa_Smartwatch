@@ -56,7 +56,7 @@ public class ModeServiceImpl implements ModeService {
                 m_logger.error("Invalid ModeName");
                 return;
             }
-            notifyListener(oldMode,getCurrentMode());
+            notifyListener(getCurrentMode(),oldMode);
         }
     }
 
