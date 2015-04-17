@@ -1,0 +1,205 @@
+<!--
+  #%L
+  Wisdom-Framework
+  %%
+  Copyright (C) 2013 - 2014 Wisdom Framework
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Configure your HomeLive</title>
+    <link rel="shortcut icon" href="/assets/home-loope.png"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="/libs/css/bootstrap.css" media="screen"/>
+    <link rel="stylesheet" href="/assets/main.css"/>
+
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <!--<ul class="nav nav-pills pull-right">-->
+        <!--<li><a href="http://wisdom-framework.org">Wisdom Framework</a></li>-->
+        <!--<li><a href="/documentation">Documentation</a></li>-->
+        <!--<li><a href="/monitor">Admin</a></li>-->
+        <!--<li><a href="http://wisdom-framework.org/documentation/apidocs/0.6.3/index.html">API</a></li>-->
+        <!--</ul>-->
+        <h3 class="text-danger">HomeLive Clone Configuration Page</h3>
+    </div>
+
+    <!--<blockquote class="lead">iCasa kicking ass</blockquote>-->
+    <div class="row">
+        <p></p>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+            <div class="jumbotron">
+                <div class="row">
+                    <div class="col-xs-4 col-sm-4">
+                        <img class="img-responsive promotion-image" src="assets/home-loope-small.png" alt="Home"/>
+                    </div>
+                    <div class="col-xs-4 col-sm-8">
+                        <h1>Hello!</h1>
+
+                        <p>Here you can configure your home</p>
+                    </div>
+                </div>
+
+                <div class="row panel-group" role="tablist" id="accordion">
+                    <!--<h2 class="sub-header">I am ...</h2>-->
+                    <!--<select multiple="multiple" class="form-control">-->
+                    <!--<option value="home"><p>at Home.</p></option>-->
+                    <!--<option value="away">Away from home.</option>-->
+                    <!--<option value="night">spending the <span>Night</span> at home.</option>-->
+                    <!--<option value="vacation">going for a Vacation.</option>-->
+                    <!--</select>-->
+                    <!--<div class="list-group">-->
+                    <!--<a href="#" class="list-group-item lead">at <strong>home</strong>.</a>-->
+                    <!--<a href="#" class="list-group-item lead"><strong>away</strong> from home.</a>-->
+                    <!--<a href="#" class="list-group-item lead">spending the <strong>night</strong> at home.</a>-->
+                    <!--<a href="#" class="list-group-item lead">going for a <strong>vacation</strong>.</a>-->
+                    <!--</div>-->
+
+                    <div class="panel panel-primary" role="tab">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                Current Mode
+                            </h4>
+                        </div>
+                        <!--<div class="panel-body">-->
+                        <!--<h2 class="sub-header">I am ...</h2>-->
+                        <!--</div>-->
+                        <div class="list-group">
+                            <a value="home" href="#" class="mode-selector list-group-item lead">I am at
+                                <strong>home</strong>.</a>
+                            <a value="away" href="#" class="mode-selector list-group-item lead">I am
+                                <strong>away</strong> from home.</a>
+                            <a value="night" href="#" class="mode-selector list-group-item lead">I am spending the
+                                <strong>night</strong> at home.</a>
+                            <a value="holidays" href="#" class="mode-selector list-group-item lead">I am going for a
+                                <strong>vacation</strong>.</a>
+                        </div>
+                    </div>
+
+                    <hr/>
+                    <div class="panel panel-info accordion-panel" role="tab">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse1">
+                                    User Information</a>
+                            </h4>
+                        </div>
+                        <div id="collapse1" class="panel-collapse collapse in">
+                            <div class="panel-body">
+                                <form id="userEmailForm" class="form-inline">
+                                    <div class="form-group">
+                                        <label for="userEmail">User Notification Email</label>
+
+                                        <div class="input-group">
+                                            <div class="input-group-addon">@</div>
+                                            <input type="email" class="form-control" id="userEmail" name="userAddress"
+                                                   placeholder="Email"/>
+                                        </div>
+                                    </div>
+                                    <button type="submit" class="btn btn-primary">Set</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-warning accordion-panel" role="tab">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse2">
+                                    Alarm Settings</a>
+                            </h4>
+                        </div>
+                        <div id="collapse2" class="panel-collapse collapse">
+                            <div class="panel-body">
+                                <div class="btn-group" data-toggle="buttons">
+                                    <label name="sound" class="alarm-button btn">
+                                        <input type="checkbox" autocomplete="off"/>Sound
+                                    </label>
+                                    <label name="camera" class="alarm-button btn">
+                                        <input type="checkbox" autocomplete="off"/>Camera
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="panel panel-success accordion-panel" role="tab">
+                        <div class="panel-heading">
+                            <h4 class="panel-title">
+                                <a data-toggle="collapse" data-parent="#accordion" href="#collapse3">
+                                    Application Settings</a>
+                            </h4>
+                        </div>
+                        <div id="collapse3" class="panel-collapse collapse">
+
+                            <div class="panel-body" id="permissions-body">
+
+                                <div id="app-list" class="list-group">
+                                </div>
+
+                                <table class="table table-hover table-bordered" id="permission-table">
+                                    <thead>
+                                    <tr>
+                                        <th class="col-md-3">Device</th>
+                                        <th class="col-md-1 text-center">Home</th>
+                                        <th class="col-md-1 text-center">Away</th>
+                                        <th class="col-md-1 text-center">Night</th>
+                                        <th class="col-md-1 text-center">Vacation</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody id="permission-table-body">
+
+                                    </tbody>
+                                </table>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <span class="glyphicon glyphicon-edit" aria-hidden="true"></span>
+
+            <p>gadsgagsg</p>
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="footer">
+        <p><span class="text-muted pull-right">${project.name} - ${project.version}</span></p>
+    </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="/libs/jquery.min.js"></script>
+<script src="/libs/js/bootstrap.min.js"></script>
+<script src="/assets/configurator.js"></script>
+<script src="/assets/gracefulWebsocket.js"></script>
+<script>
+    $.ready(new function () {
+        init();
+    });
+</script>
+
+</body>
+</html>
