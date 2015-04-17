@@ -201,7 +201,13 @@ function permissionButton(appId, deviceId, mode, permission) {
     permissionbutton.on('click', function (event) {
         var button = $(this);
         togglePermButton(button);
-        $.post('/homelive/permission', button.serialize())
+        var param = {
+            appliId : button.attr('appliId'),
+            deviceId : button.attr('deviceId'),
+            mode : button.attr('mode'),
+            permission : button.attr('permission') === 'visible' ? "total" : button.attr('permission')
+        };
+        $.post('/homelive/permission',param)
             .done(function (data) {
             });
     });

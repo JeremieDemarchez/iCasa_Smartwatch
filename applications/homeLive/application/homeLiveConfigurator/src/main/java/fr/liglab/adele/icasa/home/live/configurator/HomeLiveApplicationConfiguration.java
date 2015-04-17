@@ -8,9 +8,7 @@ import fr.liglab.adele.icasa.mode.ModeUtils;
 import org.slf4j.Logger;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * Created by aygalinc on 13/04/15.
@@ -131,10 +129,9 @@ public class HomeLiveApplicationConfiguration {
                 return returnMap;
             }
             if (Mode.equals(ModeUtils.AWAY) || Mode.equals(ModeUtils.NIGHT) || Mode.equals(ModeUtils.HOLIDAYS) || Mode.equals(ModeUtils.HOME)) {
-
                 if (accessManager.getAccessRight(m_applicationId, deviceId) != null) {
                     if (permission.equals("hidden") || permission.equals("total")) {
-                        m_permissionByMode.get(m_currentMode).put(deviceId, permission);
+                        m_permissionByMode.get(Mode).put(deviceId, permission);
                         returnMap.put(deviceId, permission);
                         return returnMap;
                     } else {
