@@ -21,14 +21,12 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.wisdom.api.DefaultController;
-import org.wisdom.api.annotations.FormParameter;
-import org.wisdom.api.annotations.Opened;
-import org.wisdom.api.annotations.Parameter;
-import org.wisdom.api.annotations.Route;
+import org.wisdom.api.annotations.*;
 import org.wisdom.api.content.Json;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.http.websockets.Publisher;
+import org.wisdom.api.templates.Template;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
@@ -37,16 +35,19 @@ import java.util.concurrent.ConcurrentHashMap;
 @Instantiate
 @Provides
 @CommandProvider(namespace = "HomeLive")
-public class HomeLiveConfigurator extends DefaultController implements ApplicationTracker,AccessRightManagerListener,ModeListener {
+public class HomeLiveConfigurator extends DefaultController implements ApplicationTracker, AccessRightManagerListener, ModeListener {
 
     public final static String HOMELIVE_WEB_SOCKET = "/homelive/ws";
 
-    private  final Logger m_logger = LoggerFactory
+    private final Logger m_logger = LoggerFactory
             .getLogger(ModeServiceImpl.class);
 
-    private final Map<String,HomeLiveApplicationConfiguration> homeLiveConfigurationAppMap = new ConcurrentHashMap<>();
+    private final Map<String, HomeLiveApplicationConfiguration> homeLiveConfigurationAppMap = new ConcurrentHashMap<>();
 
     private final Object m_lock = new Object();
+
+    @View("homelive/config")
+    Template homeConfig;
 
     @Requires(optional = false)
     Json json;
@@ -72,12 +73,12 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Requires(optional = false)
     ContextManager contextManager;
 
-    public HomeLiveConfigurator(){
+    public HomeLiveConfigurator() {
         homeLiveConfigurationAppMap.clear();
     }
 
     @Validate
-    public void start(){
+    public void start() {
         m_logger.info("HOME LIVE CONFIGURATOR Service STARTING");
         applicationManager.addApplicationListener(this);
         accessManager.addListener(this);
@@ -86,87 +87,96 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Invalidate
-    public void stop(){
+    public void stop() {
         m_logger.info("HOME LIVE CONFIGURATOR Service STOPPING");
-        try{
+        try {
             accessManager.removeListener(this);
-        }catch (Exception e){
+        } catch (Exception e) {
             m_logger.error(e.toString());
         }
-        try{
+        try {
             applicationManager.removeApplicationListener(this);
-        }catch (Exception e){
+        } catch (Exception e) {
             m_logger.error(e.toString());
         }
 
-        synchronized (m_lock){
+        synchronized (m_lock) {
             homeLiveConfigurationAppMap.clear();
         }
     }
 
+    @Route(method = HttpMethod.GET, uri = "/homelive")
+    public Result homeLiveConfigurator() {
+        return ok(render(homeConfig));
+    }
+
     @Opened("/homelive/ws")
     public void opened(@Parameter("client") String client) {
-        synchronized (m_lock){
-            for (String id : homeLiveConfigurationAppMap.keySet()){
+        synchronized (m_lock) {
+            for (String id : homeLiveConfigurationAppMap.keySet()) {
                 HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(id);
-                Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                for (String deviceId : devicePermissions.keySet()){
-                    publisher.send(HOMELIVE_WEB_SOCKET, client,(new SendPackage(id,deviceId,devicePermissions.get(deviceId),modeService.getCurrentMode())).toJson());
+                Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
+                for (String deviceId : devicePermissions.keySet()) {
+                    publisher.send(HOMELIVE_WEB_SOCKET, client, (new SendPackage(id, deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
                 }
             }
         }
 
     }
 
-    @Route(method = HttpMethod.POST,uri = "/homelive/permission")
-    public Result setPermission(@FormParameter("appliId") String appliId,@FormParameter("deviceId") String deviceId,@FormParameter("permission") String permission,@FormParameter("mode") String mode){
-        if (homeLiveConfigurationAppMap.containsKey(appliId)){
-            Map<String,String> returnMap =  homeLiveConfigurationAppMap.get(appliId).updatePermission(deviceId,permission,mode);
+    @Route(method = HttpMethod.POST, uri = "/homelive/permission")
+    public Result setPermission(@FormParameter("appliId") String appliId, @FormParameter("deviceId") String deviceId, @FormParameter("permission") String permission, @FormParameter("mode") String mode) {
+        if (homeLiveConfigurationAppMap.containsKey(appliId)) {
+            Map<String, String> returnMap = homeLiveConfigurationAppMap.get(appliId).updatePermission(deviceId, permission, mode);
             return ok();
         }
         return badRequest();
     }
 
-    @Route(method = HttpMethod.GET,uri = "/homelive/mode")
-    public Result getMode(){
+    @Route(method = HttpMethod.GET, uri = "/homelive/mode")
+    public Result getMode() {
         return ok(modeService.getCurrentMode()).json();
     }
 
-    @Route(method = HttpMethod.POST,uri = "/homelive/mode")
-    public Result setMode(@FormParameter("mode") String modeName){
+    @Route(method = HttpMethod.POST, uri = "/homelive/mode")
+    public Result setMode(@FormParameter("mode") String modeName) {
         modeService.setCurrentMode(modeName);
         return ok(modeService.getCurrentMode()).json();
     }
 
-    @Route(method = HttpMethod.GET,uri = "/homelive/notification")
-    public Result getUserAddress(){
-        return ok(notificationService.getUserAddress()).json();
+    @Route(method = HttpMethod.GET, uri = "/homelive/notification")
+    public Result getUserAddress() {
+        if(notificationService.getUserAddress() != null){
+            return ok(notificationService.getUserAddress()).json();
+        } else {
+            return ok();
+        }
     }
 
-    @Route(method = HttpMethod.POST,uri = "/homelive/notification")
-    public Result setUserAddress(@FormParameter("userAddress") String userAdress){
+    @Route(method = HttpMethod.POST, uri = "/homelive/notification")
+    public Result setUserAddress(@FormParameter("userAddress") String userAdress) {
         notificationService.setUserAddress(userAdress);
         return ok(notificationService.getUserAddress()).json();
     }
 
-    @Route(method = HttpMethod.GET,uri = "/homelive/alarm/camera")
-    public Result getAlarmCamera(){
+    @Route(method = HttpMethod.GET, uri = "/homelive/alarm/camera")
+    public Result getAlarmCamera() {
         return ok(alarmService.getAlarmCameraStatus()).json();
     }
 
-    @Route(method = HttpMethod.POST,uri = "/homelive/alarm/camera")
-    public Result setAlarmCamera(@FormParameter("cameraStatus") Boolean cameraStatus){
+    @Route(method = HttpMethod.POST, uri = "/homelive/alarm/camera")
+    public Result setAlarmCamera(@FormParameter("cameraStatus") Boolean cameraStatus) {
         alarmService.setAlarmCameraStatus(cameraStatus);
         return ok(alarmService.getAlarmCameraStatus()).json();
     }
 
-    @Route(method = HttpMethod.GET,uri = "/homelive/alarm/sound")
-    public Result getAlarmSound(){
+    @Route(method = HttpMethod.GET, uri = "/homelive/alarm/sound")
+    public Result getAlarmSound() {
         return ok(alarmService.getAlarmSoundStatus()).json();
     }
 
-    @Route(method = HttpMethod.POST,uri = "/homelive/alarm/sound")
-    public Result setAlarmSound(@FormParameter("soundStatus") Boolean soundStatus){
+    @Route(method = HttpMethod.POST, uri = "/homelive/alarm/sound")
+    public Result setAlarmSound(@FormParameter("soundStatus") Boolean soundStatus) {
         alarmService.setAlarmSoundStatus(soundStatus);
         return ok(alarmService.getAlarmSoundStatus()).json();
     }
@@ -194,15 +204,15 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
 
     @Override
     public void bundleAdded(Application app, String symbolicName) {
-        synchronized (m_lock){
-            if (homeLiveConfigurationAppMap.containsKey(app.getId())){
+        synchronized (m_lock) {
+            if (homeLiveConfigurationAppMap.containsKey(app.getId())) {
                 //APP DEJA ENREGISTRE
-            }else {
-                homeLiveConfigurationAppMap.put(app.getId(),new HomeLiveApplicationConfiguration(app.getId(),accessManager,contextManager,m_logger,modeService.getCurrentMode()));
+            } else {
+                homeLiveConfigurationAppMap.put(app.getId(), new HomeLiveApplicationConfiguration(app.getId(), accessManager, contextManager, m_logger, modeService.getCurrentMode()));
                 HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(app.getId());
-                Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                for (String deviceId : devicePermissions.keySet()){
-                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(app.getId(), deviceId, devicePermissions.get(deviceId),modeService.getCurrentMode())).toJson());
+                Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
+                for (String deviceId : devicePermissions.keySet()) {
+                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(app.getId(), deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
                 }
             }
         }
@@ -210,8 +220,8 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
 
     @Override
     public void bundleRemoved(Application app, String symbolicName) {
-        synchronized (m_lock){
-            if (homeLiveConfigurationAppMap.containsKey(app.getId())){
+        synchronized (m_lock) {
+            if (homeLiveConfigurationAppMap.containsKey(app.getId())) {
                 //APP DEJA ENREGISTRE
                 homeLiveConfigurationAppMap.remove(app.getId());
             }
@@ -232,7 +242,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
                     homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.HOLIDAYS);
                     publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, policy, modeService.getCurrentMode())).toJson());
                 } else {
-                    homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager,contextManager, m_logger, modeService.getCurrentMode()));
+                    homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, contextManager, m_logger, modeService.getCurrentMode()));
                     HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
                     Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
                     for (String deviceId : devicePermissions.keySet()) {
@@ -240,7 +250,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
                     }
                 }
             }
-        }else {
+        } else {
             m_logger.info(" Device is not in context");
         }
     }
@@ -249,22 +259,22 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     public void onAccessRightModified(AccessRight accessRight) {
         String appId = accessRight.getApplicationId();
         if (checkIfDeviceIsInIcasa(accessRight.getDeviceId())) {
-            synchronized (m_lock){
-                if (homeLiveConfigurationAppMap.containsKey(appId)){
+            synchronized (m_lock) {
+                if (homeLiveConfigurationAppMap.containsKey(appId)) {
                     String policy = accessRight.getPolicy().toString();
                     String deviceId = accessRight.getDeviceId();
                     homeLiveConfigurationAppMap.get(appId).updatePermission(deviceId, policy, modeService.getCurrentMode());
-                    publisher.publish(HOMELIVE_WEB_SOCKET,(new SendPackage(appId,deviceId,policy,modeService.getCurrentMode())).toJson());
-                }else {
-                    homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, contextManager,m_logger,modeService.getCurrentMode()));
+                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, policy, modeService.getCurrentMode())).toJson());
+                } else {
+                    homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, contextManager, m_logger, modeService.getCurrentMode()));
                     HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
-                    Map<String,String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                    for (String deviceId : devicePermissions.keySet()){
-                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId),modeService.getCurrentMode())).toJson());
+                    Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
+                    for (String deviceId : devicePermissions.keySet()) {
+                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
                     }
                 }
             }
-        }else {
+        } else {
             m_logger.info(" Device is not in context");
         }
     }
@@ -277,8 +287,8 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Override
     public void modeChange(String newMode, String oldMode) {
 
-        synchronized (m_lock){
-            for (String id : homeLiveConfigurationAppMap.keySet()){
+        synchronized (m_lock) {
+            for (String id : homeLiveConfigurationAppMap.keySet()) {
                 homeLiveConfigurationAppMap.get(id).changeCurrentMode(newMode);
             }
         }
@@ -286,24 +296,24 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
         changeAlarmStatusAccordingToMode(newMode);
     }
 
-    private void changeAlarmStatusAccordingToMode(String mode){
-        if (mode.equals(ModeUtils.HOME)){
+    private void changeAlarmStatusAccordingToMode(String mode) {
+        if (mode.equals(ModeUtils.HOME)) {
             alarmService.setAlarmSoundStatus(false);
             alarmService.setAlarmCameraStatus(true);
-        }else if (mode.equals((ModeUtils.AWAY))){
+        } else if (mode.equals((ModeUtils.AWAY))) {
             alarmService.setAlarmSoundStatus(true);
             alarmService.setAlarmCameraStatus(true);
-        }else if (mode.equals(ModeUtils.NIGHT)){
+        } else if (mode.equals(ModeUtils.NIGHT)) {
             alarmService.setAlarmSoundStatus(true);
             alarmService.setAlarmCameraStatus(true);
-        }else if(mode.equals(ModeUtils.HOLIDAYS)){
+        } else if (mode.equals(ModeUtils.HOLIDAYS)) {
             alarmService.setAlarmSoundStatus(true);
             alarmService.setAlarmCameraStatus(true);
         }
     }
 
 
-    private class SendPackage{
+    private class SendPackage {
 
         private final String m_appId;
 
@@ -313,14 +323,14 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
 
         private final String m_mode;
 
-        private SendPackage(String appId,String deviceId,String permission,String mode){
+        private SendPackage(String appId, String deviceId, String permission, String mode) {
             m_appId = appId;
             m_deviceId = deviceId;
             m_permission = permission;
             m_mode = mode;
         }
 
-        private JsonNode toJson(){
+        private JsonNode toJson() {
             ObjectNode result = json.newObject();
             result.put("appId", m_appId);
             result.put("deviceId", m_deviceId);
@@ -331,39 +341,39 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Command
-    public void getHomeLiveApp(){
-        synchronized (m_lock){
-            for(String id : homeLiveConfigurationAppMap.keySet()){
-                m_logger.info(" ID " + id );
+    public void getHomeLiveApp() {
+        synchronized (m_lock) {
+            for (String id : homeLiveConfigurationAppMap.keySet()) {
+                m_logger.info(" ID " + id);
             }
         }
     }
 
     @Command
-    public void getHomeLiveAppRight(String appId){
-        synchronized (m_lock){
-            if (homeLiveConfigurationAppMap.containsKey(appId)){
-                Map<String,String> result = homeLiveConfigurationAppMap.get(appId).getDeviceWithPermissions();
-                m_logger.info( "In  " + ModeUtils.AWAY + " isCurrent " + ModeUtils.AWAY.equals(modeService.getCurrentMode()));
-                for (String deviceId : result.keySet()){
-                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.AWAY));
+    public void getHomeLiveAppRight(String appId) {
+        synchronized (m_lock) {
+            if (homeLiveConfigurationAppMap.containsKey(appId)) {
+                Map<String, String> result = homeLiveConfigurationAppMap.get(appId).getDeviceWithPermissions();
+                m_logger.info("In  " + ModeUtils.AWAY + " isCurrent " + ModeUtils.AWAY.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()) {
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) + " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.AWAY));
                 }
 
-                m_logger.info( "In  " + ModeUtils.HOME + " isCurrent " + ModeUtils.HOME.equals(modeService.getCurrentMode()));
-                for (String deviceId : result.keySet()){
-                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.HOME));
+                m_logger.info("In  " + ModeUtils.HOME + " isCurrent " + ModeUtils.HOME.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()) {
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) + " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.HOME));
                 }
 
-                m_logger.info( "In  " + ModeUtils.NIGHT + " isCurrent " + ModeUtils.NIGHT.equals(modeService.getCurrentMode()));
-                for (String deviceId : result.keySet()){
-                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.NIGHT));
+                m_logger.info("In  " + ModeUtils.NIGHT + " isCurrent " + ModeUtils.NIGHT.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()) {
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) + " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.NIGHT));
                 }
 
-                m_logger.info( "In  " + ModeUtils.HOLIDAYS + " isCurrent " + ModeUtils.HOLIDAYS.equals(modeService.getCurrentMode()));
-                for (String deviceId : result.keySet()){
-                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) +  " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.HOLIDAYS));
+                m_logger.info("In  " + ModeUtils.HOLIDAYS + " isCurrent " + ModeUtils.HOLIDAYS.equals(modeService.getCurrentMode()));
+                for (String deviceId : result.keySet()) {
+                    m_logger.info(" Device : " + deviceId + " : " + result.get(deviceId) + " " + homeLiveConfigurationAppMap.get(appId).getPermissionAssociatedToDevice(deviceId, ModeUtils.HOLIDAYS));
                 }
-            }else {
+            } else {
                 m_logger.error(" NOT FOUND " + appId);
             }
         }
@@ -373,19 +383,19 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     public void changeMode(String mode) {
         if (mode.equals(ModeUtils.AWAY) || mode.equals(ModeUtils.NIGHT) || mode.equals(ModeUtils.HOLIDAYS) || mode.equals(ModeUtils.HOME)) {
             modeService.setCurrentMode(mode);
-        }else {
+        } else {
             m_logger.error(" INVALID MODE NAME " + mode);
         }
     }
 
     @Command
     public void getCurrentMode() {
-        m_logger.info( modeService.getCurrentMode());
+        m_logger.info(modeService.getCurrentMode());
     }
 
     @Command
     public void getAlarmStatus() {
-        m_logger.info("Camera Status " + alarmService.getAlarmCameraStatus() + " Sound Status "+alarmService.getAlarmSoundStatus());
+        m_logger.info("Camera Status " + alarmService.getAlarmCameraStatus() + " Sound Status " + alarmService.getAlarmSoundStatus());
     }
 
     @Command
@@ -398,10 +408,10 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     public void setUserToNotify(String userAddress) {
         notificationService.setUserAddress(userAddress);
         m_logger.info("Now Current User is " + notificationService.getUserAddress() + " . He/She will receive a confirmation mail.");
-        notificationService.sendNotification("[iCasa] New User ","You are the new thug in the House ! ");
+        notificationService.sendNotification("[iCasa] New User ", "You are the new thug in the House ! ");
     }
 
-    public boolean checkIfDeviceIsInIcasa(String deviceId){
+    public boolean checkIfDeviceIsInIcasa(String deviceId) {
         return contextManager.getDeviceIds().contains(deviceId);
     }
 }
