@@ -116,8 +116,10 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
             for (String id : homeLiveConfigurationAppMap.keySet()) {
                 HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(id);
                 Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                for (String deviceId : devicePermissions.keySet()) {
-                    publisher.send(HOMELIVE_WEB_SOCKET, client, (new SendPackage(id, deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
+                for (String mode : modeService.getListOfMode()){
+                    for (String deviceId : devicePermissions.keySet()) {
+                        publisher.send(HOMELIVE_WEB_SOCKET, client, (new SendPackage(id, deviceId, appliConfig.getPermissionAssociatedToDevice(deviceId, mode), mode)).toJson());
+                    }
                 }
             }
         }
@@ -125,7 +127,12 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Route(method = HttpMethod.POST, uri = "/homelive/permission")
-    public Result setPermission(@FormParameter("appliId") String appliId, @FormParameter("deviceId") String deviceId, @FormParameter("permission") String permission, @FormParameter("mode") String mode) {
+    public Result setPermission( @FormParameter("appliId") String appliId,
+                                 @FormParameter("deviceId") String deviceId,
+                                 @FormParameter("permission") String permission,
+                                 @FormParameter("mode") String mode) {
+       m_logger.info(" Request to update " + appliId + " deviceId " + deviceId + " permission " + permission + " mode "  + mode);
+
         if (homeLiveConfigurationAppMap.containsKey(appliId)) {
             Map<String, String> returnMap = homeLiveConfigurationAppMap.get(appliId).updatePermission(deviceId, permission, mode);
             return ok();
@@ -139,7 +146,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     }
 
     @Route(method = HttpMethod.POST, uri = "/homelive/mode")
-    public Result setMode(@FormParameter("mode") String modeName) {
+    public Result setMode(@FormParameter("mode")  String modeName) {
         modeService.setCurrentMode(modeName);
         return ok(modeService.getCurrentMode()).json();
     }
@@ -275,7 +282,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
                 }
             }
         } else {
-            m_logger.info(" Device is not in context");
+            m_logger.info(" Device "+ accessRight.getDeviceId() +"is not in context");
         }
     }
 
@@ -286,7 +293,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
 
     @Override
     public void modeChange(String newMode, String oldMode) {
-
+        m_logger.info("mode change ");
         synchronized (m_lock) {
             for (String id : homeLiveConfigurationAppMap.keySet()) {
                 homeLiveConfigurationAppMap.get(id).changeCurrentMode(newMode);
