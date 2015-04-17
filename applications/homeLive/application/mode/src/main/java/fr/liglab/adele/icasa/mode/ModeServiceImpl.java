@@ -4,6 +4,9 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Component
 @Instantiate
 @Provides
@@ -58,6 +61,16 @@ public class ModeServiceImpl implements ModeService {
             }
             notifyListener(getCurrentMode(),oldMode);
         }
+    }
+
+    @Override
+    public List<String> getListOfMode() {
+        List<String> listOfMode = new ArrayList<>();
+                listOfMode.add(ModeUtils.HOLIDAYS);
+        listOfMode.add(ModeUtils.HOME);
+        listOfMode.add(ModeUtils.NIGHT);
+        listOfMode.add(ModeUtils.AWAY);
+        return listOfMode;
     }
 
     private void notifyListener(String newModeName,String oldModeName){
