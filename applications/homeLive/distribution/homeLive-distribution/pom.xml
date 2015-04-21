@@ -98,6 +98,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--SIMULATOR-->
+          <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>simulator.web.instance</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
