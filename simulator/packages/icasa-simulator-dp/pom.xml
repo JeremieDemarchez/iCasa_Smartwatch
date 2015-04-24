@@ -78,7 +78,7 @@
     </dependency>
 	<dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>device.doorWindow</artifactId>
+      <artifactId>device.door.window</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>

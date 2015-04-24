@@ -131,7 +131,7 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
                                  @FormParameter("deviceId") String deviceId,
                                  @FormParameter("permission") String permission,
                                  @FormParameter("mode") String mode) {
-       m_logger.info(" Request to update " + appliId + " deviceId " + deviceId + " permission " + permission + " mode "  + mode);
+        m_logger.info(" Request to update " + appliId + " deviceId " + deviceId + " permission " + permission + " mode "  + mode);
 
         if (homeLiveConfigurationAppMap.containsKey(appliId)) {
             Map<String, String> returnMap = homeLiveConfigurationAppMap.get(appliId).updatePermission(deviceId, permission, mode);
@@ -243,17 +243,20 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
                 if (homeLiveConfigurationAppMap.containsKey(appId)) {
                     String policy = accessRight.getPolicy().toString();
                     String deviceId = accessRight.getDeviceId();
-                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.AWAY);
-                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.HOME);
-                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.NIGHT);
-                    homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy, ModeUtils.HOLIDAYS);
-                    publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, policy, modeService.getCurrentMode())).toJson());
+                    for (String mode : modeService.getListOfMode()){
+                        homeLiveConfigurationAppMap.get(appId).updateModeWithNewDevice(deviceId, policy,mode);
+                    }
+                    for (String mode : modeService.getListOfMode()) {
+                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, policy, mode)).toJson());
+                    }
                 } else {
                     homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, contextManager, m_logger, modeService.getCurrentMode()));
                     HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
                     Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                    for (String deviceId : devicePermissions.keySet()) {
-                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
+                    for (String mode : modeService.getListOfMode()) {
+                        for (String deviceId : devicePermissions.keySet()) {
+                            publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId), mode)).toJson());
+                        }
                     }
                 }
             }
@@ -265,19 +268,24 @@ public class HomeLiveConfigurator extends DefaultController implements Applicati
     @Override
     public void onAccessRightModified(AccessRight accessRight) {
         String appId = accessRight.getApplicationId();
+        m_logger.info("Acces Right Modified : " + appId);
         if (checkIfDeviceIsInIcasa(accessRight.getDeviceId())) {
             synchronized (m_lock) {
                 if (homeLiveConfigurationAppMap.containsKey(appId)) {
                     String policy = accessRight.getPolicy().toString();
                     String deviceId = accessRight.getDeviceId();
+                    m_logger.info("App already reigster, Update right  " + appId + " on device " + deviceId + " with policy " + policy + " on mode ");
                     homeLiveConfigurationAppMap.get(appId).updatePermission(deviceId, policy, modeService.getCurrentMode());
                     publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, policy, modeService.getCurrentMode())).toJson());
                 } else {
+                    m_logger.info("App must be registered " + appId);
                     homeLiveConfigurationAppMap.put(appId, new HomeLiveApplicationConfiguration(appId, accessManager, contextManager, m_logger, modeService.getCurrentMode()));
                     HomeLiveApplicationConfiguration appliConfig = homeLiveConfigurationAppMap.get(appId);
                     Map<String, String> devicePermissions = appliConfig.getDeviceWithPermissions();
-                    for (String deviceId : devicePermissions.keySet()) {
-                        publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId), modeService.getCurrentMode())).toJson());
+                    for (String mode : modeService.getListOfMode()) {
+                        for (String deviceId : devicePermissions.keySet()) {
+                            publisher.publish(HOMELIVE_WEB_SOCKET, (new SendPackage(appId, deviceId, devicePermissions.get(deviceId), mode)).toJson());
+                        }
                     }
                 }
             }

@@ -1057,6 +1057,8 @@ define(['jquery',
               imgName = "rollingShutter";
             if (@type() == "iCasa.FloodSensor")
               imgName = "liquidDetector";
+            if (@type() == "iCasa.DoorWindowSensor")
+              imgName = "doorMagneticSensor";
             if (@type() == "iCasa.SmartPhone")
               imgName = "smartPhone";
             if (@type() == "iCasa.FlatTV")

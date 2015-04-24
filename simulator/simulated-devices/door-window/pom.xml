@@ -26,7 +26,7 @@
   </parent>
   
   <!-- Project coordinates -->
-  <artifactId>device.doorWindow</artifactId>
+  <artifactId>device.door.window</artifactId>
   <packaging>bundle</packaging>
   <name>${productName} :: ${projectName}</name>
   
