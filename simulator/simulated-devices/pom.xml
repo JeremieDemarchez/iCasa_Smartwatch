@@ -42,7 +42,7 @@
 		<module>continua-rest-client</module>
 		<module>bathroom-scale</module>
 		<module>security</module>
-		<module>doorWindow</module>
+		<module>door-window</module>
 	</modules>
    <build>
       <plugins>
