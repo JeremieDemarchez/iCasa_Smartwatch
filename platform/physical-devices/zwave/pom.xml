@@ -1,0 +1,20 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  
+  <modelVersion>4.0.0</modelVersion>
+  
+  <parent>
+    <groupId>fr.liglab.adele.icasa</groupId>
+    <artifactId>parent</artifactId>
+    <version>1.2.7-SNAPSHOT</version>
+    <relativePath>../../../parent</relativePath>
+  </parent>
+  
+  <artifactId>zwave.physical.devices</artifactId>
+  <packaging>pom</packaging>
+  <name>${productName} :: ${projectName}</name>
+  
+  <modules>
+  	<module>zwave-library-install</module>
+  	<module>zwave-device-importer</module>
+  </modules>
+</project>
