@@ -27,7 +27,9 @@ import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveAlarmCommandClass.ZWaveAlarmValueEvent;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveAlarmSensorCommandClass.ZWaveAlarmSensorValueEvent;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass.CommandClass;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveMultiLevelSensorCommandClass.ZWaveMultiLevelSensorValueEvent;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +54,8 @@ import fr.liglab.adele.zwave.device.importer.ZWaveImporter;
 		
 		properties 		= { 
 			@StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_MANUFACTURER,	type="java.lang.String", value = "010F"),
-			@StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_DEVICE_ID, 		type="java.lang.String", value = "1001")
+			@StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_DEVICE_ID, 		type="java.lang.String", value = "1001"),
+			@StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_DEFAULT_PROXY,	type="java.lang.String", value = "true")
 		}
 )
 
@@ -76,6 +79,7 @@ public class FibaroMotionSensor extends AbstractDevice implements MotionSensor, 
     public FibaroMotionSensor(){
         super();
         super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
+		setPropertyValue("zwave.batteryLevel", "unknown");
     }
 
     @Validate
@@ -147,7 +151,17 @@ public class FibaroMotionSensor extends AbstractDevice implements MotionSensor, 
 					default:
 						break;
 				}
+			}
+			
+			if (event instanceof ZWaveCommandClassValueEvent) {
+
+				ZWaveCommandClassValueEvent changedValue = (ZWaveCommandClassValueEvent) event;
+				if (changedValue.getCommandClass().equals(CommandClass.BATTERY)) {
+					Integer batteryLevel = (Integer) changedValue.getValue();
+					setPropertyValue("zwave.batteryLevel", batteryLevel);
+				}
 			}			
+
 		}
 		
 	}

@@ -23,10 +23,8 @@ import java.util.concurrent.ConcurrentSkipListSet;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
-
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -34,7 +32,6 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.Unbind;
-
 import org.openhab.binding.zwave.internal.protocol.SerialInterfaceException;
 import org.openhab.binding.zwave.internal.protocol.ZWaveController;
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
@@ -46,7 +43,6 @@ import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueE
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveInclusionEvent;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveNodeStatusEvent;
-
 import org.ow2.chameleon.fuchsia.core.component.AbstractImporterComponent;
 import org.ow2.chameleon.fuchsia.core.component.ImporterIntrospection;
 import org.ow2.chameleon.fuchsia.core.component.ImporterService;
@@ -78,6 +74,7 @@ public class ZWaveImporter extends AbstractImporterComponent  {
      */
     public final static String FACTORY_PROPERTY_MANUFACTURER 	= "zwave.manufacturer";
     public final static String FACTORY_PROPERTY_DEVICE_ID 		= "zwave.device.id";
+    public final static String FACTORY_PROPERTY_DEFAULT_PROXY	= "zwave.default.proxy";
     
     /**
      * 
@@ -185,7 +182,7 @@ public class ZWaveImporter extends AbstractImporterComponent  {
     		
     		EndPointIdentifier endPoint = new EndPointIdentifier(serialPort, event.getNodeId(), event.getEndpoint());
     		  		
-    		boolean discovered 		= 	( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeStatusEvent.State.Alive)) ) ||
+			boolean discovered 		= 	( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeStatusEvent.State.Alive)) ) ||
     									( (event instanceof ZWaveInclusionEvent) && (! ((ZWaveInclusionEvent)event).getEvent().equals(ZWaveInclusionEvent.Type.IncludeDone)) ) ||
     									( (event instanceof ZWaveWakeUpEvent)) ||
     									( (event instanceof ZWaveCommandClassValueEvent));
@@ -244,14 +241,17 @@ public class ZWaveImporter extends AbstractImporterComponent  {
 
 	    			String manufacterer 	= (String) factoryDescription.getProperty(FACTORY_PROPERTY_MANUFACTURER);
 	    			String deviceId 		= (String) factoryDescription.getProperty(FACTORY_PROPERTY_DEVICE_ID);
+	    			String defaultProxy		= (String) factoryDescription.getProperty(FACTORY_PROPERTY_DEFAULT_PROXY);
 	    			
 	    			boolean match 			= ( manufacterer != null && Integer.valueOf(manufacterer,16).intValue() == node.getManufacturer()) &&
 	    									  ( deviceId != null && Integer.valueOf(deviceId,16).intValue() == node.getDeviceId());
+	    			
+	    			boolean isDefault		= ( defaultProxy != null && Boolean.valueOf(defaultProxy).booleanValue() && node.getManufacturer() == Integer.MAX_VALUE);
 
-	    			if (match) {
+	    			if (match || isDefault) {
 						LOG.debug("Zwave creating proxy for end point "+endPoint);
 	            		
-						String id = "ZWaveDevice["+endPoint.nodeId+"."+endPoint.endPointId+":"+serialPort+"]";
+						String id = "ZWaveDevice["+node.getHomeId()+"."+endPoint.nodeId+"."+endPoint.endPointId+"]";
 						
 	                    Hashtable<String, Object> configuration = new Hashtable<String, Object>();
 	            		
