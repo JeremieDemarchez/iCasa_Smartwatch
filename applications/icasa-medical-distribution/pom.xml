@@ -53,10 +53,91 @@
             <type>deployment-package</type>
         </dependency>
 
+        <!--Fuschia Dep-->
+        <dependency>
+            <groupId>org.ow2.chameleon.fuchsia</groupId>
+            <artifactId>org.ow2.chameleon.fuchsia.core</artifactId>
+            <version>0.0.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.chameleon.fuchsia.tools</groupId>
+            <artifactId>fuchsia-proxies-utils</artifactId>
+            <version>0.0.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.chameleon.fuchsia.discovery</groupId>
+            <artifactId>org.ow2.chameleon.fuchsia.discovery.filebased</artifactId>
+            <version>0.0.5-SNAPSHOT</version>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.chameleon.fuchsia.tools</groupId>
+            <artifactId>fuchsia-gogo-shell</artifactId>
+            <version>0.0.5-SNAPSHOT</version>
+        </dependency>
+
+        <!-- PORT COM -->
+        <dependency>
+            <groupId>com.neuronrobotics</groupId>
+            <artifactId>nrjavaserial</artifactId>
+            <version>3.8.8</version>
+        </dependency>
+
+        <!--ZIGBEE-->
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.driver.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.driver.impl</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.device.discovery</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.device.importer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.device.factories</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--ZWAVE-->
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zwave-device-importer</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <!--SIMULATOR-->
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>simulator.web.instance</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.eclipse.tycho</groupId>
+                <artifactId>tycho-maven-plugin</artifactId>
+                <version>0.19.0</version>
+                <extensions>true</extensions>
+            </plugin>
+
             <plugin>
                 <groupId>fr.liglab.adele.common</groupId>
                 <artifactId>maven-osgi-distribution-plugin</artifactId>

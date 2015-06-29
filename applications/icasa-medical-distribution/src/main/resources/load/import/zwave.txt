@@ -1,0 +1,3 @@
+id=zwaveDongle
+port=/dev/ttyUSB0
+protocol=zwave
