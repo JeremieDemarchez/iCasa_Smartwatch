@@ -37,6 +37,7 @@
             <modules>
                 <module>zigbee</module>
                 <module>philips</module>
+                <module>zwave</module>
             </modules>
         </profile>
         <profile>
@@ -44,6 +45,7 @@
             <modules>
                 <module>zigbee</module>
                 <module>philips</module>
+                <module>zwave</module>
             </modules>
         </profile>
     </profiles>
