@@ -26,7 +26,7 @@
     </parent>
 
     <!-- Project coordinates -->
-    <artifactId>icasa.teaching.distribution</artifactId>
+    <artifactId>icasa.teaching.distribution.context</artifactId>
     <packaging>osgi-distribution</packaging>
     <name>${productName} :: ${projectName}</name>
 
