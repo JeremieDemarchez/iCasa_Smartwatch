@@ -132,6 +132,12 @@
             <artifactId>icasa.context.model.remote</artifactId>
             <version>${project.version}</version>
         </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.model.command</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
