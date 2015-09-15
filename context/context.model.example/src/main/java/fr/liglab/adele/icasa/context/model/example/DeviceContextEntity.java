@@ -9,7 +9,7 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 @Provides
 public class DeviceContextEntity implements ContextEntity{
 
-    @ServiceProperty(name = "context.entity.id")
+    @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
 
     @Override
