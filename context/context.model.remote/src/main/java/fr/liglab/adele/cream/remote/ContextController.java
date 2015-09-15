@@ -19,6 +19,7 @@
  */
 package fr.liglab.adele.cream.remote;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -26,18 +27,18 @@ import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Route;
 import org.wisdom.api.annotations.View;
+import org.wisdom.api.content.Json;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
 
-
 import java.util.List;
 
-/**
- * Your first Wisdom Controller.
- */
 @Controller
-public class WelcomeController extends DefaultController {
+public class ContextController extends DefaultController {
+
+    @Requires
+    Json json;
 
     /**
      * Injects a template named 'welcome'.
@@ -45,10 +46,10 @@ public class WelcomeController extends DefaultController {
     @View("welcome")
     Template welcome;
 
-    @Requires
+    @Requires(specification = Relation.class,optional = true)
     List<Relation> relations;
 
-    @Requires
+    @Requires(specification = ContextEntity.class,optional = true)
     List<ContextEntity> entities;
 
     /**
@@ -64,7 +65,28 @@ public class WelcomeController extends DefaultController {
 
     @Route(method = HttpMethod.GET, uri = "/context/entities")
     public Result getEntities(){
-        return ok();
+        ObjectNode result = json.newObject();
+        result.put("size", entities.size());
+        int i = 0;
+        for (ContextEntity entity : entities){
+            result.put("entity"+i,entity.getId());
+            i++;
+        }
+        return ok(result);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/context/relations")
+    public Result getRelations(){
+        ObjectNode result = json.newObject();
+        result.put("size", relations.size());
+        int i = 0;
+        for (Relation relation : relations){
+            result.put("relation"+i+"name",relation.getName());
+            result.put("relation"+i+"source",relation.getSource());
+            result.put("relation"+i+"end",relation.getEnd());
+            i++;
+        }
+        return ok(result);
     }
 
 }
