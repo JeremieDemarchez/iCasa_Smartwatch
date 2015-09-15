@@ -28,6 +28,7 @@
 	<packaging>pom</packaging>
 	<name>${productName} :: ${projectName}</name>
 
+
     <properties>
         <site.path>snapshot</site.path>
         <repo_path>snapshot</repo_path>
@@ -50,6 +51,7 @@
             <module>frontend</module>
             <module>tools</module>
             <module>distribution</module>
+             <module>context</module>
             <module>tests</module>
             <module>applications</module>
             <module>installer</module>
