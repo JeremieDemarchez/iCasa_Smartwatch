@@ -122,9 +122,27 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     @Override
     public void deviceMoved(LocatedDevice device, Position oldPosition, Position newPosition) {
-        for (Zone zone : getZones(newPosition)){
-            m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId());
-            m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber());
+        if (getZones(oldPosition).isEmpty()){
+            for (Zone zone : getZones(newPosition)){
+                LOG.info(" Discovery create relation");
+                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId());
+                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber());
+            }
+        }else {
+            boolean delete = getZones(newPosition).isEmpty();
+            for (Zone oldZone : getZones(oldPosition)){
+                if (delete){
+                    LOG.info(" Discovery delete relation");
+                    m_relationFactory.deleteRelation("isContained", device.getSerialNumber(), oldZone.getId());
+                    m_relationFactory.deleteRelation("contained", oldZone.getId(), device.getSerialNumber());
+                }else {
+                    for (Zone newZone : getZones(newPosition)) {
+                        LOG.info(" Discovery update relation");
+                        m_relationFactory.updateRelation("isContained", device.getSerialNumber(), oldZone.getId(), device.getSerialNumber(), newZone.getId());
+                        m_relationFactory.updateRelation("contained", oldZone.getId(), device.getSerialNumber(), newZone.getId(), device.getSerialNumber());
+                    }
+                }
+            }
         }
     }
 
