@@ -40,6 +40,8 @@ public class RelationFactoryImpl implements RelationFactory{
 
         Hashtable properties = new Hashtable();
         properties.put("relation.name", name);
+        properties.put("relation.name", name);
+        properties.put("relation.name", name);
         Hashtable filters = new Hashtable();
         filters.put("relation.source","(context.entity.id="+source+")");
         filters.put("relation.end","(context.entity.id="+end+")");
