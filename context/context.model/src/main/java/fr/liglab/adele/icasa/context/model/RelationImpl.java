@@ -12,10 +12,10 @@ public class RelationImpl implements Relation {
     @Requires(id = "relation.end",optional = false)
     ContextEntity end;
 
-    @ServiceProperty(name = "relation.source.id")
+    @ServiceProperty(name = "relation.source.id",mandatory = true)
     public String sourceId;
 
-    @ServiceProperty(name = "relation.end.id")
+    @ServiceProperty(name = "relation.end.id",mandatory = true)
     public String endId;
 
     @Property( name = "relation.name",mandatory = true)

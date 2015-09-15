@@ -21,10 +21,16 @@ public class RelationFactoryImpl implements RelationFactory{
 
     private static final Logger LOG = LoggerFactory.getLogger(RelationFactoryImpl.class);
 
-    private final Map<String,ServiceRegistration> relations = new HashMap<String,ServiceRegistration>();
+    private final Map<String,IpojoServiceRegistrationRelation> relations = new HashMap<String,IpojoServiceRegistrationRelation>();
+
+    private final Object m_lockRelation;
 
     @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.RelationImpl)")
     Factory relationIpojoFactory;
+
+    public RelationFactoryImpl(){
+        this.m_lockRelation = new Object();
+    }
 
     @Validate
     public void start(){
@@ -33,53 +39,83 @@ public class RelationFactoryImpl implements RelationFactory{
 
     @Invalidate
     public void stop(){
-
+        synchronized (m_lockRelation){
+            relations.clear();
+        }
     }
 
     public void createRelation(String name,String source,String end){
+        LOG.info("Create Relation  : " + name +" source : " + " end " + end);
+        String relationId = name + source + end;
         ComponentInstance instance;
 
         Hashtable properties = new Hashtable();
         properties.put("relation.name", name);
-        properties.put("relation.name", name);
-        properties.put("relation.name", name);
+        properties.put("relation.source.id", source);
+        properties.put("relation.end.id", end);
         Hashtable filters = new Hashtable();
-        filters.put("relation.source","(context.entity.id="+source+")");
-        filters.put("relation.end","(context.entity.id="+end+")");
-        properties.put("requires.filters",filters);
+        filters.put("relation.source", "(context.entity.id=" + source + ")");
+        filters.put("relation.end", "(context.entity.id=" + end + ")");
+        properties.put("requires.filters", filters);
 
         try {
             instance = relationIpojoFactory.createComponentInstance(properties);
-            ServiceRegistration sr = new IpojoServiceRegistration(
-                    instance);
-
-            relations.put(name+source+end,sr);
+            IpojoServiceRegistrationRelation sr = new IpojoServiceRegistrationRelation(
+                    instance,
+                    name,
+                    source,
+                    end);
+            synchronized (m_lockRelation) {
+                relations.put(relationId, sr);
+            }
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
-            LOG.error("Relation instantiation failed",unacceptableConfiguration);
+            LOG.error("Relation instantiation failed", unacceptableConfiguration);
         } catch (MissingHandlerException e) {
-            LOG.error("Relation instantiation failed",e);
+            LOG.error("Relation instantiation failed", e);
         } catch (ConfigurationException e) {
-            LOG.error("Relation instantiation failed",e);
+            LOG.error("Relation instantiation failed", e);
         }
 
     }
 
     @Override
     public void deleteRelation(String name, String source, String end) {
+        LOG.info("Delete Relation  : " + name +" source : " + " end " + end);
         try {
-            relations.remove(name+source+end).unregister();
+            synchronized (m_lockRelation){
+                relations.remove(name+source+end).unregister();
+            }
         }catch(IllegalStateException e){
             LOG.error("failed unregistering relation", e);
         }
     }
 
-    class IpojoServiceRegistration implements ServiceRegistration {
+    @Override
+    public void updateRelation(String name, String oldSource, String oldEnd,String newSource,String newEnd){
+        LOG.info("Update relation " + name + " oldSource : " + oldSource + " new Source : " + newSource + " oldEnd : " + oldEnd + " newEnd : " + newEnd);
+        synchronized (m_lockRelation) {
+            String oldRelationId = name + oldSource + oldEnd;
+            IpojoServiceRegistrationRelation relationToUpdate = relations.remove(oldRelationId);
+            relationToUpdate.updateRelation(newSource, newEnd);
 
-        ComponentInstance instance;
+            String newRelationId = name + newSource + newEnd;
+            relations.put(newRelationId, relationToUpdate);
+        }
+    }
 
-        public IpojoServiceRegistration(ComponentInstance instance) {
+    class IpojoServiceRegistrationRelation implements ServiceRegistration {
+
+        private final ComponentInstance instance;
+        private final String name;
+        private final String source;
+        private final String end;
+
+        public IpojoServiceRegistrationRelation(ComponentInstance instance,String name,String source,String end) {
             super();
             this.instance = instance;
+            this.name = name;
+            this.source = source;
+            this.end = end;
         }
 
         /*
@@ -110,6 +146,7 @@ public class RelationFactoryImpl implements RelationFactory{
          * )
          */
         public void setProperties(Dictionary properties) {
+            LOG.info("Reconfigure ! ");
             instance.reconfigure(properties);
         }
 
@@ -122,5 +159,20 @@ public class RelationFactoryImpl implements RelationFactory{
             instance.dispose();
         }
 
+        public void updateRelation(String newSource,String newEnd){
+            Hashtable properties = new Hashtable();
+            Hashtable filters = new Hashtable();
+            if (!(source.equals(newSource))){
+                filters.put("relation.source","(context.entity.id="+source+")");
+            }
+            if (!(end.equals(newEnd))){
+                filters.put("relation.end","(context.entity.id="+end+")");
+            }
+            if (filters.isEmpty()){
+                return;
+            }
+            properties.put("requires.filters", filters);
+            setProperties(properties);
+        }
     }
 }

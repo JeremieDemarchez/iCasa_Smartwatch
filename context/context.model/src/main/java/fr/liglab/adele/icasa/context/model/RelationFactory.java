@@ -8,4 +8,7 @@ public interface RelationFactory {
     public void createRelation(String name,String source,String end);
 
     public void deleteRelation(String name,String source,String end);
+
+    public void updateRelation(String name, String oldSource, String oldEnd,String newSource,String newEnd);
+
 }
