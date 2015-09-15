@@ -19,6 +19,9 @@
  */
 package fr.liglab.adele.cream.remote;
 
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.Relation;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Route;
@@ -26,6 +29,9 @@ import org.wisdom.api.annotations.View;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
+
+
+import java.util.List;
 
 /**
  * Your first Wisdom Controller.
@@ -38,6 +44,12 @@ public class WelcomeController extends DefaultController {
      */
     @View("welcome")
     Template welcome;
+
+    @Requires
+    List<Relation> relations;
+
+    @Requires
+    List<ContextEntity> entities;
 
     /**
      * The action method returning the welcome page. It handles
@@ -53,7 +65,6 @@ public class WelcomeController extends DefaultController {
     @Route(method = HttpMethod.GET, uri = "/context/entities")
     public Result getEntities(){
         return ok();
-
     }
 
 }

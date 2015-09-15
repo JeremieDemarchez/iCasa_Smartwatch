@@ -98,6 +98,14 @@
             <artifactId>documentation</artifactId>
             <version>0.9.1</version>
         </dependency>
+
+        <!-- Context -->
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
     </dependencies>
 
     <dependencyManagement>
