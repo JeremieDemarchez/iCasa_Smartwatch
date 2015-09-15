@@ -12,7 +12,7 @@ public class RelationImpl implements Relation {
     @Requires(id = "relation.end",optional = false)
     ContextEntity end;
 
-    @Property( name = "relation.name")
+    @Property( name = "relation.name",mandatory = true)
     String name;
 
     public RelationImpl(){
