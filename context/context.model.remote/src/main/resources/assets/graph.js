@@ -57,7 +57,8 @@ function init() {
             edges.add({
                 id: "relation"+i+"name",
                 from: data["relation"+i+"source"],
-                to: data["relation"+i+"end"]
+                to: data["relation"+i+"end"],
+                arrows:'to'
             });
         }
         draw();
