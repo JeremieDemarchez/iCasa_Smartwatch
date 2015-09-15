@@ -65,7 +65,7 @@ public class DeviceDiscovery {
         try {
             deviceEntities.remove(device.getSerialNumber()).unregister();
         }catch(IllegalStateException e){
-            LOG.error("failed unregistering lamp", e);
+            LOG.error("failed unregistering device", e);
         }
     }
 
