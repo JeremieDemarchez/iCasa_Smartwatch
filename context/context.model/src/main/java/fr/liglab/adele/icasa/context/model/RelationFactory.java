@@ -6,4 +6,6 @@ package fr.liglab.adele.icasa.context.model;
 public interface RelationFactory {
 
     public void createRelation(String name,String source,String end);
+
+    public void deleteRelation(String name,String source,String end);
 }

@@ -16,6 +16,7 @@ import java.util.Map;
 
 @Component
 @Instantiate
+@Provides(specifications = RelationFactory.class)
 public class RelationFactoryImpl implements RelationFactory{
 
     private static final Logger LOG = LoggerFactory.getLogger(RelationFactoryImpl.class);
@@ -61,6 +62,15 @@ public class RelationFactoryImpl implements RelationFactory{
             LOG.error("Relation instantiation failed",e);
         }
 
+    }
+
+    @Override
+    public void deleteRelation(String name, String source, String end) {
+        try {
+            relations.remove(name+source+end).unregister();
+        }catch(IllegalStateException e){
+            LOG.error("failed unregistering relation", e);
+        }
     }
 
     class IpojoServiceRegistration implements ServiceRegistration {
