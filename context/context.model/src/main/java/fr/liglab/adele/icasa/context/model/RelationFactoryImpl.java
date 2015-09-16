@@ -8,10 +8,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 
 @Component
@@ -45,7 +42,7 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     public void createRelation(String name,String source,String end){
-        LOG.info("Create Relation  : " + name +" source : " + " end " + end);
+        LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
         String relationId = name + source + end;
         ComponentInstance instance;
 
@@ -80,7 +77,7 @@ public class RelationFactoryImpl implements RelationFactory{
 
     @Override
     public void deleteRelation(String name, String source, String end) {
-        LOG.info("Delete Relation  : " + name +" source : " + " end " + end);
+        LOG.info("Delete Relation  : " + name + " source : " + " end " + end);
         try {
             synchronized (m_lockRelation){
                 relations.remove(name+source+end).unregister();
@@ -91,15 +88,31 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     @Override
+    //TODO : USE RECONFIGURATION OF IPOJO, ACTUALLY DISPOSE THE OLD RELATION AND CREATE A NEW ONE
     public void updateRelation(String name, String oldSource, String oldEnd,String newSource,String newEnd){
         LOG.info("Update relation " + name + " oldSource : " + oldSource + " new Source : " + newSource + " oldEnd : " + oldEnd + " newEnd : " + newEnd);
-        synchronized (m_lockRelation) {
+  /*      synchronized (m_lockRelation) {
             String oldRelationId = name + oldSource + oldEnd;
             IpojoServiceRegistrationRelation relationToUpdate = relations.remove(oldRelationId);
             relationToUpdate.updateRelation(newSource, newEnd);
 
             String newRelationId = name + newSource + newEnd;
             relations.put(newRelationId, relationToUpdate);
+        }
+        */
+
+        synchronized (m_lockRelation) {
+            String oldRelationId = name + oldSource + oldEnd;
+            try {
+                synchronized (m_lockRelation){
+                   relations.remove(oldRelationId).unregister();
+                    createRelation(name,newSource,newEnd);
+                }
+            }catch(IllegalStateException e){
+                LOG.error("failed unregistering relation", e);
+            }
+
+
         }
     }
 
@@ -146,8 +159,13 @@ public class RelationFactoryImpl implements RelationFactory{
          * )
          */
         public void setProperties(Dictionary properties) {
-            LOG.info("Reconfigure ! ");
-            instance.reconfigure(properties);
+
+            LOG.info("Reconfigure ! " );
+            try {
+                instance.reconfigure(properties);
+            }catch (Exception e ){
+                LOG.error("Reconfiguration error",e);
+            }
         }
 
         /*
@@ -159,19 +177,25 @@ public class RelationFactoryImpl implements RelationFactory{
             instance.dispose();
         }
 
+        //TODO : NOT WORK
         public void updateRelation(String newSource,String newEnd){
-            Hashtable properties = new Hashtable();
+            Properties properties = new Properties();
             Hashtable filters = new Hashtable();
             if (!(source.equals(newSource))){
                 filters.put("relation.source","(context.entity.id="+source+")");
+                properties.put("relation.source.id", source);
+                LOG.info("source change");
             }
             if (!(end.equals(newEnd))){
                 filters.put("relation.end","(context.entity.id="+end+")");
+                LOG.info("end change");
+                properties.put("relation.end.id", end);
             }
             if (filters.isEmpty()){
                 return;
             }
             properties.put("requires.filters", filters);
+
             setProperties(properties);
         }
     }
