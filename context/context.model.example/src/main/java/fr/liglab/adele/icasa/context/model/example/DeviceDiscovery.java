@@ -41,13 +41,29 @@ public class DeviceDiscovery {
     public synchronized void bindDevices(GenericDevice device){
         ComponentInstance instance;
 
+
+
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", device.getSerialNumber());
+
+        Hashtable<String,String> state = new Hashtable<String, String>();
+        for (String property : device.getProperties()){
+            /**
+             * TODO : Maybe the second parameter type has to be changed in generic object
+             */
+            state.put(property, device.getPropertyValue(property).toString());
+        }
+        properties.put("context.entity.state", state);
+
+        Hashtable filters = new Hashtable();
+        filters.put("context.entity.relation", "(relation.source.id ="+device.getSerialNumber()+")");
+        properties.put("requires.filters", filters);
 
         try {
             instance = deviceEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
-                    instance);
+                    instance,
+                    state);
 
             deviceEntities.put(device.getSerialNumber(),sr);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
@@ -73,10 +89,12 @@ public class DeviceDiscovery {
     class IpojoServiceRegistration implements ServiceRegistration {
 
         ComponentInstance instance;
+        private final Hashtable<String, String> state;
 
-        public IpojoServiceRegistration(ComponentInstance instance) {
+        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String,String>state) {
             super();
             this.instance = instance;
+            this.state = state;
         }
 
         /*
@@ -118,6 +136,9 @@ public class DeviceDiscovery {
         public void unregister() {
             instance.dispose();
         }
+
+        //TODO : To implement
+        public void updateState(){}
 
     }
 }

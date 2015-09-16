@@ -42,11 +42,17 @@ public class RelationImpl implements Relation {
 
     @Override
     public String getSource() {
-        return source.getId();
+        return sourceId;
+        //NE FONCTIONNE PAS AVEC LES FILTRES DANS LES CONTEXT ENTITY
+        //LE SYSTEME PLANTE QUAND L AFFICHAGE WEB DU CONTEXT EST ACTUALISE
+        //return source.getId();
     }
 
     @Override
     public String getEnd() {
-        return end.getId();
+        return endId;
+        //NE FONCTIONNE PAS AVEC LES FILTRES DANS LES CONTEXT ENTITY
+        //LE SYSTEME PLANTE QUAND L AFFICHAGE WEB DU CONTEXT EST ACTUALISE
+        //return end.getId();
     }
 }

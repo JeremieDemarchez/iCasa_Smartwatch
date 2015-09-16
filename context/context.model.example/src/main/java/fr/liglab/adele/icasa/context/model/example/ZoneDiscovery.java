@@ -47,10 +47,25 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", zone.getId());
 
+        Hashtable<String,String> state = new Hashtable();
+        for (String variable : zone.getVariableNames()){
+            /**
+             * TODO : Maybe the second parameter type has to be changed in generic object
+             * TODO : Values of variables are set at the creation of the context entity (not dynamic)
+             */
+            state.put(variable, zone.getVariableValue(variable).toString());
+        }
+        properties.put("context.entity.state", state);
+
+        Hashtable filters = new Hashtable();
+        filters.put("context.entity.relation", "(relation.source.id ="+zone.getId()+")");
+        properties.put("requires.filters", filters);
+
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
-                    instance);
+                    instance,
+                    state);
             zoneEntities.put(zone.getId(),sr);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error("Relation instantiation failed",unacceptableConfiguration);
@@ -188,11 +203,14 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     class IpojoServiceRegistration implements ServiceRegistration {
 
+        private final Hashtable<String, String> state;
         ComponentInstance instance;
+        
 
-        public IpojoServiceRegistration(ComponentInstance instance) {
+        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String, String> state) {
             super();
             this.instance = instance;
+            this.state = state;
         }
 
         /*
@@ -234,6 +252,9 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         public void unregister() {
             instance.dispose();
         }
+
+        //TODO : To implement
+        public void updateState(){}
 
     }
 
