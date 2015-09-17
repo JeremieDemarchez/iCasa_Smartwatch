@@ -9,24 +9,35 @@
             width: 100%;
             height: 100%;
         }
+        .section1 h1 {
+            color: black;
+            font-family: 'Bad Script', sans-serif;
+            text-align: center;
+        }
     </style>
 </head>
 <body>
-<div class="container-fluid">
-    <div class="header">
-        <h3 class="text-danger">Context Graph Visu</h3>
+<div class="container-fluid mainpage">
+
+    <div class="row section1">
+        <div class="col-md-12 col-xs-12" id="intro">
+            <h1>
+                Context Graph View
+            </h1>
+        </div>
     </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-md-4">
-                <div class="jumbotron">
-                    <div id="stateColumn"></div>
-                </div>
+
+    <div class="row section2">
+
+        <div class="col-md-4">
+            <div class="jumbotron">
+                <div id="stateColumn"></div>
             </div>
-            <div class="col-md-8">
-                <div class="jumbotron">
-                    <div id="mynetwork"></div>
-                </div>
+        </div>
+
+        <div class="col-md-8">
+            <div class="jumbotron">
+                <div id="mynetwork"></div>
             </div>
         </div>
     </div>
