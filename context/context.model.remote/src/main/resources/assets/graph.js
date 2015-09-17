@@ -18,10 +18,34 @@ function draw(){
         nodes: nodes,
         edges: edges
     };
-    var options = {};
-
-    // initialize your network!
+    var options = {interaction:{hover:true}};
     network = new vis.Network(container, data, options);
+    network.on("selectEdge", function (params) {
+        var edgeToUpdate =  params["edges"];
+        console.log('selectEdge Event:', edgeToUpdate);
+        edgeToUpdate.forEach(function(y){
+            edges.update({id: y,label: y});
+            var url = "/context/entities/"+y;
+            var t = $.get("/context/entities",function(data) {
+                console.log('Edge Event Get Response:', data);
+            });
+        });
+    });
+    network.on("deselectEdge", function (params) {
+        var edgeToUpdate =  params["previousSelection"]["edges"];
+        console.log('deselectEdge Event:', edgeToUpdate);
+        edgeToUpdate.forEach(function(y){
+            edges.update({id: y,label: ""});
+        });
+    });
+    network.on("selectNode", function (params) {
+        var nodeToUpdate =  params["nodes"];
+        console.log('selectNode Event:', nodeToUpdate);
+    });
+    network.on("deselectNode", function (params) {
+        var nodesToUpdate =  params["previousSelection"]["nodes"];
+        console.log('deselectNode Event:', nodesToUpdate);
+    });
 }
 
 
@@ -54,8 +78,9 @@ function init() {
             console.log(data["relation"+i+"name"]);
             console.log(data["relation"+i+"source"]);
             console.log(data["relation"+i+"end"]);
+            var nodeId = data["relation"+i+"name"]+data["relation"+i+"source"]+data["relation"+i+"end"];
             edges.add({
-                id: "relation"+i+"name",
+                id: nodeId,
                 from: data["relation"+i+"source"],
                 to: data["relation"+i+"end"],
                 arrows:'to'

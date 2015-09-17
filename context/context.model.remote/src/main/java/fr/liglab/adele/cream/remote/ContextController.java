@@ -25,6 +25,7 @@ import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Route;
 import org.wisdom.api.annotations.View;
 import org.wisdom.api.content.Json;
@@ -87,6 +88,21 @@ public class ContextController extends DefaultController {
             i++;
         }
         return ok(result);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/context/relations/{id}")
+    public Result getRelation(@Parameter("id") String id){
+        ObjectNode result = json.newObject();
+        for (Relation relation : relations){
+            String relationId = relation.getName()+relation.getSource()+relation.getEnd();
+            if (relation.equals(id)){
+                result.put("relation.name",relation.getName());
+                result.put("relation.source",relation.getSource());
+                result.put("relation.end",relation.getEnd());
+                return ok(result);
+            }
+        }
+        return notFound();
     }
 
 }
