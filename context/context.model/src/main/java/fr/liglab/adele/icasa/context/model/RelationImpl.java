@@ -36,6 +36,11 @@ public class RelationImpl implements Relation {
     }
 
     @Override
+    public String getId() {
+        return getName()+getSource()+getEnd();
+    }
+
+    @Override
     public String getName() {
         return name;
     }

@@ -5,6 +5,8 @@ package fr.liglab.adele.icasa.context.model;
  */
 public interface Relation {
 
+    String getId();
+
     String getName();
 
     String getSource();
