@@ -1,5 +1,5 @@
 
-var nodes, edges, network;
+var nodes, edges, network,statePanel;
 
 function registerWebSocket() {
     var ws = $.easyWebSocket("ws://" + window.location.host + "/temperature");
@@ -10,9 +10,30 @@ function registerWebSocket() {
 
 }
 
+function updateNodeStatePanel(data){
+    var panel = $("<div></div>").attr('class',"panel panel-primary");
+    var panelHeading =  $("<div>Node State</div>").attr('class',"panel-heading");
+    var panelBody =  $("<div></div>").attr('class',"panel-body");
+    var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
+    $.each(data,function(key,val){
+        console.log("KEY : " + key + " , VAL : " + val);
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
+        stateGroupListValue.appendTo(stateGroupListItem);
+        stateGroupListItem.appendTo(stateGroupList);
+        stateGroupList.appendTo(panelBody);
+    });
+
+    /** Append all to panel**/
+    panelHeading.appendTo(panel);
+    panelBody.appendTo(panel);
+    panel.appendTo($("#statePanel"));
+}
+
 function draw(){
     // create a network
     var container = document.getElementById('mynetwork');
+    statePanel = $("statePanel");
     // provide the data in the vis format
     var data = {
         nodes: nodes,
@@ -20,17 +41,20 @@ function draw(){
     };
     var options = {interaction:{hover:true}};
     network = new vis.Network(container, data, options);
+
     network.on("selectEdge", function (params) {
         var edgeToUpdate =  params["edges"];
         console.log('selectEdge Event:', edgeToUpdate);
         edgeToUpdate.forEach(function(y){
-            edges.update({id: y,label: y});
-            var url = "/context/entities/"+y;
-            var t = $.get("/context/entities",function(data) {
+            console.log("Edge Name " + edges.get(y).name);
+            edges.update({id: y,label: edges.get(y).name});
+            var url = "/context/relations/"+y;
+            var t = $.get(url,function(data) {
                 console.log('Edge Event Get Response:', data);
             });
         });
     });
+
     network.on("deselectEdge", function (params) {
         var edgeToUpdate =  params["previousSelection"]["edges"];
         console.log('deselectEdge Event:', edgeToUpdate);
@@ -38,10 +62,18 @@ function draw(){
             edges.update({id: y,label: ""});
         });
     });
+
     network.on("selectNode", function (params) {
         var nodeToUpdate =  params["nodes"];
         console.log('selectNode Event:', nodeToUpdate);
+        nodeToUpdate.forEach(function(y) {
+            var url = "/context/entities/" + y;
+            var t = $.get(url, function (data) {
+                updateNodeStatePanel(data);
+            });
+        });
     });
+
     network.on("deselectNode", function (params) {
         var nodesToUpdate =  params["previousSelection"]["nodes"];
         console.log('deselectNode Event:', nodesToUpdate);
@@ -83,12 +115,11 @@ function init() {
                 id: nodeId,
                 from: data["relation"+i+"source"],
                 to: data["relation"+i+"end"],
-                arrows:'to'
+                arrows:'to',
+                name: data["relation"+i+"name"]
             });
         }
         draw();
     });
-
-
 
 }

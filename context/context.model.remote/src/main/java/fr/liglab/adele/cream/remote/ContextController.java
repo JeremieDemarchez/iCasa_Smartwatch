@@ -76,6 +76,22 @@ public class ContextController extends DefaultController {
         return ok(result);
     }
 
+    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}")
+    public Result getEntityState(@Parameter("id") String id){
+        System.out.println(" GET " + id);
+        ObjectNode result = json.newObject();
+        for (ContextEntity entity : entities){
+            String entityId = entity.getId();
+            if (entityId.equals(id)){
+                for (String stateId : entity.getState().keySet()){
+                    result.put(stateId,entity.getStateValue(stateId));
+                }
+                return ok(result);
+            }
+        }
+        return notFound();
+    }
+
     @Route(method = HttpMethod.GET, uri = "/context/relations")
     public Result getRelations(){
         ObjectNode result = json.newObject();
@@ -92,10 +108,11 @@ public class ContextController extends DefaultController {
 
     @Route(method = HttpMethod.GET, uri = "/context/relations/{id}")
     public Result getRelation(@Parameter("id") String id){
+        System.out.println(" GET " + id);
         ObjectNode result = json.newObject();
         for (Relation relation : relations){
-            String relationId = relation.getName()+relation.getSource()+relation.getEnd();
-            if (relation.equals(id)){
+            String relationId = relation.getId();
+            if (relationId.equals(id)){
                 result.put("relation.name",relation.getName());
                 result.put("relation.source",relation.getSource());
                 result.put("relation.end",relation.getEnd());
