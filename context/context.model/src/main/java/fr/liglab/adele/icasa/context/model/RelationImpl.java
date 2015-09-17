@@ -6,10 +6,10 @@ import org.apache.felix.ipojo.annotations.*;
 @Provides
 public class RelationImpl implements Relation {
 
-    @Requires(id = "relation.source",optional = false)
+    @Requires(id = "relation.source",optional = false, filter="(context.entity.id=${relation.source.id})")
     ContextEntity source;
 
-    @Requires(id = "relation.end",optional = false)
+    @Requires(id = "relation.end",optional = false, filter="(context.entity.id=${relation.end.id})")
     ContextEntity end;
 
     @ServiceProperty(name = "relation.source.id",mandatory = true)

@@ -50,10 +50,10 @@ public class RelationFactoryImpl implements RelationFactory{
         properties.put("relation.name", name);
         properties.put("relation.source.id", source);
         properties.put("relation.end.id", end);
-        Hashtable filters = new Hashtable();
+     /*   Hashtable filters = new Hashtable();
         filters.put("relation.source", "(context.entity.id=" + source + ")");
         filters.put("relation.end", "(context.entity.id=" + end + ")");
-        properties.put("requires.filters", filters);
+        properties.put("requires.filters", filters);*/
 
         try {
             instance = relationIpojoFactory.createComponentInstance(properties);
@@ -88,10 +88,9 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     @Override
-    //TODO : USE RECONFIGURATION OF IPOJO, ACTUALLY DISPOSE THE OLD RELATION AND CREATE A NEW ONE
     public void updateRelation(String name, String oldSource, String oldEnd,String newSource,String newEnd){
         LOG.info("Update relation " + name + " oldSource : " + oldSource + " new Source : " + newSource + " oldEnd : " + oldEnd + " newEnd : " + newEnd);
-  /*      synchronized (m_lockRelation) {
+        synchronized (m_lockRelation) {
             String oldRelationId = name + oldSource + oldEnd;
             IpojoServiceRegistrationRelation relationToUpdate = relations.remove(oldRelationId);
             relationToUpdate.updateRelation(newSource, newEnd);
@@ -99,21 +98,8 @@ public class RelationFactoryImpl implements RelationFactory{
             String newRelationId = name + newSource + newEnd;
             relations.put(newRelationId, relationToUpdate);
         }
-        */
-
-        synchronized (m_lockRelation) {
-            String oldRelationId = name + oldSource + oldEnd;
-            try {
-                synchronized (m_lockRelation){
-                   relations.remove(oldRelationId).unregister();
-                    createRelation(name,newSource,newEnd);
-                }
-            }catch(IllegalStateException e){
-                LOG.error("failed unregistering relation", e);
-            }
 
 
-        }
     }
 
     class IpojoServiceRegistrationRelation implements ServiceRegistration {
@@ -177,25 +163,12 @@ public class RelationFactoryImpl implements RelationFactory{
             instance.dispose();
         }
 
-        //TODO : NOT WORK
+
         public void updateRelation(String newSource,String newEnd){
             Properties properties = new Properties();
-            Hashtable filters = new Hashtable();
-            if (!(source.equals(newSource))){
-                filters.put("relation.source","(context.entity.id="+source+")");
-                properties.put("relation.source.id", source);
-                LOG.info("source change");
-            }
-            if (!(end.equals(newEnd))){
-                filters.put("relation.end","(context.entity.id="+end+")");
-                LOG.info("end change");
-                properties.put("relation.end.id", end);
-            }
-            if (filters.isEmpty()){
-                return;
-            }
-            properties.put("requires.filters", filters);
-
+            properties.put("relation.name", newEnd);
+            properties.put("relation.source.id", newSource);
+            properties.put("relation.end.id", newEnd);
             setProperties(properties);
         }
     }
