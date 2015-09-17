@@ -1,5 +1,5 @@
 
-var nodes, edges, network,statePanel;
+var nodes, edges, network,stateColumn;
 
 function registerWebSocket() {
     var ws = $.easyWebSocket("ws://" + window.location.host + "/temperature");
@@ -11,7 +11,8 @@ function registerWebSocket() {
 }
 
 function updateNodeStatePanel(data){
-    var panel = $("<div></div>").attr('class',"panel panel-primary");
+    $("#statepanel").remove();
+    var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"statepanel");
     var panelHeading =  $("<div>Node State</div>").attr('class',"panel-heading");
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
@@ -27,13 +28,13 @@ function updateNodeStatePanel(data){
     /** Append all to panel**/
     panelHeading.appendTo(panel);
     panelBody.appendTo(panel);
-    panel.appendTo($("#statePanel"));
+    panel.appendTo(stateColumn);
 }
 
 function draw(){
     // create a network
     var container = document.getElementById('mynetwork');
-    statePanel = $("statePanel");
+    stateColumn = $("#stateColumn");
     // provide the data in the vis format
     var data = {
         nodes: nodes,
