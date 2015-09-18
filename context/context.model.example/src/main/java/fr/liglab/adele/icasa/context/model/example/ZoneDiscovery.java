@@ -47,7 +47,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", zone.getId());
 
-        Hashtable<String,String> state = new Hashtable();
+        Hashtable<String,Object> state = new Hashtable();
         for (String variable : zone.getVariableNames()){
             /**
              * TODO : Maybe the second parameter type has to be changed in generic object
@@ -55,12 +55,8 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
              */
             state.put(variable, zone.getVariableValue(variable).toString());
         }
+        state.put("zone.name", zone.getId());
         properties.put("context.entity.state", state);
-
-        Hashtable filters = new Hashtable();
-        filters.put("context.entity.relation", "(relation.source.id ="+zone.getId()+")");
-        properties.put("requires.filters", filters);
-
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
@@ -140,8 +136,14 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         if (getZones(oldPosition).isEmpty()){
             for (Zone zone : getZones(newPosition)){
                 LOG.info(" Discovery create relation");
-                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId());
-                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber());
+                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"ContainedDevice",true,
+                        state ->{
+                            return state.get("serial.number");
+                });
+                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Location",false,
+                        state->{
+                            return state.get("zone.name");
+                        });
             }
         }else {
             boolean delete = getZones(newPosition).isEmpty();
@@ -203,11 +205,11 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     class IpojoServiceRegistration implements ServiceRegistration {
 
-        private final Hashtable<String, String> state;
+        private final Hashtable<String, Object> state;
         ComponentInstance instance;
         
 
-        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String, String> state) {
+        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String, Object> state) {
             super();
             this.instance = instance;
             this.state = state;

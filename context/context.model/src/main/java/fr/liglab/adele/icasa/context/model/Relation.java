@@ -12,4 +12,6 @@ public interface Relation {
     String getSource();
 
     String getEnd();
+
+    ExtendedState getExtendedState();
 }

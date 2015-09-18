@@ -2,6 +2,9 @@ package fr.liglab.adele.icasa.context.model;
 
 import org.apache.felix.ipojo.annotations.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 @Component
 @Provides
 public class RelationImpl implements Relation {
@@ -21,8 +24,12 @@ public class RelationImpl implements Relation {
     @Property( name = "relation.name",mandatory = true)
     String name;
 
-    public RelationImpl(){
+    private final ExtendedState m_extendedState ;
 
+    public RelationImpl(@Property(name = "relation.extendedStateName",mandatory = true,immutable = true) String stateName,
+                        @Property(name = "relation.extendedStateCallBack",mandatory = true,immutable = true) RelationCallBack stateCallBack,
+                        @Property(name = "relation.extendedStateIsAggregate",mandatory = true,immutable = true) boolean stateIsAggregate){
+        m_extendedState = new ExtendStateImmutableImpl(stateName,stateCallBack,stateIsAggregate);
     }
 
     @Validate
@@ -55,9 +62,47 @@ public class RelationImpl implements Relation {
 
     @Override
     public String getEnd() {
-        return endId;
+        //return endId;
         //NE FONCTIONNE PAS AVEC LES FILTRES DANS LES CONTEXT ENTITY
         //LE SYSTEME PLANTE QUAND L AFFICHAGE WEB DU CONTEXT EST ACTUALISE
-        //return end.getId();
+        return end.getId();
     }
+
+    @Override
+    public ExtendedState getExtendedState() {
+        return m_extendedState;
+    }
+
+    public class ExtendStateImmutableImpl implements ExtendedState {
+
+        private final boolean m_isAggregate;
+
+        private final String m_name;
+
+        private final RelationCallBack m_callBack;
+
+        private ExtendStateImmutableImpl(String name,RelationCallBack callBack,boolean isAggregate ){
+            this.m_isAggregate = isAggregate;
+            this.m_name = name;
+            m_callBack = callBack;
+        }
+
+        @Override
+        public boolean isAggregate() {
+            return m_isAggregate;
+        }
+
+        @Override
+        public String getName() {
+            return m_name;
+        }
+
+        @Override
+        public Object getValue() {
+            return  m_callBack.callBack(source.getState());
+        }
+    }
+
+
+
 }

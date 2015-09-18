@@ -2,6 +2,7 @@ package fr.liglab.adele.icasa.context.model.command;
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
+import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -22,11 +23,16 @@ public class ContextModelGoGoCommand  {
     @Requires(specification = Relation.class,optional = true,proxy = false)
     List<Relation> relations;
 
+    @Requires(specification = ContextEntity.class,optional = true,proxy = false)
+    List<ContextEntity> entities;
+
+
     @Command
     public void relations(){
         for (Relation relation: relations){
             LOG.info("Relation Name : " + relation.getName());
-            LOG.info(relation.getSource() + " --------> " + relation.getEnd());
+            LOG.info(relation.getSource() + " --------> " + relation.getEnd()+"\n"
+                    +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue());
             System.out.println("\n");
         }
     }
@@ -60,6 +66,18 @@ public class ContextModelGoGoCommand  {
                 LOG.info("Relation Name : " + relation.getName());
                 LOG.info(relation.getSource() + " --------> " + relation.getEnd());
                 System.out.println("\n");
+            }
+        }
+    }
+
+    @Command
+    public void entity(String name){
+        for (ContextEntity entity : entities){
+            if (entity.getId().equals(name)){
+                LOG.info(" Entity : " + entity.getId() + " found !! ");
+                for (String key : entity.getState().keySet()){
+                    LOG.info(" Property : " + key + " with value : " + entity.getState().get(key));
+                }
             }
         }
     }

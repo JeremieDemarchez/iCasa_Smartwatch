@@ -84,7 +84,7 @@ public class ContextController extends DefaultController {
             String entityId = entity.getId();
             if (entityId.equals(id)){
                 for (String stateId : entity.getState().keySet()){
-                    result.put(stateId,entity.getStateValue(stateId));
+                    result.put(stateId,entity.getStateValue(stateId).toString());
                 }
                 return ok(result);
             }

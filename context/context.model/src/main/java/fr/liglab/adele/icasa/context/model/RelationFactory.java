@@ -5,7 +5,7 @@ package fr.liglab.adele.icasa.context.model;
  */
 public interface RelationFactory {
 
-    public void createRelation(String name,String source,String end);
+    public void createRelation(String name,String source,String end,String extendStateName,boolean isAggregate,RelationCallBack relationCallBack);
 
     public void deleteRelation(String name,String source,String end);
 

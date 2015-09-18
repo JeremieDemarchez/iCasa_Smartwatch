@@ -46,17 +46,18 @@ public class DeviceDiscovery {
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", device.getSerialNumber());
 
-        Hashtable<String,String> state = new Hashtable<String, String>();
+        Hashtable<String,Object> state = new Hashtable<String, Object>();
         for (String property : device.getProperties()){
             /**
              * TODO : Maybe the second parameter type has to be changed in generic object
              */
             state.put(property, device.getPropertyValue(property).toString());
         }
+        state.put("serial.number", device.getSerialNumber());
         properties.put("context.entity.state", state);
 
         Hashtable filters = new Hashtable();
-        filters.put("context.entity.relation", "(relation.source.id ="+device.getSerialNumber()+")");
+        filters.put("context.entity.relation", "(relation.end.id ="+device.getSerialNumber()+")");
         properties.put("requires.filters", filters);
 
         try {
@@ -89,9 +90,9 @@ public class DeviceDiscovery {
     class IpojoServiceRegistration implements ServiceRegistration {
 
         ComponentInstance instance;
-        private final Hashtable<String, String> state;
+        private final Hashtable<String, Object> state;
 
-        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String,String>state) {
+        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String,Object>state) {
             super();
             this.instance = instance;
             this.state = state;

@@ -41,7 +41,7 @@ public class RelationFactoryImpl implements RelationFactory{
         }
     }
 
-    public void createRelation(String name,String source,String end){
+    public void createRelation(String name,String source,String end,String extendStateName,boolean isAggregate,RelationCallBack relationCallBack){
         LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
         String relationId = name + source + end;
         ComponentInstance instance;
@@ -50,6 +50,9 @@ public class RelationFactoryImpl implements RelationFactory{
         properties.put("relation.name", name);
         properties.put("relation.source.id", source);
         properties.put("relation.end.id", end);
+        properties.put("relation.extendedStateName", extendStateName);
+        properties.put("relation.extendedStateCallBack", relationCallBack);
+        properties.put("relation.extendedStateIsAggregate", isAggregate);
      /*   Hashtable filters = new Hashtable();
         filters.put("relation.source", "(context.entity.id=" + source + ")");
         filters.put("relation.end", "(context.entity.id=" + end + ")");

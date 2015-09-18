@@ -9,11 +9,11 @@ public interface ContextEntity {
 
     public String getId();
 
-    public void setStateValue (String property, String value);
+    public void setStateValue (String property, Object value);
 
     public void removeStateValue (String property);
 
-    public String getStateValue (String property);
+    public Object getStateValue (String property);
 
-    public Hashtable<String,String> getState();
+    public Hashtable<String,Object> getState();
 }
