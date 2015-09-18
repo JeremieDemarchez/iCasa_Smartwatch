@@ -14,10 +14,6 @@ public class TestFilter {
     @Requires(id = "context.entity.test", optional = true, filter = "(|(context.entity.state=kitchen)(context.entity.state=bathroom))")
     List<ContextEntity> contextEntities;
 
-    //FONTIONNE
- //   @Requires(id = "context.entity.test", optional = true, filter = "(|(context.entity.array=kitchen)(context.entity.array=bathroom))")
- //   List<ContextEntity> contextEntities_array;
-
     public TestFilter (){
     }
 

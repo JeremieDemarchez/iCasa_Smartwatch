@@ -52,17 +52,6 @@ public class DeviceDiscovery {
         }
         properties.put("context.entity.state", state);
 
-        List<List<String>> array_test = new ArrayList<>();
-        List<String> a = new ArrayList<>();
-        a.add("aiefhauf");
-        a.add("spduivspbv");
-        array_test.add(a);
-        a = new ArrayList<>();
-        a.add("isContained");
-        a.add("kitchen");
-        array_test.add(a);
-        properties.put("context.entity.array", array_test);
-
         try {
             instance = deviceEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(

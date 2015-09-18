@@ -21,9 +21,6 @@ public class DeviceContextEntity implements ContextEntity {
     @ServiceProperty(name = "context.entity.state", mandatory = true)
     List<List<String>> state;
 
-    @ServiceProperty(name = "context.entity.array", mandatory = true)
-    List<List<String>> array_test;
-
     @Validate
     public void start(){
 
@@ -41,6 +38,9 @@ public class DeviceContextEntity implements ContextEntity {
 
     @Override
     public void addStateValue(String property, String value) {
+        List<List<String>>state = new ArrayList<>();
+        state.addAll(this.state);
+
         boolean property_exists = false;
         for (List<String> property_array : state){
             if (property_array.get(0)==property){
@@ -56,10 +56,15 @@ public class DeviceContextEntity implements ContextEntity {
             property_array.add(value);
             state.add(property_array);
         }
+
+        this.state = state;
     }
 
     @Override
     public void removeStateValue(String property, String value) {
+        List<List<String>>state = new ArrayList<>();
+        state.addAll(this.state);
+
         int index = -1;
         for (List<String> property_array : state){
             if (property_array.get(0)==property){
@@ -77,6 +82,8 @@ public class DeviceContextEntity implements ContextEntity {
                 state.remove(index);
             }
         }
+
+        this.state = state;
     }
 
     @Override

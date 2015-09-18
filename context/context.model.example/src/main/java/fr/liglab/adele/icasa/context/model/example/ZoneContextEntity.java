@@ -37,6 +37,9 @@ public class ZoneContextEntity implements ContextEntity {
 
     @Override
     public void addStateValue(String property, String value) {
+        List<List<String>>state = new ArrayList<>();
+        state.addAll(this.state);
+
         boolean property_exists = false;
         for (List<String> property_array : state){
             if (property_array.get(0)==property){
@@ -52,10 +55,15 @@ public class ZoneContextEntity implements ContextEntity {
             property_array.add(value);
             state.add(property_array);
         }
+
+        this.state = state;
     }
 
     @Override
     public void removeStateValue(String property, String value) {
+        List<List<String>>state = new ArrayList<>();
+        state.addAll(this.state);
+
         int index = -1;
         for (List<String> property_array : state){
             if (property_array.get(0)==property){
@@ -73,6 +81,8 @@ public class ZoneContextEntity implements ContextEntity {
                 state.remove(index);
             }
         }
+
+        this.state = state;
     }
 
     @Override
