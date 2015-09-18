@@ -47,19 +47,15 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", zone.getId());
 
-        Hashtable<String,String> state = new Hashtable();
-        for (String variable : zone.getVariableNames()){
-            /**
-             * TODO : Maybe the second parameter type has to be changed in generic object
-             * TODO : Values of variables are set at the creation of the context entity (not dynamic)
-             */
-            state.put(variable, zone.getVariableValue(variable).toString());
+        List<List<String>> state = new ArrayList<>();
+        List<String> property_array;
+        for (String property : zone.getVariableNames()){
+            property_array = new ArrayList<>();
+            property_array.add(property);
+            property_array.add(zone.getVariableValue(property).toString());
+            state.add(property_array);
         }
         properties.put("context.entity.state", state);
-
-        Hashtable filters = new Hashtable();
-        filters.put("context.entity.relation", "(relation.source.id ="+zone.getId()+")");
-        properties.put("requires.filters", filters);
 
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
@@ -203,11 +199,11 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     class IpojoServiceRegistration implements ServiceRegistration {
 
-        private final Hashtable<String, String> state;
+        private final List<List<String>> state;
         ComponentInstance instance;
         
 
-        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String, String> state) {
+        public IpojoServiceRegistration(ComponentInstance instance, List<List<String>> state) {
             super();
             this.instance = instance;
             this.state = state;

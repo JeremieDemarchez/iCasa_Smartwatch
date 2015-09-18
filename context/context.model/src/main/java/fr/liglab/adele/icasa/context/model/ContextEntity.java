@@ -1,6 +1,6 @@
 package fr.liglab.adele.icasa.context.model;
 
-import java.util.Hashtable;
+import java.util.List;
 
 /**
  * Created by aygalinc on 15/09/15.
@@ -9,11 +9,11 @@ public interface ContextEntity {
 
     public String getId();
 
-    public void setStateValue (String property, String value);
+    public void addStateValue (String property, String value);
 
-    public void removeStateValue (String property);
+    public void removeStateValue (String property, String value);
 
-    public String getStateValue (String property);
+    public List<String> getStateValue (String property);
 
-    public Hashtable<String,String> getState();
+    public List<List<String>> getState();
 }

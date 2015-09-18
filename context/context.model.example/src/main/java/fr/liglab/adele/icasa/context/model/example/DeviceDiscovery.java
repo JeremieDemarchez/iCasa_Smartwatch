@@ -10,10 +10,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Instantiate
@@ -41,23 +38,30 @@ public class DeviceDiscovery {
     public synchronized void bindDevices(GenericDevice device){
         ComponentInstance instance;
 
-
-
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", device.getSerialNumber());
 
-        Hashtable<String,String> state = new Hashtable<String, String>();
+        List<List<String>> state = new ArrayList<>();
+        List<String> property_array;
+
         for (String property : device.getProperties()){
-            /**
-             * TODO : Maybe the second parameter type has to be changed in generic object
-             */
-            state.put(property, device.getPropertyValue(property).toString());
+            property_array = new ArrayList<>();
+            property_array.add(property);
+            property_array.add(device.getPropertyValue(property).toString());
+            state.add(property_array);
         }
         properties.put("context.entity.state", state);
 
-        Hashtable filters = new Hashtable();
-        filters.put("context.entity.relation", "(relation.source.id ="+device.getSerialNumber()+")");
-        properties.put("requires.filters", filters);
+        List<List<String>> array_test = new ArrayList<>();
+        List<String> a = new ArrayList<>();
+        a.add("aiefhauf");
+        a.add("spduivspbv");
+        array_test.add(a);
+        a = new ArrayList<>();
+        a.add("isContained");
+        a.add("kitchen");
+        array_test.add(a);
+        properties.put("context.entity.array", array_test);
 
         try {
             instance = deviceEntityFactory.createComponentInstance(properties);
@@ -89,9 +93,9 @@ public class DeviceDiscovery {
     class IpojoServiceRegistration implements ServiceRegistration {
 
         ComponentInstance instance;
-        private final Hashtable<String, String> state;
+        private final List<List<String>> state;
 
-        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String,String>state) {
+        public IpojoServiceRegistration(ComponentInstance instance, List<List<String>> state) {
             super();
             this.instance = instance;
             this.state = state;
