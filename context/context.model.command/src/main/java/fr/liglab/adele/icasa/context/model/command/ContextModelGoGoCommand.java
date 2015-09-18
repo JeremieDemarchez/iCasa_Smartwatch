@@ -71,13 +71,14 @@ public class ContextModelGoGoCommand  {
     }
 
     @Command
+    //TODO : FIX
     public void entity(String name){
         for (ContextEntity entity : entities){
             if (entity.getId().equals(name)){
                 LOG.info(" Entity : " + entity.getId() + " found !! ");
-                for (String key : entity.getState().keySet()){
+        /**        for (String key : entity.getState().keyset()){
                     LOG.info(" Property : " + key + " with value : " + entity.getState().get(key));
-                }
+                }**/
             }
         }
     }

@@ -47,16 +47,20 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", zone.getId());
 
-        Hashtable<String,Object> state = new Hashtable();
-        for (String variable : zone.getVariableNames()){
-            /**
-             * TODO : Maybe the second parameter type has to be changed in generic object
-             * TODO : Values of variables are set at the creation of the context entity (not dynamic)
-             */
-            state.put(variable, zone.getVariableValue(variable).toString());
+        List<List<Object>> state = new ArrayList<>();
+        List<Object> property_array;
+        property_array = new ArrayList<>();
+        property_array.add("zone.name");
+        property_array.add(zone.getId());
+        state.add(property_array);
+        for (String property : zone.getVariableNames()){
+            property_array = new ArrayList<>();
+            property_array.add(property);
+            property_array.add(zone.getVariableValue(property).toString());
+            state.add(property_array);
         }
-        state.put("zone.name", zone.getId());
         properties.put("context.entity.state", state);
+
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
@@ -138,11 +142,25 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
                 LOG.info(" Discovery create relation");
                 m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"ContainedDevice",true,
                         state ->{
-                            return state.get("serial.number");
+                            List<Object> value = null;
+
+                            for (List<Object> property_array : (List<List<Object>>)state) {
+                                if (property_array.get(0) == "serial.number") {
+                                    value = property_array;
+                                }
+                            }
+                            return value;
                 });
                 m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Location",false,
                         state->{
-                            return state.get("zone.name");
+                            List<Object> value = null;
+
+                                for (List<Object> property_array : (List<List<Object>>)state) {
+                                    if (property_array.get(0) == "zone.name") {
+                                        value = property_array;
+                                    }
+                                }
+                                return value;
                         });
             }
         }else {
@@ -205,11 +223,13 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     class IpojoServiceRegistration implements ServiceRegistration {
 
-        private final Hashtable<String, Object> state;
+
+        private final List<List<Object>> state;
         ComponentInstance instance;
         
 
-        public IpojoServiceRegistration(ComponentInstance instance, Hashtable<String, Object> state) {
+        public IpojoServiceRegistration(ComponentInstance instance, List<List<Object>> state) {
+
             super();
             this.instance = instance;
             this.state = state;

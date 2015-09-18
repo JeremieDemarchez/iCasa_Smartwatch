@@ -33,6 +33,7 @@ import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -83,8 +84,17 @@ public class ContextController extends DefaultController {
         for (ContextEntity entity : entities){
             String entityId = entity.getId();
             if (entityId.equals(id)){
-                for (String stateId : entity.getState().keySet()){
-                    result.put(stateId,entity.getStateValue(stateId).toString());
+
+                for (List<Object> stateId : entity.getState()){
+                    if (stateId.size()==1){
+                        result.put(stateId.get(0).toString(),"");
+                    } else {
+                        List<Object> value = new ArrayList<Object>();
+                        value.addAll(stateId);
+                        value.remove(0);
+                        result.put(stateId.get(0).toString(),value.toString());
+                    }
+
                 }
                 return ok(result);
             }

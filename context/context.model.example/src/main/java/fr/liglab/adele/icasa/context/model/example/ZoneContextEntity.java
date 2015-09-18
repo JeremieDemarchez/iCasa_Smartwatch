@@ -7,23 +7,26 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
 
 @Component
 @Provides
 public class ZoneContextEntity implements ContextEntity{
 
-    private static final Logger LOG = LoggerFactory.getLogger(DeviceContextEntity.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ZoneContextEntity.class);
 
-    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,filter="(relation.end.id =${context.entity.id})")
+
+    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
+            filter = "(relation.end.id=${context.entity.id})")
     List<Relation> relations;
 
     @Property(name = "context.entity.id",mandatory = true)
     String name;
 
-    @Property(name = "context.entity.state", mandatory = true)
-    Hashtable<String,Object> state;
+
+    @ServiceProperty(name = "context.entity.state", mandatory = true)
+    List<List<Object>> state;
+
 
     @Validate
     public void start(){
@@ -41,22 +44,69 @@ public class ZoneContextEntity implements ContextEntity{
     }
 
     @Override
-    public void setStateValue(String property, Object value) {
-        state.put(property, value);
+    public void addStateValue(String property, Object value) {
+        List<List<Object>>state = new ArrayList<>();
+        state.addAll(this.state);
+
+        boolean property_exists = false;
+        for (List<Object> property_array : state){
+            if (property_array.get(0)==property){
+                property_exists = true;
+                if (!property_array.contains(value)){
+                    property_array.add(value);
+                }
+            }
+        }
+        if (!property_exists){
+            List<Object> property_array = new ArrayList<>();
+            property_array.add(property);
+            property_array.add(value);
+            state.add(property_array);
+        }
+
+        this.state = state;
     }
 
     @Override
-    public void removeStateValue(String property) {
-        state.remove(property);
+    public void removeStateValue(String property, Object value) {
+        List<List<Object>>state = new ArrayList<>();
+        state.addAll(this.state);
+
+        int index = -1;
+        for (List<Object> property_array : state){
+            if (property_array.get(0)==property){
+                index = state.indexOf(property_array);
+                if (property_array.contains(value)){
+
+                    property_array.remove(value);
+                }
+            }
+        }
+
+        /*If the property hasn't value any more, it is cleared*/
+        if (index>=0){
+            if(state.get(index).size()==1){
+                state.remove(index);
+            }
+        }
+
+        this.state = state;
+    }
+
+
+    public List<Object> getStateValue(String property) {
+        List<Object> value = null;
+
+        for (List<Object> property_array : state) {
+            if (property_array.get(0) == property) {
+                value = property_array;
+            }
+        }
+        return value;
     }
 
     @Override
-    public Object getStateValue(String property) {
-        return state.get(property);
-    }
-
-    @Override
-    public Hashtable<String, Object> getState() {
+    public List<List<Object>> getState() {
         return state;
     }
 
@@ -66,33 +116,23 @@ public class ZoneContextEntity implements ContextEntity{
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         if (relation.getExtendedState().isAggregate()){
-            if (state.get(relation.getExtendedState().getName()) == null) {
-                List<Object> values = new ArrayList<>();
-                values.add(relation.getExtendedState().getValue());
-                setStateValue(relation.getExtendedState().getName(), values);
-            }else {
-                ((List) (state.get(relation.getExtendedState().getName()))).add(relation.getExtendedState().getValue());
-            }
+            addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
         }else {
-            setStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
+            //TODO : REMOVE OLD VALUE
+            addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
         }
     }
 
     @Modified(id = "context.entity.relation")
     public void modifiedRelations(Relation relation) {
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
-
- /**       if (relation.getExtendedState().isAggregate()){
-            List values = (List) state.get(relation.getExtendedState().getName());
-            values.add(relation.getExtendedState().getValue());
-        }else {
-            setStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
-        }**/
     }
 
     @Unbind(id = "context.entity.relation")
+    //TODO : INSPECT EXCEPTION
     public void unbindRelations (Relation relation) {
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
-        removeStateValue(relation.getExtendedState().getName());
+        removeStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
+
     }
 }
