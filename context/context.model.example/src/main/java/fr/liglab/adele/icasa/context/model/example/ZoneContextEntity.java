@@ -54,8 +54,14 @@ public class ZoneContextEntity implements ContextEntity{
         for (List<Object> property_array : state){
             if (property_array.get(0)==property){
                 property_exists = true;
-                if (!property_array.contains(value)){
+                if (!isAggregated){
+                    property_array.clear();
+                    property_array.add(property);
                     property_array.add(value);
+                } else {
+                    if (!property_array.contains(value)){
+                        property_array.add(value);
+                    }
                 }
             }
         }
