@@ -134,7 +134,7 @@ public class ZoneContextEntity implements ContextEntity{
     }
 
     @Bind(id = "context.entity.relation")
-    public void bindRelations (Relation relation) {
+    public synchronized void bindRelations (Relation relation) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         if (relation.getExtendedState().isAggregate()){
@@ -146,14 +146,14 @@ public class ZoneContextEntity implements ContextEntity{
     }
 
     @Modified(id = "context.entity.relation")
-    public void modifiedRelations(Relation relation) {
+    public synchronized void modifiedRelations(Relation relation) {
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
     }
 
     @Unbind(id = "context.entity.relation")
     //TODO : INSPECT EXCEPTION
-    public void unbindRelations (Relation relation) {
+    public synchronized void unbindRelations (Relation relation) {
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
         removeStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
 
