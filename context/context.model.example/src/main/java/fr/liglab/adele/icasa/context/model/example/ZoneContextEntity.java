@@ -46,7 +46,7 @@ public class ZoneContextEntity implements ContextEntity{
     }
 
     @Override
-    public void addStateValue(String property, Object value) {
+    public void addStateValue(String property, Object value, boolean isAggregated) {
         List<List<Object>>state = new ArrayList<>();
         state.addAll(this.state);
 
@@ -137,18 +137,14 @@ public class ZoneContextEntity implements ContextEntity{
     public synchronized void bindRelations (Relation relation) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
-        if (relation.getExtendedState().isAggregate()){
-            addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
-        }else {
-            //TODO : REMOVE OLD VALUE
-            addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
-        }
+        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation) {
         LOG.info("Modified !!");
-        LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+        LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Unbind(id = "context.entity.relation")

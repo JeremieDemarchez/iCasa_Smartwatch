@@ -11,7 +11,7 @@ public interface ContextEntity {
     public String getId();
 
 
-    public void addStateValue(String property, Object value);
+    public void addStateValue(String property, Object value, boolean isAggregated);
 
 
     public void removeStateValue(String property, Object value);
