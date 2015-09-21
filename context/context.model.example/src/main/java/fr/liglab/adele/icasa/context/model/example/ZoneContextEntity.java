@@ -29,6 +29,10 @@ public class ZoneContextEntity implements ContextEntity{
     @ServiceProperty(name = "context.entity.state", mandatory = true)
     List<List<Object>> state;
 
+    /**  @ServiceProperty(name = "context.entity.state.extension")
+    List<List<Object>> stateExtensions;
+     **/
+    private Map<String,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -133,11 +137,13 @@ public class ZoneContextEntity implements ContextEntity{
         return stateMap;
     }
 
+
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         if (relation.getExtendedState().isAggregate()){
+            m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
             addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
         }else {
             //TODO : REMOVE OLD VALUE
@@ -149,13 +155,16 @@ public class ZoneContextEntity implements ContextEntity{
     public synchronized void modifiedRelations(Relation relation) {
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+        m_stateExtension.put(relation.getId(), relation.getExtendedState().getValue());
+        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
     }
 
     @Unbind(id = "context.entity.relation")
     //TODO : INSPECT EXCEPTION
-    public synchronized void unbindRelations (Relation relation) {
+    public synchronized void unbindRelations(Relation relation) {
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
-        removeStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
 
+        removeStateValue(relation.getExtendedState().getName(), m_stateExtension.get(relation.getId()));
+        m_stateExtension.remove(relation.getId());
     }
 }
