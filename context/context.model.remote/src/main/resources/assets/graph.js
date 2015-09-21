@@ -10,10 +10,18 @@ function registerWebSocket() {
 
 }
 
-function addNodeStatePanel(elementId,data){
+function createNodeStatePanel(elementId){
     $("#nodeStatePanel"+elementId).remove();
     var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"nodeStatePanel"+elementId);
-    var panelHeading =  $("<div>Node State : "+elementId+"</div>").attr('class',"panel-heading");
+    var panelHeading =  $("<div>Node : "+elementId+"</div>").attr('class',"panel-heading");
+    panelHeading.appendTo(panel);
+    panel.appendTo(stateColumn);
+}
+
+function addNodeStatePanel(elementId,data){
+    var panelNode = $("#nodeStatePanel"+elementId);
+    var panelState = $("<div></div>").attr('class',"panel panel-info").attr('id',"statePanel"+elementId);
+    var panelHeading =  $("<div>State</div>").attr('class',"panel-heading");
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
@@ -26,9 +34,30 @@ function addNodeStatePanel(elementId,data){
     });
 
     /** Append all to panel**/
-    panelHeading.appendTo(panel);
-    panelBody.appendTo(panel);
-    panel.appendTo(stateColumn);
+    panelHeading.appendTo(panelState);
+    panelBody.appendTo(panelState);
+    panelState.appendTo(panelNode);
+}
+
+function addNodeStateExtensionPanel(elementId,data){
+    var panelNode = $("#nodeStatePanel"+elementId);
+    var panelExtensionState = $("<div></div>").attr('class',"panel panel-warning").attr('id',"stateExtensionPanel"+elementId);
+    var panelHeading =  $("<div>Extension</div>").attr('class',"panel-heading");
+    var panelBody =  $("<div></div>").attr('class',"panel-body");
+    var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
+    $.each(data,function(key,val){
+        console.log("KEY : " + key + " , VAL : " + val);
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
+        stateGroupListValue.appendTo(stateGroupListItem);
+        stateGroupListItem.appendTo(stateGroupList);
+        stateGroupList.appendTo(panelBody);
+    });
+
+    /** Append all to panel**/
+    panelHeading.appendTo(panelExtensionState);
+    panelBody.appendTo(panelExtensionState);
+    panelExtensionState.appendTo(panelNode);
 }
 
 function removeNodeStatePanel(elementId){
@@ -98,9 +127,15 @@ function draw(){
         var nodeToUpdate =  params["nodes"];
         console.log('selectNode Event:', nodeToUpdate);
         nodeToUpdate.forEach(function(y) {
-            var url = "/context/entities/" + y;
-            var t = $.get(url, function (data) {
+            createNodeStatePanel(y);
+            var urlState = "/context/entities/" + y+"/state";
+
+            var t = $.get(urlState, function (data) {
                 addNodeStatePanel(y,data);
+            });
+            var urlExtensions = "/context/entities/" + y+"/extensions";
+            var t = $.get(urlExtensions, function (data) {
+                addNodeStateExtensionPanel(y,data);
             });
         });
     });

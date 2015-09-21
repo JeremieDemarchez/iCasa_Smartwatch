@@ -50,6 +50,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         List<List<Object>> state = new ArrayList<>();
         List<Object> property_array;
         property_array = new ArrayList<>();
+        List<List<Object>> stateExtensions = new ArrayList<>();
         property_array.add("zone.name");
         property_array.add(zone.getId());
         state.add(property_array);
@@ -60,6 +61,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
             state.add(property_array);
         }
         properties.put("context.entity.state", state);
+        properties.put("context.entity.state.extension", stateExtensions);
 
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);

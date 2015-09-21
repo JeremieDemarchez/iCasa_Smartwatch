@@ -6,10 +6,7 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component(immediate = true)
 @Provides
@@ -29,10 +26,10 @@ public class DeviceContextEntity implements ContextEntity{
     @ServiceProperty(name = "context.entity.state", mandatory = true)
     List<List<Object>> state;
 
-  /**  @ServiceProperty(name = "context.entity.state.extension")
+    @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
     List<List<Object>> stateExtensions;
-**/
-    private Map<String,Object> m_stateExtension = new HashMap<>();
+
+    private final Map<String,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -49,10 +46,9 @@ public class DeviceContextEntity implements ContextEntity{
         return name;
     }
 
-    @Override
-    public void addStateValue(String property, Object value, boolean isAggregated) {
+    protected void addStateExtensionValue(String property, Object value, boolean isAggregated) {
         List<List<Object>>state = new ArrayList<>();
-        state.addAll(this.state);
+        state.addAll(this.stateExtensions);
 
         boolean property_exists = false;
         for (List<Object> property_array : state){
@@ -76,13 +72,12 @@ public class DeviceContextEntity implements ContextEntity{
             state.add(property_array);
         }
 
-        this.state = state;
+        this.stateExtensions = state;
     }
 
-    @Override
-    public void removeStateValue(String property, Object value) {
+    protected void removeStateExtensionValue(String property, Object value) {
         List<List<Object>>state = new ArrayList<>();
-        state.addAll(this.state);
+        state.addAll(this.stateExtensions);
 
         int index = -1;
         for (List<Object> property_array : state){
@@ -102,22 +97,23 @@ public class DeviceContextEntity implements ContextEntity{
             }
         }
 
-        this.state = state;
+        this.stateExtensions = state;
     }
 
 
     public List<Object> getStateValue(String property) {
-        List<Object> value = null;
+        List<Object> value = new ArrayList<>();
 
         for (List<Object> property_array : state) {
             if (property_array.get(0) == property) {
-                value = property_array;
+                Collections.copy(value,property_array);
             }
         }
         return value;
     }
 
     @Override
+    //TODO : return a copy of the list
     public List<List<Object>> getState() {
         return state;
     }
@@ -143,13 +139,52 @@ public class DeviceContextEntity implements ContextEntity{
         return stateMap;
     }
 
+    @Override
+    public List<Object> getStateExtensionValue(String property) {
+        List<Object> value = new ArrayList<>();
+
+        for (List<Object> property_array : stateExtensions) {
+            if (property_array.get(0) == property) {
+                Collections.copy(value,property_array);
+            }
+        }
+        return value;
+    }
+
+    @Override
+    //TODO : Return a copy of the stateextension list
+    public List<List<Object>> getStateExtension() {
+        return stateExtensions;
+    }
+
+    @Override
+    public Map<String, Object> getStateExtensionAsMap() {
+        Map<String,Object> stateMap = new HashMap<String,Object>();
+        for (List<Object> property_array : stateExtensions){
+            if (property_array.size() == 2){
+                stateMap.put((String)property_array.get(0),property_array.get(1));
+            }else {
+                List<Object> paramsValue = new ArrayList<>();
+                for (Object obj : property_array){
+                    if (obj.equals(property_array.get(0))){
+                        //do nothing
+                    }else {
+                        paramsValue.add(obj);
+                    }
+                }
+                stateMap.put((String)property_array.get(0),paramsValue);
+            }
+        }
+        return stateMap;
+    }
+
 
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
-        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(),relation.getExtendedState().isAggregate());
+        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
 
     }
 
@@ -158,7 +193,7 @@ public class DeviceContextEntity implements ContextEntity{
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
-        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
+        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Unbind(id = "context.entity.relation")
@@ -166,7 +201,7 @@ public class DeviceContextEntity implements ContextEntity{
     public synchronized void unbindRelations(Relation relation) {
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
 
-        removeStateValue(relation.getExtendedState().getName(), m_stateExtension.get(relation.getId()));
+        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(relation.getId()));
         m_stateExtension.remove(relation.getId());
     }
 }
