@@ -126,6 +126,9 @@ public class ContextController extends DefaultController {
                 result.put("relation.name",relation.getName());
                 result.put("relation.source",relation.getSource());
                 result.put("relation.end",relation.getEnd());
+                result.put("relation.state.extension.name",relation.getExtendedState().getName());
+                result.put("relation.state.extension.value",relation.getExtendedState().getValue().toString());
+                result.put("relation.state.extension.isAggregate",relation.getExtendedState().isAggregate());
                 return ok(result);
             }
         }

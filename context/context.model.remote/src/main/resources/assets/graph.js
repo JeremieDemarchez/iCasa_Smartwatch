@@ -10,10 +10,10 @@ function registerWebSocket() {
 
 }
 
-function updateNodeStatePanel(data){
-    $("#statepanel").remove();
-    var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"statepanel");
-    var panelHeading =  $("<div>Node State</div>").attr('class',"panel-heading");
+function addNodeStatePanel(elementId,data){
+    $("#nodeStatePanel"+elementId).remove();
+    var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"nodeStatePanel"+elementId);
+    var panelHeading =  $("<div>Node State : "+elementId+"</div>").attr('class',"panel-heading");
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
@@ -29,6 +29,35 @@ function updateNodeStatePanel(data){
     panelHeading.appendTo(panel);
     panelBody.appendTo(panel);
     panel.appendTo(stateColumn);
+}
+
+function removeNodeStatePanel(elementId){
+    $("#nodeStatePanel"+elementId).remove();
+}
+
+function addRelationStatePanel(elementId,data){
+    $("#relationStatePanel"+elementId).remove();
+    var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"relationStatePanel"+elementId);
+    var panelHeading =  $("<div>Relation State</div>").attr('class',"panel-heading");
+    var panelBody =  $("<div></div>").attr('class',"panel-body");
+    var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
+    $.each(data,function(key,val){
+        console.log("KEY : " + key + " , VAL : " + val);
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
+        stateGroupListValue.appendTo(stateGroupListItem);
+        stateGroupListItem.appendTo(stateGroupList);
+        stateGroupList.appendTo(panelBody);
+    });
+
+    /** Append all to panel**/
+    panelHeading.appendTo(panel);
+    panelBody.appendTo(panel);
+    panel.appendTo(stateColumn);
+}
+
+function removeRelationStatePanel(elementId){
+    $("#relationStatePanel"+elementId).remove();
 }
 
 function draw(){
@@ -51,16 +80,17 @@ function draw(){
             edges.update({id: y,label: edges.get(y).name});
             var url = "/context/relations/"+y;
             var t = $.get(url,function(data) {
-                console.log('Edge Event Get Response:', data);
+                addRelationStatePanel(y,data);
             });
         });
     });
 
     network.on("deselectEdge", function (params) {
-        var edgeToUpdate =  params["previousSelection"]["edges"];
-        console.log('deselectEdge Event:', edgeToUpdate);
-        edgeToUpdate.forEach(function(y){
+        var edgeToRemove =  params["previousSelection"]["edges"];
+        console.log('deselectEdge Event:', edgeToRemove);
+        edgeToRemove.forEach(function(y){
             edges.update({id: y,label: ""});
+            removeRelationStatePanel(y);
         });
     });
 
@@ -70,14 +100,16 @@ function draw(){
         nodeToUpdate.forEach(function(y) {
             var url = "/context/entities/" + y;
             var t = $.get(url, function (data) {
-                updateNodeStatePanel(data);
+                addNodeStatePanel(y,data);
             });
         });
     });
 
     network.on("deselectNode", function (params) {
-        var nodesToUpdate =  params["previousSelection"]["nodes"];
-        console.log('deselectNode Event:', nodesToUpdate);
+        var nodesToRemove =  params["previousSelection"]["nodes"];
+        nodesToRemove.forEach(function(y) {
+            removeNodeStatePanel(y);
+        });
     });
 }
 
