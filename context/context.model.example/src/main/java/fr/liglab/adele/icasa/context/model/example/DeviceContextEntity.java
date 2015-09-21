@@ -50,7 +50,7 @@ public class DeviceContextEntity implements ContextEntity{
     }
 
     @Override
-    public void addStateValue(String property, Object value) {
+    public void addStateValue(String property, Object value, boolean isAggregated) {
         List<List<Object>>state = new ArrayList<>();
         state.addAll(this.state);
 
@@ -58,8 +58,14 @@ public class DeviceContextEntity implements ContextEntity{
         for (List<Object> property_array : state){
             if (property_array.get(0)==property){
                 property_exists = true;
-                if (!property_array.contains(value)){
+                if (!isAggregated){
+                    property_array.clear();
+                    property_array.add(property);
                     property_array.add(value);
+                } else {
+                    if (!property_array.contains(value)){
+                        property_array.add(value);
+                    }
                 }
             }
         }
@@ -142,13 +148,9 @@ public class DeviceContextEntity implements ContextEntity{
     public synchronized void bindRelations (Relation relation) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
-        if (relation.getExtendedState().isAggregate()){
-            m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
-            addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
-        }else {
-            //TODO : REMOVE OLD VALUE
-            addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
-        }
+        m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
+        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(),relation.getExtendedState().isAggregate());
+
     }
 
     @Modified(id = "context.entity.relation")
@@ -156,7 +158,7 @@ public class DeviceContextEntity implements ContextEntity{
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
-        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
+        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Unbind(id = "context.entity.relation")
