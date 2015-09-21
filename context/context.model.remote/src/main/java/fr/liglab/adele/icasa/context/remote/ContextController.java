@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package fr.liglab.adele.cream.remote;
+package fr.liglab.adele.icasa.context.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
