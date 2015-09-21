@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Component(immediate = true)
 @Provides
 public class DeviceContextEntity implements ContextEntity{
 
@@ -157,7 +157,6 @@ public class DeviceContextEntity implements ContextEntity{
     //TODO : INSPECT EXCEPTION
     public synchronized void unbindRelations (Relation relation) {
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
-        removeStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
-
+     //   removeStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue());
     }
 }

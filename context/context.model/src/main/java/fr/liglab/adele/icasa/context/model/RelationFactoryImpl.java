@@ -11,7 +11,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 
-@Component
+@Component(immediate = true)
 @Instantiate
 @Provides(specifications = RelationFactory.class)
 public class RelationFactoryImpl implements RelationFactory{

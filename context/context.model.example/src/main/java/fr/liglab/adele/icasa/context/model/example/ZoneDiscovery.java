@@ -13,7 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Component
+@Component(immediate = true)
 @Instantiate
 public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 

@@ -11,7 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Component(immediate = true)
 @Provides
 public class ZoneContextEntity implements ContextEntity{
 
