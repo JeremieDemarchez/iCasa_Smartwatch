@@ -140,11 +140,11 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         if (getZones(oldPosition).isEmpty()){
             for (Zone zone : getZones(newPosition)){
                 LOG.info(" Discovery create relation");
-                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"ContainedDevice",true,
+                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"Relation.ContainedDevice",true,
                         state ->{
                             return state.get("serial.number");
                         });
-                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Location",false,
+                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Relation.Location",false,
                         state->{
                             return state.get("zone.name");
                         });
