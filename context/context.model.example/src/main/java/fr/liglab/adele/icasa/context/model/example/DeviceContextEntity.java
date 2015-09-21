@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,7 +30,7 @@ public class DeviceContextEntity implements ContextEntity{
     @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
     List<List<Object>> stateExtensions;
 
-    private final Map<String,Object> m_stateExtension = new HashMap<>();
+    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -46,12 +47,12 @@ public class DeviceContextEntity implements ContextEntity{
         return name;
     }
 
-    protected void addStateExtensionValue(String property, Object value, boolean isAggregated) {
-        List<List<Object>>state = new ArrayList<>();
-        state.addAll(this.stateExtensions);
+    protected synchronized void addStateExtensionValue(String property, Object value, boolean isAggregated) {
+        /**     List<List<Object>> state = new ArrayList<>();
+         state.addAll(this.stateExtensions);**/
 
         boolean property_exists = false;
-        for (List<Object> property_array : state){
+        for (List<Object> property_array : stateExtensions){
             if (property_array.get(0)==property){
                 property_exists = true;
                 if (!isAggregated){
@@ -69,20 +70,20 @@ public class DeviceContextEntity implements ContextEntity{
             List<Object> property_array = new ArrayList<>();
             property_array.add(property);
             property_array.add(value);
-            state.add(property_array);
+            stateExtensions.add(property_array);
         }
 
-        this.stateExtensions = state;
+//        this.stateExtensions = state;
     }
 
-    protected void removeStateExtensionValue(String property, Object value) {
-        List<List<Object>>state = new ArrayList<>();
-        state.addAll(this.stateExtensions);
-
+    protected synchronized void removeStateExtensionValue(String property, Object value) {
+        /**   List<List<Object>> state = new ArrayList<>();
+         state.addAll(this.stateExtensions);
+         **/
         int index = -1;
-        for (List<Object> property_array : state){
+        for (List<Object> property_array : stateExtensions){
             if (property_array.get(0)==property){
-                index = state.indexOf(property_array);
+                index = stateExtensions.indexOf(property_array);
                 if (property_array.contains(value)){
 
                     property_array.remove(value);
@@ -92,12 +93,12 @@ public class DeviceContextEntity implements ContextEntity{
 
         /*If the property hasn't value any more, it is cleared*/
         if (index>=0){
-            if(state.get(index).size()==1){
-                state.remove(index);
+            if(stateExtensions.get(index).size()==1){
+                stateExtensions.remove(index);
             }
         }
 
-        this.stateExtensions = state;
+        //    this.stateExtensions = state;
     }
 
 
@@ -180,28 +181,28 @@ public class DeviceContextEntity implements ContextEntity{
 
 
     @Bind(id = "context.entity.relation")
-    public synchronized void bindRelations (Relation relation) {
+    public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
-        m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
+        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
 
     }
 
     @Modified(id = "context.entity.relation")
-    public synchronized void modifiedRelations(Relation relation) {
+    public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
-        m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
+        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Unbind(id = "context.entity.relation")
     //TODO : INSPECT EXCEPTION
-    public synchronized void unbindRelations(Relation relation) {
-        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
+    public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
+        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
 
-        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(relation.getId()));
+        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
         m_stateExtension.remove(relation.getId());
     }
 }
