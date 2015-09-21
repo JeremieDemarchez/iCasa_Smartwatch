@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Component
 @Provides
@@ -110,6 +112,26 @@ public class ZoneContextEntity implements ContextEntity{
         return state;
     }
 
+    @Override
+    public Map<String,Object> getStateAsMap() {
+        Map<String,Object> stateMap = new HashMap<String,Object>();
+        for (List<Object> property_array : state){
+            if (property_array.size() == 2){
+                stateMap.put((String)property_array.get(0),property_array.get(1));
+            }else {
+                List<Object> paramsValue = new ArrayList<>();
+                for (Object obj : property_array){
+                    if (obj.equals(property_array.get(0))){
+                        //do nothing
+                    }else {
+                        paramsValue.add(obj);
+                    }
+                }
+                stateMap.put((String)property_array.get(0),paramsValue);
+            }
+        }
+        return stateMap;
+    }
 
     @Bind(id = "context.entity.relation")
     public void bindRelations (Relation relation) {
@@ -125,6 +147,7 @@ public class ZoneContextEntity implements ContextEntity{
 
     @Modified(id = "context.entity.relation")
     public void modifiedRelations(Relation relation) {
+        LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
     }
 

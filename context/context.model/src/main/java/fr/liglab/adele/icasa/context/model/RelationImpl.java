@@ -99,7 +99,7 @@ public class RelationImpl implements Relation {
 
         @Override
         public Object getValue() {
-            return  m_callBack.callBack(source.getState());
+            return  m_callBack.callBack(source.getStateAsMap());
         }
     }
 

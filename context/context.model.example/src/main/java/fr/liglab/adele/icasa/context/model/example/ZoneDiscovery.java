@@ -142,25 +142,11 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
                 LOG.info(" Discovery create relation");
                 m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"ContainedDevice",true,
                         state ->{
-                            List<Object> value = null;
-
-                            for (List<Object> property_array : (List<List<Object>>)state) {
-                                if (property_array.get(0) == "serial.number") {
-                                    value = property_array;
-                                }
-                            }
-                            return value;
-                });
+                            return state.get("serial.number");
+                        });
                 m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Location",false,
                         state->{
-                            List<Object> value = null;
-
-                                for (List<Object> property_array : (List<List<Object>>)state) {
-                                    if (property_array.get(0) == "zone.name") {
-                                        value = property_array;
-                                    }
-                                }
-                                return value;
+                            return state.get("zone.name");
                         });
             }
         }else {
@@ -226,7 +212,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
         private final List<List<Object>> state;
         ComponentInstance instance;
-        
+
 
         public IpojoServiceRegistration(ComponentInstance instance, List<List<Object>> state) {
 

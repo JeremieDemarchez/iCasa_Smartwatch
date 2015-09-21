@@ -1,6 +1,7 @@
 package fr.liglab.adele.icasa.context.model;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Created by aygalinc on 15/09/15.
@@ -18,5 +19,7 @@ public interface ContextEntity {
     public List<Object> getStateValue (String property);
 
     public List<List<Object>> getState();
+
+    public Map<String,Object> getStateAsMap();
 
 }

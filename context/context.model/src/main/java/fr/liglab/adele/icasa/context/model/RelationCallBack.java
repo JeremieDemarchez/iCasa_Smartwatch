@@ -6,5 +6,5 @@ import java.util.Map;
 @FunctionalInterface
 public interface RelationCallBack<T> {
 
-    T callBack(List<List<Object>> sourceState);
+    T callBack(Map<String,Object> sourceState);
 }
