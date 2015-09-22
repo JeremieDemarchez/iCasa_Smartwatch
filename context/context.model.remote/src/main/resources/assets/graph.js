@@ -14,14 +14,20 @@ function createNodeStatePanel(elementId){
     $("#nodeStatePanel"+elementId).remove();
     var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"nodeStatePanel"+elementId);
     var panelHeading =  $("<div>Node : "+elementId+"</div>").attr('class',"panel-heading");
+    var panelState = $("<div></div>").attr('class',"panel panel-info").attr('id',"statePanel"+elementId);
+    var panelStateHeading =  $("<div>State</div>").attr('class',"panel-heading");
+    var panelExtensionState = $("<div></div>").attr('class',"panel panel-warning").attr('id',"stateExtensionPanel"+elementId);
+    var panelExtensionStateHeading =  $("<div>Extension</div>").attr('class',"panel-heading");
+    panelExtensionStateHeading.appendTo(panelExtensionState);
+    panelStateHeading.appendTo(panelState);
     panelHeading.appendTo(panel);
+    panelState.appendTo(panel);
+    panelExtensionState.appendTo(panel);
     panel.appendTo(stateColumn);
 }
 
 function addNodeStatePanel(elementId,data){
-    var panelNode = $("#nodeStatePanel"+elementId);
-    var panelState = $("<div></div>").attr('class',"panel panel-info").attr('id',"statePanel"+elementId);
-    var panelHeading =  $("<div>State</div>").attr('class',"panel-heading");
+    var panelState = $("#statePanel"+elementId);
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
@@ -34,15 +40,12 @@ function addNodeStatePanel(elementId,data){
     });
 
     /** Append all to panel**/
-    panelHeading.appendTo(panelState);
     panelBody.appendTo(panelState);
-    panelState.appendTo(panelNode);
+
 }
 
 function addNodeStateExtensionPanel(elementId,data){
-    var panelNode = $("#nodeStatePanel"+elementId);
-    var panelExtensionState = $("<div></div>").attr('class',"panel panel-warning").attr('id',"stateExtensionPanel"+elementId);
-    var panelHeading =  $("<div>Extension</div>").attr('class',"panel-heading");
+    var panelExtensionState = $("#stateExtensionPanel"+elementId);
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
@@ -55,9 +58,7 @@ function addNodeStateExtensionPanel(elementId,data){
     });
 
     /** Append all to panel**/
-    panelHeading.appendTo(panelExtensionState);
     panelBody.appendTo(panelExtensionState);
-    panelExtensionState.appendTo(panelNode);
 }
 
 function removeNodeStatePanel(elementId){
@@ -92,7 +93,7 @@ function removeRelationStatePanel(elementId){
 function draw(){
     // create a network
     var container = document.getElementById('mynetwork');
-    stateColumn = $("#stateColumn");
+
     // provide the data in the vis format
     var data = {
         nodes: nodes,
@@ -154,6 +155,7 @@ function init() {
 // create an array with nodes
     nodes = new vis.DataSet();
     edges = new vis.DataSet();
+    stateColumn = $("#stateColumn");
     var t = $.get("/context/entities",function(data) {
         var numberOfEntities = data.size;
         console.log(data.size);
@@ -189,5 +191,5 @@ function init() {
         }
         draw();
     });
-
 }
+
