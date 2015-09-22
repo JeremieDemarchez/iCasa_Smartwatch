@@ -211,6 +211,6 @@ public class ContextEntityImpl implements ContextEntity{
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
 
         removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
-        m_stateExtension.remove(relation.getId());
+        m_stateExtension.remove(serviceReference);
     }
 }
