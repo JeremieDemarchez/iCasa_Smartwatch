@@ -18,7 +18,13 @@ public class TestMeanAggregation {
     @Requires (id = "test.aggregation.factory", optional = false)
     AggregationFactory aggregationFactory;
 
-    String filter_room = "kitchen";
+    String filter_kitchen = "kitchen";
+
+    String filter_living_room = "livingroom";
+
+    String filter_bathroom = "bathroom";
+
+    String filter_bedroom = "bedroom";
 
     String filter_dl = "dimmerLight*";
 
@@ -36,10 +42,34 @@ public class TestMeanAggregation {
 
     @Validate
     public void start(){
-        aggregationFactory.createAggregation("MeanBinaryLightKitchen",
-                "(&(context.entity.state.extension=" + filter_room + ")" +
+        aggregationFactory.createAggregation("MeanLightKitchen",
+                "(&(context.entity.state.extension=" + filter_kitchen + ")" +
                         "(|(context.entity.state=" + filter_bl + ")" +
                           "(context.entity.state=" + filter_dl + ")))",
+                sources -> {
+                    return this.meanAggregationFunction(sources);
+                });
+
+        aggregationFactory.createAggregation("MeanLightLivingroom",
+                "(&(context.entity.state.extension=" + filter_living_room + ")" +
+                        "(|(context.entity.state=" + filter_bl + ")" +
+                        "(context.entity.state=" + filter_dl + ")))",
+                sources -> {
+                    return this.meanAggregationFunction(sources);
+                });
+
+        aggregationFactory.createAggregation("MeanLightBathroom",
+                "(&(context.entity.state.extension=" + filter_bathroom + ")" +
+                        "(|(context.entity.state=" + filter_bl + ")" +
+                        "(context.entity.state=" + filter_dl + ")))",
+                sources -> {
+                    return this.meanAggregationFunction(sources);
+                });
+
+        aggregationFactory.createAggregation("MeanLightBedroom",
+                "(&(context.entity.state.extension=" + filter_bedroom + ")" +
+                        "(|(context.entity.state=" + filter_bl + ")" +
+                        "(context.entity.state=" + filter_dl + ")))",
                 sources -> {
                     return this.meanAggregationFunction(sources);
                 });
