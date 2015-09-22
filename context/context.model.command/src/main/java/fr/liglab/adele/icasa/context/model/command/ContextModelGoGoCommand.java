@@ -44,7 +44,8 @@ public class ContextModelGoGoCommand  {
         for (Relation relation: relations) {
             if (relation.getName().equals(name)) {
                 out = out +"Relation Name : " + relation.getName()+ "\n";
-                out = out + relation.getSource() + " --------> " + relation.getEnd() + "\n";
+                out = out + relation.getSource() + " --------> " + relation.getEnd() + "\n"
+                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
             }
         }
         LOG.info(out);
@@ -56,7 +57,8 @@ public class ContextModelGoGoCommand  {
         for (Relation relation: relations) {
             if (relation.getSource().equals(source)) {
                 out = out +"Relation Name : " + relation.getName() + "\n";
-                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n";
+                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
+                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
             }
         }
         LOG.info(out);
@@ -68,7 +70,8 @@ public class ContextModelGoGoCommand  {
         for (Relation relation: relations) {
             if (relation.getEnd().equals(end)) {
                 out = out + "Relation Name : " + relation.getName()+"\n";
-                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n";
+                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
+                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
             }
         }
         LOG.info(out);
