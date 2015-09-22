@@ -116,7 +116,13 @@ public class ZoneContextEntity implements ContextEntity{
     @Override
     //TODO : return a copy of the list
     public List<List<Object>> getState() {
-        return state;
+        List<List<Object>> stateCopy = new ArrayList<>();
+        for (List<Object> property_array : state) {
+            List copyProperty = new ArrayList<>();
+            Collections.copy(copyProperty,property_array);
+            stateCopy.add(copyProperty);
+        }
+        return stateCopy;
     }
 
     @Override
@@ -155,7 +161,13 @@ public class ZoneContextEntity implements ContextEntity{
     @Override
     //TODO : Return a copy of the stateextension list
     public List<List<Object>> getStateExtension() {
-        return stateExtensions;
+        List<List<Object>> stateCopy = new ArrayList<>();
+        for (List<Object> property_array : stateExtensions) {
+            List copyProperty = new ArrayList<>();
+            Collections.copy(copyProperty,property_array);
+            stateCopy.add(copyProperty);
+        }
+        return stateCopy;
     }
 
     @Override
