@@ -56,7 +56,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         for (String property : zone.getVariableNames()){
             property_array = new ArrayList<>();
             property_array.add(property);
-            property_array.add(zone.getVariableValue(property).toString());
+            property_array.add(zone.getVariableValue(property));
             state.add(property_array);
         }
         properties.put("context.entity.state", state);

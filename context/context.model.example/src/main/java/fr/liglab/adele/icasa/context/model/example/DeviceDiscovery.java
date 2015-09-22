@@ -50,7 +50,7 @@ public class DeviceDiscovery {
         for (String property : device.getProperties()){
             property_array = new ArrayList<>();
             property_array.add(property);
-            property_array.add(device.getPropertyValue(property).toString());
+            property_array.add(device.getPropertyValue(property));
             state.add(property_array);
         }
         properties.put("context.entity.state", state);

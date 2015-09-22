@@ -20,6 +20,7 @@
 package fr.liglab.adele.cream.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.liglab.adele.icasa.context.model.Aggregation;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -52,6 +53,9 @@ public class ContextController extends DefaultController {
 
     @Requires(specification = ContextEntity.class,optional = true)
     List<ContextEntity> entities;
+
+    @Requires(specification = Aggregation.class,optional = true)
+    List<Aggregation> aggregations;
 
     /**
      * The action method returning the welcome page. It handles
@@ -125,4 +129,19 @@ public class ContextController extends DefaultController {
         return notFound();
     }
 
+
+    @Route(method = HttpMethod.GET, uri = "/context/aggregations")
+    public Result getAggregation(){
+        ObjectNode result = json.newObject();
+        result.put("size", aggregations.size());
+        int i = 0;
+        for (Aggregation aggregation : aggregations){
+            result.put("aggregation"+i+"name",aggregation.getName());
+            result.put("aggregation"+i+"filter",aggregation.getFilter());
+            result.put("aggregation"+i+"sources",aggregation.getSources().toString());
+            result.put("aggregation"+i+"result",aggregation.getResult().toString());
+            i++;
+        }
+        return ok(result);
+    }
 }
