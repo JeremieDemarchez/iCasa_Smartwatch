@@ -11,9 +11,9 @@ import java.util.*;
 
 @Component(immediate = true)
 @Provides
-public class DeviceContextEntity implements ContextEntity{
+public class ContextEntityImpl implements ContextEntity{
 
-    private static final Logger LOG = LoggerFactory.getLogger(DeviceContextEntity.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContextEntityImpl.class);
 
 
     @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,

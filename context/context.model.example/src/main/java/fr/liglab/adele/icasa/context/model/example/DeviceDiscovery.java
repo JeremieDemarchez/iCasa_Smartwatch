@@ -20,7 +20,7 @@ public class DeviceDiscovery {
 
     private final Map<String,ServiceRegistration> deviceEntities = new HashMap<>();
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.DeviceContextEntity)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
     Factory deviceEntityFactory;
 
     @Validate
@@ -56,6 +56,7 @@ public class DeviceDiscovery {
         }
         properties.put("context.entity.state", state);
         properties.put("context.entity.state.extension", stateExtensions);
+        properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+device.getSerialNumber());
 
         try {
             instance = deviceEntityFactory.createComponentInstance(properties);

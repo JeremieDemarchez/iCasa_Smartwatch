@@ -27,7 +27,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     @Requires
     private RelationFactory m_relationFactory;
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ZoneContextEntity)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
     private Factory zoneEntityFactory;
 
     @Validate
@@ -62,6 +62,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         }
         properties.put("context.entity.state", state);
         properties.put("context.entity.state.extension", stateExtensions);
+        properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+zone.getId());
 
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
