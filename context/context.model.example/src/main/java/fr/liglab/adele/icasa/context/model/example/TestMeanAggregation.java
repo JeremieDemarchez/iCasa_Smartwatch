@@ -4,6 +4,8 @@ import fr.liglab.adele.icasa.context.model.AggregationFactory;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 
 import org.apache.felix.ipojo.annotations.*;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
 
 import java.util.List;
 
@@ -18,11 +20,15 @@ public class TestMeanAggregation {
 
     String filter_room = "kitchen";
 
-    String filter_dl = "dimmerLight.powerLevel";
+    String filter_dl = "dimmerLight*";
 
-    String filter_bl = "binaryLight.powerStatus";
+    String filter_bl = "binaryLight*";
 
-    String bl_max_power = "binaryLight.maxPowerLevel";
+    String dl_power_level = DimmerLight.DIMMER_LIGHT_POWER_LEVEL;
+
+    String bl_power_status = BinaryLight.BINARY_LIGHT_POWER_STATUS;
+
+    String bl_max_power = BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL;
 
     public TestMeanAggregation(){
 
@@ -30,20 +36,14 @@ public class TestMeanAggregation {
 
     @Validate
     public void start(){
-//        aggregationFactory.createAggregation("MeanBinaryLightKitchen",
-//                "(&(context.entity.state=" + filter_room + ")" +
-//                        "(|(context.entity.state=" + filter_bl + ")" +
-//                        "(context.entity.state=" + filter_dl + ")))",
-//                sources -> {
-//                    return this.meanAggregationFunction(sources);
-//                });
         aggregationFactory.createAggregation("MeanBinaryLightKitchen",
-                filter_room + ")" +
+                "(&(context.entity.state.extension=" + filter_room + ")" +
                         "(|(context.entity.state=" + filter_bl + ")" +
-                        "(context.entity.state=" + filter_dl + ")",
+                          "(context.entity.state=" + filter_dl + ")))",
                 sources -> {
                     return this.meanAggregationFunction(sources);
                 });
+
     }
 
     @Invalidate
@@ -58,21 +58,23 @@ public class TestMeanAggregation {
         for (Object s : sources){
             if (s instanceof ContextEntity) {
                 ContextEntity contextEntity = (ContextEntity) s;
-                if (!contextEntity.getStateValue(filter_bl).isEmpty()) {
+                if (!contextEntity.getStateValue(bl_power_status).isEmpty()) {
                     n += 1;
-                    if (contextEntity.getStateValue(filter_bl).get(1).equals(true)) {
+                    if (contextEntity.getStateValue(bl_power_status).get(1).equals(true)) {
                         result += Math.pow((double) contextEntity.getStateValue(bl_max_power).get(1), 2);
                     }
 
-                } else if (!contextEntity.getStateValue(filter_dl).isEmpty()) {
+                } else if (!contextEntity.getStateValue(dl_power_level).isEmpty()) {
                     n += 1;
-                    result += Math.pow((double) contextEntity.getStateValue(filter_dl).get(1), 2);
+                    result += Math.pow((double) contextEntity.getStateValue(dl_power_level).get(1), 2);
                 }
             }
         }
 
         if (n>0) {
             result = Math.sqrt(result / n);
+        } else {
+            result = -1;
         }
         return result;
     }
