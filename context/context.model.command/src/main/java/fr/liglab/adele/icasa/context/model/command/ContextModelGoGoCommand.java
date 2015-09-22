@@ -29,45 +29,52 @@ public class ContextModelGoGoCommand  {
 
     @Command
     public void relations(){
+        String out = new String();
         for (Relation relation: relations){
-            LOG.info("Relation Name : " + relation.getName());
-            LOG.info(relation.getSource() + " --------> " + relation.getEnd()+"\n"
-                    +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue());
-            System.out.println("\n");
+            out = out +"Relation Name : " + relation.getName()+ "\n";
+            out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
+                    +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
         }
+        LOG.info(out);
     }
 
     @Command
     public void relationsByName(String name){
+        String out = new String();
         for (Relation relation: relations) {
             if (relation.getName().equals(name)) {
-                LOG.info("Relation Name : " + relation.getName());
-                LOG.info(relation.getSource() + " --------> " + relation.getEnd());
-                System.out.println("\n");
+                out = out +"Relation Name : " + relation.getName()+ "\n";
+                out = out + relation.getSource() + " --------> " + relation.getEnd() + "\n"
+                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
             }
         }
+        LOG.info(out);
     }
 
     @Command
     public void relationsBySource(String source){
+        String out = new String();
         for (Relation relation: relations) {
             if (relation.getSource().equals(source)) {
-                LOG.info("Relation Name : " + relation.getName());
-                LOG.info(relation.getSource() + " --------> " + relation.getEnd());
-                System.out.println("\n");
+                out = out +"Relation Name : " + relation.getName() + "\n";
+                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
+                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
             }
         }
+        LOG.info(out);
     }
 
     @Command
     public void relationsByEnd(String end){
+        String out = new String();
         for (Relation relation: relations) {
             if (relation.getEnd().equals(end)) {
-                LOG.info("Relation Name : " + relation.getName());
-                LOG.info(relation.getSource() + " --------> " + relation.getEnd());
-                System.out.println("\n");
+                out = out + "Relation Name : " + relation.getName()+"\n";
+                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
+                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
             }
         }
+        LOG.info(out);
     }
 
     @Command
