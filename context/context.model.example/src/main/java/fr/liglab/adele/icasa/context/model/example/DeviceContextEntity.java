@@ -20,9 +20,8 @@ public class DeviceContextEntity implements ContextEntity{
             filter = "(relation.end.id=${context.entity.id})")
     List<Relation> relations;
 
-    @Property(name = "context.entity.id",mandatory = true)
+    @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
-
 
     @ServiceProperty(name = "context.entity.state", mandatory = true)
     List<List<Object>> state;
@@ -48,8 +47,7 @@ public class DeviceContextEntity implements ContextEntity{
     }
 
     protected synchronized void addStateExtensionValue(String property, Object value, boolean isAggregated) {
-        List<List<Object>> stateExtensions = new ArrayList<>();
-        stateExtensions.addAll(this.stateExtensions);
+        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
 
         boolean property_exists = false;
         for (List<Object> property_array : stateExtensions){
@@ -73,12 +71,11 @@ public class DeviceContextEntity implements ContextEntity{
             stateExtensions.add(property_array);
         }
 
-        this.stateExtensions = stateExtensions;
+        this.stateExtensions = new ArrayList<>(stateExtensions);
     }
 
     protected synchronized void removeStateExtensionValue(String property, Object value) {
-        List<List<Object>> stateExtensions = new ArrayList<>();
-        stateExtensions.addAll(this.stateExtensions);
+        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
 
         int index = -1;
         for (List<Object> property_array : stateExtensions){
@@ -98,7 +95,7 @@ public class DeviceContextEntity implements ContextEntity{
             }
         }
 
-        this.stateExtensions = stateExtensions;
+        this.stateExtensions = new ArrayList<>(stateExtensions);
     }
 
 
@@ -118,8 +115,7 @@ public class DeviceContextEntity implements ContextEntity{
     public List<List<Object>> getState() {
         List<List<Object>> stateCopy = new ArrayList<>();
         for (List<Object> property_array : state) {
-            List copyProperty = new ArrayList<>();
-            Collections.copy(copyProperty,property_array);
+            List copyProperty = new ArrayList<>(property_array);
             stateCopy.add(copyProperty);
         }
         return stateCopy;
@@ -163,8 +159,7 @@ public class DeviceContextEntity implements ContextEntity{
     public List<List<Object>> getStateExtension() {
         List<List<Object>> stateCopy = new ArrayList<>();
         for (List<Object> property_array : stateExtensions) {
-            List copyProperty = new ArrayList<>();
-            Collections.copy(copyProperty,property_array);
+            List copyProperty = new ArrayList<>(property_array);
             stateCopy.add(copyProperty);
         }
         return stateCopy;
@@ -206,6 +201,7 @@ public class DeviceContextEntity implements ContextEntity{
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
+        /*TODO : remove old value ?*/
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
