@@ -7,7 +7,10 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component(immediate = true)
 @Provides
@@ -50,6 +53,7 @@ public class ContextEntityImpl implements ContextEntity{
         List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
 
         boolean property_exists = false;
+
         for (List<Object> property_array : stateExtensions){
             if (property_array.get(0)==property){
                 property_exists = true;
@@ -92,6 +96,21 @@ public class ContextEntityImpl implements ContextEntity{
         if (index>=0){
             if(stateExtensions.get(index).size()==1){
                 stateExtensions.remove(index);
+            }
+        }
+
+        this.stateExtensions = new ArrayList<>(stateExtensions);
+    }
+
+    private synchronized void replaceStateExtensionValue(String property,Object newValue,Object oldValue){
+        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
+
+        for (List<Object> property_array : stateExtensions){
+            if (property_array.get(0)==property){
+                if (property_array.contains(oldValue)){
+                    int index = property_array.indexOf(oldValue);
+                    property_array.set(index,newValue);
+                }
             }
         }
 
@@ -199,14 +218,14 @@ public class ContextEntityImpl implements ContextEntity{
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
         LOG.info("Modified !!");
-        LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
-        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
-        /*TODO : remove old value ?*/
-        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
+        LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+        LOG.info( "NEW value " +relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
+        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get(serviceReference));
+        m_stateExtension.put(serviceReference, relation.getExtendedState().getValue());
+
     }
 
     @Unbind(id = "context.entity.relation")
-    //TODO : INSPECT EXCEPTION
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
         LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
 
