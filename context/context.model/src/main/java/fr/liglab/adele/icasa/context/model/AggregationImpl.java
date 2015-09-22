@@ -11,7 +11,7 @@ import java.util.List;
 @Provides
 public class AggregationImpl implements Aggregation {
 
-    @Requires(id = "aggregation.sources", optional = false, filter="(&(context.entity.state=${aggregation.source.filter}))")
+    @Requires(id = "aggregation.sources", optional = false, filter="(&(context.entity.state.extension=${aggregation.source.filter}))")
     List<ContextEntity> sources;
 
     @Property(name = "aggregation.name",mandatory = true)

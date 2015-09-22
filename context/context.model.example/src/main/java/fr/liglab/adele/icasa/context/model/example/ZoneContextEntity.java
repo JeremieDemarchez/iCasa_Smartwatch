@@ -3,13 +3,11 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component(immediate = true)
 @Provides
@@ -29,10 +27,10 @@ public class ZoneContextEntity implements ContextEntity{
     @ServiceProperty(name = "context.entity.state", mandatory = true)
     List<List<Object>> state;
 
-    /**  @ServiceProperty(name = "context.entity.state.extension")
+    @ServiceProperty(name = "context.entity.state.extension")
     List<List<Object>> stateExtensions;
-     **/
-    private Map<String,Object> m_stateExtension = new HashMap<>();
+
+    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -49,13 +47,12 @@ public class ZoneContextEntity implements ContextEntity{
         return name;
     }
 
-    @Override
-    public void addStateValue(String property, Object value, boolean isAggregated) {
-        List<List<Object>>state = new ArrayList<>();
-        state.addAll(this.state);
+    protected synchronized void addStateExtensionValue(String property, Object value, boolean isAggregated) {
+        List<List<Object>> stateExtensions = new ArrayList<>();
+        stateExtensions.addAll(this.stateExtensions);
 
         boolean property_exists = false;
-        for (List<Object> property_array : state){
+        for (List<Object> property_array : stateExtensions){
             if (property_array.get(0)==property){
                 property_exists = true;
                 if (!isAggregated){
@@ -73,21 +70,20 @@ public class ZoneContextEntity implements ContextEntity{
             List<Object> property_array = new ArrayList<>();
             property_array.add(property);
             property_array.add(value);
-            state.add(property_array);
+            stateExtensions.add(property_array);
         }
 
-        this.state = state;
+        this.stateExtensions = stateExtensions;
     }
 
-    @Override
-    public void removeStateValue(String property, Object value) {
-        List<List<Object>>state = new ArrayList<>();
-        state.addAll(this.state);
+    protected synchronized void removeStateExtensionValue(String property, Object value) {
+        List<List<Object>> stateExtensions = new ArrayList<>();
+        stateExtensions.addAll(this.stateExtensions);
 
         int index = -1;
-        for (List<Object> property_array : state){
+        for (List<Object> property_array : stateExtensions){
             if (property_array.get(0)==property){
-                index = state.indexOf(property_array);
+                index = stateExtensions.indexOf(property_array);
                 if (property_array.contains(value)){
 
                     property_array.remove(value);
@@ -97,27 +93,28 @@ public class ZoneContextEntity implements ContextEntity{
 
         /*If the property hasn't value any more, it is cleared*/
         if (index>=0){
-            if(state.get(index).size()==1){
-                state.remove(index);
+            if(stateExtensions.get(index).size()==1){
+                stateExtensions.remove(index);
             }
         }
 
-        this.state = state;
+        this.stateExtensions = stateExtensions;
     }
 
 
     public List<Object> getStateValue(String property) {
-        List<Object> value = null;
+        List<Object> value = new ArrayList<>();
 
         for (List<Object> property_array : state) {
             if (property_array.get(0) == property) {
-                value = property_array;
+                value = new ArrayList<>(property_array);
             }
         }
         return value;
     }
 
     @Override
+    //TODO : return a copy of the list
     public List<List<Object>> getState() {
         return state;
     }
@@ -143,30 +140,68 @@ public class ZoneContextEntity implements ContextEntity{
         return stateMap;
     }
 
+    @Override
+    public List<Object> getStateExtensionValue(String property) {
+        List<Object> value = new ArrayList<>();
+
+        for (List<Object> property_array : stateExtensions) {
+            if (property_array.get(0) == property) {
+                value = new ArrayList<>(property_array);
+            }
+        }
+        return value;
+    }
+
+    @Override
+    //TODO : Return a copy of the stateextension list
+    public List<List<Object>> getStateExtension() {
+        return stateExtensions;
+    }
+
+    @Override
+    public Map<String, Object> getStateExtensionAsMap() {
+        Map<String,Object> stateMap = new HashMap<String,Object>();
+        for (List<Object> property_array : stateExtensions){
+            if (property_array.size() == 2){
+                stateMap.put((String)property_array.get(0),property_array.get(1));
+            }else {
+                List<Object> paramsValue = new ArrayList<>();
+                for (Object obj : property_array){
+                    if (obj.equals(property_array.get(0))){
+                        //do nothing
+                    }else {
+                        paramsValue.add(obj);
+                    }
+                }
+                stateMap.put((String)property_array.get(0),paramsValue);
+            }
+        }
+        return stateMap;
+    }
+
 
     @Bind(id = "context.entity.relation")
-    public synchronized void bindRelations (Relation relation) {
+    public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
-        m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
-        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(),relation.getExtendedState().isAggregate());
+        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
+        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
 
     }
 
     @Modified(id = "context.entity.relation")
-    public synchronized void modifiedRelations(Relation relation) {
+    public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
         LOG.info("Modified !!");
         LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
-        m_stateExtension.put(relation.getId(),relation.getExtendedState().getValue());
-        addStateValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
+        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
+        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Unbind(id = "context.entity.relation")
-    //TODO : INSPECT EXCEPTION
-    public synchronized void unbindRelations(Relation relation) {
-        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName()  );
+    public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
+        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
 
-        removeStateValue(relation.getExtendedState().getName(), m_stateExtension.get(relation.getId()));
-        m_stateExtension.remove(relation.getId());
+        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
+        m_stateExtension.remove(serviceReference);
     }
 }

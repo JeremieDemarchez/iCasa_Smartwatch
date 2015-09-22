@@ -58,20 +58,22 @@ public class TestMeanAggregation {
         for (Object s : sources){
             if (s instanceof ContextEntity) {
                 ContextEntity contextEntity = (ContextEntity) s;
-                if (contextEntity.getStateValue(filter_bl) != null) {
+                if (!contextEntity.getStateValue(filter_bl).isEmpty()) {
                     n += 1;
-                    if (contextEntity.getStateValue(filter_bl).get(0).equals(true)) {
+                    if (contextEntity.getStateValue(filter_bl).get(1).equals(true)) {
                         result += Math.pow((double) contextEntity.getStateValue(bl_max_power).get(1), 2);
                     }
 
-                } else if (contextEntity.getStateValue(filter_dl) != null) {
+                } else if (!contextEntity.getStateValue(filter_dl).isEmpty()) {
                     n += 1;
                     result += Math.pow((double) contextEntity.getStateValue(filter_dl).get(1), 2);
                 }
             }
         }
 
-        result = Math.sqrt(result / n);
+        if (n>0) {
+            result = Math.sqrt(result / n);
+        }
         return result;
     }
 }

@@ -71,14 +71,20 @@ public class ContextModelGoGoCommand  {
     }
 
     @Command
-    //TODO : FIX
     public void entity(String name){
+        String out = new String();
         for (ContextEntity entity : entities){
             if (entity.getId().equals(name)){
-                LOG.info(" Entity : " + entity.getId() + " found !! ");
-        /**        for (String key : entity.getState().keyset()){
-                    LOG.info(" Property : " + key + " with value : " + entity.getState().get(key));
-                }**/
+                out = out + "Entity : " + name + "\n";
+                out = out +"State : " + "\n";
+                for (String key : entity.getStateAsMap().keySet()){
+                    out = out +" Property : " + key + " with value : " + entity.getStateAsMap().get(key)+ "\n";
+                }
+                out = out +"Extension : " + "\n";
+                for (String key : entity.getStateExtensionAsMap().keySet()){
+                    out = out +" Property : " + key + " with value : " + entity.getStateExtensionAsMap().get(key)+ "\n";
+                }
+                LOG.info(out);
             }
         }
     }

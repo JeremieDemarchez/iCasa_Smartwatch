@@ -42,6 +42,7 @@ public class DeviceDiscovery {
         properties.put("context.entity.id", device.getSerialNumber());
 
         List<List<Object>> state = new ArrayList<>();
+        List<List<Object>> stateExtensions = new ArrayList<>();
         List<Object> property_array;
         property_array = new ArrayList<>();
         property_array.add("serial.number");
@@ -54,6 +55,7 @@ public class DeviceDiscovery {
             state.add(property_array);
         }
         properties.put("context.entity.state", state);
+        properties.put("context.entity.state.extension", stateExtensions);
 
         try {
             instance = deviceEntityFactory.createComponentInstance(properties);

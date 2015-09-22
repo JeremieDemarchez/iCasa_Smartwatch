@@ -10,14 +10,16 @@ public interface ContextEntity {
 
     public String getId();
 
-    public void addStateValue(String property, Object value, boolean isAggregated);
-
-    public void removeStateValue(String property, Object value);
-
     public List<Object> getStateValue (String property);
 
     public List<List<Object>> getState();
 
     public Map<String,Object> getStateAsMap();
+
+    public List<Object> getStateExtensionValue (String property);
+
+    public List<List<Object>> getStateExtension();
+
+    public Map<String,Object> getStateExtensionAsMap();
 
 }
