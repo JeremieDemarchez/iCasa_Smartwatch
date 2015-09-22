@@ -2,19 +2,26 @@ package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
+import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Component(immediate = true)
 @Provides
-public class ContextEntityImpl implements ContextEntity{
+public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
-    private static final Logger LOG = LoggerFactory.getLogger(ContextEntityImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DeviceContextEntityImpl.class);
 
+    @Requires(specification = GenericDevice.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
+    GenericDevice device;
 
     @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
             filter = "(relation.end.id=${context.entity.id})")
@@ -187,7 +194,6 @@ public class ContextEntityImpl implements ContextEntity{
         return stateMap;
     }
 
-
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
         LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
@@ -213,5 +219,106 @@ public class ContextEntityImpl implements ContextEntity{
 
         removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
         m_stateExtension.remove(relation.getId());
+    }
+
+    //TODO : To verify
+    public void addStateValue(String property, Object value, boolean isAggregated) {
+        List<List<Object>> state = new ArrayList<>(this.state);
+
+        boolean property_exists = false;
+        for (List<Object> property_array : state){
+            if (property_array.get(0)==property){
+                property_exists = true;
+                if (!isAggregated){
+                    property_array.clear();
+                    property_array.add(property);
+                    property_array.add(value);
+                } else {
+                    if (!property_array.contains(value)){
+                        property_array.add(value);
+                    }
+                }
+            }
+        }
+        if (!property_exists){
+            List<Object> property_array = new ArrayList<>();
+            property_array.add(property);
+            property_array.add(value);
+            state.add(property_array);
+        }
+
+        this.state = new ArrayList<>(state);
+    }
+
+    public void replaceStateValue(String property, Object newValue, Object oldValue, boolean isAggregated) {
+        this.removeStateValue(property, oldValue);
+        this.addStateValue(property, newValue, isAggregated);
+    }
+
+
+    public void removeStateValue(String property, Object value) {
+        List<List<Object>> state = new ArrayList<>(this.state);
+
+        int index = -1;
+        for (List<Object> property_array : state){
+            if (property_array.get(0)==property){
+                index = state.indexOf(property_array);
+                if (property_array.contains(value)){
+
+                    property_array.remove(value);
+                }
+            }
+        }
+
+        /*If the property hasn't value any more, it is cleared*/
+        if (index>=0){
+            if(state.get(index).size()==1){
+                state.remove(index);
+            }
+        }
+
+        this.state = new ArrayList<>(state);
+    }
+
+    @Bind(id = "context.entity.device")
+    public void bindGenericDevice (GenericDevice device) {
+        device.addListener(this);
+    }
+
+    @Unbind(id = "context.entity.device")
+    public void unbindGenericDevice(GenericDevice device) {
+        device.removeListener(this);
+    }
+
+
+    @Override
+    public void deviceAdded(GenericDevice device) {
+        LOG.info("Device : "+device.getSerialNumber()+ " add listener to context entity : "+  this.getId());
+    }
+
+    @Override
+    public void deviceRemoved(GenericDevice device) {
+
+    }
+
+    @Override
+    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
+        LOG.info("Device : "+device.getSerialNumber() + " Property modified : "+ propertyName );
+        replaceStateValue(propertyName,newValue,oldValue,false);
+    }
+
+    @Override
+    public void devicePropertyAdded(GenericDevice device, String propertyName) {
+
+    }
+
+    @Override
+    public void devicePropertyRemoved(GenericDevice device, String propertyName) {
+
+    }
+
+    @Override
+    public void deviceEvent(GenericDevice device, Object data) {
+
     }
 }
