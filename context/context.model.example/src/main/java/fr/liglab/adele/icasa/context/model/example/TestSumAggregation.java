@@ -1,6 +1,6 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.model.AggregationFactory;
+import fr.liglab.adele.icasa.context.transformation.AggregationFactory;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
