@@ -1,4 +1,6 @@
-package fr.liglab.adele.icasa.context.model;
+package fr.liglab.adele.icasa.context.transformation;
+
+import fr.liglab.adele.icasa.context.model.ContextEntity;
 
 import java.util.List;
 

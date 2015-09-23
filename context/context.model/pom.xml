@@ -44,7 +44,9 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model</Export-Package>
+                        <Export-Package>fr.liglab.adele.icasa.context.model;
+                            fr.liglab.adele.icasa.context.transformation
+                        </Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

@@ -9,10 +9,10 @@ import java.util.Map;
 @Provides
 public class RelationImpl implements Relation {
 
-    @Requires(id = "relation.source",optional = false, filter="(context.entity.id=${relation.source.id})")
+    @Requires(id = "relation.source",optional = false, filter="(context.entity.id=${relation.source.id})",proxy = false)
     ContextEntity source;
 
-    @Requires(id = "relation.end",optional = false, filter="(context.entity.id=${relation.end.id})")
+    @Requires(id = "relation.end",optional = false, filter="(context.entity.id=${relation.end.id})",proxy = false)
     ContextEntity end;
 
     @Property(name = "relation.source.id",mandatory = true)

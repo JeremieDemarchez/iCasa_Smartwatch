@@ -20,7 +20,7 @@
 package fr.liglab.adele.icasa.context.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.context.model.Aggregation;
+import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Requires;

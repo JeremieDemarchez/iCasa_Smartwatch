@@ -148,8 +148,6 @@ public class RelationFactoryImpl implements RelationFactory{
          * )
          */
         public void setProperties(Dictionary properties) {
-
-            LOG.info("Reconfigure ! " );
             try {
                 instance.reconfigure(properties);
             }catch (Exception e ){

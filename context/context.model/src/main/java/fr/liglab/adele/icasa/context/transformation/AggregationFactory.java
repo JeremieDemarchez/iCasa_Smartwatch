@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model;
+package fr.liglab.adele.icasa.context.transformation;
 
 /**
  * Created by aygalinc on 15/09/15.

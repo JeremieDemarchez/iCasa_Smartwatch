@@ -1,6 +1,5 @@
-package fr.liglab.adele.icasa.context.model;
+package fr.liglab.adele.icasa.context.transformation;
 
-import fr.liglab.adele.icasa.context.model.Aggregation;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.*;
 

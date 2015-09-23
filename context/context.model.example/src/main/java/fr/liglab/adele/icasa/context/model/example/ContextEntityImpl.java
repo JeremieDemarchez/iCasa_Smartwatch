@@ -20,7 +20,7 @@ public class ContextEntityImpl implements ContextEntity{
 
 
     @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
-            filter = "(relation.end.id=${context.entity.id})")
+            filter = "(relation.end.id=${context.entity.id})",proxy = false)
     List<Relation> relations;
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
@@ -212,14 +212,15 @@ public class ContextEntityImpl implements ContextEntity{
         /*state actualisation*/
         m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
-
     }
 
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Modified !!");
-        LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
-        LOG.info( "NEW value " +relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
+        LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+        LOG.info("NEW value " + relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
+        if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
+            LOG.error(" Modified is called but last and new extended state are equals");
+        }
         replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get(serviceReference));
         m_stateExtension.put(serviceReference, relation.getExtendedState().getValue());
 
@@ -227,7 +228,7 @@ public class ContextEntityImpl implements ContextEntity{
 
     @Unbind(id = "context.entity.relation")
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
+        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
 
         removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
         m_stateExtension.remove(serviceReference);

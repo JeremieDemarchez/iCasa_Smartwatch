@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model;
+package fr.liglab.adele.icasa.context.transformation;
 
 import java.util.List;
 

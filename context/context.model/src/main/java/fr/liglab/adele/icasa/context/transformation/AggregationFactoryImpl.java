@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model;
+package fr.liglab.adele.icasa.context.transformation;
 
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -22,7 +22,7 @@ public class AggregationFactoryImpl implements AggregationFactory{
 
     private final Object m_lockAggregation;
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.AggregationImpl)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.transformation.AggregationImpl)")
     Factory aggregationIpojoFactory;
 
     public AggregationFactoryImpl(){
