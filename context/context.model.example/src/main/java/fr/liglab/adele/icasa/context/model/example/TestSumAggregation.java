@@ -1,11 +1,10 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.transformation.AggregationFactory;
+import fr.liglab.adele.icasa.context.model.AggregationFactory;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-
-import org.apache.felix.ipojo.annotations.*;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
+import org.apache.felix.ipojo.annotations.*;
 
 import java.util.List;
 
@@ -14,7 +13,7 @@ import java.util.List;
  */
 @Component
 @Instantiate
-public class TestMeanAggregation {
+public class TestSumAggregation {
     @Requires (id = "test.aggregation.factory", optional = false)
     AggregationFactory aggregationFactory;
 
@@ -36,42 +35,42 @@ public class TestMeanAggregation {
 
     String bl_max_power = BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL;
 
-    public TestMeanAggregation(){
+    public TestSumAggregation(){
 
     }
 
     @Validate
     public void start(){
-        aggregationFactory.createAggregation("MeanLightKitchen",
+        aggregationFactory.createAggregation("SumLightKitchen",
                 "(&(context.entity.state.extension=" + filter_kitchen + ")" +
                         "(|(context.entity.state=" + filter_bl + ")" +
                           "(context.entity.state=" + filter_dl + ")))",
                 sources -> {
-                    return this.meanAggregationFunction(sources);
+                    return this.sumAggregationFunction(sources);
                 });
 
-        aggregationFactory.createAggregation("MeanLightLivingroom",
+        aggregationFactory.createAggregation("SumLightLivingroom",
                 "(&(context.entity.state.extension=" + filter_living_room + ")" +
                         "(|(context.entity.state=" + filter_bl + ")" +
                         "(context.entity.state=" + filter_dl + ")))",
                 sources -> {
-                    return this.meanAggregationFunction(sources);
+                    return this.sumAggregationFunction(sources);
                 });
 
-        aggregationFactory.createAggregation("MeanLightBathroom",
+        aggregationFactory.createAggregation("SumLightBathroom",
                 "(&(context.entity.state.extension=" + filter_bathroom + ")" +
                         "(|(context.entity.state=" + filter_bl + ")" +
                         "(context.entity.state=" + filter_dl + ")))",
                 sources -> {
-                    return this.meanAggregationFunction(sources);
+                    return this.sumAggregationFunction(sources);
                 });
 
-        aggregationFactory.createAggregation("MeanLightBedroom",
+        aggregationFactory.createAggregation("SumLightBedroom",
                 "(&(context.entity.state.extension=" + filter_bedroom + ")" +
                         "(|(context.entity.state=" + filter_bl + ")" +
                         "(context.entity.state=" + filter_dl + ")))",
                 sources -> {
-                    return this.meanAggregationFunction(sources);
+                    return this.sumAggregationFunction(sources);
                 });
 
     }
@@ -81,7 +80,7 @@ public class TestMeanAggregation {
 
     }
 
-    public Object meanAggregationFunction (List sources) {
+    public Object sumAggregationFunction (List sources) {
         double result = 0;
         int n = 0;
 
@@ -91,19 +90,17 @@ public class TestMeanAggregation {
                 if (!contextEntity.getStateValue(bl_power_status).isEmpty()) {
                     n += 1;
                     if (contextEntity.getStateValue(bl_power_status).get(1).equals(true)) {
-                        result += Math.pow((double) contextEntity.getStateValue(bl_max_power).get(1), 2);
+                        result += (double) contextEntity.getStateValue(bl_max_power).get(1);
                     }
 
                 } else if (!contextEntity.getStateValue(dl_power_level).isEmpty()) {
                     n += 1;
-                    result += Math.pow((double) contextEntity.getStateValue(dl_power_level).get(1), 2);
+                    result += (double) contextEntity.getStateValue(dl_power_level).get(1);
                 }
             }
         }
 
-        if (n>0) {
-            result = Math.sqrt(result / n);
-        } else {
+        if (n<=0) {
             result = -1;
         }
         return result;

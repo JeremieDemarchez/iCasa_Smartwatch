@@ -44,7 +44,7 @@ public class AggregationFactoryImpl implements AggregationFactory{
     @Override
     public void createAggregation(String name, String filter, AggregationFunction aggregationFunction) {
         LOG.info("Create Aggregation  : " + name +" filter : " + filter);
-        String aggregationId = name + filter;
+        String aggregationId = name;
         ComponentInstance instance;
 
         Hashtable properties = new Hashtable();
@@ -53,6 +53,9 @@ public class AggregationFactoryImpl implements AggregationFactory{
         List<String> sourcesId = new ArrayList<String>();
         properties.put("aggregation.sources.id", sourcesId);
         properties.put("aggregation.function", aggregationFunction);
+        Hashtable requiresFilters = new Hashtable();
+        requiresFilters.put("aggregation.sources", filter);
+        properties.put("requires.filters", requiresFilters);
 
         try {
             instance = aggregationIpojoFactory.createComponentInstance(properties);
@@ -78,24 +81,10 @@ public class AggregationFactoryImpl implements AggregationFactory{
         LOG.info("Delete Aggregation  : " + name + " filter : " + filter);
         try {
             synchronized (m_lockAggregation){
-                aggregations.remove(name+filter).unregister();
+                aggregations.remove(name).unregister();
             }
         }catch(IllegalStateException e){
             LOG.error("failed unregistering relation", e);
-        }
-    }
-
-    @Override
-    public void updateFilterAggregation(String name, String oldFilter, String newFilter) {
-        LOG.info("Update Aggregation " + name + " old Filter : " + oldFilter + " new Filter : " + newFilter);
-
-        synchronized (m_lockAggregation) {
-            String oldAggregationId = name + oldFilter;
-            IpojoServiceRegistrationAggregation aggregationToUpdate = aggregations.remove(oldAggregationId);
-            aggregationToUpdate.updateFilterAggregation(newFilter);
-
-            String newAggregationId = name + newFilter;
-            aggregations.put(newAggregationId, aggregationToUpdate);
         }
     }
 

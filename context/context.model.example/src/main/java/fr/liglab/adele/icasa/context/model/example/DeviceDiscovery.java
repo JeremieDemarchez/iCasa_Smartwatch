@@ -1,6 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -14,13 +16,13 @@ import java.util.*;
 
 @Component(immediate = true)
 @Instantiate
-public class DeviceDiscovery {
+public class DeviceDiscovery{
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceDiscovery.class);
 
     private final Map<String,ServiceRegistration> deviceEntities = new HashMap<>();
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.DeviceContextEntityImpl)")
     Factory deviceEntityFactory;
 
     @Validate
@@ -61,8 +63,7 @@ public class DeviceDiscovery {
         try {
             instance = deviceEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
-                    instance,
-                    state);
+                    instance);
 
             deviceEntities.put(device.getSerialNumber(),sr);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
@@ -89,12 +90,9 @@ public class DeviceDiscovery {
 
         ComponentInstance instance;
 
-        private final List<List<Object>> state;
-
-        public IpojoServiceRegistration(ComponentInstance instance, List<List<Object>> state) {
+        public IpojoServiceRegistration(ComponentInstance instance) {
             super();
             this.instance = instance;
-            this.state = state;
         }
 
         /*
@@ -137,10 +135,5 @@ public class DeviceDiscovery {
             instance.dispose();
         }
 
-        //TODO : To implement
-        public void updateState(){}
-
     }
 }
-
-

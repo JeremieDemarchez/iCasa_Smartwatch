@@ -8,6 +8,4 @@ public interface AggregationFactory {
     public void createAggregation(String name, String filter, AggregationFunction aggregationFunction);
 
     public void deleteAggregation(String name, String filter);
-
-    public void updateFilterAggregation(String name, String oldFilter, String newFilter);
 }
