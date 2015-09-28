@@ -48,15 +48,21 @@ public class AggregationFactoryImpl implements AggregationFactory{
         ComponentInstance instance;
 
         Hashtable properties = new Hashtable();
-        properties.put("aggregation.name", name);
         properties.put("aggregation.source.filter", filter);
         List<String> sourcesId = new ArrayList<String>();
-        properties.put("aggregation.sources.id", sourcesId);
         properties.put("aggregation.function", aggregationFunction);
         Hashtable requiresFilters = new Hashtable();
         requiresFilters.put("aggregation.sources", filter);
         properties.put("requires.filters", requiresFilters);
-
+        List<List<Object>> state = new ArrayList<>();
+        List property_array = new ArrayList<>();
+        property_array.add("aggregation.value");
+        property_array.add(0);
+        state.add(property_array);
+        List<List<Object>> stateExtensions = new ArrayList<>();
+        properties.put("context.entity.state", state);
+        properties.put("context.entity.state.extension", stateExtensions);
+        properties.put("context.entity.id", name);
         try {
             instance = aggregationIpojoFactory.createComponentInstance(properties);
             IpojoServiceRegistrationAggregation sr = new IpojoServiceRegistrationAggregation(

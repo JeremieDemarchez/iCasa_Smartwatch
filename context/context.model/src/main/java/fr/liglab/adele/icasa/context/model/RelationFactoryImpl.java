@@ -50,6 +50,7 @@ public class RelationFactoryImpl implements RelationFactory{
         properties.put("relation.name", name);
         properties.put("relation.source.id", source);
         properties.put("relation.end.id", end);
+        properties.put("relation.value", 0);
         properties.put("relation.extendedStateName", extendStateName);
         properties.put("relation.extendedStateCallBack", relationCallBack);
         properties.put("relation.extendedStateIsAggregate", isAggregate);

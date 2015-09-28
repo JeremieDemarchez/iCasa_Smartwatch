@@ -1,28 +1,34 @@
 package fr.liglab.adele.icasa.context.model;
 
 import org.apache.felix.ipojo.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
 import java.util.Map;
 
 @Component
 @Provides
 public class RelationImpl implements Relation {
 
-    @Requires(id = "relation.source",optional = false, filter="(context.entity.id=${relation.source.id})",proxy = false)
+    private static final Logger LOG = LoggerFactory.getLogger(RelationImpl.class);
+
+    @Requires(id = "relation.source",optional = false, filter="(context.entity.id=${relation.source.id})")
     ContextEntity source;
 
-    @Requires(id = "relation.end",optional = false, filter="(context.entity.id=${relation.end.id})",proxy = false)
+    @Requires(id = "relation.end",optional = false, filter="(context.entity.id=${relation.end.id})")
     ContextEntity end;
 
-    @Property(name = "relation.source.id",mandatory = true)
+    @ServiceProperty(name = "relation.source.id",mandatory = true)
     public String sourceId;
 
-    @Property(name = "relation.end.id",mandatory = true)
+    @ServiceProperty(name = "relation.end.id",mandatory = true)
     public String endId;
 
-    @Property( name = "relation.name",mandatory = true)
+    @ServiceProperty( name = "relation.name",mandatory = true)
     String name;
+
+    @ServiceProperty( name = "relation.value",mandatory = true)
+    Object value;
 
     private final ExtendedState m_extendedState ;
 
@@ -40,6 +46,16 @@ public class RelationImpl implements Relation {
     @Invalidate
     public void stop(){
 
+    }
+
+    @Modified(id = "relation.source")
+    public void modifiedSource(){
+        LOG.info("RELATION" + getId() + " Source is Modified");
+        LOG.info("Actual Value " + value + " new value " + m_extendedState.getValue());
+        if (value.equals(m_extendedState.getValue())){
+            return;
+        }
+        value = m_extendedState.getValue();
     }
 
     @Override
@@ -66,6 +82,10 @@ public class RelationImpl implements Relation {
         //NE FONCTIONNE PAS AVEC LES FILTRES DANS LES CONTEXT ENTITY
         //LE SYSTEME PLANTE QUAND L AFFICHAGE WEB DU CONTEXT EST ACTUALISE
         return end.getId();
+    }
+
+    private Map getSourceState(){
+        return source.getStateAsMap();
     }
 
     @Override
@@ -99,7 +119,7 @@ public class RelationImpl implements Relation {
 
         @Override
         public Object getValue() {
-            return  m_callBack.callBack(source.getStateAsMap());
+            return  m_callBack.callBack(getSourceState());
         }
     }
 

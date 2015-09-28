@@ -11,8 +11,8 @@ import java.util.List;
 /**
  * Created by Gerbert on 21/09/2015.
  */
-@Component
-@Instantiate
+/**@Component
+@Instantiate**/
 public class TestSumAggregation {
     @Requires (id = "test.aggregation.factory", optional = false)
     AggregationFactory aggregationFactory;

@@ -165,7 +165,7 @@ public class ContextController extends DefaultController {
     }
 
 
-    @Route(method = HttpMethod.GET, uri = "/context/aggregations")
+  /**  @Route(method = HttpMethod.GET, uri = "/context/aggregations")
     public Result getAggregation(){
         ObjectNode result = json.newObject();
         result.put("size", aggregations.size());
@@ -178,5 +178,5 @@ public class ContextController extends DefaultController {
             i++;
         }
         return ok(result);
-    }
+    }**/
 }

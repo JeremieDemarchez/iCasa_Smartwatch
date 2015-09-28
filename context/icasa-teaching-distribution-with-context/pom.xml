@@ -32,6 +32,11 @@
 
     <!-- Project dependencies -->
     <dependencies>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa.apps</groupId>
+            <artifactId>binary.light.follow.me.application</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 
         <dependency>
             <groupId>fr.liglab.adele.common</groupId>

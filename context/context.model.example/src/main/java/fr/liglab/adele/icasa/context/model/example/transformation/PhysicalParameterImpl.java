@@ -1,8 +1,10 @@
-package fr.liglab.adele.icasa.context.transformation;
+package fr.liglab.adele.icasa.context.model.example.transformation;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.transformation.Aggregation;
+import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -13,9 +15,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-@Component
+@Component(immediate = true,propagation = true)
 @Provides
-public class AggregationImpl implements Aggregation {
+public class PhysicalParameterImpl implements Aggregation {
+
+    /** REQUIRES **/
+    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
+            filter = "(relation.end.id=${context.entity.id})",proxy = false)
+    List<Relation> relations;
 
     @Requires(optional = false)
     RelationFactory relationFactory;
@@ -23,19 +30,43 @@ public class AggregationImpl implements Aggregation {
     @Requires(id = "aggregation.sources", optional = true)
     List<ContextEntity> sources;
 
-    @Property(name = "aggregation.source.filter", mandatory = true)
+    /** PROPERTIES **/
+    @ServiceProperty(name = "aggregation.source.filter", mandatory = true)
     String filter;
 
+    @ServiceProperty(name = "physical.parameter.zone", mandatory = true)
+    String zoneId;
+
+    @ServiceProperty(name = "physical.parameter.name", mandatory = true)
+    String physicalParameterName;
+
+    @ServiceProperty(name = "context.entity.id",mandatory = true)
+    String name;
+
+    @ServiceProperty(name = "context.entity.state", mandatory = true)
+    List<List<Object>> state;
+
+    @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
+    List<List<Object>> stateExtensions;
+
+
+    /** ATTRIBUTES **/
     private final AggregationFunction m_aggregationFunction;
 
+    private static final Logger LOG = LoggerFactory.getLogger(PhysicalParameterImpl.class);
 
-    public AggregationImpl(@Property(name = "aggregation.function", mandatory = true, immutable = true) AggregationFunction aggregationFunction) {
+    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
+
+
+    public PhysicalParameterImpl(@Property(name = "aggregation.function", mandatory = true, immutable = true) AggregationFunction aggregationFunction) {
         m_aggregationFunction = aggregationFunction;
     }
 
     @Validate
     public void start(){
-
+        relationFactory.createRelation("isPhysicalParameterOf", this.getId(), zoneId,physicalParameterName, true, m_state -> {
+            return m_state.get("aggregation.value");
+        });
     }
 
     @Invalidate
@@ -53,7 +84,7 @@ public class AggregationImpl implements Aggregation {
         property_array.add(getResult());
         List<List<Object>> newState = new ArrayList<>();
         newState.add(property_array);
-        state = newState;
+        state = new ArrayList<List<Object>>(newState);
     }
 
     @Modified(id = "aggregation.sources")
@@ -63,10 +94,10 @@ public class AggregationImpl implements Aggregation {
         property_array.add(getResult());
         List<List<Object>> newState = new ArrayList<>();
         newState.add(property_array);
-        state = newState;
+        state = new ArrayList<List<Object>>(newState);
     }
 
-        @Unbind(id = "aggregation.sources")
+    @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
         relationFactory.deleteRelation("ComputeWith",contextEntity.getId(),this.getId());
         List property_array = new ArrayList<>();
@@ -74,7 +105,7 @@ public class AggregationImpl implements Aggregation {
         property_array.add(getResult());
         List<List<Object>> newState = new ArrayList<>();
         newState.add(property_array);
-        state = newState;
+        state = new ArrayList<List<Object>>(newState);
     }
 
     @Override
@@ -86,23 +117,6 @@ public class AggregationImpl implements Aggregation {
     public synchronized Object getResult() {
         return m_aggregationFunction.getResult(sources);
     }
-
-    private static final Logger LOG = LoggerFactory.getLogger(AggregationImpl.class);
-
-    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
-            filter = "(relation.end.id=${context.entity.id})",proxy = false)
-    List<Relation> relations;
-
-    @ServiceProperty(name = "context.entity.id",mandatory = true)
-    String name;
-
-    @ServiceProperty(name = "context.entity.state", mandatory = true)
-    List<List<Object>> state;
-
-    @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
-    List<List<Object>> stateExtensions;
-
-    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
 
     @Override
     public String getId() {

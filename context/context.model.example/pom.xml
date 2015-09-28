@@ -52,7 +52,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model.example</Export-Package>
+                        <Export-Package>fr.liglab.adele.icasa.context.model.example;
+                            fr.liglab.adele.icasa.context.model.example.transformation</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>
