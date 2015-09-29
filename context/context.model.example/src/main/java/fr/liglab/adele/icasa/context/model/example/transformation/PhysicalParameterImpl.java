@@ -64,8 +64,11 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Validate
     public void start(){
-        relationFactory.createRelation("isPhysicalParameterOf", this.getId(), zoneId,physicalParameterName, true, m_state -> {
+        relationFactory.createRelation("isPhysicalParameterOf", this.getId(), zoneId,physicalParameterName, false, m_state -> {
             return m_state.get("aggregation.value");
+        });
+        relationFactory.createRelation("havePhysicalParameterOf",zoneId,this.getId(),"zone.impacted", false, m_state -> {
+            return m_state.get("zone.name");
         });
     }
 
@@ -89,6 +92,10 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Modified(id = "aggregation.sources")
     public void modifiedContextEntities (ContextEntity contextEntity) {
+        System.out.println(" MODIFIIIIIIIIIIIIIIIIIIIIIIIIIIIIIEDDD " +getStateValue("aggregation.value") +" equals" +  getResult() );
+        if (getStateValue("aggregation.value").equals(getResult())){
+            return;
+        }
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
@@ -283,7 +290,7 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+ //       LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
@@ -291,10 +298,13 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+   /**     LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
         LOG.info("NEW value " + relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
         if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
             LOG.error(" Modified is called but last and new extended state are equals");
+        }**/
+        if(m_stateExtension.get(serviceReference).equals(relation.getExtendedState().getValue())){
+            return;
         }
         replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get(serviceReference));
         m_stateExtension.put(serviceReference, relation.getExtendedState().getValue());
@@ -303,7 +313,7 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Unbind(id = "context.entity.relation")
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
+   //     LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
 
         removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
         m_stateExtension.remove(serviceReference);

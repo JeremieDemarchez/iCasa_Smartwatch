@@ -42,7 +42,7 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     public void createRelation(String name,String source,String end,String extendStateName,boolean isAggregate,RelationCallBack relationCallBack){
-        LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
+      //  LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
         String relationId = name + source + end;
         ComponentInstance instance;
 
@@ -81,7 +81,7 @@ public class RelationFactoryImpl implements RelationFactory{
 
     @Override
     public void deleteRelation(String name, String source, String end) {
-        LOG.info("Delete Relation  : " + name + " source : " + " end " + end);
+  //      LOG.info("Delete Relation  : " + name + " source : " + " end " + end);
         try {
             synchronized (m_lockRelation){
                 relations.remove(name+source+end).unregister();
@@ -93,7 +93,7 @@ public class RelationFactoryImpl implements RelationFactory{
 
     @Override
     public void updateRelation(String name, String oldSource, String oldEnd,String newSource,String newEnd){
-        LOG.info("Update relation " + name + " oldSource : " + oldSource + " new Source : " + newSource + " oldEnd : " + oldEnd + " newEnd : " + newEnd);
+  //      LOG.info("Update relation " + name + " oldSource : " + oldSource + " new Source : " + newSource + " oldEnd : " + oldEnd + " newEnd : " + newEnd);
         synchronized (m_lockRelation) {
             String oldRelationId = name + oldSource + oldEnd;
             IpojoServiceRegistrationRelation relationToUpdate = relations.remove(oldRelationId);

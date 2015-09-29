@@ -50,8 +50,8 @@ public class RelationImpl implements Relation {
 
     @Modified(id = "relation.source")
     public void modifiedSource(){
-        LOG.info("RELATION" + getId() + " Source is Modified");
-        LOG.info("Actual Value " + value + " new value " + m_extendedState.getValue());
+      LOG.info("RELATION" + getId() + " Source is Modified");
+        LOG.info("Actual Value " + value + " new value " + m_extendedState.getValue()+ " equals ? "+value.equals(m_extendedState.getValue()));
         if (value.equals(m_extendedState.getValue())){
             return;
         }

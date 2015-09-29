@@ -14,7 +14,7 @@ import java.util.List;
 
 import static org.apache.felix.ipojo.configuration.Instance.instance;
 
-@Configuration
+//@Configuration
 public class PhysicalParameterConfiguration {
 
     String filter_kitchen = "kitchen";
@@ -25,11 +25,11 @@ public class PhysicalParameterConfiguration {
 
     String filter_bedroom = "bedroom";
 
-    String filter_dl = "dimmerLight*";
+    String filter_dl = DimmerLight.DIMMER_LIGHT_POWER_LEVEL+"*";
 
-    String filter_bl = "binaryLight*";
+    String filter_bl = BinaryLight.BINARY_LIGHT_POWER_STATUS+"*";
 
-    String filter_presence = "presenceSensor.sensedPresence";
+    String filter_presence = "presenceSensor.sensedPresence*";
 
     String dl_power_level = DimmerLight.DIMMER_LIGHT_POWER_LEVEL;
 
@@ -171,7 +171,6 @@ public class PhysicalParameterConfiguration {
             for (Object s : sources){
                 ContextEntity contextEntity = (ContextEntity) s;
                 if (!contextEntity.getStateValue(presence).isEmpty()) {
-                    System.out.println("&&&&&&&&&&&&&&&&&&&& Aggregation " +  contextEntity.getStateValue(presence).get(1));
                     if (contextEntity.getStateValue(presence).get(1).equals(true)) {
                         countOn +=1;
                         // result += (double) contextEntity.getStateValue(presence).get(1);

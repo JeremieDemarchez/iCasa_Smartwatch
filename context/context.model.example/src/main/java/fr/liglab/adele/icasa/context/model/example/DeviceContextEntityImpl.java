@@ -196,7 +196,7 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+        //      LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
@@ -205,17 +205,20 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Modified !!");
-        LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+/**        LOG.info("Modified !!");
+ LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+ **/
+        if(m_stateExtension.get(serviceReference).equals(relation.getExtendedState().getValue())){
+            return;
+        }
         m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
-        /*TODO : remove old value ?*/
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
     @Unbind(id = "context.entity.relation")
     //TODO : INSPECT EXCEPTION
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
+        //  LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
 
         removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
         m_stateExtension.remove(relation.getId());
@@ -250,9 +253,31 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
         this.state = new ArrayList<>(state);
     }
 
-    public void replaceStateValue(String property, Object newValue, Object oldValue, boolean isAggregated) {
-        this.removeStateValue(property, oldValue);
-        this.addStateValue(property, newValue, isAggregated);
+    /** public void replaceStateValue(String property, Object newValue, Object oldValue, boolean isAggregated) {
+     this.removeStateValue(property, oldValue);
+     this.addStateValue(property, newValue, isAggregated);
+     }**/
+
+    private synchronized void replaceStateValue(String property,Object newValue,Object oldValue){
+        List<List<Object>> stateCopy = new ArrayList<>(this.state);
+        List<List<Object>> stateCopyShuffle = new ArrayList<>();
+
+        for (List<Object> property_array : stateCopy){
+            if (property_array.get(0)==property){
+                property_array.set(1,newValue);
+            }
+        }
+
+        //HACK : IF THE LIST IS NOT SHUFFLE EVENT ISN4T PROPAGED TO OSGI REGISTRY
+        int size = stateCopy.size();
+        for(int i=0;i<size;i++){
+            stateCopyShuffle.add(new ArrayList<>());
+        }
+        for(int i=0;i<size;i++){
+            stateCopyShuffle.set(i,stateCopy.get(size-i-1));
+        }
+
+        this.state = new ArrayList<>(stateCopyShuffle);
     }
 
 
@@ -303,8 +328,8 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-        LOG.info("Device : "+device.getSerialNumber() + " Property modified : "+ propertyName );
-        replaceStateValue(propertyName,newValue,oldValue,false);
+        LOG.info("Device : "+device.getSerialNumber() + " Property modified : "+ propertyName + " old " + oldValue + " new " + newValue );
+        replaceStateValue(propertyName,newValue,oldValue);
     }
 
     @Override
