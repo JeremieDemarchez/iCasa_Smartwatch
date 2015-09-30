@@ -202,6 +202,11 @@ public class AggregationImpl implements Aggregation {
     }
 
     @Override
+    public void setState(String state, Object value) {
+
+    }
+
+    @Override
     public Map<String,Object> getStateAsMap() {
         Map<String,Object> stateMap = new HashMap<String,Object>();
         for (List<Object> property_array : state){

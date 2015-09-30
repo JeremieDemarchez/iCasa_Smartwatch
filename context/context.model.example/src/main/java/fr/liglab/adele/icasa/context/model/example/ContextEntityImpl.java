@@ -142,6 +142,11 @@ public class ContextEntityImpl implements ContextEntity{
     }
 
     @Override
+    public void setState(String state, Object value) {
+        //DO NOTHING
+    }
+
+    @Override
     public Map<String,Object> getStateAsMap() {
         Map<String,Object> stateMap = new HashMap<String,Object>();
         for (List<Object> property_array : state){

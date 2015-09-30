@@ -130,6 +130,11 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
     }
 
     @Override
+    public void setState(String state, Object value) {
+        device.setPropertyValue(state,value);
+    }
+
+    @Override
     public Map<String,Object> getStateAsMap() {
         Map<String,Object> stateMap = new HashMap<String,Object>();
         for (List<Object> property_array : state){
@@ -328,8 +333,8 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-        LOG.info("Device : "+device.getSerialNumber() + " Property modified : "+ propertyName + " old " + oldValue + " new " + newValue );
-        replaceStateValue(propertyName,newValue,oldValue);
+        LOG.info("Device : " + device.getSerialNumber() + " Property modified : " + propertyName + " old " + oldValue + " new " + newValue);
+        replaceStateValue(propertyName, newValue, oldValue);
     }
 
     @Override
