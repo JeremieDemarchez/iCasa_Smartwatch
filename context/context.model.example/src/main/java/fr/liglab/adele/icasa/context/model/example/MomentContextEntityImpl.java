@@ -2,8 +2,6 @@ package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
-import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -16,15 +14,15 @@ import java.util.Map;
 
 @Component(immediate = true)
 @Provides
-public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
+public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayListener{
 
-    private static final Logger LOG = LoggerFactory.getLogger(DeviceContextEntityImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MomentContextEntityImpl.class);
 
-    @Requires(specification = GenericDevice.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
-    GenericDevice device;
+    @Requires
+    private MomentOfTheDayService momentOfTheDayService;
 
     @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
-            filter = "(relation.end.id=${context.entity.id})")
+            filter = "(relation.end.id=${context.entity.id})",proxy = false)
     List<Relation> relations;
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
@@ -40,12 +38,12 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Validate
     public void start(){
-
+        momentOfTheDayService.register(this);
     }
 
     @Invalidate
     public void stop(){
-
+        momentOfTheDayService.register(this);
     }
 
     @Override
@@ -57,6 +55,7 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
         List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
 
         boolean property_exists = false;
+
         for (List<Object> property_array : stateExtensions){
             if (property_array.get(0)==property){
                 property_exists = true;
@@ -105,6 +104,21 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
         this.stateExtensions = new ArrayList<>(stateExtensions);
     }
 
+    private synchronized void replaceStateExtensionValue(String property,Object newValue,Object oldValue){
+        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
+
+        for (List<Object> property_array : stateExtensions){
+            if (property_array.get(0)==property){
+                if (property_array.contains(oldValue)){
+                    int index = property_array.indexOf(oldValue);
+                    property_array.set(index,newValue);
+                }
+            }
+        }
+
+        this.stateExtensions = new ArrayList<>(stateExtensions);
+    }
+
 
     @Override
     public List<Object> getStateValue(String property) {
@@ -131,7 +145,7 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public void setState(String state, Object value) {
-        device.setPropertyValue(state,value);
+        //DO NOTHING
     }
 
     @Override
@@ -199,69 +213,38 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
         return stateMap;
     }
 
+
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
-        //      LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+  //      LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
-
     }
 
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-/**        LOG.info("Modified !!");
- LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
- **/
+    /**    LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+        LOG.info("NEW value " + relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
+        if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
+            LOG.error(" Modified is called but last and new extended state are equals");
+        }**/
         if(m_stateExtension.get(serviceReference).equals(relation.getExtendedState().getValue())){
             return;
         }
-        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
-        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
+        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get(serviceReference));
+        m_stateExtension.put(serviceReference, relation.getExtendedState().getValue());
+
     }
 
     @Unbind(id = "context.entity.relation")
-    //TODO : INSPECT EXCEPTION
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        //  LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
+ //       LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
 
         removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
-        m_stateExtension.remove(relation.getId());
+        m_stateExtension.remove(serviceReference);
     }
 
-    //TODO : To verify
-    public void addStateValue(String property, Object value, boolean isAggregated) {
-        List<List<Object>> state = new ArrayList<>(this.state);
-
-        boolean property_exists = false;
-        for (List<Object> property_array : state){
-            if (property_array.get(0)==property){
-                property_exists = true;
-                if (!isAggregated){
-                    property_array.clear();
-                    property_array.add(property);
-                    property_array.add(value);
-                } else {
-                    if (!property_array.contains(value)){
-                        property_array.add(value);
-                    }
-                }
-            }
-        }
-        if (!property_exists){
-            List<Object> property_array = new ArrayList<>();
-            property_array.add(property);
-            property_array.add(value);
-            state.add(property_array);
-        }
-
-        this.state = new ArrayList<>(state);
-    }
-
-    /** public void replaceStateValue(String property, Object newValue, Object oldValue, boolean isAggregated) {
-     this.removeStateValue(property, oldValue);
-     this.addStateValue(property, newValue, isAggregated);
-     }**/
 
     private synchronized void replaceStateValue(String property,Object newValue,Object oldValue){
         List<List<Object>> stateCopy = new ArrayList<>(this.state);
@@ -286,70 +269,10 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
         this.state = new ArrayList<>(stateCopyShuffle);
     }
 
-
-    public void removeStateValue(String property, Object value) {
-        List<List<Object>> state = new ArrayList<>(this.state);
-
-        int index = -1;
-        for (List<Object> property_array : state){
-            if (property_array.get(0)==property){
-                index = state.indexOf(property_array);
-                if (property_array.contains(value)){
-
-                    property_array.remove(value);
-                }
-            }
-        }
-
-        /*If the property hasn't value any more, it is cleared*/
-        if (index>=0){
-            if(state.get(index).size()==1){
-                state.remove(index);
-            }
-        }
-
-        this.state = new ArrayList<>(state);
-    }
-
-    @Bind(id = "context.entity.device")
-    public void bindGenericDevice (GenericDevice device) {
-        device.addListener(this);
-    }
-
-    @Unbind(id = "context.entity.device")
-    public void unbindGenericDevice(GenericDevice device) {
-        device.removeListener(this);
-    }
-
-
     @Override
-    public void deviceAdded(GenericDevice device) {
-        LOG.info("Device : "+device.getSerialNumber()+ " add listener to context entity : "+  this.getId());
-    }
-
-    @Override
-    public void deviceRemoved(GenericDevice device) {
-
-    }
-
-    @Override
-    public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
-        LOG.info("Device : " + device.getSerialNumber() + " Property modified : " + propertyName + " old " + oldValue + " new " + newValue);
-        replaceStateValue(propertyName, newValue, oldValue);
-    }
-
-    @Override
-    public void devicePropertyAdded(GenericDevice device, String propertyName) {
-
-    }
-
-    @Override
-    public void devicePropertyRemoved(GenericDevice device, String propertyName) {
-
-    }
-
-    @Override
-    public void deviceEvent(GenericDevice device, Object data) {
-
+    public void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay) {
+        LOG.info("Moment of the day changed : " + newMomentOfTheDay );
+        String propertyName = "currentMomentOfTheDay";
+        replaceStateValue(propertyName, newMomentOfTheDay, getStateValue(propertyName));
     }
 }
