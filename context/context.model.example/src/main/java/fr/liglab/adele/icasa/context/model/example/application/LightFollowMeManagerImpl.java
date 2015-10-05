@@ -1,8 +1,10 @@
 package fr.liglab.adele.icasa.context.model.example.application;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.example.MomentOfTheDay;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -17,8 +19,14 @@ public class LightFollowMeManagerImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(LightFollowMeManagerImpl.class);
 
-    @Requires(specification = ContextEntity.class,id = "zone.to.regulate" , optional = true,filter = "(context.entity.state=zone.name*)")
+    @Requires(specification = ContextEntity.class,id = "zone.to.regulate" , optional = true, filter = "(context.entity.state=zone.name*)")
     List<ContextEntity> zoneEntities;
+
+    @Requires(specification = ContextEntity.class, id = "moment.of.the.day", optional = true, filter = "(context.entity.id=momentOfTheDay*)")
+    ContextEntity momentOfTheDayEntity;
+
+    @Requires(specification = LightFollowRegulator.class, id = "light.follow.me.regulators", optional = true)
+    List<LightFollowRegulator> lightFollowRegulators;
 
     @Requires(id = "physical.factory",optional = false,filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl)")
     Factory physicalParameterFactory;
@@ -149,7 +157,9 @@ public class LightFollowMeManagerImpl {
         ComponentInstance instance;
 
         String m_filterPresence = "(&(physical.parameter.name=Presence)(context.entity.state.extension="+zone+"*))";
-        String m_filterLight = "(&(context.entity.state="+ BinaryLight.BINARY_LIGHT_POWER_STATUS+"*)(context.entity.state.extension="+zone+"*))";
+        String m_filterLight = "(&(context.entity.state.extension="+zone+"*)" +
+                "(|(context.entity.state="+ BinaryLight.BINARY_LIGHT_POWER_STATUS + "*)" +
+                "(context.entity.state=" + DimmerLight.DIMMER_LIGHT_POWER_LEVEL + "*)))";
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("presence",m_filterPresence);
         m_requiresFilters.put("lights",m_filterLight);
@@ -196,5 +206,62 @@ public class LightFollowMeManagerImpl {
         }
     }
 
+    @Bind(id = "moment.of.the.day")
+    public void bindMomentOfTheDay(ContextEntity momentOfTheDay){
+        for(LightFollowRegulator lightFollowRegulator : lightFollowRegulators){
+            updateLightFollowRegulator(lightFollowRegulator, momentOfTheDay);
+        }
+    }
 
+    @Modified(id = "moment.of.the.day")
+    public void modifiedMomentOfTheDay(ContextEntity momentOfTheDay){
+        for(LightFollowRegulator lightFollowRegulator : lightFollowRegulators){
+            updateLightFollowRegulator(lightFollowRegulator, momentOfTheDay);
+        }
+    }
+
+    @Unbind(id = "moment.of.the.day")
+    public void unbindMomentOfTheDay(ContextEntity momentOfTheDay){
+
+    }
+
+    @Bind(id = "light.follow.me.regulators")
+    public void bindLightFollowMeRegulators(LightFollowRegulator lightFollowMeRegulator){
+        if (momentOfTheDayEntity != null) {
+            updateLightFollowRegulator(lightFollowMeRegulator, momentOfTheDayEntity);
+        }
+    }
+
+    @Unbind(id = "light.follow.me.regulators")
+    public void unbindLightFollowMeRegulators(LightFollowRegulator lightFollowMeRegulator){
+
+    }
+
+    private void updateLightFollowRegulator (LightFollowRegulator lightFollowRegulator, ContextEntity momentOfTheDayEntity){
+        if (!momentOfTheDayEntity.getStateValue("currentMomentOfTheDay").isEmpty()) {
+            MomentOfTheDay momentOfTheDay = (MomentOfTheDay) momentOfTheDayEntity.getStateValue("currentMomentOfTheDay").get(1);
+            lightFollowRegulator.setIlluminanceFactor(convertMomentOfTheDay(momentOfTheDay));
+        }
+
+    }
+
+    private double convertMomentOfTheDay(MomentOfTheDay momentOfTheDay){
+        double illuminanceFactor = 1;
+        switch (momentOfTheDay){
+            case MORNING:
+                illuminanceFactor = 0.5;
+                break;
+            case AFTERNOON:
+                illuminanceFactor = 0.2;
+                break;
+            case EVENING:
+                illuminanceFactor = 1;
+                break;
+            case NIGHT:
+                illuminanceFactor = 0.8;
+                break;
+        }
+
+        return illuminanceFactor;
+    }
 }
