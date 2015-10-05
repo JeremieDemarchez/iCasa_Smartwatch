@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +33,7 @@ public class ContextEntityImpl implements ContextEntity{
     @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
     List<List<Object>> stateExtensions;
 
-    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
+    private final Map<Long,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -216,7 +217,7 @@ public class ContextEntityImpl implements ContextEntity{
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
   //      LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
-        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
+        m_stateExtension.put((Long)serviceReference.getProperty(Constants.SERVICE_ID),relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
     }
 
@@ -227,11 +228,11 @@ public class ContextEntityImpl implements ContextEntity{
         if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
             LOG.error(" Modified is called but last and new extended state are equals");
         }**/
-        if(m_stateExtension.get(serviceReference).equals(relation.getExtendedState().getValue())){
+        if(m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)).equals(relation.getExtendedState().getValue())){
             return;
         }
-        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get(serviceReference));
-        m_stateExtension.put(serviceReference, relation.getExtendedState().getValue());
+        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)));
+        m_stateExtension.put((Long)serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
 
     }
 
@@ -239,7 +240,7 @@ public class ContextEntityImpl implements ContextEntity{
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
  //       LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
 
-        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
-        m_stateExtension.remove(serviceReference);
+        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)));
+        m_stateExtension.remove((Long)serviceReference.getProperty(Constants.SERVICE_ID));
     }
 }

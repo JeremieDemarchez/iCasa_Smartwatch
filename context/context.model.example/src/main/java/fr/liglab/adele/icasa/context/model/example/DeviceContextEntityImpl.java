@@ -5,6 +5,7 @@ import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.*;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,7 +37,7 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
     @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
     List<List<Object>> stateExtensions;
 
-    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
+    private final Map<Long,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -129,6 +130,21 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
         return stateCopy;
     }
 
+    private synchronized void replaceStateExtensionValue(String property,Object newValue,Object oldValue){
+        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
+
+        for (List<Object> property_array : stateExtensions){
+            if (property_array.get(0)==property){
+                if (property_array.contains(oldValue)){
+                    int index = property_array.indexOf(oldValue);
+                    property_array.set(index,newValue);
+                }
+            }
+        }
+
+        this.stateExtensions = new ArrayList<>(stateExtensions);
+    }
+
     @Override
     public void setState(String state, Object value) {
         device.setPropertyValue(state,value);
@@ -203,30 +219,31 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
         //      LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
-        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
+        m_stateExtension.put((Long)serviceReference.getProperty(Constants.SERVICE_ID),relation.getExtendedState().getValue());
         addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
-
     }
 
     @Modified(id = "context.entity.relation")
     public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-/**        LOG.info("Modified !!");
- LOG.info("Entity : " + name + " modified relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
- **/
-        if(m_stateExtension.get(serviceReference).equals(relation.getExtendedState().getValue())){
+        /**    LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+         LOG.info("NEW value " + relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
+         if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
+         LOG.error(" Modified is called but last and new extended state are equals");
+         }**/
+        if(m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)).equals(relation.getExtendedState().getValue())){
             return;
         }
-        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
-        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
+        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)));
+        m_stateExtension.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
+
     }
 
     @Unbind(id = "context.entity.relation")
-    //TODO : INSPECT EXCEPTION
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        //  LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(relation.getId()) );
+        //       LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
 
-        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
-        m_stateExtension.remove(relation.getId());
+        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)));
+        m_stateExtension.remove((Long)serviceReference.getProperty(Constants.SERVICE_ID));
     }
 
     //TODO : To verify
