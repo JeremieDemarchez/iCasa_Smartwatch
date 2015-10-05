@@ -54,9 +54,6 @@ public class ContextController extends DefaultController {
     @Requires(specification = ContextEntity.class,optional = true)
     List<ContextEntity> entities;
 
-    @Requires(specification = Aggregation.class,optional = true)
-    List<Aggregation> aggregations;
-
     /**
      * The action method returning the welcome page. It handles
      * HTTP GET request on the "/" URL.
