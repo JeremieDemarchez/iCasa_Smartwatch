@@ -1,0 +1,166 @@
+package fr.liglab.adele.icasa.context.handler;
+
+import fr.liglab.adele.icasa.context.model.Relation;
+import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.HandlerFactory;
+import org.apache.felix.ipojo.PrimitiveHandler;
+import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
+import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.MethodMetadata;
+import org.apache.felix.ipojo.parser.PojoMetadata;
+import org.osgi.framework.Constants;
+import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.reflect.Member;
+import java.util.*;
+
+@Handler(name = "ContextEntity", namespace = RelationsHandler.RELATIONS_HANDLER_NAMESPACE)
+public class RelationsHandler extends PrimitiveHandler{
+
+    //TODO : HOW TO CONFIGURE THE FILTER ?
+    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
+            filter = "(relation.end.id=cuisine)",proxy = false)
+    List<Relation> relations;
+
+    private static final Logger LOG = LoggerFactory.getLogger(RelationsHandler.class);
+
+    private ProvidedServiceHandler m_providedServiceHandler;
+
+    public static final String RELATIONS_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler";
+
+    private Map<String,Object> m_stateExtensions = new HashMap<>();
+
+    private final Map<Long,Object> m_stateExtensionByServiceId = new HashMap<>();
+
+    @Bind(id = "context.entity.relation")
+    public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
+        LOG.info(" BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
+        /*state actualisation*/
+        m_stateExtensionByServiceId.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
+
+        String relationName = relation.getExtendedState().getName();
+
+        if (m_stateExtensions.containsKey(relationName)){
+            if (relation.getExtendedState().isAggregate()){
+                List<Object> stateExtension = (List)m_stateExtensions.get(relationName);
+                stateExtension.add(relation.getExtendedState().getValue());
+                updateExtensionState(relationName, m_stateExtensions.get(relationName));
+
+            }else {
+                m_stateExtensions.put(relationName,relation.getExtendedState().getValue());
+                updateExtensionState(relationName,m_stateExtensions.get(relationName));
+            }
+
+        } else {
+            if (relation.getExtendedState().isAggregate()){
+                List<Object> stateExtension = new ArrayList<>();
+                stateExtension.add(relation.getExtendedState().getValue());
+                m_stateExtensions.put(relationName, stateExtension);
+                addExtensionState(relationName,stateExtension);
+
+            }else {
+                m_stateExtensions.put(relationName,relation.getExtendedState().getValue());
+                addExtensionState(relationName, relation.getExtendedState().getValue());
+            }
+        }
+
+    }
+
+    @Modified(id = "context.entity.relation")
+    public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
+        LOG.info(" MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
+        String relationName = relation.getExtendedState().getName();
+        Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+
+        if (oldStateExtension.equals(relation.getExtendedState().getValue())){
+            return;
+        }
+
+        LOG.info(" MODIFIED PROPERTY !!!!!! ");
+
+        if (relation.getExtendedState().isAggregate()){
+            List<Object> stateExtension = (List)m_stateExtensions.get(relationName);
+            int oldValueIndex = stateExtension.indexOf(oldStateExtension);
+            stateExtension.add(oldValueIndex,relation.getExtendedState().getName());
+            m_stateExtensions.put(relationName, stateExtension);
+            updateExtensionState(relationName, stateExtension);
+
+        }else {
+            m_stateExtensions.put(relationName,relation.getExtendedState().getValue());
+            updateExtensionState(relationName, relation.getExtendedState().getValue());
+        }
+    }
+
+    @Unbind(id = "context.entity.relation")
+    public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
+        LOG.info(" UNBIND elation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName());
+        String relationName = relation.getExtendedState().getName();
+        Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+
+        if (relation.getExtendedState().isAggregate()){
+            List<Object> stateExtension = (List)m_stateExtensions.get(relationName);
+            int oldValueIndex = stateExtension.indexOf(oldStateExtension);
+            stateExtension.remove(oldValueIndex);
+            if (stateExtension.isEmpty()){
+                m_stateExtensions.remove(relationName);
+                removeExtensionState(relationName);
+            }else {
+                m_stateExtensions.put(relationName, stateExtension);
+                updateExtensionState(relationName, stateExtension);
+            }
+        }else {
+            m_stateExtensions.remove(relationName);
+            removeExtensionState(relationName);
+        }
+    }
+
+
+    private void addExtensionState(String propertyId,Object value){
+        Hashtable<String,Object> hashtable = new Hashtable();
+        hashtable.put(propertyId, value);
+        m_providedServiceHandler.addProperties(hashtable);
+    }
+
+    private void removeExtensionState(String propertyId){
+        Hashtable<String,Object> hashtable = new Hashtable();
+        hashtable.put(propertyId, new Object());
+        m_providedServiceHandler.removeProperties(hashtable);
+    }
+
+    private void updateExtensionState(String propertyId,Object value){
+        Hashtable<String,Object> hashtable = new Hashtable();
+        hashtable.put(propertyId, value);
+        m_providedServiceHandler.reconfigure(hashtable);
+    }
+
+    @Override
+    public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+        PojoMetadata pojoMetadata = getPojoMetadata();
+        MethodMetadata[] methodMetadatas = pojoMetadata.getMethods();
+        for (MethodMetadata method : methodMetadatas){
+            if (method.getMethodName().equals("getStateExtensionAsMap")){
+                getInstanceManager().register(method,this);
+            }
+        }
+    }
+
+    public synchronized void stop() {
+
+    }
+
+    public synchronized void start() {
+        m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+
+    }
+    //TODO : HOW TO INJECT EXTENDED STATE IN CONTEXT ENITY ?
+    public synchronized void onExit(Object pojo, Member method, Object returnedObj){
+        returnedObj = m_stateExtensions;
+        if(returnedObj instanceof Map){
+            returnedObj= Collections.unmodifiableMap(m_stateExtensions);
+            LOG.info(returnedObj.toString());
+        }
+    }
+}

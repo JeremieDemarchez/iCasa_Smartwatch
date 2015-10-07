@@ -240,17 +240,6 @@ public class AggregationImpl implements Aggregation {
     }
 
     @Override
-    //TODO : Return a copy of the stateextension list
-    public List<List<Object>> getStateExtension() {
-        List<List<Object>> stateCopy = new ArrayList<>();
-        for (List<Object> property_array : stateExtensions) {
-            List copyProperty = new ArrayList<>(property_array);
-            stateCopy.add(copyProperty);
-        }
-        return stateCopy;
-    }
-
-    @Override
     public Map<String, Object> getStateExtensionAsMap() {
         Map<String,Object> stateMap = new HashMap<String,Object>();
         for (List<Object> property_array : stateExtensions){

@@ -20,8 +20,6 @@ public interface ContextEntity {
 
     public List<Object> getStateExtensionValue (String property);
 
-    public List<List<Object>> getStateExtension();
-
     public Map<String,Object> getStateExtensionAsMap();
 
 }

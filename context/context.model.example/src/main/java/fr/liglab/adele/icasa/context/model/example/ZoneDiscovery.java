@@ -61,9 +61,12 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
             state.add(property_array);
         }
         properties.put("context.entity.state", state);
-        properties.put("context.entity.state.extension", stateExtensions);
         properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+zone.getId());
-
+/**
+        Hashtable requiresFilters = new Hashtable();
+        requiresFilters.put("context.entity.relation", "(relation.end.id="+zone.getId()+")");
+        properties.put("requires.filters", requiresFilters);
+**/
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(

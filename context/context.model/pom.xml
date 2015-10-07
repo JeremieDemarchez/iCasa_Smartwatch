@@ -45,7 +45,8 @@
                 <configuration>
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.context.model;
-                            fr.liglab.adele.icasa.context.transformation
+                            fr.liglab.adele.icasa.context.transformation;
+                            fr.liglab.adele.icasa.context.handler
                         </Export-Package>
                     </instructions>
                 </configuration>
