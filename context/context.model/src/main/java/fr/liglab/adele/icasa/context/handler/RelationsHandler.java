@@ -20,10 +20,13 @@ import java.util.*;
 @Handler(name = "ContextEntity", namespace = RelationsHandler.RELATIONS_HANDLER_NAMESPACE)
 public class RelationsHandler extends PrimitiveHandler{
 
-    //TODO : HOW TO CONFIGURE THE FILTER ?
-    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
-            filter = "(relation.end.id=cuisine)",proxy = false)
+   @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
+            filter = "(relation.end.id=${end.id})",proxy = false)
     List<Relation> relations;
+
+    @Property(name = "end.id")
+    String endId;
+
 
     private static final Logger LOG = LoggerFactory.getLogger(RelationsHandler.class);
 
@@ -145,6 +148,11 @@ public class RelationsHandler extends PrimitiveHandler{
                 getInstanceManager().register(method,this);
             }
         }
+
+        String id =  (String)configuration.get("context.entity.id");
+        Properties properties = new Properties();
+        properties.put("end.id",id);
+        getHandlerManager().reconfigure(properties);
     }
 
     public synchronized void stop() {
@@ -155,12 +163,13 @@ public class RelationsHandler extends PrimitiveHandler{
         m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
 
     }
-    //TODO : HOW TO INJECT EXTENDED STATE IN CONTEXT ENITY ?
-    public synchronized void onExit(Object pojo, Member method, Object returnedObj){
-        returnedObj = m_stateExtensions;
+
+   public synchronized void onExit(Object pojo, Member method, Object returnedObj){
+
         if(returnedObj instanceof Map){
-            returnedObj= Collections.unmodifiableMap(m_stateExtensions);
-            LOG.info(returnedObj.toString());
+            Map<String,Object> returnMap = (Map)returnedObj ;
+            returnMap.clear();
+            returnMap.putAll(m_stateExtensions);
         }
     }
 }
