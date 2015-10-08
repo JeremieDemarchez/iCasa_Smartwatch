@@ -14,7 +14,7 @@ import java.util.Map;
 
 @Component(immediate = true)
 @Provides
-@fr.liglab.adele.icasa.context.handler.ContextEntity(name = "Zone")
+@fr.liglab.adele.icasa.context.handler.ContextEntity
 public class ContextEntityImpl implements ContextEntity{
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextEntityImpl.class);

@@ -17,6 +17,7 @@ import java.util.Map;
 
 @Component(immediate = true)
 @Provides
+@fr.liglab.adele.icasa.context.handler.ContextEntity
 public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     private static final Logger LOG = LoggerFactory.getLogger(DeviceContextEntityImpl.class);
@@ -24,20 +25,11 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
     @Requires(specification = GenericDevice.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
     GenericDevice device;
 
-    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
-            filter = "(relation.end.id=${context.entity.id})")
-    List<Relation> relations;
-
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
 
     @ServiceProperty(name = "context.entity.state", mandatory = true)
     List<List<Object>> state;
-
-    @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
-    List<List<Object>> stateExtensions;
-
-    private final Map<Long,Object> m_stateExtension = new HashMap<>();
 
     @Validate
     public void start(){
@@ -53,59 +45,6 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
     public String getId() {
         return name;
     }
-
-    protected synchronized void addStateExtensionValue(String property, Object value, boolean isAggregated) {
-        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
-
-        boolean property_exists = false;
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.get(0)==property){
-                property_exists = true;
-                if (!isAggregated){
-                    property_array.clear();
-                    property_array.add(property);
-                    property_array.add(value);
-                } else {
-                    if (!property_array.contains(value)){
-                        property_array.add(value);
-                    }
-                }
-            }
-        }
-        if (!property_exists){
-            List<Object> property_array = new ArrayList<>();
-            property_array.add(property);
-            property_array.add(value);
-            stateExtensions.add(property_array);
-        }
-
-        this.stateExtensions = new ArrayList<>(stateExtensions);
-    }
-
-    protected synchronized void removeStateExtensionValue(String property, Object value) {
-        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
-
-        int index = -1;
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.get(0)==property){
-                index = stateExtensions.indexOf(property_array);
-                if (property_array.contains(value)){
-
-                    property_array.remove(value);
-                }
-            }
-        }
-
-        /*If the property hasn't value any more, it is cleared*/
-        if (index>=0){
-            if(stateExtensions.get(index).size()==1){
-                stateExtensions.remove(index);
-            }
-        }
-
-        this.stateExtensions = new ArrayList<>(stateExtensions);
-    }
-
 
     @Override
     public List<Object> getStateValue(String property) {
@@ -128,21 +67,6 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
             stateCopy.add(copyProperty);
         }
         return stateCopy;
-    }
-
-    private synchronized void replaceStateExtensionValue(String property,Object newValue,Object oldValue){
-        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
-
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.get(0)==property){
-                if (property_array.contains(oldValue)){
-                    int index = property_array.indexOf(oldValue);
-                    property_array.set(index,newValue);
-                }
-            }
-        }
-
-        this.stateExtensions = new ArrayList<>(stateExtensions);
     }
 
     @Override
@@ -173,66 +97,12 @@ public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public List<Object> getStateExtensionValue(String property) {
-        List<Object> value = new ArrayList<>();
-
-        for (List<Object> property_array : stateExtensions) {
-            if (property_array.get(0) == property) {
-                value = new ArrayList<>(property_array);
-            }
-        }
-        return value;
+       return new ArrayList<>();
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-        Map<String,Object> stateMap = new HashMap<String,Object>();
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.size() == 2){
-                stateMap.put((String)property_array.get(0),property_array.get(1));
-            }else {
-                List<Object> paramsValue = new ArrayList<>();
-                for (Object obj : property_array){
-                    if (obj.equals(property_array.get(0))){
-                        //do nothing
-                    }else {
-                        paramsValue.add(obj);
-                    }
-                }
-                stateMap.put((String)property_array.get(0),paramsValue);
-            }
-        }
-        return stateMap;
-    }
-
-    @Bind(id = "context.entity.relation")
-    public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
-        //      LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
-        /*state actualisation*/
-        m_stateExtension.put((Long)serviceReference.getProperty(Constants.SERVICE_ID),relation.getExtendedState().getValue());
-        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
-    }
-
-    @Modified(id = "context.entity.relation")
-    public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-        /**    LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
-         LOG.info("NEW value " + relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
-         if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
-         LOG.error(" Modified is called but last and new extended state are equals");
-         }**/
-        if(m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)).equals(relation.getExtendedState().getValue())){
-            return;
-        }
-        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)));
-        m_stateExtension.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
-
-    }
-
-    @Unbind(id = "context.entity.relation")
-    public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        //       LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
-
-        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get((Long)serviceReference.getProperty(Constants.SERVICE_ID)));
-        m_stateExtension.remove((Long)serviceReference.getProperty(Constants.SERVICE_ID));
+        return new HashMap<>();
     }
 
     //TODO : To verify

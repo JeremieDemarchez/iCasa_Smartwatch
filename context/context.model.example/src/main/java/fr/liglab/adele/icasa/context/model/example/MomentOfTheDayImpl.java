@@ -73,7 +73,7 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
     @Override
     public void run() {
         // The method run is called on a regular basis
-        System.out.println(" EXEC ");
+   //     System.out.println(" EXEC ");
         // TODO : do something to check the current time of the day and see if
         // it has changed
         DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
@@ -119,7 +119,6 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
         state.add(property_array);
 
         properties.put("context.entity.state", state);
-        properties.put("context.entity.state.extension", stateExtensions);
         properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+ "momentOfTheDay");
 
         try {

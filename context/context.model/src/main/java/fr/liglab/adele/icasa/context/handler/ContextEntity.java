@@ -5,5 +5,5 @@ package fr.liglab.adele.icasa.context.handler;
  */
 public @interface ContextEntity {
 
-    String name();
+
 }

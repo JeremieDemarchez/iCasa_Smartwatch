@@ -57,7 +57,6 @@ public class DeviceDiscovery{
             state.add(property_array);
         }
         properties.put("context.entity.state", state);
-        properties.put("context.entity.state.extension", stateExtensions);
         properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+device.getSerialNumber());
 
         try {

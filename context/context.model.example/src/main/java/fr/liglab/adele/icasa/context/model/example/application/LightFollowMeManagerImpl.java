@@ -116,7 +116,7 @@ public class LightFollowMeManagerImpl {
         Hashtable properties = new Hashtable();
         ComponentInstance instance;
 
-        String m_filter = "(&(context.entity.state.extension=" + zone + "*)" +
+        String m_filter = "(&(Relation.Location=" + zone + ")" +
                 "(context.entity.state=presenceSensor.sensedPresence*))";
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("aggregation.sources",m_filter);
@@ -156,8 +156,8 @@ public class LightFollowMeManagerImpl {
         Hashtable properties = new Hashtable();
         ComponentInstance instance;
 
-        String m_filterPresence = "(&(physical.parameter.name=Presence)(context.entity.state.extension="+zone+"*))";
-        String m_filterLight = "(&(context.entity.state.extension="+zone+"*)" +
+        String m_filterPresence = "(&(physical.parameter.name=Presence)(zone.impacted="+zone+"))";
+        String m_filterLight = "(&(Relation.Location="+zone+")" +
                 "(|(context.entity.state="+ BinaryLight.BINARY_LIGHT_POWER_STATUS + "*)" +
                 "(context.entity.state=" + DimmerLight.DIMMER_LIGHT_POWER_LEVEL + "*)))";
         Hashtable m_requiresFilters = new Hashtable<>();
