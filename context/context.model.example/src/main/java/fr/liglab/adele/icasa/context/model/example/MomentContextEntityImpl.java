@@ -1,9 +1,7 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

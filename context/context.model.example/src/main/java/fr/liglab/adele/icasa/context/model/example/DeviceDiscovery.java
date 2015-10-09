@@ -1,8 +1,6 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;

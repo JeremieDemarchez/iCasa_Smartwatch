@@ -1,7 +1,6 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.clockservice.Clock;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;

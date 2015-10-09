@@ -1,8 +1,6 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.handler.AbstractContextEntity;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,8 +16,6 @@ import java.util.Map;
 public class ContextEntityImpl implements ContextEntity{
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextEntityImpl.class);
-
-
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;

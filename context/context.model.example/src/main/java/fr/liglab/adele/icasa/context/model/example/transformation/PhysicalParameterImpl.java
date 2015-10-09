@@ -1,12 +1,10 @@
 package fr.liglab.adele.icasa.context.model.example.transformation;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
 import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

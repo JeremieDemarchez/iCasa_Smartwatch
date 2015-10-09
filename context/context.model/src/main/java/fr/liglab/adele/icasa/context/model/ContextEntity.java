@@ -1,5 +1,6 @@
 package fr.liglab.adele.icasa.context.model;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,8 @@ public interface ContextEntity {
 
     public List<Object> getStateExtensionValue (String property);
 
-    public Map<String,Object> getStateExtensionAsMap();
+    default public Map<String,Object> getStateExtensionAsMap(){
+        return new HashMap<>();
+    }
 
 }

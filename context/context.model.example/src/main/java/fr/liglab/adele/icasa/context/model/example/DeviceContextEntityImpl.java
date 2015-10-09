@@ -1,12 +1,9 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.framework.Constants;
-import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
