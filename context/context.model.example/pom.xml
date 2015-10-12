@@ -65,7 +65,10 @@
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.context.model.example;
                             fr.liglab.adele.icasa.context.model.example.transformation;
-                            fr.liglab.adele.icasa.context.model.example.application</Export-Package>
+                            fr.liglab.adele.icasa.context.model.example.application;
+                            fr.liglab.adele.icasa.context.model.example.day;
+                            fr.liglab.adele.icasa.context.model.example.device;
+                            fr.liglab.adele.icasa.context.model.example.zone</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

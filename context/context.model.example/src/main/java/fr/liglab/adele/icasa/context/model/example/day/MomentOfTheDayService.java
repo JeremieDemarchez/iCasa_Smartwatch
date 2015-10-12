@@ -1,8 +1,5 @@
 package fr.liglab.adele.icasa.context.model.example.day;
 
-import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
-import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDayListener;
-
 /**
  * The MomentOfTheDay service is used to retrieve the moment of the day.
  * It also supports listeners that are notified when the moment of the day
@@ -16,22 +13,5 @@ public interface MomentOfTheDayService {
      * @return the moment of the day
      */
     MomentOfTheDay getMomentOfTheDay();
-
-    /**
-     * Register a listener that will be notified each time the current moment of the day
-     * changed.
-     *
-     * @param listener
-     *            the listener
-     */
-    void register(MomentOfTheDayListener listener);
-
-    /**
-     * Unregister a moment of the day listener.
-     *
-     * @param listener
-     *            the listener
-     */
-    void unregister(MomentOfTheDayListener listener);
 
 }

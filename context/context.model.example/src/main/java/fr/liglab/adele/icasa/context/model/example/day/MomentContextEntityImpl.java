@@ -1,7 +1,12 @@
 package fr.liglab.adele.icasa.context.model.example.day;
 
+import fr.liglab.adele.icasa.clockservice.Clock;
+import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
+import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import org.apache.felix.ipojo.annotations.*;
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,32 +14,94 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
 @Component(immediate = true)
+@Instantiate
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayListener {
+@State(states = {MomentContextEntityImpl.MOMENT_OF_THE_DAY})
+public class MomentContextEntityImpl implements ContextEntity,MomentOfTheDayService,PeriodicRunnable{
+
+    public static final String MOMENT_OF_THE_DAY = "momentOfTheDay";
 
     private static final Logger LOG = LoggerFactory.getLogger(MomentContextEntityImpl.class);
 
-    @Requires
-    private MomentOfTheDayService momentOfTheDayService;
+    /**
+     * The current moment of the day :
+     **/
+    MomentOfTheDay currentMomentOfTheDay = MomentOfTheDay.MORNING;
 
-    @ServiceProperty(name = "context.entity.id",mandatory = true)
-    String name;
+    @Requires(id = "clock",optional = false)
+    Clock clock;
 
-    @ServiceProperty(name = "context.entity.state", mandatory = true)
-    List<List<Object>> state;
+
+    private final String name = "MomentOfTheDay";
+
+    @Pull(state = MOMENT_OF_THE_DAY)
+    Function getMomentOfTheDay = (Object obj) ->{
+        return getMomentOfTheDay();
+    };
+
 
     @Validate
     public void start(){
-        momentOfTheDayService.register(this);
+        DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
+        int hour = dateTimeEli.getHourOfDay();
+        MomentOfTheDay temp = currentMomentOfTheDay;
+        currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
+        if (currentMomentOfTheDay != temp ){
+            pushState(MOMENT_OF_THE_DAY,currentMomentOfTheDay);
+        }
     }
 
     @Invalidate
     public void stop(){
-        momentOfTheDayService.register(this);
+
     }
+
+
+    @Override
+    public MomentOfTheDay getMomentOfTheDay(){
+        return currentMomentOfTheDay;
+    }
+
+    @Override
+    public long getPeriod(){
+        // The service will be periodically called every hour.
+        return 3600 * 1000 ;
+    }
+
+    @Override
+    public String getGroup(){
+        return "default"; // you don't need to understand this part.
+    }
+
+
+    @Override
+    public void run() {
+        DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
+        int hour = dateTimeEli.getHourOfDay();
+        MomentOfTheDay temp = currentMomentOfTheDay;
+        currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
+        if (currentMomentOfTheDay != temp ){
+            pushState(MOMENT_OF_THE_DAY,currentMomentOfTheDay);
+        }
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+    private final Map<String,Object> injectedState = new HashMap<>();
 
     @Override
     public String getId() {
@@ -42,15 +109,8 @@ public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayLis
     }
 
     @Override
-    public List<Object> getStateValue(String property) {
-        List<Object> value = new ArrayList<>();
-
-        for (List<Object> property_array : state) {
-            if (property_array.get(0) == property) {
-                value = new ArrayList<>(property_array);
-            }
-        }
-        return value;
+    public Object getStateValue(String property) {
+        return injectedState.get(property);
     }
 
     @Override
@@ -60,67 +120,21 @@ public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayLis
 
     @Override
     public Map<String,Object> getState() {
-        Map<String,Object> stateMap = new HashMap<String,Object>();
-        for (List<Object> property_array : state){
-            if (property_array.size() == 2){
-                stateMap.put((String)property_array.get(0),property_array.get(1));
-            }else {
-                List<Object> paramsValue = new ArrayList<>();
-                for (Object obj : property_array){
-                    if (obj.equals(property_array.get(0))){
-                        //do nothing
-                    }else {
-                        paramsValue.add(obj);
-                    }
-                }
-                stateMap.put((String)property_array.get(0),paramsValue);
-            }
-        }
-        return stateMap;
+        return injectedState;
     }
 
     @Override
     public List<Object> getStateExtensionValue(String property) {
-      return new ArrayList<>();
+        return new ArrayList<>();
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-      return new HashMap<>();
+        return new HashMap<String,Object>();
     }
 
     @Override
     public void pushState(String state, Object value) {
 
-    }
-
-    private synchronized void replaceStateValue(String property,Object newValue,Object oldValue){
-        List<List<Object>> stateCopy = new ArrayList<>(this.state);
-        List<List<Object>> stateCopyShuffle = new ArrayList<>();
-
-        for (List<Object> property_array : stateCopy){
-            //TODO : to verify if there are several parameters in state
-            if (property_array.get(0)==property){
-                property_array.set(1,newValue);
-            }
-        }
-
-        //HACK : IF THE LIST IS NOT SHUFFLE EVENT ISN4T PROPAGED TO OSGI REGISTRY
-        int size = stateCopy.size();
-        for(int i=0;i<size;i++){
-            stateCopyShuffle.add(new ArrayList<>());
-        }
-        for(int i=0;i<size;i++){
-            stateCopyShuffle.set(i,stateCopy.get(size-i-1));
-        }
-
-        this.state = new ArrayList<>(stateCopyShuffle);
-    }
-
-    @Override
-    public void momentOfTheDayHasChanged(MomentOfTheDay newMomentOfTheDay) {
-//        LOG.info("Moment of the day changed : " + newMomentOfTheDay );
-        String propertyName = "currentMomentOfTheDay";
-        replaceStateValue(propertyName, newMomentOfTheDay, getStateValue(propertyName));
     }
 }
