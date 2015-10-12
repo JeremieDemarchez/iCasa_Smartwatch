@@ -84,8 +84,8 @@ public class ContextModelGoGoCommand  {
             if (entity.getId().equals(name)){
                 out = out + "Entity : " + name + "\n";
                 out = out +"State : " + "\n";
-                for (String key : entity.getStateAsMap().keySet()){
-                    out = out +" Property : " + key + " with value : " + entity.getStateAsMap().get(key)+ "\n";
+                for (String key : entity.getState().keySet()){
+                    out = out +" Property : " + key + " with value : " + entity.getState().get(key)+ "\n";
                 }
                 out = out +"Extension : " + "\n";
                 for (String key : entity.getStateExtensionAsMap().keySet()){

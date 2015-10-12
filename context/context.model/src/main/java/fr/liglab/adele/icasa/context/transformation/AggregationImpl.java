@@ -191,23 +191,12 @@ public class AggregationImpl implements Aggregation {
     }
 
     @Override
-    //TODO : return a copy of the list
-    public List<List<Object>> getState() {
-        List<List<Object>> stateCopy = new ArrayList<>();
-        for (List<Object> property_array : state) {
-            List copyProperty = new ArrayList<>(property_array);
-            stateCopy.add(copyProperty);
-        }
-        return stateCopy;
-    }
-
-    @Override
     public void setState(String state, Object value) {
 
     }
 
     @Override
-    public Map<String,Object> getStateAsMap() {
+    public Map<String,Object> getState() {
         Map<String,Object> stateMap = new HashMap<String,Object>();
         for (List<Object> property_array : state){
             if (property_array.size() == 2){
@@ -258,6 +247,11 @@ public class AggregationImpl implements Aggregation {
             }
         }
         return stateMap;
+    }
+
+    @Override
+    public void pushState(String state, Object value) {
+
     }
 
 

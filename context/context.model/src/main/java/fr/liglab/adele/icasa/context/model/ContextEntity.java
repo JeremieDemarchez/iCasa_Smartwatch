@@ -11,18 +11,16 @@ public interface ContextEntity {
 
     public String getId();
 
-    public List<Object> getStateValue (String property);
-
-    public List<List<Object>> getState();
+    public Object getStateValue (String property);
 
     public void setState(String state,Object value);
 
-    public Map<String,Object> getStateAsMap();
+    public Map<String,Object> getState();
 
     public List<Object> getStateExtensionValue (String property);
 
-    default public Map<String,Object> getStateExtensionAsMap(){
-        return new HashMap<>();
-    }
+    public Map<String,Object> getStateExtensionAsMap();
+
+    public void pushState(String state,Object value);
 
 }

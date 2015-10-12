@@ -17,7 +17,7 @@ import static org.apache.felix.ipojo.configuration.Instance.instance;
 //@Configuration
 public class PhysicalParameterConfiguration {
 
-    String filter_kitchen = "kitchen";
+    /**    String filter_kitchen = "kitchen";
 
     String filter_living_room = "livingroom";
 
@@ -139,7 +139,7 @@ public class PhysicalParameterConfiguration {
                 .with("context.entity.id").setto(filter_kitchen+"Illuminance");
     }
 
-    public class IlluminanceAggregation implements AggregationFunction{
+   public class IlluminanceAggregation implements AggregationFunction{
 
         @Override
         public Object getResult(List sources) {
@@ -283,5 +283,5 @@ public class PhysicalParameterConfiguration {
                 .with("context.entity.state").setto(state)
                 .with("context.entity.state.extension").setto(new ArrayList<List<Object>>())
                 .with("context.entity.id").setto(filter_kitchen+"Presence");
-    }
+    }**/
 }

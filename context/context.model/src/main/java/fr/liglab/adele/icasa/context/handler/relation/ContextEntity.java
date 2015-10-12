@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.handler;
+package fr.liglab.adele.icasa.context.handler.relation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

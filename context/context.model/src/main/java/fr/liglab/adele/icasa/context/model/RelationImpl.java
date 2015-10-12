@@ -85,7 +85,7 @@ public class RelationImpl implements Relation {
     }
 
     private Map getSourceState(){
-        return source.getStateAsMap();
+        return source.getState();
     }
 
     @Override

@@ -43,17 +43,22 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
     @Bind(id = "presence")
     public void bindBedroomPresence(Aggregation aggregation){
         LOG.info(" Bind Presence");
-        updateLightRegulation(aggregation);
+  //      updateLightRegulation(aggregation);
     }
 
     @Modified(id = "presence")
     public void modifiedBedroomPresence(Aggregation aggregation){
         LOG.info(" Modified Presence");
-        updateLightRegulation(aggregation);
+        //      updateLightRegulation(aggregation);
+    }
+
+    @Override
+    public void setIlluminanceFactor(double illuminanceFactor) {
+
     }
 
 
-    private void updateLightRegulation (Aggregation aggregation){
+    /**   private void updateLightRegulation (Aggregation aggregation){
         if(((boolean)aggregation.getResult() == true)){
             if (illuminanceFactor>=1){
                 setOnAllLights();
@@ -96,7 +101,7 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
         double illuminance = 0;
         int n = 0;
         /*get max illuminance*/
-        for (ContextEntity entity : lightEntities){
+    /**       for (ContextEntity entity : lightEntities){
             if(!entity.getStateValue(stateProp_binarymax).isEmpty()) {
                 illuminanceTemp = (double)entity.getStateValue(stateProp_binarymax).get(1);
                 //illuminances.put(lightEntities.indexOf(entity),illuminanceTemp);
@@ -109,16 +114,16 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
         }
 
         /*set illuminance with factor*/
-        illuminance *= illuminanceFactor;
+    /**        illuminance *= illuminanceFactor;
         double maxLevel;
 
         /*Particuliar behavior if only one lamp*/
-        if (lightEntities.size()==1){
+  /**      if (lightEntities.size()==1){
             ContextEntity entity = lightEntities.get(0);
             if(!entity.getStateValue(stateProp_binarystatus).isEmpty()) {
-                maxLevel = (double)entity.getStateValue(stateProp_binarymax).get(1);
-                if (illuminance >= (maxLevel/2)){ /*If it doesn't really require light, doesn't set status to on*/
-                    entity.setState(stateProp_binarystatus, true);
+                maxLevel = (double)entity.getStateValue(stateProp_binarymax).get(1);**/
+  /**              if (illuminance >= (maxLevel/2)){ /*If it doesn't really require light, doesn't set status to on*/
+    /**                  entity.setState(stateProp_binarystatus, true);
                 } else {
                     entity.setState(stateProp_binarystatus, false);
                 }
@@ -162,5 +167,5 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
             this.illuminanceFactor = illuminanceFactor;
         }
         updateLightRegulation(presenceAggregation);
-    }
+    }**/
 }

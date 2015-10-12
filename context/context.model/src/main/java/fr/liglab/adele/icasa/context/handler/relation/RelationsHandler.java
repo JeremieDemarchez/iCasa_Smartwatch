@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.handler;
+package fr.liglab.adele.icasa.context.handler.relation;
 
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.ConfigurationException;
@@ -20,7 +20,7 @@ import java.util.*;
 @Handler(name = "ContextEntity", namespace = RelationsHandler.RELATIONS_HANDLER_NAMESPACE)
 public class RelationsHandler extends PrimitiveHandler{
 
-   @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
+    @Requires(specification = Relation.class, id = "context.entity.relation", optional = true,
             filter = "(relation.end.id=${end.id})",proxy = false)
     List<Relation> relations;
 
@@ -32,7 +32,7 @@ public class RelationsHandler extends PrimitiveHandler{
 
     private ProvidedServiceHandler m_providedServiceHandler;
 
-    public static final String RELATIONS_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler";
+    public static final String RELATIONS_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.relation";
 
     private Map<String,Object> m_stateExtensions = new HashMap<>();
 
@@ -164,7 +164,7 @@ public class RelationsHandler extends PrimitiveHandler{
 
     }
 
-   public synchronized void onExit(Object pojo, Member method, Object returnedObj){
+    public synchronized void onExit(Object pojo, Member method, Object returnedObj){
 
         if(returnedObj instanceof Map){
             Map<String,Object> returnMap = (Map)returnedObj ;

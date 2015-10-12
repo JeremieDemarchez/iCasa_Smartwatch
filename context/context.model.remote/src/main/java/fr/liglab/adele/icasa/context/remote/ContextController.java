@@ -84,8 +84,8 @@ public class ContextController extends DefaultController {
         for (ContextEntity entity : entities){
             String entityId = entity.getId();
             if (entityId.equals(id)){
-                for (String key : entity.getStateAsMap().keySet()){
-                    result.put(key,entity.getStateAsMap().get(key).toString());
+                for (String key : entity.getState().keySet()){
+                    result.put(key,entity.getState().get(key).toString());
                 }
                 for (String key : entity.getStateExtensionAsMap().keySet()){
                     result.put(key,entity.getStateExtensionAsMap().get(key).toString());
@@ -119,8 +119,8 @@ public class ContextController extends DefaultController {
         for (ContextEntity entity : entities){
             String entityId = entity.getId();
             if (entityId.equals(id)){
-                for (String key : entity.getStateAsMap().keySet()){
-                    result.put(key,entity.getStateAsMap().get(key).toString());
+                for (String key : entity.getState().keySet()){
+                    result.put(key,entity.getState().get(key).toString());
                 }
                 return ok(result);
             }

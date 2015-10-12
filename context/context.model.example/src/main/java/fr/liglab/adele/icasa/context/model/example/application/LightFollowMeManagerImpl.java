@@ -54,7 +54,7 @@ public class LightFollowMeManagerImpl {
 
     }
 
-    @Bind(id = "zone.to.regulate" )
+/**    @Bind(id = "zone.to.regulate" )
     public void bindZone(ContextEntity entity){
         createPresenceAggregation((String) entity.getStateAsMap().get("zone.name"));
         createLightFollowMeRegulator((String)entity.getStateAsMap().get("zone.name"));
@@ -263,5 +263,5 @@ public class LightFollowMeManagerImpl {
         }
 
         return illuminanceFactor;
-    }
+    }**/
 }
