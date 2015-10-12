@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.day;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.*;
@@ -13,7 +13,7 @@ import java.util.Map;
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayListener{
+public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayListener {
 
     private static final Logger LOG = LoggerFactory.getLogger(MomentContextEntityImpl.class);
 

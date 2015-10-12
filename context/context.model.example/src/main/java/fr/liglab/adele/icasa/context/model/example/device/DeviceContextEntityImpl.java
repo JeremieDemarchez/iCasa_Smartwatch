@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.device;
 
 import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
 import fr.liglab.adele.icasa.context.handler.synchronization.State;

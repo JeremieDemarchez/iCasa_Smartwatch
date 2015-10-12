@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.day;
 
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
@@ -18,7 +18,7 @@ import java.util.*;
 @Provides(specifications = {PeriodicRunnable.class, MomentOfTheDayService.class} )
 public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnable {
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.MomentContextEntityImpl)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.day.MomentContextEntityImpl)")
     private Factory momentEntityFactory;
 
     private final Object m_aggregationlock = new Object();

@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.day;
 
 public enum MomentOfTheDay {
     MORNING(6), AFTERNOON(12), EVENING(18), NIGHT(22);

@@ -1,8 +1,11 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.day;
 
 /**
  *
  */
+
+import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
+
 /**
  * The listener interface for receiving momentOfTheDay events.
  * The class that is interested in processing a momentOfTheDay

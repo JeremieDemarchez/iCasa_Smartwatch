@@ -1,4 +1,7 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.day;
+
+import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
+import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDayListener;
 
 /**
  * The MomentOfTheDay service is used to retrieve the moment of the day.

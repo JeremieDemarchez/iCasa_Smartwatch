@@ -1,7 +1,8 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.zone;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.example.device.DeviceDiscovery;
 import fr.liglab.adele.icasa.location.*;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -27,7 +28,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     @Requires
     private RelationFactory m_relationFactory;
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.ContextEntityImpl)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.zone.ContextEntityImpl)")
     private Factory zoneEntityFactory;
 
     @Validate

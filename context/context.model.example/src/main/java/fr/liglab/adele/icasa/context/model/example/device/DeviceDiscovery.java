@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model.example;
+package fr.liglab.adele.icasa.context.model.example.device;
 
 
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -20,7 +20,7 @@ public class DeviceDiscovery{
 
     private final Map<String,ServiceRegistration> deviceEntities = new HashMap<>();
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.DeviceContextEntityImpl)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.DeviceContextEntityImpl)")
     Factory deviceEntityFactory;
 
     @Validate

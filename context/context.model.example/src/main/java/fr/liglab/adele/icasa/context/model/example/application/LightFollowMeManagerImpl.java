@@ -1,10 +1,6 @@
 package fr.liglab.adele.icasa.context.model.example.application;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.example.MomentOfTheDay;
-import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
