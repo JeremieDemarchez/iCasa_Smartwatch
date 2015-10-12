@@ -18,7 +18,7 @@ public class RelationFactoryImpl implements RelationFactory{
 
     private static final Logger LOG = LoggerFactory.getLogger(RelationFactoryImpl.class);
 
-    private final Map<String,IpojoServiceRegistrationRelation> relations = new HashMap<String,IpojoServiceRegistrationRelation>();
+    private final Map<UUID,IpojoServiceRegistrationRelation> relations = new HashMap<UUID,IpojoServiceRegistrationRelation>();
 
     private final Object m_lockRelation;
 
@@ -41,9 +41,10 @@ public class RelationFactoryImpl implements RelationFactory{
         }
     }
 
-    public void createRelation(String name,String source,String end,String extendStateName,boolean isAggregate,RelationCallBack relationCallBack){
+    @Override
+    public UUID createRelation(String name, String source, String end, String extendStateName, boolean isAggregate, RelationCallBack relationCallBack){
       //  LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
-        String relationId = name + source + end;
+        UUID relationId = UUID.randomUUID();
         ComponentInstance instance;
 
         Hashtable properties = new Hashtable();
@@ -54,10 +55,6 @@ public class RelationFactoryImpl implements RelationFactory{
         properties.put("relation.extendedStateName", extendStateName);
         properties.put("relation.extendedStateCallBack", relationCallBack);
         properties.put("relation.extendedStateIsAggregate", isAggregate);
-     /*   Hashtable filters = new Hashtable();
-        filters.put("relation.source", "(context.entity.id=" + source + ")");
-        filters.put("relation.end", "(context.entity.id=" + end + ")");
-        properties.put("requires.filters", filters);*/
 
         try {
             instance = relationIpojoFactory.createComponentInstance(properties);
@@ -76,34 +73,78 @@ public class RelationFactoryImpl implements RelationFactory{
         } catch (ConfigurationException e) {
             LOG.error("Relation instantiation failed", e);
         }
-
+        return relationId;
     }
 
     @Override
-    public void deleteRelation(String name, String source, String end) {
-  //      LOG.info("Delete Relation  : " + name + " source : " + " end " + end);
-        try {
-            synchronized (m_lockRelation){
-                relations.remove(name+source+end).unregister();
+    public void deleteRelation(UUID relationId) {
+        if (relationId != null) {
+            try {
+                synchronized (m_lockRelation){
+                    relations.remove(relationId).unregister();
+                }
+            }catch(IllegalStateException e){
+                LOG.error("failed unregistering relation", e);
             }
-        }catch(IllegalStateException e){
-            LOG.error("failed unregistering relation", e);
         }
     }
 
     @Override
-    public void updateRelation(String name, String oldSource, String oldEnd,String newSource,String newEnd){
-  //      LOG.info("Update relation " + name + " oldSource : " + oldSource + " new Source : " + newSource + " oldEnd : " + oldEnd + " newEnd : " + newEnd);
-        synchronized (m_lockRelation) {
-            String oldRelationId = name + oldSource + oldEnd;
-            IpojoServiceRegistrationRelation relationToUpdate = relations.remove(oldRelationId);
-            relationToUpdate.updateRelation(newSource, newEnd);
-
-            String newRelationId = name + newSource + newEnd;
-            relations.put(newRelationId, relationToUpdate);
+    public void updateRelation(UUID relationId, String newSource, String newEnd) {
+        if (relationId != null) {
+            synchronized (m_lockRelation) {
+                IpojoServiceRegistrationRelation relationToUpdate = relations.get(relationId);
+                relationToUpdate.updateRelation(newSource, newEnd);
+            }
         }
+    }
 
+    @Override
+    public UUID findId(String name, String source, String end) {
+        UUID uuid = null;
+        IpojoServiceRegistrationRelation relation;
+        for(Map.Entry<UUID, IpojoServiceRegistrationRelation> entry : relations.entrySet()){
+            relation = entry.getValue();
+            if(relation.getName()==name){
+                if((relation.getSource().equals(source))&(relation.getEnd().equals(end)));
+                uuid = entry.getKey();
+            }
+        }
+        return uuid;
+    }
 
+    @Override
+    public List<UUID> findIdsByEndpoint(String endpoint) {
+        List<UUID> endpointIds = new ArrayList<>();
+        endpointIds.addAll(findIdsBySource(endpoint));
+        endpointIds.addAll(findIdsByEnd(endpoint));
+        return endpointIds;
+    }
+
+    @Override
+    public List<UUID> findIdsBySource(String source) {
+        List<UUID> sourceIds = new ArrayList<>();
+        IpojoServiceRegistrationRelation relation;
+        for(Map.Entry<UUID, IpojoServiceRegistrationRelation> entry : relations.entrySet()){
+            relation = entry.getValue();
+            if(relation.getSource().equals(source)){
+                sourceIds.add(entry.getKey());
+            }
+        }
+        return sourceIds;
+    }
+
+    @Override
+    public List<UUID> findIdsByEnd(String end) {
+        List<UUID> endIds = new ArrayList<>();
+        IpojoServiceRegistrationRelation relation;
+        for(Map.Entry<UUID, IpojoServiceRegistrationRelation> entry : relations.entrySet()){
+            relation = entry.getValue();
+            if(relation.getEnd().equals(end)){
+                endIds.add(entry.getKey());
+            }
+        }
+        return endIds;
     }
 
     class IpojoServiceRegistrationRelation implements ServiceRegistration {
@@ -172,6 +213,18 @@ public class RelationFactoryImpl implements RelationFactory{
             properties.put("relation.source.id", newSource);
             properties.put("relation.end.id", newEnd);
             setProperties(properties);
+        }
+
+        public String getName(){
+            return name;
+        }
+
+        public String getSource(){
+            return source;
+        }
+
+        public String getEnd(){
+            return end;
         }
     }
 }

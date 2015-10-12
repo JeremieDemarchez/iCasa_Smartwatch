@@ -81,6 +81,9 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     @Override
     public void zoneRemoved(Zone zone) {
         try {
+            for(UUID uuid : m_relationFactory.findIdsByEndpoint(zone.getId())){
+                m_relationFactory.deleteRelation(uuid);
+            }
             zoneEntities.remove(zone.getId()).unregister();
         }catch(IllegalStateException e){
             LOG.error("failed unregistering zone Entity", e);
@@ -139,14 +142,20 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     @Override
     public void deviceMoved(LocatedDevice device, Position oldPosition, Position newPosition) {
+        String deviceID = device.getSerialNumber();
+        String oldZoneID;
+        String newZoneID;
+        UUID uuid;
+
         if (getZones(oldPosition).isEmpty()){
             for (Zone zone : getZones(newPosition)){
                 LOG.info(" Discovery create relation");
-                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"Relation.ContainedDevice",true,
+                newZoneID = zone.getId();
+                m_relationFactory.createRelation("isContained",deviceID,newZoneID,"Relation.ContainedDevice",true,
                         state ->{
                             return state.get("serial.number");
                         });
-                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Relation.Location",false,
+                m_relationFactory.createRelation("contained",newZoneID,deviceID,"Relation.Location",false,
                         state->{
                             return state.get("zone.name");
                         });
@@ -154,15 +163,21 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         }else {
             boolean delete = getZones(newPosition).isEmpty();
             for (Zone oldZone : getZones(oldPosition)){
+                oldZoneID = oldZone.getId();
                 if (delete){
                     LOG.info(" Discovery delete relation");
-                    m_relationFactory.deleteRelation("isContained", device.getSerialNumber(), oldZone.getId());
-                    m_relationFactory.deleteRelation("contained", oldZone.getId(), device.getSerialNumber());
+                    uuid = m_relationFactory.findId("isContained", deviceID, oldZoneID);
+                    m_relationFactory.deleteRelation(uuid);
+                    uuid = m_relationFactory.findId("contained", oldZoneID, deviceID);
+                    m_relationFactory.deleteRelation(uuid);
                 }else {
                     for (Zone newZone : getZones(newPosition)) {
                         LOG.info(" Discovery update relation");
-                        m_relationFactory.updateRelation("isContained", device.getSerialNumber(), oldZone.getId(), device.getSerialNumber(), newZone.getId());
-                        m_relationFactory.updateRelation("contained", oldZone.getId(), device.getSerialNumber(), newZone.getId(), device.getSerialNumber());
+                        newZoneID = newZone.getId();
+                        uuid = m_relationFactory.findId("isContained", deviceID, oldZoneID);
+                        m_relationFactory.updateRelation(uuid, deviceID, newZoneID);
+                        uuid = m_relationFactory.findId("contained", oldZoneID, deviceID);
+                        m_relationFactory.updateRelation(uuid, newZoneID, deviceID);
                     }
                 }
             }

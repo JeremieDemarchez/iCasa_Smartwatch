@@ -8,10 +8,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Provides
@@ -66,9 +63,11 @@ public class AggregationImpl implements Aggregation {
         state = newState;
     }
 
-        @Unbind(id = "aggregation.sources")
+    @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        relationFactory.deleteRelation("ComputeWith",contextEntity.getId(),this.getId());
+        UUID uuid = relationFactory.findId("ComputeWith", contextEntity.getId(), this.getId());
+        relationFactory.deleteRelation(uuid);
+
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
