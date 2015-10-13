@@ -8,6 +8,8 @@ import java.util.UUID;
  */
 public interface RelationFactory {
 
+    public UUID createRelation(RelationType relationType, String source, String end);
+
     public UUID createRelation(String name, String source,String end, String extendStateName, boolean isAggregate, RelationCallBack relationCallBack);
 
     public void deleteRelation(UUID relationId);

@@ -42,6 +42,11 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     @Override
+    public UUID createRelation(RelationType relationType, String source, String end) {
+        return createRelation(relationType.getName(), source, end, relationType.getExtendStateName(), relationType.isAggregate(), relationType.getRelationCallBack());
+    }
+
+    @Override
     public UUID createRelation(String name, String source, String end, String extendStateName, boolean isAggregate, RelationCallBack relationCallBack){
       //  LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
         UUID relationId = UUID.randomUUID();
