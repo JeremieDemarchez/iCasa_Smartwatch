@@ -4,20 +4,17 @@ import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
 import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
-import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
+import fr.liglab.adele.icasa.context.model.RelationType;
 import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.context.transformation.Relation_ComputeWith;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
+
 
 @Component(immediate = true,propagation = false)
 @Provides
@@ -45,9 +42,15 @@ public class PhysicalParameterImpl implements Aggregation {
     /** ATTRIBUTES **/
     private final AggregationFunction m_aggregationFunction;
 
+
     private final String m_physicalParameterName;
 
     private final String m_zoneId;
+
+    private final RelationType relation_computeWith = new Relation_ComputeWith();
+    private final RelationType relation_isPhysicalParameterOf ;
+    private final RelationType relation_havePhysicalParameterOf = new Relation_HavePhysicalParameterOf();
+
 
     private static final Logger LOG = LoggerFactory.getLogger(PhysicalParameterImpl.class);
 
@@ -57,6 +60,7 @@ public class PhysicalParameterImpl implements Aggregation {
         m_aggregationFunction = aggregationFunction;
         m_physicalParameterName = name;
         m_zoneId = zoneName;
+        relation_isPhysicalParameterOf = new Relation_IsPhysicalParameterOf(m_physicalParameterName);
     }
 
     @Pull(state = PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME )
@@ -74,12 +78,8 @@ public class PhysicalParameterImpl implements Aggregation {
     }
     @Validate
     public void start(){
-        relationFactory.createRelation("isPhysicalParameterOf", this.getId(), m_zoneId, m_physicalParameterName, false, m_state -> {
-            return m_state.get(AGGREGATION_VALUE);
-        });
-        relationFactory.createRelation("havePhysicalParameterOf",m_zoneId,this.getId(),"zone.impacted", false, m_state -> {
-            return m_state.get(ZoneContextEntityImpl.ZONE_NAME);
-        });
+        relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
+        relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
     }
 
     @Invalidate
@@ -89,9 +89,7 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
-        relationFactory.createRelation("ComputeWith", contextEntity.getId(), this.getId(), "ComputeWith", true, m_state -> {
-            return m_state.get(PresenceSensor.DEVICE_SERIAL_NUMBER);
-        });
+        relationFactory.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
         pushState(AGGREGATION_VALUE,getResult());
     }
 
@@ -102,6 +100,9 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
+        UUID uuid = relationFactory.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
+        relationFactory.deleteRelation(uuid);
+
         pushState(AGGREGATION_VALUE,getResult());
     }
 

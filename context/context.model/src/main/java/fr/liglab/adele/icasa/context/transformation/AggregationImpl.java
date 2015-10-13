@@ -3,15 +3,13 @@ package fr.liglab.adele.icasa.context.transformation;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.RelationType;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Component
 @Provides
@@ -27,6 +25,8 @@ public class AggregationImpl implements Aggregation {
     String filter;
 
     private final AggregationFunction m_aggregationFunction;
+
+    private final RelationType relation_computeWith = new Relation_ComputeWith();
 
 
     public AggregationImpl(@Property(name = "aggregation.function", mandatory = true, immutable = true) AggregationFunction aggregationFunction) {
@@ -45,9 +45,7 @@ public class AggregationImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
-        relationFactory.createRelation("ComputeWith", contextEntity.getId(), this.getId(), "ComputeWith", true, m_state -> {
-            return m_state.get("serial.number");
-        });
+        relationFactory.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
@@ -66,9 +64,11 @@ public class AggregationImpl implements Aggregation {
         state = newState;
     }
 
-        @Unbind(id = "aggregation.sources")
+    @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        relationFactory.deleteRelation("ComputeWith",contextEntity.getId(),this.getId());
+        UUID uuid = relationFactory.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
+        relationFactory.deleteRelation(uuid);
+
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
