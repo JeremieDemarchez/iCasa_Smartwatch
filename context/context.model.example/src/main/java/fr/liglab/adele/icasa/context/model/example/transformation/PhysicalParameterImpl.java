@@ -78,8 +78,8 @@ public class PhysicalParameterImpl implements Aggregation {
     }
     @Validate
     public void start(){
-   //     relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
-    //   relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
+        relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
+     relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
     }
 
     @Invalidate

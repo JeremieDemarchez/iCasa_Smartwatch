@@ -156,8 +156,8 @@ public class RelationFactoryImpl implements RelationFactory{
 
         private final ComponentInstance instance;
         private final String name;
-        private final String source;
-        private final String end;
+        private  String source;
+        private  String end;
 
         public IpojoServiceRegistrationRelation(ComponentInstance instance,String name,String source,String end) {
             super();
