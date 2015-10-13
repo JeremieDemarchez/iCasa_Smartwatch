@@ -7,6 +7,8 @@ import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.ParseUtils;
 import org.apache.felix.ipojo.parser.PojoMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.Member;
 import java.util.*;
@@ -15,6 +17,8 @@ import java.util.function.Function;
 //TODO : SYnchro on different map access
 //TODO : More defensive programming when function of synchro is call
 public class SynchronizationHandler extends PrimitiveHandler {
+
+    private static final Logger LOG = LoggerFactory.getLogger(SynchronizationHandler.class);
 
     public static final String SYNCHRONISATION_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.synchronization";
 
@@ -112,8 +116,12 @@ public class SynchronizationHandler extends PrimitiveHandler {
                 if (m_pullFunction.containsKey(stateId)){
                     Function getFunction = m_pullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
-                    m_stateValue.put(stateId,returnObj);
-                    addState(stateId,returnObj);
+                    if (returnObj != null){
+                        m_stateValue.put(stateId,returnObj);
+                        addState(stateId,returnObj);
+                    }else {
+                        LOG.error("INITIALISATION : Pull fonction " + stateId + " return null Object ! ");
+                    }
                 }
             }
         }
@@ -180,13 +188,17 @@ public class SynchronizationHandler extends PrimitiveHandler {
                 if (m_pullFunction.containsKey(stateId)){
                     Function getFunction = m_pullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
-                    if (m_stateValue.containsKey(stateId)) {
-                        if (returnObj.equals(m_stateValue.get(stateId))) {
+                    if (returnObj != null) {
+                        if (m_stateValue.containsKey(stateId)) {
+                            if (returnObj.equals(m_stateValue.get(stateId))) {
 
-                        } else {
-                            m_stateValue.replace(stateId,returnObj);
-                            updateState(stateId,returnObj);
+                            } else {
+                                m_stateValue.replace(stateId, returnObj);
+                                updateState(stateId, returnObj);
+                            }
                         }
+                    }else {
+                        LOG.error("Pull fonction " + stateId + " return null Object ! ");
                     }
                 }
             }
@@ -214,15 +226,18 @@ public class SynchronizationHandler extends PrimitiveHandler {
         public void onEntry(Object pojo, Member method, Object[] args) {
             String stateId = (String)args[0];
             Object value = args[1];
-
-            if (m_statesId.contains(stateId)){
-                if (m_stateValue.containsKey(stateId)){
-                    m_stateValue.put(stateId,value);
-                    updateState(stateId,value);
-                }else {
-                    m_stateValue.put(stateId,value);
-                    addState(stateId,value);
+            if (value != null) {
+                if (m_statesId.contains(stateId)) {
+                    if (m_stateValue.containsKey(stateId)) {
+                        m_stateValue.put(stateId, value);
+                        updateState(stateId, value);
+                    } else {
+                        m_stateValue.put(stateId, value);
+                        addState(stateId, value);
+                    }
                 }
+            }else{
+                LOG.error(" Cannot apply push for "+stateId+", value is null ! ");
             }
         }
 
