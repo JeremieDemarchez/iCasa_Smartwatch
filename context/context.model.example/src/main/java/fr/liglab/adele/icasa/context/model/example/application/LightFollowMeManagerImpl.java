@@ -3,13 +3,12 @@ package fr.liglab.adele.icasa.context.model.example.application;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.example.day.MomentContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
-import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDayService;
+import fr.liglab.adele.icasa.context.model.example.device.BinaryContextEntityImpl;
+import fr.liglab.adele.icasa.context.model.example.device.DimmerContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.device.PresenceContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -158,9 +157,8 @@ public class LightFollowMeManagerImpl {
         ComponentInstance instance;
 
         String m_filterPresence = "(&("+PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME+"=Presence)(zone.impacted="+zone+"))";
-        String m_filterLight = "(&(Relation.Location="+zone+")" +
-                "(|(("+ BinaryLight.BINARY_LIGHT_POWER_STATUS+"={true,false})" +
-                "("+DimmerLight.DIMMER_LIGHT_POWER_LEVEL + "=*)))";
+        String m_filterLight = "(&(location="+zone+")" +
+                "("+ BinaryContextEntityImpl.DEVICE_TYPE+"=BinaryLight))";
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("presence",m_filterPresence);
         m_requiresFilters.put("lights",m_filterLight);
