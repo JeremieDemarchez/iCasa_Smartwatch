@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example.application;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.example.day.MomentContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
+import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDayService;
 import fr.liglab.adele.icasa.context.model.example.device.PresenceContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
@@ -29,7 +30,7 @@ public class LightFollowMeManagerImpl {
     @Requires(specification = ContextEntity.class,id = "zone.to.regulate" , optional = true, filter = "("+ ZoneContextEntityImpl.ZONE_NAME+"=*)")
     List<ContextEntity> zoneEntities;
 
-    @Requires(specification = ContextEntity.class, id = "moment.of.the.day", optional = true, filter = "("+MomentContextEntityImpl.MOMENT_OF_THE_DAY+"=*)")
+    @Requires(specification = ContextEntity.class, id = "moment.of.the.day",proxy = false,nullable = false, optional = true, filter = "("+MomentContextEntityImpl.MOMENT_OF_THE_DAY+"=*)")
     ContextEntity momentOfTheDayEntity;
 
     @Requires(specification = LightFollowRegulator.class, id = "light.follow.me.regulators", optional = true)
@@ -63,7 +64,7 @@ public class LightFollowMeManagerImpl {
 
     @Bind(id = "zone.to.regulate" )
     public void bindZone(ContextEntity entity){
-       createPresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+        createPresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
         createLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
     }
 
@@ -71,7 +72,7 @@ public class LightFollowMeManagerImpl {
     @Unbind(id = "zone.to.regulate" )
     public void unbindZone(ContextEntity entity){
         deletePresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
-       deleteLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+        deleteLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
     }
 
     @Unbind(id = "physical.factory")
@@ -236,8 +237,10 @@ public class LightFollowMeManagerImpl {
     }
 
     private void updateLightFollowRegulator (LightFollowRegulator lightFollowRegulator, ContextEntity momentOfTheDayEntity){
-        MomentOfTheDay momentOfTheDay = (MomentOfTheDay) momentOfTheDayEntity.getStateValue(MomentContextEntityImpl.MOMENT_OF_THE_DAY);
-        lightFollowRegulator.setIlluminanceFactor(convertMomentOfTheDay(momentOfTheDay));
+        if (momentOfTheDayEntity != null){
+            MomentOfTheDay momentOfTheDay = (MomentOfTheDay) momentOfTheDayEntity.getStateValue(MomentContextEntityImpl.MOMENT_OF_THE_DAY);
+            lightFollowRegulator.setIlluminanceFactor(convertMomentOfTheDay(momentOfTheDay));
+        }
     }
 
     private double convertMomentOfTheDay(MomentOfTheDay momentOfTheDay){
@@ -259,4 +262,7 @@ public class LightFollowMeManagerImpl {
 
         return illuminanceFactor;
     }
+
+
+
 }
