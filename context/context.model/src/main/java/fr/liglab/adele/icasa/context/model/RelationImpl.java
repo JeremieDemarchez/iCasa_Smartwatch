@@ -50,12 +50,16 @@ public class RelationImpl implements Relation {
 
     @Modified(id = "relation.source")
     public void modifiedSource(){
-      LOG.info("RELATION" + getId() + " Source is Modified");
-        LOG.info("Actual Value " + value + " new value " + m_extendedState.getValue()+ " equals ? "+value.equals(m_extendedState.getValue()));
-        if (value.equals(m_extendedState.getValue())){
-            return;
+        LOG.info("RELATION " + getId() + " Source is Modified");
+        if (m_extendedState.getValue() != null) {
+            LOG.info("Actual Value " + value + " new value " + m_extendedState.getValue() + " equals ? ");
+            if (value.equals(m_extendedState.getValue())) {
+                return;
+            }
+            value = m_extendedState.getValue();
+        }else{
+            LOG.error("Extended State Function Return a null Object");
         }
-        value = m_extendedState.getValue();
     }
 
     @Override
