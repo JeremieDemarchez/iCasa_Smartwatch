@@ -55,7 +55,7 @@ public class PhysicalParameterImpl implements Aggregation {
     private static final Logger LOG = LoggerFactory.getLogger(PhysicalParameterImpl.class);
 
     public PhysicalParameterImpl(@Property(name = "aggregation.function", mandatory = true, immutable = true) AggregationFunction aggregationFunction,
-                                 @Property(name = PHYSICAL_PARAMETER_NAME,mandatory = true,immutable = true) String name,
+                                 @Property(name = PHYSICAL_PARAMETER_NAME+".init",mandatory = true,immutable = true) String name,
                                  @Property(name = "physical.parameter.zone", mandatory = true,immutable = true)String zoneName) {
         m_aggregationFunction = aggregationFunction;
         m_physicalParameterName = name;
@@ -78,8 +78,8 @@ public class PhysicalParameterImpl implements Aggregation {
     }
     @Validate
     public void start(){
-        relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
-        relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
+   //     relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
+    //   relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
     }
 
     @Invalidate
@@ -137,7 +137,7 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Override
     public Map<String,Object> getState() {
-        return injectedState;
+        return Collections.unmodifiableMap(injectedState);
     }
 
     @Override

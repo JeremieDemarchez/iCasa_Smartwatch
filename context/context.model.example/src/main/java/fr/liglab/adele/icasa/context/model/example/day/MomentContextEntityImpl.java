@@ -10,10 +10,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component(immediate = true)
@@ -120,7 +117,7 @@ public class MomentContextEntityImpl implements ContextEntity,MomentOfTheDayServ
 
     @Override
     public Map<String,Object> getState() {
-        return injectedState;
+        return Collections.unmodifiableMap(injectedState);
     }
 
     @Override

@@ -9,7 +9,7 @@ public class Relation_ComputeWith extends RelationTypeImpl{
 
     public Relation_ComputeWith (){
         super("ComputeWith", "ComputeWith", true, m_state -> {
-                    return m_state.get("serial.number");
+                    return m_state.get("device.serialNumber");
         });
     }
 }

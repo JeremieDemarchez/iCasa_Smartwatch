@@ -9,7 +9,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 public class Relation_IsContained extends RelationTypeImpl{
 
     public Relation_IsContained(){
-        super("isContained", "Relation.ContainedDevice", true, state ->{
+        super("isContained", "containedDevice", true, state ->{
             return state.get(GenericDevice.DEVICE_SERIAL_NUMBER);
         });
     }

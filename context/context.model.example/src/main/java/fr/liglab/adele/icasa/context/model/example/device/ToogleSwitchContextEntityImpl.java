@@ -7,7 +7,7 @@ import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,51 +18,51 @@ import java.util.function.Function;
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {DimmerContextEntityImpl.DEVICE_TYPE,DimmerLight.DEVICE_SERIAL_NUMBER,DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL,DimmerLight.DIMMER_LIGHT_POWER_LEVEL})
-public class DimmerContextEntityImpl implements ContextEntity, DeviceListener{
+@State(states = {PowerSwitch.DEVICE_SERIAL_NUMBER, PowerSwitch.POWER_SWITCH_CURRENT_STATUS})
+public class ToogleSwitchContextEntityImpl implements ContextEntity, DeviceListener{
 
     public static final String DEVICE_TYPE = "device.type";
 
-    private static final Logger LOG = LoggerFactory.getLogger(DimmerContextEntityImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ToogleSwitchContextEntityImpl.class);
 
-    @Requires(specification = DimmerLight.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
-    DimmerLight device;
+    @Requires(specification = PowerSwitch.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
+    PowerSwitch device;
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
 
-    @Pull(state = DimmerContextEntityImpl.DEVICE_TYPE)
-    private final Function getDeviceType = (Object obj)->{
-        return "DimmerLight";
-    };
-
-    @Pull(state = DimmerLight.DEVICE_SERIAL_NUMBER)
+    @Pull(state = BinaryLight.DEVICE_SERIAL_NUMBER)
     private final Function getSerialNumber = (Object obj)->{
         return device.getSerialNumber();
     };
 
-    @Pull(state = DimmerLight.DIMMER_LIGHT_POWER_LEVEL)
-    private final Function getLightPowerStatus= (Object obj)->{
-        return device.getPowerLevel();
+    @Pull(state = ToogleSwitchContextEntityImpl.DEVICE_TYPE)
+    private final Function getDeviceType = (Object obj)->{
+        return "ToogleSwitch";
     };
 
-    @Pull(state = DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL)
+    @Pull(state = BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL)
     private final Function getLightMaxPowerLevel = (Object obj)->{
-        return device.getMaxPowerLevel();
+        return device.getStatus();
     };
 
-    @Set(state = DimmerLight.DIMMER_LIGHT_POWER_LEVEL)
+    @Set(state = PowerSwitch.POWER_SWITCH_CURRENT_STATUS)
     private final Function setLightPowerStatus= (Object obj)->{
-        return device.setPowerLevel((Double)obj);
+        if ((boolean)obj == true){
+            device.switchOn();
+        }else{
+            device.switchOff();
+        }
+        return true;
     };
 
     @Bind(id = "context.entity.device")
-    public void bindGenericDevice (DimmerLight device) {
+    public void bindGenericDevice (PowerSwitch device) {
         device.addListener(this);
     }
 
     @Unbind(id = "context.entity.device")
-    public void unbindGenericDevice(DimmerLight device) {
+    public void unbindGenericDevice(PowerSwitch device) {
         device.removeListener(this);
     }
 

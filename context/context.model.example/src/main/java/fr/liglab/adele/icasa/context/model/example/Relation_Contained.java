@@ -9,7 +9,7 @@ import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
 public class Relation_Contained extends RelationTypeImpl{
 
     public Relation_Contained(){
-        super("contained", "Relation.Location",false, state->{
+        super("contained", "location",false, state->{
             return state.get(ZoneContextEntityImpl.ZONE_NAME);
         });
     }

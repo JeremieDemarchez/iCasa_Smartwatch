@@ -4,6 +4,7 @@ package fr.liglab.adele.icasa.context.model.example.device;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -31,6 +32,9 @@ public class DeviceDiscovery{
 
     @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.PresenceContextEntityImpl)")
     Factory presenceEntityFactory;
+
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.ToogleSwitchContextEntityImpl)")
+    Factory toogleEntityFactory;
 
     @Validate
     public void start(){
@@ -102,6 +106,17 @@ public class DeviceDiscovery{
 
     @Unbind(id = "presence",optional = true,aggregate = true)
     public synchronized void unbindPresence(PresenceSensor device){
+        removeEntity(device.getSerialNumber());
+    }
+
+    @Bind(id = "toogle",optional = true,aggregate = true)
+    public synchronized void bindToogle(PowerSwitch device){
+        createEntity(toogleEntityFactory,device);
+
+    }
+
+    @Unbind(id = "toogle",optional = true,aggregate = true)
+    public synchronized void unbindToogle(PowerSwitch device){
         removeEntity(device.getSerialNumber());
     }
 

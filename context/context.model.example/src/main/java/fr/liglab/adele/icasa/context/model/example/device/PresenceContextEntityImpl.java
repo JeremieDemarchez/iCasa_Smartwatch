@@ -21,8 +21,10 @@ import java.util.function.Function;
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {PresenceSensor.DEVICE_SERIAL_NUMBER, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE})
+@State(states = {PresenceContextEntityImpl.DEVICE_TYPE,PresenceSensor.DEVICE_SERIAL_NUMBER, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE})
 public class PresenceContextEntityImpl implements ContextEntity, DeviceListener{
+
+    public static final String DEVICE_TYPE = "device.type";
 
     private static final Logger LOG = LoggerFactory.getLogger(PresenceContextEntityImpl.class);
 
@@ -31,6 +33,11 @@ public class PresenceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
+
+    @Pull(state = PresenceContextEntityImpl.DEVICE_TYPE)
+    private final Function getDeviceType = (Object obj)->{
+        return "PresenceSensor";
+    };
 
     @Pull(state = PresenceSensor.DEVICE_SERIAL_NUMBER)
     private final Function getSerialNumber = (Object obj)->{

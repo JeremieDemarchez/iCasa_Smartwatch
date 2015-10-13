@@ -11,17 +11,16 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {BinaryLight.DEVICE_SERIAL_NUMBER, BinaryLight.BINARY_LIGHT_POWER_STATUS,BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL})
+@State(states = {BinaryContextEntityImpl.DEVICE_TYPE,BinaryLight.DEVICE_SERIAL_NUMBER, BinaryLight.BINARY_LIGHT_POWER_STATUS,BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL})
 public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
+
+    public static final String DEVICE_TYPE = "device.type";
 
     private static final Logger LOG = LoggerFactory.getLogger(BinaryContextEntityImpl.class);
 
@@ -34,6 +33,11 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
     @Pull(state = BinaryLight.DEVICE_SERIAL_NUMBER)
     private final Function getSerialNumber = (Object obj)->{
         return device.getSerialNumber();
+    };
+
+    @Pull(state = BinaryContextEntityImpl.DEVICE_TYPE)
+    private final Function getDeviceType = (Object obj)->{
+        return "BinaryLight";
     };
 
     @Pull(state = BinaryLight.BINARY_LIGHT_POWER_STATUS)
@@ -129,7 +133,7 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public Map<String,Object> getState() {
-        return injectedState;
+        return Collections.unmodifiableMap(injectedState);
     }
 
     @Override

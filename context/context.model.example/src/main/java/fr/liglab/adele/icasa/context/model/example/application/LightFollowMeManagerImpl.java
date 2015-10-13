@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example.application;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.example.day.MomentContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
+import fr.liglab.adele.icasa.context.model.example.device.PresenceContextEntityImpl;
 import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
@@ -62,15 +63,15 @@ public class LightFollowMeManagerImpl {
 
     @Bind(id = "zone.to.regulate" )
     public void bindZone(ContextEntity entity){
-        createPresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
-  //      createLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+       createPresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+        createLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
     }
 
 
     @Unbind(id = "zone.to.regulate" )
     public void unbindZone(ContextEntity entity){
         deletePresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
-  //      deleteLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+       deleteLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
     }
 
     @Unbind(id = "physical.factory")
@@ -123,7 +124,7 @@ public class LightFollowMeManagerImpl {
         ComponentInstance instance;
 
         String m_filter = "(&(location=" + zone + ")" +
-                "("+ PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE+"={true,false}))";
+                "("+ PresenceContextEntityImpl.DEVICE_TYPE+"=PresenceSensor))";
 
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("aggregation.sources",m_filter);
@@ -133,7 +134,7 @@ public class LightFollowMeManagerImpl {
         properties.put("aggregation.function", new PresenceAggregation());
         properties.put("aggregation.source.filter", m_filter);
         properties.put("physical.parameter.zone", zone);
-        properties.put(PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,"Presence");
+        properties.put(PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME+".init","Presence");
         properties.put("context.entity.id",zone + "Presence");
 
         try {
