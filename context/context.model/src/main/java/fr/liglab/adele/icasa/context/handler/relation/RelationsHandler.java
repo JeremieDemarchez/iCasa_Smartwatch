@@ -99,7 +99,7 @@ public class RelationsHandler extends PrimitiveHandler{
 
     @Unbind(id = "context.entity.relation")
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info(" UNBIND elation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName());
+        LOG.info(" UNBIND Relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName());
         String relationName = relation.getExtendedState().getName();
         Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
 

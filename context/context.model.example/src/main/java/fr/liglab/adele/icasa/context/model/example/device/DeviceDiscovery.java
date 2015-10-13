@@ -2,6 +2,9 @@ package fr.liglab.adele.icasa.context.model.example.device;
 
 
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.InvalidSyntaxException;
@@ -20,8 +23,14 @@ public class DeviceDiscovery{
 
     private final Map<String,ServiceRegistration> deviceEntities = new HashMap<>();
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.DeviceContextEntityImpl)")
-    Factory deviceEntityFactory;
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.BinaryContextEntityImpl)")
+    Factory binaryEntityFactory;
+
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.DimmerContextEntityImpl)")
+    Factory dimmerEntityFactory;
+
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.PresenceContextEntityImpl)")
+    Factory presenceEntityFactory;
 
     @Validate
     public void start(){
@@ -33,32 +42,15 @@ public class DeviceDiscovery{
 
     }
 
-
-    @Bind(id = "devices",optional = true,aggregate = true)
-    public synchronized void bindDevices(GenericDevice device){
+    private void createEntity(Factory facto,GenericDevice device){
         ComponentInstance instance;
 
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", device.getSerialNumber());
-
-        List<List<Object>> state = new ArrayList<>();
-        List<List<Object>> stateExtensions = new ArrayList<>();
-        List<Object> property_array;
-        property_array = new ArrayList<>();
-        property_array.add("serial.number");
-        property_array.add(device.getSerialNumber());
-        state.add(property_array);
-        for (String property : device.getProperties()){
-            property_array = new ArrayList<>();
-            property_array.add(property);
-            property_array.add(device.getPropertyValue(property));
-            state.add(property_array);
-        }
-        properties.put("context.entity.state", state);
         properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+device.getSerialNumber());
 
         try {
-            instance = deviceEntityFactory.createComponentInstance(properties);
+            instance = facto.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
                     instance);
 
@@ -70,18 +62,48 @@ public class DeviceDiscovery{
         } catch (ConfigurationException e) {
             LOG.error("Relation instantiation failed",e);
         }
-
     }
 
-    @Unbind(id = "devices",optional = true,aggregate = true)
-    public synchronized void unbindDevices(GenericDevice device){
+    private void removeEntity(String serialNumber){
         try {
-            deviceEntities.remove(device.getSerialNumber()).unregister();
+            deviceEntities.remove(serialNumber).unregister();
         }catch(IllegalStateException e){
             LOG.error("failed unregistering device", e);
         }
     }
 
+    @Bind(id = "binary",optional = true,aggregate = true)
+    public synchronized void bindBinary(BinaryLight device){
+      createEntity(binaryEntityFactory, device);
+
+    }
+
+    @Unbind(id = "binary",optional = true,aggregate = true)
+    public synchronized void unbindBinary(BinaryLight device){
+       removeEntity(device.getSerialNumber());
+    }
+
+    @Bind(id = "dimmer",optional = true,aggregate = true)
+    public synchronized void bindDimmer(DimmerLight device){
+        createEntity(dimmerEntityFactory,device);
+
+    }
+
+    @Unbind(id = "dimmer",optional = true,aggregate = true)
+    public synchronized void unbindDimmer(DimmerLight device){
+        removeEntity(device.getSerialNumber());
+    }
+
+    @Bind(id = "presence",optional = true,aggregate = true)
+    public synchronized void bindPresence(PresenceSensor device){
+        createEntity(presenceEntityFactory,device);
+
+    }
+
+    @Unbind(id = "presence",optional = true,aggregate = true)
+    public synchronized void unbindPresence(PresenceSensor device){
+        removeEntity(device.getSerialNumber());
+    }
 
     class IpojoServiceRegistration implements ServiceRegistration {
 

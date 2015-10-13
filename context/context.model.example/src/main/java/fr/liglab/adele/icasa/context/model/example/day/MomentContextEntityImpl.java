@@ -46,7 +46,7 @@ public class MomentContextEntityImpl implements ContextEntity,MomentOfTheDayServ
 
     @Validate
     public void start(){
-        DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
+       DateTime dateTimeEli =new DateTime(clock.currentTimeMillis());
         int hour = dateTimeEli.getHourOfDay();
         MomentOfTheDay temp = currentMomentOfTheDay;
         currentMomentOfTheDay = temp.getCorrespondingMoment(hour);

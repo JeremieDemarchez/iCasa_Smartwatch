@@ -1,9 +1,14 @@
 package fr.liglab.adele.icasa.context.model.example.transformation;
 
+import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
+import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
 import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -12,11 +17,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 
-@Component(immediate = true,propagation = true)
+@Component(immediate = true,propagation = false)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
+@State(states = {PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,PhysicalParameterImpl.AGGREGATION_VALUE})
 public class PhysicalParameterImpl implements Aggregation {
+
+    public final static String PHYSICAL_PARAMETER_NAME = "physical.parameter.name";
+
+    public final static String AGGREGATION_VALUE = "aggregation.value";
 
     @Requires(optional = false)
     RelationFactory relationFactory;
@@ -28,34 +39,46 @@ public class PhysicalParameterImpl implements Aggregation {
     @ServiceProperty(name = "aggregation.source.filter", mandatory = true)
     String filter;
 
-    @ServiceProperty(name = "physical.parameter.zone", mandatory = true)
-    String zoneId;
-
-    @ServiceProperty(name = "physical.parameter.name", mandatory = true)
-    String physicalParameterName;
-
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
-
-    @ServiceProperty(name = "context.entity.state", mandatory = true)
-    List<List<Object>> state;
 
     /** ATTRIBUTES **/
     private final AggregationFunction m_aggregationFunction;
 
+    private final String m_physicalParameterName;
+
+    private final String m_zoneId;
+
     private static final Logger LOG = LoggerFactory.getLogger(PhysicalParameterImpl.class);
 
-    public PhysicalParameterImpl(@Property(name = "aggregation.function", mandatory = true, immutable = true) AggregationFunction aggregationFunction) {
+    public PhysicalParameterImpl(@Property(name = "aggregation.function", mandatory = true, immutable = true) AggregationFunction aggregationFunction,
+                                 @Property(name = PHYSICAL_PARAMETER_NAME,mandatory = true,immutable = true) String name,
+                                 @Property(name = "physical.parameter.zone", mandatory = true,immutable = true)String zoneName) {
         m_aggregationFunction = aggregationFunction;
+        m_physicalParameterName = name;
+        m_zoneId = zoneName;
     }
 
+    @Pull(state = PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME )
+    Function getName = (Object obj) ->{
+        return getPhysicalParameterName();
+    };
+
+    @Pull(state = PhysicalParameterImpl.AGGREGATION_VALUE )
+    Function getAggregationValue = (Object obj) ->{
+        return getResult();
+    };
+
+    private String getPhysicalParameterName(){
+        return m_physicalParameterName;
+    }
     @Validate
     public void start(){
-        relationFactory.createRelation("isPhysicalParameterOf", this.getId(), zoneId, physicalParameterName, false, m_state -> {
-            return m_state.get("aggregation.value");
+        relationFactory.createRelation("isPhysicalParameterOf", this.getId(), m_zoneId, m_physicalParameterName, false, m_state -> {
+            return m_state.get(AGGREGATION_VALUE);
         });
-        relationFactory.createRelation("havePhysicalParameterOf",zoneId,this.getId(),"zone.impacted", false, m_state -> {
-            return m_state.get("zone.name");
+        relationFactory.createRelation("havePhysicalParameterOf",m_zoneId,this.getId(),"zone.impacted", false, m_state -> {
+            return m_state.get(ZoneContextEntityImpl.ZONE_NAME);
         });
     }
 
@@ -67,39 +90,19 @@ public class PhysicalParameterImpl implements Aggregation {
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
         relationFactory.createRelation("ComputeWith", contextEntity.getId(), this.getId(), "ComputeWith", true, m_state -> {
-            return m_state.get("serial.number");
+            return m_state.get(PresenceSensor.DEVICE_SERIAL_NUMBER);
         });
-        List property_array = new ArrayList<>();
-        property_array.add("aggregation.value");
-        property_array.add(getResult());
-        List<List<Object>> newState = new ArrayList<>();
-        newState.add(property_array);
-        state = new ArrayList<List<Object>>(newState);
+        pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Modified(id = "aggregation.sources")
     public void modifiedContextEntities (ContextEntity contextEntity) {
-        System.out.println(" MODIFIIIIIIIIIIIIIIIIIIIIIIIIIIIIIEDDD " +getStateValue("aggregation.value") +" equals" +  getResult() );
-        if (getStateValue("aggregation.value").equals(getResult())){
-            return;
-        }
-        List property_array = new ArrayList<>();
-        property_array.add("aggregation.value");
-        property_array.add(getResult());
-        List<List<Object>> newState = new ArrayList<>();
-        newState.add(property_array);
-        state = new ArrayList<List<Object>>(newState);
+        pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        relationFactory.deleteRelation("ComputeWith",contextEntity.getId(),this.getId());
-        List property_array = new ArrayList<>();
-        property_array.add("aggregation.value");
-        property_array.add(getResult());
-        List<List<Object>> newState = new ArrayList<>();
-        newState.add(property_array);
-        state = new ArrayList<List<Object>>(newState);
+        pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Override
@@ -112,57 +115,38 @@ public class PhysicalParameterImpl implements Aggregation {
         return m_aggregationFunction.getResult(sources);
     }
 
+
+
+    private final Map<String,Object> injectedState = new HashMap<>();
+
     @Override
     public String getId() {
         return name;
     }
 
     @Override
-    public List<Object> getStateValue(String property) {
-        List<Object> value = new ArrayList<>();
-
-        for (List<Object> property_array : state) {
-            if (property_array.get(0) == property) {
-                value = new ArrayList<>(property_array);
-            }
-        }
-        return value;
+    public Object getStateValue(String property) {
+        return injectedState.get(property);
     }
 
     @Override
     public void setState(String state, Object value) {
-
+        //DO NOTHING
     }
 
     @Override
     public Map<String,Object> getState() {
-        Map<String,Object> stateMap = new HashMap<String,Object>();
-        for (List<Object> property_array : state){
-            if (property_array.size() == 2){
-                stateMap.put((String)property_array.get(0),property_array.get(1));
-            }else {
-                List<Object> paramsValue = new ArrayList<>();
-                for (Object obj : property_array){
-                    if (obj.equals(property_array.get(0))){
-                        //do nothing
-                    }else {
-                        paramsValue.add(obj);
-                    }
-                }
-                stateMap.put((String)property_array.get(0),paramsValue);
-            }
-        }
-        return stateMap;
+        return injectedState;
     }
 
     @Override
     public List<Object> getStateExtensionValue(String property) {
-       return new ArrayList<>();
+        return new ArrayList<>();
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-      return new HashMap<>();
+        return new HashMap<String,Object>();
     }
 
     @Override

@@ -1,13 +1,23 @@
 package fr.liglab.adele.icasa.context.model.example.application;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.example.day.MomentContextEntityImpl;
+import fr.liglab.adele.icasa.context.model.example.day.MomentOfTheDay;
+import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
+import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
+import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
 
 @Component(immediate = true)
 @Instantiate
@@ -15,10 +25,10 @@ public class LightFollowMeManagerImpl {
 
     private static final Logger LOG = LoggerFactory.getLogger(LightFollowMeManagerImpl.class);
 
-    @Requires(specification = ContextEntity.class,id = "zone.to.regulate" , optional = true, filter = "(context.entity.state=zone.name*)")
+    @Requires(specification = ContextEntity.class,id = "zone.to.regulate" , optional = true, filter = "("+ ZoneContextEntityImpl.ZONE_NAME+"=*)")
     List<ContextEntity> zoneEntities;
 
-    @Requires(specification = ContextEntity.class, id = "moment.of.the.day", optional = true, filter = "(context.entity.id=momentOfTheDay*)")
+    @Requires(specification = ContextEntity.class, id = "moment.of.the.day", optional = true, filter = "("+MomentContextEntityImpl.MOMENT_OF_THE_DAY+"=*)")
     ContextEntity momentOfTheDayEntity;
 
     @Requires(specification = LightFollowRegulator.class, id = "light.follow.me.regulators", optional = true)
@@ -50,17 +60,17 @@ public class LightFollowMeManagerImpl {
 
     }
 
-/**    @Bind(id = "zone.to.regulate" )
+    @Bind(id = "zone.to.regulate" )
     public void bindZone(ContextEntity entity){
-        createPresenceAggregation((String) entity.getStateAsMap().get("zone.name"));
-        createLightFollowMeRegulator((String)entity.getStateAsMap().get("zone.name"));
+        createPresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+  //      createLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
     }
 
 
     @Unbind(id = "zone.to.regulate" )
     public void unbindZone(ContextEntity entity){
-        deletePresenceAggregation((String) entity.getStateAsMap().get("zone.name"));
-        deleteLightFollowMeRegulator((String) entity.getStateAsMap().get("zone.name"));
+        deletePresenceAggregation((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
+  //      deleteLightFollowMeRegulator((String) entity.getStateValue(ZoneContextEntityImpl.ZONE_NAME));
     }
 
     @Unbind(id = "physical.factory")
@@ -112,25 +122,18 @@ public class LightFollowMeManagerImpl {
         Hashtable properties = new Hashtable();
         ComponentInstance instance;
 
-        String m_filter = "(&(Relation.Location=" + zone + ")" +
-                "(context.entity.state=presenceSensor.sensedPresence*))";
+        String m_filter = "(&(location=" + zone + ")" +
+                "("+ PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE+"={true,false}))";
+
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("aggregation.sources",m_filter);
-
-        List<List<Object>> state =  new ArrayList<List<Object>>();
-        List property_array = new ArrayList<>();
-        property_array.add("aggregation.value");
-        property_array.add(false);
-        state.add(property_array);
 
         properties.put("requires.filters", m_requiresFilters);
         properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example.transformation."+zone+"Presence");
         properties.put("aggregation.function", new PresenceAggregation());
         properties.put("aggregation.source.filter", m_filter);
         properties.put("physical.parameter.zone", zone);
-        properties.put("physical.parameter.name","Presence");
-        properties.put("context.entity.state",state);
-        properties.put("context.entity.state.extension",new ArrayList<List<Object>>());
+        properties.put(PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,"Presence");
         properties.put("context.entity.id",zone + "Presence");
 
         try {
@@ -152,10 +155,10 @@ public class LightFollowMeManagerImpl {
         Hashtable properties = new Hashtable();
         ComponentInstance instance;
 
-        String m_filterPresence = "(&(physical.parameter.name=Presence)(zone.impacted="+zone+"))";
+        String m_filterPresence = "(&("+PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME+"=Presence)(zone.impacted="+zone+"))";
         String m_filterLight = "(&(Relation.Location="+zone+")" +
-                "(|(context.entity.state="+ BinaryLight.BINARY_LIGHT_POWER_STATUS + "*)" +
-                "(context.entity.state=" + DimmerLight.DIMMER_LIGHT_POWER_LEVEL + "*)))";
+                "(|(("+ BinaryLight.BINARY_LIGHT_POWER_STATUS+"={true,false})" +
+                "("+DimmerLight.DIMMER_LIGHT_POWER_LEVEL + "=*)))";
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("presence",m_filterPresence);
         m_requiresFilters.put("lights",m_filterLight);
@@ -184,12 +187,10 @@ public class LightFollowMeManagerImpl {
             int countOn = 0;
             for (Object s : sources){
                 ContextEntity contextEntity = (ContextEntity) s;
-                if (!contextEntity.getStateValue(m_presence).isEmpty()) {
-                    if (contextEntity.getStateValue(m_presence).get(1).equals(true)) {
-                        countOn +=1;
-                    }else {
-                        countOn -=1;
-                    }
+                if (contextEntity.getStateValue(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE).equals(true)) {
+                    countOn +=1;
+                }else {
+                    countOn -= 1;
                 }
             }
             if (countOn > 0){
@@ -234,11 +235,8 @@ public class LightFollowMeManagerImpl {
     }
 
     private void updateLightFollowRegulator (LightFollowRegulator lightFollowRegulator, ContextEntity momentOfTheDayEntity){
-        if (!momentOfTheDayEntity.getStateValue("currentMomentOfTheDay").isEmpty()) {
-            MomentOfTheDay momentOfTheDay = (MomentOfTheDay) momentOfTheDayEntity.getStateValue("currentMomentOfTheDay").get(1);
-            lightFollowRegulator.setIlluminanceFactor(convertMomentOfTheDay(momentOfTheDay));
-        }
-
+        MomentOfTheDay momentOfTheDay = (MomentOfTheDay) momentOfTheDayEntity.getStateValue(MomentContextEntityImpl.MOMENT_OF_THE_DAY);
+        lightFollowRegulator.setIlluminanceFactor(convertMomentOfTheDay(momentOfTheDay));
     }
 
     private double convertMomentOfTheDay(MomentOfTheDay momentOfTheDay){
@@ -259,5 +257,5 @@ public class LightFollowMeManagerImpl {
         }
 
         return illuminanceFactor;
-    }**/
+    }
 }

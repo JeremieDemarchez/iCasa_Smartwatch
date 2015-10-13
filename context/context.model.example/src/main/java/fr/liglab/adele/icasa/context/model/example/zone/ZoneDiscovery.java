@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.model.example.zone;
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
 import fr.liglab.adele.icasa.context.model.example.device.DeviceDiscovery;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.*;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -28,7 +29,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     @Requires
     private RelationFactory m_relationFactory;
 
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.zone.ContextEntityImpl)")
+    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl)")
     private Factory zoneEntityFactory;
 
     @Validate
@@ -47,28 +48,12 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
         Hashtable properties = new Hashtable();
         properties.put("context.entity.id", zone.getId());
-
-        List<List<Object>> state = new ArrayList<>();
-        List<Object> property_array;
-        property_array = new ArrayList<>();
-        property_array.add("zone.name");
-        property_array.add(zone.getId());
-
-        state.add(property_array);
-        for (String property : zone.getVariableNames()){
-            property_array = new ArrayList<>();
-            property_array.add(property);
-            property_array.add(zone.getVariableValue(property));
-            state.add(property_array);
-        }
-        properties.put("context.entity.state", state);
         properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+zone.getId());
 
         try {
             instance = zoneEntityFactory.createComponentInstance(properties);
             ServiceRegistration sr = new IpojoServiceRegistration(
-                    instance,
-                    state);
+                    instance);
             zoneEntities.put(zone.getId(),sr);
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error("Relation instantiation failed",unacceptableConfiguration);
@@ -143,11 +128,11 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
         if (getZones(oldPosition).isEmpty()){
             for (Zone zone : getZones(newPosition)){
                 LOG.info(" Discovery create relation");
-                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"Relation.ContainedDevice",true,
+                m_relationFactory.createRelation("isContained",device.getSerialNumber(),zone.getId(),"containedDevice",true,
                         state ->{
-                            return state.get("serial.number");
+                            return state.get(GenericDevice.DEVICE_SERIAL_NUMBER);
                         });
-                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"Relation.Location",false,
+                m_relationFactory.createRelation("contained",zone.getId(),device.getSerialNumber(),"location",false,
                         state->{
                             return state.get("zone.name");
                         });
@@ -213,15 +198,13 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     class IpojoServiceRegistration implements ServiceRegistration {
 
 
-        private final List<List<Object>> state;
         ComponentInstance instance;
 
 
-        public IpojoServiceRegistration(ComponentInstance instance, List<List<Object>> state) {
+        public IpojoServiceRegistration(ComponentInstance instance) {
 
             super();
             this.instance = instance;
-            this.state = state;
         }
 
         /*

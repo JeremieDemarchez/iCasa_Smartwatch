@@ -43,22 +43,18 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
     @Bind(id = "presence")
     public void bindBedroomPresence(Aggregation aggregation){
         LOG.info(" Bind Presence");
-  //      updateLightRegulation(aggregation);
+        updateLightRegulation(aggregation);
     }
 
     @Modified(id = "presence")
     public void modifiedBedroomPresence(Aggregation aggregation){
         LOG.info(" Modified Presence");
-        //      updateLightRegulation(aggregation);
-    }
-
-    @Override
-    public void setIlluminanceFactor(double illuminanceFactor) {
-
+        updateLightRegulation(aggregation);
     }
 
 
-    /**   private void updateLightRegulation (Aggregation aggregation){
+
+    private void updateLightRegulation (Aggregation aggregation){
         if(((boolean)aggregation.getResult() == true)){
             if (illuminanceFactor>=1){
                 setOnAllLights();
@@ -74,9 +70,9 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
 
     private synchronized void setOffAllLights() {
         for (ContextEntity entity : lightEntities){
-            if(!entity.getStateValue(stateProp_binarystatus).isEmpty()) {
+            if(entity.getStateValue(stateProp_binarystatus) != null) {
                 entity.setState(stateProp_binarystatus, false);
-            } else if(!entity.getStateValue(stateProp_dimmerlevel).isEmpty()) {
+            } else if(entity.getStateValue(stateProp_dimmerlevel) != null) {
                 entity.setState(stateProp_dimmerlevel, (double)0);
             }
         }
@@ -85,10 +81,10 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
     private synchronized void setOnAllLights(){
         double dimmerMaxLevel;
         for (ContextEntity entity : lightEntities){
-            if(!entity.getStateValue(stateProp_binarystatus).isEmpty()) {
+            if(entity.getStateValue(stateProp_binarystatus)!= null) {
                 entity.setState(stateProp_binarystatus, true);
-            } else if(!entity.getStateValue(stateProp_dimmermax).isEmpty()) {
-                dimmerMaxLevel = (double)entity.getStateValue(stateProp_dimmermax).get(1);
+            } else if(entity.getStateValue(stateProp_dimmermax) != null) {
+                dimmerMaxLevel = (double)entity.getStateValue(stateProp_dimmermax);
                 entity.setState(stateProp_dimmerlevel, dimmerMaxLevel);
             }
         }
@@ -101,42 +97,42 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
         double illuminance = 0;
         int n = 0;
         /*get max illuminance*/
-    /**       for (ContextEntity entity : lightEntities){
-            if(!entity.getStateValue(stateProp_binarymax).isEmpty()) {
-                illuminanceTemp = (double)entity.getStateValue(stateProp_binarymax).get(1);
+        for (ContextEntity entity : lightEntities){
+            if(entity.getStateValue(stateProp_binarymax)!= null) {
+                illuminanceTemp = (double)entity.getStateValue(stateProp_binarymax);
                 //illuminances.put(lightEntities.indexOf(entity),illuminanceTemp);
                 illuminance += illuminanceTemp;
-            } else if(!entity.getStateValue(stateProp_dimmermax).isEmpty()) {
-                illuminanceTemp = (double)entity.getStateValue(stateProp_dimmermax).get(1);
+            } else if(entity.getStateValue(stateProp_dimmermax)!= null) {
+                illuminanceTemp = (double)entity.getStateValue(stateProp_dimmermax);
                 //illuminances.put(lightEntities.indexOf(entity),illuminanceTemp);
                 illuminance += illuminanceTemp;
             }
         }
 
         /*set illuminance with factor*/
-    /**        illuminance *= illuminanceFactor;
+        illuminance *= illuminanceFactor;
         double maxLevel;
 
         /*Particuliar behavior if only one lamp*/
-  /**      if (lightEntities.size()==1){
+        if (lightEntities.size()==1){
             ContextEntity entity = lightEntities.get(0);
-            if(!entity.getStateValue(stateProp_binarystatus).isEmpty()) {
-                maxLevel = (double)entity.getStateValue(stateProp_binarymax).get(1);**/
-  /**              if (illuminance >= (maxLevel/2)){ /*If it doesn't really require light, doesn't set status to on*/
-    /**                  entity.setState(stateProp_binarystatus, true);
+            if(entity.getStateValue(stateProp_binarystatus)!= null) {
+                maxLevel = (double)entity.getStateValue(stateProp_binarymax);
+                if (illuminance >= (maxLevel/2)){ /*If it doesn't really require light, doesn't set status to on*/
+                    entity.setState(stateProp_binarystatus, true);
                 } else {
                     entity.setState(stateProp_binarystatus, false);
                 }
-            } else if(!entity.getStateValue(stateProp_dimmermax).isEmpty()) {
-                maxLevel = (double)entity.getStateValue(stateProp_dimmermax).get(1);
+            } else if(entity.getStateValue(stateProp_dimmermax)!= null) {
+                maxLevel = (double)entity.getStateValue(stateProp_dimmermax);
                 maxLevel = Math.min(maxLevel, illuminance);
                 entity.setState(stateProp_dimmerlevel, maxLevel);
             }
 
         } else {
             for (ContextEntity entity : lightEntities){
-                if(!entity.getStateValue(stateProp_binarystatus).isEmpty()) {
-                    maxLevel = (double)entity.getStateValue(stateProp_binarymax).get(1);
+                if(entity.getStateValue(stateProp_binarystatus) != null) {
+                    maxLevel = (double)entity.getStateValue(stateProp_binarymax);
                     if (illuminance >= maxLevel){
                         entity.setState(stateProp_binarystatus, true);
                         illuminance -= maxLevel;
@@ -147,8 +143,8 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
             }
 
             for (ContextEntity entity : lightEntities){
-                if(!entity.getStateValue(stateProp_dimmermax).isEmpty()) {
-                    maxLevel = (double)entity.getStateValue(stateProp_dimmermax).get(1);
+                if(entity.getStateValue(stateProp_dimmermax)!= null) {
+                    maxLevel = (double)entity.getStateValue(stateProp_dimmermax);
                     maxLevel = Math.min(maxLevel, illuminance);
                     entity.setState(stateProp_dimmerlevel, maxLevel);
                     illuminance -= maxLevel;
@@ -167,5 +163,5 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
             this.illuminanceFactor = illuminanceFactor;
         }
         updateLightRegulation(presenceAggregation);
-    }**/
+    }
 }

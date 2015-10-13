@@ -1,12 +1,12 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
 import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
+import fr.liglab.adele.icasa.context.handler.synchronization.Set;
 import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,30 +20,49 @@ import java.util.function.Function;
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {"serial.number", BinaryLight.BINARY_LIGHT_POWER_STATUS, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE})
-public class DeviceContextEntityImpl implements ContextEntity, DeviceListener{
+@State(states = {BinaryLight.DEVICE_SERIAL_NUMBER, BinaryLight.BINARY_LIGHT_POWER_STATUS,BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL})
+public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
-    private static final Logger LOG = LoggerFactory.getLogger(DeviceContextEntityImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BinaryContextEntityImpl.class);
 
-    @Requires(specification = GenericDevice.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
-    GenericDevice device;
+    @Requires(specification = BinaryLight.class, id = "context.entity.device", optional = false, filter ="(device.serialNumber=${context.entity.id})")
+    BinaryLight device;
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
 
-
-    @Pull(state = "serial.number")
-    private final Function getZoneName = (Object obj)->{
+    @Pull(state = BinaryLight.DEVICE_SERIAL_NUMBER)
+    private final Function getSerialNumber = (Object obj)->{
         return device.getSerialNumber();
     };
 
+    @Pull(state = BinaryLight.BINARY_LIGHT_POWER_STATUS)
+    private final Function getLightPowerStatus= (Object obj)->{
+        return device.getPowerStatus();
+    };
+
+    @Pull(state = BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL)
+    private final Function getLightMaxPowerLevel = (Object obj)->{
+        return device.getMaxPowerLevel();
+    };
+
+    @Set(state = BinaryLight.BINARY_LIGHT_POWER_STATUS)
+    private final Function setLightPowerStatus= (Object obj)->{
+        if ((boolean)obj == true){
+            device.turnOn();
+        }else{
+            device.turnOff();
+        }
+        return true;
+    };
+
     @Bind(id = "context.entity.device")
-    public void bindGenericDevice (GenericDevice device) {
+    public void bindGenericDevice (BinaryLight device) {
         device.addListener(this);
     }
 
     @Unbind(id = "context.entity.device")
-    public void unbindGenericDevice(GenericDevice device) {
+    public void unbindGenericDevice(BinaryLight device) {
         device.removeListener(this);
     }
 

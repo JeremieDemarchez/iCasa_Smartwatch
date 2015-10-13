@@ -1,6 +1,5 @@
-package fr.liglab.adele.icasa.context.model.example.zone;
+package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
 import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.*;
@@ -11,57 +10,17 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
 
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states={"area","zone.name"})
+@State
 public class ContextEntityImpl implements ContextEntity{
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextEntityImpl.class);
 
     @ServiceProperty(name = "context.entity.id",mandatory = true)
     String name;
-
-    private String zoneName = "Fake";
-
-    private Double size = 93.5;
-
-    @Pull(state = "area")
-    private final Function getZoneName = (Object obj)->{
-        return zoneName;
-    };
-
-
-    @Pull(state = "zone.name")
-    private final Function getSize = (Object obj)->{
-        return size;
-    };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
