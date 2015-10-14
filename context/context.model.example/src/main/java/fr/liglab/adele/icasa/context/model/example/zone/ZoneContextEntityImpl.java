@@ -93,7 +93,9 @@ public class ZoneContextEntityImpl implements ContextEntity,ZoneListener{
 
     @Override
     public void zoneVariableAdded(Zone zone, String variableName) {
-
+        if(variableName.equals("Area")){
+            pushState(ZONE_AREA,zone.getVariableValue("Area"));
+        }
     }
 
     @Override
