@@ -1,7 +1,9 @@
 package fr.liglab.adele.icasa.context.handler.synchronization;
 
 import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
@@ -254,6 +256,57 @@ public class SynchronizationHandler extends PrimitiveHandler {
         @Override
         public void onFinally(Object pojo, Member method) {
 
+        }
+    }
+
+    @Override
+    public HandlerDescription getDescription() {
+        return new SynchronizationHandlerDescription(this);
+    }
+
+    private class SynchronizationHandlerDescription extends HandlerDescription {
+        public SynchronizationHandlerDescription(PrimitiveHandler h) { super(h); }
+
+        // Method returning the custom description of this handler.
+        public Element getHandlerInfo() {
+            // Needed to get the root description element.
+            Element elem = super.getHandlerInfo();
+
+            for (String stateId : m_statesId){
+                Element stateElement = new Element("state property","");
+                stateElement.addAttribute(new Attribute("name",stateId));
+                if(m_pullFunction.containsKey(stateId)){
+                    Function pull = m_pullFunction.get(stateId);
+                    Object returnPull = pull.apply(stateId);
+                    if (returnPull != null){
+                        stateElement.addAttribute(new Attribute("value",returnPull.toString()));
+                        stateElement.addAttribute(new Attribute("pullFunction","Yes"));
+                    }else{
+                        stateElement.addAttribute(new Attribute("value","Value return by Pull Function is null"));
+                        stateElement.addAttribute(new Attribute("pullFunction","Yes"));
+                    }
+                }
+                else {
+                    if (m_stateValue.containsKey(stateId)){
+                        stateElement.addAttribute(new Attribute("value",m_stateValue.get(stateId).toString()));
+                        stateElement.addAttribute(new Attribute("pullFunction","No"));
+                    }else{
+                        stateElement.addAttribute(new Attribute("value","No Value"));
+                        stateElement.addAttribute(new Attribute("pullFunction","No"));
+                    }
+                }
+
+                if (m_setFunction.containsKey(stateId)){
+                    stateElement.addAttribute(new Attribute("setFunction","Yes"));
+                }
+                else {
+                    stateElement.addAttribute(new Attribute("setFunction","No"));
+                }
+
+                elem.addElement(stateElement);
+            }
+
+            return elem;
         }
     }
 }
