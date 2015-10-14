@@ -1,8 +1,9 @@
 package fr.liglab.adele.icasa.context.handler.synchronization;
 
-/**
- * Created by aygalinc on 12/10/15.
- */
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Target;
+
+@Target(ElementType.TYPE)
 public @interface State {
 
     String[] states() default {};
