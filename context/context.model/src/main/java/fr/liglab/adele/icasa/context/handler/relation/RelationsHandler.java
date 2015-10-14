@@ -6,17 +6,17 @@ import org.apache.felix.ipojo.HandlerFactory;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
-import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.Member;
 import java.util.*;
 
 @Handler(name = "ContextEntity", namespace = RelationsHandler.RELATIONS_HANDLER_NAMESPACE)
@@ -211,5 +211,47 @@ public class RelationsHandler extends PrimitiveHandler{
 
     public Object onGet(Object pojo, String fieldName, Object value){
         return new HashMap<>(m_stateExtensions);
+    }
+
+    @Override
+    public HandlerDescription getDescription() {
+        return new RelationHandlerDescription(this);
+    }
+
+    private class RelationHandlerDescription extends HandlerDescription {
+        public RelationHandlerDescription(PrimitiveHandler h) { super(h); }
+
+        // Method returning the custom description of this handler.
+        public synchronized Element getHandlerInfo() {
+            // Needed to get the root description element.
+            Element elem = super.getHandlerInfo();
+            Element extendedStateElement = new Element("Extended State","");
+            for (String extendedName : m_stateExtensions.keySet()){
+                Element extensionElement = new Element("state extension","");
+                extensionElement.addAttribute(new Attribute("Name",extendedName));
+                extensionElement.addAttribute(new Attribute("Value",m_stateExtensions.get(extendedName).toString()));
+                extendedStateElement.addElement(extensionElement);
+            }
+
+            elem.addElement(extendedStateElement);
+
+            Element relationsElement = new Element("Relations","");
+            for (Relation relation : relations){
+                Element relationElement = new Element("Relation","");
+                relationElement.addAttribute(new Attribute("Name",relation.getName()));
+                relationElement.addAttribute(new Attribute("Source",relation.getSource()));
+                relationElement.addAttribute(new Attribute("End",relation.getEnd()));
+                Element extensionElement = new Element("ExtensionState","");
+                extensionElement.addAttribute(new Attribute("Name",relation.getExtendedState().getName()));
+                extensionElement.addAttribute(new Attribute("Value",relation.getExtendedState().getValue().toString()));
+                extensionElement.addAttribute(new Attribute("Is Aggregate", String.valueOf(relation.getExtendedState().isAggregate())));
+                relationElement.addElement(extensionElement);
+                relationsElement.addElement(relationElement);
+            }
+
+            elem.addElement(relationsElement);
+
+            return elem;
+        }
     }
 }
