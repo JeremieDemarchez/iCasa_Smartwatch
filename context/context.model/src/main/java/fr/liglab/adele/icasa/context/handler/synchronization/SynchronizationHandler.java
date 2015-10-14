@@ -273,34 +273,34 @@ public class SynchronizationHandler extends PrimitiveHandler {
             Element elem = super.getHandlerInfo();
 
             for (String stateId : m_statesId){
-                Element stateElement = new Element("state property","");
-                stateElement.addAttribute(new Attribute("name",stateId));
+                Element stateElement = new Element("State property","");
+                stateElement.addAttribute(new Attribute("Name",stateId));
                 if(m_pullFunction.containsKey(stateId)){
                     Function pull = m_pullFunction.get(stateId);
                     Object returnPull = pull.apply(stateId);
                     if (returnPull != null){
-                        stateElement.addAttribute(new Attribute("value",returnPull.toString()));
-                        stateElement.addAttribute(new Attribute("pullFunction","Yes"));
+                        stateElement.addAttribute(new Attribute("Value",returnPull.toString()));
+                        stateElement.addAttribute(new Attribute("Pull function","registered"));
                     }else{
-                        stateElement.addAttribute(new Attribute("value","Value return by Pull Function is null"));
-                        stateElement.addAttribute(new Attribute("pullFunction","Yes"));
+                        stateElement.addAttribute(new Attribute("Value","Value return by Pull Function is null"));
+                        stateElement.addAttribute(new Attribute("PullFunction","registered"));
                     }
                 }
                 else {
                     if (m_stateValue.containsKey(stateId)){
-                        stateElement.addAttribute(new Attribute("value",m_stateValue.get(stateId).toString()));
-                        stateElement.addAttribute(new Attribute("pullFunction","No"));
+                        stateElement.addAttribute(new Attribute("Value",m_stateValue.get(stateId).toString()));
+                        stateElement.addAttribute(new Attribute("Pull function","unregistered"));
                     }else{
-                        stateElement.addAttribute(new Attribute("value","No Value"));
-                        stateElement.addAttribute(new Attribute("pullFunction","No"));
+                        stateElement.addAttribute(new Attribute("Value","No Value"));
+                        stateElement.addAttribute(new Attribute("Pull function","unregistered"));
                     }
                 }
 
                 if (m_setFunction.containsKey(stateId)){
-                    stateElement.addAttribute(new Attribute("setFunction","Yes"));
+                    stateElement.addAttribute(new Attribute("Set function","registered"));
                 }
                 else {
-                    stateElement.addAttribute(new Attribute("setFunction","No"));
+                    stateElement.addAttribute(new Attribute("Set function","unregistered"));
                 }
 
                 elem.addElement(stateElement);
