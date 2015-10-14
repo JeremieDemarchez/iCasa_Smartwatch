@@ -41,21 +41,38 @@ public class LightFollowRegulatorImpl implements LightFollowRegulator {
     }
 
     @Bind(id = "presence")
-    public void bindBedroomPresence(Aggregation aggregation){
+    public void bindRoomPresence(Aggregation aggregation){
         LOG.info(" Bind Presence");
         updateLightRegulation(aggregation);
     }
 
     @Modified(id = "presence")
-    public void modifiedBedroomPresence(Aggregation aggregation){
+    public void modifiedRoomPresence(Aggregation aggregation){
         LOG.info(" Modified Presence");
         updateLightRegulation(aggregation);
+    }
+
+    @Unbind(id = "presence")
+    public void unbindRoomPresence(Aggregation aggregation){
+        /*TODO : verify*/
+        LOG.info(" Unbind Presence");
+        setOffAllLights();
+    }
+
+    @Bind(id = "lights")
+    public void bindLights(ContextEntity contextEntity){
+        updateLightRegulation(presenceAggregation);
+    }
+
+    @Unbind(id = "lights")
+    public void unbindLights(ContextEntity contextEntity){
+        updateLightRegulation(presenceAggregation);
     }
 
 
 
     private void updateLightRegulation (Aggregation aggregation){
-        if(((boolean)aggregation.getResult() == true)){
+        if(((boolean)aggregation.getResult())){
             if (illuminanceFactor>=1){
                 setOnAllLights();
             } else if (illuminanceFactor<=0){
