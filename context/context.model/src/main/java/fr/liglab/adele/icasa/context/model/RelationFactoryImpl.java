@@ -106,16 +106,16 @@ public class RelationFactoryImpl implements RelationFactory{
 
     @Override
     public UUID findId(String name, String source, String end) {
-        UUID uuid = null;
         IpojoServiceRegistrationRelation relation;
         for(Map.Entry<UUID, IpojoServiceRegistrationRelation> entry : relations.entrySet()){
             relation = entry.getValue();
-            if(relation.getName()==name){
-                if((relation.getSource().equals(source))&(relation.getEnd().equals(end)));
-                uuid = entry.getKey();
+            if(relation.getName().equals(name)){
+                if((relation.getSource().equals(source))&&(relation.getEnd().equals(end))){
+                    return entry.getKey();
+                }
             }
         }
-        return uuid;
+        return null;
     }
 
     @Override

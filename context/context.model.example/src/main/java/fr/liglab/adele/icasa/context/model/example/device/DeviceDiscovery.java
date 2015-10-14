@@ -1,6 +1,7 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
 
+import fr.liglab.adele.icasa.context.model.RelationFactory;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
@@ -35,6 +36,9 @@ public class DeviceDiscovery{
 
     @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.device.ToogleSwitchContextEntityImpl)")
     Factory toogleEntityFactory;
+
+    @Requires
+    private RelationFactory m_relationFactory;
 
     @Validate
     public void start(){
@@ -84,7 +88,10 @@ public class DeviceDiscovery{
 
     @Unbind(id = "binary",optional = true,aggregate = true)
     public synchronized void unbindBinary(BinaryLight device){
-       removeEntity(device.getSerialNumber());
+        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
+            m_relationFactory.deleteRelation(uuid);
+        }
+        removeEntity(device.getSerialNumber());
     }
 
     @Bind(id = "dimmer",optional = true,aggregate = true)
@@ -95,6 +102,9 @@ public class DeviceDiscovery{
 
     @Unbind(id = "dimmer",optional = true,aggregate = true)
     public synchronized void unbindDimmer(DimmerLight device){
+        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
+            m_relationFactory.deleteRelation(uuid);
+        }
         removeEntity(device.getSerialNumber());
     }
 
@@ -106,6 +116,9 @@ public class DeviceDiscovery{
 
     @Unbind(id = "presence",optional = true,aggregate = true)
     public synchronized void unbindPresence(PresenceSensor device){
+        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
+            m_relationFactory.deleteRelation(uuid);
+        }
         removeEntity(device.getSerialNumber());
     }
 
@@ -117,6 +130,9 @@ public class DeviceDiscovery{
 
     @Unbind(id = "toogle",optional = true,aggregate = true)
     public synchronized void unbindToogle(PowerSwitch device){
+        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
+            m_relationFactory.deleteRelation(uuid);
+        }
         removeEntity(device.getSerialNumber());
     }
 
