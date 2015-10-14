@@ -12,10 +12,7 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.function.Function;
 
 @Component(immediate = true)
@@ -91,10 +88,6 @@ public class PresenceContextEntityImpl implements ContextEntity, DeviceListener{
 
     }
 
-
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
     @Validate
     public void start(){
 
@@ -104,6 +97,10 @@ public class PresenceContextEntityImpl implements ContextEntity, DeviceListener{
     public void stop(){
 
     }
+
+    private final Map<String,Object> injectedState = new HashMap<>();
+
+    private final Map<String,Object> injectedExtensionState =new HashMap<>();
 
     @Override
     public String getId() {
@@ -122,17 +119,17 @@ public class PresenceContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public Map<String,Object> getState() {
-        return injectedState;
+        return Collections.unmodifiableMap(injectedState);
     }
 
     @Override
-    public List<Object> getStateExtensionValue(String property) {
-        return new ArrayList<>();
+    public Object getStateExtensionValue(String property) {
+        return injectedExtensionState.get(property);
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-        return new HashMap<String,Object>();
+        return Collections.unmodifiableMap(injectedExtensionState);
     }
 
     @Override

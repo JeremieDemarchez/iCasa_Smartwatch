@@ -98,10 +98,6 @@ public class ToogleSwitchContextEntityImpl implements ContextEntity, DeviceListe
 
     }
 
-
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
     @Validate
     public void start(){
 
@@ -111,6 +107,10 @@ public class ToogleSwitchContextEntityImpl implements ContextEntity, DeviceListe
     public void stop(){
 
     }
+
+    private final Map<String,Object> injectedState = new HashMap<>();
+
+    private final Map<String,Object> injectedExtensionState =new HashMap<>();
 
     @Override
     public String getId() {
@@ -133,13 +133,13 @@ public class ToogleSwitchContextEntityImpl implements ContextEntity, DeviceListe
     }
 
     @Override
-    public List<Object> getStateExtensionValue(String property) {
-        return new ArrayList<>();
+    public Object getStateExtensionValue(String property) {
+        return injectedExtensionState.get(property);
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-        return new HashMap<String,Object>();
+        return Collections.unmodifiableMap(injectedExtensionState);
     }
 
     @Override

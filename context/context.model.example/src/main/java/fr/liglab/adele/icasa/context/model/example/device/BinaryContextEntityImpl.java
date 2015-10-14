@@ -102,10 +102,6 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
     }
 
-
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
     @Validate
     public void start(){
 
@@ -115,6 +111,10 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
     public void stop(){
 
     }
+
+    private final Map<String,Object> injectedState = new HashMap<>();
+
+    private final Map<String,Object> injectedExtensionState =new HashMap<>();
 
     @Override
     public String getId() {
@@ -137,13 +137,13 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
     }
 
     @Override
-    public List<Object> getStateExtensionValue(String property) {
-        return new ArrayList<>();
+    public Object getStateExtensionValue(String property) {
+        return injectedExtensionState.get(property);
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-        return new HashMap<String,Object>();
+        return injectedExtensionState;
     }
 
     @Override

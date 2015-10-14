@@ -17,7 +17,7 @@ public interface ContextEntity {
 
     public Map<String,Object> getState();
 
-    public List<Object> getStateExtensionValue (String property);
+    public Object getStateExtensionValue (String property);
 
     public Map<String,Object> getStateExtensionAsMap();
 

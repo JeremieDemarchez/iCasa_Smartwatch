@@ -3,10 +3,12 @@ package fr.liglab.adele.icasa.context.handler.relation;
 import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.HandlerFactory;
+import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.osgi.framework.Constants;
@@ -37,6 +39,8 @@ public class RelationsHandler extends PrimitiveHandler{
     private Map<String,Object> m_stateExtensions = new HashMap<>();
 
     private final Map<Long,Object> m_stateExtensionByServiceId = new HashMap<>();
+
+    private InstanceManager m_instanceManager;
 
     @Bind(id = "context.entity.relation")
     public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
@@ -184,18 +188,16 @@ public class RelationsHandler extends PrimitiveHandler{
 
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+        m_instanceManager = getInstanceManager();
         PojoMetadata pojoMetadata = getPojoMetadata();
-        MethodMetadata[] methodMetadatas = pojoMetadata.getMethods();
-        for (MethodMetadata method : methodMetadatas){
-            if (method.getMethodName().equals("getStateExtensionAsMap")){
-                getInstanceManager().register(method,this);
-            }
-        }
 
         String id =  (String)configuration.get("context.entity.id");
         Properties properties = new Properties();
         properties.put("end.id",id);
         getHandlerManager().reconfigure(properties);
+
+        FieldMetadata injectedState = pojoMetadata.getField("injectedExtensionState");
+        m_instanceManager.register(injectedState, this);
     }
 
     public synchronized void stop() {
@@ -207,12 +209,7 @@ public class RelationsHandler extends PrimitiveHandler{
 
     }
 
-    public synchronized void onExit(Object pojo, Member method, Object returnedObj){
-
-        if(returnedObj instanceof Map){
-            Map<String,Object> returnMap = (Map)returnedObj ;
-            returnMap.clear();
-            returnMap.putAll(m_stateExtensions);
-        }
+    public Object onGet(Object pojo, String fieldName, Object value){
+        return new HashMap<>(m_stateExtensions);
     }
 }

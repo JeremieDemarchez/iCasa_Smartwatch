@@ -136,6 +136,7 @@ public class ZoneContextEntityImpl implements ContextEntity,ZoneListener{
 
     private final Map<String,Object> injectedState = new HashMap<>();
 
+    private final Map<String,Object> injectedExtensionState =new HashMap<>();
 
     @Override
     public String getId() {
@@ -158,13 +159,13 @@ public class ZoneContextEntityImpl implements ContextEntity,ZoneListener{
     }
 
     @Override
-    public List<Object> getStateExtensionValue(String property) {
-        return new ArrayList<>();
+    public Object getStateExtensionValue(String property) {
+        return injectedExtensionState.get(property);
     }
 
     @Override
     public Map<String, Object> getStateExtensionAsMap() {
-        return new HashMap<String,Object>();
+        return Collections.unmodifiableMap(injectedExtensionState);
     }
 
     @Override
