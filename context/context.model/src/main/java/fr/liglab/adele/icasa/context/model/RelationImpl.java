@@ -74,10 +74,10 @@ public class RelationImpl implements Relation {
 
     @Override
     public String getSource() {
-        return sourceId;
+        //return sourceId;
         //NE FONCTIONNE PAS AVEC LES FILTRES DANS LES CONTEXT ENTITY
         //LE SYSTEME PLANTE QUAND L AFFICHAGE WEB DU CONTEXT EST ACTUALISE
-        //return source.getId();
+        return source.getId();
     }
 
     @Override
@@ -123,10 +123,9 @@ public class RelationImpl implements Relation {
 
         @Override
         public Object getValue() {
+            //TODO value = ...
             return  m_callBack.callBack(getSourceState());
         }
     }
-
-
 
 }

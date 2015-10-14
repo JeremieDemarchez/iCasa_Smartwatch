@@ -74,6 +74,9 @@ public class DeviceDiscovery{
 
     private void removeEntity(String serialNumber){
         try {
+            for(UUID uuid : m_relationFactory.findIdsByEndpoint(serialNumber)){
+                m_relationFactory.deleteRelation(uuid);
+            }
             deviceEntities.remove(serialNumber).unregister();
         }catch(IllegalStateException e){
             LOG.error("failed unregistering device", e);
@@ -83,14 +86,10 @@ public class DeviceDiscovery{
     @Bind(id = "binary",optional = true,aggregate = true)
     public synchronized void bindBinary(BinaryLight device){
       createEntity(binaryEntityFactory, device);
-
     }
 
     @Unbind(id = "binary",optional = true,aggregate = true)
     public synchronized void unbindBinary(BinaryLight device){
-        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
-            m_relationFactory.deleteRelation(uuid);
-        }
         removeEntity(device.getSerialNumber());
     }
 
@@ -102,37 +101,26 @@ public class DeviceDiscovery{
 
     @Unbind(id = "dimmer",optional = true,aggregate = true)
     public synchronized void unbindDimmer(DimmerLight device){
-        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
-            m_relationFactory.deleteRelation(uuid);
-        }
         removeEntity(device.getSerialNumber());
     }
 
     @Bind(id = "presence",optional = true,aggregate = true)
     public synchronized void bindPresence(PresenceSensor device){
         createEntity(presenceEntityFactory,device);
-
     }
 
     @Unbind(id = "presence",optional = true,aggregate = true)
     public synchronized void unbindPresence(PresenceSensor device){
-        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
-            m_relationFactory.deleteRelation(uuid);
-        }
         removeEntity(device.getSerialNumber());
     }
 
     @Bind(id = "toogle",optional = true,aggregate = true)
     public synchronized void bindToogle(PowerSwitch device){
         createEntity(toogleEntityFactory,device);
-
     }
 
     @Unbind(id = "toogle",optional = true,aggregate = true)
     public synchronized void unbindToogle(PowerSwitch device){
-        for(UUID uuid : m_relationFactory.findIdsByEndpoint(device.getSerialNumber())){
-            m_relationFactory.deleteRelation(uuid);
-        }
         removeEntity(device.getSerialNumber());
     }
 

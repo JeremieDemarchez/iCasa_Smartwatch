@@ -212,11 +212,13 @@ public class RelationFactoryImpl implements RelationFactory{
         }
 
 
-        public void updateRelation(String newSource,String newEnd){
+        public void updateRelation(String newSource, String newEnd){
             Properties properties = new Properties();
+            source = newSource;
+            end = newEnd;
             properties.put("relation.name", name);
-            properties.put("relation.source.id", newSource);
-            properties.put("relation.end.id", newEnd);
+            properties.put("relation.source.id", source);
+            properties.put("relation.end.id", end);
             setProperties(properties);
         }
 
