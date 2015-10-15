@@ -39,7 +39,11 @@ public class RelationsHandler extends PrimitiveHandler{
 
     private Map<String,Object> m_stateExtensions = new HashMap<>();
 
+    private final Object m_stateExtensionLock = new Object();
+
     private final Map<Long,Object> m_stateExtensionByServiceId = new HashMap<>();
+
+    private final Object m_stateExtensionByServiceLock = new Object();
 
     private InstanceManager m_instanceManager;
 
@@ -48,31 +52,35 @@ public class RelationsHandler extends PrimitiveHandler{
         LOG.info(" BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
         /*state actualisation*/
         if(relation.getExtendedState().getValue() != null) {
-            m_stateExtensionByServiceId.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
+
+            synchronized (m_stateExtensionByServiceId) {
+                m_stateExtensionByServiceId.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
+            }
 
             String relationName = relation.getExtendedState().getName();
+            synchronized (m_stateExtensionLock) {
+                if (m_stateExtensions.containsKey(relationName)) {
+                    if (relation.getExtendedState().isAggregate()) {
+                        List<Object> stateExtension = (List) m_stateExtensions.get(relationName);
+                        stateExtension.add(relation.getExtendedState().getValue());
+                        updateExtensionState(relationName, m_stateExtensions.get(relationName));
 
-            if (m_stateExtensions.containsKey(relationName)) {
-                if (relation.getExtendedState().isAggregate()) {
-                    List<Object> stateExtension = (List) m_stateExtensions.get(relationName);
-                    stateExtension.add(relation.getExtendedState().getValue());
-                    updateExtensionState(relationName, m_stateExtensions.get(relationName));
-
-                } else {
-                    m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
-                    updateExtensionState(relationName, m_stateExtensions.get(relationName));
-                }
-
-            } else {
-                if (relation.getExtendedState().isAggregate()) {
-                    List<Object> stateExtension = new ArrayList<>();
-                    stateExtension.add(relation.getExtendedState().getValue());
-                    m_stateExtensions.put(relationName, stateExtension);
-                    addExtensionState(relationName, stateExtension);
+                    } else {
+                        m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
+                        updateExtensionState(relationName, m_stateExtensions.get(relationName));
+                    }
 
                 } else {
-                    m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
-                    addExtensionState(relationName, relation.getExtendedState().getValue());
+                    if (relation.getExtendedState().isAggregate()) {
+                        List<Object> stateExtension = new ArrayList<>();
+                        stateExtension.add(relation.getExtendedState().getValue());
+                        m_stateExtensions.put(relationName, stateExtension);
+                        addExtensionState(relationName, stateExtension);
+
+                    } else {
+                        m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
+                        addExtensionState(relationName, relation.getExtendedState().getValue());
+                    }
                 }
             }
         }else {
@@ -86,54 +94,60 @@ public class RelationsHandler extends PrimitiveHandler{
         LOG.info(" MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() + " old value " + m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID)));
         String relationName = relation.getExtendedState().getName();
         if(relation.getExtendedState().getValue() != null) {
-            Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
-            if (oldStateExtension != null) {
-                if (oldStateExtension.equals(relation.getExtendedState().getValue())) {
-                    LOG.info(" Modified call but same value ");
-                    return;
-                }
-                LOG.info(" MODIFIED PROPERTY !!!!!! ");
 
-                if (relation.getExtendedState().isAggregate()){
-                    List<Object> stateExtension = (List)m_stateExtensions.get(relationName);
-                    int oldValueIndex = stateExtension.indexOf(oldStateExtension);
-                    stateExtension.add(oldValueIndex,relation.getExtendedState().getName());
-                    m_stateExtensions.put(relationName, stateExtension);
-                    updateExtensionState(relationName, stateExtension);
-                    m_stateExtensionByServiceId.replace((Long) serviceReference.getProperty(Constants.SERVICE_ID),relation.getExtendedState().getValue());
-                }else {
-                    m_stateExtensions.put(relationName,relation.getExtendedState().getValue());
-                    updateExtensionState(relationName, relation.getExtendedState().getValue());
-                    m_stateExtensionByServiceId.replace((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
-                }
-            }else {
-                if (relation.getExtendedState().getValue() != null) {
-                    m_stateExtensionByServiceId.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
-                    if (m_stateExtensions.containsKey(relationName)) {
+            synchronized (m_stateExtensionByServiceId) {
+                Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+                if (oldStateExtension != null) {
+                    if (oldStateExtension.equals(relation.getExtendedState().getValue())) {
+                        LOG.info(" Modified call but same value ");
+                        return;
+                    }
+                    LOG.info(" MODIFIED PROPERTY !!!!!! ");
+                    synchronized (m_stateExtensionLock) {
                         if (relation.getExtendedState().isAggregate()) {
                             List<Object> stateExtension = (List) m_stateExtensions.get(relationName);
-                            stateExtension.add(relation.getExtendedState().getValue());
-                            updateExtensionState(relationName, m_stateExtensions.get(relationName));
-
-                        } else {
-                            m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
-                            updateExtensionState(relationName, m_stateExtensions.get(relationName));
-                        }
-
-                    } else {
-                        if (relation.getExtendedState().isAggregate()) {
-                            List<Object> stateExtension = new ArrayList<>();
-                            stateExtension.add(relation.getExtendedState().getValue());
+                            int oldValueIndex = stateExtension.indexOf(oldStateExtension);
+                            stateExtension.add(oldValueIndex, relation.getExtendedState().getName());
                             m_stateExtensions.put(relationName, stateExtension);
-                            addExtensionState(relationName, stateExtension);
-
+                            updateExtensionState(relationName, stateExtension);
+                            m_stateExtensionByServiceId.replace((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
                         } else {
                             m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
-                            addExtensionState(relationName, relation.getExtendedState().getValue());
+                            updateExtensionState(relationName, relation.getExtendedState().getValue());
+                            m_stateExtensionByServiceId.replace((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
                         }
                     }
                 } else {
-                    LOG.error(" Error Modified relation " + relation.getName() + " on context entity " + relation.getEnd() + " because extended State function return a null value");
+                    if (relation.getExtendedState().getValue() != null) {
+                        m_stateExtensionByServiceId.put((Long) serviceReference.getProperty(Constants.SERVICE_ID), relation.getExtendedState().getValue());
+                        synchronized (m_stateExtensionLock) {
+                            if (m_stateExtensions.containsKey(relationName)) {
+                                if (relation.getExtendedState().isAggregate()) {
+                                    List<Object> stateExtension = (List) m_stateExtensions.get(relationName);
+                                    stateExtension.add(relation.getExtendedState().getValue());
+                                    updateExtensionState(relationName, m_stateExtensions.get(relationName));
+
+                                } else {
+                                    m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
+                                    updateExtensionState(relationName, m_stateExtensions.get(relationName));
+                                }
+
+                            } else {
+                                if (relation.getExtendedState().isAggregate()) {
+                                    List<Object> stateExtension = new ArrayList<>();
+                                    stateExtension.add(relation.getExtendedState().getValue());
+                                    m_stateExtensions.put(relationName, stateExtension);
+                                    addExtensionState(relationName, stateExtension);
+
+                                } else {
+                                    m_stateExtensions.put(relationName, relation.getExtendedState().getValue());
+                                    addExtensionState(relationName, relation.getExtendedState().getValue());
+                                }
+                            }
+                        }
+                    } else {
+                        LOG.error(" Error Modified relation " + relation.getName() + " on context entity " + relation.getEnd() + " because extended State function return a null value");
+                    }
                 }
             }
         }else {
@@ -145,25 +159,30 @@ public class RelationsHandler extends PrimitiveHandler{
     public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
         LOG.info(" UNBIND Relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName());
         String relationName = relation.getExtendedState().getName();
-        Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
-        if (oldStateExtension != null) {
-            if (relation.getExtendedState().isAggregate()) {
-                List<Object> stateExtension = (List) m_stateExtensions.get(relationName);
-                int oldValueIndex = stateExtension.indexOf(oldStateExtension);
-                stateExtension.remove(oldValueIndex);
-                if (stateExtension.isEmpty()) {
-                    m_stateExtensions.remove(relationName);
-                    removeExtensionState(relationName);
-                    m_stateExtensionByServiceId.remove((Long) serviceReference.getProperty(Constants.SERVICE_ID));
-                } else {
-                    m_stateExtensions.put(relationName, stateExtension);
-                    updateExtensionState(relationName, stateExtension);
-                    m_stateExtensionByServiceId.remove((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+        synchronized (m_stateExtensionByServiceLock) {
+
+            Object oldStateExtension = m_stateExtensionByServiceId.get((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+            if (oldStateExtension != null) {
+                synchronized (m_stateExtensionLock) {
+                    if (relation.getExtendedState().isAggregate()) {
+                        List<Object> stateExtension = (List) m_stateExtensions.get(relationName);
+                        int oldValueIndex = stateExtension.indexOf(oldStateExtension);
+                        stateExtension.remove(oldValueIndex);
+                        if (stateExtension.isEmpty()) {
+                            m_stateExtensions.remove(relationName);
+                            removeExtensionState(relationName);
+                            m_stateExtensionByServiceId.remove((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+                        } else {
+                            m_stateExtensions.put(relationName, stateExtension);
+                            updateExtensionState(relationName, stateExtension);
+                            m_stateExtensionByServiceId.remove((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+                        }
+                    } else {
+                        m_stateExtensions.remove(relationName);
+                        removeExtensionState(relationName);
+                        m_stateExtensionByServiceId.remove((Long) serviceReference.getProperty(Constants.SERVICE_ID));
+                    }
                 }
-            } else {
-                m_stateExtensions.remove(relationName);
-                removeExtensionState(relationName);
-                m_stateExtensionByServiceId.remove((Long) serviceReference.getProperty(Constants.SERVICE_ID));
             }
         }
     }
@@ -172,19 +191,25 @@ public class RelationsHandler extends PrimitiveHandler{
     private void addExtensionState(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
-        m_providedServiceHandler.addProperties(hashtable);
+        if (m_providedServiceHandler != null){
+            m_providedServiceHandler.addProperties(hashtable);
+        }
     }
 
     private void removeExtensionState(String propertyId){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, new Object());
-        m_providedServiceHandler.removeProperties(hashtable);
+        if (m_providedServiceHandler != null) {
+            m_providedServiceHandler.removeProperties(hashtable);
+        }
     }
 
     private void updateExtensionState(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
-        m_providedServiceHandler.reconfigure(hashtable);
+        if (m_providedServiceHandler != null){
+            m_providedServiceHandler.reconfigure(hashtable);
+        }
     }
 
     @Override
@@ -219,7 +244,7 @@ public class RelationsHandler extends PrimitiveHandler{
 
     @Override
     public synchronized void stop() {
-
+        m_providedServiceHandler = null;
     }
 
     @Override
@@ -229,7 +254,9 @@ public class RelationsHandler extends PrimitiveHandler{
     }
 
     public Object onGet(Object pojo, String fieldName, Object value){
-        return new HashMap<>(m_stateExtensions);
+        synchronized (m_stateExtensionLock) {
+            return new HashMap<>(m_stateExtensions);
+        }
     }
 
     @Override
@@ -245,11 +272,13 @@ public class RelationsHandler extends PrimitiveHandler{
             // Needed to get the root description element.
             Element elem = super.getHandlerInfo();
             Element extendedStateElement = new Element("Extended State","");
-            for (String extendedName : m_stateExtensions.keySet()){
-                Element extensionElement = new Element("state extension","");
-                extensionElement.addAttribute(new Attribute("Name",extendedName));
-                extensionElement.addAttribute(new Attribute("Value",m_stateExtensions.get(extendedName).toString()));
-                extendedStateElement.addElement(extensionElement);
+            synchronized (m_stateExtensionLock) {
+                for (String extendedName : m_stateExtensions.keySet()) {
+                    Element extensionElement = new Element("state extension", "");
+                    extensionElement.addAttribute(new Attribute("Name", extendedName));
+                    extensionElement.addAttribute(new Attribute("Value", m_stateExtensions.get(extendedName).toString()));
+                    extendedStateElement.addElement(extensionElement);
+                }
             }
 
             elem.addElement(extendedStateElement);
