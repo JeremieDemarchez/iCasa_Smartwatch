@@ -79,7 +79,7 @@ public class PhysicalParameterImpl implements Aggregation {
     @Validate
     public void start(){
         relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
-     relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
+        relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
     }
 
     @Invalidate
@@ -101,8 +101,9 @@ public class PhysicalParameterImpl implements Aggregation {
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
         UUID uuid = relationFactory.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
-        relationFactory.deleteRelation(uuid);
-
+        if (uuid != null) {
+            relationFactory.deleteRelation(uuid);
+        }
         pushState(AGGREGATION_VALUE,getResult());
     }
 

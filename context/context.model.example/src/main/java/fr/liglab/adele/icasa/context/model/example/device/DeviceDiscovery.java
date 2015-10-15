@@ -74,10 +74,12 @@ public class DeviceDiscovery{
 
     private void removeEntity(String serialNumber){
         try {
-            for(UUID uuid : m_relationFactory.findIdsByEndpoint(serialNumber)){
-                m_relationFactory.deleteRelation(uuid);
+            if (m_relationFactory.findIdsByEndpoint(serialNumber) != null) {
+                for (UUID uuid : m_relationFactory.findIdsByEndpoint(serialNumber)) {
+                    m_relationFactory.deleteRelation(uuid);
+                }
+                deviceEntities.remove(serialNumber).unregister();
             }
-            deviceEntities.remove(serialNumber).unregister();
         }catch(IllegalStateException e){
             LOG.error("failed unregistering device", e);
         }

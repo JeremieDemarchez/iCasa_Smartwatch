@@ -2,12 +2,10 @@ package fr.liglab.adele.icasa.context.model.example.zone;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.RelationType;
 import fr.liglab.adele.icasa.context.model.example.Relation_Contained;
 import fr.liglab.adele.icasa.context.model.example.Relation_IsContained;
 import fr.liglab.adele.icasa.context.model.example.device.DeviceDiscovery;
-import fr.liglab.adele.icasa.device.GenericDevice;
-
-import fr.liglab.adele.icasa.context.model.RelationType;
 import fr.liglab.adele.icasa.location.*;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -74,6 +72,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     @Override
     public void zoneRemoved(Zone zone) {
         try {
+            if (m_relationFactory.findIdsByEndpoint(zone.getId()) != null)
             for(UUID uuid : m_relationFactory.findIdsByEndpoint(zone.getId())){
                 m_relationFactory.deleteRelation(uuid);
             }
@@ -147,7 +146,7 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
                 newZoneID = zone.getId();
                 m_relationFactory.createRelation(relation_isContained, deviceID, newZoneID);
                 m_relationFactory.createRelation(relation_contained, newZoneID, deviceID);
-        }
+            }
         }else {
             boolean delete = getZones(newPosition).isEmpty();
             for (Zone oldZone : getZones(oldPosition)){
@@ -155,16 +154,24 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
                 if (delete){
                     LOG.info(" Discovery delete relation");
                     uuid = m_relationFactory.findId(relation_isContained.getName(), deviceID, oldZoneID);
-                    m_relationFactory.deleteRelation(uuid);
+                    if (uuid != null) {
+                        m_relationFactory.deleteRelation(uuid);
+                    }
                     uuid = m_relationFactory.findId(relation_contained.getName(), oldZoneID, deviceID);
-                    m_relationFactory.deleteRelation(uuid);
+                    if (uuid != null) {
+                        m_relationFactory.deleteRelation(uuid);
+                    }
                 }else {
                     for (Zone newZone : getZones(newPosition)) {
                         LOG.info(" Discovery update relation");
                         newZoneID = newZone.getId();
                         uuid = m_relationFactory.findId(relation_isContained.getName(), deviceID, oldZoneID);
-                        m_relationFactory.updateRelation(uuid, deviceID, newZoneID);
-                        uuid = m_relationFactory.findId(relation_contained.getName(), oldZoneID, deviceID);
+                        if (uuid != null) {
+                            m_relationFactory.updateRelation(uuid, deviceID, newZoneID);
+                        }
+                        if (uuid != null) {
+                            uuid = m_relationFactory.findId(relation_contained.getName(), oldZoneID, deviceID);
+                        }
                         m_relationFactory.updateRelation(uuid, newZoneID, deviceID);
                     }
                 }
