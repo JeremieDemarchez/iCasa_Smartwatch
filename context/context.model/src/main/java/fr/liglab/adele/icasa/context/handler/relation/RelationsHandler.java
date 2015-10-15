@@ -7,6 +7,7 @@ import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
+import org.apache.felix.ipojo.architecture.PropertyDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
@@ -192,6 +193,22 @@ public class RelationsHandler extends PrimitiveHandler{
         PojoMetadata pojoMetadata = getPojoMetadata();
 
         String id =  (String)configuration.get("context.entity.id");
+
+        //If not in configuration, find in component type description
+        if(id == null){
+            boolean findProperties = false;
+            for(PropertyDescription description : m_instanceManager.getInstanceDescription().getComponentDescription().getProperties()){
+                if (description.getName().equals("context.entity.id")){
+                    id = (String)description.getCurrentValue();
+                    findProperties=true;
+                    break;
+                }
+            }
+            if(findProperties == false){
+                LOG.error(" Property context.entity.id missing");
+            }
+        }
+
         Properties properties = new Properties();
         properties.put("end.id",id);
         getHandlerManager().reconfigure(properties);
@@ -200,10 +217,12 @@ public class RelationsHandler extends PrimitiveHandler{
         m_instanceManager.register(injectedState, this);
     }
 
+    @Override
     public synchronized void stop() {
 
     }
 
+    @Override
     public synchronized void start() {
         m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
 
