@@ -14,11 +14,12 @@ import java.util.*;
 import java.util.function.Function;
 
 @Component(immediate = true)
+//@Component(publicFactory = false)
 @Instantiate
-@Provides
+@Provides(specifications = {ContextEntity.class, MomentOfTheDayService.class, PeriodicRunnable.class})
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @State(states = {MomentContextEntityImpl.MOMENT_OF_THE_DAY})
-public class MomentContextEntityImpl implements ContextEntity,MomentOfTheDayService,PeriodicRunnable{
+public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayService, PeriodicRunnable{
 
     public static final String MOMENT_OF_THE_DAY = "momentOfTheDay";
 
@@ -29,11 +30,11 @@ public class MomentContextEntityImpl implements ContextEntity,MomentOfTheDayServ
      **/
     MomentOfTheDay currentMomentOfTheDay = MomentOfTheDay.MORNING;
 
-    @Requires(id = "clock",optional = false)
+    @Requires(specification = Clock.class, id = "clock", optional = false)
     Clock clock;
 
-
-    private final String name = "MomentOfTheDay";
+    @ServiceProperty(name = "context.entity.id", mandatory = true, value = "MomentOfTheDay")
+    private String name;
 
     @Pull(state = MOMENT_OF_THE_DAY)
     Function getMomentOfTheDay = (Object obj) ->{
