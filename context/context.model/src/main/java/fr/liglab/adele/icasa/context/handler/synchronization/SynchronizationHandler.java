@@ -38,6 +38,8 @@ public class SynchronizationHandler extends PrimitiveHandler {
 
     private final Map<String,Object> m_stateValue = new HashMap<>();
 
+    private final Object m_stateLock = new Object();
+
     private ProvidedServiceHandler m_providedServiceHandler;
 
     private InstanceManager m_instanceManager;
@@ -97,6 +99,7 @@ public class SynchronizationHandler extends PrimitiveHandler {
                 FieldMetadata setFunctionField = pojoMetadata.getField(element.getAttribute("field"));
                 Function pullFunction = (Function) getInstanceManager().getFieldValue(setFunctionField.getFieldName());
                 m_pullFunction.put(stateId, pullFunction);
+
             }
         }
     }
@@ -115,19 +118,22 @@ public class SynchronizationHandler extends PrimitiveHandler {
     public void stateChanged(int state) {
         if (state == InstanceManager.VALID) {
             for (String stateId : m_statesId){
-                if (m_pullFunction.containsKey(stateId)){
+                if (m_pullFunction.containsKey(stateId)) {
                     Function getFunction = m_pullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
-                    if (returnObj != null){
-                        m_stateValue.put(stateId,returnObj);
-                        addState(stateId,returnObj);
-                    }else {
+                    if (returnObj != null) {
+                        synchronized (m_stateLock) {
+                            m_stateValue.put(stateId, returnObj);
+                            addState(stateId, returnObj);
+                        }
+                    } else {
                         LOG.error("INITIALISATION : Pull fonction " + stateId + " return null Object ! ");
                     }
                 }
             }
         }
     }
+
 
     private void addState(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
@@ -189,12 +195,14 @@ public class SynchronizationHandler extends PrimitiveHandler {
                     Function getFunction = m_pullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
                     if (returnObj != null) {
-                        if (m_stateValue.containsKey(stateId)) {
-                            if (returnObj.equals(m_stateValue.get(stateId))) {
+                        synchronized (m_stateLock) {
+                            if (m_stateValue.containsKey(stateId)) {
+                                if (returnObj.equals(m_stateValue.get(stateId))) {
 
-                            } else {
-                                m_stateValue.replace(stateId, returnObj);
-                                updateState(stateId, returnObj);
+                                } else {
+                                    m_stateValue.replace(stateId, returnObj);
+                                    updateState(stateId, returnObj);
+                                }
                             }
                         }
                     }else {
@@ -228,12 +236,14 @@ public class SynchronizationHandler extends PrimitiveHandler {
             Object value = args[1];
             if (value != null) {
                 if (m_statesId.contains(stateId)) {
-                    if (m_stateValue.containsKey(stateId)) {
-                        m_stateValue.put(stateId, value);
-                        updateState(stateId, value);
-                    } else {
-                        m_stateValue.put(stateId, value);
-                        addState(stateId, value);
+                    synchronized (m_stateLock) {
+                        if (m_stateValue.containsKey(stateId)) {
+                            m_stateValue.put(stateId, value);
+                            updateState(stateId, value);
+                        } else {
+                            m_stateValue.put(stateId, value);
+                            addState(stateId, value);
+                        }
                     }
                 }
             }else{
@@ -285,12 +295,14 @@ public class SynchronizationHandler extends PrimitiveHandler {
                     }
                 }
                 else {
-                    if (m_stateValue.containsKey(stateId)){
-                        stateElement.addAttribute(new Attribute("Value",m_stateValue.get(stateId).toString()));
-                        stateElement.addAttribute(new Attribute("Pull function","unregistered"));
-                    }else{
-                        stateElement.addAttribute(new Attribute("Value","No Value"));
-                        stateElement.addAttribute(new Attribute("Pull function","unregistered"));
+                    synchronized (m_stateLock) {
+                        if (m_stateValue.containsKey(stateId)) {
+                            stateElement.addAttribute(new Attribute("Value", m_stateValue.get(stateId).toString()));
+                            stateElement.addAttribute(new Attribute("Pull function", "unregistered"));
+                        } else {
+                            stateElement.addAttribute(new Attribute("Value", "No Value"));
+                            stateElement.addAttribute(new Attribute("Pull function", "unregistered"));
+                        }
                     }
                 }
 
