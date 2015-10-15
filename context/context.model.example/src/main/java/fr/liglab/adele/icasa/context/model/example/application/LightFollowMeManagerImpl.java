@@ -9,6 +9,8 @@ import fr.liglab.adele.icasa.context.model.example.device.PresenceContextEntityI
 import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -158,7 +160,7 @@ public class LightFollowMeManagerImpl {
 
         String m_filterPresence = "(&("+PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME+"=Presence)(zone.impacted="+zone+"))";
         String m_filterLight = "(&(location="+zone+")" +
-                "("+ BinaryContextEntityImpl.DEVICE_TYPE+"=BinaryLight))";
+                "(|("+ BinaryLight.BINARY_LIGHT_POWER_STATUS+"=*)("+ DimmerLight.DIMMER_LIGHT_POWER_LEVEL+"=*)))";
         Hashtable m_requiresFilters = new Hashtable<>();
         m_requiresFilters.put("presence",m_filterPresence);
         m_requiresFilters.put("lights",m_filterLight);
