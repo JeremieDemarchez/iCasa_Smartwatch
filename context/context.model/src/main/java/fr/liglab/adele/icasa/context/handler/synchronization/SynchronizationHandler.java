@@ -102,12 +102,12 @@ public class SynchronizationHandler extends PrimitiveHandler {
     }
 
     @Override
-    public void stop() {
-
+    public synchronized void stop() {
+        m_providedServiceHandler = null;
     }
 
     @Override
-    public void start() {
+    public synchronized void start() {
         m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
     }
 
@@ -132,19 +132,17 @@ public class SynchronizationHandler extends PrimitiveHandler {
     private void addState(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
-        m_providedServiceHandler.addProperties(hashtable);
-    }
-
-    private void removeState(String propertyId){
-        Hashtable<String,Object> hashtable = new Hashtable();
-        hashtable.put(propertyId, new Object());
-        m_providedServiceHandler.removeProperties(hashtable);
+        if (m_providedServiceHandler != null){
+            m_providedServiceHandler.addProperties(hashtable);
+        }
     }
 
     private void updateState(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
-        m_providedServiceHandler.reconfigure(hashtable);
+        if (m_providedServiceHandler != null){
+            m_providedServiceHandler.reconfigure(hashtable);
+        }
     }
 
     public Object onGet(Object pojo, String fieldName, Object value){
