@@ -1,5 +1,16 @@
 <ipojo>
-    <handler classname="fr.liglab.adele.icasa.context.handler.synchronization.SynchronizationHandler" name="State" namespace="fr.liglab.adele.icasa.context.handler.synchronization" />
-    <handler classname="fr.liglab.adele.icasa.context.handler.synchronization.SynchronizationHandler" name="Pull" namespace="fr.liglab.adele.icasa.context.handler.synchronization" />
-    <handler classname="fr.liglab.adele.icasa.context.handler.synchronization.SynchronizationHandler" name="Set" namespace="fr.liglab.adele.icasa.context.handler.synchronization" />
+    <handler classname="fr.liglab.adele.icasa.context.handler.synchronization.SynchronizationHandler" name="State" namespace="fr.liglab.adele.icasa.context.handler.synchronization">
+    <requires  field="scheduler" proxy="false">
+    </requires>
+    </handler>
+    <handler classname="fr.liglab.adele.icasa.context.handler.synchronization.SynchronizationHandler" name="Pull" namespace="fr.liglab.adele.icasa.context.handler.synchronization" >
+        <requires  field="scheduler" proxy="false">
+
+</requires>
+</handler>
+    <handler classname="fr.liglab.adele.icasa.context.handler.synchronization.SynchronizationHandler" name="Set" namespace="fr.liglab.adele.icasa.context.handler.synchronization" >
+        <requires  field="scheduler" proxy="false">
+
+        </requires>
+    </handler>
 </ipojo>

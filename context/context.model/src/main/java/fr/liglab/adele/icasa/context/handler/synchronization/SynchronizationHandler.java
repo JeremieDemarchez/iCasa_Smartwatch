@@ -11,9 +11,12 @@ import org.apache.felix.ipojo.parser.ParseUtils;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
+import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
 import java.lang.reflect.Member;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 //TODO : SYnchro on different map access
@@ -23,6 +26,8 @@ public class SynchronizationHandler extends PrimitiveHandler {
     private static final Logger LOG = LoggerFactory.getLogger(SynchronizationHandler.class);
 
     public static final String SYNCHRONISATION_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.synchronization";
+
+    ManagedScheduledExecutorService scheduler;
 
     private final SetStateMethodInterceptor m_setStateMethodInterceptor = new SetStateMethodInterceptor();
 
@@ -34,7 +39,7 @@ public class SynchronizationHandler extends PrimitiveHandler {
 
     private final Map<String,Function> m_setFunction = new HashMap<>();
 
-    private final Map<String,Function> m_pullFunction = new HashMap<>();
+    private final Map<String,ScheduledFunction> m_pullFunction = new HashMap<>();
 
     private final Map<String,Object> m_stateValue = new HashMap<>();
 
@@ -96,9 +101,35 @@ public class SynchronizationHandler extends PrimitiveHandler {
         if (pullElements !=null) {
             for (Element element : pullElements) {
                 String stateId = element.getAttribute("state");
-                FieldMetadata setFunctionField = pojoMetadata.getField(element.getAttribute("field"));
-                Function pullFunction = (Function) getInstanceManager().getFieldValue(setFunctionField.getFieldName());
-                m_pullFunction.put(stateId, pullFunction);
+                if (stateId != null){
+
+                    Long stateUpdateRate = -1L;
+
+                    String updateRate = element.getAttribute("period");
+                    if (updateRate != null) {
+                        try {
+                            stateUpdateRate = Long.valueOf(updateRate);
+                        } catch (NumberFormatException e) {
+                            LOG.error("update rate of " + stateId + "attribute isn't valid");
+                        }
+                    }
+
+                    TimeUnit stateTimeUnit = TimeUnit.SECONDS;
+
+                    String timeUnit = element.getAttribute("unit");
+                    if (timeUnit != null) {
+                        try {
+                            stateTimeUnit = TimeUnit.valueOf(timeUnit);
+                        }catch (IllegalArgumentException e){
+                            LOG.error("Unit of" + stateId + "attribute isn't valid , use default instead");
+                        }
+                    }
+
+                    FieldMetadata setFunctionField = pojoMetadata.getField(element.getAttribute("field"));
+                    Function pullFunction = (Function) getInstanceManager().getFieldValue(setFunctionField.getFieldName());
+                    ScheduledFunction scheduledFunction = new ScheduledPullFunctionImpl(pullFunction,stateUpdateRate,stateTimeUnit,stateId,this);
+                    m_pullFunction.put(stateId, scheduledFunction);
+                }
 
             }
         }
@@ -119,15 +150,44 @@ public class SynchronizationHandler extends PrimitiveHandler {
         if (state == InstanceManager.VALID) {
             for (String stateId : m_statesId){
                 if (m_pullFunction.containsKey(stateId)) {
-                    Function getFunction = m_pullFunction.get(stateId);
+                    ScheduledFunction getFunction = m_pullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
-                    if (returnObj != null) {
-                        synchronized (m_stateLock) {
-                            m_stateValue.put(stateId, returnObj);
-                            addState(stateId, returnObj);
-                        }
-                    } else {
-                        LOG.error("INITIALISATION : Pull fonction " + stateId + " return null Object ! ");
+                    update(stateId,returnObj);
+
+                    if (getFunction.getPeriod() > 0){
+                        ManagedScheduledFutureTask futur = scheduler.scheduleAtFixedRate(getFunction, getFunction.getPeriod(), getFunction.getPeriod(), getFunction.getUnit());
+                        getFunction.submitted(futur);
+
+                        /**   ManagedFutureTask.SuccessCallback<Object> onSucces =  (ManagedFutureTask<Object> var1, Object var2) -> {
+                         LOG.info("On success called on  " + stateId + " with  " + var2);
+                         if (var2 != null) {
+                         synchronized (m_stateLock) {
+                         if (var2.equals(m_stateValue.get(stateId))) {
+
+                         } else {
+                         m_stateValue.replace(stateId, var2);
+                         updateState(stateId, var2);
+                         }
+                         }
+                         } else {
+                         LOG.error("Pull fonction " + stateId + " return null Object ! ");
+                         }
+                         };
+                         futur.onSuccess(onSucces);
+                         **/
+                    }
+
+                }
+            }
+        }
+
+        if (state == InstanceManager.INVALID) {
+            for (String stateId : m_statesId){
+                if (m_pullFunction.containsKey(stateId)) {
+                    ScheduledFunction getFunction = m_pullFunction.get(stateId);
+                    if (getFunction.getPeriod() > 0){
+                        getFunction.task().cancel(true);
+                        getFunction.submitted(null);
                     }
                 }
             }
@@ -135,7 +195,7 @@ public class SynchronizationHandler extends PrimitiveHandler {
     }
 
 
-    private void addState(String propertyId,Object value){
+    private void addStateServiceProperty(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
         if (m_providedServiceHandler != null){
@@ -143,11 +203,33 @@ public class SynchronizationHandler extends PrimitiveHandler {
         }
     }
 
-    private void updateState(String propertyId,Object value){
+    private void updateStateServiceProperty(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
         if (m_providedServiceHandler != null){
             m_providedServiceHandler.reconfigure(hashtable);
+        }
+    }
+
+    public void update(String stateId,Object value){
+        if (stateId != null) {
+            if (value != null) {
+                if (m_statesId.contains(stateId)) {
+                    synchronized (m_stateLock) {
+                        if (m_stateValue.containsKey(stateId)) {
+                            if (!value.equals(m_stateValue.get(stateId))) {
+                                m_stateValue.put(stateId, value);
+                                updateStateServiceProperty(stateId, value);
+                            }
+                        } else {
+                            m_stateValue.put(stateId, value);
+                            addStateServiceProperty(stateId, value);
+                        }
+                    }
+                }
+            } else {
+                LOG.error(" Cannot apply push for " + stateId + ", value is null ! ");
+            }
         }
     }
 
@@ -194,20 +276,7 @@ public class SynchronizationHandler extends PrimitiveHandler {
                 if (m_pullFunction.containsKey(stateId)){
                     Function getFunction = m_pullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
-                    if (returnObj != null) {
-                        synchronized (m_stateLock) {
-                            if (m_stateValue.containsKey(stateId)) {
-                                if (returnObj.equals(m_stateValue.get(stateId))) {
-
-                                } else {
-                                    m_stateValue.replace(stateId, returnObj);
-                                    updateState(stateId, returnObj);
-                                }
-                            }
-                        }
-                    }else {
-                        LOG.error("Pull fonction " + stateId + " return null Object ! ");
-                    }
+                    update(stateId,returnObj);
                 }
             }
         }
@@ -234,21 +303,7 @@ public class SynchronizationHandler extends PrimitiveHandler {
         public void onEntry(Object pojo, Member method, Object[] args) {
             String stateId = (String)args[0];
             Object value = args[1];
-            if (value != null) {
-                if (m_statesId.contains(stateId)) {
-                    synchronized (m_stateLock) {
-                        if (m_stateValue.containsKey(stateId)) {
-                            m_stateValue.put(stateId, value);
-                            updateState(stateId, value);
-                        } else {
-                            m_stateValue.put(stateId, value);
-                            addState(stateId, value);
-                        }
-                    }
-                }
-            }else{
-                LOG.error(" Cannot apply push for "+stateId+", value is null ! ");
-            }
+            update(stateId,value);
         }
 
         @Override
@@ -314,6 +369,7 @@ public class SynchronizationHandler extends PrimitiveHandler {
                 }
 
                 elem.addElement(stateElement);
+
             }
 
             return elem;
