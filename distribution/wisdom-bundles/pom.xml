@@ -253,30 +253,30 @@
                         <!-- bin directory -->
                         <output>
                             <IncludesArtifactId>tablesorter</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                         <!-- bin directory -->
                         <output>
                             <IncludesArtifactId>momentjs</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                         <!-- bin directory -->
                         <output>
                             <IncludesArtifactId>jquery-mousewhee</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                         <!-- bin directory -->
                         <output>
                             <IncludesArtifactId>jquery</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                         <output>
                             <IncludesArtifactId>handlebars</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                         <output>
                             <IncludesArtifactId>bootstrap</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                     </outputs>
                 </configuration>
