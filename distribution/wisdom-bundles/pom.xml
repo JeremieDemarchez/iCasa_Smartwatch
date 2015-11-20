@@ -17,10 +17,6 @@
     <dependencies>
         <dependency>
             <groupId>org.wisdom-framework</groupId>
-            <artifactId>wisdom-netty-engine</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
             <artifactId>router</artifactId>
         </dependency>
         <dependency>
