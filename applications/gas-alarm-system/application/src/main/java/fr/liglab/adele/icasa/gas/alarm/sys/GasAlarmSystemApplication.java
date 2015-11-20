@@ -16,6 +16,7 @@ import org.apache.felix.ipojo.annotations.*;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 
 @Component(name = "GasAlarmSystemApplication")
@@ -121,13 +122,13 @@ public class GasAlarmSystemApplication implements DeviceListener,PeriodicRunnabl
 
     @Override
     public long getPeriod() {
-        return 1000*30;
+        return 30;
 
     }
 
     @Override
-    public String getGroup() {
-        return "Gas-Alarm-Thread-0";
+    public TimeUnit getUnit() {
+        return TimeUnit.SECONDS;
     }
 
     @Override

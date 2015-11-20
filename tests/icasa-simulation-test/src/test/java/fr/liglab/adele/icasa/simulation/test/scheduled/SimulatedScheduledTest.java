@@ -29,6 +29,7 @@ import org.ow2.chameleon.runner.test.ChameleonRunner;
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 
 @RunWith(ChameleonRunner.class)
@@ -58,7 +59,7 @@ public class SimulatedScheduledTest {
     @Test
     public void scheduleAPeriodictaskTest(){
         clock.setFactor(60);
-        PeriodicRunnable runnable = new PeriodicScheduledTestTask(clock, ONE_MINUTE);
+        PeriodicRunnable runnable = new PeriodicScheduledTestTask(clock,1,TimeUnit.MINUTES);
         ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), runnable, new Hashtable());
         try {
             Thread.sleep(10000);
@@ -79,7 +80,7 @@ public class SimulatedScheduledTest {
         Date now = new Date();
         Date scheduledTime = new Date(now.getTime() + ONE_MINUTE*5);//Scheduled in 5 min from now
 
-        ScheduledTestTask runnable = new ScheduledTestTask(clock, scheduledTime, "group1");
+        ScheduledTestTask runnable = new ScheduledTestTask(clock, scheduledTime);
         ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), runnable, new Hashtable());
 
         try {

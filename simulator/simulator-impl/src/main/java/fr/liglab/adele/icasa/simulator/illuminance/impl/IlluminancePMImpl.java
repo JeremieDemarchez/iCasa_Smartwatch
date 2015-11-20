@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.illuminance.impl;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
@@ -248,14 +249,14 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         PeriodicRunnable computeTempTask = new PeriodicRunnable() {
             @Override
             public long getPeriod() {
-                return 1800*1000 ; // call every 30 minutes
+                return 30 ; // call every 30 minutes
             }
-
 
             @Override
-            public String getGroup() {
-                return "IlluminancePM-group";
+            public TimeUnit getUnit() {
+                return TimeUnit.MINUTES;
             }
+
 
             @Override
             public void run() {

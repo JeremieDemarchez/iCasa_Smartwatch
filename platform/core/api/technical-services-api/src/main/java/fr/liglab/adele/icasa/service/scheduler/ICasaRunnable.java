@@ -20,10 +20,5 @@ package fr.liglab.adele.icasa.service.scheduler;
  * iCasa Clock {@link fr.liglab.adele.icasa.clockservice.Clock}
  */
 public interface ICasaRunnable extends Runnable{
-    /**
-     * Gets the job's group.
-     * Jobs sharing a group use the same thread pool.
-     * @return the job's group name.
-     */
-    public String getGroup();
+
 }

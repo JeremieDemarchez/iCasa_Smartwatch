@@ -24,13 +24,10 @@ public class ScheduledTestTask implements ScheduledRunnable {
 
     private final Date executionDate;
 
-    private final String group;
-
     private Clock clock;
 
-    public ScheduledTestTask(Clock service, Date date, String group){
+    public ScheduledTestTask(Clock service, Date date){
         this.executionDate = date;
-        this.group = group;
         clock = service;
     }
 
@@ -38,15 +35,6 @@ public class ScheduledTestTask implements ScheduledRunnable {
         return executionDate.getTime();
     }
 
-    /**
-     * Gets the job's group.
-     * Jobs sharing a group use the same thread pool.
-     *
-     * @return the job's group
-     */
-    public String getGroup() {
-        return group;  //To change body of implemented methods use File | Settings | File Templates.
-    }
 
     public void run() {
         System.out.println("Expected time: " + executionDate);
