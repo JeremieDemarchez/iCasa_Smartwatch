@@ -17,6 +17,10 @@
     <dependencies>
         <dependency>
             <groupId>org.wisdom-framework</groupId>
+            <artifactId>wisdom-vertx-engine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
             <artifactId>router</artifactId>
         </dependency>
         <dependency>

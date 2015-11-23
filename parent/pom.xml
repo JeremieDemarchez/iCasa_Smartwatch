@@ -45,7 +45,7 @@ See the License for the specific language governing permissions and
         <AdeleBaseVersion>${project.parent.version}</AdeleBaseVersion>
         <DistributionTestVersion>${AdeleBaseVersion}</DistributionTestVersion>
         <mimepullVersion>1.4</mimepullVersion>
-        <netty.version>4.0.12.Final</netty.version>
+        <netty.version>4.0.23.Final</netty.version>
         <wisdom.version>0.8.0</wisdom.version>
         <jackson.version>2.4.4</jackson.version>
     </properties>
@@ -260,6 +260,12 @@ See the License for the specific language governing permissions and
                 <groupId>org.wisdom-framework</groupId>
                 <artifactId>wisdom-mailer</artifactId>
                 <version>0.5</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.wisdom-framework</groupId>
+                <artifactId>wisdom-vertx-engine</artifactId>
+                <version>${wisdom.version}</version>
             </dependency>
 
             <dependency>
