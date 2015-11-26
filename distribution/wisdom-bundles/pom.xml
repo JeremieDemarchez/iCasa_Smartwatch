@@ -268,7 +268,7 @@
                         <!-- bin directory -->
                         <output>
                             <IncludesArtifactId>jquery</IncludesArtifactId>
-                            <directory>applications</directory>
+                            <directory>runtime</directory>
                         </output>
                         <output>
                             <IncludesArtifactId>handlebars</IncludesArtifactId>
