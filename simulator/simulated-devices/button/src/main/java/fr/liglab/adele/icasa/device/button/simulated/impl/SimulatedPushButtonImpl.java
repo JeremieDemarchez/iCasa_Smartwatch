@@ -134,11 +134,6 @@ public class SimulatedPushButtonImpl extends AbstractDevice implements Simulated
         }
 
         @Override
-        public String getGroup() {
-            return null;
-        }
-
-        @Override
         public void run() {
             registrationTask.unregister();//remove service.
             release();

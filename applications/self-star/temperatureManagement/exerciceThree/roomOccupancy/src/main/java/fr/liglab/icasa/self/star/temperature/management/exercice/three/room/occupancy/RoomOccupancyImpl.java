@@ -12,6 +12,7 @@ import org.apache.felix.ipojo.annotations.*;
 import org.joda.time.DateTime;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -114,13 +115,14 @@ public class RoomOccupancyImpl implements RoomOccupancy,PeriodicRunnable,ClockLi
 
     @Override
     public long getPeriod() {
-        return 40000;
+        return 40;
     }
 
     @Override
-    public String getGroup() {
-        return "Room-Occupancy-Thread";
+    public TimeUnit getUnit() {
+        return TimeUnit.SECONDS;
     }
+
 
     @Override
     public void run() {

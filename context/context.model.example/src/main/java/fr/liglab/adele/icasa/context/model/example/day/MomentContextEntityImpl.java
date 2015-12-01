@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Component(immediate = true)
@@ -67,14 +68,13 @@ public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDaySer
     @Override
     public long getPeriod(){
         // The service will be periodically called every hour.
-        return 3600 * 1000 ;
+        return 1 ;
     }
 
     @Override
-    public String getGroup(){
-        return "default"; // you don't need to understand this part.
+    public TimeUnit getUnit() {
+        return TimeUnit.HOURS;
     }
-
 
     @Override
     public void run() {

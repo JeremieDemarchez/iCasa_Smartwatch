@@ -13,6 +13,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -78,14 +79,13 @@ public class temperatureControllerImpl implements PeriodicRunnable,DeviceListene
 
     @Override
     public long getPeriod() {
-        return 60000;
+        return 1;
     }
 
     @Override
-    public String getGroup() {
-        return "Tcontroller";
+    public TimeUnit getUnit() {
+        return TimeUnit.MINUTES;
     }
-
     @Override
     public void run() {
         synchronized (m_lock){

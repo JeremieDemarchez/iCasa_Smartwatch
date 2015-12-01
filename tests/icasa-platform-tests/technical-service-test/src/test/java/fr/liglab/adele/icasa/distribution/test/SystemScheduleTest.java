@@ -18,8 +18,6 @@ package fr.liglab.adele.icasa.distribution.test;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
-import fr.liglab.adele.icasa.service.scheduler.SpecificClockPeriodicRunnable;
-import fr.liglab.adele.icasa.service.scheduler.SpecificClockScheduledRunnable;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -31,6 +29,7 @@ import org.ow2.chameleon.runner.test.ChameleonRunner;
 import javax.inject.Inject;
 import java.util.Date;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import static org.mockito.Mockito.*;
 
@@ -65,7 +64,7 @@ public class SystemScheduleTest {
 
         PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
         when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
-        when(mockPeriodic.getGroup()).thenReturn("group1");
+        when(mockPeriodic.getUnit()).thenReturn(TimeUnit.MILLISECONDS);
         ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), mockPeriodic, new Hashtable());
         try {
             Thread.sleep(10000);
@@ -88,7 +87,6 @@ public class SystemScheduleTest {
 
         ScheduledRunnable spyTask = mock(ScheduledRunnable.class);
         when(spyTask.getExecutionDate()).thenReturn(scheduledTime.getTime());
-        when(spyTask.getGroup()).thenReturn("group1");
         ServiceRegistration register = context.registerService(ScheduledRunnable.class.getName(), spyTask, new Hashtable());
 
         try {
@@ -103,7 +101,7 @@ public class SystemScheduleTest {
     /**
      * Test scheduling a task with null group.
      */
-    @Test
+  /**  @Test
     public void taskWithNullGroupTest(){
         PeriodicRunnable mockPeriodic = mock(PeriodicRunnable.class);
         when(mockPeriodic.getPeriod()).thenReturn(Long.valueOf(1000));
@@ -116,12 +114,12 @@ public class SystemScheduleTest {
         }
         register.unregister();
         verify(mockPeriodic, atLeast(2)).run();
-    }
+    }**/
 
     /**
      * Test .
      */
-    @Test
+  /**  @Test
     public void scheduleTaskWithNullGroupTest(){
 
         Date now = new Date();
@@ -139,12 +137,12 @@ public class SystemScheduleTest {
         }
         register.unregister();
         verify(spyTask,atLeast(1)).run();//at least one run.
-    }
+    }**/
 
     /**
      * Test scheduling one shot task.
      */
-    @Test
+  /**  @Test
     public void specificClockScheduleTaskTest(){
 
         Date now = new Date();
@@ -175,12 +173,12 @@ public class SystemScheduleTest {
         }
         register.unregister();
         verify(spyTask,times(1)).run();//at least one run.
-    }
+    }**/
 
     /**
      * Test scheduling one shot task.
      */
-    @Test
+  /**  @Test
     public void specificClockPeriodicTaskTest(){
 
         Date now = new Date();
@@ -224,5 +222,5 @@ public class SystemScheduleTest {
 
         register.unregister();
     }
-
+**/
 }

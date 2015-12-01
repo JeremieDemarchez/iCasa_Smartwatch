@@ -35,6 +35,7 @@ import fr.liglab.adele.icasa.location.LocatedDeviceListener;
 import fr.liglab.adele.icasa.location.ZoneListener;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Component(name = "temperature-model")
 @Instantiate(name = "temperature-model-0")
@@ -126,14 +127,14 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         PeriodicRunnable computeTempTask = new PeriodicRunnable() {
             @Override
             public long getPeriod() {
-                return 60000;//each 10sec will update the temperature.
+                return 10;//each 10sec will update the temperature.
             }
-
 
             @Override
-            public String getGroup() {
-                return "TempPM-group";
+            public TimeUnit getUnit() {
+                return TimeUnit.SECONDS;
             }
+
 
             @Override
             public void run() {

@@ -7,6 +7,7 @@ import org.joda.time.DateTime;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -51,13 +52,13 @@ public class MomentOfTheDayImpl implements MomentOfTheDayService, PeriodicRunnab
 
     public long getPeriod(){
         // The service will be periodically called every hour.
-        return 3600 * 1000 ;
+        return 1 ;
     }
 
-    public String getGroup(){
-        return "default"; // you don't need to understand this part.
+    @Override
+    public TimeUnit getUnit(){
+        return TimeUnit.HOURS;
     }
-
 
     @Override
     public void run() {
