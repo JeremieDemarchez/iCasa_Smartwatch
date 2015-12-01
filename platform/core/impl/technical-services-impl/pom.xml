@@ -54,6 +54,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.wisdom-framework</groupId>
+            <artifactId>wisdom-executors</artifactId>
+        </dependency>
     </dependencies>
 
     <build>

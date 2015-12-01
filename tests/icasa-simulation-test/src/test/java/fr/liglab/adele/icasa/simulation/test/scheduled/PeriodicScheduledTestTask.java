@@ -19,6 +19,7 @@ import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 
 import java.util.Date;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -30,9 +31,12 @@ public class PeriodicScheduledTestTask implements PeriodicRunnable {
 
     private long period;
 
-    public PeriodicScheduledTestTask(Clock clockService, long period){
+    private TimeUnit unit;
+
+    public PeriodicScheduledTestTask(Clock clockService, long period,TimeUnit unit){
         clock = clockService;
         this.period = period;
+        this.unit = unit;
     }
 
     /**
@@ -44,26 +48,13 @@ public class PeriodicScheduledTestTask implements PeriodicRunnable {
         return period;
     }
 
-    /**
-     * If false, the job is scheduled at fixed interval. If true, at fixed rate.
-     */
-    public boolean isScheduledAtFixedRate() {
-        return false;  //To change body of implemented methods use File | Settings | File Templates.
-    }
-
-    /**
-     * Gets the job's group.
-     * Jobs sharing a group use the same thread pool.
-     *
-     * @return the job's group
-     */
-    public String getGroup() {
-        return "group2";  //To change body of implemented methods use File | Settings | File Templates.
+    @Override
+    public TimeUnit getUnit() {
+        return unit;
     }
 
     public void run() {
         System.out.println("Executing service Simulation date: " + new Date(clock.currentTimeMillis()));
         System.out.println("Executing service Real Date: " + new Date());
-
     }
 }

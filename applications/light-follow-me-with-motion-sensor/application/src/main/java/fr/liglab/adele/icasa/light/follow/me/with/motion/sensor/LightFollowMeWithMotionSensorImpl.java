@@ -383,11 +383,6 @@ public class LightFollowMeWithMotionSensorImpl implements DeviceListener,ClockLi
         }
 
         @Override
-        public String getGroup() {
-            return groupName;
-        }
-
-        @Override
         public void run() {
             synchronized (m_lock){
                 setOffAllLightsInLocation(location);

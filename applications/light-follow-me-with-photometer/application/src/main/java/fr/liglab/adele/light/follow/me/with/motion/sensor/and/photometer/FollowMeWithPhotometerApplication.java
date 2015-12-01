@@ -480,11 +480,6 @@ public class FollowMeWithPhotometerApplication implements DeviceListener,ClockLi
         }
 
         @Override
-        public synchronized String getGroup() {
-            return groupName;
-        }
-
-        @Override
         public void run() {
             synchronized (m_devicelock){
                 setOffAllLightsInLocation(location);

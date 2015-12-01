@@ -190,16 +190,8 @@ Both interfaces inherit from a `fr.liglab.adele.icasa.service.scheduler.ICasaRun
      * iCasa Clock {@link fr.liglab.adele.icasa.clock.Clock}
      */
     public interface ICasaRunnable extends Runnable{
-        /**
-         * Gets the job's group.
-         * Jobs sharing a group use the same thread pool.
-         * @return the job's group name.
-         */
-        public String getGroup();
-    }
-    
-The group, represents the threadpool wich will handle the iCasa task.
 
+    }
 
 ### 4.1. Periodic tasks
 
@@ -210,11 +202,17 @@ In order to build periodic tasks, an OSGi service must provide the `fr.liglab.ad
      * iCasa Clock {@link fr.liglab.adele.icasa.clock.Clock}
      */
     public interface PeriodicRunnable extends ICasaRunnable {
-        /**
-         * Gets the scheduled period.
-         * @return the period in milliseconds.
-         */
-        public long getPeriod();
+          /**
+            * Gets the scheduled period.
+            * @return the period.
+          */
+          public long getPeriod();
+
+            /**
+             * Gets the scheduled period unit.
+             * @return the unit .
+             */
+            public TimeUnit getUnit();
     
     }
     
@@ -226,21 +224,25 @@ As said before, in order to register a periodic tasks it is needed to provide th
     @Provides
     @Instantiate
     public class MyPeriodicTasks implements PeriodicRunnable {
-        /**
-        * Gets the job's group.
-        * Jobs sharing a group use the same thread pool.
-        * @return the job's group name. If null, it will be added to the default group.
-        */
-        public String getGroup(){
-            return "threadPool-1";
-        }
+
+        // this tasks will be executed each second.
+
         /**
         * Gets the scheduled period.
-        * @return the period in milliseconds.
+        * @return the period .
         */
         public long getPeriod(){
-            return 1000; // this tasks will be executed each second.
+            return 1;
         }
+
+        /**
+        * Gets the scheduled period unit.
+        * @return the unit .
+        */
+        public TimeUnit getUnit(){
+            return TimeUnit.SECONDS;
+        }
+
         /**
         * This method will be called every second.
         */
@@ -290,14 +292,7 @@ As said before, in order to register a periodic tasks it is needed to provide th
             SimpleDateFormat sdf =  new SimpleDateFormat("yyyy, MM, dd");
             dateToExecute = sdf.parse(date);
         }
-        /**
-        * Gets the job's group.
-        * Jobs sharing a group use the same thread pool.
-        * @return the job's group name. If null, it will be added to the default group.
-        */
-        public String getGroup(){
-            return "threadPool-2";
-        }
+
         /**
          * Get the date to be scheduled the iCasa tasks using the iCasa Clock.
          * @return the date in milliseconds.

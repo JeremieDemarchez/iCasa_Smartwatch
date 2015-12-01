@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.service.scheduler;
 
+import java.util.concurrent.TimeUnit;
+
 /**
  * An OSGi service providing this interface will allow to schedule periodic tasks using the
  * iCasa Clock {@link fr.liglab.adele.icasa.clockservice.Clock}
@@ -22,8 +24,13 @@ package fr.liglab.adele.icasa.service.scheduler;
 public interface PeriodicRunnable extends ICasaRunnable {
     /**
      * Gets the scheduled period.
-     * @return the period in milliseconds.
+     * @return the period.
      */
     public long getPeriod();
 
+    /**
+     * Gets the scheduled period unit.
+     * @return the unit .
+     */
+    public TimeUnit getUnit();
 }
