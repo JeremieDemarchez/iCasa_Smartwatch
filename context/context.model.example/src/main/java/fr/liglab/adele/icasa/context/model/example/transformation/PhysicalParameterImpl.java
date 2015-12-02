@@ -19,10 +19,12 @@ import java.util.function.Function;
 @Component(immediate = true,propagation = false)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,PhysicalParameterImpl.AGGREGATION_VALUE})
+@State(states = {PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,PhysicalParameterImpl.AGGREGATION_NAME, PhysicalParameterImpl.AGGREGATION_VALUE})
 public class PhysicalParameterImpl implements Aggregation {
 
     public final static String PHYSICAL_PARAMETER_NAME = "physical.parameter.name";
+
+    public final static String AGGREGATION_NAME = "aggregation.name";
 
     public final static String AGGREGATION_VALUE = "aggregation.value";
 
@@ -72,6 +74,12 @@ public class PhysicalParameterImpl implements Aggregation {
     Function getAggregationValue = (Object obj) ->{
         return getResult();
     };
+
+    @Pull(state = AGGREGATION_NAME)
+    private final Function getAggregationName = (Object obj)->{
+        return name;
+    };
+
 
     private String getPhysicalParameterName(){
         return m_physicalParameterName;
