@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
 import java.util.concurrent.TimeUnit;
@@ -39,11 +38,11 @@ public class PeriodicJob {
     }
 
     public TimeUnit getUnit(){
-       return m_periodicRunnable.getUnit();
+        return TimeUnit.MILLISECONDS;
     }
 
     public long getPeriod(){
-        return m_periodicRunnable.getPeriod()*m_clock.getFactor();
+        return (long)( (double) (m_periodicRunnable.getPeriod()* TimeUtils.getTimeFactorToConvertInMillisecond(m_periodicRunnable.getUnit()))/(double)m_clock.getFactor());
     }
 
     public void submitted(ManagedScheduledFutureTask futureTask){
