@@ -31,6 +31,9 @@ import java.util.Date;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import static org.mockito.Mockito.atLeast;
+import static org.mockito.Mockito.verify;
+
 
 @RunWith(ChameleonRunner.class)
 public class SimulatedScheduledTest {
@@ -59,6 +62,7 @@ public class SimulatedScheduledTest {
     @Test
     public void scheduleAPeriodictaskTest(){
         clock.setFactor(60);
+        clock.resume();
         PeriodicRunnable runnable = new PeriodicScheduledTestTask(clock,1,TimeUnit.MINUTES);
         ServiceRegistration register = context.registerService(PeriodicRunnable.class.getName(), runnable, new Hashtable());
         try {
@@ -77,6 +81,7 @@ public class SimulatedScheduledTest {
     @Test
     public void scheduleTaskTest(){
         clock.setFactor(60);
+        clock.resume();
         Date now = new Date();
         Date scheduledTime = new Date(now.getTime() + ONE_MINUTE*5);//Scheduled in 5 min from now
 

@@ -16,7 +16,6 @@
 package fr.liglab.adele.icasa.service.scheduler.impl;
 
 import fr.liglab.adele.icasa.clockservice.Clock;
-import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
 import fr.liglab.adele.icasa.service.scheduler.ScheduledRunnable;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
@@ -39,7 +38,7 @@ public class OneShotJob {
     }
 
     public long getExecutionDate(){
-       return (m_scheduledRunnable.getExecutionDate() - m_clock.currentTimeMillis()) * m_clock.getFactor() ;
+        return (long) ( (double)(m_scheduledRunnable.getExecutionDate() - m_clock.currentTimeMillis()) / (double)m_clock.getFactor()) ;
     }
     public void submitted(ManagedScheduledFutureTask futureTask){
         m_futureTask =  futureTask;
