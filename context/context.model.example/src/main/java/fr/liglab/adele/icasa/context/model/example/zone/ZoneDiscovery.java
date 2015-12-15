@@ -1,6 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example.zone;
 
 import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
+import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreatorInterface;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
 import fr.liglab.adele.icasa.context.model.RelationType;
 import fr.liglab.adele.icasa.context.model.example.Relation_Contained;
@@ -28,14 +30,14 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     private final RelationType relation_isContained = new Relation_IsContained();
     private final RelationType relation_contained = new Relation_Contained();
 
+    @EntityCreator(entity=ZoneContextEntityImpl.class)
+    private EntityCreatorInterface m_entityCreatorInterface;
+
     @Requires
     private ContextManager m_manager;
 
-    @Requires
+    @Requires(optional = false)
     private RelationFactory m_relationFactory;
-
-    @Requires(filter = "(factory.name=fr.liglab.adele.icasa.context.model.example.zone.ZoneContextEntityImpl)")
-    private Factory zoneEntityFactory;
 
     @Validate
     public void start(){
@@ -49,37 +51,12 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     @Override
     public void zoneAdded(Zone zone) {
-        ComponentInstance instance;
-
-        Hashtable properties = new Hashtable();
-        properties.put("context.entity.id", zone.getId());
-        properties.put("instance.name", "fr.liglab.adele.icasa.context.model.example."+zone.getId());
-
-        try {
-            instance = zoneEntityFactory.createComponentInstance(properties);
-            ServiceRegistration sr = new IpojoServiceRegistration(
-                    instance);
-            zoneEntities.put(zone.getId(),sr);
-        } catch (UnacceptableConfiguration unacceptableConfiguration) {
-            LOG.error("Relation instantiation failed",unacceptableConfiguration);
-        } catch (MissingHandlerException e) {
-            LOG.error("Relation instantiation failed",e);
-        } catch (ConfigurationException e) {
-            LOG.error("Relation instantiation failed",e);
-        }
+        m_entityCreatorInterface.createEntity(zone.getId());
     }
 
     @Override
     public void zoneRemoved(Zone zone) {
-        try {
-            if (m_relationFactory.findIdsByEndpoint(zone.getId()) != null)
-            for(UUID uuid : m_relationFactory.findIdsByEndpoint(zone.getId())){
-                m_relationFactory.deleteRelation(uuid);
-            }
-            zoneEntities.remove(zone.getId()).unregister();
-        }catch(IllegalStateException e){
-            LOG.error("failed unregistering zone Entity", e);
-        }
+        m_entityCreatorInterface.deleteEntity(zone.getId());
     }
 
     @Override
@@ -216,63 +193,6 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     @Override
     public void deviceEvent(LocatedDevice device, Object data) {
-
-    }
-
-    class IpojoServiceRegistration implements ServiceRegistration {
-
-
-        ComponentInstance instance;
-
-
-        public IpojoServiceRegistration(ComponentInstance instance) {
-
-            super();
-            this.instance = instance;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.osgi.framework.ServiceRegistration#getReference()
-         */
-        public ServiceReference getReference() {
-            try {
-                ServiceReference[] references;
-                references = instance.getContext().getServiceReferences(
-                        instance.getClass().getCanonicalName(),
-                        "(instance.name=" + instance.getInstanceName()
-                                + ")");
-                if (references.length > 0)
-                    return references[0];
-            } catch (InvalidSyntaxException e) {
-                LOG.error(" Invalid syntax Exception " , e);
-            }
-            return null;
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see
-         * org.osgi.framework.ServiceRegistration#setProperties(java.util.Dictionary
-         * )
-         */
-        public void setProperties(Dictionary properties) {
-            instance.reconfigure(properties);
-        }
-
-        /*
-         * (non-Javadoc)
-         *
-         * @see org.osgi.framework.ServiceRegistration#unregister()
-         */
-        public void unregister() {
-            instance.dispose();
-        }
-
-        //TODO : To implement
-        public void updateState(){}
 
     }
 

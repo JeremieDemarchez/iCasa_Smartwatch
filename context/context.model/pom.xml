@@ -20,6 +20,12 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.manipulator</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
@@ -52,6 +58,7 @@
                     <instructions>
                         <Export-Package>fr.liglab.adele.icasa.context.model;
                             fr.liglab.adele.icasa.context.transformation;
+                            fr.liglab.adele.icasa.context.handler.creator.entity;
                             fr.liglab.adele.icasa.context.handler.relation;
                             fr.liglab.adele.icasa.context.handler.synchronization
                         </Export-Package>

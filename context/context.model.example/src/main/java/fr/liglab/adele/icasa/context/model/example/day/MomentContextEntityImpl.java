@@ -16,7 +16,7 @@ import java.util.function.Function;
 
 @Component(immediate = true)
 //@Component(publicFactory = false)
-@Instantiate
+@Instantiate /*NO NEED OF ENTITY CREATOR*/
 @Provides(specifications = {ContextEntity.class, MomentOfTheDayService.class, PeriodicRunnable.class})
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @State(states = {MomentContextEntityImpl.MOMENT_OF_THE_DAY})
