@@ -15,12 +15,6 @@
  */
 package fr.liglab.adele.icasa.command.handler;
 
-import java.lang.reflect.Method;
-import java.util.Dictionary;
-import java.util.HashSet;
-import java.util.Properties;
-import java.util.Set;
-
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.PrimitiveHandler;
@@ -31,21 +25,27 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.lang.reflect.Method;
+import java.util.Dictionary;
+import java.util.HashSet;
+import java.util.Properties;
+import java.util.Set;
+
 
 /**
  * The shell handler allows to expose commands to the felix shell based on
  * annotations. The present version is targeting gogo shell.
- * 
+ *
  * Usage :
- * 
+ *
  * \@CommandProvider(namespace = "namespaceofthecommand") : declares a new
  * component.
- * 
+ *
  * \@Command before each command to add the command to the command list (be
  * aware that it will also consider each method with the same name as a
  * command).
  *
- * 
+ *
  */
 
 @Handler(name = "CommandProvider", namespace = CommandHandler.NAMESPACE)
@@ -59,12 +59,12 @@ public class CommandHandler extends PrimitiveHandler {
 	/**
 	 * The bundle context used to register the gogo service.
 	 */
-	private static BundleContext m_context;
+	private BundleContext m_context;
 
 	/**
 	 * The command service once the pojo has been registered as a command.
 	 */
-	private static ServiceRegistration m_commandServiceReg;
+	private ServiceRegistration m_commandServiceReg = null;
 
 	/**
 	 * The command namespace given by the CommandProvider annotation
@@ -73,8 +73,10 @@ public class CommandHandler extends PrimitiveHandler {
 
 	private final String DEFAULT_NAMESPACE = "default";
 
-    private static final Logger L = LoggerFactory
-            .getLogger(CommandHandler.class.getName());
+	private static final Logger L = LoggerFactory.getLogger(CommandHandler.class.getName());
+
+	private InstanceManager instanceManager;
+
 
 	/**
 	 * the commandNames set contains the name of the command to be
@@ -84,7 +86,7 @@ public class CommandHandler extends PrimitiveHandler {
 
 	/**
 	 * Get the bundleContext from iPOJO
-	 * 
+	 *
 	 * @param context
 	 *            : the bundleContext.
 	 */
@@ -92,11 +94,11 @@ public class CommandHandler extends PrimitiveHandler {
 		m_context = context;
 	}
 
-	private InstanceManager instanceManager;
+
 
 	/**
 	 * Parses the component's metadata to retrieve the namespace
-	 * 
+	 *
 	 * @param metadata
 	 *            component's metadata
 	 * @param configuration
@@ -105,7 +107,7 @@ public class CommandHandler extends PrimitiveHandler {
 	 *             the configuration is inconsistent
 	 */
 	@Override
-	public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
+	public synchronized void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
 		// Get all Namespace:CommandProvider element from the metadata
 		Element[] commandProviderElements = metadata.getElements("CommandProvider", NAMESPACE);
@@ -147,39 +149,58 @@ public class CommandHandler extends PrimitiveHandler {
 	 */
 	@SuppressWarnings("unchecked")
 	@Override
-	public void start() {
-		L.info("start the shell handler");
-
-		Object pojo = instanceManager.getPojoObject();
-
-		// if the component implements some command :
-		if (m_commandNames.size() > 0) {
-
-			// create the dictionary for the commands with the information
-			// retrieved in the configuration.
-			@SuppressWarnings("rawtypes")
-			Dictionary properties = new Properties();
-			properties.put("osgi.command.scope", m_commandNameSpace);
-			properties.put("osgi.command.function",
-			        m_commandNames.toArray(new String[m_commandNames.size()]));
-
-			// register the pojo as a gogo shell command provider.
-			m_commandServiceReg = m_context.registerService(pojo.getClass().getName(), pojo,
-			        properties);
-		}
+	public synchronized void start() {
 	}
 
 	/**
 	 * The instance is stopping.
 	 */
 	@Override
-	public void stop() {
-		L.info("stop the shell handler");
+	public synchronized void stop() {
 
-		// unregister the command service when stopped
-		if (m_commandServiceReg != null) {
-			m_commandServiceReg.unregister();
-		}
 	}
 
+
+	@Override
+	public synchronized void stateChanged(int state) {
+		if (state == InstanceManager.VALID) {
+			Object pojo = instanceManager.getPojoObject();
+
+
+			// if the component implements some command :
+			if (m_commandNames.size() > 0) {
+
+
+				// create the dictionary for the commands with the information
+				// retrieved in the configuration.
+				@SuppressWarnings("rawtypes")
+				Dictionary properties = new Properties();
+				properties.put("osgi.command.scope", m_commandNameSpace);
+				properties.put("osgi.command.function",
+						m_commandNames.toArray(new String[m_commandNames.size()]));
+
+				// register the pojo as a gogo shell command provider.
+				m_commandServiceReg = m_context.registerService(pojo.getClass().getName(), pojo,
+						properties);
+				for (String commandName : m_commandNames) {
+					L.info("New command :" + commandName + " registered");
+				}
+			}
+		}else  {
+			// unregister the command service when stopped
+			if (m_commandServiceReg != null) {
+				try{
+					m_commandServiceReg.unregister();
+					m_commandServiceReg = null;
+					for (String commandName : m_commandNames) {
+						L.info("Command :" + commandName + " unregistered");
+					}
+				}catch (IllegalStateException e){
+					L.error(" Service Already unregistered ",e);
+				}
+
+
+			}
+		}
+	}
 }
