@@ -1,6 +1,9 @@
 package fr.liglab.adele.icasa.context.handler.creator.entity;
 
-import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorManagementInterface;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
+import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
@@ -20,7 +23,8 @@ import java.util.*;
 
 /*UN HANDLER PAR COMPOSANT? --> */
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
-public class EntityCreatorHandler extends PrimitiveHandler {
+@Provides
+public class EntityCreatorHandler extends PrimitiveHandler implements EntityCreatorManagementInterface {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreatorHandler.class);
 
@@ -32,13 +36,14 @@ public class EntityCreatorHandler extends PrimitiveHandler {
 
     private ProvidedServiceHandler m_providedServiceHandler;
 
-    private final Map<String, EntityCreatorInterface> creators = new HashMap<>();
+    private final Map<String, String> impl_by_field = new HashMap<>();
 
-    @Requires(optional = false)
-    private RelationFactory m_relationFactory;
+    private final Map<String, EntityCreatorImpl> creators_by_impl = new HashMap<>();
+
+    @RelationCreator(relation = RelationImpl.class)
+    private RelationCreatorInterface m_relationCreator;
 
     @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = true, proxy = false)
-    //@Requires(id ="entity.factory",optional = true)
     private Factory m_entityFactory;
 
     @Property(name = "factory.filter")
@@ -47,8 +52,8 @@ public class EntityCreatorHandler extends PrimitiveHandler {
 
     @Override
     public synchronized void start() {
-        m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
 
+        m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
     }
 
     @Override
@@ -69,17 +74,27 @@ public class EntityCreatorHandler extends PrimitiveHandler {
         for (Element e: creatorElements){
             String entity = e.getAttribute("entity");
             String field = e.getAttribute("field");
-            creators.put(field, new EntityCreatorImpl(entity));
+            creators_by_impl.put(entity, new EntityCreatorImpl(entity));
+            impl_by_field.put(field, entity);
 
             PojoMetadata pojoMetadata = getPojoMetadata();
             FieldMetadata creator = pojoMetadata.getField(field);
             m_instanceManager.register(creator, this);
+
+            /*deafault : ENABLED*/
+            switchCreation(entity, true);
         }
 
     }
 
     public Object onGet(Object pojo, String fieldName, Object value){
-        return creators.get(fieldName);
+
+        String implementation = impl_by_field.get(fieldName);
+        if (implementation != null){
+            return creators_by_impl.get(implementation);
+        } else {
+            return null;
+        }
     }
 
     @Override
@@ -87,7 +102,47 @@ public class EntityCreatorHandler extends PrimitiveHandler {
         return new EntityCreatorHandlerDescription(this);
     }
 
+
+    @Override
+    public Set<String> getImplementations() {
+
+        return new HashSet<>(impl_by_field.values());
+    }
+
+    @Override
+    public Set<String> getPendingInstances(String implementation) {
+        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        if (entityCreator != null){
+            return entityCreator.getPendingEntities();
+        } else {
+            return null;
+        }
+    }
+
+    @Override
+    public boolean getImplentationState(String implementation) {
+        return false;
+    }
+
+    @Override
+    public boolean switchCreation(String implementation, boolean enable) {
+
+        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        boolean result = false;
+        if (entityCreator != null){
+            if (enable){
+                entityCreator.enableCreation();
+            } else {
+                entityCreator.disableCreation();
+            }
+            result = true;
+        } else {}
+
+        return result;
+    }
+
     private class EntityCreatorHandlerDescription extends HandlerDescription {
+
         public EntityCreatorHandlerDescription(PrimitiveHandler h) { super(h); }
 
         // Method returning the custom description of this handler.
@@ -97,7 +152,7 @@ public class EntityCreatorHandler extends PrimitiveHandler {
 
             Element creatorElements = new Element("Entity Creators","");
 
-            for (Map.Entry<String, EntityCreatorInterface> creator : creators.entrySet()){
+            for (Map.Entry<String, String> creator : impl_by_field.entrySet()){
                 Element creatorElement = new Element("Entity Creator","");
                 creatorElement.addAttribute(new Attribute("Name",creator.getKey()));
                 creatorElements.addElement(creatorElement);
@@ -111,24 +166,108 @@ public class EntityCreatorHandler extends PrimitiveHandler {
 
     private class EntityCreatorImpl implements EntityCreatorInterface{
 
-        private final Map<String,ServiceRegistration> entities = new HashMap<>();
-
-        private String m_entityClass;
+        private String m_entityImplementation;
 
         private String m_entityPackage;
 
+        private boolean m_switch;
+
+        private final Map<String,ServiceRegistration> entities_reg = new HashMap<>();
+
+        private final Set<String> created_entities = new HashSet<>();
+
+        private final Set<String> pending_entities = new HashSet<>();
+
+
         protected EntityCreatorImpl(String entity){
-            m_entityClass = entity;
+            m_entityImplementation = entity;
             int lastPoint = entity.lastIndexOf(".");
             m_entityPackage = entity.substring(0, lastPoint) + ".";
+            m_switch = false;
+        }
+
+        protected String getImplementation(){
+            return m_entityImplementation;
+        }
+
+        protected Set<String> getPendingEntities(){
+            return pending_entities;
+        }
+
+        protected synchronized void enableCreation() {
+
+            synchronized (pending_entities){
+                synchronized (created_entities){
+                    Set<String> pes = new HashSet<>(pending_entities);
+                    Set<String> entities_to_remove = new HashSet<>();
+                    for(String id : pes){
+                        createInstance(id);
+                        created_entities.add(id);
+                        entities_to_remove.add(id);
+                    }
+                    pending_entities.removeAll(entities_to_remove);
+
+                    /*TODO NOTIFY RELATIONS*/
+                    m_switch = true;
+                }
+            }
+        }
+
+        protected synchronized void disableCreation() {
+
+            synchronized (pending_entities){
+                synchronized (created_entities) {
+                    m_switch = false;
+
+                    Set<String> entities_to_remove = new HashSet<>();
+                    for (String id : created_entities) {
+                        deleteInstance(id);
+                        entities_to_remove.add(id);
+                        pending_entities.add(id);
+                    }
+                    created_entities.removeAll(entities_to_remove);
+
+                    /***/
+                    /*TODO NOTIFY RELATIONS*/
+                }
+            }
         }
 
         @Override
-        public void createEntity(String id){
+        public synchronized void createEntity(String id){
+
+            synchronized (pending_entities){
+                synchronized (created_entities) {
+                    if (m_switch) {
+                        createInstance(id);
+                        created_entities.add(id);
+                    } else {
+                        pending_entities.add(id);
+                    }
+                }
+            }
+        }
+
+        @Override
+        public synchronized void deleteEntity(String id){
+
+            synchronized (pending_entities){
+                synchronized (created_entities) {
+                    if (m_switch) {
+                        deleteInstance(id);
+                        created_entities.remove(id);
+                    } else {
+                        pending_entities.remove(id);
+                    }
+                }
+            }
+        }
+
+        private void createInstance (String id){
             ComponentInstance instance;
 
             Hashtable properties = new Hashtable();
-            properties.put("factory.filter", m_entityClass);
+            properties.put("factory.filter", m_entityImplementation);
             m_handlerManager.reconfigure(properties);
 
             properties = new Hashtable();
@@ -141,7 +280,10 @@ public class EntityCreatorHandler extends PrimitiveHandler {
                     instance = m_entityFactory.createComponentInstance(properties);
                     ServiceRegistration sr = new IpojoServiceRegistration(instance);
 
-                    entities.put(id, sr);
+                    synchronized (entities_reg){
+                        entities_reg.put(id, sr);
+                    }
+//                    m_relationCreator.entityCreated(id);
                 } catch (UnacceptableConfiguration unacceptableConfiguration) {
                     LOG.error("Relation instantiation failed", unacceptableConfiguration);
                 } catch (MissingHandlerException e) {
@@ -152,17 +294,14 @@ public class EntityCreatorHandler extends PrimitiveHandler {
             }
         }
 
-        @Override
-        public void deleteEntity(String id){
+        private void deleteInstance (String id){
 
             try {
-                if (m_relationFactory.findIdsByEndpoint(id) != null) {
-                    for (UUID uuid : m_relationFactory.findIdsByEndpoint(id)) {
-                        m_relationFactory.deleteRelation(uuid);
-                    }
-                    entities.remove(id).unregister();
+//                m_relationCreator.entityRemoved(id);
+                synchronized (entities_reg){
+                    entities_reg.remove(id).unregister();
                 }
-            }catch(IllegalStateException e){
+            } catch(IllegalStateException e) {
                 LOG.error("failed unregistering device", e);
             }
         }

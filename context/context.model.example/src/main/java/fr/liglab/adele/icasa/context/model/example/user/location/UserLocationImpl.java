@@ -1,12 +1,12 @@
 package fr.liglab.adele.icasa.context.model.example.user.location;
 
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
 import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
 import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;
-import fr.liglab.adele.icasa.context.model.example.Relation_Contained;
-import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
 import org.apache.felix.ipojo.annotations.*;
@@ -28,8 +28,8 @@ public class UserLocationImpl implements Aggregation {
 
     public final static String AGGREGATION_VALUE = "aggregation.value";
 
-    @Requires(optional = false)
-    RelationFactory relationFactory;
+    @RelationCreator(relation = RelationImpl.class)
+    private RelationCreatorInterface m_relationCreator;
 
     @Requires(id = "aggregation.sources", optional = true)
     List<Aggregation> sources;
@@ -82,15 +82,15 @@ public class UserLocationImpl implements Aggregation {
 
     @Invalidate
     public void stop(){
-        List<UUID> uuid_list = relationFactory.findIdsByEndpoint(name);
-        for(UUID uuid: uuid_list){
-            relationFactory.deleteRelation(uuid);
-        }
+//        Set<UUID> uuid_list = m_relationCreator.findIdsByEndpoint(name);
+//        for(UUID uuid: uuid_list){
+//            m_relationCreator.deleteRelation(uuid);
+//        }
     }
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindPA (Aggregation aggregation) {
-        relationFactory.createRelation(relation_computeWith, aggregation.getId(), this.getId());
+        m_relationCreator.createRelation(relation_computeWith, aggregation.getId(), this.getId());
         pushState(AGGREGATION_VALUE,getResult());
     }
 
@@ -101,10 +101,10 @@ public class UserLocationImpl implements Aggregation {
 
     @Unbind(id = "aggregation.sources")
     public void unbindPA (Aggregation aggregation) {
-        UUID uuid = relationFactory.findId(relation_computeWith.getName(), aggregation.getId(), this.getId());
-        if (uuid != null) {
-            relationFactory.deleteRelation(uuid);
-        }
+//        UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), aggregation.getId(), this.getId());
+//        if (uuid != null) {
+//            m_relationCreator.deleteRelation(uuid);
+//        }
         pushState(AGGREGATION_VALUE,getResult());
     }
 
@@ -116,10 +116,10 @@ public class UserLocationImpl implements Aggregation {
     @Unbind(id = "user.source")
     public void unbindUserContextEntity (ContextEntity contextEntity) {
         /*A modifier*/
-        List<UUID> uuid_list = relationFactory.findIdsByEndpoint(contextEntity.getId());
-        for(UUID uuid: uuid_list){
-            relationFactory.deleteRelation(uuid);
-        }
+//        Set<UUID> uuid_list = m_relationCreator.findIdsByEndpoint(contextEntity.getId());
+//        for(UUID uuid: uuid_list){
+//            m_relationCreator.deleteRelation(uuid);
+//        }
         pushState(AGGREGATION_VALUE,getResult());
     }
 
@@ -153,15 +153,15 @@ public class UserLocationImpl implements Aggregation {
                     if ((zone!= null)&&(test!=null)){
                         if (test.equals(true)) {
                             locations.add(zone);
-                            uuid = relationFactory.findId(relation_location.getName(), zone, userId);
+                            uuid = m_relationCreator.findId(relation_location.getName(), zone, userId);
                             if (uuid == null) {
-                                relationFactory.createRelation(relation_location, zone, userId);
+                                m_relationCreator.createRelation(relation_location, zone, userId);
                             }
                         } else {
                             locations.remove(zone);
-                            uuid = relationFactory.findId(relation_location.getName(), zone, userId);
+                            uuid = m_relationCreator.findId(relation_location.getName(), zone, userId);
                             if (uuid != null) {
-                                relationFactory.deleteRelation(uuid);
+                                m_relationCreator.deleteRelation(uuid);
                             }
                         }
 

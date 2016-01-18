@@ -1,8 +1,10 @@
 package fr.liglab.adele.icasa.context.transformation;
 
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
-import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.ServiceReference;
@@ -14,9 +16,10 @@ import java.util.*;
 @Component
 @Provides
 public class AggregationImpl implements Aggregation {
+    /*TODO PAS A JOUR!!!*/
 
-    @Requires(optional = false)
-    RelationFactory relationFactory;
+    @RelationCreator(relation= RelationImpl.class)
+    private RelationCreatorInterface m_relationCreator;
 
     @Requires(id = "aggregation.sources", optional = true)
     List<ContextEntity> sources;
@@ -45,7 +48,7 @@ public class AggregationImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
-        relationFactory.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
+        m_relationCreator.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
@@ -66,8 +69,8 @@ public class AggregationImpl implements Aggregation {
 
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        UUID uuid = relationFactory.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
-        relationFactory.deleteRelation(uuid);
+        UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
+        m_relationCreator.deleteRelation(uuid);
 
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
