@@ -8,7 +8,9 @@ import fr.liglab.adele.icasa.context.ipojo.module.StateVariableFieldVisitor;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
+import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
@@ -392,6 +394,55 @@ public class EntityHandler extends PrimitiveHandler  {
 
         TimeUnit getUnit(){
             return m_unit;
+        }
+    }
+
+    private class EntityHandlerDescription extends HandlerDescription {
+        public EntityHandlerDescription(PrimitiveHandler h) { super(h); }
+
+        // Method returning the custom description of this handler.
+        public Element getHandlerInfo() {
+            // Needed to get the root description element.
+            Element elem = super.getHandlerInfo();
+
+            for (String stateId : m_stateSpecifications){
+                Element stateElement = new Element("State property","");
+                stateElement.addAttribute(new Attribute("Name",stateId));
+                if(m_pullFunction.containsKey(stateId)){
+                    Function pull = m_pullFunction.get(stateId);
+                    Object returnPull = pull.apply(stateId);
+                    if (returnPull != null){
+                        stateElement.addAttribute(new Attribute("Value",returnPull.toString()));
+                        stateElement.addAttribute(new Attribute("Pull function","registered"));
+                    }else{
+                        stateElement.addAttribute(new Attribute("Value","Value return by Pull Function is null"));
+                        stateElement.addAttribute(new Attribute("PullFunction","registered"));
+                    }
+                }
+                else {
+                    synchronized (m_stateLock) {
+                        if (m_stateValue.containsKey(stateId)) {
+                            stateElement.addAttribute(new Attribute("Value", m_stateValue.get(stateId).toString()));
+                            stateElement.addAttribute(new Attribute("Pull function", "unregistered"));
+                        } else {
+                            stateElement.addAttribute(new Attribute("Value", "No Value"));
+                            stateElement.addAttribute(new Attribute("Pull function", "unregistered"));
+                        }
+                    }
+                }
+
+                if (m_setFunction.containsKey(stateId)){
+                    stateElement.addAttribute(new Attribute("Set function","registered"));
+                }
+                else {
+                    stateElement.addAttribute(new Attribute("Set function","unregistered"));
+                }
+
+                elem.addElement(stateElement);
+
+            }
+
+            return elem;
         }
     }
 }
