@@ -120,19 +120,19 @@ public class EntityHandler extends PrimitiveHandler  {
                                     }
                                 }
                             }else {
-                                error("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");
+                                throw new ConfigurationException("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");
                             }
                         }
                         if (!findInEntity) {
-                            error("State variable " + state + " is defined in entityType but never referenced in " + m_componentName);
+                            throw new ConfigurationException("State variable " + state + " is defined in entityType but never referenced in " + m_componentName);
                         }
                     }else {
-                        error("State variable " + state + " is defined in entityType but never referenced in " + m_componentName +" reason : no " + StateVariableFieldVisitor.STATE_VARIABLE_ELEMENT + " element in entity ");
+                        throw new ConfigurationException("State variable " + state + " is defined in entityType but never referenced in " + m_componentName +" reason : no " + StateVariableFieldVisitor.STATE_VARIABLE_ELEMENT + " element in entity ");
                     }
                 }
             }
         } else {
-            error("Entity Handler cannot be attached to a component with no " + ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT + " element");
+            throw new ConfigurationException("Entity Handler cannot be attached to a component with no " + ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT + " element");
         }
 
         /**
