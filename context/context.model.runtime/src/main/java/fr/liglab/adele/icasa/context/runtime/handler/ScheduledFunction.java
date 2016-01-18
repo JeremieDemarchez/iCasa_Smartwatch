@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.handler.synchronization;
+package fr.liglab.adele.icasa.context.runtime.handler;
 
 import org.wisdom.api.concurrent.ManagedFutureTask;
 

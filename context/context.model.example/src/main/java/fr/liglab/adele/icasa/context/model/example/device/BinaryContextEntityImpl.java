@@ -1,8 +1,7 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
-import fr.liglab.adele.icasa.context.handler.synchronization.Set;
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
+import fr.liglab.adele.icasa.context.annotation.Pull;
+import fr.liglab.adele.icasa.context.annotation.Set;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -11,13 +10,15 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.function.Function;
-
+ /**
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {BinaryContextEntityImpl.DEVICE_TYPE,BinaryLight.DEVICE_SERIAL_NUMBER, BinaryLight.BINARY_LIGHT_POWER_STATUS,BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL})
+@Entity(spec =)**/
 public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
     public static final String DEVICE_TYPE = "device.type";

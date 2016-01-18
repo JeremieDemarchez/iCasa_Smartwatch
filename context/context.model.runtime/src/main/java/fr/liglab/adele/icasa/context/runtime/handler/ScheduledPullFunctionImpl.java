@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.handler.synchronization;
+package fr.liglab.adele.icasa.context.runtime.handler;
 
 import org.wisdom.api.concurrent.ManagedFutureTask;
 
@@ -14,7 +14,7 @@ public class ScheduledPullFunctionImpl implements ScheduledFunction {
 
     private final String m_stateId;
 
-    private final SynchronizationHandler m_handler;
+    private final EntityHandler m_handler;
 
     private final long m_period;
 
@@ -22,7 +22,7 @@ public class ScheduledPullFunctionImpl implements ScheduledFunction {
 
     private  ManagedFutureTask m_futureTask;
 
-    public ScheduledPullFunctionImpl(Function function,long period,TimeUnit unit,String stateId,SynchronizationHandler handler) {
+    public ScheduledPullFunctionImpl(Function function,long period,TimeUnit unit,String stateId,EntityHandler handler) {
         this.m_function = function;
         this.m_period = period;
         this.m_unit = unit;

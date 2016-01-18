@@ -12,7 +12,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>icasa.context.model</artifactId>
+    <artifactId>icasa.context.model.test</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
@@ -20,12 +20,6 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
-
-        <dependency>
-            <groupId>org.apache.felix</groupId>
-            <artifactId>org.apache.felix.ipojo.manipulator</artifactId>
-        </dependency>
-
         <dependency>
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo</artifactId>
@@ -37,19 +31,28 @@
         </dependency>
 
         <dependency>
-            <groupId>org.osgi</groupId>
-            <artifactId>org.osgi.core</artifactId>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.model</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>wisdom-executors</artifactId>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>context.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>technical.services.api</artifactId>
+            <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>command.handler</artifactId>
-            <version>1.2.7-SNAPSHOT</version>
+            <version>${project.version}</version>
+            <scope>provided</scope>
         </dependency>
 
     </dependencies>
@@ -62,14 +65,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model;
-                            fr.liglab.adele.icasa.context.annotation;
-                            fr.liglab.adele.icasa.context.transformation;
-                            fr.liglab.adele.icasa.context.handler.creator;
-                            fr.liglab.adele.icasa.context.handler.creator.entity;
-                            fr.liglab.adele.icasa.context.handler.creator.relation;
-                            fr.liglab.adele.icasa.context.handler.relation;
-                            fr.liglab.adele.icasa.context.handler.synchronization
+                        <Export-Package>fr.liglab.adele.icasa.context.model.example;
                         </Export-Package>
                     </instructions>
                 </configuration>
@@ -77,6 +73,13 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-ipojo-plugin</artifactId>
+                <dependencies>
+                        <dependency>
+                            <groupId>fr.liglab.adele.icasa</groupId>
+                            <artifactId>icasa.context.ipojo.module</artifactId>
+                            <version>${project.version}</version>
+                        </dependency>
+                </dependencies>
                 <executions>
                     <execution>
                         <goals>

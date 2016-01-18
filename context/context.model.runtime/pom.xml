@@ -12,7 +12,7 @@
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>icasa.context.model</artifactId>
+    <artifactId>icasa.context.model.runtime</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
@@ -20,6 +20,7 @@
             <groupId>org.apache.felix</groupId>
             <artifactId>org.apache.felix.ipojo.annotations</artifactId>
         </dependency>
+
 
         <dependency>
             <groupId>org.apache.felix</groupId>
@@ -32,6 +33,18 @@
         </dependency>
 
         <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.model</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.ipojo.module</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
         </dependency>
@@ -39,17 +52,6 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>org.wisdom-framework</groupId>
-            <artifactId>wisdom-executors</artifactId>
-        </dependency>
-
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>command.handler</artifactId>
-            <version>1.2.7-SNAPSHOT</version>
         </dependency>
 
     </dependencies>
@@ -62,14 +64,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model;
-                            fr.liglab.adele.icasa.context.annotation;
-                            fr.liglab.adele.icasa.context.transformation;
-                            fr.liglab.adele.icasa.context.handler.creator;
-                            fr.liglab.adele.icasa.context.handler.creator.entity;
-                            fr.liglab.adele.icasa.context.handler.creator.relation;
-                            fr.liglab.adele.icasa.context.handler.relation;
-                            fr.liglab.adele.icasa.context.handler.synchronization
+                        <Export-Package>
                         </Export-Package>
                     </instructions>
                 </configuration>

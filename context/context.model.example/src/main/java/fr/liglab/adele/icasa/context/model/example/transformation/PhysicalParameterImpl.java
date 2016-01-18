@@ -1,9 +1,9 @@
 package fr.liglab.adele.icasa.context.model.example.transformation;
 
+
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
+import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;
@@ -17,11 +17,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Function;
 
-
+/**
 @Component(immediate = true,propagation = false)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,PhysicalParameterImpl.AGGREGATION_NAME, PhysicalParameterImpl.AGGREGATION_VALUE})
+@State(states = {PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,PhysicalParameterImpl.AGGREGATION_NAME, PhysicalParameterImpl.AGGREGATION_VALUE})**/
 public class PhysicalParameterImpl implements Aggregation {
 
     public final static String PHYSICAL_PARAMETER_NAME = "physical.parameter.name";
@@ -67,17 +67,17 @@ public class PhysicalParameterImpl implements Aggregation {
         relation_isPhysicalParameterOf = new Relation_IsPhysicalParameterOf(m_physicalParameterName);
     }
 
-    @Pull(state = PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME )
+  //  @Pull(state = PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME )
     Function getName = (Object obj) ->{
         return getPhysicalParameterName();
     };
 
-    @Pull(state = PhysicalParameterImpl.AGGREGATION_VALUE )
+  //  @Pull(state = PhysicalParameterImpl.AGGREGATION_VALUE )
     Function getAggregationValue = (Object obj) ->{
         return getResult();
     };
 
-    @Pull(state = AGGREGATION_NAME)
+ //   @Pull(state = AGGREGATION_NAME)
     private final Function getAggregationName = (Object obj)->{
         return name;
     };
