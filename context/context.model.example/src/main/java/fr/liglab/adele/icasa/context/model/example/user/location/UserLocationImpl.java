@@ -1,27 +1,23 @@
 package fr.liglab.adele.icasa.context.model.example.user.location;
 
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
+import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationFactory;
 import fr.liglab.adele.icasa.context.model.RelationType;
-import fr.liglab.adele.icasa.context.model.example.Relation_Contained;
-import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import sun.rmi.runtime.Log;
 
 import java.util.*;
 import java.util.function.Function;
 
-
+/**
 @Component(immediate = true,propagation = false)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {UserLocationImpl.PARAMETER_NAME, UserLocationImpl.AGGREGATION_VALUE})
+@State(states = {UserLocationImpl.PARAMETER_NAME, UserLocationImpl.AGGREGATION_VALUE})**/
 public class UserLocationImpl implements Aggregation {
 
     public final static String PARAMETER_NAME = "user.location";

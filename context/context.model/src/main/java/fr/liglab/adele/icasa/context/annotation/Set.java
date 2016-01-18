@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.handler.synchronization;
+package fr.liglab.adele.icasa.context.annotation;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;

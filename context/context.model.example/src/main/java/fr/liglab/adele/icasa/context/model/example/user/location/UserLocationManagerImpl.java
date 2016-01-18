@@ -1,6 +1,5 @@
 package fr.liglab.adele.icasa.context.model.example.user.location;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.example.transformation.PhysicalParameterImpl;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;

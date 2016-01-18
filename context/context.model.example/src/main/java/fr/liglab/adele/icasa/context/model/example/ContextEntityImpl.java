@@ -1,6 +1,5 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
@@ -8,10 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Component(immediate = true)
+/**@Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State
+@State**/
 public class ContextEntityImpl implements ContextEntity{
 
     private static final Logger LOG = LoggerFactory.getLogger(ContextEntityImpl.class);

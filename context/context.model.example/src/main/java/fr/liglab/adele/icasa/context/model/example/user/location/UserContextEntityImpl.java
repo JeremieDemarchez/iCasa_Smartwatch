@@ -1,7 +1,6 @@
 package fr.liglab.adele.icasa.context.model.example.user.location;
 
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
+import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
@@ -12,11 +11,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+/**
 @Component(immediate = true)
 @Instantiate
 @Provides(specifications = {ContextEntity.class})
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {UserContextEntityImpl.USER_ID_PROP})
+@State(states = {UserContextEntityImpl.USER_ID_PROP})**/
 public class UserContextEntityImpl implements ContextEntity{
 
     public static final String USER_ID_PROP = "user.id";

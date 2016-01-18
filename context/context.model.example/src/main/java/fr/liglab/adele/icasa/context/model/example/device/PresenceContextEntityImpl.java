@@ -1,12 +1,9 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
-import fr.liglab.adele.icasa.context.handler.synchronization.Set;
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
+import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
@@ -15,10 +12,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Function;
 
+/**
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states = {PresenceContextEntityImpl.DEVICE_TYPE,PresenceSensor.DEVICE_SERIAL_NUMBER, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE})
+@State(states = {PresenceContextEntityImpl.DEVICE_TYPE,PresenceSensor.DEVICE_SERIAL_NUMBER, PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE})**/
 public class PresenceContextEntityImpl implements ContextEntity, DeviceListener{
 
     public static final String DEVICE_TYPE = "device.type";

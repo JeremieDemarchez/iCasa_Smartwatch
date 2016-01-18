@@ -1,8 +1,7 @@
 package fr.liglab.adele.icasa.context.model.example.zone;
 
 import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.context.handler.synchronization.Pull;
-import fr.liglab.adele.icasa.context.handler.synchronization.State;
+import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
@@ -15,10 +14,11 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Function;
 
+/**
 @Component(immediate = true)
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states={ZoneContextEntityImpl.ZONE_AREA,ZoneContextEntityImpl.ZONE_NAME})
+@State(states={ZoneContextEntityImpl.ZONE_AREA,ZoneContextEntityImpl.ZONE_NAME})**/
 public class ZoneContextEntityImpl implements ContextEntity,ZoneListener{
 
     public static final String ZONE_NAME = "zone.name";
