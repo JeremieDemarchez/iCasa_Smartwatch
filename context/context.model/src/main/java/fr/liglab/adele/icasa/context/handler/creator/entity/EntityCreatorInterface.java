@@ -9,7 +9,7 @@ public interface EntityCreatorInterface {
 
     void createEntity(String id);
 
-    void createEntity(String id, Map<String, Object> initialization);
+    void createEntity(String id, Map.Entry<String,Map<String, Object>> initialization);
 
     void deleteEntity(String id);
 }
