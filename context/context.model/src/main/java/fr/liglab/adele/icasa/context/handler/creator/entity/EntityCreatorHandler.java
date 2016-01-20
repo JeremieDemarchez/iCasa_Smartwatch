@@ -1,6 +1,5 @@
 package fr.liglab.adele.icasa.context.handler.creator.entity;
 
-import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorManagementInterface;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
@@ -246,6 +245,11 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
                     }
                 }
             }
+        }
+
+        @Override
+        public void createEntity(String id, Map<String, Object> initialization) {
+            
         }
 
         @Override

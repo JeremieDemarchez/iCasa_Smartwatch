@@ -3,7 +3,6 @@ package fr.liglab.adele.icasa.context.model.example.transformation;
 
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
-import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;

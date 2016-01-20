@@ -6,15 +6,11 @@ import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreatorInterfa
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
