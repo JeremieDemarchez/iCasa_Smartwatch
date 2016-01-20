@@ -51,4 +51,9 @@ public class ContextEntityImplPrime implements ContextEntity,ContextEntityDescri
     public String hello() {
         return null;
     }
+
+    @Override
+    public String getSerialNumber() {
+        return null;
+    }
 }

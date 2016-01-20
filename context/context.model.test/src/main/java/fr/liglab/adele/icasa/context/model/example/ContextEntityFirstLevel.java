@@ -4,4 +4,6 @@ import fr.liglab.adele.icasa.context.annotation.EntityType;
 
 @EntityType(states = {"serialNumber"})
 public interface ContextEntityFirstLevel {
+
+    String getSerialNumber();
 }

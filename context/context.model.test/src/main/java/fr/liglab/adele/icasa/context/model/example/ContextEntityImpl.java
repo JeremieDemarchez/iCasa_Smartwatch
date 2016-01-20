@@ -19,6 +19,9 @@ public class ContextEntityImpl implements ContextEntity,ContextEntityDescription
     @StateField(name = "ID")
     public String id;
 
+    @StateField(name = "serial.number")
+    public String serialNumber;
+
     @Pull(state = "ID",period = 1,unit = TimeUnit.HOURS)
     public Function idsynchro;
 
@@ -62,6 +65,11 @@ public class ContextEntityImpl implements ContextEntity,ContextEntityDescription
 
     @Override
     public String hello() {
+        return null;
+    }
+
+    @Override
+    public String getSerialNumber() {
         return null;
     }
 }

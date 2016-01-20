@@ -69,6 +69,19 @@ public class EntityHandler extends PrimitiveHandler  {
     @Requires(specification = ManagedScheduledExecutorService.class,id="scheduler")
     public ManagedScheduledExecutorService scheduler;
 
+    private void extractStateFromInterface(Class interfaz){
+        Annotation[] entityTypeAnnotations = interfaz.getDeclaredAnnotationsByType(EntityType.class);
+        for(Annotation entityTypeAnnotation : entityTypeAnnotations){
+            EntityType cast = (EntityType)entityTypeAnnotation;
+            String[] statesInEntityType = cast.states();
+            //TODO : Test if state Variable are not already defined
+            m_stateSpecifications.addAll(Arrays.asList(statesInEntityType));
+        }
+        for (Class superInterfaz : interfaz.getInterfaces()){
+            extractStateFromInterface(superInterfaz);
+        }
+    }
+
     @Override
     public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
 
@@ -82,12 +95,7 @@ public class EntityHandler extends PrimitiveHandler  {
         Class[] interfaces = clazz.getInterfaces();
 
         for(Class interfaz : interfaces){
-            Annotation[] entityTypeAnnotations = interfaz.getDeclaredAnnotationsByType(EntityType.class);
-            for(Annotation entityTypeAnnotation : entityTypeAnnotations){
-                EntityType cast = (EntityType)entityTypeAnnotation;
-                String[] statesInEntityType = cast.states();
-                m_stateSpecifications.addAll(Arrays.asList(statesInEntityType));
-            }
+            extractStateFromInterface(interfaz);
         }
 
         /**

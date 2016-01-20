@@ -53,4 +53,9 @@ import java.util.Map;
     public String hello() {
         return null;
     }
+
+    @Override
+    public String getSerialNumber() {
+        return null;
+    }
 }
