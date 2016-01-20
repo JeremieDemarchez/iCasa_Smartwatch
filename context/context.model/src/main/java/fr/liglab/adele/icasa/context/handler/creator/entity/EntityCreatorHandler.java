@@ -7,6 +7,7 @@ import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
+import org.apache.felix.ipojo.architecture.PropertyDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
@@ -173,9 +174,9 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
 
         private final Map<String,ServiceRegistration> entities_reg = new HashMap<>();
 
-        private final Set<String> created_entities = new HashSet<>();
+        private final Map<String, Map<String, Object>> created_entities = new HashMap<>();
 
-        private final Set<String> pending_entities = new HashSet<>();
+        private final Map<String, Map<String, Object>> pending_entities = new HashMap<>();
 
 
         protected EntityCreatorImpl(String entity){
@@ -190,23 +191,28 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
         }
 
         protected Set<String> getPendingEntities(){
-            return pending_entities;
+            return pending_entities.keySet();
         }
 
         protected synchronized void enableCreation() {
 
             synchronized (pending_entities){
                 synchronized (created_entities){
-                    Set<String> pes = new HashSet<>(pending_entities);
                     Set<String> entities_to_remove = new HashSet<>();
-                    for(String id : pes){
-                        createInstance(id, null);
-                        created_entities.add(id);
+                    Map<String, Object> initialization;
+                    String id;
+                    for(Map.Entry<String, Map<String, Object>> entity : pending_entities.entrySet()){
+                        id = entity.getKey();
+                        initialization = entity.getValue();
+                        createInstance(id, initialization);
+                        created_entities.put(id, initialization);
                         entities_to_remove.add(id);
                     }
-                    pending_entities.removeAll(entities_to_remove);
 
-                    /*TODO NOTIFY RELATIONS*/
+                    for (String id_r : entities_to_remove){
+                        pending_entities.remove(id_r);
+                    }
+
                     m_switch = true;
                 }
             }
@@ -219,15 +225,20 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
                     m_switch = false;
 
                     Set<String> entities_to_remove = new HashSet<>();
-                    for (String id : created_entities) {
+                    Map<String, Object> initialization;
+                    String id;
+
+                    for (Map.Entry<String, Map<String, Object>> entity : created_entities.entrySet()) {
+                        id = entity.getKey();
+                        initialization = entity.getValue();
                         deleteInstance(id);
                         entities_to_remove.add(id);
-                        pending_entities.add(id);
+                        pending_entities.put(id, initialization);
                     }
-                    created_entities.removeAll(entities_to_remove);
 
-                    /***/
-                    /*TODO NOTIFY RELATIONS*/
+                    for (String id_r : entities_to_remove){
+                        created_entities.remove(id_r);
+                    }
                 }
             }
         }
@@ -243,9 +254,9 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
                 synchronized (created_entities) {
                     if (m_switch) {
                         createInstance(id, initialization);
-                        created_entities.add(id);
+                        created_entities.put(id, initialization);
                     } else {
-                        pending_entities.add(id);
+                        pending_entities.put(id, initialization);
                     }
                 }
             }
@@ -277,6 +288,9 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
             properties = new Hashtable();
             properties.put("context.entity.id", id);
             properties.put("instance.name", m_entityPackage + id);
+            if (initialization != null){
+                properties.put("context.entity.init", initialization);
+            } else {}
 
             if (m_entityFactory!=null) {
                 try {
