@@ -200,7 +200,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
                     Set<String> pes = new HashSet<>(pending_entities);
                     Set<String> entities_to_remove = new HashSet<>();
                     for(String id : pes){
-                        createInstance(id);
+                        createInstance(id, null);
                         created_entities.add(id);
                         entities_to_remove.add(id);
                     }
@@ -234,11 +234,15 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
 
         @Override
         public synchronized void createEntity(String id){
+            createEntity(id, null);
+        }
 
+        @Override
+        public void createEntity(String id,  Map<String, Object> initialization) {
             synchronized (pending_entities){
                 synchronized (created_entities) {
                     if (m_switch) {
-                        createInstance(id);
+                        createInstance(id, initialization);
                         created_entities.add(id);
                     } else {
                         pending_entities.add(id);
@@ -247,10 +251,6 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
             }
         }
 
-        @Override
-        public void createEntity(String id, Map<String, Object> initialization) {
-            
-        }
 
         @Override
         public synchronized void deleteEntity(String id){
@@ -267,7 +267,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
             }
         }
 
-        private void createInstance (String id){
+        private void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
             Hashtable properties = new Hashtable();
