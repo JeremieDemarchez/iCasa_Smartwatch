@@ -47,4 +47,21 @@ public class RelationTypeImpl implements RelationType{
         return relationCallBack;
     }
 
+    @Override
+    public String toString() {
+        /*The definition of equivalence can be modified*/
+        return name + "." + extendStateName;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (o instanceof RelationType) {
+            RelationType relationType = (RelationType) o;
+            if (this.toString().equals(relationType.toString())) {
+                /*The definition of equivalence can be modified*/
+                return true;
+            } else {}
+        } else {}
+        return false;
+    }
 }

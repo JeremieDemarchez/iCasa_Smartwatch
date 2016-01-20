@@ -9,5 +9,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.FIELD)
 public @interface EntityCreator {
 
-    Class entity();         /*Context Entity Implementation*/
+    Class entity();                 /*Context Entity Implementation*/
 }

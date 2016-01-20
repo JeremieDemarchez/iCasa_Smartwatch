@@ -15,6 +15,13 @@ import java.util.*;
 @Instantiate
 @Provides(specifications = RelationFactory.class)
 public class RelationFactoryImpl implements RelationFactory{
+    /**
+     * TODO : KEEP PENDING RELATIONS (due to pending entities)
+     * @Require all Entity Creator Handler Interfaces
+     * Creation -> check source and end entities
+     * If doesn't exist and are in pending entities
+     * Create pending relations
+     */
 
     private static final Logger LOG = LoggerFactory.getLogger(RelationFactoryImpl.class);
 
@@ -42,14 +49,18 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     @Override
-    public UUID createRelation(RelationType relationType, String source, String end) {
-        return createRelation(relationType.getName(), source, end, relationType.getExtendStateName(), relationType.isAggregate(), relationType.getRelationCallBack());
+    public UUID createRelation(UUID uuid, RelationType relationType, String source, String end) {
+        return createRelation(uuid, relationType.getName(), source, end, relationType.getExtendStateName(), relationType.isAggregate(), relationType.getRelationCallBack());
     }
 
     @Override
-    public UUID createRelation(String name, String source, String end, String extendStateName, boolean isAggregate, RelationCallBack relationCallBack){
-      //  LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
+    public UUID createRelation(RelationType relationType, String source, String end) {
         UUID relationId = UUID.randomUUID();
+        return createRelation(relationId, relationType.getName(), source, end, relationType.getExtendStateName(), relationType.isAggregate(), relationType.getRelationCallBack());
+    }
+
+    private UUID createRelation(UUID uuid, String name, String source, String end, String extendStateName, boolean isAggregate, RelationCallBack relationCallBack){
+      //  LOG.info("Create Relation  : " + name +" source : " + source + " end " + end);
         ComponentInstance instance;
 
         Hashtable properties = new Hashtable();
@@ -69,7 +80,7 @@ public class RelationFactoryImpl implements RelationFactory{
                     source,
                     end);
             synchronized (m_lockRelation) {
-                relations.put(relationId, sr);
+                relations.put(uuid, sr);
             }
         } catch (UnacceptableConfiguration unacceptableConfiguration) {
             LOG.error("Relation instantiation failed", unacceptableConfiguration);
@@ -78,7 +89,7 @@ public class RelationFactoryImpl implements RelationFactory{
         } catch (ConfigurationException e) {
             LOG.error("Relation instantiation failed", e);
         }
-        return relationId;
+        return uuid;
     }
 
     @Override
@@ -119,16 +130,16 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     @Override
-    public List<UUID> findIdsByEndpoint(String endpoint) {
-        List<UUID> endpointIds = new ArrayList<>();
+    public Set<UUID> findIdsByEndpoint(String endpoint) {
+        Set<UUID> endpointIds = new HashSet<>();
         endpointIds.addAll(findIdsBySource(endpoint));
         endpointIds.addAll(findIdsByEnd(endpoint));
         return endpointIds;
     }
 
     @Override
-    public List<UUID> findIdsBySource(String source) {
-        List<UUID> sourceIds = new ArrayList<>();
+    public Set<UUID> findIdsBySource(String source) {
+        Set<UUID> sourceIds = new HashSet<>();
         IpojoServiceRegistrationRelation relation;
         for(Map.Entry<UUID, IpojoServiceRegistrationRelation> entry : relations.entrySet()){
             relation = entry.getValue();
@@ -140,8 +151,8 @@ public class RelationFactoryImpl implements RelationFactory{
     }
 
     @Override
-    public List<UUID> findIdsByEnd(String end) {
-        List<UUID> endIds = new ArrayList<>();
+    public Set<UUID> findIdsByEnd(String end) {
+        Set<UUID> endIds = new HashSet<>();
         IpojoServiceRegistrationRelation relation;
         for(Map.Entry<UUID, IpojoServiceRegistrationRelation> entry : relations.entrySet()){
             relation = entry.getValue();

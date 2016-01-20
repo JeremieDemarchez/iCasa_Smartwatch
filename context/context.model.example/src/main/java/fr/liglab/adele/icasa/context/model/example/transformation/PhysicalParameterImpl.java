@@ -1,8 +1,11 @@
 package fr.liglab.adele.icasa.context.model.example.transformation;
 
+
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
 import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;
 import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.transformation.AggregationFunction;
@@ -27,8 +30,8 @@ public class PhysicalParameterImpl implements Aggregation {
 
     public final static String AGGREGATION_VALUE = "aggregation.value";
 
-    @Requires(optional = false)
-    RelationFactory relationFactory;
+    @RelationCreator(relation=RelationImpl.class)
+    private RelationCreatorInterface m_relationCreator;
 
     @Requires(id = "aggregation.sources", optional = true)
     List<ContextEntity> sources;
@@ -85,8 +88,8 @@ public class PhysicalParameterImpl implements Aggregation {
     }
     @Validate
     public void start(){
-        relationFactory.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
-        relationFactory.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
+        m_relationCreator.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
+        m_relationCreator.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
     }
 
     @Invalidate
@@ -96,7 +99,7 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
-        relationFactory.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
+        m_relationCreator.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
         pushState(AGGREGATION_VALUE,getResult());
     }
 
@@ -107,9 +110,9 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        UUID uuid = relationFactory.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
+        UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
         if (uuid != null) {
-            relationFactory.deleteRelation(uuid);
+            m_relationCreator.deleteRelation(uuid);
         }
         pushState(AGGREGATION_VALUE,getResult());
     }

@@ -12,10 +12,4 @@ public interface RelationType {
     boolean isAggregate();
 
     RelationCallBack getRelationCallBack();
-
-    //RelationCallBack getRelationCallBack();
-
-    /**
-     * TODO : SOURCE TYPE ? END TYPE ?
-     */
 }

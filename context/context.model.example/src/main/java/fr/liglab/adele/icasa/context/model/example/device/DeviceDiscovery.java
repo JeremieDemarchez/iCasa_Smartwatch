@@ -3,7 +3,9 @@ package fr.liglab.adele.icasa.context.model.example.device;
 
 import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
 import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreatorInterface;
-import fr.liglab.adele.icasa.context.model.RelationFactory;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
+import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
+import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
@@ -39,8 +41,8 @@ public class DeviceDiscovery{
     @EntityCreator(entity=ToogleSwitchContextEntityImpl.class)
     private EntityCreatorInterface m_creatorToggle;
 
-    @Requires
-    private RelationFactory m_relationFactory;
+    @RelationCreator(relation=RelationImpl.class)
+    private RelationCreatorInterface m_relationCreator;
 
     @Validate
     public void start(){
@@ -52,17 +54,17 @@ public class DeviceDiscovery{
 
     }
 
-    @Bind(id = "binary",optional = true,aggregate = true)
+    @Bind(id = "binary", optional = true, aggregate = true)
     public synchronized void bindBinary(BinaryLight device){
         m_creatorBinary.createEntity(device.getSerialNumber());
     }
 
-    @Unbind(id = "binary",optional = true,aggregate = true)
+    @Unbind(id = "binary", optional = true, aggregate = true)
     public synchronized void unbindBinary(BinaryLight device){
         m_creatorBinary.deleteEntity(device.getSerialNumber());
     }
 
-    @Bind(id = "dimmer",optional = true,aggregate = true)
+    @Bind(id = "dimmer", optional = true, aggregate = true)
     public synchronized void bindDimmer(DimmerLight device){
         m_creatorDimmer.createEntity(device.getSerialNumber());
 
@@ -73,22 +75,22 @@ public class DeviceDiscovery{
         m_creatorDimmer.deleteEntity(device.getSerialNumber());
     }
 
-    @Bind(id = "presence",optional = true,aggregate = true)
+    @Bind(id = "presence", optional = true, aggregate = true)
     public synchronized void bindPresence(PresenceSensor device){
         m_creatorPresence.createEntity(device.getSerialNumber());
     }
 
-    @Unbind(id = "presence",optional = true,aggregate = true)
+    @Unbind(id = "presence", optional = true, aggregate = true)
     public synchronized void unbindPresence(PresenceSensor device){
         m_creatorPresence.deleteEntity(device.getSerialNumber());
     }
 
-    @Bind(id = "toogle",optional = true,aggregate = true)
+    @Bind(id = "toogle", optional = true, aggregate = true)
     public synchronized void bindToogle(PowerSwitch device){
         m_creatorToggle.createEntity(device.getSerialNumber());
     }
 
-    @Unbind(id = "toogle",optional = true,aggregate = true)
+    @Unbind(id = "toogle", optional = true, aggregate = true)
     public synchronized void unbindToogle(PowerSwitch device){
         m_creatorToggle.deleteEntity(device.getSerialNumber());
     }

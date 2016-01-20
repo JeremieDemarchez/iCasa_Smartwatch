@@ -1,22 +1,30 @@
-package fr.liglab.adele.icasa.context.model;
+package fr.liglab.adele.icasa.context.handler.creator.relation;
 
-        import java.util.Set;
-        import java.util.UUID;
+import fr.liglab.adele.icasa.context.model.RelationType;
+
+import java.util.Set;
+import java.util.UUID;
 
 /**
- * Created by aygalinc on 15/09/15.
+ * Created by Eva on 14/12/2015.
  */
-public interface RelationFactory {
-    /*Shouldn't be used directly by context (use Relation creator instead)*/
+public interface RelationCreatorInterface {
 
-    /*TODO A ENLEVER!!!!!*/
     UUID createRelation(RelationType relationType, String source, String end);
-
-    UUID createRelation(UUID uuid, RelationType relationType, String source, String end);
 
     void deleteRelation(UUID relationId);
 
     void updateRelation(UUID relationId, String newSource, String newEnd);
+
+    /*Interface for entity creator*/
+    void deleteRelationsOfEntity(String id);
+
+    void removeRelationsOfEntity(String id);
+
+    void retrieveRelationsOfEntity(String id);
+
+
+
 
     UUID findId(String name, String source, String end);
 
