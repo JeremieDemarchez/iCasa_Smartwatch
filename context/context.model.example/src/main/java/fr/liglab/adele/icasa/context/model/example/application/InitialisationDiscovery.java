@@ -2,7 +2,7 @@
 //
 //
 //import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-//import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreatorInterface;
+//import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreator;
 //import fr.liglab.adele.icasa.context.model.RelationFactory;
 //import fr.liglab.adele.icasa.context.model.example.device.BinaryContextEntityImpl;
 //import fr.liglab.adele.icasa.context.model.example.device.DimmerContextEntityImpl;
@@ -29,16 +29,16 @@
 //    private final Map<String,ServiceRegistration> deviceEntities = new HashMap<>();
 //
 //    @EntityCreator(entity=BinaryContextEntityImpl.class)
-//    private EntityCreatorInterface m_creatorBinary;
+//    private _EntityCreator m_creatorBinary;
 //
 //    @EntityCreator(entity=DimmerContextEntityImpl.class)
-//    private EntityCreatorInterface m_creatorDimmer;
+//    private _EntityCreator m_creatorDimmer;
 //
 //    @EntityCreator(entity=PresenceContextEntityImpl.class)
-//    private EntityCreatorInterface m_creatorPresence;
+//    private _EntityCreator m_creatorPresence;
 //
 //    @EntityCreator(entity=ToogleSwitchContextEntityImpl.class)
-//    private EntityCreatorInterface m_creatorToggle;
+//    private _EntityCreator m_creatorToggle;
 //
 //    @Requires
 //    private RelationFactory m_relationFactory;

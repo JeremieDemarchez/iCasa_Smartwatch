@@ -2,9 +2,9 @@ package fr.liglab.adele.icasa.context.model.example.device;
 
 
 import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreatorInterface;
+import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
-import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
+import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
@@ -26,19 +26,19 @@ public class DeviceDiscovery{
     private final Map<String,ServiceRegistration> deviceEntities = new HashMap<>();
 
     @EntityCreator(entity=BinaryContextEntityImpl.class)
-    private EntityCreatorInterface m_creatorBinary;
+    private _EntityCreator m_creatorBinary;
 
     @EntityCreator(entity=DimmerContextEntityImpl.class)
-    private EntityCreatorInterface m_creatorDimmer;
+    private _EntityCreator m_creatorDimmer;
 
     @EntityCreator(entity=PresenceContextEntityImpl.class)
-    private EntityCreatorInterface m_creatorPresence;
+    private _EntityCreator m_creatorPresence;
 
     @EntityCreator(entity=ToogleSwitchContextEntityImpl.class)
-    private EntityCreatorInterface m_creatorToggle;
+    private _EntityCreator m_creatorToggle;
 
     @RelationCreator(relation=RelationImpl.class)
-    private RelationCreatorInterface m_relationCreator;
+    private _RelationCreator m_relationCreator;
 
     @Validate
     public void start(){

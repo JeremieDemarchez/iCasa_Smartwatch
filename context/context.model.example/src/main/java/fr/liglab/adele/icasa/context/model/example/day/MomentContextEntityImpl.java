@@ -16,9 +16,13 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
-
+/*
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @Entity(spec = MomentOfTheDayService.class)
+@Component
+@Provides
+@Instantiate
+*/
 public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayService, PeriodicRunnable{
 
     private static final Logger LOG = LoggerFactory.getLogger(MomentContextEntityImpl.class);

@@ -20,7 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 
 @Handler(name = "RelationCreator", namespace = RelationCreatorHandler.RELATION_CREATOR_HANDLER_NAMESPACE)
-public class RelationCreatorHandler extends PrimitiveHandler implements RelationCreatorManagementInterface {
+public class RelationCreatorHandler extends PrimitiveHandler implements _RelationCreatorManagement {
 
     private static final Logger LOG = LoggerFactory.getLogger(RelationCreatorHandler.class);
 
@@ -154,7 +154,7 @@ public class RelationCreatorHandler extends PrimitiveHandler implements Relation
         }
     }
 
-    private class RelationCreatorImpl implements RelationCreatorInterface{
+    private class RelationCreatorImpl implements _RelationCreator {
         /*enabling relations could have been done with RelationType (here done with impl)*/
 
         private String m_relationImplementation;

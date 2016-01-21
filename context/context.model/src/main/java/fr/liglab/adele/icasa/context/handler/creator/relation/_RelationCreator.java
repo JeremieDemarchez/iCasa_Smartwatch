@@ -8,7 +8,7 @@ import java.util.UUID;
 /**
  * Created by Eva on 14/12/2015.
  */
-public interface RelationCreatorInterface {
+public interface _RelationCreator {
 
     UUID createRelation(RelationType relationType, String source, String end);
 

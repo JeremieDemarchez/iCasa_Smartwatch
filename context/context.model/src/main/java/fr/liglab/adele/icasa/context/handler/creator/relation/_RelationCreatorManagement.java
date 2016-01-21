@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Created by Eva on 14/12/2015.
  */
-public interface RelationCreatorManagementInterface {
+public interface _RelationCreatorManagement {
 
     Set<String> getTypes();
 

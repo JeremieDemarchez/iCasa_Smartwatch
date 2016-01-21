@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Created by Eva on 14/12/2015.
  */
-public interface EntityCreatorManagementInterface {
+public interface _EntityCreatorManagement {
 
     Set<String> getImplementations();
 
@@ -15,5 +15,5 @@ public interface EntityCreatorManagementInterface {
 
     boolean switchCreation(String implementation, boolean enable);
 
-
+    boolean deleteAllInstancesOf(String implementation);
 }

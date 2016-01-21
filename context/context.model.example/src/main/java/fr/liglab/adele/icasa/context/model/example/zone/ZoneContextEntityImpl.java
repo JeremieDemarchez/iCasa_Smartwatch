@@ -14,11 +14,13 @@ import org.slf4j.LoggerFactory;
 import java.util.*;
 import java.util.function.Function;
 
-/**
+
 @Component(immediate = true)
 @Provides
+/*
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@State(states={ZoneContextEntityImpl.ZONE_AREA,ZoneContextEntityImpl.ZONE_NAME})**/
+@State(states={ZoneContextEntityImpl.ZONE_AREA,ZoneContextEntityImpl.ZONE_NAME})
+*/
 public class ZoneContextEntityImpl implements ContextEntity,ZoneListener{
 
     public static final String ZONE_NAME = "zone.name";

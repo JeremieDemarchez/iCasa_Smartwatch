@@ -2,9 +2,9 @@ package fr.liglab.adele.icasa.context.model.example.zone;
 
 import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreatorInterface;
+import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
-import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
+import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;
 import fr.liglab.adele.icasa.context.model.example.Relation_Contained;
@@ -30,10 +30,10 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
     private final RelationType relation_contained = new Relation_Contained();
 
     @EntityCreator(entity=ZoneContextEntityImpl.class)
-    private EntityCreatorInterface m_entityCreatorInterface;
+    private _EntityCreator m_entityCreator;
 
     @RelationCreator(relation=RelationImpl.class)
-    private RelationCreatorInterface m_relationCreator;
+    private _RelationCreator m_relationCreator;
 
     @Requires(id = "context.manager")
     private ContextManager m_manager;
@@ -61,12 +61,12 @@ public class ZoneDiscovery implements ZoneListener,LocatedDeviceListener {
 
     @Override
     public void zoneAdded(Zone zone) {
-        m_entityCreatorInterface.createEntity(zone.getId());
+        m_entityCreator.createEntity(zone.getId());
     }
 
     @Override
     public void zoneRemoved(Zone zone) {
-        m_entityCreatorInterface.deleteEntity(zone.getId());
+        m_entityCreator.deleteEntity(zone.getId());
     }
 
     @Override

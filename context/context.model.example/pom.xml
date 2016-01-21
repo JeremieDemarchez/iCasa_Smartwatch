@@ -75,6 +75,16 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-ipojo-plugin</artifactId>
+
+                <!--
+                <dependencies>
+                    <dependency>
+                        <groupId>fr.liglab.adele.icasa</groupId>
+                        <artifactId>icasa.context.ipojo.module</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                -->
                 <executions>
                     <execution>
                         <goals>

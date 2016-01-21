@@ -1,13 +1,12 @@
 package fr.liglab.adele.icasa.context.handler.creator.entity;
 
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
-import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
+import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.architecture.PropertyDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
@@ -24,7 +23,7 @@ import java.util.*;
 /*UN HANDLER PAR COMPOSANT? --> */
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
 @Provides
-public class EntityCreatorHandler extends PrimitiveHandler implements EntityCreatorManagementInterface {
+public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCreatorManagement {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreatorHandler.class);
 
@@ -41,7 +40,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
     private final Map<String, EntityCreatorImpl> creators_by_impl = new HashMap<>();
 
     @RelationCreator(relation = RelationImpl.class)
-    private RelationCreatorInterface m_relationCreator;
+    private _RelationCreator m_relationCreator;
 
     @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = true, proxy = false)
     private Factory m_entityFactory;
@@ -81,7 +80,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
             FieldMetadata creator = pojoMetadata.getField(field);
             m_instanceManager.register(creator, this);
 
-            /*deafault : ENABLED*/
+            /*TODO default : ENABLED?*/
             switchCreation(entity, true);
         }
 
@@ -102,7 +101,6 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
         return new EntityCreatorHandlerDescription(this);
     }
 
-
     @Override
     public Set<String> getImplementations() {
 
@@ -121,7 +119,10 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
 
     @Override
     public boolean getImplentationState(String implementation) {
-        return false;
+        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        if (entityCreator != null){
+            return entityCreator.getState();
+        } else {return false;}
     }
 
     @Override
@@ -139,6 +140,15 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
         } else {}
 
         return result;
+    }
+
+    @Override
+    public boolean deleteAllInstancesOf(String implementation) {
+        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        if (entityCreator != null){
+            entityCreator.deleteAllEntities();
+            return true;
+        } else {return false;}
     }
 
     private class EntityCreatorHandlerDescription extends HandlerDescription {
@@ -164,7 +174,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
         }
     }
 
-    private class EntityCreatorImpl implements EntityCreatorInterface{
+    private class EntityCreatorImpl implements _EntityCreator {
 
         private String m_entityImplementation;
 
@@ -193,6 +203,8 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
         protected Set<String> getPendingEntities(){
             return pending_entities.keySet();
         }
+
+        protected boolean getState(){return m_switch;}
 
         protected synchronized void enableCreation() {
 
@@ -278,6 +290,24 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
             }
         }
 
+        @Override
+        public synchronized void deleteAllEntities() {
+            synchronized (pending_entities){
+                synchronized (created_entities) {
+
+                    for(String id : created_entities.keySet()){
+                        deleteInstance(id);
+                    }
+                    created_entities.clear();
+
+                    for(String id : pending_entities.keySet()){
+                        deleteInstance(id);
+                    }
+                    pending_entities.clear();
+                }
+            }
+        }
+
         private void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
@@ -294,14 +324,13 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
 
             if (m_entityFactory!=null) {
                 try {
-                    /*factory prête?*/
+                    /*factory ready?*/
                     instance = m_entityFactory.createComponentInstance(properties);
                     ServiceRegistration sr = new IpojoServiceRegistration(instance);
 
                     synchronized (entities_reg){
                         entities_reg.put(id, sr);
                     }
-//                    m_relationCreator.entityCreated(id);
                 } catch (UnacceptableConfiguration unacceptableConfiguration) {
                     LOG.error("Relation instantiation failed", unacceptableConfiguration);
                 } catch (MissingHandlerException e) {
@@ -315,9 +344,11 @@ public class EntityCreatorHandler extends PrimitiveHandler implements EntityCrea
         private void deleteInstance (String id){
 
             try {
-//                m_relationCreator.entityRemoved(id);
                 synchronized (entities_reg){
-                    entities_reg.remove(id).unregister();
+                    ServiceRegistration sr = entities_reg.remove(id);
+                    if (sr != null){
+                        sr.unregister();
+                    }
                 }
             } catch(IllegalStateException e) {
                 LOG.error("failed unregistering device", e);

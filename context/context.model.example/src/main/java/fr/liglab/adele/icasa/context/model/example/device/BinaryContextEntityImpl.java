@@ -1,5 +1,7 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
+
+import fr.liglab.adele.icasa.context.annotation.Entity;
 import fr.liglab.adele.icasa.context.annotation.Pull;
 import fr.liglab.adele.icasa.context.annotation.Set;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
@@ -14,11 +16,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
- /**
+
+//@fr.liglab.adele.icasa.context.handler.relation.ContextEntity
+//@Entity(spec = ContextEntity.class )
 @Component(immediate = true)
 @Provides
-@fr.liglab.adele.icasa.context.handler.relation.ContextEntity
-@Entity(spec =)**/
 public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
     public static final String DEVICE_TYPE = "device.type";
@@ -55,7 +57,7 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
     private final Function setLightPowerStatus= (Object obj)->{
         if ((boolean)obj == true){
             device.turnOn();
-        }else{
+        } else {
             device.turnOff();
         }
         return true;

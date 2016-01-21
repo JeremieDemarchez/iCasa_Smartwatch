@@ -2,7 +2,7 @@ package fr.liglab.adele.icasa.context.model.example.transformation;
 
 
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
-import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreatorInterface;
+import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import fr.liglab.adele.icasa.context.model.RelationType;
@@ -30,7 +30,7 @@ public class PhysicalParameterImpl implements Aggregation {
     public final static String AGGREGATION_VALUE = "aggregation.value";
 
     @RelationCreator(relation=RelationImpl.class)
-    private RelationCreatorInterface m_relationCreator;
+    private _RelationCreator m_relationCreator;
 
     @Requires(id = "aggregation.sources", optional = true)
     List<ContextEntity> sources;
