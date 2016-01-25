@@ -9,7 +9,7 @@ import java.lang.annotation.Target;
 @Retention(RetentionPolicy.RUNTIME)
 public @interface Entity {
 
-    Class spec();
+    Class[] spec();
 
     public static final String FACTORY_OF_ENTITY = "factory.of.context.entity";
     public static final String FACTORY_OF_ENTITY_VALUE = "true";

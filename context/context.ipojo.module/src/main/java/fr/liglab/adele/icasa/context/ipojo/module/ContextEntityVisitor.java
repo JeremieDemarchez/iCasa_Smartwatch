@@ -10,6 +10,11 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 /**
  * Created by aygalinc on 14/01/16.
  */
@@ -26,7 +31,8 @@ public class ContextEntityVisitor extends AnnotationVisitor {
 
     private Element m_component = getComponentElement();
 
-    private String m_typeName;
+    private Set<String> m_internalTypeNames = new HashSet<>();
+    private String m_provides;
     private String m_className;
 
     private Class spec;
@@ -42,10 +48,11 @@ public class ContextEntityVisitor extends AnnotationVisitor {
     }
 
     @Override
-    public void visit(String s,Object o){
-        if (o instanceof Type) {
-            m_className = ((Type) o).getClassName();
-            m_typeName = ((Type) o).getInternalName();
+    public AnnotationVisitor visitArray(String name){
+        if (name.equals("spec")){
+            return new InterfaceArrayVisitor();
+        }else {
+            return null;
         }
     }
     @Override
@@ -59,16 +66,16 @@ public class ContextEntityVisitor extends AnnotationVisitor {
             m_reporter.error("Cannot ensure that the class " + m_workbench.getType().getClassName() + " implements the " +
                     ContextEntity.class.getName() + " interface.");
         }
-
-        if (!m_workbench.getClassNode().interfaces.contains((m_typeName))){
-            m_reporter.error("Cannot ensure that the class " + m_workbench.getType().getClassName() + " is the implementation of the  " +
-                    m_className + " context entity description.");
+        for (String spec : m_internalTypeNames){
+            if (!m_workbench.getClassNode().interfaces.contains((spec))){
+                m_reporter.error("Cannot ensure that the class " + m_workbench.getType().getClassName() + " is the implementation of the  " +
+                        spec + " context entity description.");
+            }
         }
-
 
         m_component.addAttribute(new Attribute("classname", classname));
 
-        Element provideElement = getProvidesElement("{" + classname + "," + ContextEntity.class.getName() + "}");
+        Element provideElement = getProvidesElement(m_provides);
         provideElement.addElement(getPropertyElement(Entity.FACTORY_OF_ENTITY, null, String.class.getName(), Entity.FACTORY_OF_ENTITY_VALUE, "true", "true"));
         provideElement.addElement(getPropertyElement(Entity.FACTORY_OF_ENTITY_TYPE, null, String.class.getName(), m_className, "true", "true"));
 
@@ -133,4 +140,43 @@ public class ContextEntityVisitor extends AnnotationVisitor {
         }
         return prop;
     }
+
+    private class InterfaceArrayVisitor extends AnnotationVisitor {
+        /**
+         * List of parsed interface.
+         */
+        private String m_itfs;
+
+        public InterfaceArrayVisitor() {
+            super(Opcodes.ASM5);
+        }
+
+        /**
+         * Visit one element of the array.
+         *
+         * @param arg0 : null
+         * @param arg1 : element value.
+         * @see org.objectweb.asm.AnnotationVisitor#visit(java.lang.String, java.lang.Object)
+         */
+        public void visit(String arg0, Object arg1) {
+            if (m_itfs == null) {
+                m_itfs = "{" + ((Type) arg1).getClassName();
+            } else {
+                m_itfs += "," + ((Type) arg1).getClassName();
+            }
+            m_internalTypeNames.add(((Type) arg1).getInternalName());
+        }
+
+        /**
+         * End of the array visit.
+         * Add the attribute to 'provides' element.
+         *
+         * @see org.objectweb.asm.AnnotationVisitor#visitEnd()
+         */
+        public void visitEnd() {
+            m_provides = m_itfs + "}";
+        }
+
+    }
+
 }
