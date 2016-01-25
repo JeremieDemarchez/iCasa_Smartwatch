@@ -1,10 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
 
-import fr.liglab.adele.icasa.context.annotation.Entity;
 import fr.liglab.adele.icasa.context.annotation.Pull;
-import fr.liglab.adele.icasa.context.annotation.Set;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.annotation.Apply;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -12,9 +10,6 @@ import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.function.Function;
 
 //@fr.liglab.adele.icasa.context.handler.relation.ContextEntity
@@ -53,7 +48,7 @@ public class BinaryContextEntityImpl implements  DeviceListener{
         return device.getMaxPowerLevel();
     };
 
-    @Set(state = BinaryLight.BINARY_LIGHT_POWER_STATUS)
+    @Apply(state = BinaryLight.BINARY_LIGHT_POWER_STATUS)
     private final Function setLightPowerStatus= (Object obj)->{
         if ((boolean)obj == true){
             device.turnOn();

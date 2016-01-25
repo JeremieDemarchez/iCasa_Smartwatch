@@ -1,17 +1,12 @@
 package fr.liglab.adele.icasa.context.model.example.device;
 
-import fr.liglab.adele.icasa.context.annotation.Pull;
-import fr.liglab.adele.icasa.context.annotation.Set;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.device.DeviceListener;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
 import java.util.function.Function;
 
 /**

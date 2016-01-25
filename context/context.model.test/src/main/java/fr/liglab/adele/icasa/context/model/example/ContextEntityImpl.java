@@ -2,11 +2,9 @@ package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.annotation.Entity;
 import fr.liglab.adele.icasa.context.annotation.Pull;
-import fr.liglab.adele.icasa.context.annotation.Set;
+import fr.liglab.adele.icasa.context.annotation.Apply;
 import fr.liglab.adele.icasa.context.annotation.StateField;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
@@ -25,7 +23,7 @@ public class ContextEntityImpl implements ContextEntityDescription{
     @Pull(state = "ID",period = 1,unit = TimeUnit.HOURS)
     public Function idsynchro;
 
-    @Set(state = "ID")
+    @Apply(state = "ID")
     public Function idsynchroSet;
 
     @Override

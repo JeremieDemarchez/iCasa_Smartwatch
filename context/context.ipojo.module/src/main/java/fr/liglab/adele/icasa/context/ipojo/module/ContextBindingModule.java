@@ -2,7 +2,7 @@ package fr.liglab.adele.icasa.context.ipojo.module;
 
 import fr.liglab.adele.icasa.context.annotation.Entity;
 import fr.liglab.adele.icasa.context.annotation.Pull;
-import fr.liglab.adele.icasa.context.annotation.Set;
+import fr.liglab.adele.icasa.context.annotation.Apply;
 import fr.liglab.adele.icasa.context.annotation.StateField;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.ComponentWorkbench;
 import org.apache.felix.ipojo.manipulator.spi.AbsBindingModule;
@@ -61,7 +61,7 @@ public class ContextBindingModule extends AbsBindingModule {
                         }
                     }
                 });
-        bind(Set.class)
+        bind(Apply.class)
                 .when(on(ElementType.FIELD))
                 .to(new AnnotationVisitorFactory() {
                     public synchronized AnnotationVisitor newAnnotationVisitor(BindingContext context) {
@@ -72,7 +72,7 @@ public class ContextBindingModule extends AbsBindingModule {
                             context.getReporter().warn("Class " + context.getClassNode().name + " must but annoted with " + Entity.class + " to use Set annotation");
                             return null;
                         }else {
-                            return new SetFieldVisitor(name,workbench, context.getReporter());
+                            return new ApplyFieldVisitor(name,workbench, context.getReporter());
                         }
                     }
                 });

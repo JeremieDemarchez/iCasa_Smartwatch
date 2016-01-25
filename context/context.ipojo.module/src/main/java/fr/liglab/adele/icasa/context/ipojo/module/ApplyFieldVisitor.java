@@ -10,9 +10,9 @@ import org.objectweb.asm.Opcodes;
 /**
  * Created by aygalinc on 15/01/16.
  */
-public class SetFieldVisitor extends AnnotationVisitor {
+public class ApplyFieldVisitor extends AnnotationVisitor {
 
-    public static final String STATE_VARIABLE_ATTRIBUTE_SET = "set";
+    public static final String STATE_VARIABLE_ATTRIBUTE_SET = "apply";
 
     private final Reporter m_reporter;
 
@@ -37,7 +37,7 @@ public class SetFieldVisitor extends AnnotationVisitor {
      * @param parent : element element.
      * @param field : field name.
      */
-    public SetFieldVisitor(String field, ComponentWorkbench parent, Reporter reporter) {
+    public ApplyFieldVisitor(String field, ComponentWorkbench parent, Reporter reporter) {
         super(Opcodes.ASM5);
         m_workbench = parent;
         m_field = field;

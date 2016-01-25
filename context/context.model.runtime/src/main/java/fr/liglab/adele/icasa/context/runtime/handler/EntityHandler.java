@@ -3,7 +3,7 @@ package fr.liglab.adele.icasa.context.runtime.handler;
 import fr.liglab.adele.icasa.context.annotation.EntityType;
 import fr.liglab.adele.icasa.context.ipojo.module.ContextEntityVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.PullFieldVisitor;
-import fr.liglab.adele.icasa.context.ipojo.module.SetFieldVisitor;
+import fr.liglab.adele.icasa.context.ipojo.module.ApplyFieldVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.StateVariableFieldVisitor;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.*;
@@ -127,7 +127,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                         m_pullFunctionField.put(state,new ScheduledFunctionConfiguration(pullField,-1L,TimeUnit.SECONDS));
                                     }
 
-                                    String stateField = stateVariableElement.getAttribute(SetFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
+                                    String stateField = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
                                     if (stateField != null){
                                         m_setFunctionField.put(state,stateField);
                                     }
