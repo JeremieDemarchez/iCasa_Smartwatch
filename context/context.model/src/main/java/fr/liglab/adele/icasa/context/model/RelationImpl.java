@@ -89,7 +89,7 @@ public class RelationImpl implements Relation {
     }
 
     private Map getSourceState(){
-        return source.getState();
+        return null;//source.getState();
     }
 
     @Override

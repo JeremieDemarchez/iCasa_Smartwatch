@@ -21,7 +21,8 @@ import java.util.function.Function;
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @State(states = {PhysicalParameterImpl.PHYSICAL_PARAMETER_NAME,PhysicalParameterImpl.AGGREGATION_NAME, PhysicalParameterImpl.AGGREGATION_VALUE})**/
-public class PhysicalParameterImpl implements Aggregation {
+
+public class PhysicalParameterImpl  {
 
     public final static String PHYSICAL_PARAMETER_NAME = "physical.parameter.name";
 
@@ -87,8 +88,8 @@ public class PhysicalParameterImpl implements Aggregation {
     }
     @Validate
     public void start(){
-        m_relationCreator.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
-        m_relationCreator.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
+        //        m_relationCreator.createRelation(relation_isPhysicalParameterOf, this.getId(), m_zoneId);
+        //      m_relationCreator.createRelation(relation_havePhysicalParameterOf, m_zoneId, this.getId());
     }
 
     @Invalidate
@@ -98,72 +99,33 @@ public class PhysicalParameterImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
-        m_relationCreator.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
-        pushState(AGGREGATION_VALUE,getResult());
+        //      m_relationCreator.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
+  //      pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Modified(id = "aggregation.sources")
     public void modifiedContextEntities (ContextEntity contextEntity) {
-        pushState(AGGREGATION_VALUE,getResult());
+   //     pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
-        if (uuid != null) {
-            m_relationCreator.deleteRelation(uuid);
-        }
-        pushState(AGGREGATION_VALUE,getResult());
+        //     UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
+        //       if (uuid != null) {
+        //          m_relationCreator.deleteRelation(uuid);
+        //      }
+   //     pushState(AGGREGATION_VALUE,getResult());
     }
 
-    @Override
+ //   @Override
     public String getFilter() {
         return filter;
     }
 
-    @Override
+   // @Override
     public synchronized Object getResult() {
         return m_aggregationFunction.getResult(sources);
     }
 
 
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
-    private final Map<String,Object> injectedExtensionState =new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return injectedState.get(property);
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-        //DO NOTHING
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        return Collections.unmodifiableMap(injectedState);
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return injectedExtensionState.get(property);
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return Collections.unmodifiableMap(injectedExtensionState);
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
 }

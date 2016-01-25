@@ -18,7 +18,7 @@ import java.util.function.Function;
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @State(states = {DimmerContextEntityImpl.DEVICE_TYPE,DimmerLight.DEVICE_SERIAL_NUMBER,DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL,DimmerLight.DIMMER_LIGHT_POWER_LEVEL})**/
-public class DimmerContextEntityImpl implements ContextEntity, DeviceListener{
+public class DimmerContextEntityImpl implements  DeviceListener{
 
     public static final String DEVICE_TYPE = "device.type";
 
@@ -68,7 +68,7 @@ public class DimmerContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public void deviceAdded(GenericDevice device) {
-        LOG.info("Device : "+device.getSerialNumber()+ " add listener to context entity : "+  this.getId());
+        LOG.info("Device : "+device.getSerialNumber()+ " add listener to context entity : "/*t+  his.getId()*/);
     }
 
     @Override
@@ -79,7 +79,7 @@ public class DimmerContextEntityImpl implements ContextEntity, DeviceListener{
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
         LOG.info("Device : " + device.getSerialNumber() + " Property modified : " + propertyName + " old " + oldValue + " new " + newValue);
-        pushState(propertyName, newValue);
+   //     pushState(propertyName, newValue);
     }
 
     @Override
@@ -107,42 +107,4 @@ public class DimmerContextEntityImpl implements ContextEntity, DeviceListener{
 
     }
 
-    private final Map<String,Object> injectedState = new HashMap<>();
-
-    private final Map<String,Object> injectedExtensionState =new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return injectedState.get(property);
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-        //DO NOTHING
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        return Collections.unmodifiableMap(injectedState);
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return injectedExtensionState.get(property);
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return injectedExtensionState;
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
 }

@@ -15,7 +15,7 @@ import java.util.*;
 
 @Component
 @Provides
-public class AggregationImpl implements Aggregation {
+public class AggregationImpl /*implements Aggregation */{
     /*TODO PAS A JOUR!!!*/
 
     @RelationCreator(relation= RelationImpl.class)
@@ -48,13 +48,13 @@ public class AggregationImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindContextEntities (ContextEntity contextEntity) {
-        m_relationCreator.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
+        //     m_relationCreator.createRelation(relation_computeWith, contextEntity.getId(), this.getId());
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
         List<List<Object>> newState = new ArrayList<>();
         newState.add(property_array);
-        state = newState;
+  //      state = newState;
     }
 
     @Modified(id = "aggregation.sources")
@@ -64,28 +64,28 @@ public class AggregationImpl implements Aggregation {
         property_array.add(getResult());
         List<List<Object>> newState = new ArrayList<>();
         newState.add(property_array);
-        state = newState;
+ //       state = newState;
     }
 
     @Unbind(id = "aggregation.sources")
     public void unbindContextEntities (ContextEntity contextEntity) {
-        UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
-        m_relationCreator.deleteRelation(uuid);
+        //       UUID uuid = m_relationCreator.findId(relation_computeWith.getName(), contextEntity.getId(), this.getId());
+        //   m_relationCreator.deleteRelation(uuid);
 
         List property_array = new ArrayList<>();
         property_array.add("aggregation.value");
         property_array.add(getResult());
         List<List<Object>> newState = new ArrayList<>();
         newState.add(property_array);
-        state = newState;
+    //    state = newState;
     }
 
-    @Override
+//    @Override
     public String getFilter() {
         return filter;
     }
 
-    @Override
+  //  @Override
     public synchronized Object getResult() {
         return m_aggregationFunction.getResult(sources);
     }
@@ -96,193 +96,7 @@ public class AggregationImpl implements Aggregation {
             filter = "(relation.end.id=${context.entity.id})",proxy = false)
     List<Relation> relations;
 
-    @ServiceProperty(name = "context.entity.id",mandatory = true)
-    String name;
-
-    @ServiceProperty(name = "context.entity.state", mandatory = true)
-    List<List<Object>> state;
-
-    @ServiceProperty(name = "context.entity.state.extension", mandatory = true)
-    List<List<Object>> stateExtensions;
-
-    private final Map<ServiceReference,Object> m_stateExtension = new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    protected synchronized void addStateExtensionValue(String property, Object value, boolean isAggregated) {
-        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
-
-        boolean property_exists = false;
-
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.get(0)==property){
-                property_exists = true;
-                if (!isAggregated){
-                    property_array.clear();
-                    property_array.add(property);
-                    property_array.add(value);
-                } else {
-                    if (!property_array.contains(value)){
-                        property_array.add(value);
-                    }
-                }
-            }
-        }
-        if (!property_exists){
-            List<Object> property_array = new ArrayList<>();
-            property_array.add(property);
-            property_array.add(value);
-            stateExtensions.add(property_array);
-        }
-
-        this.stateExtensions = new ArrayList<>(stateExtensions);
-    }
-
-    protected synchronized void removeStateExtensionValue(String property, Object value) {
-        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
-
-        int index = -1;
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.get(0)==property){
-                index = stateExtensions.indexOf(property_array);
-                if (property_array.contains(value)){
-
-                    property_array.remove(value);
-                }
-            }
-        }
-
-        /*If the property hasn't value any more, it is cleared*/
-        if (index>=0){
-            if(stateExtensions.get(index).size()==1){
-                stateExtensions.remove(index);
-            }
-        }
-
-        this.stateExtensions = new ArrayList<>(stateExtensions);
-    }
-
-    private synchronized void replaceStateExtensionValue(String property,Object newValue,Object oldValue){
-        List<List<Object>> stateExtensions = new ArrayList<>(this.stateExtensions);
-
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.get(0)==property){
-                if (property_array.contains(oldValue)){
-                    int index = property_array.indexOf(oldValue);
-                    property_array.set(index,newValue);
-                }
-            }
-        }
-
-        this.stateExtensions = new ArrayList<>(stateExtensions);
-    }
 
 
-    @Override
-    public List<Object> getStateValue(String property) {
-        List<Object> value = new ArrayList<>();
 
-        for (List<Object> property_array : state) {
-            if (property_array.get(0) == property) {
-                value = new ArrayList<>(property_array);
-            }
-        }
-        return value;
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        Map<String,Object> stateMap = new HashMap<String,Object>();
-        for (List<Object> property_array : state){
-            if (property_array.size() == 2){
-                stateMap.put((String)property_array.get(0),property_array.get(1));
-            }else {
-                List<Object> paramsValue = new ArrayList<>();
-                for (Object obj : property_array){
-                    if (obj.equals(property_array.get(0))){
-                        //do nothing
-                    }else {
-                        paramsValue.add(obj);
-                    }
-                }
-                stateMap.put((String)property_array.get(0),paramsValue);
-            }
-        }
-        return stateMap;
-    }
-
-    @Override
-    public List<Object> getStateExtensionValue(String property) {
-        List<Object> value = new ArrayList<>();
-
-        for (List<Object> property_array : stateExtensions) {
-            if (property_array.get(0) == property) {
-                value = new ArrayList<>(property_array);
-            }
-        }
-        return value;
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        Map<String,Object> stateMap = new HashMap<String,Object>();
-        for (List<Object> property_array : stateExtensions){
-            if (property_array.size() == 2){
-                stateMap.put((String)property_array.get(0),property_array.get(1));
-            }else {
-                List<Object> paramsValue = new ArrayList<>();
-                for (Object obj : property_array){
-                    if (obj.equals(property_array.get(0))){
-                        //do nothing
-                    }else {
-                        paramsValue.add(obj);
-                    }
-                }
-                stateMap.put((String)property_array.get(0),paramsValue);
-            }
-        }
-        return stateMap;
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
-
-
-    @Bind(id = "context.entity.relation")
-    public synchronized void bindRelations (Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " BIND relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue() );
-        /*state actualisation*/
-        m_stateExtension.put(serviceReference,relation.getExtendedState().getValue());
-        addStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), relation.getExtendedState().isAggregate());
-    }
-
-    @Modified(id = "context.entity.relation")
-    public synchronized void modifiedRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " MODIFIED relation " + relation.getName() + " provides State Extension " + relation.getExtendedState().getName() + " value " + relation.getExtendedState().getValue());
-        LOG.info("NEW value " + relation.getExtendedState().getValue() + " OLD value " + m_stateExtension.get(serviceReference));
-        if (relation.getExtendedState().getValue().equals(m_stateExtension.get(serviceReference))){
-            LOG.error(" Modified is called but last and new extended state are equals");
-        }
-        replaceStateExtensionValue(relation.getExtendedState().getName(), relation.getExtendedState().getValue(), m_stateExtension.get(serviceReference));
-        m_stateExtension.put(serviceReference, relation.getExtendedState().getValue());
-
-    }
-
-    @Unbind(id = "context.entity.relation")
-    public synchronized void unbindRelations(Relation relation,ServiceReference serviceReference) {
-        LOG.info("Entity : " + name + " UNBIND relation " + relation.getName() + " remove " + m_stateExtension.get(serviceReference));
-
-        removeStateExtensionValue(relation.getExtendedState().getName(), m_stateExtension.get(serviceReference));
-        m_stateExtension.remove(serviceReference);
-    }
 }

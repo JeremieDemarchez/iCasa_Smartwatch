@@ -23,7 +23,7 @@ import java.util.function.Function;
 @Provides
 @Instantiate
 */
-public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDayService, PeriodicRunnable{
+public class MomentContextEntityImpl implements  MomentOfTheDayService, PeriodicRunnable{
 
     private static final Logger LOG = LoggerFactory.getLogger(MomentContextEntityImpl.class);
 
@@ -51,7 +51,7 @@ public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDaySer
         MomentOfTheDay temp = currentMomentOfTheDay;
         currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
         if (currentMomentOfTheDay != temp ){
-            pushState(MOMENT_OF_THE_DAY,currentMomentOfTheDay);
+  //          pushState(MOMENT_OF_THE_DAY,currentMomentOfTheDay);
         }
     }
 
@@ -84,57 +84,9 @@ public class MomentContextEntityImpl implements ContextEntity, MomentOfTheDaySer
         MomentOfTheDay temp = currentMomentOfTheDay;
         currentMomentOfTheDay = temp.getCorrespondingMoment(hour);
         if (currentMomentOfTheDay != temp ){
-            pushState(MOMENT_OF_THE_DAY,currentMomentOfTheDay);
+      //      pushState(MOMENT_OF_THE_DAY,currentMomentOfTheDay);
         }
     }
 
 
-
-
-
-
-
-
-
-
-
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
-    private final Map<String,Object> injectedExtensionState =new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return injectedState.get(property);
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-        //DO NOTHING
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        return Collections.unmodifiableMap(injectedState);
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return injectedExtensionState.get(property);
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return Collections.unmodifiableMap(injectedExtensionState);
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
 }

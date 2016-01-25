@@ -84,27 +84,8 @@ public class ContextController extends DefaultController {
         for (ContextEntity entity : entities){
             String entityId = entity.getId();
             if (entityId.equals(id)){
-                for (String key : entity.getState().keySet()){
-                    result.put(key,entity.getState().get(key).toString());
-                }
-                for (String key : entity.getStateExtensionAsMap().keySet()){
-                    result.put(key,entity.getStateExtensionAsMap().get(key).toString());
-                }
-                return ok(result);
-            }
-        }
-        return notFound();
-    }
-
-    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/extensions")
-    public Result getEntityState(@Parameter("id") String id){
-        System.out.println(" GET " + id);
-        ObjectNode result = json.newObject();
-        for (ContextEntity entity : entities){
-            String entityId = entity.getId();
-            if (entityId.equals(id)){
-                for (String key : entity.getStateExtensionAsMap().keySet()){
-                    result.put(key,entity.getStateExtensionAsMap().get(key).toString());
+                for (String key : entity.getStates()){
+                    result.put(key,entity.getStateValue(key).toString());
                 }
                 return ok(result);
             }
@@ -119,8 +100,8 @@ public class ContextController extends DefaultController {
         for (ContextEntity entity : entities){
             String entityId = entity.getId();
             if (entityId.equals(id)){
-                for (String key : entity.getState().keySet()){
-                    result.put(key,entity.getState().get(key).toString());
+                for (String key : entity.getStates()){
+                    result.put(key,entity.getStateValue(key).toString());
                 }
                 return ok(result);
             }

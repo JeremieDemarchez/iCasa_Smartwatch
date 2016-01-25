@@ -21,7 +21,7 @@ import java.util.function.Function;
 //@Entity(spec = ContextEntity.class )
 @Component(immediate = true)
 @Provides
-public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
+public class BinaryContextEntityImpl implements  DeviceListener{
 
     public static final String DEVICE_TYPE = "device.type";
 
@@ -76,7 +76,7 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
     @Override
     public void deviceAdded(GenericDevice device) {
-        LOG.info("Device : "+device.getSerialNumber()+ " add listener to context entity : "+  this.getId());
+        LOG.info("Device : "+device.getSerialNumber()+ " add listener to context entity : "/*+  this.getId()*/);
     }
 
     @Override
@@ -87,7 +87,7 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
     @Override
     public void devicePropertyModified(GenericDevice device, String propertyName, Object oldValue, Object newValue) {
         LOG.info("Device : " + device.getSerialNumber() + " Property modified : " + propertyName + " old " + oldValue + " new " + newValue);
-        pushState(propertyName, newValue);
+ //       pushState(propertyName, newValue);
     }
 
     @Override
@@ -115,42 +115,4 @@ public class BinaryContextEntityImpl implements ContextEntity, DeviceListener{
 
     }
 
-    private final Map<String,Object> injectedState = new HashMap<>();
-
-    private final Map<String,Object> injectedExtensionState =new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return injectedState.get(property);
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-        //DO NOTHING
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        return Collections.unmodifiableMap(injectedState);
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return injectedExtensionState.get(property);
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return injectedExtensionState;
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
 }

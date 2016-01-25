@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Entity(spec = ContextEntityDescription.class)
-public class ContextEntityImpl implements ContextEntity,ContextEntityDescription{
+public class ContextEntityImpl implements ContextEntityDescription{
 
     @StateField(name = "hello")
     public String hello;
@@ -27,41 +27,6 @@ public class ContextEntityImpl implements ContextEntity,ContextEntityDescription
 
     @Set(state = "ID")
     public Function idsynchroSet;
-
-    @Override
-    public String getId() {
-        return null;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return null;
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-
-    }
-
-    @Override
-    public Map<String, Object> getState() {
-        return null;
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return null;
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return null;
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
 
     @Override
     public String hello() {

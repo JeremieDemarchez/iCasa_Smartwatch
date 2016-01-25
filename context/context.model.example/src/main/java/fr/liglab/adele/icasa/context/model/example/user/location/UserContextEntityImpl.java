@@ -17,7 +17,7 @@ import java.util.function.Function;
 @Provides(specifications = {ContextEntity.class})
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @State(states = {UserContextEntityImpl.USER_ID_PROP})**/
-public class UserContextEntityImpl implements ContextEntity{
+public class UserContextEntityImpl {
 
     public static final String USER_ID_PROP = "user.id";
 
@@ -40,54 +40,6 @@ public class UserContextEntityImpl implements ContextEntity{
 
     @Invalidate
     public void stop(){
-
-    }
-
-
-
-
-
-
-
-
-
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
-    private final Map<String,Object> injectedExtensionState =new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return injectedState.get(property);
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-        //DO NOTHING
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        return Collections.unmodifiableMap(injectedState);
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return injectedExtensionState.get(property);
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return injectedExtensionState;
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
 
     }
 }

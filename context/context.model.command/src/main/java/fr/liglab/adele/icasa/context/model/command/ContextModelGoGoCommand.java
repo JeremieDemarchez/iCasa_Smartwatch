@@ -80,16 +80,12 @@ public class ContextModelGoGoCommand  {
     @Command
     public void entity(String name){
         String out = new String();
-        for (ContextEntity entity : entities){
+      for (ContextEntity entity : entities){
             if (entity.getId().equals(name)){
                 out = out + "Entity : " + name + "\n";
                 out = out +"State : " + "\n";
-                for (String key : entity.getState().keySet()){
-                    out = out +" Property : " + key + " with value : " + entity.getState().get(key)+ "\n";
-                }
-                out = out +"Extension : " + "\n";
-                for (String key : entity.getStateExtensionAsMap().keySet()){
-                    out = out +" Property : " + key + " with value : " + entity.getStateExtensionAsMap().get(key)+ "\n";
+                for (String key : entity.getStates()){
+                    out = out +" Property : " + key + " with value : " + entity.getStateValue(key)+ "\n";
                 }
                 LOG.info(out);
             }

@@ -21,7 +21,7 @@ import java.util.function.Function;
 @Provides
 @fr.liglab.adele.icasa.context.handler.relation.ContextEntity
 @State(states = {UserLocationImpl.PARAMETER_NAME, UserLocationImpl.AGGREGATION_VALUE})**/
-public class UserLocationImpl implements Aggregation {
+public class UserLocationImpl {
 
     public final static String PARAMETER_NAME = "user.location";
 
@@ -89,13 +89,13 @@ public class UserLocationImpl implements Aggregation {
 
     @Bind(id = "aggregation.sources", aggregate = true)
     public void bindPA (Aggregation aggregation) {
-        m_relationCreator.createRelation(relation_computeWith, aggregation.getId(), this.getId());
-        pushState(AGGREGATION_VALUE,getResult());
+        //   m_relationCreator.createRelation(relation_computeWith, aggregation.getId(), this.getId());
+        //    pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Modified(id = "aggregation.sources")
     public void modifiedPA (Aggregation aggregation) {
-        pushState(AGGREGATION_VALUE,getResult());
+        //     pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Unbind(id = "aggregation.sources")
@@ -104,12 +104,12 @@ public class UserLocationImpl implements Aggregation {
 //        if (uuid != null) {
 //            m_relationCreator.deleteRelation(uuid);
 //        }
-        pushState(AGGREGATION_VALUE,getResult());
+        //        pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Bind(id = "user.source", aggregate = false)
     public void bindUserContextEntity (ContextEntity contextEntity) {
-        pushState(AGGREGATION_VALUE,getResult());
+        // pushState(AGGREGATION_VALUE,getResult());
     }
 
     @Unbind(id = "user.source")
@@ -119,15 +119,15 @@ public class UserLocationImpl implements Aggregation {
 //        for(UUID uuid: uuid_list){
 //            m_relationCreator.deleteRelation(uuid);
 //        }
-        pushState(AGGREGATION_VALUE,getResult());
+        //      pushState(AGGREGATION_VALUE,getResult());
     }
 
-    @Override
+    //   @Override
     public String getFilter() {
         return filter;
     }
 
-    @Override
+    //  @Override
     public synchronized Object getResult() {
         return m_aggregationFunction.getResult(sources);
     }
@@ -148,7 +148,7 @@ public class UserLocationImpl implements Aggregation {
                 for (Object s: sources){
                     Aggregation aggregation = (Aggregation) s;
                     test = (Boolean)aggregation.getResult();
-                    zone = (String)aggregation.getStateExtensionValue("zone.impacted");
+                    //            zone = (String)aggregation.getStateExtensionValue("zone.impacted");
                     if ((zone!= null)&&(test!=null)){
                         if (test.equals(true)) {
                             locations.add(zone);
@@ -174,43 +174,4 @@ public class UserLocationImpl implements Aggregation {
 
 
 
-
-    private final Map<String,Object> injectedState = new HashMap<>();
-
-    private final Map<String,Object> injectedExtensionState =new HashMap<>();
-
-    @Override
-    public String getId() {
-        return name;
-    }
-
-    @Override
-    public Object getStateValue(String property) {
-        return injectedState.get(property);
-    }
-
-    @Override
-    public void setState(String state, Object value) {
-        //DO NOTHING
-    }
-
-    @Override
-    public Map<String,Object> getState() {
-        return Collections.unmodifiableMap(injectedState);
-    }
-
-    @Override
-    public Object getStateExtensionValue(String property) {
-        return injectedExtensionState.get(property);
-    }
-
-    @Override
-    public Map<String, Object> getStateExtensionAsMap() {
-        return Collections.unmodifiableMap(injectedExtensionState);
-    }
-
-    @Override
-    public void pushState(String state, Object value) {
-
-    }
 }

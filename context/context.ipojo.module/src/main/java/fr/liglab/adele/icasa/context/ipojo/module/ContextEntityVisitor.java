@@ -61,11 +61,6 @@ public class ContextEntityVisitor extends AnnotationVisitor {
 
         String classname = m_workbench.getType().getClassName();
 
-        // Detect if Context Entity is Implemented
-        if (!m_workbench.getClassNode().interfaces.contains(Type.getInternalName(ContextEntity.class))){
-            m_reporter.error("Cannot ensure that the class " + m_workbench.getType().getClassName() + " implements the " +
-                    ContextEntity.class.getName() + " interface.");
-        }
         for (String spec : m_internalTypeNames){
             if (!m_workbench.getClassNode().interfaces.contains((spec))){
                 m_reporter.error("Cannot ensure that the class " + m_workbench.getType().getClassName() + " is the implementation of the  " +

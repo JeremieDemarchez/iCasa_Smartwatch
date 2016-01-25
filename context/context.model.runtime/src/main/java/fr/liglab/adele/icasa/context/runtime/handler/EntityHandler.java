@@ -5,27 +5,26 @@ import fr.liglab.adele.icasa.context.ipojo.module.ContextEntityVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.PullFieldVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.SetFieldVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.StateVariableFieldVisitor;
+import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
+import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.parser.FieldMetadata;
-import org.apache.felix.ipojo.parser.MethodMetadata;
-import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Member;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 
 @Handler(name ="entity" ,namespace = "fr.liglab.adele.icasa.context.runtime.handler.EntityHandler")
-public class EntityHandler extends PrimitiveHandler  {
+@Provides(specifications = ContextEntity.class)
+public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     /**
      * Component Management
@@ -55,13 +54,8 @@ public class EntityHandler extends PrimitiveHandler  {
     private final Object m_stateLock = new Object();
 
     /**
-     * Method Interceptor
+     * State Field Interceptor
      */
-    private final SetStateMethodInterceptor m_setStateMethodInterceptor = new SetStateMethodInterceptor();
-
-    private final GetStateMethodInterceptor m_getStateMethodInterceptor = new GetStateMethodInterceptor();
-
-    private final PushStateMethodInterceptor m_pushStateMethodInterceptor = new PushStateMethodInterceptor();
 
     private final StateFieldInterceptor m_stateFieldInterceptor = new StateFieldInterceptor();
 
@@ -89,6 +83,13 @@ public class EntityHandler extends PrimitiveHandler  {
 
         m_instanceManager = getInstanceManager();
         m_componentName = m_instanceManager.getInstanceName();
+
+        /**
+         * Check if dictionnary contains context entity id
+         */
+        if (dictionary.get("context.entity.id") == null){
+            throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
+        }
         /**
          * Introspect Interface Implemented by the component POJO and construct the
          * state specification of the entitytype ( basically a set of state variable)
@@ -151,32 +152,6 @@ public class EntityHandler extends PrimitiveHandler  {
         } else {
             throw new ConfigurationException("Entity Handler cannot be attached to a component with no " + ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT + " element");
         }
-
-        /**
-         * Add method interceptor on method provided by Context Entity Interface
-         */
-        PojoMetadata pojoMetadata = getPojoMetadata();
-        MethodMetadata[] methodMetadatas = pojoMetadata.getMethods();
-        for (MethodMetadata method : methodMetadatas){
-            if (method.getMethodName().equals("setState")){
-                m_instanceManager.register(method, m_setStateMethodInterceptor);
-            }
-
-            if (method.getMethodName().equals("pushState")){
-                m_instanceManager.register(method, m_pushStateMethodInterceptor);
-            }
-
-            if (method.getMethodName().equals("getStateValue")){
-                m_instanceManager.register(method,m_getStateMethodInterceptor);
-            }
-        }
-
-        /**
-         * Intercept injected state
-         */
-        FieldMetadata injectedState = pojoMetadata.getField("injectedState");
-        m_instanceManager.register(injectedState,this);
-
     }
 
     public void onCreation(Object instance) {
@@ -297,8 +272,26 @@ public class EntityHandler extends PrimitiveHandler  {
         }
     }
 
-    public Object onGet(Object pojo, String fieldName, Object value){
-        return new HashMap<>(m_stateValue);
+    @Override
+    public String getId() {
+        synchronized (m_stateLock){
+            return (String) m_stateValue.get("context.entity.id");
+        }
+    }
+
+    @Override
+    public Object getStateValue(String property) {
+        if (property != null){
+            synchronized (m_stateLock){
+                return m_stateValue.get(property);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<String> getStates() {
+        return new HashSet<>(m_stateSpecifications);
     }
 
     private class StateFieldInterceptor implements FieldInterceptor {
@@ -325,97 +318,14 @@ public class EntityHandler extends PrimitiveHandler  {
 
                 /** Check if have a bufferised value in cas of null**/
                 if (returnObj == null){
-                    if (m_stateValue.containsKey(fieldName)){
-                        returnObj = m_stateValue.get(fieldName);
+                    synchronized (m_stateLock) {
+                        if (m_stateValue.containsKey(fieldName)) {
+                            returnObj = m_stateValue.get(fieldName);
+                        }
                     }
                 }
             }
             return returnObj;
-        }
-    }
-
-    private class SetStateMethodInterceptor implements MethodInterceptor {
-
-        @Override
-        public void onEntry(Object pojo, Member method, Object[] args) {
-            String stateId = (String)args[0];
-            Object value = args[1];
-
-            if(m_setFunction.containsKey(stateId)){
-                Function setFunction = m_setFunction.get(stateId);
-                setFunction.apply(value);
-            }
-        }
-
-        @Override
-        public void onExit(Object pojo, Member method, Object returnedObj) {
-
-        }
-
-        @Override
-        public void onError(Object pojo, Member method, Throwable throwable) {
-
-        }
-
-        @Override
-        public void onFinally(Object pojo, Member method) {
-
-        }
-    }
-
-    private class GetStateMethodInterceptor implements MethodInterceptor{
-
-        @Override
-        public void onEntry(Object pojo, Member method, Object[] args) {
-            String stateId = (String)args[0];
-
-            if (m_stateSpecifications.contains(stateId)){
-                if (m_pullFunction.containsKey(stateId)){
-                    Function getFunction = m_pullFunction.get(stateId);
-                    Object returnObj = getFunction.apply(stateId);
-                    update(stateId,returnObj);
-                }
-            }
-        }
-
-        @Override
-        public void onExit(Object pojo, Member method, Object returnedObj) {
-
-        }
-
-        @Override
-        public void onError(Object pojo, Member method, Throwable throwable) {
-
-        }
-
-        @Override
-        public void onFinally(Object pojo, Member method) {
-
-        }
-    }
-
-    private class PushStateMethodInterceptor implements MethodInterceptor{
-
-        @Override
-        public void onEntry(Object pojo, Member method, Object[] args) {
-            String stateId = (String)args[0];
-            Object value = args[1];
-            update(stateId,value);
-        }
-
-        @Override
-        public void onExit(Object pojo, Member method, Object returnedObj) {
-
-        }
-
-        @Override
-        public void onError(Object pojo, Member method, Throwable throwable) {
-
-        }
-
-        @Override
-        public void onFinally(Object pojo, Member method) {
-
         }
     }
 
