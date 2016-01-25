@@ -63,6 +63,8 @@ public class EntityHandler extends PrimitiveHandler  {
 
     private final PushStateMethodInterceptor m_pushStateMethodInterceptor = new PushStateMethodInterceptor();
 
+    private final StateFieldInterceptor m_stateFieldInterceptor = new StateFieldInterceptor();
+
     /**
      * Wisdom Scheduler dependency
      */
@@ -128,6 +130,11 @@ public class EntityHandler extends PrimitiveHandler  {
                                     if (stateField != null){
                                         m_setFunctionField.put(state,stateField);
                                     }
+
+                                    /**
+                                     * Add a field interceptor
+                                     */
+                                    m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getName()),m_stateFieldInterceptor);
                                 }
                             }else {
                                 throw new ConfigurationException("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");
@@ -292,6 +299,39 @@ public class EntityHandler extends PrimitiveHandler  {
 
     public Object onGet(Object pojo, String fieldName, Object value){
         return new HashMap<>(m_stateValue);
+    }
+
+    private class StateFieldInterceptor implements FieldInterceptor {
+
+        @Override
+        public void onSet(Object pojo, String fieldName, Object value) {
+
+            if(m_setFunction.containsKey(fieldName)){
+                Function setFunction = m_setFunction.get(fieldName);
+                setFunction.apply(value);
+            }
+
+        }
+
+        @Override
+        public Object onGet(Object pojo, String fieldName, Object value) {
+            Object returnObj = null;
+            if (m_stateSpecifications.contains(fieldName)){
+                if (m_pullFunction.containsKey(fieldName)){
+                    Function getFunction = m_pullFunction.get(fieldName);
+                    returnObj = getFunction.apply(fieldName);
+                    update(fieldName,returnObj);
+                }
+
+                /** Check if have a bufferised value in cas of null**/
+                if (returnObj == null){
+                    if (m_stateValue.containsKey(fieldName)){
+                        returnObj = m_stateValue.get(fieldName);
+                    }
+                }
+            }
+            return returnObj;
+        }
     }
 
     private class SetStateMethodInterceptor implements MethodInterceptor {
