@@ -14,25 +14,16 @@ public class ContextEntityImpl implements ContextEntityDescription{
     @StateField(name = "hello")
     public String hello;
 
-    @StateField(name = "ID")
-    public String id;
-
     @StateField(name = "serial.number")
-    public String serialNumber;
-
-    @Pull(state = "ID",period = 1,unit = TimeUnit.HOURS)
-    public Function idsynchro;
-
-    @Apply(state = "ID")
-    public Function idsynchroSet;
+    public String serial;
 
     @Override
     public String hello() {
-        return null;
+        return hello;
     }
 
     @Override
     public String getSerialNumber() {
-        return null;
+        return hello;
     }
 }

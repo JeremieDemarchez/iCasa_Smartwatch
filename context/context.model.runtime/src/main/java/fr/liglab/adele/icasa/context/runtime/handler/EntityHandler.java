@@ -1,9 +1,9 @@
 package fr.liglab.adele.icasa.context.runtime.handler;
 
 import fr.liglab.adele.icasa.context.annotation.EntityType;
+import fr.liglab.adele.icasa.context.ipojo.module.ApplyFieldVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.ContextEntityVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.PullFieldVisitor;
-import fr.liglab.adele.icasa.context.ipojo.module.ApplyFieldVisitor;
 import fr.liglab.adele.icasa.context.ipojo.module.StateVariableFieldVisitor;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.*;
@@ -14,6 +14,7 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
@@ -62,7 +63,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     /**
      * Wisdom Scheduler dependency
      */
-    @Requires(specification = ManagedScheduledExecutorService.class,id="scheduler")
+    @Requires(specification = ManagedScheduledExecutorService.class,id="scheduler",proxy = false)
     public ManagedScheduledExecutorService scheduler;
 
     private void extractStateFromInterface(Class interfaz){
@@ -87,8 +88,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         /**
          * Check if dictionnary contains context entity id
          */
-        if (dictionary.get("context.entity.id") == null){
+        if (dictionary.get(CONTEXT_ENTITY_ID) == null){
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
+        }else {
+            m_stateValue.put(CONTEXT_ENTITY_ID,dictionary.get(CONTEXT_ENTITY_ID));
         }
         /**
          * Introspect Interface Implemented by the component POJO and construct the
@@ -102,7 +105,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
 
         /**
-         * Parse the manifest and compare if all the state variabledeclared in the specification is
+         * Parse the manifest and compare if all the state variable declared in the specification is
          * referenced in the implementation.
          * Construct also the different map of function
          */
@@ -135,7 +138,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                     /**
                                      * Add a field interceptor
                                      */
-                                    m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getName()),m_stateFieldInterceptor);
+                                    m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldInterceptor);
                                 }
                             }else {
                                 throw new ConfigurationException("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");
@@ -151,6 +154,21 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             }
         } else {
             throw new ConfigurationException("Entity Handler cannot be attached to a component with no " + ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT + " element");
+        }
+
+        /**
+         * Initialisation value are put in the buffer by default. Can change in future.
+         */
+        if (dictionary.get("context.entity.init") != null){
+            Map<String,Object> initialStateValue = (Map<String, Object>) dictionary.get("context.entity.init");
+            for (String key : initialStateValue.keySet()){
+                if (m_stateSpecifications.contains(key)){
+                    m_stateValue.put(key,initialStateValue.get(key));
+                }else{
+                    warn(" State " + key +" is not defined in " + m_componentName + " , so it cannot be used to configured initial value");
+                }
+
+            }
         }
     }
 
@@ -275,7 +293,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     @Override
     public String getId() {
         synchronized (m_stateLock){
-            return (String) m_stateValue.get("context.entity.id");
+            return (String) m_stateValue.get(CONTEXT_ENTITY_ID);
         }
     }
 

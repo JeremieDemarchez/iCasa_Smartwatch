@@ -10,6 +10,8 @@ import java.util.Set;
  */
 public interface ContextEntity {
 
+    public static final String CONTEXT_ENTITY_ID = "context.entity.id";
+
     public String getId();
 
     public Object getStateValue (String property);

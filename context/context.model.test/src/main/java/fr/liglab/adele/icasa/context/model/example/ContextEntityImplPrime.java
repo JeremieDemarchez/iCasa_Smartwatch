@@ -9,9 +9,6 @@ import java.util.Map;
 @Entity(spec = ContextEntityDescription.class)
 public class ContextEntityImplPrime implements ContextEntityDescription{
 
-    @StateField(name = "hello")
-    public String hello;
-
     @Override
     public String hello() {
         return null;

@@ -2,6 +2,7 @@ package fr.liglab.adele.icasa.context.handler.creator.entity;
 
 import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
 import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
+import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
@@ -316,7 +317,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
             m_handlerManager.reconfigure(properties);
 
             properties = new Hashtable();
-            properties.put("context.entity.id", id);
+            properties.put(ContextEntity.CONTEXT_ENTITY_ID, id);
             properties.put("instance.name", m_entityPackage + id);
             if (initialization != null){
                 properties.put("context.entity.init", initialization);
