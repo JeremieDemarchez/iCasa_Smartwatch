@@ -18,6 +18,8 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
 
     public static final String STATE_VARIABLE_ATTRIBUTE_FIELD = "field";
 
+    public static final String STATE_VARIABLE_ATTRIBUTE_VALUE = "value";
+
     private final Reporter m_reporter;
 
     /**
@@ -37,6 +39,11 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
     private String m_name;
 
     /**
+     * Property name.
+     */
+    private String m_defaultValue;
+
+    /**
      * Constructor.
      * @param parent : element element.
      * @param field : field name.
@@ -49,8 +56,12 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
     }
 
     public void visit(String name, Object value) {
-        if (name.equals("name")) {
+        if (name.equals(STATE_VARIABLE_ATTRIBUTE_NAME)) {
             m_name = value.toString();
+            return;
+        }
+        if (name.equals(STATE_VARIABLE_ATTRIBUTE_VALUE)) {
+            m_defaultValue = value.toString();
             return;
         }
     }
@@ -77,6 +88,9 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
         }
 
         stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_FIELD, m_field));
+        if (m_defaultValue != null && m_defaultValue.equals("")){
 
+            stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_VALUE, m_name));
+        }
     }
 }

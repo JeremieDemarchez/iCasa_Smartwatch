@@ -139,6 +139,18 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                      * Add a field interceptor
                                      */
                                     m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldInterceptor);
+
+                                    /**
+                                     * Default Value Affectation
+                                     */
+                                    String defaultValue = stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_VALUE);
+
+                                    if (defaultValue != null){
+                                        /**
+                                         * Init always with a string, TODO must introspect type and try to create the appropriate Value
+                                         */
+                                        m_stateValue.put(state,defaultValue);
+                                    }
                                 }
                             }else {
                                 throw new ConfigurationException("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");

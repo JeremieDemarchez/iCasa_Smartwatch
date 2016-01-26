@@ -10,4 +10,6 @@ import java.lang.annotation.Target;
 public @interface StateField {
 
     String name();
+
+    String value() default "";
 }
