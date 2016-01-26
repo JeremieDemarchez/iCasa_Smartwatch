@@ -10,11 +10,11 @@ import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.ServiceController;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
-import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
@@ -26,6 +26,9 @@ import java.util.function.Function;
 @Handler(name ="entity" ,namespace = "fr.liglab.adele.icasa.context.runtime.handler.EntityHandler")
 @Provides(specifications = ContextEntity.class)
 public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
+
+    @ServiceController(value=false, specification=ContextEntity.class)
+    private boolean controller;
 
     /**
      * Component Management
@@ -175,6 +178,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             Map<String,Object> initialStateValue = (Map<String, Object>) dictionary.get("context.entity.init");
             for (String key : initialStateValue.keySet()){
                 if (m_stateSpecifications.contains(key)){
+                    /**
+                     * Maybe need to check if type is equal
+                     */
                     m_stateValue.put(key,initialStateValue.get(key));
                 }else{
                     warn(" State " + key +" is not defined in " + m_componentName + " , so it cannot be used to configured initial value");
@@ -212,12 +218,18 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     }
 
     @Override
-    public void stateChanged(int state) {
+    public synchronized void stateChanged(int state) {
 
         /**
          * When component become Valid , Entity handler calls all the available pull function
          */
         if (state == InstanceManager.VALID) {
+
+            /**
+             * Managed Context Entity Service Exposition
+             */
+            controller = true;
+
             for (String stateId : m_stateSpecifications){
                 if (m_pullFunction.containsKey(stateId)) {
                     ScheduledFunction getFunction = m_pullFunction.get(stateId);
@@ -252,6 +264,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
 
         if (state == InstanceManager.INVALID) {
+
+            /**
+             * Managed Context Entity Service Exposition
+             */
+            controller = false;
+
             for (String stateId : m_stateSpecifications){
                 if (m_pullFunction.containsKey(stateId)) {
                     ScheduledFunction getFunction = m_pullFunction.get(stateId);
