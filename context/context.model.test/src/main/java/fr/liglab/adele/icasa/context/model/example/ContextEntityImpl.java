@@ -1,12 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.annotation.Pull;
-import fr.liglab.adele.icasa.context.annotation.Apply;
+import fr.liglab.adele.icasa.context.annotation.Push;
 import fr.liglab.adele.icasa.context.annotation.StateField;
-
-import java.util.concurrent.TimeUnit;
-import java.util.function.Function;
 
 @Entity(spec = ContextEntityDescription.class)
 public class ContextEntityImpl implements ContextEntityDescription{
@@ -25,5 +21,10 @@ public class ContextEntityImpl implements ContextEntityDescription{
     @Override
     public String getSerialNumber() {
         return hello;
+    }
+
+    @Push(state = "hello")
+    public void pushHello(String sentence){
+
     }
 }

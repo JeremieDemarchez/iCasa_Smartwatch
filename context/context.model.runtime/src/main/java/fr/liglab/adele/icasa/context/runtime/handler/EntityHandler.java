@@ -15,10 +15,12 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
 import java.lang.annotation.Annotation;
+import java.lang.reflect.Member;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -52,6 +54,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     private final Map<String,ScheduledFunction> m_pullFunction = new HashMap<>();
 
     private final Map<String,ScheduledFunctionConfiguration> m_pullFunctionField = new HashMap<>();
+
+    private final Map<String,String> m_pushMethod = new HashMap<>();
 
     private final Map<String,Object> m_stateValue = new HashMap<>();
 
@@ -133,9 +137,16 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                         m_pullFunctionField.put(state,new ScheduledFunctionConfiguration(pullField,-1L,TimeUnit.SECONDS));
                                     }
 
-                                    String stateField = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
-                                    if (stateField != null){
-                                        m_setFunctionField.put(state,stateField);
+                                    String setField = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
+                                    if (setField != null){
+                                        m_setFunctionField.put(state,setField);
+                                    }
+
+                                    String pushMethod = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
+                                    if (pushMethod != null){
+                                        m_setFunctionField.put(state, pushMethod);
+                                        MethodMetadata methodMetadata = getPojoMetadata().getMethod(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
+                                        m_instanceManager.register(methodMetadata,new PushMethodInterceptor(state));
                                     }
 
                                     /**
@@ -230,6 +241,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
              */
             controller = true;
 
+            /**
+             * Initialise with State Default Value
+             */
+            addStateServiceProperties(new Hashtable<>(m_stateValue));
+
+
             for (String stateId : m_stateSpecifications){
                 if (m_pullFunction.containsKey(stateId)) {
                     ScheduledFunction getFunction = m_pullFunction.get(stateId);
@@ -282,6 +299,16 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
     }
 
+    /**
+     * Management of Property exposed by the service
+     *
+     */
+
+    private void addStateServiceProperties(Dictionary<String,Object> properties){
+        if (m_providedServiceHandler != null){
+            m_providedServiceHandler.addProperties(properties);
+        }
+    }
     private void addStateServiceProperty(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
@@ -320,28 +347,45 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
     }
 
-    @Override
-    public String getId() {
-        synchronized (m_stateLock){
-            return (String) m_stateValue.get(CONTEXT_ENTITY_ID);
-        }
-    }
+    /**
+     * Push Method Interceptor
+     */
+    private class PushMethodInterceptor implements MethodInterceptor {
 
-    @Override
-    public Object getStateValue(String property) {
-        if (property != null){
-            synchronized (m_stateLock){
-                return m_stateValue.get(property);
+        private final String m_name;
+
+        PushMethodInterceptor(String name){
+            m_name = name;
+        }
+
+        @Override
+        public void onEntry(Object pojo, Member method, Object[] args) {
+
+        }
+
+        @Override
+        public void onExit(Object pojo, Member method, Object returnedObj) {
+            if (returnedObj != null){
+                synchronized (m_stateLock) {
+                    update(m_name,returnedObj);
+                }
             }
         }
-        return null;
+
+        @Override
+        public void onError(Object pojo, Member method, Throwable throwable) {
+
+        }
+
+        @Override
+        public void onFinally(Object pojo, Member method) {
+
+        }
     }
 
-    @Override
-    public Set<String> getStates() {
-        return new HashSet<>(m_stateSpecifications);
-    }
-
+    /**
+     * State Field Interceptor
+     */
     private class StateFieldInterceptor implements FieldInterceptor {
 
         @Override
@@ -377,6 +421,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
     }
 
+    /**
+     * Utility class to create Scheduled Function
+     */
     private class ScheduledFunctionConfiguration {
         private final String m_field;
 
@@ -402,6 +449,38 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             return m_unit;
         }
     }
+
+    /**
+     *
+     * Context Entity Implementation
+     *
+     */
+    @Override
+    public String getId() {
+        synchronized (m_stateLock){
+            return (String) m_stateValue.get(CONTEXT_ENTITY_ID);
+        }
+    }
+
+    @Override
+    public Object getStateValue(String property) {
+        if (property != null){
+            synchronized (m_stateLock){
+                return m_stateValue.get(property);
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Set<String> getStates() {
+        return new HashSet<>(m_stateSpecifications);
+    }
+
+
+    /**
+     * HANDLER DESCRIPTION
+     */
 
     private class EntityHandlerDescription extends HandlerDescription {
         public EntityHandlerDescription(PrimitiveHandler h) { super(h); }

@@ -1,14 +1,12 @@
 package fr.liglab.adele.icasa.context.ipojo.module;
 
-import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.annotation.Pull;
-import fr.liglab.adele.icasa.context.annotation.Apply;
-import fr.liglab.adele.icasa.context.annotation.StateField;
+import fr.liglab.adele.icasa.context.annotation.*;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.ComponentWorkbench;
 import org.apache.felix.ipojo.manipulator.spi.AbsBindingModule;
 import org.apache.felix.ipojo.manipulator.spi.AnnotationVisitorFactory;
 import org.apache.felix.ipojo.manipulator.spi.BindingContext;
 import org.objectweb.asm.AnnotationVisitor;
+import org.objectweb.asm.Type;
 
 import java.lang.annotation.ElementType;
 
@@ -26,7 +24,6 @@ public class ContextBindingModule extends AbsBindingModule {
         bind(Entity.class)
                 .to(new AnnotationVisitorFactory() {
                     public synchronized AnnotationVisitor newAnnotationVisitor(BindingContext context) {
-                        context.getReporter().info(" Entity Visitor ! ");
                         return new ContextEntityVisitor(context.getWorkbench(), context.getReporter());
                     }
                 });
@@ -69,10 +66,27 @@ public class ContextBindingModule extends AbsBindingModule {
                         ComponentWorkbench workbench = context.getWorkbench();
 
                         if(!workbench.getIds().containsKey(ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT)) {
-                            context.getReporter().warn("Class " + context.getClassNode().name + " must but annoted with " + Entity.class + " to use Set annotation");
+                            context.getReporter().warn("Class " + context.getClassNode().name + " must but annoted with " + Entity.class + " to use Apply annotation");
                             return null;
                         }else {
                             return new ApplyFieldVisitor(name,workbench, context.getReporter());
+                        }
+                    }
+                });
+        bind(Push.class)
+                .when(on(ElementType.METHOD))
+                .to(new AnnotationVisitorFactory() {
+                    public synchronized AnnotationVisitor newAnnotationVisitor(BindingContext context) {
+                        String name = context.getMethodNode().name;
+                        ComponentWorkbench workbench = context.getWorkbench();
+                        if(!workbench.getIds().containsKey(ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT)) {
+                            context.getReporter().warn("Class " + context.getClassNode().name + " must but annoted with " + Entity.class + " to use push annotation");
+                            return null;
+                        }else if (Type.getReturnType(context.getMethodNode().desc).equals(Type.VOID_TYPE)){
+                            context.getReporter().error("A method annotate with pull must have a return. The value of this return is affected in the state buffer each time the method is called.");
+                            return null;
+                        } else {
+                            return new PushMethodVisitor(name,workbench, context.getReporter());
                         }
                     }
                 });
