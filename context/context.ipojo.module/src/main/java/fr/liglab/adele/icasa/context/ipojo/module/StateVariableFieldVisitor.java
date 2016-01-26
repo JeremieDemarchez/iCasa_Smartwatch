@@ -20,6 +20,8 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
 
     public static final String STATE_VARIABLE_ATTRIBUTE_VALUE = "value";
 
+    public static final String STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS = "directAccess";
+
     private final Reporter m_reporter;
 
     /**
@@ -44,6 +46,11 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
     private String m_defaultValue;
 
     /**
+     * Property name.
+     */
+    private boolean m_directAccess = false;
+
+    /**
      * Constructor.
      * @param parent : element element.
      * @param field : field name.
@@ -62,6 +69,10 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
         }
         if (name.equals(STATE_VARIABLE_ATTRIBUTE_VALUE)) {
             m_defaultValue = value.toString();
+            return;
+        }
+        if (name.equals(STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS)) {
+            m_directAccess = Boolean.valueOf(value.toString());
             return;
         }
     }
@@ -84,13 +95,23 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
             stateVariableElement = new Element(STATE_VARIABLE_ELEMENT, "");
             stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_NAME, m_name));
             m_workbench.getElements().put(stateVariableElement,ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT);
-            m_workbench.getIds().put(m_name,stateVariableElement);
+            m_workbench.getIds().put(m_name, stateVariableElement);
         }
 
         stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_FIELD, m_field));
         if (m_defaultValue != null && m_defaultValue.equals("")){
-
             stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_VALUE, m_name));
+        }
+
+        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS,String.valueOf(m_directAccess)));
+
+        /**
+         * Check if state variable have synchro function and log a warning in this case if direct access is true
+         */
+        if (m_directAccess){
+            if (stateVariableElement.getAttribute(PullFieldVisitor.STATE_VARIABLE_ATTRIBUTE_PULL) != null || stateVariableElement.getAttribute(PushMethodVisitor.STATE_VARIABLE_ATTRIBUTE_PUSH) != null || stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET) != null){
+                m_reporter.warn(" State Element " + m_name + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
+            }
         }
     }
 }

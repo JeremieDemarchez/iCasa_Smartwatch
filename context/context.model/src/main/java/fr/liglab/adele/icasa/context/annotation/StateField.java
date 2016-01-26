@@ -12,4 +12,6 @@ public @interface StateField {
     String name();
 
     String value() default "";
+
+    boolean directAccess() default false;
 }

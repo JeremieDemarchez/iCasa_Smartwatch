@@ -67,5 +67,8 @@ public class ApplyFieldVisitor extends AnnotationVisitor {
 
         stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_SET, m_field));
 
+        if (stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS) != null && Boolean.valueOf(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS))){
+            m_reporter.warn(" State Element " + m_name + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
+        }
     }
 }

@@ -64,8 +64,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     /**
      * State Field Interceptor
      */
+    private final StateFieldWithNoDirectAccessInterceptor m_stateFieldWithNoDirectAccessInterceptor = new StateFieldWithNoDirectAccessInterceptor();
 
-    private final StateFieldInterceptor m_stateFieldInterceptor = new StateFieldInterceptor();
+    private final StateFieldWithDirectAccessInterceptor m_stateFieldWithDirectAccessInterceptor = new StateFieldWithDirectAccessInterceptor();
 
     /**
      * Wisdom Scheduler dependency
@@ -129,30 +130,41 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                 if (stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME).equals(state)) {
                                     findInEntity = true;
 
-                                    String pullField = stateVariableElement.getAttribute(PullFieldVisitor.STATE_VARIABLE_ATTRIBUTE_PULL);
-                                    if (pullField != null){
-                                        /**
-                                         * Defaut Config for the moment
-                                         */
-                                        m_pullFunctionField.put(state,new ScheduledFunctionConfiguration(pullField,-1L,TimeUnit.SECONDS));
-                                    }
-
-                                    String setField = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
-                                    if (setField != null){
-                                        m_setFunctionField.put(state,setField);
-                                    }
-
-                                    String pushMethod = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
-                                    if (pushMethod != null){
-                                        m_setFunctionField.put(state, pushMethod);
-                                        MethodMetadata methodMetadata = getPojoMetadata().getMethod(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
-                                        m_instanceManager.register(methodMetadata,new PushMethodInterceptor(state));
-                                    }
-
                                     /**
-                                     * Add a field interceptor
+                                     * No Direct Access Case : Register synchro Function
                                      */
-                                    m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldInterceptor);
+                                    if (!Boolean.valueOf(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS))) {
+                                        String pullField = stateVariableElement.getAttribute(PullFieldVisitor.STATE_VARIABLE_ATTRIBUTE_PULL);
+                                        if (pullField != null) {
+                                            /**
+                                             * Defaut Config for the moment
+                                             */
+                                            m_pullFunctionField.put(state, new ScheduledFunctionConfiguration(pullField, -1L, TimeUnit.SECONDS));
+                                        }
+
+                                        String setField = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
+                                        if (setField != null) {
+                                            m_setFunctionField.put(state, setField);
+                                        }
+
+                                        String pushMethod = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
+                                        if (pushMethod != null) {
+                                            m_setFunctionField.put(state, pushMethod);
+                                            MethodMetadata methodMetadata = getPojoMetadata().getMethod(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
+                                            m_instanceManager.register(methodMetadata, new PushMethodInterceptor(state));
+                                        }
+
+                                        /**
+                                         * Add a field interceptor for No direct Access State Variable
+                                         */
+                                        m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldWithNoDirectAccessInterceptor);
+                                    } else {
+                                        /**
+                                         * Add a field interceptor for direct Access State Variable
+                                         */
+                                        m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldWithDirectAccessInterceptor);
+
+                                    }
 
                                     /**
                                      * Default Value Affectation
@@ -384,9 +396,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     }
 
     /**
-     * State Field Interceptor
+     * State Field With No Direct Access Interceptor
      */
-    private class StateFieldInterceptor implements FieldInterceptor {
+    private class StateFieldWithNoDirectAccessInterceptor implements FieldInterceptor {
 
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {
@@ -414,6 +426,35 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                         if (m_stateValue.containsKey(fieldName)) {
                             returnObj = m_stateValue.get(fieldName);
                         }
+                    }
+                }
+            }
+            return returnObj;
+        }
+    }
+
+    /**
+     * State Field With Direct Access Interceptor
+     */
+    private class StateFieldWithDirectAccessInterceptor implements FieldInterceptor {
+
+        @Override
+        public void onSet(Object pojo, String fieldName, Object value) {
+            if (m_stateSpecifications.contains(fieldName)) {
+                synchronized (m_stateValue) {
+                    update(fieldName, value);
+                }
+            }
+        }
+
+        @Override
+        public Object onGet(Object pojo, String fieldName, Object value) {
+            Object returnObj = null;
+            if (m_stateSpecifications.contains(fieldName)){
+                /** Check if have a bufferised value in cas of null**/
+                synchronized (m_stateLock) {
+                    if (m_stateValue.containsKey(fieldName)) {
+                        returnObj = m_stateValue.get(fieldName);
                     }
                 }
             }
