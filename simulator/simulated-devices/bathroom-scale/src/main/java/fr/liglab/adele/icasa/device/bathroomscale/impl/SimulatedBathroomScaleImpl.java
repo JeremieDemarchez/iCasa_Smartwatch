@@ -53,12 +53,13 @@ public class SimulatedBathroomScaleImpl extends MedicalDeviceImpl implements Bat
 
 	@Validate
 	protected void start() {
-		manager.addListener(this);
+		//manager.addListener(this);
 	}
 
 	@Invalidate
 	protected void stop() {
-		manager.removeListener(this);
+
+		//manager.removeListener(this);
 	}
 
 	public String getSerialNumber() {

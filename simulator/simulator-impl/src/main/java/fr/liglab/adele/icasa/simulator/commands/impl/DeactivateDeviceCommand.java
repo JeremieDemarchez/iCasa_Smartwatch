@@ -49,7 +49,7 @@ public class DeactivateDeviceCommand extends AbstractCommand {
 	@Override
    public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
-		simulationManager.setDeviceState(deviceId, false);
+//		simulationManager.setDeviceState(deviceId, false);
 		return null;
    }
 

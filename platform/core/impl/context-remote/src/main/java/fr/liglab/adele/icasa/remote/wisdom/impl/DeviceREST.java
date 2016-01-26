@@ -18,19 +18,19 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.wisdom.SimulatedDeviceManager;
 import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.wisdom.api.DefaultController;
-
-import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Path;
 import org.wisdom.api.annotations.Route;
@@ -54,14 +54,8 @@ import java.util.Map;
 @Path("/icasa/devices")
 public class DeviceREST extends DefaultController {
 
-    @Requires
-    private ContextManager _contextMgr;
-    
-    @Requires (optional = true) 
+   /** @Requires (optional = true)
     SimulatedDeviceManager simulator;
-    
-
-
 
     @Route(method = HttpMethod.GET, uri = "/deviceTypes")
     public Result deviceTypes() {
@@ -92,7 +86,7 @@ public class DeviceREST extends DefaultController {
      * return <code>null<code> if the device does not exist.
      * @throws java.text.ParseException
      */
-    @Route(method = HttpMethod.GET, uri = "/device/{deviceId}")
+   /** @Route(method = HttpMethod.GET, uri = "/device/{deviceId}")
     public Result device(@Parameter("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
             return ok(getDevices()).as(MimeTypes.JSON);
@@ -162,7 +156,7 @@ public class DeviceREST extends DefaultController {
      *
      * @return
      */
-    @Route(method = HttpMethod.POST, uri = "/device")
+/**    @Route(method = HttpMethod.POST, uri = "/device")
     public Result createDevice() {
         String content = null;
         try {
@@ -212,7 +206,7 @@ public class DeviceREST extends DefaultController {
      * @param deviceId device id
      * @return true if chain is successful deleted, false if it does not exist.
      */
-    @Route(method = HttpMethod.DELETE, uri = "/device/{deviceId}")
+  /**  @Route(method = HttpMethod.DELETE, uri = "/device/{deviceId}")
     public Result deleteDevice(@Parameter("deviceId") String deviceId) {
 
     	if(simulator == null) {
@@ -236,7 +230,7 @@ public class DeviceREST extends DefaultController {
      *
      * @return a JSON array containing all devices.
      */
-    private String getDeviceTypes() {
+  /**  private String getDeviceTypes() {
         JSONArray currentDevices = new JSONArray();
         for (String deviceTypeStr : _contextMgr.getDeviceTypes()) {
             JSONObject deviceType = IcasaJSONUtil.getDeviceTypeJSON(deviceTypeStr, _contextMgr);
@@ -254,7 +248,7 @@ public class DeviceREST extends DefaultController {
      *
      * @return a JSON array containing all devices.
      */
-    private String getSimulatedDeviceTypes() {
+  /**  private String getSimulatedDeviceTypes() {
         JSONArray currentDevices = new JSONArray();
         for (String deviceTypeStr : simulator.getDeviceTypes()) {
             JSONObject deviceType = IcasaJSONUtil.getDeviceTypeJSON(deviceTypeStr, _contextMgr);
@@ -272,7 +266,7 @@ public class DeviceREST extends DefaultController {
      *
      * @return a JSON array containing all devices.
      */
-    private String getDevices() {
+   /** private String getDevices() {
         //boolean atLeastOne = false;
         JSONArray currentDevices = new JSONArray();
         for (LocatedDevice device : _contextMgr.getDevices()) {
@@ -285,5 +279,5 @@ public class DeviceREST extends DefaultController {
 
         return currentDevices.toString();
     }
-
+**/
 }

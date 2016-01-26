@@ -48,8 +48,8 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 	
 	protected boolean personInZone() {
 		for (Person person : getManager().getPersons()) {
-			if (detectionZone.contains(person))
-				return true;
+	/**		if (detectionZone.contains(person))
+				return true;**/
 		}
 		return false;
 	}
@@ -111,21 +111,21 @@ public abstract class MedicalDeviceImpl extends AbstractDevice implements Locate
 			String zoneId = getSerialNumber() + "#zone";
 			Position center = device.getCenterAbsolutePosition();
 			int detectionScope = (Integer) getPropertyValue(DETECTION_SCOPE);
-			detectionZone = getManager().createZone(zoneId, center, detectionScope);
-			device.attachObject(detectionZone);
+		//	detectionZone = getManager().createZone(zoneId, center, detectionScope);
+		//	device.attachObject(detectionZone);
 		}	   
    }
 	
 	@Override
    public void deviceRemoved(LocatedDevice device) {
-		if (device.getSerialNumber().equals(getSerialNumber())) {
+	/**	if (device.getSerialNumber().equals(getSerialNumber())) {
 			device.detachObject(detectionZone);
             try{
 			    getManager().removeZone(detectionZone.getId());
             }catch(Exception ex){ //the case where manager is not available. (ie when stopping the gateway.)
                 logger.warn("Unable to remove zone: " + detectionZone.getId() , ex);
             }
-		}
+		}**/
 	   
    }
 

@@ -15,24 +15,19 @@
  */
 package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
+import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.access.AccessManager;
+import fr.liglab.adele.icasa.access.AccessRight;
+import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.dependency.interceptors.ServiceTrackingInterceptor;
 import org.apache.felix.ipojo.dependency.interceptors.TransformedServiceReference;
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.access.AccessManager;
-import fr.liglab.adele.icasa.access.AccessRight;
-import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
-import fr.liglab.adele.icasa.device.GenericDevice;
 
 @Component(name = "DeviceAccessTrackingInterceptor")
 @Provides(specifications = { ServiceTrackingInterceptor.class }, properties = { @StaticServiceProperty(name = "target", value = "(objectClass=fr.liglab.adele.icasa.device.GenericDevice)", type = "java.lang.String") })
@@ -124,7 +119,7 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
                 .getprovidedServiceSpecification();
 
         for (String specification : specs) {
-            if (specification.equals(ContextManager.class.getName()))
+            if (specification.equals(LocationManager.class.getName()))
                 return true;
         }
 

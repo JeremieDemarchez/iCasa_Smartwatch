@@ -69,7 +69,7 @@ public class SimulationEventBroadcast  {
 
 		// Register iCasa listeners
 		_iCasaListener = new ICasaSimulatedEventListener();
-		_simulMgr.addListener(_iCasaListener);
+	//	_simulMgr.addListener(_iCasaListener);
 		
 		
 		_scriptListener = new ScriptPlayerEventListener();
@@ -84,7 +84,7 @@ public class SimulationEventBroadcast  {
 		// Unregister iCasa listeners
 
 		if (_iCasaListener != null) {
-			_simulMgr.removeListener(_iCasaListener);
+	//		_simulMgr.removeListener(_iCasaListener);
 			_iCasaListener = null;
 		}
 		

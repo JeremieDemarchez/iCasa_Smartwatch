@@ -65,7 +65,7 @@ public class ShowPersonZonesCommand extends AbstractCommand {
         String personName = param.getString(PARAMS[0]);
         Person person = manager.getPerson(personName);
 
-        if (person != null) {
+  /**      if (person != null) {
             List<Zone> zones = manager.getZones();
 
             out.println("Zones: ");
@@ -74,7 +74,7 @@ public class ShowPersonZonesCommand extends AbstractCommand {
                     out.println("Zone : " + zone);
                 }
             }
-        }
+        }**/
         return null;
     }
 

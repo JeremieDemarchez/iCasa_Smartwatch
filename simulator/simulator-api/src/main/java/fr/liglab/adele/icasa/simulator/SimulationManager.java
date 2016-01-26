@@ -15,20 +15,20 @@
  */
 package fr.liglab.adele.icasa.simulator;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.LocationManager;
 import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * The simulation Mananger deals with operations associated to simulation
  *
  */
-public interface SimulationManager extends ContextManager {
+public interface SimulationManager  {
 
 	/**
 	 * Simulates a fail/reparation in a device.

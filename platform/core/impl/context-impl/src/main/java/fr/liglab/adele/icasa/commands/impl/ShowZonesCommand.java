@@ -15,19 +15,15 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
-import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.commands.Signature;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.List;
 
 /**
  *
@@ -38,10 +34,10 @@ import java.util.List;
 public class ShowZonesCommand extends AbstractCommand {
 
 
-    @Requires
+  /**  @Requires
     private ContextManager manager;
 
-
+**/
     private static final String NAME= "show-zones";
 
     public ShowZonesCommand(){
@@ -62,10 +58,10 @@ public class ShowZonesCommand extends AbstractCommand {
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         out.println("Zones: ");
-        List<Zone> zones = manager.getZones();
+     /**   List<Zone> zones = manager.getZones();
         for (Zone zone : zones) {
             out.println("Zone " + zone.getId() + " : " + zone);
-        }
+        }**/
         return null;
     }
 

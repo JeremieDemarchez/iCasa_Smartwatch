@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.util;
 
-import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.LocationManager;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -31,8 +31,8 @@ public class ZoneJSON {
 	public static final String POSITION_LEFTX_PROP = "leftX";
 	public static final String POSITION_BOTTOMY_PROP = "bottomY";
 	public static final String POSITION_RIGHTX_PROP = "rightX";
-    public static final String POSITION_BOTTOMZ_PROP = "bottomZ";
-    public static final String POSITION_TOPZ_PROP = "topZ";
+	public static final String POSITION_BOTTOMZ_PROP = "bottomZ";
+	public static final String POSITION_TOPZ_PROP = "topZ";
 	public static final String NAME_PROP = "name";
 	public static final String TYPE_PROP = "type";
 	public static final String ZONE_ID_PROP = "zoneId";
@@ -44,8 +44,8 @@ public class ZoneJSON {
 	private Integer topY;
 	private Integer rigthX;
 	private Integer bottomY;
-    private Integer bottomZ;
-    private Integer topZ;
+	private Integer bottomZ;
+	private Integer topZ;
 
 	public static ZoneJSON fromString(String jsonStr) {
 		ZoneJSON zone = null;
@@ -61,29 +61,29 @@ public class ZoneJSON {
 			;
 			if (json.has(NAME_PROP)){
 				zone.setName(json.getString(NAME_PROP));
-            }
+			}
 			if (json.has(POSITION_LEFTX_PROP)){
 				zone.setLeftX(json.getInt(POSITION_LEFTX_PROP));
-            }
+			}
 			if (json.has(POSITION_TOPY_PROP)){
 				zone.setTopY(json.getInt(POSITION_TOPY_PROP));
-            }
+			}
 			if (json.has(POSITION_RIGHTX_PROP)){
 				zone.setRigthX(json.getInt(POSITION_RIGHTX_PROP));
-            }
+			}
 			if (json.has(POSITION_BOTTOMY_PROP)){
 				zone.setBottomY(json.getInt(POSITION_BOTTOMY_PROP));
-            }
-            if (json.has(POSITION_BOTTOMZ_PROP)){
-                zone.setBottomZ(json.getInt(POSITION_BOTTOMZ_PROP));
-            } else {
-                zone.setBottomZ(Zone.DEFAULT_Z_BOTTOM);
-            }
-            if (json.has(POSITION_TOPZ_PROP)){
-                zone.setTopZ(json.getInt(POSITION_TOPZ_PROP));
-            } else {
-                zone.setTopZ(zone.getBottomZ() + Zone.DEFAULT_Z_LENGTH);
-            }
+			}
+			if (json.has(POSITION_BOTTOMZ_PROP)){
+				zone.setBottomZ(json.getInt(POSITION_BOTTOMZ_PROP));
+			} else {
+				zone.setBottomZ(LocationManager.ZONE_DEFAULT_Z);
+			}
+			if (json.has(POSITION_TOPZ_PROP)){
+				zone.setTopZ(json.getInt(POSITION_TOPZ_PROP));
+			} else {
+				zone.setTopZ(zone.getBottomZ() + LocationManager.ZONE_DEFAULT_Z_LENGHT);
+			}
 
 		} catch (JSONException e) {
 			e.printStackTrace();
@@ -168,19 +168,19 @@ public class ZoneJSON {
 		this.bottomY = bottomY;
 	}
 
-    public Integer getBottomZ() {
-        return bottomZ;
-    }
+	public Integer getBottomZ() {
+		return bottomZ;
+	}
 
-    public void setBottomZ(Integer bottomZ) {
-        this.bottomZ = bottomZ;
-    }
+	public void setBottomZ(Integer bottomZ) {
+		this.bottomZ = bottomZ;
+	}
 
-    public Integer getTopZ() {
-        return topZ;
-    }
+	public Integer getTopZ() {
+		return topZ;
+	}
 
-    public void setTopZ(Integer topZ) {
-        this.topZ = topZ;
-    }
+	public void setTopZ(Integer topZ) {
+		this.topZ = topZ;
+	}
 }

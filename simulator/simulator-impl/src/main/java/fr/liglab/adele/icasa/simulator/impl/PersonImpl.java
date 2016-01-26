@@ -69,9 +69,9 @@ public class PersonImpl extends LocatedObjectImpl implements Person {
 
 	@Override
 	public String getLocation() {
-		Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
+		/**Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
 		if (zone != null)
-			return zone.getId();
+			return zone.getId();**/
 		return "unknown";
 	}
 

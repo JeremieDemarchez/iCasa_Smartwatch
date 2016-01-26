@@ -63,42 +63,41 @@ public class SimulatedPhotometerImpl extends AbstractDevice implements Photomete
 
 	@Override
 	public void enterInZones(List<Zone> zones) {
-		if (!zones.isEmpty()) {
+		/**		if (!zones.isEmpty()) {
 			for (Zone zone : zones) {
-				if (zone.getVariableValue("Illuminance") != null) {
+			if (zone.getVariableValue("Illuminance") != null) {
 					m_zone = zone;
 					getIlluminanceFromZone();
 					m_zone.addListener(listener);
 					break;
 				}
 			}
-		}
+		}**/
 	}
 
-	@Override
+				@Override
 	public void leavingZones(List<Zone> zones) {
-		setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, -1.0d);
-		if (m_zone != null)
-			m_zone.removeListener(listener);
+	/**	setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, -1.0d);
+	if (m_zone != null)
+			m_zone.removeListener(listener);**/
 	}
-
-	private void getIlluminanceFromZone() {
-		if (m_zone != null) {
+	private void getIlluminanceFromZone(){
+			/**	if (m_zone != null) {
 			Double currentIlluminance = ((Double) m_zone.getVariableValue("Illuminance"));
 			if (currentIlluminance != null) {
 				setPropertyValue(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE, currentIlluminance);
 			}
-		}
+		}**/
 	}
 
 	class PhotometerZoneListener extends BaseZoneListener {
 
 		@Override
 		public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
-			if (m_zone == zone)
+		/**	if (m_zone == zone)
 				if (!(getFault().equalsIgnoreCase("yes")))
 					if (variableName.equals("Illuminance"))
-						getIlluminanceFromZone();
+						getIlluminanceFromZone();**/
 		}
 	}
 

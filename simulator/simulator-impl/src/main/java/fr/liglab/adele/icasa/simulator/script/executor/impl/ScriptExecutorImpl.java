@@ -18,12 +18,6 @@ package fr.liglab.adele.icasa.simulator.script.executor.impl;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 import fr.liglab.adele.icasa.commands.ICasaCommand;
-import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.PersonType;
-import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
@@ -372,7 +366,7 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
             out.println("\t<!-- Zone Section -->");
             out.println();
 
-            for (Zone zone : simulationManager.getZones()) {
+       /**     for (Zone zone : simulationManager.getZones()) {
                 String id = zone.getId();
                 int leftX = zone.getLeftTopAbsolutePosition().x;
                 int topY = zone.getLeftTopAbsolutePosition().y;
@@ -408,12 +402,12 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
                             + value + "\" />");
                 }
                 out.println();
-            }
+            }**/
 
             out.println("\t<!-- Device Section -->");
             out.println();
 
-            for (LocatedDevice device : simulationManager.getDevices()) {
+      /**      for (LocatedDevice device : simulationManager.getDevices()) {
                 String id = device.getSerialNumber();
                 String type = device.getType();
 
@@ -444,7 +438,7 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
 
                 out.println();
 
-            }
+            }**/
 
             out.println("</behavior>");
 

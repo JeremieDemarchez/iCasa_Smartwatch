@@ -59,8 +59,8 @@ public class SimulatedCarbonMonoxydeSensorImpl extends AbstractDevice implements
 
     @Override
     public void enterInZones(List<Zone> zones) {
-        if (!zones.isEmpty()) {
-            for (Zone zone : zones) {
+        /**      if (!zones.isEmpty()) {
+         for (Zone zone : zones) {
                 if (zone.getVariableValue("COConcentration") != null) {
                     m_zone = zone;
                     getCOConcentrationFromZone();
@@ -68,22 +68,22 @@ public class SimulatedCarbonMonoxydeSensorImpl extends AbstractDevice implements
                     break;
                 }
             }
-        }
+        }**/
     }
 
     @Override
     public void leavingZones(List<Zone> zones) {
         setPropertyValue(CarbonMonoxydeSensor.CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION, 0.0d);
-        if (m_zone != null)
-            m_zone.removeListener(listener);
+     /**   if (m_zone != null)
+            m_zone.removeListener(listener);**/
     }
 
     private void getCOConcentrationFromZone() {
-        if (m_zone != null) {
+     /**   if (m_zone != null) {
             Double currentCOConcentration = ((Double) m_zone.getVariableValue("COConcentration"));
             if (currentCOConcentration != null)
                 setPropertyValue(CarbonMonoxydeSensor.CARBON_MONOXYDE_SENSOR_CURRENT_CONCENTRATION, currentCOConcentration);
-        }
+        }**/
     }
 
     class GasSensorZoneListener extends BaseZoneListener {

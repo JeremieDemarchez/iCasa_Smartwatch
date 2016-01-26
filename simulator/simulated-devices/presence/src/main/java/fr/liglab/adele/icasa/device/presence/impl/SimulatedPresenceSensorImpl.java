@@ -148,19 +148,19 @@ public class SimulatedPresenceSensorImpl extends AbstractDevice implements Prese
 
 	private boolean personInZone() {
 		for (Person person : manager.getPersons()) {
-			if (m_zone.contains(person))
-				return true;
+		/**	if (m_zone.contains(person))
+				return true;**/
 		}
 		return false;
 	}
 
 	@Validate
 	protected void start() {
-		manager.addListener(this);
+	//	manager.addListener(this);
 	}
 
 	@Invalidate
 	protected void stop() {
-		manager.removeListener(this);
+	//	manager.removeListener(this);
 	}
 }

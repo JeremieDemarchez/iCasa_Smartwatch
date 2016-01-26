@@ -104,7 +104,7 @@ public class SimulatedMotionSensorImpl extends AbstractDevice implements MotionS
      */
     private void updateState(Person person, Position oldPosition) {
         if (m_zone != null) {
-            if (m_zone.contains(person)) {
+        /**    if (m_zone.contains(person)) {
                 // when a person arrives or moves into the  zone.
                 this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
             } else if (oldPosition != null) {
@@ -112,18 +112,18 @@ public class SimulatedMotionSensorImpl extends AbstractDevice implements MotionS
                 if (m_zone.contains(oldPosition)) {
                     this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
                 }
-            }
+            }**/
         }
     }
 
 	@Validate
 	protected void start() {
-		manager.addListener(this);
+	//	manager.addListener(this);
 	}
 
 	@Invalidate
 	protected void stop() {
-		manager.removeListener(this);
+	//	manager.removeListener(this);
 	}
 
 

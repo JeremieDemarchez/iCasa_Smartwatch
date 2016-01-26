@@ -47,7 +47,7 @@ public class SimulationREST extends DefaultController {
 
     @Route(method = HttpMethod.DELETE, uri = "/icasa/simulation")
     public Result resetSimulation() {
-        _simulationMgr.resetContext();
+  //      _simulationMgr.resetContext();
         return ok();
     }
 

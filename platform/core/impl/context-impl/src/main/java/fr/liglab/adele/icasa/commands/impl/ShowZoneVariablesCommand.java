@@ -15,20 +15,16 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.commands.Signature;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Set;
 
 /**
  *
@@ -38,9 +34,9 @@ import java.util.Set;
 @Instantiate(name="show-zones-variables-command")
 public class ShowZoneVariablesCommand extends AbstractCommand {
 
-    @Requires
+    /**  @Requires
     private ContextManager manager;
-
+     **/
     private static final String[] PARAMS =  new String[]{ScriptLanguage.ZONE_ID};
 
     private static final String NAME= "show-zone";
@@ -63,16 +59,16 @@ public class ShowZoneVariablesCommand extends AbstractCommand {
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String zoneId = param.getString(PARAMS[0]);
-        Zone zone = manager.getZone(zoneId);
-        if (zone == null){
-            throw new IllegalArgumentException("Zone ("+ zoneId +") does not exist");
-        }
-        out.print(zone);
-        out.println("\nVariables: ");
-        Set<String> variables = manager.getZoneVariables(zoneId);
-        for (String variable : variables) {
-            out.println("Variable: " + variable + " - Value: " + manager.getZoneVariableValue(zoneId, variable));
-        }
+        /**     Zone zone = manager.getZone(zoneId);
+         if (zone == null){
+         throw new IllegalArgumentException("Zone ("+ zoneId +") does not exist");
+         }
+         out.print(zone);
+         out.println("\nVariables: ");
+         Set<String> variables = manager.getZoneVariables(zoneId);
+         for (String variable : variables) {
+         out.println("Variable: " + variable + " - Value: " + manager.getZoneVariableValue(zoneId, variable));
+         }**/
         return null;
     }
 

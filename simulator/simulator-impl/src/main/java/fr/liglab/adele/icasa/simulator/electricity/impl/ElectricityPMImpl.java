@@ -15,15 +15,20 @@
  */
 package fr.liglab.adele.icasa.simulator.electricity.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.PowerObservable;
-import fr.liglab.adele.icasa.location.*;
+import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.location.LocatedDeviceListener;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.ZoneListener;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 /**
  *
@@ -31,7 +36,7 @@ import java.util.*;
 @Component(name = "electricity-model")
 @Instantiate(name = "electricity-model-0")
 @Provides(specifications = PhysicalModel.class)
-public class ElectricityPMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
+public class ElectricityPMImpl /**implements PhysicalModel, ZoneListener, LocatedDeviceListener**/ {
 
 
     public static final String ELECTRICITY_PROP_NAME = "Electricity";
@@ -43,7 +48,7 @@ public class ElectricityPMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     private Map<Zone,Double> mapOfConsumption = new HashMap<Zone,Double>();
 
-    private final Object m_lock ;
+    /**  private final Object m_lock ;
 
     @Requires
     private ContextManager _contextMgr;
@@ -265,6 +270,6 @@ public class ElectricityPMImpl implements PhysicalModel, ZoneListener, LocatedDe
     }
 
 
-
+**/
 }
 

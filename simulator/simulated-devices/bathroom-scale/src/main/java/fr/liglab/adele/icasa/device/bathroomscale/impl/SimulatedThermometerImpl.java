@@ -50,12 +50,12 @@ public class SimulatedThermometerImpl extends MedicalDeviceImpl implements Medic
 
 	@Validate
 	protected void start() {
-		manager.addListener(this);
+		//manager.addListener(this);
 	}
 
 	@Invalidate
 	protected void stop() {
-		manager.removeListener(this);
+		//manager.removeListener(this);
 	}
 
 	public String getSerialNumber() {

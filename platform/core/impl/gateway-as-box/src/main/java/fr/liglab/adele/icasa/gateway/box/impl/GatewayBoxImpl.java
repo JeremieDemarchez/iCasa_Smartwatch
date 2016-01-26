@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.gateway.box.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.box.Box;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
@@ -33,9 +32,6 @@ import java.util.UUID;
 public class GatewayBoxImpl extends AbstractDevice implements Box {
 
     public static final String SERIAL_NUMBER_PREFIX = "gateway-";
-
-    @Requires
-    private ContextManager _contextMgr;
 
     @Requires
     private Preferences _preferences;
@@ -58,12 +54,11 @@ public class GatewayBoxImpl extends AbstractDevice implements Box {
 
     @Validate
     private void start() {
-        Object gatewayId = _preferences.getGlobalPropertyValue(ContextManager.GATEWAY_ID_PROP_NAME);
+        Object gatewayId = _preferences.getGlobalPropertyValue("198.198.112.0");
         if ((gatewayId != null) && (gatewayId instanceof String)) {
-             serialNumber = SERIAL_NUMBER_PREFIX + gatewayId;
+            serialNumber = SERIAL_NUMBER_PREFIX + gatewayId;
         } else {
             String generatedGatewayId = UUID.randomUUID().toString();
-            _preferences.setGlobalPropertyValue(ContextManager.GATEWAY_ID_PROP_NAME, generatedGatewayId);
 
             serialNumber = SERIAL_NUMBER_PREFIX + generatedGatewayId;
         }

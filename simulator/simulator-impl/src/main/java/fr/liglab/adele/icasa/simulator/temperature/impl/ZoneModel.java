@@ -69,7 +69,7 @@ public class ZoneModel {
     }
 
     public String getZoneId() {
-        return _zone.getId();
+        return _zone.getZoneName();
     }
 
     public double getThermalCapacity() {
@@ -77,14 +77,14 @@ public class ZoneModel {
     }
 
     public void updateThermalCapacity() {
-        if (updateThermalCapacity){
+    /**    if (updateThermalCapacity){
             double newVolume = 2.5d; // use this value as default to avoid divide by zero
             Double zoneVolume = (Double) _zone.getVariableValue(VOLUME_PROP_NAME);
             if ((zoneVolume != null) && ((zoneVolume) > 0.0d)){
                 newVolume =  zoneVolume;
             }
             _thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
-        }
+        }**/
     }
 
 
@@ -110,9 +110,9 @@ public class ZoneModel {
 
 
     public boolean isInTheZone(LocatedDevice device) {
-        if ((device != null) && (_zone.contains(device))) {
+   /**     if ((device != null) && (_zone.contains(device))) {
             return true;
-        }
+        }**/
         return false;
     }
 

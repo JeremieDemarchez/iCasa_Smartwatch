@@ -15,19 +15,16 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
+import fr.liglab.adele.icasa.LocationManager;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.remote.wisdom.util.ZoneJSON;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.wisdom.api.Controller;
 import org.wisdom.api.DefaultController;
-import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Path;
 import org.wisdom.api.annotations.Route;
@@ -36,69 +33,69 @@ import org.wisdom.api.http.MimeTypes;
 import org.wisdom.api.http.Result;
 
 import java.io.IOException;
+import java.util.List;
 
 
 /**
  *
  */
+
 @Component
 @Provides
 @Instantiate
 @Path("/icasa/zones")
-public class ZoneREST extends DefaultController {
+public class ZoneREST extends DefaultController implements Controller {
 
 	@Requires
-	private ContextManager _simulationMgr;
+	private LocationManager m_locationManager;
+
+	@Requires(id = "zones", specification = Zone.class,optional = true)
+	List<Zone>  zones;
 
 
-    @Route(method = HttpMethod.GET, uri = "/zones")
-    public Result zones() {
+	@Route(method = HttpMethod.GET, uri = "/zones")
+	public Result zones() {
 		return ok(getZones()).as(MimeTypes.JSON);
 	}
 
-
-
 	/**
 	 * Retrieves a zone.
-	 * 
+	 *
 	 * @param zoneId
 	 *           The ID of the zone to retrieve
 	 * @return The required zone
 	 */
 
-    @Route(method = HttpMethod.GET, uri = "/zone/{zoneId}")
+	@Route(method = HttpMethod.GET, uri = "/zone/{zoneId}")
 	public Result getZone(@Parameter("zoneId") String zoneId) {
 		if (zoneId == null || zoneId.length() < 1) {
 			return ok(getZones()).as(MimeTypes.JSON);
 		}
 
-		Zone zoneFound = _simulationMgr.getZone(zoneId);
-		if (zoneFound == null) {
+		boolean zoneFound = m_locationManager.getZoneIds().contains(zoneId);
+		if (!zoneFound){
 			return notFound();
 		} else {
-			JSONObject zoneJSON = IcasaJSONUtil.getZoneJSON(zoneFound);
-
-			return ok(zoneJSON.toString()).as(MimeTypes.JSON);
+			for (Zone zone:zones){
+				if (zone.getZoneName().equals(zoneId)){
+					JSONObject zoneJSON = IcasaJSONUtil.getZoneJSON(zone);
+					return ok(zoneJSON.toString()).as(MimeTypes.JSON);
+				}
+			}
 		}
+		return internalServerError();
 	}
 
 	/**
 	 * Returns a JSON array containing all zones.
-	 * 
+	 *
 	 * @return a JSON array containing all zones.
 	 */
 	public String getZones() {
 		// boolean atLeastOne = false;
 		JSONArray currentZones = new JSONArray();
-		for (String envId : _simulationMgr.getZoneIds()) {
-			Zone zone = _simulationMgr.getZone(envId);
-			if (zone == null)
-				continue;
-
+		for (Zone zone : zones) {
 			JSONObject zoneJSON = IcasaJSONUtil.getZoneJSON(zone);
-			if (zoneJSON == null)
-				continue;
-
 			currentZones.put(zoneJSON);
 		}
 
@@ -106,89 +103,79 @@ public class ZoneREST extends DefaultController {
 	}
 
 
-    @Route(method = HttpMethod.PUT, uri = "/zone/{zoneId}")
+	@Route(method = HttpMethod.PUT, uri = "/zone/{zoneId}")
 	public Result updatesZone(@Parameter("zoneId") String zoneId) {
-        String content = null;
-        try {
-            content = IcasaJSONUtil.getContent(context().reader());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return internalServerError();
-        }
+		String content = null;
+		try {
+			content = IcasaJSONUtil.getContent(context().reader());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError();
+		}
 		if (zoneId == null || zoneId.length() < 1) {
 			return notFound();
 		}
 
-		Zone zoneFound = _simulationMgr.getZone(zoneId);
-		if (zoneFound == null)
-			return notFound();
+		boolean zoneFound = m_locationManager.getZoneIds().contains(zoneId);
+		if (zoneFound )	return notFound();
 
 		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
 
 		Position position = new Position(zoneJSON.getLeftX(), zoneJSON.getTopY());
 
-		// TODO: Review for children zones
-		if (!position.equals(zoneFound.getLeftTopAbsolutePosition())){ //move zone
-			try {
-                _simulationMgr.moveZone(zoneFound.getId(),position.x,position.y,position.z);
-			} catch (Exception e1) {
-				e1.printStackTrace();
+		for(Zone zone : zones){
+			if (zone.getZoneName().equals(zoneId)){
+				if (!zone.getLeftTopAbsolutePosition().equals(position)){
+					zone.setLeftTopAbsolutePosition(position);
+				}
+				int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
+				int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
+				if ( (zone.getXLength() != width) || (zone.getYLength() != height) ){
+					zone.setLeftTopAbsolutePosition(position);
+				}
 			}
-        }
-
-		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
-		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
-
-		if (zoneFound.getXLength() != width || zoneFound.getYLength() != height){
-			try {
-                _simulationMgr.resizeZone(zoneFound.getId(), width, height,zoneFound.getZLength());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-        }
-
-		return ok(IcasaJSONUtil.getZoneJSON(zoneFound).toString()).as(MimeTypes.JSON);
+		}
+		return ok();
 
 	}
 
-    @Route(method = HttpMethod.POST, uri = "/zone")
+	@Route(method = HttpMethod.POST, uri = "/zone")
 	public Result createZone() {
-        String content = null;
-        try {
-            content = IcasaJSONUtil.getContent(context().reader());
-        } catch (IOException e) {
-            e.printStackTrace();
-            return internalServerError();
-        }
+		String content = null;
+		try {
+			content = IcasaJSONUtil.getContent(context().reader());
+		} catch (IOException e) {
+			e.printStackTrace();
+			return internalServerError();
+		}
 
 		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
 
 		int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
 		int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
-        int depth = zoneJSON.getTopZ() - zoneJSON.getBottomZ();
+		int depth = zoneJSON.getTopZ() - zoneJSON.getBottomZ();
 
-		Zone newZone = _simulationMgr
-		      .createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), zoneJSON.getBottomZ(), width, height, depth);
+		m_locationManager.createZone(zoneJSON.getId(), zoneJSON.getLeftX(), zoneJSON.getTopY(), zoneJSON.getBottomZ(), width, height, depth);
 
-		return ok(IcasaJSONUtil.getZoneJSON(newZone).toString()).as(MimeTypes.JSON);
-
-	}
-
-
-    @Route(method = HttpMethod.DELETE, uri = "/zone/{zoneId}")
-	public Result deleteZone(@Parameter("zoneId") String zoneId) {
-
-		Zone zone = _simulationMgr.getZone(zoneId);
-
-		if (zone == null)
-			return notFound();
-		try {
-			_simulationMgr.removeZone(zoneId);
-		} catch (Exception e) {
-			e.printStackTrace();
-			return internalServerError();
-		}
+		//	return ok(IcasaJSONUtil.getZoneJSON(newZone).toString()).as(MimeTypes.JSON);
 		return ok();
 	}
 
+
+	@Route(method = HttpMethod.DELETE, uri = "/zone/{zoneId}")
+	public Result deleteZone(@Parameter("zoneId") String zoneId) {
+		m_locationManager.removeZone(zoneId);
+		return ok();
+	}
+
+	@Validate
+	public void start(){
+
+	}
+
+
+	@Invalidate
+	public void stop(){
+
+	}
 }

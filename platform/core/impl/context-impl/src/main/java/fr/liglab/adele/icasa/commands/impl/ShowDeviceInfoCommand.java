@@ -15,20 +15,16 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.commands.Signature;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.Set;
 
 /**
  * Show the properties of a specific device
@@ -38,9 +34,9 @@ import java.util.Set;
 @Instantiate(name = "show-device-command")
 public class ShowDeviceInfoCommand extends AbstractCommand {
 
-    @Requires
+    /** @Requires
     private ContextManager simulationManager;
-
+     **/
     private static final String[] PARAMS =  new String[]{ScriptLanguage.DEVICE_ID};
 
     private static final String NAME= "show-device";
@@ -65,14 +61,14 @@ public class ShowDeviceInfoCommand extends AbstractCommand {
         String[] params = signature.getParameters();
         String deviceId = param.getString(params[0]);
         out.println("Properties: ");
-        LocatedDevice device = simulationManager.getDevice(deviceId);
-        if (device==null) {
-            throw new IllegalArgumentException("Device ("+ deviceId +") does not exist");
-        }
-        Set<String> properties = device.getProperties();
-        for (String property : properties) {
-            out.println("Property: " + property + " - Value: " +device.getPropertyValue(property));
-        }
+        /**   LocatedDevice device = simulationManager.getDevice(deviceId);
+         if (device==null) {
+         throw new IllegalArgumentException("Device ("+ deviceId +") does not exist");
+         }
+         Set<String> properties = device.getProperties();
+         for (String property : properties) {
+         out.println("Property: " + property + " - Value: " +device.getPropertyValue(property));
+         }**/
         return null;
     }
 

@@ -103,15 +103,15 @@ public class ICasaContextSourceBuilder implements ContextSource {
 		lock.writeLock().unlock();
 	}
 
-	@Validate
-	protected void start() {
+	/**		@Validate
+protected void start() {
 		manager.addListener(personListener);
 	}
 
 	protected void stop() {
 		manager.removeListener(personListener);
 	}
-
+**/
 	private void notifyListeners(String property, String value) {
 
 		ArrayList<ContextListener> copyList = new ArrayList<ContextListener>();

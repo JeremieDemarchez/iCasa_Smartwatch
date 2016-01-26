@@ -15,12 +15,8 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.util;
 
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.impl.ClockREST;
 import org.json.JSONArray;
@@ -29,11 +25,10 @@ import org.json.JSONObject;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.Set;
 
 public class IcasaJSONUtil {
 
-	public static JSONObject getDeviceJSON(LocatedDevice device, ContextManager _ctxMgr) {
+	/**public static JSONObject getDeviceJSON(LocatedDevice device, ContextManager _ctxMgr) {
 
 		String deviceType = device.getType();
 		if (deviceType == null){
@@ -96,7 +91,7 @@ public class IcasaJSONUtil {
 		}
 
 		return deviceTypeJSON;
-	}
+	}**/
 
 	public static JSONObject getPersonTypeJSON(String personTypeStr) {
 		JSONObject personTypeJSON = null;
@@ -115,10 +110,8 @@ public class IcasaJSONUtil {
 	public static JSONObject getZoneJSON(Zone zone) {
 		JSONObject zoneJSON = null;
 		try {
-			String zoneId = zone.getId();
-            if (zoneId.contains("#zone")){    //skip zones attached to medical devices.
-                return null;
-            }
+			String zoneId = zone.getZoneName();
+
 			zoneJSON = new JSONObject();
 			zoneJSON.putOnce(ZoneJSON.ID_PROP, zoneId);
 			zoneJSON.putOnce(ZoneJSON.NAME_PROP, zoneId);
@@ -129,23 +122,21 @@ public class IcasaJSONUtil {
 			zoneJSON.put(ZoneJSON.IS_ROOM_PROP, true); // TODO change it when Zone API will be improved
 
 			JSONArray propObject = new JSONArray();
-			for (String variable : zone.getVariableNames()) {
-                JSONObject property = new JSONObject();
-                property.put("name", variable);
-                property.put("value", getValidObject(zone.getVariableValue(variable)));
-                String unit = "N/A"; // TODO change it when Zone API will be improved
-                if (variable.equalsIgnoreCase("Temperature")){
-                    unit = "K";
-                } else if (variable.equalsIgnoreCase("Volume")){
-                    unit = "m3";
-                } else if (variable.equalsIgnoreCase("Area")){
-                    unit = "m2";
-                } else if (variable.equalsIgnoreCase("Illuminance")){
-                    unit = "lux";
-                }
-                property.put("unit", unit);
-				propObject.put(property);
-			}
+			JSONObject xlenghtPoperty = new JSONObject();
+			xlenghtPoperty.put("name", Zone.ZONE_X_LENGHT);
+			xlenghtPoperty.put("value", getValidObject(zone.getXLength()));
+			xlenghtPoperty.put("unit", "m");
+			propObject.put(xlenghtPoperty);
+			JSONObject ylenghtPoperty = new JSONObject();
+			ylenghtPoperty.put("name", Zone.ZONE_Y_LENGHT);
+			ylenghtPoperty.put("value", getValidObject(zone.getYLength()));
+			ylenghtPoperty.put("unit", "m");
+			propObject.put(ylenghtPoperty);
+			JSONObject zlenghtPoperty = new JSONObject();
+			zlenghtPoperty.put("name", Zone.ZONE_Y_LENGHT);
+			zlenghtPoperty.put("value", getValidObject(zone.getZLength()));
+			zlenghtPoperty.put("unit", "m");
+			propObject.put(zlenghtPoperty);
 			zoneJSON.put(ZoneJSON.VARIABLE_PROP, propObject);
 
 		} catch (JSONException e) {

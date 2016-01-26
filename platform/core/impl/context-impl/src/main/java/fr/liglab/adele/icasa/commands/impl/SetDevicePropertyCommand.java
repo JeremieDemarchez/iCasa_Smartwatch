@@ -15,15 +15,12 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.commands.Signature;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -34,8 +31,8 @@ import java.io.PrintStream;
 @Instantiate(name = "property-device-command")
 public class SetDevicePropertyCommand extends AbstractCommand {
 
-	@Requires
-	private ContextManager contextManager;
+/**	@Requires
+	private ContextManager contextManager;**/
 
     private static final String NAME = "set-device-property";
 
@@ -67,9 +64,9 @@ public class SetDevicePropertyCommand extends AbstractCommand {
 		String propertyId = param.getString(signature.getParameters()[1]);
 		//Object value = param.get(signature.getParameters()[2]);
         Object value = getValue(param,signature);
-		LocatedDevice device = contextManager.getDevice(deviceId);
+	/**	LocatedDevice device = contextManager.getDevice(deviceId);
 		if (device != null)
-			device.setPropertyValue(propertyId, value);
+			device.setPropertyValue(propertyId, value);**/
 		return null;
 	}
 

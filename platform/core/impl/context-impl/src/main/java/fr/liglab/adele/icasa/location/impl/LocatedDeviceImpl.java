@@ -15,24 +15,16 @@
  */
 package fr.liglab.adele.icasa.location.impl;
 
+import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.device.DeviceListener;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.location.*;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.context.impl.ContextManagerImpl;
-import fr.liglab.adele.icasa.device.DeviceListener;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.LocatedDeviceListener;
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevice, DeviceListener<GenericDevice> {
 
@@ -52,14 +44,14 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 	private String _type;
 	
 	
-	private ContextManager manager;
+	private LocationManager manager;
 	
 	private final List<LocatedDeviceListener> listeners = new ArrayList<LocatedDeviceListener>();
 
 	private ReadWriteLock lock = new ReentrantReadWriteLock();
 
 	public LocatedDeviceImpl(String serialNumber, Position position, GenericDevice deviceComponent, String type,
-	      ContextManager manager) {
+							 LocationManager manager) {
 		super(position);
 		this.m_serialNumber = serialNumber;
 		this.deviceComponent = deviceComponent;
@@ -155,7 +147,7 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 
 	@Override
 	public void setCenterAbsolutePosition(Position position) {
-		Position oldPosition = getCenterAbsolutePosition();
+	/**	Position oldPosition = getCenterAbsolutePosition();
 		super.setCenterAbsolutePosition(position);
 		List<LocatedDeviceListener> snapshotListener = getListenerCopy();
 		// Listeners notification
@@ -167,18 +159,18 @@ public class LocatedDeviceImpl extends LocatedObjectImpl implements LocatedDevic
 				ex.printStackTrace();
 			}
 		}
-        updatePosition();
+        updatePosition();**/
 	}
 
     public void updatePosition(){
         // Computes the new location
-        if (deviceComponent != null) {
+    /**    if (deviceComponent != null) {
             Zone zone = manager.getZoneFromPosition(getCenterAbsolutePosition());
             String location = GenericDevice.LOCATION_UNKNOWN;
             if (zone != null)
                 location = zone.getId();
             deviceComponent.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, location);
-        }
+        }**/
     }
 
 	@Override

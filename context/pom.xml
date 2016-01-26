@@ -17,10 +17,10 @@
         <module>context.model</module>
         <module>context.ipojo.module</module>
         <module>context.model.runtime</module>
-        <module>context.model.example</module>
+      <!--  <module>context.model.example</module>-->
         <module>context.model.remote</module>
         <module>context.model.command</module>
-        <module>icasa-teaching-distribution-with-context</module>
+     <!--   <module>icasa-teaching-distribution-with-context</module>-->
         <module>context.model.test</module>
     </modules>
 

@@ -65,7 +65,7 @@ public class ResetContextCommand extends AbstractCommand {
 
     @Override
 	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-		simulationManager.resetContext();
+	//	simulationManager.resetContext();
 		return null;
 	}
 

@@ -16,11 +16,9 @@
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.ClockListener;
 import fr.liglab.adele.icasa.listener.MultiEventListener;
-import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.RemoteEventBroadcast;
@@ -40,6 +38,8 @@ import org.wisdom.api.http.websockets.Publisher;
 import java.util.Date;
 import java.util.UUID;
 
+import org.wisdom.api.Controller;
+
 @Component
 @Provides(specifications = {RemoteEventBroadcast.class, Controller.class})
 @Instantiate
@@ -54,14 +54,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 	private Publisher publisher;
 
 	@Requires
-	private ContextManager _ctxMgr;
-
-
-
-	@Requires
 	private Clock _clock;
-
-	private ICasaEventListener _iCasaListener;
 
 	private ClockEventListener _clockListener;
 
@@ -71,9 +64,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 	protected void start() {
         logger.debug("start");
 		// Register iCasa listeners
-		_iCasaListener = new ICasaEventListener();
-		_ctxMgr.addListener(_iCasaListener);
-
 
 		_clockListener = new ClockEventListener();
 		_clock.addListener(_clockListener);
@@ -85,10 +75,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
         logger.debug("stop");
 		// Unregister iCasa listeners
 
-		if (_iCasaListener != null) {
-			_ctxMgr.removeListener(_iCasaListener);
-			_iCasaListener = null;
-		}
 		if (_clockListener != null) {
 			_clock.removeListener(_clockListener);
 			_clockListener = null;
@@ -126,7 +112,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
     }
 
 	public void sendEvent(String eventType, JSONObject event) {
-        logger.debug("!! sending event : " + eventType  + "to " + url);
+        logger.debug("!! sending event : " + eventType + "to " + url);
 		try {
 			event.put("eventType", eventType);
 			event.put("id", generateUUID());
@@ -138,350 +124,51 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 		}
 	}
 
-	private class ICasaEventListener implements MultiEventListener {
-
-		@Override
-		public void deviceTypeRemoved(String deviceType) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceTypeId", deviceType);
-				sendEvent("device-type-removed",json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-                e.printStackTrace();
-			}
+	@Bind(id="zones",specification = Zone.class,optional = true,aggregate = true)
+	public synchronized void bindZone(Zone zone){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("zoneId", zone.getZoneName());
+			json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
+			sendEvent("zone-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
 		}
+	}
 
-		@Override
-		public void deviceTypeAdded(String deviceType) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceTypeId", deviceType);
-				sendEvent("device-type-added", json);
-			} catch (JSONException e) {
-				e.printStackTrace();
-                logger.error("Building message error" + json, e);
-			}
+	@Modified(id="zones")
+	public synchronized void modifiedZone(Zone zone){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("zoneId", zone.getZoneName());
+			json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
+			sendEvent("zone-moved", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
 		}
-
-		@Override
-		public void deviceMoved(LocatedDevice device, Position oldPosition, Position newPosition) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceId", device.getSerialNumber());
-				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
-				sendEvent("device-position-update", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
+		JSONObject jsonResized = new JSONObject();
+		try {
+			jsonResized.put("zoneId", zone.getZoneName());
+			jsonResized.put("zone", IcasaJSONUtil.getZoneJSON(zone));
+			sendEvent("zone-resized", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + jsonResized, e);
+			e.printStackTrace();
 		}
+	}
 
-		@Override
-		public void deviceAdded(LocatedDevice device) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceId", device.getSerialNumber());
-				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
-				sendEvent("device-added", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
+	@Unbind(id="zones")
+	public synchronized void unbindZone(Zone zone){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("zoneId", zone.getZoneName());
+			sendEvent("zone-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
 		}
-
-		@Override
-		public void deviceRemoved(LocatedDevice device) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceId", device.getSerialNumber());
-				sendEvent("device-removed", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void devicePropertyModified(LocatedDevice device, String propertyName, Object oldValue, Object newValue) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceId", device.getSerialNumber());
-				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
-				sendEvent("device-property-updated", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void devicePropertyAdded(LocatedDevice device, String propertyName) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceId", device.getSerialNumber());
-				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
-				sendEvent("device-property-added", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void devicePropertyRemoved(LocatedDevice device, String propertyName) {
-			JSONObject json = new JSONObject();
-			try {
-				json.put("deviceId", device.getSerialNumber());
-				json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
-				sendEvent("device-property-removed", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-        /**
-         * Invoked when a device has been attached to another device
-         *
-         * @param container
-         * @param child
-         */
-        public void deviceAttached(LocatedDevice container, LocatedDevice child) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("deviceId", container.getSerialNumber());
-                json.put("container", IcasaJSONUtil.getDeviceJSON(container, _ctxMgr));
-                json.put("child", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
-                sendEvent("device-attached-device", json);
-            } catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-                e.printStackTrace();
-            }
-        }
-
-        /**
-         * * Invoked when a device has been detached from another device
-         *
-         * @param container
-         * @param child
-         */
-        public void deviceDetached(LocatedDevice container, LocatedDevice child) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("deviceId", container.getSerialNumber());
-                json.put("container", IcasaJSONUtil.getDeviceJSON(container, _ctxMgr));
-                json.put("child", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
-                sendEvent("device-detached-device", json);
-            } catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-                e.printStackTrace();
-            }
-        }
-
-        /**
-         * Callback notifying when the device want to trigger an event.
-         *
-         * @param device the device triggering the event.
-         * @param data   the content of the event.
-         */
-        @Override
-        public void deviceEvent(LocatedDevice device, Object data) {
-            JSONObject json = new JSONObject();
-            try {
-                json.put("deviceId", device.getSerialNumber());
-                json.put("device", IcasaJSONUtil.getDeviceJSON(device, _ctxMgr));
-                json.put("event-data", String.valueOf(data));
-                sendEvent("device-event", json);
-            } catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-                e.printStackTrace();
-            }
-        }
-
-
-        @Override
-		public void zoneVariableAdded(Zone zone, String variableName) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-variable-added", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void zoneVariableRemoved(Zone zone, String variableName) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-			JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-variable-removed", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-			JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-variable-updated", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void zoneMoved(Zone zone, Position oldPosition, Position newPosition) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-moved", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void zoneResized(Zone zone) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-resized", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void zoneParentModified(Zone zone, Zone oldParent, Zone newParent) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-parent-updated", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-        /**
-         * Invoked when a device has been attached a zone
-         *
-         * @param container
-         * @param child
-         */
-        public void deviceAttached(Zone container, LocatedDevice child) {
-            if(isAScopeZone(container)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-            try {
-                json.put("zoneId", container.getId());
-                json.put("zone", IcasaJSONUtil.getZoneJSON(container));
-                json.put("device", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
-                sendEvent("device-attached-zone", json);
-            } catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-                e.printStackTrace();
-            }
-        }
-
-        /**
-         * * Invoked when a device has been detached from a zone
-         *
-         * @param container
-         * @param child
-         */
-        public void deviceDetached(Zone container, LocatedDevice child) {
-            if(isAScopeZone(container)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-            try {
-                json.put("zoneId", container.getId());
-                json.put("zone", IcasaJSONUtil.getZoneJSON(container));
-                json.put("device", IcasaJSONUtil.getDeviceJSON(child, _ctxMgr));
-                sendEvent("device-detached-zone", json);
-            } catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-                e.printStackTrace();
-            }
-        }
-
-        @Override
-		public void zoneAdded(Zone zone) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
-				sendEvent("zone-added", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-		@Override
-		public void zoneRemoved(Zone zone) {
-            if(isAScopeZone(zone)) {
-                return ; // we don't send scope zones to the frontend
-            }
-            JSONObject json = new JSONObject();
-			try {
-				json.put("zoneId", zone.getId());
-				sendEvent("zone-removed", json);
-			} catch (JSONException e) {
-                logger.error("Building message error" + json, e);
-				e.printStackTrace();
-			}
-		}
-
-        private boolean isAScopeZone(Zone zone){
-            //turnaround: As scope does not exist, zones
-            //containing #zone in the name are considered as scope zones, they are used in medical devices
-            //to identify in simulation when a simulated person use the medical device.
-            if (zone.getId().contains("#zone")) {
-                return true;
-            }
-            return false;
-        }
-
-
 	}
 
 	private class ClockEventListener implements ClockListener {

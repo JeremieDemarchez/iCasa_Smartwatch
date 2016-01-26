@@ -66,7 +66,7 @@ public class SimulatedPushButtonImpl extends AbstractDevice implements Simulated
 	public void enterInZones(List<Zone> zones) {
 		if (!zones.isEmpty()) {
 			m_zone = zones.get(0);
-			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getId());
+			setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, m_zone.getZoneName());
 		}
 	}
 

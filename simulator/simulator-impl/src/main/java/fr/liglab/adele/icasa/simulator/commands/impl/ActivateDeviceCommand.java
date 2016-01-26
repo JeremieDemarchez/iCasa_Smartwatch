@@ -60,7 +60,7 @@ public class ActivateDeviceCommand extends AbstractCommand {
 
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        simulationManager.setDeviceState(param.getString(ScriptLanguage.DEVICE_ID), true);
+  //      simulationManager.setDeviceState(param.getString(ScriptLanguage.DEVICE_ID), true);
         return null;
     }
     @Override

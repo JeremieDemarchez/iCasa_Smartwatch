@@ -15,19 +15,15 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
-import fr.liglab.adele.icasa.location.LocatedDevice;
+import fr.liglab.adele.icasa.commands.Signature;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
 import java.io.InputStream;
 import java.io.PrintStream;
-import java.util.List;
 
 /**
  *
@@ -38,9 +34,9 @@ import java.util.List;
 public class ShowDevicesCommand extends AbstractCommand {
 
 
-    @Requires
+    /**   @Requires
     private ContextManager manager;
-
+     **/
     private static final String NAME= "show-devices";
 
     /**
@@ -60,10 +56,10 @@ public class ShowDevicesCommand extends AbstractCommand {
     @Override
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         out.println("Devices: ");
-        List<LocatedDevice> devices = manager.getDevices();
-        for (LocatedDevice locatedDevice : devices) {
-            out.println("Device " + locatedDevice);
-        }
+        /**      List<LocatedDevice> devices = manager.getDevices();
+         for (LocatedDevice locatedDevice : devices) {
+         out.println("Device " + locatedDevice);
+         }**/
         return null;
     }
 

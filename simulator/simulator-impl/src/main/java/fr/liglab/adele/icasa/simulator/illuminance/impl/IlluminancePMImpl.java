@@ -15,44 +15,21 @@
  */
 package fr.liglab.adele.icasa.simulator.illuminance.impl;
 
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-
-import fr.liglab.adele.icasa.clockservice.Clock;
-import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
+import fr.liglab.adele.icasa.simulator.PhysicalModel;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Validate;
-
-import fr.liglab.adele.icasa.ContextManager;
-import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.LocatedDeviceListener;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.ZoneListener;
-import fr.liglab.adele.icasa.simulator.PhysicalModel;
-import org.joda.time.DateTime;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 
 @Component(name = "illuminance-model")
 @Instantiate(name = "illuminance-model-0")
 @Provides(specifications = PhysicalModel.class)
-public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
+public class IlluminancePMImpl /**implements PhysicalModel, ZoneListener, LocatedDeviceListener **/{
 
 
     /**
      * Rought Constant to establish the correspondance between power & illuminance
      */
-    public static final double LUMENS_CONSTANT_VALUE = 683.0d;
+ /**   public static final double LUMENS_CONSTANT_VALUE = 683.0d;
 
 
     public static final String ILLUMINANCE_PROP_NAME = "Illuminance";
@@ -78,7 +55,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
     /*
      * @gardedBy(_deviceLock)
      */
-    private Set<LocatedDevice> _lights = new HashSet<LocatedDevice>();
+ /**   private Set<LocatedDevice> _lights = new HashSet<LocatedDevice>();
 
     private final Object _clockLock ;
 
@@ -101,7 +78,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      **/
     PartOfTheDay currentMomentOfTheDay  ;
 
-    public IlluminancePMImpl(BundleContext context) {
+  /**  public IlluminancePMImpl(BundleContext context) {
         // workaround of ipojo bug of object member initialization
         _clockLock = new Object();
         _deviceLock = new Object();
@@ -289,7 +266,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      *
      * @return a new mutable set of all light devices for each call.
      */
-    private Set<GenericDevice> getLightDevices() {
+  /**  private Set<GenericDevice> getLightDevices() {
         Set<GenericDevice> devices = new HashSet<GenericDevice>();
         synchronized (_deviceLock) {
             for (LocatedDevice locatedDevice : _lights) {
@@ -321,7 +298,7 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      *
      * @param zone a zone
      */
-    private void updateIlluminance(Zone zone) {
+  /**  private void updateIlluminance(Zone zone) {
         double returnedIlluminance = 0.0;
         synchronized (_clockLock){
             returnedIlluminance = currentExternalSource;
@@ -422,5 +399,5 @@ public class IlluminancePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         }
         updateZones();
     }
-
+**/
 }

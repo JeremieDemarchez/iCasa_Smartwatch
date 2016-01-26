@@ -15,32 +15,22 @@
  */
 package fr.liglab.adele.icasa.simulator.temperature.impl;
 
-import fr.liglab.adele.icasa.ContextManager;
 import fr.liglab.adele.icasa.Variable;
-import fr.liglab.adele.icasa.clockservice.Clock;
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.temperature.Cooler;
-import fr.liglab.adele.icasa.device.temperature.Heater;
-import fr.liglab.adele.icasa.location.*;
-import fr.liglab.adele.icasa.service.scheduler.PeriodicRunnable;
-import fr.liglab.adele.icasa.service.zone.size.calculator.ZoneSizeCalculator;
+import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.simulator.PhysicalModel;
-import org.apache.felix.ipojo.annotations.*;
-import org.joda.time.DateTime;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Provides;
 
-import fr.liglab.adele.icasa.location.LocatedDeviceListener;
-
-import fr.liglab.adele.icasa.location.ZoneListener;
-
-import java.util.*;
-import java.util.concurrent.TimeUnit;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Component(name = "temperature-model")
 @Instantiate(name = "temperature-model-0")
 @Provides(specifications = PhysicalModel.class)
-public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDeviceListener {
+public class TemperaturePMImpl /**implements PhysicalModel, ZoneListener, LocatedDeviceListener**/ {
 
     public static final String TEMPERATURE_PROP_NAME = "Temperature";
     public static final String VOLUME_PROP_NAME = "Volume";
@@ -85,7 +75,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
 
     private Map<String /* zone id */, ZoneModel> _zoneModels = new HashMap<String, ZoneModel>();
 
-    @Requires
+   /** @Requires
     private ContextManager _contextMgr;
 
     @Requires
@@ -235,7 +225,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      * @param timeDiff time difference in ms from the last computation
      * @return the temperature computed for time t + dt
      */
-    private double computeTemperature(Zone zone, long timeDiff) {
+  /**  private double computeTemperature(Zone zone, long timeDiff) {
 
         String zoneId = zone.getId();
 
@@ -296,7 +286,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
             /**
              * Clipping function to saturate the temperature at a certain level
              */
-            if (newTemperature > HIGHEST_TEMP)
+  /**          if (newTemperature > HIGHEST_TEMP)
                 newTemperature = HIGHEST_TEMP;
             else if (newTemperature < LOWER_TEMP)
                 newTemperature = LOWER_TEMP;
@@ -412,7 +402,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         /*
          * X,Y plan ------- |Z1 ------ | | Z2 | | ------ -------
          */
-        if (!z1xInZ2x && !z2xInZ1x && (z2yInZ1y || z1yInZ2y)) {
+    /**    if (!z1xInZ2x && !z2xInZ1x && (z2yInZ1y || z1yInZ2y)) {
             double xzWallSurface = interX * xFactor * interZ * zFactor;
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
@@ -423,7 +413,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         /*
          * X,Y plan ------ ----| Z2 |--- |Z1 ------ | -------------
          */
-        if (!z1yInZ2y && !z2yInZ1y && (z2xInZ1x || z1xInZ2x)) {
+    /**       if (!z1yInZ2y && !z2yInZ1y && (z2xInZ1x || z1xInZ2x)) {
             double yzWallSurface = interY * yFactor * interZ * zFactor;
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
@@ -434,7 +424,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         /*
          * X,Y plan ------ ----| Z2 |--- |Z1 | | | ----| |--- | | ------
          */
-        if ((z2xInZ1x && !z1xInZ2x && z1yInZ2y && !z2yInZ1y) || (!z2xInZ1x && z1xInZ2x && !z1yInZ2y && z2yInZ1y)) {
+    /**     if ((z2xInZ1x && !z1xInZ2x && z1yInZ2y && !z2yInZ1y) || (!z2xInZ1x && z1xInZ2x && !z1yInZ2y && z2yInZ1y)) {
             double xyWallSurface = interX * xFactor * interY * yFactor;
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
@@ -445,7 +435,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
         /*
          * X,Y plan ------ ----| Z2 |--- |Z1 | | | ----| |--- | | ------
          */
-        if ((interX > 0) && (interY > 0) && !z2xInZ1x && !z1xInZ2x && !z1yInZ2y && !z2yInZ1y) {
+    /**       if ((interX > 0) && (interY > 0) && !z2xInZ1x && !z1xInZ2x && !z1yInZ2y && !z2yInZ1y) {
             Parallelepiped interPara = getInterParallelepiped(p1, p2);
 
             return getSurfaceOfParallelepipedInMeters(interPara.xInterval, interPara.yInterval, interPara.zInterval,
@@ -464,7 +454,7 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
      * @param p2 another parallelepiped
      * @return intersection of the two parallelepiped.
      */
-    private Parallelepiped getInterParallelepiped(Parallelepiped p1, Parallelepiped p2) {
+/**   private Parallelepiped getInterParallelepiped(Parallelepiped p1, Parallelepiped p2) {
         Interval xInterval = getIntersectionInterval(p1.xInterval, p2.xInterval);
         Interval yInterval = getIntersectionInterval(p1.yInterval, p2.yInterval);
         Interval zInterval = getIntersectionInterval(p1.zInterval, p2.zInterval);
@@ -720,5 +710,5 @@ public class TemperaturePMImpl implements PhysicalModel, ZoneListener, LocatedDe
             zoneModel.updateThermalCapacity();
         }
     }
-
+**/
 }
