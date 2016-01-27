@@ -177,6 +177,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                          */
                                         m_stateValue.put(state,defaultValue);
                                     }
+                                    break;
                                 }
                             }else {
                                 throw new ConfigurationException("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");
