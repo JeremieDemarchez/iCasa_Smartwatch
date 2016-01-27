@@ -6,6 +6,8 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,6 +21,8 @@ import java.util.Set;
 @CommandProvider(namespace = "creators")
 public class CreatorAdministrator {
 
+    private static final Logger LOG = LoggerFactory.getLogger(CreatorAdministrator.class);
+
     @Requires(specification = CreatorHandlerIntrospection.class)
     List<CreatorHandlerIntrospection> entityCreators;
 
@@ -27,7 +31,7 @@ public class CreatorAdministrator {
     @Command
     public void getEntities(){
 
-        System.out.println("Entity Implementations : ");
+        LOG.info("Entity Implementations : ");
         Set<String> implementations = new HashSet<>();
 
 
@@ -37,13 +41,13 @@ public class CreatorAdministrator {
             }
         }
 
-        System.out.println(implementations.toString());
+        LOG.info(implementations.toString());
     }
 
     @Command
     public void getEntityState(String name){
 
-        System.out.println("Entity Implementation : " + name + " - State : ");
+        LOG.info("Entity Implementation : " + name + " - State : ");
 
         boolean state = false;
 
@@ -52,9 +56,9 @@ public class CreatorAdministrator {
         }
 
         if (state){
-            System.out.println("enabled");
+            LOG.info("enabled");
         } else {
-            System.out.println("disabled");
+            LOG.info("disabled");
         }
 
     }
@@ -69,9 +73,9 @@ public class CreatorAdministrator {
         }
 
         if (result) {
-            System.out.println("Entity " + name + " enabled");
+            LOG.info("Entity " + name + " enabled");
         } else {
-            System.out.println("Error enabling");
+            LOG.info("Error enabling");
         }
     }
 
@@ -85,9 +89,9 @@ public class CreatorAdministrator {
         }
 
         if (result) {
-            System.out.println("Entity " + name + " disabled");
+            LOG.info("Entity " + name + " disabled");
         } else {
-            System.out.println("Error disabling");
+            LOG.info("Error disabling");
         }
     }
 
@@ -101,9 +105,9 @@ public class CreatorAdministrator {
         }
 
         if (result) {
-            System.out.println("Entity " + name + " deleted");
+            LOG.info("Entity " + name + " deleted");
         } else {
-            System.out.println("Error deleting");
+            LOG.info("Error deleting");
         }
     }
 }
