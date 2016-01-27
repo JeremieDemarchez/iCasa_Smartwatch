@@ -5,10 +5,8 @@ import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
+import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
@@ -23,7 +21,7 @@ import java.util.*;
 
 /*UN HANDLER PAR COMPOSANT? --> */
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
-@Provides
+@Provides(specifications = _EntityCreatorManagement.class)
 public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCreatorManagement {
 
     public static final String ENTITY_CREATOR_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.creator.entity";
@@ -32,8 +30,6 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
 
     private HandlerManager m_handlerManager;
 
-    private ProvidedServiceHandler m_providedServiceHandler;
-
     private final Map<String, String> impl_by_field = new HashMap<>();
 
     private final Map<String, EntityCreatorImpl> creators_by_impl = new HashMap<>();
@@ -41,7 +37,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
     @RelationCreator(relation = RelationImpl.class)
     private _RelationCreator m_relationCreator;
 
-    @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = true, proxy = false)
+    @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = false, proxy = false)
     private Factory m_entityFactory;
 
     @Property(name = "factory.filter")
@@ -51,12 +47,11 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
     @Override
     public synchronized void start() {
 
-        m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
     }
 
     @Override
     public synchronized void stop() {
-        m_providedServiceHandler = null;
+
     }
 
 
@@ -84,6 +79,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
         }
 
     }
+
 
     public Object onGet(Object pojo, String fieldName, Object value){
 
@@ -307,7 +303,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
             }
         }
 
-        private void createInstance (String id, Map<String, Object> initialization){
+        private synchronized void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
             Hashtable properties = new Hashtable();
@@ -321,23 +317,21 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                 properties.put("context.entity.init", initialization);
             } else {} //Why an empty else ?
 
-            if (m_entityFactory!=null) {
-                try {
+            try {
                     /*factory ready?*/
-                    instance = m_entityFactory.createComponentInstance(properties);
-                    ServiceRegistration sr = new IpojoServiceRegistration(instance);
+                instance = m_entityFactory.createComponentInstance(properties);
+                ServiceRegistration sr = new IpojoServiceRegistration(instance);
 
-                    synchronized (entities_reg){
-                        entities_reg.put(id, sr);
-                    }
-                    info(" Entity " + id +" creation succeed ");
-                } catch (UnacceptableConfiguration unacceptableConfiguration) {
-                    error("Entity " + id +" instantiation failed", unacceptableConfiguration);
-                } catch (MissingHandlerException e) {
-                    error("Entity " + id +" instantiation failed", e);
-                } catch (ConfigurationException e) {
-                    error("Entity " + id + " instantiation failed", e);
+                synchronized (entities_reg){
+                    entities_reg.put(id, sr);
                 }
+                info(" Entity " + id +" creation succeed ");
+            } catch (UnacceptableConfiguration unacceptableConfiguration) {
+                error("Entity " + id +" instantiation failed", unacceptableConfiguration);
+            } catch (MissingHandlerException e) {
+                error("Entity " + id +" instantiation failed", e);
+            } catch (ConfigurationException e) {
+                error("Entity " + id + " instantiation failed", e);
             }
         }
 
