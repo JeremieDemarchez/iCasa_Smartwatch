@@ -16,6 +16,8 @@ import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.MethodMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
@@ -31,6 +33,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     @ServiceController(value=false, specification=ContextEntity.class)
     private boolean controller;
+
+    private static final Logger LOG = LoggerFactory.getLogger(EntityHandler.class);
 
     /**
      * Component Management
@@ -257,7 +261,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             /**
              * Initialise with State Default Value
              */
-         //   addStateServiceProperties(new Hashtable<>(m_stateValue));
+            addStateServiceProperties(new Hashtable<>(m_stateValue));
 
 
             for (String stateId : m_stateSpecifications){
