@@ -15,6 +15,7 @@ import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
+import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,6 +51,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
      * State Field
      */
     private final List<String> m_stateSpecifications = new ArrayList<>();
+
+    private final Map<String,String> m_statesFields = new HashMap<>();
 
     private final Map<String,Function> m_setFunction = new HashMap<>();
 
@@ -135,6 +138,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                     findInEntity = true;
 
                                     /**
+                                     * Retrieve fieldMetadata
+                                     */
+                                    FieldMetadata fieldMetadata = getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
+                                    m_statesFields.put(state, fieldMetadata.getFieldName());
+
+                                    /**
                                      * No Direct Access Case : Register synchro Function
                                      */
                                     if (!Boolean.valueOf(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS))) {
@@ -161,12 +170,14 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                         /**
                                          * Add a field interceptor for No direct Access State Variable
                                          */
-                                        m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldWithNoDirectAccessInterceptor);
+
+                                        m_instanceManager.register(fieldMetadata, m_stateFieldWithNoDirectAccessInterceptor);
                                     } else {
                                         /**
                                          * Add a field interceptor for direct Access State Variable
                                          */
-                                        m_instanceManager.register(getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD)), m_stateFieldWithDirectAccessInterceptor);
+
+                                        m_instanceManager.register(fieldMetadata, m_stateFieldWithDirectAccessInterceptor);
 
                                     }
 
@@ -407,9 +418,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {
-
-            if(m_setFunction.containsKey(fieldName)){
-                Function setFunction = m_setFunction.get(fieldName);
+            String state = fieldToStateName(fieldName);
+            if(m_setFunction.containsKey(state)){
+                Function setFunction = m_setFunction.get(state);
                 setFunction.apply(value);
             }
 
@@ -418,18 +429,19 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         @Override
         public Object onGet(Object pojo, String fieldName, Object value) {
             Object returnObj = null;
-            if (m_stateSpecifications.contains(fieldName)){
-                if (m_pullFunction.containsKey(fieldName)){
-                    Function getFunction = m_pullFunction.get(fieldName);
-                    returnObj = getFunction.apply(fieldName);
-                    update(fieldName,returnObj);
+            String state = fieldToStateName(fieldName);
+            if (m_stateSpecifications.contains(state)){
+                if (m_pullFunction.containsKey(state)){
+                    Function getFunction = m_pullFunction.get(state);
+                    returnObj = getFunction.apply(state);
+                    update(state,returnObj);
                 }
 
                 /** Check if have a bufferised value in cas of null**/
                 if (returnObj == null){
                     synchronized (m_stateLock) {
-                        if (m_stateValue.containsKey(fieldName)) {
-                            returnObj = m_stateValue.get(fieldName);
+                        if (m_stateValue.containsKey(state)) {
+                            returnObj = m_stateValue.get(state);
                         }
                     }
                 }
@@ -445,9 +457,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {
-            if (m_stateSpecifications.contains(fieldName)) {
+            String state = fieldToStateName(fieldName);
+            if (m_stateSpecifications.contains(state)) {
                 synchronized (m_stateValue) {
-                    update(fieldName, value);
+                    update(state, value);
                 }
             }
         }
@@ -455,16 +468,26 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         @Override
         public Object onGet(Object pojo, String fieldName, Object value) {
             Object returnObj = null;
-            if (m_stateSpecifications.contains(fieldName)){
+            String state = fieldToStateName(fieldName);
+            if (m_stateSpecifications.contains(state)){
                 /** Check if have a bufferised value in cas of null**/
                 synchronized (m_stateLock) {
-                    if (m_stateValue.containsKey(fieldName)) {
-                        returnObj = m_stateValue.get(fieldName);
+                    if (m_stateValue.containsKey(state)) {
+                        returnObj = m_stateValue.get(state);
                     }
                 }
             }
             return returnObj;
         }
+    }
+
+    private String fieldToStateName(String field){
+        for (String state : m_statesFields.keySet()){
+            if (m_statesFields.get(state).equals(field)){
+                return state;
+            }
+        }
+        return null;
     }
 
     /**

@@ -1,9 +1,6 @@
 package fr.liglab.adele.icasa.context.handler.creator.entity;
 
-import fr.liglab.adele.icasa.context.handler.creator.relation.RelationCreator;
-import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Property;
