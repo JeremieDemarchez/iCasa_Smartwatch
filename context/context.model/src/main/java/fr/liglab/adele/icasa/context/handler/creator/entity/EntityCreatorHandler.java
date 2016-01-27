@@ -21,8 +21,8 @@ import java.util.*;
 
 /*UN HANDLER PAR COMPOSANT? --> */
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
-@Provides(specifications = _EntityCreatorManagement.class)
-public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCreatorManagement {
+@Provides(specifications = CreatorHandlerIntrospection.class)
+public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHandlerIntrospection {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreatorHandler.class);
 

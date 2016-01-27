@@ -1,6 +1,6 @@
 package fr.liglab.adele.icasa.context.handler.creator;
 
-import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreatorManagement;
+import fr.liglab.adele.icasa.context.handler.creator.entity.CreatorHandlerIntrospection;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import fr.liglab.adele.icasa.command.handler.Command;
@@ -19,8 +19,8 @@ import java.util.Set;
 @CommandProvider(namespace = "creators")
 public class CreatorAdministrator {
 
-    @Requires(specification = _EntityCreatorManagement.class)
-    List<_EntityCreatorManagement> entityCreators;
+    @Requires(specification = CreatorHandlerIntrospection.class)
+    List<CreatorHandlerIntrospection> entityCreators;
 
     private final String pck = "fr.liglab.adele.icasa.context.model.";
 
@@ -31,7 +31,7 @@ public class CreatorAdministrator {
         Set<String> implementations = new HashSet<>();
 
 
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             for (String imp : ec.getImplementations()){
                 implementations.add(imp.replace(pck, ""));
             }
@@ -47,7 +47,7 @@ public class CreatorAdministrator {
 
         boolean state = false;
 
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             state = state || ec.getImplentationState(pck + name);
         }
 
@@ -63,7 +63,7 @@ public class CreatorAdministrator {
     public void enableEntity(String name){
 
         boolean result = false;
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             /*switch creation return true if something was enabled*/
             result = ec.switchCreation(pck + name, true) || result;
         }
@@ -79,7 +79,7 @@ public class CreatorAdministrator {
     public void disableEntity(String name){
 
         boolean result = false;
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             /*switch creation return true if something was disabled*/
             result = ec.switchCreation(pck + name, false) || result;
         }
@@ -95,7 +95,7 @@ public class CreatorAdministrator {
     public void deleteAll(String name){
 
         boolean result = false;
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             /*switch creation return true if something was disabled*/
             result = ec.deleteAllInstancesOf(pck + name) || result;
         }
