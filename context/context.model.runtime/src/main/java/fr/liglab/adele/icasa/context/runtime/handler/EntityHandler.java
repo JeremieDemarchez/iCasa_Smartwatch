@@ -546,6 +546,11 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         return new HashSet<>(m_stateSpecifications);
     }
 
+    @Override
+    public Map<String, Object> dumpState(String property) {
+        return new HashMap<>(m_stateValue);
+    }
+
 
     /**
      * HANDLER DESCRIPTION
