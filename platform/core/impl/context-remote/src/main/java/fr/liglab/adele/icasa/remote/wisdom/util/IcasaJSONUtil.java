@@ -133,7 +133,7 @@ public class IcasaJSONUtil {
 			ylenghtPoperty.put("unit", "m");
 			propObject.put(ylenghtPoperty);
 			JSONObject zlenghtPoperty = new JSONObject();
-			zlenghtPoperty.put("name", Zone.ZONE_Y_LENGHT);
+			zlenghtPoperty.put("name", Zone.ZONE_Z_LENGHT);
 			zlenghtPoperty.put("value", getValidObject(zone.getZLength()));
 			zlenghtPoperty.put("unit", "m");
 			propObject.put(zlenghtPoperty);

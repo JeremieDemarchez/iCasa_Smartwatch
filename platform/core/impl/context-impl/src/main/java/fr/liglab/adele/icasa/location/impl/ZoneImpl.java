@@ -114,7 +114,7 @@ public class ZoneImpl implements Zone {
 	}
 
 	@Override
-	public void resize(int newWidth, int newHeight, int newDepth) throws Exception {
+	public void resize(int newWidth, int newHeight, int newDepth){
 		xLength = newWidth;
 		yLength = newHeight;
 		zLength = newDepth;

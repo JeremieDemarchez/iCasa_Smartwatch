@@ -116,9 +116,6 @@ public class ZoneREST extends DefaultController implements Controller {
 			return notFound();
 		}
 
-		boolean zoneFound = m_locationManager.getZoneIds().contains(zoneId);
-		if (zoneFound )	return notFound();
-
 		ZoneJSON zoneJSON = ZoneJSON.fromString(content);
 
 		Position position = new Position(zoneJSON.getLeftX(), zoneJSON.getTopY());
@@ -131,11 +128,12 @@ public class ZoneREST extends DefaultController implements Controller {
 				int width = zoneJSON.getRigthX() - zoneJSON.getLeftX();
 				int height = zoneJSON.getBottomY() - zoneJSON.getTopY();
 				if ( (zone.getXLength() != width) || (zone.getYLength() != height) ){
-					zone.setLeftTopAbsolutePosition(position);
+					zone.resize(width,height,4);
 				}
+				return ok();
 			}
 		}
-		return ok();
+		return notFound();
 
 	}
 

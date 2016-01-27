@@ -122,6 +122,6 @@ public interface Zone {
 	 * @param newDepth The new Depth (Z length value)
 	 * @throws Exception When the zone does not fit its parent zone.
 	 */
-	public void resize(int newWidth, int newHeight, int newDepth) throws Exception;
+	public void resize(int newWidth, int newHeight, int newDepth);
 
 }
