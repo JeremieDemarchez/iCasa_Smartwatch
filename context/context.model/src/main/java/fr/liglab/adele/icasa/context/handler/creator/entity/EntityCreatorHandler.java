@@ -5,10 +5,11 @@ import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
@@ -23,7 +24,7 @@ import java.util.*;
 
 /*UN HANDLER PAR COMPOSANT? --> */
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
-@Provides
+@Provides(specifications = _EntityCreatorManagement.class)
 public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCreatorManagement {
 
     private static final Logger LOG = LoggerFactory.getLogger(EntityCreatorHandler.class);
@@ -34,34 +35,25 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
 
     private HandlerManager m_handlerManager;
 
-    private ProvidedServiceHandler m_providedServiceHandler;
-
     private final Map<String, String> impl_by_field = new HashMap<>();
 
     private final Map<String, EntityCreatorImpl> creators_by_impl = new HashMap<>();
 
-    @RelationCreator(relation = RelationImpl.class)
-    private _RelationCreator m_relationCreator;
-
-    @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = true, proxy = false)
+    @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = false, proxy = false)
     private Factory m_entityFactory;
 
     @Property(name = "factory.filter")
     private String m_factoryFilter;
 
-
     @Override
     public synchronized void start() {
-
-        m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+        LOG.info(" Handler Start");
     }
 
     @Override
     public synchronized void stop() {
-        m_providedServiceHandler = null;
+        LOG.info(" Handler Stop");
     }
-
-
 
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
@@ -81,11 +73,20 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
             FieldMetadata creator = pojoMetadata.getField(field);
             m_instanceManager.register(creator, this);
 
+            /**
+             * Need to reconfigure the handler with the right spec
+             */
+            Properties properties = new Properties();
+            properties.put("factory.filter",entity);
+            getHandlerManager().reconfigure(properties);
+
             /*TODO default : ENABLED?*/
             switchCreation(entity, true);
         }
 
+
     }
+
 
     public Object onGet(Object pojo, String fieldName, Object value){
 
@@ -163,14 +164,18 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
 
             Element creatorElements = new Element("Entity Creators","");
 
-            for (Map.Entry<String, String> creator : impl_by_field.entrySet()){
+            for (String field : impl_by_field.keySet()){
                 Element creatorElement = new Element("Entity Creator","");
-                creatorElement.addAttribute(new Attribute("Name",creator.getKey()));
+                creatorElement.addAttribute(new Attribute("field : ", field));
+                creatorElement.addAttribute(new Attribute("Spec ", impl_by_field.get(field)));
                 creatorElements.addElement(creatorElement);
             }
 
             elem.addElement(creatorElements);
-
+            for (org.apache.felix.ipojo.Handler handler : getHandlerManager().getRegisteredHandlers()){
+                HandlerDescription description = handler.getDescription();
+                creatorElements.addElement(description.getHandlerInfo());
+            }
             return elem;
         }
     }
@@ -309,36 +314,38 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
             }
         }
 
-        private void createInstance (String id, Map<String, Object> initialization){
+        private synchronized void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
-            Hashtable properties = new Hashtable();
-            properties.put("factory.filter", m_entityImplementation);
-            m_handlerManager.reconfigure(properties);
+          Hashtable properties = new Hashtable();
+            /**     properties.put("factory.filter", m_entityImplementation);
+            m_handlerManager.reconfigure(properties);**/
 
             properties = new Hashtable();
             properties.put(ContextEntity.CONTEXT_ENTITY_ID, id);
             properties.put("instance.name", m_entityPackage + id);
+            LOG.info(" Try to create entity " + id);
             if (initialization != null){
                 properties.put("context.entity.init", initialization);
-            } else {}
-
-            if (m_entityFactory!=null) {
-                try {
-                    /*factory ready?*/
-                    instance = m_entityFactory.createComponentInstance(properties);
-                    ServiceRegistration sr = new IpojoServiceRegistration(instance);
-
-                    synchronized (entities_reg){
-                        entities_reg.put(id, sr);
-                    }
-                } catch (UnacceptableConfiguration unacceptableConfiguration) {
-                    LOG.error("Relation instantiation failed", unacceptableConfiguration);
-                } catch (MissingHandlerException e) {
-                    LOG.error("Relation instantiation failed", e);
-                } catch (ConfigurationException e) {
-                    LOG.error("Relation instantiation failed", e);
+                for (String key : initialization.keySet()){
+                    LOG.info(" param : " + key + " value : " + initialization.get(key));
                 }
+            }
+            try {
+                    /*factory ready?*/
+                instance = m_entityFactory.createComponentInstance(properties);
+                ServiceRegistration sr = new IpojoServiceRegistration(instance);
+
+                synchronized (entities_reg){
+                    entities_reg.put(id, sr);
+                }
+                LOG.info(" Entity " + id + " creation succeed ");
+            } catch (UnacceptableConfiguration unacceptableConfiguration) {
+                LOG.error("Entity " + id + " instantiation failed", unacceptableConfiguration);
+            } catch (MissingHandlerException e) {
+                LOG.error("Entity " + id + " instantiation failed", e);
+            } catch (ConfigurationException e) {
+                LOG.error("Entity " + id + " instantiation failed", e);
             }
         }
 
@@ -352,7 +359,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                     }
                 }
             } catch(IllegalStateException e) {
-                LOG.error("failed unregistering device", e);
+                error("Failed unregistering Entity " + id, e);
             }
         }
 
@@ -380,7 +387,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                     if (references.length > 0)
                         return references[0];
                 } catch (InvalidSyntaxException e) {
-                    LOG.error(" Invalid syntax Exception " , e);
+                    error(" Invalid syntax Exception ", e);
                 }
                 return null;
             }

@@ -16,6 +16,8 @@ import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.MethodMetadata;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
@@ -31,6 +33,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     @ServiceController(value=false, specification=ContextEntity.class)
     private boolean controller;
+
+    private static final Logger LOG = LoggerFactory.getLogger(EntityHandler.class);
 
     /**
      * Component Management
@@ -149,7 +153,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
                                         String pushMethod = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
                                         if (pushMethod != null) {
-                                            m_setFunctionField.put(state, pushMethod);
+                                            m_pushMethod.put(state, pushMethod);
                                             MethodMetadata methodMetadata = getPojoMetadata().getMethod(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
                                             m_instanceManager.register(methodMetadata, new PushMethodInterceptor(state));
                                         }
@@ -177,6 +181,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                          */
                                         m_stateValue.put(state,defaultValue);
                                     }
+                                    break;
                                 }
                             }else {
                                 throw new ConfigurationException("Malformed Manifest : a " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD + " is declared with no " + StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME + " attribute");
@@ -522,6 +527,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     /**
      * HANDLER DESCRIPTION
      */
+    @Override
+    public HandlerDescription getDescription(){
+        return new EntityHandlerDescription(this);
+    }
 
     private class EntityHandlerDescription extends HandlerDescription {
         public EntityHandlerDescription(PrimitiveHandler h) { super(h); }

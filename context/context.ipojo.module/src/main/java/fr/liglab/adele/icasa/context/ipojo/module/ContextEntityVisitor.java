@@ -69,6 +69,7 @@ public class ContextEntityVisitor extends AnnotationVisitor {
         }
 
         m_component.addAttribute(new Attribute("classname", classname));
+        m_component.addAttribute(new Attribute("immediate", "true"));
 
         Element provideElement = getProvidesElement(m_provides);
         provideElement.addElement(getPropertyElement(Entity.FACTORY_OF_ENTITY, null, String.class.getName(), Entity.FACTORY_OF_ENTITY_VALUE, "false", "true"));
