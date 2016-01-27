@@ -522,6 +522,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     /**
      * HANDLER DESCRIPTION
      */
+    @Override
+    public HandlerDescription getDescription(){
+        return new EntityHandlerDescription(this);
+    }
 
     private class EntityHandlerDescription extends HandlerDescription {
         public EntityHandlerDescription(PrimitiveHandler h) { super(h); }
