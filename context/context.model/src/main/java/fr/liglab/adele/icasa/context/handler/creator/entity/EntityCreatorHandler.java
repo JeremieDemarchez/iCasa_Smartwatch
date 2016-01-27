@@ -5,8 +5,10 @@ import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
@@ -16,8 +18,6 @@ import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -25,8 +25,6 @@ import java.util.*;
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
 @Provides
 public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCreatorManagement {
-
-    private static final Logger LOG = LoggerFactory.getLogger(EntityCreatorHandler.class);
 
     public static final String ENTITY_CREATOR_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.creator.entity";
 
@@ -321,7 +319,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
             properties.put("instance.name", m_entityPackage + id);
             if (initialization != null){
                 properties.put("context.entity.init", initialization);
-            } else {}
+            } else {} //Why an empty else ?
 
             if (m_entityFactory!=null) {
                 try {
@@ -332,12 +330,13 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                     synchronized (entities_reg){
                         entities_reg.put(id, sr);
                     }
+                    info(" Entity " + id +" creation succeed ");
                 } catch (UnacceptableConfiguration unacceptableConfiguration) {
-                    LOG.error("Relation instantiation failed", unacceptableConfiguration);
+                    error("Entity " + id +" instantiation failed", unacceptableConfiguration);
                 } catch (MissingHandlerException e) {
-                    LOG.error("Relation instantiation failed", e);
+                    error("Entity " + id +" instantiation failed", e);
                 } catch (ConfigurationException e) {
-                    LOG.error("Relation instantiation failed", e);
+                    error("Entity " + id + " instantiation failed", e);
                 }
             }
         }
@@ -352,7 +351,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                     }
                 }
             } catch(IllegalStateException e) {
-                LOG.error("failed unregistering device", e);
+                error("Failed unregistering Entity " + id, e);
             }
         }
 
@@ -380,7 +379,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                     if (references.length > 0)
                         return references[0];
                 } catch (InvalidSyntaxException e) {
-                    LOG.error(" Invalid syntax Exception " , e);
+                    error(" Invalid syntax Exception ", e);
                 }
                 return null;
             }
