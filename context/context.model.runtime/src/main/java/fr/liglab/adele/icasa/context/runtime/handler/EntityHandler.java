@@ -149,7 +149,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
                                         String pushMethod = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
                                         if (pushMethod != null) {
-                                            m_setFunctionField.put(state, pushMethod);
+                                            m_pushMethod.put(state, pushMethod);
                                             MethodMetadata methodMetadata = getPojoMetadata().getMethod(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
                                             m_instanceManager.register(methodMetadata, new PushMethodInterceptor(state));
                                         }
@@ -257,7 +257,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             /**
              * Initialise with State Default Value
              */
-            addStateServiceProperties(new Hashtable<>(m_stateValue));
+         //   addStateServiceProperties(new Hashtable<>(m_stateValue));
 
 
             for (String stateId : m_stateSpecifications){
