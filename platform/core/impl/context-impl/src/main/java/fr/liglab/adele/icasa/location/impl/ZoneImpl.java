@@ -127,27 +127,6 @@ public class ZoneImpl implements Zone {
 		return new Position(newX, newY, z);
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		ZoneImpl zone = (ZoneImpl) o;
-
-		if (!zoneName.equals(zone.getZoneName()))
-			return false;
-
-		return true;
-	}
-
-	@Override
-	public int hashCode() {
-		int result = zoneName.hashCode();
-		return result;
-	}
-
 	@Validate
 	public void start(){
 
