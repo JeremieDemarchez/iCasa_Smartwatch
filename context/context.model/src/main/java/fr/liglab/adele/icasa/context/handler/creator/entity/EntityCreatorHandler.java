@@ -5,10 +5,11 @@ import fr.liglab.adele.icasa.context.handler.creator.relation._RelationCreator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.RelationImpl;
 import org.apache.felix.ipojo.*;
-import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.annotations.Handler;
+import org.apache.felix.ipojo.annotations.Property;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.architecture.HandlerDescription;
-import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
@@ -16,6 +17,8 @@ import org.apache.felix.ipojo.parser.PojoMetadata;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
@@ -23,6 +26,8 @@ import java.util.*;
 @Handler(name = "EntityCreator", namespace = EntityCreatorHandler.ENTITY_CREATOR_HANDLER_NAMESPACE)
 @Provides(specifications = _EntityCreatorManagement.class)
 public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCreatorManagement {
+
+    private static final Logger LOG = LoggerFactory.getLogger(EntityCreatorHandler.class);
 
     public static final String ENTITY_CREATOR_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.creator.entity";
 
@@ -34,27 +39,21 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
 
     private final Map<String, EntityCreatorImpl> creators_by_impl = new HashMap<>();
 
-    @RelationCreator(relation = RelationImpl.class)
-    private _RelationCreator m_relationCreator;
-
     @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = false, proxy = false)
     private Factory m_entityFactory;
 
     @Property(name = "factory.filter")
     private String m_factoryFilter;
 
-
     @Override
     public synchronized void start() {
-
+        LOG.info(" Handler Start");
     }
 
     @Override
     public synchronized void stop() {
-
+        LOG.info(" Handler Stop");
     }
-
-
 
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
@@ -74,9 +73,17 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
             FieldMetadata creator = pojoMetadata.getField(field);
             m_instanceManager.register(creator, this);
 
+            /**
+             * Need to reconfigure the handler with the right spec
+             */
+            Properties properties = new Properties();
+            properties.put("factory.filter",entity);
+            getHandlerManager().reconfigure(properties);
+
             /*TODO default : ENABLED?*/
             switchCreation(entity, true);
         }
+
 
     }
 
@@ -157,14 +164,18 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
 
             Element creatorElements = new Element("Entity Creators","");
 
-            for (Map.Entry<String, String> creator : impl_by_field.entrySet()){
+            for (String field : impl_by_field.keySet()){
                 Element creatorElement = new Element("Entity Creator","");
-                creatorElement.addAttribute(new Attribute("Name",creator.getKey()));
+                creatorElement.addAttribute(new Attribute("field : ", field));
+                creatorElement.addAttribute(new Attribute("Spec ", impl_by_field.get(field)));
                 creatorElements.addElement(creatorElement);
             }
 
             elem.addElement(creatorElements);
-
+            for (org.apache.felix.ipojo.Handler handler : getHandlerManager().getRegisteredHandlers()){
+                HandlerDescription description = handler.getDescription();
+                creatorElements.addElement(description.getHandlerInfo());
+            }
             return elem;
         }
     }
@@ -306,17 +317,20 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
         private synchronized void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
-            Hashtable properties = new Hashtable();
-            properties.put("factory.filter", m_entityImplementation);
-            m_handlerManager.reconfigure(properties);
+          Hashtable properties = new Hashtable();
+            /**     properties.put("factory.filter", m_entityImplementation);
+            m_handlerManager.reconfigure(properties);**/
 
             properties = new Hashtable();
             properties.put(ContextEntity.CONTEXT_ENTITY_ID, id);
             properties.put("instance.name", m_entityPackage + id);
+            LOG.info(" Try to create entity " + id);
             if (initialization != null){
                 properties.put("context.entity.init", initialization);
-            } else {} //Why an empty else ?
-
+                for (String key : initialization.keySet()){
+                    LOG.info(" param : " + key + " value : " + initialization.get(key));
+                }
+            }
             try {
                     /*factory ready?*/
                 instance = m_entityFactory.createComponentInstance(properties);
@@ -325,13 +339,13 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
                 synchronized (entities_reg){
                     entities_reg.put(id, sr);
                 }
-                info(" Entity " + id +" creation succeed ");
+                LOG.info(" Entity " + id + " creation succeed ");
             } catch (UnacceptableConfiguration unacceptableConfiguration) {
-                error("Entity " + id +" instantiation failed", unacceptableConfiguration);
+                LOG.error("Entity " + id + " instantiation failed", unacceptableConfiguration);
             } catch (MissingHandlerException e) {
-                error("Entity " + id +" instantiation failed", e);
+                LOG.error("Entity " + id + " instantiation failed", e);
             } catch (ConfigurationException e) {
-                error("Entity " + id + " instantiation failed", e);
+                LOG.error("Entity " + id + " instantiation failed", e);
             }
         }
 
