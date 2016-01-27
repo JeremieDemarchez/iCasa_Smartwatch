@@ -4,22 +4,13 @@ import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.context.annotation.Entity;
 import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreator;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
-import org.apache.felix.ipojo.ConfigurationException;
+import fr.liglab.adele.icasa.context.handler.creator.entity.Creator;
 import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.MissingHandlerException;
-import org.apache.felix.ipojo.UnacceptableConfiguration;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Map;
 
 
@@ -39,7 +30,7 @@ public class Test {
     Factory factoryTest;
 
     @EntityCreator(entity = ContextEntityImpl.class)
-    _EntityCreator creatorValidComponent;
+    Creator creatorValidComponent;
 
     @Command
     public void testEntity(){

@@ -5,7 +5,7 @@ import java.util.Map;
 /**
  * Created by Eva on 14/12/2015.
  */
-public interface _EntityCreator {
+public interface Creator {
 
     void createEntity(String id);
 

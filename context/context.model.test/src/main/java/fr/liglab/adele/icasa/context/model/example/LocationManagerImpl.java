@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreator;
+import fr.liglab.adele.icasa.context.handler.creator.entity.Creator;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -31,7 +31,7 @@ import java.util.Set;
 public class LocationManagerImpl implements LocationManager {
 
 	@EntityCreator(entity= ZoneImpl.class)
-	_EntityCreator creator;
+	Creator creator;
 
 	@Override
 	public void createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {

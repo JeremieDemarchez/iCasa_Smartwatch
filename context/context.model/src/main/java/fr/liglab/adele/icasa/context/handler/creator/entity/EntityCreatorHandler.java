@@ -177,7 +177,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements _EntityCre
         }
     }
 
-    private class EntityCreatorImpl implements _EntityCreator {
+    private class EntityCreatorImpl implements Creator {
 
         private String m_entityImplementation;
 
