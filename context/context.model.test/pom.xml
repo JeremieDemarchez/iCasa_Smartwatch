@@ -38,12 +38,6 @@
 
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>context.api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>technical.services.api</artifactId>
             <version>${project.version}</version>
         </dependency>

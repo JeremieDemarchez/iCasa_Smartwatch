@@ -28,6 +28,10 @@ import java.util.Map;
 @CommandProvider(namespace = "test")
 public class Test {
 
+
+    @Requires
+    LocationManager locationManager;
+
     @Requires(optional = true)
     ContextEntityDescription description;
 
@@ -49,24 +53,22 @@ public class Test {
 
     @Command
     public void createWorkingEntityWithValidConfig(){
-
             Map entityInit = new Hashtable<>();
             entityInit.put(ContextEntityDescription.HELLO_STATE,"initValue");
-
-
-            creatorValidComponent.createEntity("ValidEntityWithValidConfig",entityInit);
-
-
+       // entityInit.put(Zone.ZONE_NAME,"initValue");
+            creatorValidComponent.createEntity("ValidEntityWithValidConfig", entityInit);
     }
 
+   @Command
+   public void createZone(){
+       locationManager.createZone("Kitchen", 10, 10, 10, 10, 10, 10);
+   }
+
     @Command
-    public void createWorkingEntityWithInValidConfig(){
-
-    }
-
-    @Command
-    public void createNotWorkingEntity(){
-
+    public void getZone(){
+        for (String zoneid : locationManager.getZoneIds()){
+            System.out.printf(" Zone Present " + zoneid);
+        }
     }
 
     @Command
