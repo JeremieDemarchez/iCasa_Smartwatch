@@ -259,6 +259,13 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
         }
 
         @Override
+        public Set<String> getEntityIdsCreated() {
+            synchronized (created_entities){
+                return new HashSet<>(created_entities.keySet());
+            }
+        }
+
+        @Override
         public synchronized void createEntity(String id){
             createEntity(id, null);
         }
@@ -314,9 +321,9 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
         private synchronized void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
-          Hashtable properties = new Hashtable();
+            Hashtable properties = new Hashtable();
             /**     properties.put("factory.filter", m_entityImplementation);
-            m_handlerManager.reconfigure(properties);**/
+             m_handlerManager.reconfigure(properties);**/
 
             properties = new Hashtable();
             properties.put(ContextEntity.CONTEXT_ENTITY_ID, id);
