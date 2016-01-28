@@ -225,6 +225,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
     }
 
+    @Override
     public void onCreation(Object instance) {
 
         for (Map.Entry<String,String> entry: mySetFunctionField.entrySet()){
@@ -384,7 +385,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
         @Override
         public void onEntry(Object pojo, Member method, Object[] args) {
-
+            //Do nothing
         }
 
         @Override
@@ -398,12 +399,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
         @Override
         public void onError(Object pojo, Member method, Throwable throwable) {
-
+        //Do nothing
         }
 
         @Override
         public void onFinally(Object pojo, Member method) {
-
+        //Do nothing
         }
     }
 
