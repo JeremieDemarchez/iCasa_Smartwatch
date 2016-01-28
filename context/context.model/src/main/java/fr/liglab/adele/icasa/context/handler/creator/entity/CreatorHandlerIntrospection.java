@@ -5,7 +5,7 @@ import java.util.Set;
 /**
  * Created by Eva on 14/12/2015.
  */
-public interface _EntityCreatorManagement {
+public interface CreatorHandlerIntrospection {
 
     Set<String> getImplementations();
 

@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.model.command;
+package fr.liglab.adele.icasa.context.extensions.command;
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;

@@ -14,22 +14,22 @@ public class PushMethodVisitor extends AnnotationVisitor {
 
     public static final String STATE_VARIABLE_ATTRIBUTE_PUSH = "push";
 
-    private final Reporter m_reporter;
+    private final Reporter myReporter;
 
     /**
      * Parent element element.
      */
-    private final ComponentWorkbench m_workbench;
+    private final ComponentWorkbench myWorkbench;
 
     /**
      * Field name.
      */
-    private final String m_method;
+    private final String myMethod;
 
     /**
      * Property name.
      */
-    private String m_name;
+    private String myName;
 
     /**
      * Constructor.
@@ -38,36 +38,38 @@ public class PushMethodVisitor extends AnnotationVisitor {
      */
     public PushMethodVisitor(String method, ComponentWorkbench parent, Reporter reporter) {
         super(Opcodes.ASM5);
-        m_workbench = parent;
-        m_method = method;
-        m_reporter = reporter;
+        myWorkbench = parent;
+        myMethod = method;
+        myReporter = reporter;
     }
 
+    @Override
     public void visit(String name, Object value) {
-        if (name.equals("state")) {
-            m_name = value.toString();
+        if ("state".equals(name)) {
+            myName = value.toString();
             return;
         }
     }
+
     @Override
     public void visitEnd() {
-        Element stateVariableElement = m_workbench.getIds().get(m_name);
+        Element stateVariableElement = myWorkbench.getIds().get(myName);
 
         if (stateVariableElement != null && stateVariableElement.getAttribute(STATE_VARIABLE_ATTRIBUTE_PUSH) != null){
-            m_reporter.error("Error on class " + m_workbench.getClassNode().name + " : Pull function for " + m_name + " is define more than once" );
+            myReporter.error("Error on class " + myWorkbench.getClassNode().name + " : Pull function for " + myName + " is define more than once");
         }
 
         if (stateVariableElement == null) {
             stateVariableElement = new Element(StateVariableFieldVisitor.STATE_VARIABLE_ELEMENT, "");
-            stateVariableElement.addAttribute(new Attribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME,m_name));
-            m_workbench.getElements().put(stateVariableElement,ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT);
-            m_workbench.getIds().put(m_name, stateVariableElement);
+            stateVariableElement.addAttribute(new Attribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_NAME, myName));
+            myWorkbench.getElements().put(stateVariableElement,ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT);
+            myWorkbench.getIds().put(myName, stateVariableElement);
         }
 
-        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_PUSH, m_method));
+        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_PUSH, myMethod));
 
         if (stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS) != null && Boolean.valueOf(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS))){
-            m_reporter.warn(" State Element " + m_name + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
+            myReporter.warn(" State Element " + myName + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
         }
     }
 }

@@ -1,11 +1,13 @@
-package fr.liglab.adele.icasa.context.handler.creator;
+package fr.liglab.adele.icasa.context.extensions.command;
 
-import fr.liglab.adele.icasa.context.handler.creator.entity._EntityCreatorManagement;
+import fr.liglab.adele.icasa.context.handler.creator.entity.CreatorHandlerIntrospection;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
@@ -19,42 +21,44 @@ import java.util.Set;
 @CommandProvider(namespace = "creators")
 public class CreatorAdministrator {
 
-    @Requires(specification = _EntityCreatorManagement.class)
-    List<_EntityCreatorManagement> entityCreators;
+    private static final Logger LOG = LoggerFactory.getLogger(CreatorAdministrator.class);
+
+    @Requires(specification = CreatorHandlerIntrospection.class)
+    List<CreatorHandlerIntrospection> entityCreators;
 
     private final String pck = "fr.liglab.adele.icasa.context.model.";
 
     @Command
     public void getEntities(){
 
-        System.out.println("Entity Implementations : ");
+        LOG.info("Entity Implementations : ");
         Set<String> implementations = new HashSet<>();
 
 
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             for (String imp : ec.getImplementations()){
                 implementations.add(imp.replace(pck, ""));
             }
         }
 
-        System.out.println(implementations.toString());
+        LOG.info(implementations.toString());
     }
 
     @Command
     public void getEntityState(String name){
 
-        System.out.println("Entity Implementation : " + name + " - State : ");
+        LOG.info("Entity Implementation : " + name + " - State : ");
 
         boolean state = false;
 
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             state = state || ec.getImplentationState(pck + name);
         }
 
         if (state){
-            System.out.println("enabled");
+            LOG.info("enabled");
         } else {
-            System.out.println("disabled");
+            LOG.info("disabled");
         }
 
     }
@@ -63,15 +67,15 @@ public class CreatorAdministrator {
     public void enableEntity(String name){
 
         boolean result = false;
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             /*switch creation return true if something was enabled*/
             result = ec.switchCreation(pck + name, true) || result;
         }
 
         if (result) {
-            System.out.println("Entity " + name + " enabled");
+            LOG.info("Entity " + name + " enabled");
         } else {
-            System.out.println("Error enabling");
+            LOG.info("Error enabling");
         }
     }
 
@@ -79,15 +83,15 @@ public class CreatorAdministrator {
     public void disableEntity(String name){
 
         boolean result = false;
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             /*switch creation return true if something was disabled*/
             result = ec.switchCreation(pck + name, false) || result;
         }
 
         if (result) {
-            System.out.println("Entity " + name + " disabled");
+            LOG.info("Entity " + name + " disabled");
         } else {
-            System.out.println("Error disabling");
+            LOG.info("Error disabling");
         }
     }
 
@@ -95,15 +99,15 @@ public class CreatorAdministrator {
     public void deleteAll(String name){
 
         boolean result = false;
-        for (_EntityCreatorManagement ec : entityCreators){
+        for (CreatorHandlerIntrospection ec : entityCreators){
             /*switch creation return true if something was disabled*/
             result = ec.deleteAllInstancesOf(pck + name) || result;
         }
 
         if (result) {
-            System.out.println("Entity " + name + " deleted");
+            LOG.info("Entity " + name + " deleted");
         } else {
-            System.out.println("Error deleting");
+            LOG.info("Error deleting");
         }
     }
 }

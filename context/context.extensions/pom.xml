@@ -6,21 +6,16 @@
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
         <version>1.2.7-SNAPSHOT</version>
-        <relativePath>../parent</relativePath>
+        <relativePath>../../parent</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>icasa.context</artifactId>
+    <artifactId>icasa.extensions</artifactId>
     <packaging>pom</packaging>
 
     <modules>
-        <module>context.model</module>
-        <module>context.ipojo.module</module>
-        <module>context.model.runtime</module>
-        <!--   <module>context.model.example</module>-->
-        <module>context.extensions</module>
-        <!-- <module>icasa-teaching-distribution-with-context</module>-->
-        <module>context.model.test</module>
+        <module>context.extensions.command</module>
+        <module>context.extensions.remote</module>
     </modules>
 
 </project>

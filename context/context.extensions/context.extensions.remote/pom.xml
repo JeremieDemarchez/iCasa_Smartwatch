@@ -25,7 +25,7 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>fr.liglab.adele.icasa</groupId>
-    <artifactId>icasa.context.model.remote</artifactId>
+    <artifactId>icasa.context.extensions.remote</artifactId>
     <version>1.2.7-SNAPSHOT</version>
 
     <packaging>wisdom</packaging>
