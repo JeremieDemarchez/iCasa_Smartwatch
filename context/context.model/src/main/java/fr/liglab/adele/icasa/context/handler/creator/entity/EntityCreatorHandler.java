@@ -28,19 +28,19 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
     public static final String ENTITY_CREATOR_HANDLER_NAMESPACE = "fr.liglab.adele.icasa.context.handler.creator.entity";
 
-    private InstanceManager m_instanceManager;
+    private InstanceManager myInstanceManager;
 
-    private HandlerManager m_handlerManager;
+    private HandlerManager myHandlerManager;
 
-    private final Map<String, String> impl_by_field = new HashMap<>();
+    private final Map<String, String> myImplByField = new HashMap<>();
 
-    private final Map<String, EntityCreatorImpl> creators_by_impl = new HashMap<>();
+    private final Map<String, EntityCreatorImpl> myCreatorsByImpl = new HashMap<>();
 
     @Requires(id ="entity.factory", filter = "(factory.name=${factory.filter})", optional = false, proxy = false)
-    private Factory m_entityFactory;
+    private Factory myEntityFactory;
 
     @Property(name = "factory.filter")
-    private String m_factoryFilter;
+    private String myFactoryFilter;
 
     @Override
     public synchronized void start() {
@@ -55,20 +55,20 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
     @Override
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
-        m_instanceManager = getInstanceManager();
-        m_handlerManager = getHandlerManager();
+        myInstanceManager = getInstanceManager();
+        myHandlerManager = getHandlerManager();
 
         Element[] creatorElements = metadata.getElements("EntityCreator", ENTITY_CREATOR_HANDLER_NAMESPACE);
 
         for (Element e: creatorElements){
             String entity = e.getAttribute("entity");
             String field = e.getAttribute("field");
-            creators_by_impl.put(entity, new EntityCreatorImpl(entity));
-            impl_by_field.put(field, entity);
+            myCreatorsByImpl.put(entity, new EntityCreatorImpl(entity));
+            myImplByField.put(field, entity);
 
             PojoMetadata pojoMetadata = getPojoMetadata();
             FieldMetadata creator = pojoMetadata.getField(field);
-            m_instanceManager.register(creator, this);
+            myInstanceManager.register(creator, this);
 
             /**
              * Need to reconfigure the handler with the right spec
@@ -87,9 +87,9 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
     public Object onGet(Object pojo, String fieldName, Object value){
 
-        String implementation = impl_by_field.get(fieldName);
+        String implementation = myImplByField.get(fieldName);
         if (implementation != null){
-            return creators_by_impl.get(implementation);
+            return myCreatorsByImpl.get(implementation);
         } else {
             return null;
         }
@@ -103,12 +103,12 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
     @Override
     public Set<String> getImplementations() {
 
-        return new HashSet<>(impl_by_field.values());
+        return new HashSet<>(myImplByField.values());
     }
 
     @Override
     public Set<String> getPendingInstances(String implementation) {
-        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        EntityCreatorImpl entityCreator = myCreatorsByImpl.get(implementation);
         if (entityCreator != null){
             return entityCreator.getPendingEntities();
         } else {
@@ -118,7 +118,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
     @Override
     public boolean getImplentationState(String implementation) {
-        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        EntityCreatorImpl entityCreator = myCreatorsByImpl.get(implementation);
         if (entityCreator != null){
             return entityCreator.getState();
         } else {return false;}
@@ -127,7 +127,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
     @Override
     public boolean switchCreation(String implementation, boolean enable) {
 
-        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        EntityCreatorImpl entityCreator = myCreatorsByImpl.get(implementation);
         boolean result = false;
         if (entityCreator != null){
             if (enable){
@@ -143,7 +143,7 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
     @Override
     public boolean deleteAllInstancesOf(String implementation) {
-        EntityCreatorImpl entityCreator = creators_by_impl.get(implementation);
+        EntityCreatorImpl entityCreator = myCreatorsByImpl.get(implementation);
         if (entityCreator != null){
             entityCreator.deleteAllEntities();
             return true;
@@ -161,10 +161,10 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
             Element creatorElements = new Element("Entity Creators","");
 
-            for (String field : impl_by_field.keySet()){
+            for (Map.Entry<String,String> entry : myImplByField.entrySet()){
                 Element creatorElement = new Element("Entity Creator","");
-                creatorElement.addAttribute(new Attribute("field : ", field));
-                creatorElement.addAttribute(new Attribute("Spec ", impl_by_field.get(field)));
+                creatorElement.addAttribute(new Attribute("field : ", entry.getKey()));
+                creatorElement.addAttribute(new Attribute("Spec ", entry.getValue()));
                 creatorElements.addElement(creatorElement);
             }
 
@@ -179,80 +179,80 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
     private class EntityCreatorImpl implements Creator {
 
-        private String m_entityImplementation;
+        private String myEntityImplementation;
 
-        private String m_entityPackage;
+        private String myEntityPackage;
 
-        private boolean m_switch;
+        private boolean mySwitch;
 
-        private final Map<String,ServiceRegistration> entities_reg = new HashMap<>();
+        private final Map<String,ServiceRegistration> myEntitiesReg = new HashMap<>();
 
-        private final Map<String, Map<String, Object>> created_entities = new HashMap<>();
+        private final Map<String, Map<String, Object>> myCreatedEntities = new HashMap<>();
 
-        private final Map<String, Map<String, Object>> pending_entities = new HashMap<>();
+        private final Map<String, Map<String, Object>> myPendingEntities = new HashMap<>();
 
 
         protected EntityCreatorImpl(String entity){
-            m_entityImplementation = entity;
+            myEntityImplementation = entity;
             int lastPoint = entity.lastIndexOf(".");
-            m_entityPackage = entity.substring(0, lastPoint) + ".";
-            m_switch = false;
+            myEntityPackage = entity.substring(0, lastPoint) + ".";
+            mySwitch = false;
         }
 
         protected String getImplementation(){
-            return m_entityImplementation;
+            return myEntityImplementation;
         }
 
         protected Set<String> getPendingEntities(){
-            return pending_entities.keySet();
+            return myPendingEntities.keySet();
         }
 
-        protected boolean getState(){return m_switch;}
+        protected boolean getState(){return mySwitch;}
 
         protected synchronized void enableCreation() {
 
-            synchronized (pending_entities){
-                synchronized (created_entities){
+            synchronized (myPendingEntities){
+                synchronized (myCreatedEntities){
                     Set<String> entities_to_remove = new HashSet<>();
                     Map<String, Object> initialization;
                     String id;
-                    for(Map.Entry<String, Map<String, Object>> entity : pending_entities.entrySet()){
+                    for(Map.Entry<String, Map<String, Object>> entity : myPendingEntities.entrySet()){
                         id = entity.getKey();
                         initialization = entity.getValue();
                         createInstance(id, initialization);
-                        created_entities.put(id, initialization);
+                        myCreatedEntities.put(id, initialization);
                         entities_to_remove.add(id);
                     }
 
                     for (String id_r : entities_to_remove){
-                        pending_entities.remove(id_r);
+                        myPendingEntities.remove(id_r);
                     }
 
-                    m_switch = true;
+                    mySwitch = true;
                 }
             }
         }
 
         protected synchronized void disableCreation() {
 
-            synchronized (pending_entities){
-                synchronized (created_entities) {
-                    m_switch = false;
+            synchronized (myPendingEntities){
+                synchronized (myCreatedEntities) {
+                    mySwitch = false;
 
                     Set<String> entities_to_remove = new HashSet<>();
                     Map<String, Object> initialization;
                     String id;
 
-                    for (Map.Entry<String, Map<String, Object>> entity : created_entities.entrySet()) {
+                    for (Map.Entry<String, Map<String, Object>> entity : myCreatedEntities.entrySet()) {
                         id = entity.getKey();
                         initialization = entity.getValue();
                         deleteInstance(id);
                         entities_to_remove.add(id);
-                        pending_entities.put(id, initialization);
+                        myPendingEntities.put(id, initialization);
                     }
 
                     for (String id_r : entities_to_remove){
-                        created_entities.remove(id_r);
+                        myCreatedEntities.remove(id_r);
                     }
                 }
             }
@@ -260,8 +260,8 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
         @Override
         public Set<String> getEntityIdsCreated() {
-            synchronized (created_entities){
-                return new HashSet<>(created_entities.keySet());
+            synchronized (myCreatedEntities){
+                return new HashSet<>(myCreatedEntities.keySet());
             }
         }
 
@@ -272,13 +272,13 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
         @Override
         public void createEntity(String id,  Map<String, Object> initialization) {
-            synchronized (pending_entities){
-                synchronized (created_entities) {
-                    if (m_switch) {
+            synchronized (myPendingEntities){
+                synchronized (myCreatedEntities) {
+                    if (mySwitch) {
                         createInstance(id, initialization);
-                        created_entities.put(id, initialization);
+                        myCreatedEntities.put(id, initialization);
                     } else {
-                        pending_entities.put(id, initialization);
+                        myPendingEntities.put(id, initialization);
                     }
                 }
             }
@@ -288,13 +288,13 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
         @Override
         public synchronized void deleteEntity(String id){
 
-            synchronized (pending_entities){
-                synchronized (created_entities) {
-                    if (m_switch) {
+            synchronized (myPendingEntities){
+                synchronized (myCreatedEntities) {
+                    if (mySwitch) {
                         deleteInstance(id);
-                        created_entities.remove(id);
+                        myCreatedEntities.remove(id);
                     } else {
-                        pending_entities.remove(id);
+                        myPendingEntities.remove(id);
                     }
                 }
             }
@@ -302,18 +302,18 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
         @Override
         public synchronized void deleteAllEntities() {
-            synchronized (pending_entities){
-                synchronized (created_entities) {
+            synchronized (myPendingEntities){
+                synchronized (myCreatedEntities) {
 
-                    for(String id : created_entities.keySet()){
+                    for(String id : myCreatedEntities.keySet()){
                         deleteInstance(id);
                     }
-                    created_entities.clear();
+                    myCreatedEntities.clear();
 
-                    for(String id : pending_entities.keySet()){
+                    for(String id : myPendingEntities.keySet()){
                         deleteInstance(id);
                     }
-                    pending_entities.clear();
+                    myPendingEntities.clear();
                 }
             }
         }
@@ -322,12 +322,12 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
             ComponentInstance instance;
 
             Hashtable properties = new Hashtable();
-            /**     properties.put("factory.filter", m_entityImplementation);
-             m_handlerManager.reconfigure(properties);**/
+            /**     properties.put("factory.filter", myEntityImplementation);
+             myHandlerManager.reconfigure(properties);**/
 
             properties = new Hashtable();
             properties.put(ContextEntity.CONTEXT_ENTITY_ID, id);
-            properties.put("instance.name", m_entityPackage + id);
+            properties.put("instance.name", myEntityPackage + id);
             LOG.info(" Try to create entity " + id);
             if (initialization != null){
                 properties.put("context.entity.init", initialization);
@@ -337,11 +337,11 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
             }
             try {
                     /*factory ready?*/
-                instance = m_entityFactory.createComponentInstance(properties);
+                instance = myEntityFactory.createComponentInstance(properties);
                 ServiceRegistration sr = new IpojoServiceRegistration(instance);
 
-                synchronized (entities_reg){
-                    entities_reg.put(id, sr);
+                synchronized (myEntitiesReg){
+                    myEntitiesReg.put(id, sr);
                 }
                 LOG.info(" Entity " + id + " creation succeed ");
             } catch (UnacceptableConfiguration unacceptableConfiguration) {
@@ -356,8 +356,8 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
         private void deleteInstance (String id){
 
             try {
-                synchronized (entities_reg){
-                    ServiceRegistration sr = entities_reg.remove(id);
+                synchronized (myEntitiesReg){
+                    ServiceRegistration sr = myEntitiesReg.remove(id);
                     if (sr != null){
                         sr.unregister();
                     }

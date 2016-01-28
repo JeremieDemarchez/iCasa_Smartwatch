@@ -22,33 +22,33 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
 
     public static final String STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS = "directAccess";
 
-    private final Reporter m_reporter;
+    private final Reporter myReporter;
 
     /**
      * Parent element element.
      */
-    private final ComponentWorkbench m_workbench;
+    private final ComponentWorkbench myWorkbench;
 
     /**
      * Field name.
      */
-    private final String m_field;
+    private final String myField;
 
 
     /**
      * Property name.
      */
-    private String m_name;
+    private String myName;
 
     /**
      * Property name.
      */
-    private String m_defaultValue;
+    private String myDefaultValue;
 
     /**
      * Property name.
      */
-    private boolean m_directAccess = false;
+    private boolean myDirectAccess = false;
 
     /**
      * Constructor.
@@ -57,34 +57,36 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
      */
     public StateVariableFieldVisitor(String field, ComponentWorkbench parent,Reporter reporter) {
         super(Opcodes.ASM5);
-        m_workbench = parent;
-        m_field = field;
-        m_reporter = reporter;
+        myWorkbench = parent;
+        myField = field;
+        myReporter = reporter;
     }
 
+    @Override
     public void visit(String name, Object value) {
-        if (name.equals(STATE_VARIABLE_ATTRIBUTE_NAME)) {
-            m_name = value.toString();
+        if (STATE_VARIABLE_ATTRIBUTE_NAME.equals(name)) {
+            myName = value.toString();
             return;
         }
-        if (name.equals(STATE_VARIABLE_ATTRIBUTE_VALUE)) {
-            m_defaultValue = value.toString();
+        if (STATE_VARIABLE_ATTRIBUTE_VALUE.equals(name)) {
+            myDefaultValue = value.toString();
             return;
         }
-        if (name.equals(STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS)) {
-            m_directAccess = Boolean.valueOf(value.toString());
+        if (STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS.equals(name)) {
+            myDirectAccess = Boolean.valueOf(value.toString());
             return;
         }
     }
+
     @Override
     public void visitEnd() {
         Element stateVariableElement = null;
 
-        Element stateVariable = m_workbench.getIds().get(m_name);
+        Element stateVariable = myWorkbench.getIds().get(myName);
 
-        if ( (stateVariable != null) && (stateVariable.getAttribute(STATE_VARIABLE_ATTRIBUTE_NAME) != null) && (stateVariable.getAttribute(STATE_VARIABLE_ATTRIBUTE_NAME).equals(m_name)) ){
+        if ( (stateVariable != null) && (stateVariable.getAttribute(STATE_VARIABLE_ATTRIBUTE_NAME) != null) && (stateVariable.getAttribute(STATE_VARIABLE_ATTRIBUTE_NAME).equals(myName)) ){
             if (!(stateVariable.getAttribute(STATE_VARIABLE_ATTRIBUTE_FIELD) == null)){
-                m_reporter.error("State Variable " + m_name + " is attached to more than one field");
+                myReporter.error("State Variable " + myName + " is attached to more than one field");
                 return;
             } else {
                 stateVariableElement = stateVariable;
@@ -93,25 +95,27 @@ public class StateVariableFieldVisitor extends AnnotationVisitor {
 
         if (stateVariableElement == null) {
             stateVariableElement = new Element(STATE_VARIABLE_ELEMENT, "");
-            stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_NAME, m_name));
-            m_workbench.getElements().put(stateVariableElement,ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT);
-            m_workbench.getIds().put(m_name, stateVariableElement);
+            stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_NAME, myName));
+            myWorkbench.getElements().put(stateVariableElement,ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT);
+            myWorkbench.getIds().put(myName, stateVariableElement);
         }
 
-        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_FIELD, m_field));
-        if (m_defaultValue != null && m_defaultValue.equals("")){
-            stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_VALUE, m_name));
+        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_FIELD, myField));
+        if ("".equals(myDefaultValue)){
+            stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_VALUE, myName));
         }
 
-        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS,String.valueOf(m_directAccess)));
+        stateVariableElement.addAttribute(new Attribute(STATE_VARIABLE_ATTRIBUTE_DIRECT_ACCESS,String.valueOf(myDirectAccess)));
 
         /**
          * Check if state variable have synchro function and log a warning in this case if direct access is true
          */
-        if (m_directAccess){
-            if (stateVariableElement.getAttribute(PullFieldVisitor.STATE_VARIABLE_ATTRIBUTE_PULL) != null || stateVariableElement.getAttribute(PushMethodVisitor.STATE_VARIABLE_ATTRIBUTE_PUSH) != null || stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET) != null){
-                m_reporter.warn(" State Element " + m_name + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
-            }
+        if (myDirectAccess && haveSynchroAttribute(stateVariableElement)){
+                myReporter.warn(" State Element " + myName + " is in direct access but own synchro function (PUSH, PULL or APPLY). At runtime this function will not be used by the framework and affects the state.");
         }
+    }
+
+    private boolean haveSynchroAttribute(Element stateVariableElement){
+        return stateVariableElement.getAttribute(PullFieldVisitor.STATE_VARIABLE_ATTRIBUTE_PULL) != null || stateVariableElement.getAttribute(PushMethodVisitor.STATE_VARIABLE_ATTRIBUTE_PUSH) != null || stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET) != null ;
     }
 }

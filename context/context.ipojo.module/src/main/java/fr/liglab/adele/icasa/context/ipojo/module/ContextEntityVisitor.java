@@ -1,7 +1,6 @@
 package fr.liglab.adele.icasa.context.ipojo.module;
 
 import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.manipulator.Reporter;
 import org.apache.felix.ipojo.manipulator.metadata.annotation.ComponentWorkbench;
 import org.apache.felix.ipojo.metadata.Attribute;
@@ -10,9 +9,7 @@ import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.Type;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -26,16 +23,16 @@ public class ContextEntityVisitor extends AnnotationVisitor {
      */
     public static final String COMPONENT = "component";
 
-    private final Reporter m_reporter;
-    private final ComponentWorkbench m_workbench;
+    private final Reporter myReporter;
 
-    private Element m_component = getComponentElement();
+    private final ComponentWorkbench myWorkbench;
 
-    private Set<String> m_internalTypeNames = new HashSet<>();
-    private String m_provides;
-    private String m_className;
+    private Element myComponent = getComponentElement();
 
-    private Class spec;
+    private Set<String> myInternalTypeNames = new HashSet<>();
+
+    private String myProvides;
+
     /**
      * Creates the visitor.
      * @param workbench the workbench.
@@ -43,13 +40,13 @@ public class ContextEntityVisitor extends AnnotationVisitor {
      */
     public ContextEntityVisitor(ComponentWorkbench workbench, Reporter reporter) {
         super(Opcodes.ASM5);
-        this.m_reporter = reporter;
-        this.m_workbench = workbench;
+        this.myReporter = reporter;
+        this.myWorkbench = workbench;
     }
 
     @Override
     public AnnotationVisitor visitArray(String name){
-        if (name.equals("spec")){
+        if ("spec".equals(name)){
             return new InterfaceArrayVisitor();
         }else {
             return null;
@@ -59,34 +56,34 @@ public class ContextEntityVisitor extends AnnotationVisitor {
     public void visitEnd() {
 
 
-        String classname = m_workbench.getType().getClassName();
+        String classname = myWorkbench.getType().getClassName();
 
-        for (String spec : m_internalTypeNames){
-            if (!m_workbench.getClassNode().interfaces.contains((spec))){
-                m_reporter.error("Cannot ensure that the class " + m_workbench.getType().getClassName() + " is the implementation of the  " +
+        for (String spec : myInternalTypeNames){
+            if (!myWorkbench.getClassNode().interfaces.contains(spec)){
+                myReporter.error("Cannot ensure that the class " + myWorkbench.getType().getClassName() + " is the implementation of the  " +
                         spec + " context entity description.");
             }
         }
 
-        m_component.addAttribute(new Attribute("classname", classname));
-        m_component.addAttribute(new Attribute("immediate", "true"));
+        myComponent.addAttribute(new Attribute("classname", classname));
+        myComponent.addAttribute(new Attribute("immediate", "true"));
 
-        Element provideElement = getProvidesElement(m_provides);
+        Element provideElement = getProvidesElement(myProvides);
         provideElement.addElement(getPropertyElement(Entity.FACTORY_OF_ENTITY, null, String.class.getName(), Entity.FACTORY_OF_ENTITY_VALUE, "false", "true"));
-        provideElement.addElement(getPropertyElement(Entity.FACTORY_OF_ENTITY_TYPE, null, String.class.getName(), m_className, "false", "true"));
+        provideElement.addElement(getPropertyElement(Entity.FACTORY_OF_ENTITY_TYPE, null, String.class.getName(), classname, "false", "true"));
 
-        m_workbench.getElements().put(provideElement,null);
+        myWorkbench.getElements().put(provideElement,null);
 
         Element contextElement = getContextEntityElement();
-        m_workbench.getElements().put(contextElement,null);
+        myWorkbench.getElements().put(contextElement,null);
 
-        if (m_workbench.getRoot() == null) {
-            m_workbench.setRoot(m_component);
-            m_workbench.getIds().put(CONTEXT_ENTITY_ELEMENT,contextElement);
+        if (myWorkbench.getRoot() == null) {
+            myWorkbench.setRoot(myComponent);
+            myWorkbench.getIds().put(CONTEXT_ENTITY_ELEMENT,contextElement);
         } else {
             // Error case: 2 component type's annotations (@Component and @Handler for example) on the same class
-            m_reporter.error("Multiple 'component type' annotations on the class '{%s}'.", classname);
-            m_reporter.warn("@Entity is ignored.");
+            myReporter.error("Multiple 'component type' annotations on the class '{%s}'.", classname);
+            myReporter.warn("@Entity is ignored.");
         }
     }
 
@@ -94,8 +91,7 @@ public class ContextEntityVisitor extends AnnotationVisitor {
     // Utility method
 
     public Element getContextEntityElement() {
-        Element entity = new Element(CONTEXT_ENTITY_ELEMENT,"");
-        return entity;
+        return  new Element(CONTEXT_ENTITY_ELEMENT,"");
     }
 
     public Element getProvidesElement(String specifications) {
@@ -141,7 +137,7 @@ public class ContextEntityVisitor extends AnnotationVisitor {
         /**
          * List of parsed interface.
          */
-        private String m_itfs;
+        private String myItfs;
 
         public InterfaceArrayVisitor() {
             super(Opcodes.ASM5);
@@ -154,13 +150,14 @@ public class ContextEntityVisitor extends AnnotationVisitor {
          * @param arg1 : element value.
          * @see org.objectweb.asm.AnnotationVisitor#visit(java.lang.String, java.lang.Object)
          */
+        @Override
         public void visit(String arg0, Object arg1) {
-            if (m_itfs == null) {
-                m_itfs = "{" + ((Type) arg1).getClassName();
+            if (myItfs == null) {
+                myItfs = "{" + ((Type) arg1).getClassName();
             } else {
-                m_itfs += "," + ((Type) arg1).getClassName();
+                myItfs += "," + ((Type) arg1).getClassName();
             }
-            m_internalTypeNames.add(((Type) arg1).getInternalName());
+            myInternalTypeNames.add(((Type) arg1).getInternalName());
         }
 
         /**
@@ -169,8 +166,9 @@ public class ContextEntityVisitor extends AnnotationVisitor {
          *
          * @see org.objectweb.asm.AnnotationVisitor#visitEnd()
          */
+        @Override
         public void visitEnd() {
-            m_provides = m_itfs + "}";
+            myProvides = myItfs + "}";
         }
 
     }

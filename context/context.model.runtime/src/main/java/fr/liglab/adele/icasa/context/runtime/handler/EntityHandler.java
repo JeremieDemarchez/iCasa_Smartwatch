@@ -17,8 +17,6 @@ import org.apache.felix.ipojo.metadata.Attribute;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
@@ -33,9 +31,7 @@ import java.util.function.Function;
 public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     @ServiceController(value=false, specification=ContextEntity.class)
-    private boolean controller;
-
-    private static final Logger LOG = LoggerFactory.getLogger(EntityHandler.class);
+    private boolean myController;
 
     /**
      * Component Management
@@ -215,14 +211,14 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
          */
         if (dictionary.get("context.entity.init") != null){
             Map<String,Object> initialStateValue = (Map<String, Object>) dictionary.get("context.entity.init");
-            for (String key : initialStateValue.keySet()){
-                if (myStateSpecifications.contains(key)){
+            for (Map.Entry<String,Object> entry : initialStateValue.entrySet()){
+                if (myStateSpecifications.contains(entry.getKey())){
                     /**
                      * Maybe need to check if type is equal
                      */
-                    myStateValue.put(key, initialStateValue.get(key));
+                    myStateValue.put(entry.getKey(), entry.getValue());
                 }else{
-                    warn(" State " + key +" is not defined in " + myComponentName + " , so it cannot be used to configured initial value");
+                    warn(" State " + entry.getKey() +" is not defined in " + myComponentName + " , so it cannot be used to configured initial value");
                 }
 
             }
@@ -231,16 +227,16 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     public void onCreation(Object instance) {
 
-        for (String state: mySetFunctionField.keySet()){
-            Function setFunction = (Function) myInstanceManager.getFieldValue(mySetFunctionField.get(state));
-            mySetFunction.put(state, setFunction);
+        for (Map.Entry<String,String> entry: mySetFunctionField.entrySet()){
+            Function setFunction = (Function) myInstanceManager.getFieldValue(entry.getValue());
+            mySetFunction.put(entry.getKey(), setFunction);
         }
 
-        for (String state : myPullFunctionField.keySet()) {
-            ScheduledFunctionConfiguration config =  myPullFunctionField.get(state);
+        for (Map.Entry<String,ScheduledFunctionConfiguration> entry: myPullFunctionField.entrySet()) {
+            ScheduledFunctionConfiguration config =  entry.getValue();
             Function pullFunction = (Function) myInstanceManager.getFieldValue(config.getFieldName());
-            ScheduledFunction scheduledFunction = new ScheduledPullFunctionImpl(pullFunction,config.getPeriod(),config.getUnit(),state,this);
-            myPullFunction.put(state, scheduledFunction);
+            ScheduledFunction scheduledFunction = new ScheduledPullFunctionImpl(pullFunction,config.getPeriod(),config.getUnit(),entry.getKey(),this);
+            myPullFunction.put(entry.getKey(), scheduledFunction);
         }
 
     }
@@ -267,7 +263,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             /**
              * Managed Context Entity Service Exposition
              */
-            controller = true;
+            myController = true;
 
             /**
              * Initialise with State Default Value
@@ -313,7 +309,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             /**
              * Managed Context Entity Service Exposition
              */
-            controller = false;
+            myController = false;
 
             for (String stateId : myStateSpecifications){
                 if (myPullFunction.containsKey(stateId)) {
@@ -380,10 +376,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
      */
     private class PushMethodInterceptor implements MethodInterceptor {
 
-        private final String m_name;
+        private final String myName;
 
         PushMethodInterceptor(String name){
-            m_name = name;
+            myName = name;
         }
 
         @Override
@@ -395,7 +391,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         public void onExit(Object pojo, Member method, Object returnedObj) {
             if (returnedObj != null){
                 synchronized (myStateLock) {
-                    update(m_name,returnedObj);
+                    update(myName,returnedObj);
                 }
             }
         }
@@ -482,9 +478,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     }
 
     private String fieldToStateName(String field){
-        for (String state : myStatesFields.keySet()){
-            if (myStatesFields.get(state).equals(field)){
-                return state;
+        for (Map.Entry<String,String> state : myStatesFields.entrySet()){
+            if (state.getValue().equals(field)){
+                return state.getKey();
             }
         }
         return null;
@@ -494,28 +490,28 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
      * Utility class to create Scheduled Function
      */
     private class ScheduledFunctionConfiguration {
-        private final String m_field;
+        private final String myField;
 
-        private final Long m_period;
+        private final Long myPeriod;
 
-        private final TimeUnit m_unit;
+        private final TimeUnit myUnit;
 
         ScheduledFunctionConfiguration(String field,Long period,TimeUnit unit){
-            m_field = field;
-            m_period = period;
-            m_unit = unit;
+            myField = field;
+            myPeriod = period;
+            myUnit = unit;
         }
 
         String getFieldName(){
-            return m_field;
+            return myField;
         }
 
         Long getPeriod(){
-            return m_period;
+            return myPeriod;
         }
 
         TimeUnit getUnit(){
-            return m_unit;
+            return myUnit;
         }
     }
 
@@ -564,6 +560,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         public EntityHandlerDescription(PrimitiveHandler h) { super(h); }
 
         // Method returning the custom description of this handler.
+        @Override
         public Element getHandlerInfo() {
             // Needed to get the root description element.
             Element elem = super.getHandlerInfo();
