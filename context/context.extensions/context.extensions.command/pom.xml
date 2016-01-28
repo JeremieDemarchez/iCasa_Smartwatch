@@ -7,12 +7,12 @@
         <groupId>fr.liglab.adele.icasa</groupId>
         <artifactId>parent</artifactId>
         <version>1.2.7-SNAPSHOT</version>
-        <relativePath>../../parent</relativePath>
+        <relativePath>../../../parent</relativePath>
     </parent>
 
     <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>icasa.context.model.command</artifactId>
+    <artifactId>icasa.context.extensions.command</artifactId>
     <packaging>bundle</packaging>
 
     <dependencies>
@@ -57,7 +57,7 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model.command</Export-Package>
+                        <Export-Package>fr.liglab.adele.icasa.context.extensions.command</Export-Package>
                     </instructions>
                 </configuration>
             </plugin>

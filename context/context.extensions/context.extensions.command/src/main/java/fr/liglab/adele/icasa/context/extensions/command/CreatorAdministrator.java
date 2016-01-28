@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.handler.creator;
+package fr.liglab.adele.icasa.context.extensions.command;
 
 import fr.liglab.adele.icasa.context.handler.creator.entity.CreatorHandlerIntrospection;
 import org.apache.felix.ipojo.annotations.Component;
