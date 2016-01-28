@@ -10,54 +10,54 @@ import java.util.function.Function;
  */
 public class ScheduledPullFunctionImpl implements ScheduledFunction {
 
-    private final Function m_function;
+    private final Function myFunction;
 
-    private final String m_stateId;
+    private final String myStateId;
 
-    private final EntityHandler m_handler;
+    private final EntityHandler myHandler;
 
-    private final long m_period;
+    private final long myPeriod;
 
-    private final TimeUnit m_unit;
+    private final TimeUnit myUnit;
 
-    private  ManagedFutureTask m_futureTask;
+    private  ManagedFutureTask myFutureTask;
 
     public ScheduledPullFunctionImpl(Function function,long period,TimeUnit unit,String stateId,EntityHandler handler) {
-        this.m_function = function;
-        this.m_period = period;
-        this.m_unit = unit;
-        this.m_stateId = stateId;
-        this.m_handler = handler;
+        this.myFunction = function;
+        this.myPeriod = period;
+        this.myUnit = unit;
+        this.myStateId = stateId;
+        this.myHandler = handler;
     }
 
     @Override
     public Object apply(Object object) {
-        return m_function.apply(object);
+        return myFunction.apply(object);
     }
 
     @Override
     public void run() {
-        Object returnObj = m_function.apply(null);
-        m_handler.update(m_stateId,returnObj);
+        Object returnObj = myFunction.apply(null);
+        myHandler.update(myStateId, returnObj);
     }
 
     @Override
     public long getPeriod() {
-        return m_period;
+        return myPeriod;
     }
 
     @Override
     public TimeUnit getUnit() {
-        return m_unit;
+        return myUnit;
     }
 
     @Override
     public void submitted(ManagedFutureTask futureTask) {
-        m_futureTask = futureTask;
+        myFutureTask = futureTask;
     }
 
     @Override
     public ManagedFutureTask task() {
-        return m_futureTask;
+        return myFutureTask;
     }
 }

@@ -40,40 +40,40 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     /**
      * Component Management
      */
-    private ProvidedServiceHandler m_providedServiceHandler;
+    private ProvidedServiceHandler myProvidedServiceHandler;
 
-    private InstanceManager m_instanceManager;
+    private InstanceManager myInstanceManager;
 
-    private String m_componentName;
+    private String myComponentName;
 
 
     /**
      * State Field
      */
-    private final List<String> m_stateSpecifications = new ArrayList<>();
+    private final List<String> myStateSpecifications = new ArrayList<>();
 
-    private final Map<String,String> m_statesFields = new HashMap<>();
+    private final Map<String,String> myStatesFields = new HashMap<>();
 
-    private final Map<String,Function> m_setFunction = new HashMap<>();
+    private final Map<String,Function> mySetFunction = new HashMap<>();
 
-    private final Map<String,String> m_setFunctionField = new HashMap<>();
+    private final Map<String,String> mySetFunctionField = new HashMap<>();
 
-    private final Map<String,ScheduledFunction> m_pullFunction = new HashMap<>();
+    private final Map<String,ScheduledFunction> myPullFunction = new HashMap<>();
 
-    private final Map<String,ScheduledFunctionConfiguration> m_pullFunctionField = new HashMap<>();
+    private final Map<String,ScheduledFunctionConfiguration> myPullFunctionField = new HashMap<>();
 
-    private final Map<String,String> m_pushMethod = new HashMap<>();
+    private final Map<String,String> myPushMethod = new HashMap<>();
 
-    private final Map<String,Object> m_stateValue = new HashMap<>();
+    private final Map<String,Object> myStateValue = new HashMap<>();
 
-    private final Object m_stateLock = new Object();
+    private final Object myStateLock = new Object();
 
     /**
      * State Field Interceptor
      */
-    private final StateFieldWithNoDirectAccessInterceptor m_stateFieldWithNoDirectAccessInterceptor = new StateFieldWithNoDirectAccessInterceptor();
+    private final StateFieldWithNoDirectAccessInterceptor myStateFieldWithNoDirectAccessInterceptor = new StateFieldWithNoDirectAccessInterceptor();
 
-    private final StateFieldWithDirectAccessInterceptor m_stateFieldWithDirectAccessInterceptor = new StateFieldWithDirectAccessInterceptor();
+    private final StateFieldWithDirectAccessInterceptor myStateFieldWithDirectAccessInterceptor = new StateFieldWithDirectAccessInterceptor();
 
     /**
      * Wisdom Scheduler dependency
@@ -87,7 +87,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             EntityType cast = (EntityType)entityTypeAnnotation;
             String[] statesInEntityType = cast.states();
             //TODO : Test if state Variable are not already defined
-            m_stateSpecifications.addAll(Arrays.asList(statesInEntityType));
+            myStateSpecifications.addAll(Arrays.asList(statesInEntityType));
         }
         for (Class superInterfaz : interfaz.getInterfaces()){
             extractStateFromInterface(superInterfaz);
@@ -97,8 +97,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     @Override
     public void configure(Element element, Dictionary dictionary) throws ConfigurationException {
 
-        m_instanceManager = getInstanceManager();
-        m_componentName = m_instanceManager.getInstanceName();
+        myInstanceManager = getInstanceManager();
+        myComponentName = myInstanceManager.getInstanceName();
 
         /**
          * Check if dictionnary contains context entity id
@@ -106,7 +106,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         if (dictionary.get(CONTEXT_ENTITY_ID) == null){
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
         }else {
-            m_stateValue.put(CONTEXT_ENTITY_ID,dictionary.get(CONTEXT_ENTITY_ID));
+            myStateValue.put(CONTEXT_ENTITY_ID, dictionary.get(CONTEXT_ENTITY_ID));
         }
         /**
          * Introspect Interface Implemented by the component POJO and construct the
@@ -127,7 +127,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         Element[] entityElements = element.getElements(ContextEntityVisitor.CONTEXT_ENTITY_ELEMENT);
 
         if(entityElements != null) {
-            for (String state : m_stateSpecifications) {
+            for (String state : myStateSpecifications) {
                 for (Element entityElement : entityElements) {
                     Element[] stateVariableElements = entityElement.getElements(StateVariableFieldVisitor.STATE_VARIABLE_ELEMENT);
                     if (stateVariableElements != null) {
@@ -141,7 +141,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                      * Retrieve fieldMetadata
                                      */
                                     FieldMetadata fieldMetadata = getPojoMetadata().getField(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
-                                    m_statesFields.put(state, fieldMetadata.getFieldName());
+                                    myStatesFields.put(state, fieldMetadata.getFieldName());
 
                                     /**
                                      * No Direct Access Case : Register synchro Function
@@ -152,32 +152,32 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                             /**
                                              * Defaut Config for the moment
                                              */
-                                            m_pullFunctionField.put(state, new ScheduledFunctionConfiguration(pullField, -1L, TimeUnit.SECONDS));
+                                            myPullFunctionField.put(state, new ScheduledFunctionConfiguration(pullField, -1L, TimeUnit.SECONDS));
                                         }
 
                                         String setField = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
                                         if (setField != null) {
-                                            m_setFunctionField.put(state, setField);
+                                            mySetFunctionField.put(state, setField);
                                         }
 
                                         String pushMethod = stateVariableElement.getAttribute(ApplyFieldVisitor.STATE_VARIABLE_ATTRIBUTE_SET);
                                         if (pushMethod != null) {
-                                            m_pushMethod.put(state, pushMethod);
+                                            myPushMethod.put(state, pushMethod);
                                             MethodMetadata methodMetadata = getPojoMetadata().getMethod(stateVariableElement.getAttribute(StateVariableFieldVisitor.STATE_VARIABLE_ATTRIBUTE_FIELD));
-                                            m_instanceManager.register(methodMetadata, new PushMethodInterceptor(state));
+                                            myInstanceManager.register(methodMetadata, new PushMethodInterceptor(state));
                                         }
 
                                         /**
                                          * Add a field interceptor for No direct Access State Variable
                                          */
 
-                                        m_instanceManager.register(fieldMetadata, m_stateFieldWithNoDirectAccessInterceptor);
+                                        myInstanceManager.register(fieldMetadata, myStateFieldWithNoDirectAccessInterceptor);
                                     } else {
                                         /**
                                          * Add a field interceptor for direct Access State Variable
                                          */
 
-                                        m_instanceManager.register(fieldMetadata, m_stateFieldWithDirectAccessInterceptor);
+                                        myInstanceManager.register(fieldMetadata, myStateFieldWithDirectAccessInterceptor);
 
                                     }
 
@@ -190,7 +190,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                                         /**
                                          * Init always with a string, TODO must introspect type and try to create the appropriate Value
                                          */
-                                        m_stateValue.put(state,defaultValue);
+                                        myStateValue.put(state, defaultValue);
                                     }
                                     break;
                                 }
@@ -199,10 +199,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                             }
                         }
                         if (!findInEntity) {
-                            throw new ConfigurationException("State variable " + state + " is defined in entityType but never referenced in " + m_componentName);
+                            throw new ConfigurationException("State variable " + state + " is defined in entityType but never referenced in " + myComponentName);
                         }
                     }else {
-                        throw new ConfigurationException("State variable " + state + " is defined in entityType but never referenced in " + m_componentName +" reason : no " + StateVariableFieldVisitor.STATE_VARIABLE_ELEMENT + " element in entity ");
+                        throw new ConfigurationException("State variable " + state + " is defined in entityType but never referenced in " + myComponentName +" reason : no " + StateVariableFieldVisitor.STATE_VARIABLE_ELEMENT + " element in entity ");
                     }
                 }
             }
@@ -216,13 +216,13 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         if (dictionary.get("context.entity.init") != null){
             Map<String,Object> initialStateValue = (Map<String, Object>) dictionary.get("context.entity.init");
             for (String key : initialStateValue.keySet()){
-                if (m_stateSpecifications.contains(key)){
+                if (myStateSpecifications.contains(key)){
                     /**
                      * Maybe need to check if type is equal
                      */
-                    m_stateValue.put(key,initialStateValue.get(key));
+                    myStateValue.put(key, initialStateValue.get(key));
                 }else{
-                    warn(" State " + key +" is not defined in " + m_componentName + " , so it cannot be used to configured initial value");
+                    warn(" State " + key +" is not defined in " + myComponentName + " , so it cannot be used to configured initial value");
                 }
 
             }
@@ -231,28 +231,28 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     public void onCreation(Object instance) {
 
-        for (String state: m_setFunctionField.keySet()){
-            Function setFunction = (Function) m_instanceManager.getFieldValue(m_setFunctionField.get(state));
-            m_setFunction.put(state, setFunction);
+        for (String state: mySetFunctionField.keySet()){
+            Function setFunction = (Function) myInstanceManager.getFieldValue(mySetFunctionField.get(state));
+            mySetFunction.put(state, setFunction);
         }
 
-        for (String state : m_pullFunctionField.keySet()) {
-            ScheduledFunctionConfiguration config =  m_pullFunctionField.get(state);
-            Function pullFunction = (Function) m_instanceManager.getFieldValue(config.getFieldName());
+        for (String state : myPullFunctionField.keySet()) {
+            ScheduledFunctionConfiguration config =  myPullFunctionField.get(state);
+            Function pullFunction = (Function) myInstanceManager.getFieldValue(config.getFieldName());
             ScheduledFunction scheduledFunction = new ScheduledPullFunctionImpl(pullFunction,config.getPeriod(),config.getUnit(),state,this);
-            m_pullFunction.put(state, scheduledFunction);
+            myPullFunction.put(state, scheduledFunction);
         }
 
     }
 
     @Override
     public synchronized void stop() {
-        m_providedServiceHandler = null;
+        myProvidedServiceHandler = null;
     }
 
     @Override
     public synchronized void start() {
-        m_providedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
+        myProvidedServiceHandler = (ProvidedServiceHandler) getHandler(HandlerFactory.IPOJO_NAMESPACE + ":provides");
 
     }
 
@@ -272,12 +272,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             /**
              * Initialise with State Default Value
              */
-            addStateServiceProperties(new Hashtable<>(m_stateValue));
+            addStateServiceProperties(new Hashtable<>(myStateValue));
 
 
-            for (String stateId : m_stateSpecifications){
-                if (m_pullFunction.containsKey(stateId)) {
-                    ScheduledFunction getFunction = m_pullFunction.get(stateId);
+            for (String stateId : myStateSpecifications){
+                if (myPullFunction.containsKey(stateId)) {
+                    ScheduledFunction getFunction = myPullFunction.get(stateId);
                     Object returnObj = getFunction.apply(stateId);
                     update(stateId,returnObj);
 
@@ -288,11 +288,11 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                         /**   ManagedFutureTask.SuccessCallback<Object> onSucces =  (ManagedFutureTask<Object> var1, Object var2) -> {
                          LOG.info("On success called on  " + stateId + " with  " + var2);
                          if (var2 != null) {
-                         synchronized (m_stateLock) {
-                         if (var2.equals(m_stateValue.get(stateId))) {
+                         synchronized (myStateLock) {
+                         if (var2.equals(myStateValue.get(stateId))) {
 
                          } else {
-                         m_stateValue.replace(stateId, var2);
+                         myStateValue.replace(stateId, var2);
                          updateState(stateId, var2);
                          }
                          }
@@ -315,9 +315,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
              */
             controller = false;
 
-            for (String stateId : m_stateSpecifications){
-                if (m_pullFunction.containsKey(stateId)) {
-                    ScheduledFunction getFunction = m_pullFunction.get(stateId);
+            for (String stateId : myStateSpecifications){
+                if (myPullFunction.containsKey(stateId)) {
+                    ScheduledFunction getFunction = myPullFunction.get(stateId);
                     if (getFunction.getPeriod() > 0){
                         getFunction.task().cancel(true);
                         getFunction.submitted(null);
@@ -333,38 +333,38 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
      */
 
     private void addStateServiceProperties(Dictionary<String,Object> properties){
-        if (m_providedServiceHandler != null){
-            m_providedServiceHandler.addProperties(properties);
+        if (myProvidedServiceHandler != null){
+            myProvidedServiceHandler.addProperties(properties);
         }
     }
     private void addStateServiceProperty(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
-        if (m_providedServiceHandler != null){
-            m_providedServiceHandler.addProperties(hashtable);
+        if (myProvidedServiceHandler != null){
+            myProvidedServiceHandler.addProperties(hashtable);
         }
     }
 
     private void updateStateServiceProperty(String propertyId,Object value){
         Hashtable<String,Object> hashtable = new Hashtable();
         hashtable.put(propertyId, value);
-        if (m_providedServiceHandler != null){
-            m_providedServiceHandler.reconfigure(hashtable);
+        if (myProvidedServiceHandler != null){
+            myProvidedServiceHandler.reconfigure(hashtable);
         }
     }
 
     public void update(String stateId,Object value){
         if (stateId != null) {
             if (value != null) {
-                if (m_stateSpecifications.contains(stateId)) {
-                    synchronized (m_stateLock) {
-                        if (m_stateValue.containsKey(stateId)) {
-                            if (!value.equals(m_stateValue.get(stateId))) {
-                                m_stateValue.put(stateId, value);
+                if (myStateSpecifications.contains(stateId)) {
+                    synchronized (myStateLock) {
+                        if (myStateValue.containsKey(stateId)) {
+                            if (!value.equals(myStateValue.get(stateId))) {
+                                myStateValue.put(stateId, value);
                                 updateStateServiceProperty(stateId, value);
                             }
                         } else {
-                            m_stateValue.put(stateId, value);
+                            myStateValue.put(stateId, value);
                             addStateServiceProperty(stateId, value);
                         }
                     }
@@ -394,7 +394,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         @Override
         public void onExit(Object pojo, Member method, Object returnedObj) {
             if (returnedObj != null){
-                synchronized (m_stateLock) {
+                synchronized (myStateLock) {
                     update(m_name,returnedObj);
                 }
             }
@@ -419,8 +419,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {
             String state = fieldToStateName(fieldName);
-            if(m_setFunction.containsKey(state)){
-                Function setFunction = m_setFunction.get(state);
+            if(mySetFunction.containsKey(state)){
+                Function setFunction = mySetFunction.get(state);
                 setFunction.apply(value);
             }
 
@@ -430,18 +430,18 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         public Object onGet(Object pojo, String fieldName, Object value) {
             Object returnObj = null;
             String state = fieldToStateName(fieldName);
-            if (m_stateSpecifications.contains(state)){
-                if (m_pullFunction.containsKey(state)){
-                    Function getFunction = m_pullFunction.get(state);
+            if (myStateSpecifications.contains(state)){
+                if (myPullFunction.containsKey(state)){
+                    Function getFunction = myPullFunction.get(state);
                     returnObj = getFunction.apply(state);
                     update(state,returnObj);
                 }
 
                 /** Check if have a bufferised value in cas of null**/
                 if (returnObj == null){
-                    synchronized (m_stateLock) {
-                        if (m_stateValue.containsKey(state)) {
-                            returnObj = m_stateValue.get(state);
+                    synchronized (myStateLock) {
+                        if (myStateValue.containsKey(state)) {
+                            returnObj = myStateValue.get(state);
                         }
                     }
                 }
@@ -458,8 +458,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         @Override
         public void onSet(Object pojo, String fieldName, Object value) {
             String state = fieldToStateName(fieldName);
-            if (m_stateSpecifications.contains(state)) {
-                synchronized (m_stateValue) {
+            if (myStateSpecifications.contains(state)) {
+                synchronized (myStateValue) {
                     update(state, value);
                 }
             }
@@ -469,11 +469,11 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         public Object onGet(Object pojo, String fieldName, Object value) {
             Object returnObj = null;
             String state = fieldToStateName(fieldName);
-            if (m_stateSpecifications.contains(state)){
+            if (myStateSpecifications.contains(state)){
                 /** Check if have a bufferised value in cas of null**/
-                synchronized (m_stateLock) {
-                    if (m_stateValue.containsKey(state)) {
-                        returnObj = m_stateValue.get(state);
+                synchronized (myStateLock) {
+                    if (myStateValue.containsKey(state)) {
+                        returnObj = myStateValue.get(state);
                     }
                 }
             }
@@ -482,8 +482,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     }
 
     private String fieldToStateName(String field){
-        for (String state : m_statesFields.keySet()){
-            if (m_statesFields.get(state).equals(field)){
+        for (String state : myStatesFields.keySet()){
+            if (myStatesFields.get(state).equals(field)){
                 return state;
             }
         }
@@ -526,16 +526,16 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
      */
     @Override
     public String getId() {
-        synchronized (m_stateLock){
-            return (String) m_stateValue.get(CONTEXT_ENTITY_ID);
+        synchronized (myStateLock){
+            return (String) myStateValue.get(CONTEXT_ENTITY_ID);
         }
     }
 
     @Override
     public Object getStateValue(String property) {
         if (property != null){
-            synchronized (m_stateLock){
-                return m_stateValue.get(property);
+            synchronized (myStateLock){
+                return myStateValue.get(property);
             }
         }
         return null;
@@ -543,12 +543,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
     @Override
     public Set<String> getStates() {
-        return new HashSet<>(m_stateSpecifications);
+        return new HashSet<>(myStateSpecifications);
     }
 
     @Override
     public Map<String, Object> dumpState(String property) {
-        return new HashMap<>(m_stateValue);
+        return new HashMap<>(myStateValue);
     }
 
 
@@ -568,11 +568,11 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             // Needed to get the root description element.
             Element elem = super.getHandlerInfo();
 
-            for (String stateId : m_stateSpecifications){
+            for (String stateId : myStateSpecifications){
                 Element stateElement = new Element("State property","");
                 stateElement.addAttribute(new Attribute("Name",stateId));
-                if(m_pullFunction.containsKey(stateId)){
-                    Function pull = m_pullFunction.get(stateId);
+                if(myPullFunction.containsKey(stateId)){
+                    Function pull = myPullFunction.get(stateId);
                     Object returnPull = pull.apply(stateId);
                     if (returnPull != null){
                         stateElement.addAttribute(new Attribute("Value",returnPull.toString()));
@@ -583,9 +583,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                     }
                 }
                 else {
-                    synchronized (m_stateLock) {
-                        if (m_stateValue.containsKey(stateId)) {
-                            stateElement.addAttribute(new Attribute("Value", m_stateValue.get(stateId).toString()));
+                    synchronized (myStateLock) {
+                        if (myStateValue.containsKey(stateId)) {
+                            stateElement.addAttribute(new Attribute("Value", myStateValue.get(stateId).toString()));
                             stateElement.addAttribute(new Attribute("Pull function", "unregistered"));
                         } else {
                             stateElement.addAttribute(new Attribute("Value", "No Value"));
@@ -594,7 +594,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                     }
                 }
 
-                if (m_setFunction.containsKey(stateId)){
+                if (mySetFunction.containsKey(stateId)){
                     stateElement.addAttribute(new Attribute("Set function","registered"));
                 }
                 else {
