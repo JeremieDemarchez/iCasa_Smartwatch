@@ -30,8 +30,6 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
 
     private InstanceManager myInstanceManager;
 
-    private HandlerManager myHandlerManager;
-
     private final Map<String, String> myImplByField = new HashMap<>();
 
     private final Map<String, EntityCreatorImpl> myCreatorsByImpl = new HashMap<>();
@@ -56,7 +54,6 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
     public void configure(Element metadata, Dictionary configuration) throws ConfigurationException {
 
         myInstanceManager = getInstanceManager();
-        myHandlerManager = getHandlerManager();
 
         Element[] creatorElements = metadata.getElements("EntityCreator", ENTITY_CREATOR_HANDLER_NAMESPACE);
 
@@ -98,6 +95,11 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
     @Override
     public HandlerDescription getDescription() {
         return new EntityCreatorHandlerDescription(this);
+    }
+
+    @Override
+    public String getAttachedComponentInstanceName() {
+        return myInstanceManager.getInstanceName();
     }
 
     @Override
@@ -321,11 +323,9 @@ public class EntityCreatorHandler extends PrimitiveHandler implements CreatorHan
         private synchronized void createInstance (String id, Map<String, Object> initialization){
             ComponentInstance instance;
 
-            Hashtable properties = new Hashtable();
-            /**     properties.put("factory.filter", myEntityImplementation);
-             myHandlerManager.reconfigure(properties);**/
 
-            properties = new Hashtable();
+
+            Hashtable properties = new Hashtable();
             properties.put(ContextEntity.CONTEXT_ENTITY_ID, id);
             properties.put("instance.name", myEntityPackage + id);
             LOG.info(" Try to create entity " + id);

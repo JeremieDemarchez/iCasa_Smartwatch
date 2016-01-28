@@ -7,6 +7,8 @@ import java.util.Set;
  */
 public interface CreatorHandlerIntrospection {
 
+    String getAttachedComponentInstanceName();
+
     Set<String> getImplementations();
 
     Set<String> getPendingInstances(String implementation);
