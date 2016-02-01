@@ -24,6 +24,7 @@ import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Route;
 import org.wisdom.api.annotations.View;
 import org.wisdom.api.content.Json;
@@ -32,6 +33,7 @@ import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ContextController extends DefaultController {
@@ -62,12 +64,31 @@ public class ContextController extends DefaultController {
     @Route(method = HttpMethod.GET, uri = "/context/entities")
     public Result getEntities(){
         ObjectNode result = json.newObject();
-        result.put("size", entities.size());
+
         int i = 0;
         for (ContextEntity entity : entities){
-            result.put("entity"+i,entity.getId());
-            i++;
+            result.put(entity.getId(),true);
+
         }
         return ok(result);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}")
+    public Result getEntity(@Parameter(value = "id") String id){
+        if (id == null){
+            return internalServerError(new NullPointerException(" id is null"));
+        }
+
+        ObjectNode result = json.newObject();
+
+        for (ContextEntity entity : entities){
+            if (entity.getId().equals(id)){
+                for (Map.Entry<String,Object> entry : entity.dumpState(null).entrySet()){
+                    result.put(entry.getKey(),entry.getValue().toString());
+                }
+                return ok(result);
+            }
+        }
+        return notFound();
     }
 }
