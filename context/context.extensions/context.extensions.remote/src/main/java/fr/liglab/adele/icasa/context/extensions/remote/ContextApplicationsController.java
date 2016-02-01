@@ -20,54 +20,41 @@
 package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
+import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Route;
-import org.wisdom.api.annotations.View;
 import org.wisdom.api.content.Json;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
-import org.wisdom.api.templates.Template;
-
-import java.util.List;
 
 @Controller
-public class ContextController extends DefaultController {
+public class ContextApplicationsController extends DefaultController {
 
     @Requires
     Json json;
 
-    /**
-     * Injects a template named 'welcome'.
-     */
-    @View("ContextMainPage")
-    Template welcome;
 
-    @Requires(specification = ContextEntity.class,optional = true)
-    List<ContextEntity> entities;
-
-    /**
-     * The action method returning the welcome page. It handles
-     * HTTP GET request on the "/" URL.
-     *
-     * @return the welcome page
-     */
-    @Route(method = HttpMethod.GET, uri = "/context")
-    public Result welcome() {
-        return ok(render(welcome, "welcome", "Welcome to Wisdom Framework!"));
-    }
-
-    @Route(method = HttpMethod.GET, uri = "/context/entities")
-    public Result getEntities(){
+    @Route(method = HttpMethod.GET, uri = "/context/applications")
+    public Result getContextApplications(){
         ObjectNode result = json.newObject();
-        result.put("size", entities.size());
-        int i = 0;
-        for (ContextEntity entity : entities){
-            result.put("entity"+i,entity.getId());
-            i++;
-        }
+
+
+
         return ok(result);
     }
+
+    @Route(method = HttpMethod.GET, uri = "/context/applications/{id}")
+    public Result getContextApplication(@Parameter(value = "id") String id){
+        if (id == null){
+            return internalServerError(new NullPointerException("Application id is null"));
+        }
+
+        ObjectNode result = json.newObject();
+
+        return notFound();
+    }
+
+
 }
