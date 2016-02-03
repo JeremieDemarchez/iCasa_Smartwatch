@@ -16,16 +16,35 @@
     <packaging>deployment-package</packaging>
     <name>${productName} :: ${projectName}</name>
 
+    <properties>
+        <fuchsia.version>0.0.5-SNAPSHOT</fuchsia.version>
+    </properties>
+
     <dependencies>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>org.ow2.chameleon.fuchsia.base.philips-hue.huedsk-bundle</artifactId>
+            <artifactId>philips.device.importer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>philips.device.discovery</artifactId>
+            <artifactId>philips.device.fuchsia.set.up</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <artifactId>org.ow2.chameleon.fuchsia.base.philips-hue.huedsk-bundle</artifactId>
+            <groupId>org.ow2.chameleon.fuchsia.base.philips-hue</groupId>
+            <version>${fuchsia.version}</version>
+            <optional>false</optional>
+        </dependency>
+        <dependency>
+            <groupId>org.ow2.chameleon.fuchsia.discovery</groupId>
+            <artifactId>org.ow2.chameleon.fuchsia.discovery.philips-hue</artifactId>
+            <version>${fuchsia.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.compendium</artifactId>
         </dependency>
     </dependencies>
 
@@ -40,10 +59,6 @@
                     <includeDependencies>true</includeDependencies>
                     <deploymentPackage>
                         <resources>
-                            <processedResource>
-                                <processor>org.osgi.deployment.rp.autoload</processor>
-                                <filePath>/src/main/resources/rose-conf-philips_driver.json</filePath>
-                            </processedResource>
                         </resources>
                     </deploymentPackage>
                 </configuration>

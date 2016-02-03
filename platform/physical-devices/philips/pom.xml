@@ -30,6 +30,7 @@
 
 	<modules>
         <module>importers</module>
+        <module>philips-set-up</module>
 	</modules>
 
    <build>
