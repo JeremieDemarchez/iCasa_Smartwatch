@@ -63,7 +63,7 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
 
     private final BundleContext context;
 
-    @Requires
+    @Requires(filter = "((factory.name=philipsHueBridge))")
     Factory philipsBridgeFactory;
 
     private Map<String, ServiceRegistration> bridges = new HashMap<String, ServiceRegistration>();

@@ -67,7 +67,7 @@ public class PhilipsHueLightImporter extends AbstractImporterComponent {
     private Map<String, ServiceRegistration> lamps = new HashMap<String, ServiceRegistration>();
 
 
-    @Requires(optional = false)
+    @Requires(optional = false,filter = "((factory.name=philipsHueLight))")
     Factory philipsHUELightFactory ;
 
     @ServiceProperty(name = "target", value = "(&(discovery.philips.device.name=*)(scope=generic))")

@@ -19,7 +19,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Component(immediate = true)
+@Component(immediate = true,name = "philipsHueBridge")
 @Provides(specifications = {DiscoveryIntrospection.class,DiscoveryIntrospection.class,PhilipsHueBridge.class})
 public class PhilipsHueBridgeImpl extends AbstractDiscoveryComponent implements PhilipsHueBridge{
 
