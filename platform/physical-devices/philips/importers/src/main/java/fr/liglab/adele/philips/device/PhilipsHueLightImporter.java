@@ -58,9 +58,9 @@ import java.util.Map;
 
 @Component
 @Provides(specifications = {ImporterService.class,ImporterIntrospection.class})
-public class PhilipsHueImporter extends AbstractImporterComponent {
+public class PhilipsHueLightImporter extends AbstractImporterComponent {
 
-    private static final Logger LOG = LoggerFactory.getLogger(PhilipsHueImporter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PhilipsHueLightImporter.class);
 
     private final BundleContext context;
 
@@ -76,7 +76,7 @@ public class PhilipsHueImporter extends AbstractImporterComponent {
     @ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
     private String name;
 
-    public PhilipsHueImporter(BundleContext context) {
+    public PhilipsHueLightImporter(BundleContext context) {
         this.context = context;
     }
 
@@ -120,7 +120,6 @@ public class PhilipsHueImporter extends AbstractImporterComponent {
         try {
             properties.put(GenericDevice.DEVICE_SERIAL_NUMBER,pojo.getId());
             properties.put("philips.device.light",pojo.getLight());
-            properties.put("philips.device.bridge",pojo.getBridge());
             instance = philipsHUELightFactory.createComponentInstance(properties);
             if (instance != null) {
                 ServiceRegistration sr = new IpojoServiceRegistration(

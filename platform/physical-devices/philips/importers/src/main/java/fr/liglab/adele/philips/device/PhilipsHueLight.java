@@ -16,7 +16,6 @@
 package fr.liglab.adele.philips.device;
 
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
-import com.philips.lighting.model.PHBridge;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -27,6 +26,7 @@ import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,8 +48,8 @@ public class PhilipsHueLight extends AbstractDevice implements
     @ServiceProperty(name="philips.device.light",mandatory = true)
     private PHLight light;
 
-    @ServiceProperty(name="philips.device.bridge",mandatory = true)
-    private PHBridge bridge;
+    @Requires(optional =false)
+    private PhilipsHueBridge bridge;
 
     private static final Logger LOG = LoggerFactory.getLogger(PhilipsHueLight.class);
 

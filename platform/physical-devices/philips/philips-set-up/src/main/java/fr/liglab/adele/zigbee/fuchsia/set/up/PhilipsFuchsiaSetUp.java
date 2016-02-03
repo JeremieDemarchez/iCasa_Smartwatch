@@ -39,7 +39,7 @@ public class PhilipsFuchsiaSetUp {
             .with(ImportationLinker.FILTER_IMPORTERSERVICE_PROPERTY).setto("(instance.name=philipsBridgeImporter)");
 
     Instance philipsLightImporter = instance().named("philipsLightImporter")
-            .of("fr.liglab.adele.philips.device.PhilipsHueImporter");
+            .of("fr.liglab.adele.philips.device.PhilipsHueLightImporter");
 
     Instance philipsLightImporterLinker = instance().named("philipsLightLinker")
             .of(FuchsiaConstants.DEFAULT_IMPORTATION_LINKER_FACTORY_NAME)

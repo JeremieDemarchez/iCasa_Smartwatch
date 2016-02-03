@@ -35,12 +35,11 @@ package fr.liglab.adele.philips.device;
  * #L%
  */
 
-import com.philips.lighting.hue.sdk.bridge.impl.PHBridgeImpl;
-import com.philips.lighting.model.PHBridge;
 import fr.liglab.adele.philips.device.util.PhilipsHueBridgeDeclarationWrapper;
-import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.*;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.ow2.chameleon.fuchsia.core.component.AbstractImporterComponent;
@@ -51,7 +50,10 @@ import org.ow2.chameleon.fuchsia.core.exceptions.BinderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 @Component
 @Provides(specifications = {ImporterService.class,ImporterIntrospection.class})
@@ -61,11 +63,10 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
 
     private final BundleContext context;
 
-    Timer timer;
+    @Requires
+    Factory philipsBridgeFactory;
 
-    private Map<String, ServiceRegistration> lamps = new HashMap<String, ServiceRegistration>();
     private Map<String, ServiceRegistration> bridges = new HashMap<String, ServiceRegistration>();
-    private Map<String, FetchBridgeLampsTask> lampsSearchTask = new HashMap<String, FetchBridgeLampsTask>();
 
     @ServiceProperty(name = "target", value = "(&(discovery.philips.bridge.type=*)(scope=generic))")
     private String filter;
@@ -84,13 +85,13 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
 
     @Validate
     public void validate() {
-        timer = new Timer();
+        super.start();
         LOG.info("Philips hue Importer is up and running");
     }
 
     @Invalidate
     public void invalidate() {
-
+        super.stop();
         LOG.info("Cleaning up instances into Philips hue Importer");
 
         cleanup();
@@ -103,14 +104,6 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
             bridges.remove(bridgeEntry.getKey()).unregister();
         }
 
-        for (Map.Entry<String, ServiceRegistration> bridgeEntry : lamps.entrySet()) {
-            lamps.remove(bridgeEntry.getKey()).unregister();
-        }
-
-        timer.cancel();
-
-        timer.purge();
-
     }
 
     @Override
@@ -120,20 +113,28 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
 
         PhilipsHueBridgeDeclarationWrapper pojo= PhilipsHueBridgeDeclarationWrapper.create(importDeclaration);
 
-        Dictionary<String, Object> props = new Hashtable<String, Object>();
+        ComponentInstance instance;
 
-        props.put("bridge.id",pojo.getId());
+        Hashtable properties = new Hashtable();
 
-        ServiceRegistration bridgeService=context.registerService(new String[]{PHBridge.class.getName(),PHBridgeImpl.class.getName()},pojo.getBridgeObject(),props);
+        try {
+            properties.put("philips.bridge",pojo.getBridgeObject());
+            properties.put("bridge.id",pojo.getId());
+            instance = philipsBridgeFactory.createComponentInstance(properties);
+            if (instance != null) {
+                ServiceRegistration sr = new IpojoServiceRegistration(
+                        instance);
+                bridges.put(pojo.getId(),sr);
+                super.handleImportDeclaration(importDeclaration);
+            }
+        } catch (UnacceptableConfiguration unacceptableConfiguration) {
+            LOG.error("failed registering lamp", unacceptableConfiguration);
+        } catch (MissingHandlerException e) {
+            LOG.error("failed registering lamp", e);
+        } catch (ConfigurationException e) {
+            LOG.error("failed registering lamp", e);
+        }
 
-        FetchBridgeLampsTask task=new FetchBridgeLampsTask((PHBridgeImpl) pojo.getBridgeObject(),lamps,context);
-
-        timer.schedule(task,0,5000);
-
-        super.handleImportDeclaration(importDeclaration);
-
-        bridges.put(pojo.getId(), bridgeService);
-        lampsSearchTask.put(pojo.getId(),task);
 
     }
 
@@ -144,10 +145,6 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
 
         PhilipsHueBridgeDeclarationWrapper pojo= PhilipsHueBridgeDeclarationWrapper.create(importDeclaration);
 
-        lampsSearchTask.remove(pojo.getId()).cancel();
-
-        unhandleImportDeclaration(importDeclaration);
-
         try {
             ServiceRegistration sr = bridges.remove(pojo.getId());
             if (sr != null) {
@@ -157,16 +154,7 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
             LOG.error("failed unregistering bridge", e);
         }
 
-        try {
-            for (Map.Entry<String, ServiceRegistration> entry : lamps.entrySet()) {
-                ServiceRegistration sr = lamps.remove(entry.getKey());
-                if (sr != null) {
-                    sr.unregister();
-                }
-            }
-        } catch (IllegalStateException e) {
-            LOG.error("failed unregistering lamp", e);
-        }
+        unhandleImportDeclaration(importDeclaration);
     }
 
 
@@ -174,5 +162,60 @@ public class PhilipsHueBridgeImporter extends AbstractImporterComponent {
         return name;
     }
 
+    /**
+     * A wrapper for ipojo Component instances
+     *
+     *
+     */
+    class IpojoServiceRegistration implements ServiceRegistration {
+
+        ComponentInstance instance;
+
+        public IpojoServiceRegistration(ComponentInstance instance) {
+            super();
+            this.instance = instance;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see org.osgi.framework.ServiceRegistration#getReference()
+         */
+        public ServiceReference getReference() {
+            try {
+                ServiceReference[] references = instance.getContext()
+                        .getServiceReferences(
+                                instance.getClass().getCanonicalName(),
+                                "(instance.name=" + instance.getInstanceName()
+                                        + ")");
+                if (references.length > 0)
+                    return references[0];
+            } catch (InvalidSyntaxException e) {
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see
+         * org.osgi.framework.ServiceRegistration#setProperties(java.util.Dictionary
+         * )
+         */
+        public void setProperties(Dictionary properties) {
+            instance.reconfigure(properties);
+        }
+
+        /*
+         * (non-Javadoc)
+         *
+         * @see org.osgi.framework.ServiceRegistration#unregister()
+         */
+        public void unregister() {
+            instance.dispose();
+        }
+
+    }
 }
 
