@@ -14,46 +14,45 @@
  *   limitations under the License.
  */
 /**
- * 
+ *
  */
 package fr.liglab.adele.zigbee.device.importer;
 
-import java.util.ArrayList;
-import java.util.Dictionary;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.zigbee.driver.TypeCode;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.Factory;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.apache.felix.ipojo.annotations.Validate;
+import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
-import org.osgi.service.log.LogService;
-import org.osgi.service.remoteserviceadmin.EndpointDescription;
 import org.osgi.service.remoteserviceadmin.RemoteConstants;
-import org.ow2.chameleon.rose.AbstractImporterComponent;
-import org.ow2.chameleon.rose.ImporterService;
-import org.ow2.chameleon.rose.RoseMachine;
+import org.ow2.chameleon.fuchsia.core.component.AbstractImporterComponent;
+import org.ow2.chameleon.fuchsia.core.component.ImporterIntrospection;
+import org.ow2.chameleon.fuchsia.core.component.ImporterService;
+import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclaration;
+import org.ow2.chameleon.fuchsia.core.exceptions.BinderException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.zigbee.driver.TypeCode;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Hashtable;
+import java.util.Map;
 
 /**
- * rose importer for zigbee presence sensor devices.
+ * Fuchsia importer for zigbee devices.
  *
  */
 @Component(name = "zigbee.device.importer")
-@Provides(specifications = { ImporterService.class }, properties = { @StaticServiceProperty(type = "java.lang.String", name = "rose.protos.configs", value = "zigbee") })
+@Provides(specifications = {ImporterService.class, ImporterIntrospection.class})
 public class ZigbeeImporter extends AbstractImporterComponent {
+
+	@ServiceProperty(name = ImporterService.TARGET_FILTER_PROPERTY,value ="(protocol=zigbee)")
+	private String filter;
+
+	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
+	private String name;
 
 	@Requires(filter = "(factory.name=zigbeePhotometer)")
 	private Factory photometerFactory;
@@ -73,37 +72,49 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 	@Requires(filter = "(factory.name=zigbeeThermometer)")
 	private Factory thermometerFactory;
 
-    @Requires(filter = "(factory.name=zigbeePresenceSensor)")
-    private Factory presenceSensorFactory;
-
-	@Requires(id = "rose.machine")
-	private RoseMachine roseMachine;
+	@Requires(filter = "(factory.name=zigbeePresenceSensor)")
+	private Factory presenceSensorFactory;
 
 	private static final Logger logger = LoggerFactory
 			.getLogger(ZigbeeImporter.class);
 
-	@Override
-	public List<String> getConfigPrefix() {
-		List<String> list = new ArrayList<String>();
-		list.add("zigbee");
-		return list;
+	private final Map<String, ServiceRegistration> zigbeeDevices = new HashMap<String, ServiceRegistration>();
+
+	@Validate
+	protected void start() {
+		zigbeeDevices.clear();
+		super.start();
+	}
+
+	@Invalidate
+	protected void stop() {
+		cleanup();
+		super.stop();
+	}
+
+	@PostRegistration
+	public void registration(ServiceReference serviceReference) {
+		super.setServiceReference(serviceReference);
+	}
+
+
+	private void cleanup() {
+
+		for (Map.Entry<String, ServiceRegistration> zigbeeEntry : zigbeeDevices.entrySet()) {
+			zigbeeDevices.remove(zigbeeEntry.getKey()).unregister();
+		}
+
 	}
 
 	@Override
-	public RoseMachine getRoseMachine() {
-		return roseMachine;
-	}
-
-	@Override
-	protected ServiceRegistration createProxy(EndpointDescription epd,
-			Map<String, Object> arg1) {
+	protected synchronized void useImportDeclaration(ImportDeclaration importDeclaration) throws BinderException {
 		ComponentInstance instance;
 		try {
 
 			Factory factory = null;
 
-			if (epd != null) {
-				Map<String, Object> epdProps = epd.getProperties();
+			if (importDeclaration != null) {
+				Map<String, Object> epdProps = importDeclaration.getMetadata();
 				String deviceType = (String) epdProps
 						.get("zigbee.device.type.code");
 				String moduleAddress = (String) epdProps.get("id");
@@ -123,12 +134,12 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 				} else if (TypeCode.C003.toString().equals(deviceType)) {
 					factory = motionSensorFactory;
 				}  else if (TypeCode.C005.toString().equals(deviceType)) {
-                    factory = thermometerFactory;
-                }else if (TypeCode.C006.toString().equals(deviceType)) {
+					factory = thermometerFactory;
+				}else if (TypeCode.C006.toString().equals(deviceType)) {
 					factory = presenceSensorFactory;
 				} else {
 					// device type not supported
-					return null;
+					return ;
 				}
 
 				Hashtable properties = new Hashtable();
@@ -142,41 +153,41 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 				if (instance != null) {
 					ServiceRegistration sr = new IpojoServiceRegistration(
 							instance);
-					return sr;
+					zigbeeDevices.put(serialNumber,sr);
 				}
+				super.handleImportDeclaration(importDeclaration);
+
 			}
 
 		} catch (Exception ex) {
-			ex.printStackTrace();
+			logger.error("Error in using import declaration" + importDeclaration.toString(),ex);
+		}
+	}
+
+	@Override
+	protected synchronized void denyImportDeclaration(ImportDeclaration importDeclaration) throws BinderException {
+		Map<String, Object> epdProps = importDeclaration.getMetadata();
+		String serialNumber = (String) epdProps
+				.get(RemoteConstants.ENDPOINT_ID);
+		try {
+			zigbeeDevices.remove(serialNumber).unregister();
+		} catch (IllegalStateException e) {
+			logger.error("failed unregistering zigbee device", e);
 		}
 
-		return null;
+		unhandleImportDeclaration(importDeclaration);
 	}
+
 
 	@Override
-	protected void destroyProxy(EndpointDescription arg0, ServiceRegistration sr) {
-		sr.unregister();
-	}
-
-	@Override
-	protected LogService getLogService() {
-		return null;
-	}
-
-	@Validate
-	protected void start() {
-		super.start();
-	}
-
-	@Invalidate
-	protected void stop() {
-		super.stop();
+	public String getName() {
+		return name;
 	}
 
 	/**
 	 * A wrapper for ipojo Component instances
 	 *
-	 * 
+	 *
 	 */
 	class IpojoServiceRegistration implements ServiceRegistration {
 

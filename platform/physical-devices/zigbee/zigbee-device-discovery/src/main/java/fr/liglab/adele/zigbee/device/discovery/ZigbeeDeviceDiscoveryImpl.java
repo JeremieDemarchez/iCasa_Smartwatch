@@ -14,88 +14,113 @@
  *   limitations under the License.
  */
 /**
- * 
+ *
  */
 package fr.liglab.adele.zigbee.device.discovery;
-
-import java.util.Map;
-import java.util.Properties;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.osgi.service.remoteserviceadmin.EndpointDescription;
-import org.osgi.service.remoteserviceadmin.RemoteConstants;
-import org.ow2.chameleon.rose.RoseMachine;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
+import org.apache.felix.ipojo.Factory;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.ServiceProperty;
+import org.osgi.framework.BundleContext;
+import org.osgi.service.remoteserviceadmin.RemoteConstants;
+import org.ow2.chameleon.fuchsia.core.component.AbstractDiscoveryComponent;
+import org.ow2.chameleon.fuchsia.core.component.DiscoveryIntrospection;
+import org.ow2.chameleon.fuchsia.core.component.DiscoveryService;
+import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclaration;
+import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclarationBuilder;
+import org.ow2.chameleon.fuchsia.core.exceptions.BinderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  *
  */
-@Component(name = "zigbee.rose.discovery", immediate = true)
-@Provides(specifications={ZigbeeDeviceTracker.class})
-public class ZigbeeDeviceDiscoveryImpl implements ZigbeeDeviceTracker {
+@Component(name = "zigbee.fuchsia.discovery", immediate = true)
+@Provides(specifications={ZigbeeDeviceTracker.class, DiscoveryService.class, DiscoveryIntrospection.class})
+public class ZigbeeDeviceDiscoveryImpl extends AbstractDiscoveryComponent implements ZigbeeDeviceTracker {
 
-	@Requires(id="rose.machine")
-	private RoseMachine roseMachine;
-	
-	private static final Logger logger = LoggerFactory
-			.getLogger(ZigbeeDeviceDiscoveryImpl.class);
-	
-	@Override
-	public void deviceAdded(DeviceInfo deviceInfo) {
-		logger.debug("new zigbee device added in discovery : " + deviceInfo.getModuleAddress());
-		registerZigbeeDeviceInROSE(deviceInfo);
+	private static final Logger logger = LoggerFactory.getLogger(ZigbeeDeviceDiscoveryImpl.class);
+
+	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
+	private String name;
+
+	protected ZigbeeDeviceDiscoveryImpl(BundleContext bundleContext) {
+		super(bundleContext);
 	}
 
 	@Override
-	public void deviceRemoved(DeviceInfo deviceInfo) {
+	public void start(){
+		super.start();
+	}
+
+	@Override
+	public void stop(){
+		super.stop();
+	}
+
+	@Override
+	public synchronized void deviceAdded(DeviceInfo deviceInfo) {
+		logger.debug("new zigbee device added in discovery : " + deviceInfo.getModuleAddress());
+		registerZigbeeImportDeclaration(deviceInfo);
+	}
+
+	@Override
+	public synchronized void deviceRemoved(DeviceInfo deviceInfo) {
 		String serial = computeSerialNumber(deviceInfo.getModuleAddress());
-		unregisterZigbeeDeviceInROSE(serial);
+		ImportDeclaration importToRemove = null;
+		for (ImportDeclaration declaration : super.getImportDeclarations()){
+			Map<String,Object> metadatas = declaration.getMetadata();
+			if (metadatas.get("id") != null && metadatas.get("id").equals(deviceInfo.getModuleAddress())){
+				importToRemove = declaration;
+				break;
+			}
+		}
+		if (importToRemove !=null) {
+			super.unregisterImportDeclaration(importToRemove);
+		}
 	}
 
 	@Override
 	public void deviceDataChanged(String moduleAddress, Data oldData,
-			Data newData) {
+								  Data newData) {
 		// do nothing
-		
+
 	}
 
 	@Override
 	public void deviceBatteryLevelChanged(String moduleAddress,
-			float oldBatteryLevel, float newBatteryLevel) {
+										  float oldBatteryLevel, float newBatteryLevel) {
 		// do nothing
-		
-	}
-	
-	private void unregisterZigbeeDeviceInROSE(String serialNumber) {
 
-		roseMachine.removeRemote(serialNumber);
 	}
 
-	private void registerZigbeeDeviceInROSE(DeviceInfo deviceInfo) {
-		
-		Map props = new Properties();
+	private void registerZigbeeImportDeclaration(DeviceInfo deviceInfo) {
 
 		String serialNumber = computeSerialNumber(deviceInfo.getModuleAddress());
 
-		props.put(RemoteConstants.ENDPOINT_ID, serialNumber);
-		props.put(RemoteConstants.SERVICE_IMPORTED_CONFIGS, "zigbee");
-		props.put("objectClass", new String[] { "fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo" });
+		ImportDeclaration zigbeeDeclaration = ImportDeclarationBuilder.empty()
+				.key(RemoteConstants.ENDPOINT_ID).value(serialNumber)
+				.key("protocol").value("zigbee")
+				.key("objectClass").value(new String[] { "fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo" })
+				.key("id").value(deviceInfo.getModuleAddress())
+				.key("zigbee.device.type.code").value( deviceInfo.getTypeCode().toString())
+				.build();
 
-		props.put("id", deviceInfo.getModuleAddress());
-		props.put("zigbee.device.type.code", deviceInfo.getTypeCode().toString());
-
-		EndpointDescription epd = new EndpointDescription(props);
-		roseMachine.putRemote(serialNumber, epd);
+		super.registerImportDeclaration(zigbeeDeclaration);
 	}
-	
+
 	private String computeSerialNumber(String moduleAddress){
 		return "zigbee#"+moduleAddress;
+	}
+
+	@Override
+	public String getName() {
+		return name;
 	}
 }
