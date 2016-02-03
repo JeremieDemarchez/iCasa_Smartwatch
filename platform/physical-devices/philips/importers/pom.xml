@@ -22,12 +22,11 @@
 	<packaging>bundle</packaging>
 	<name>${productName} :: ${projectName} :: Philips Device Discovery</name>
 
+	<properties>
+		<fuchsia.version>0.0.5-SNAPSHOT</fuchsia.version>
+	</properties>
+
 	<dependencies>
-        <dependency>
-            <artifactId>org.ow2.chameleon.fuchsia.base.philips-hue.huedsk-bundle</artifactId>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <version>${project.version}</version>
-        </dependency>
 		<dependency>
 			<groupId>org.ow2.chameleon.rose</groupId>
 			<artifactId>rose-core</artifactId>
@@ -53,6 +52,17 @@
             <artifactId>context.api</artifactId>
             <version>${project.version}</version>
         </dependency>
+		<dependency>
+			<artifactId>org.ow2.chameleon.fuchsia.base.philips-hue.huedsk-bundle</artifactId>
+			<groupId>org.ow2.chameleon.fuchsia.base.philips-hue</groupId>
+			<version>${fuchsia.version}</version>
+			<optional>false</optional>
+		</dependency>
+		<dependency>
+			<groupId>org.ow2.chameleon.fuchsia</groupId>
+			<artifactId>org.ow2.chameleon.fuchsia.core</artifactId>
+			<version>${fuchsia.version}</version>
+		</dependency>
 	</dependencies>
 
 	<build>

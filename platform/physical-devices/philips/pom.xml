@@ -29,9 +29,9 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-        <module>huesdk-bundle</module>
-		<module>discovery</module>
+        <module>importers</module>
 	</modules>
+
    <build>
       <plugins>
          <plugin>
