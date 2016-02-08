@@ -1,8 +1,12 @@
+function clearBox(elementID){
 
+    console.log("Clear " + elementID);
+    document.getElementById(elementID).innerHTML = "";
+}
 
 function drawProviderPanel(providerId,data){
 
-    var factorySection = $("#providersSection");
+    var providersSection = $("#providersSection");
 
     var panel = $("<div></div>").attr('class',"panel panel-primary providerPanel").attr('id',"provider"+providerId);
     var panelHeading =  $("<div></div>").attr('class',"panel-heading");
@@ -52,6 +56,8 @@ function getProvider(providerId){
 }
 
 function getListOfProviders(){
+
+    clearBox("providersSection");
     console.log("Get List of Provider");
     t = $.get("/context/providers",function(data) {
         $.each(data,function(key,value){

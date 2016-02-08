@@ -1,4 +1,8 @@
+function clearBox(elementID){
 
+    console.log("Clear " + elementID);
+    document.getElementById(elementID).innerHTML = "";
+}
 
 function getApplication(providerId){
 
@@ -10,11 +14,13 @@ function getApplication(providerId){
 }
 
 function getListOfApplications(){
-        console.log("Get List of Applications");
-        t = $.get("/context/applications",function(data) {
-            $.each(data,function(key,value){
-                getApplication(key)
-            });
+
+    clearBox("applicationsSection");
+    console.log("Get List of Applications");
+    t = $.get("/context/applications",function(data) {
+        $.each(data,function(key,value){
+            getApplication(key)
         });
+    });
 }
 
