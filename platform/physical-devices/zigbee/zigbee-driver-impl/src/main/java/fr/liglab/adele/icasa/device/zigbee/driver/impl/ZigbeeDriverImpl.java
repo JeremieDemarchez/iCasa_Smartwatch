@@ -62,21 +62,17 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 
     private static final String SERIAL_PORT_PROPERTY = "zigbee.driver.port";
 
-	//@Property(mandatory = false, value = "COM3", name = SERIAL_PORT_PROPERTY)
+	private static final String BAUD_RATE_PROPERTY = "baud.rate";
+
+	@Property(mandatory = true, name = SERIAL_PORT_PROPERTY)
 	private String port;
 
-	@Property(name = "baud.rate", mandatory = false, value = "115200")
+	@Property(name = BAUD_RATE_PROPERTY, mandatory = true)// value = "115200"
 	private Integer baud;
 
 	/* @GardedBy(trackers) */
 	private List<ZigbeeDeviceTracker> trackers;
 
-    @Property(mandatory = false, value = "NONE", name = SERIAL_PORT_PROPERTY)
-    public void setPort(String seriaPort){
-        this.port = seriaPort;
-        this.stop();//stop if there is a current handler.
-        this.start();//will initialize it with the new port.
-    }
 
 	public List<ZigbeeDeviceTracker> getTrackers() {
 		synchronized(trackers) {
@@ -155,15 +151,6 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 	 */
 	@Override
 	public String getCOMPort() {
-        String givenPort = context.getProperty(SERIAL_PORT_PROPERTY);
-        if(givenPort != null && givenPort.length()>0){
-            logger.info("Get port: "+ givenPort+ " from property: " + SERIAL_PORT_PROPERTY);
-            return givenPort;
-        }
-        logger.warn("Get port: "+ givenPort+ " from component: " + SERIAL_PORT_PROPERTY);
-        if (port == null) {
-            return "NONE";
-        }
 		return port;
 	}
 

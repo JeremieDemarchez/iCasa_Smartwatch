@@ -18,9 +18,9 @@
 
 	<!-- Project Descrkiption -->
 	<modelVersion>4.0.0</modelVersion>
-	<artifactId>zigbee.device.importer</artifactId>
+	<artifactId>philips.device.importer</artifactId>
 	<packaging>bundle</packaging>
-	<name>${productName} :: ${projectName} :: Zigbee Device Importer</name>
+	<name>${productName} :: ${projectName} :: Philips Device Discovery</name>
 
 	<properties>
 		<fuchsia.version>0.0.5-SNAPSHOT</fuchsia.version>
@@ -28,12 +28,8 @@
 
 	<dependencies>
 		<dependency>
-			<groupId>org.apache.felix</groupId>
-			<artifactId>org.apache.felix.ipojo.annotations</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>org.osgi</groupId>
-			<artifactId>org.osgi.core</artifactId>
+			<groupId>org.ow2.chameleon.rose</groupId>
+			<artifactId>rose-core</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
@@ -43,10 +39,24 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-log4j12</artifactId>
 		</dependency>
+        <dependency>
+            <groupId>org.osgi</groupId>
+            <artifactId>org.osgi.core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.felix</groupId>
+            <artifactId>org.apache.felix.ipojo.annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>context.api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
 		<dependency>
-		    <groupId>fr.liglab.adele.icasa</groupId>
-		    <artifactId>zigbee.driver.api</artifactId>
-		    <version>${project.version}</version>
+			<artifactId>org.ow2.chameleon.fuchsia.base.philips-hue.huedsk-bundle</artifactId>
+			<groupId>org.ow2.chameleon.fuchsia.base.philips-hue</groupId>
+			<version>${fuchsia.version}</version>
+			<optional>false</optional>
 		</dependency>
 		<dependency>
 			<groupId>org.ow2.chameleon.fuchsia</groupId>
@@ -63,7 +73,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
-						<Import-Package>fr.liglab.adele.icasa.device.zigbee.driver, *</Import-Package>
+						<Import-Package>*</Import-Package>
 					</instructions>
 				</configuration>
 			</plugin>

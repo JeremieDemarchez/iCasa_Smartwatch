@@ -64,7 +64,6 @@ public class SchedulerTechnicalService implements ClockListener {
                 ManagedScheduledFutureTask task = scheduler.scheduleAtFixedRate(runnable,
                         job.getPeriod(), job.getPeriod(), job.getUnit());
                 job.submitted(task);
-                LOGGER.info(" UnScheduled Runnable " + serviceRefId + " is submitted");
             }
             m_periodicJobs.put(serviceRefId, job);
         }else {
@@ -131,7 +130,6 @@ public class SchedulerTechnicalService implements ClockListener {
 
     @Validate
     public synchronized void validate() {
-        LOGGER.info(" iCasa Scheduler Start ! " + " clock state paused : " + clock.isPaused());
         clock.addListener(this);
         for (Long key : m_periodicJobs.keySet()){
             PeriodicJob job = m_periodicJobs.get(key);
@@ -140,7 +138,6 @@ public class SchedulerTechnicalService implements ClockListener {
                     ManagedScheduledFutureTask task = scheduler.scheduleAtFixedRate(job.getPeriodicRunnable(),
                             job.getPeriod(), job.getPeriod(), job.getUnit());
                     job.submitted(task);
-                    LOGGER.info(" Scheduling of " + key + "done with " + job.getPeriod() + " in " + job.getUnit());
                 }
             }
         }
@@ -206,7 +203,6 @@ public class SchedulerTechnicalService implements ClockListener {
     @Override
     public synchronized void factorModified(int oldFactor) {
         for (Long key : m_periodicJobs.keySet()){
-            LOGGER.info(" Scheduled Runnable " + key + " is Reschedule");
             PeriodicJob job = m_periodicJobs.get(key);
             if (job.task() != null) {
                 job.task().cancel(true);
@@ -216,7 +212,6 @@ public class SchedulerTechnicalService implements ClockListener {
                 ManagedScheduledFutureTask task = scheduler.scheduleAtFixedRate(job.getPeriodicRunnable(),
                         job.getPeriod(), job.getPeriod(), job.getUnit());
                 job.submitted(task);
-                LOGGER.info(" Rescheduling of " + key + "done with " + job.getPeriod() + " in " + job.getUnit());
             }
         }
         for (Long key : m_scheduledJobs.keySet()) {
@@ -275,7 +270,6 @@ public class SchedulerTechnicalService implements ClockListener {
     @Override
     public synchronized void clockResumed() {
         for (Long key : m_periodicJobs.keySet()){
-            LOGGER.info(" Scheduled Runnable " + key + " is Reschedule");
             PeriodicJob job = m_periodicJobs.get(key);
             if (job.task() != null) {
                 job.task().cancel(true);
@@ -285,7 +279,6 @@ public class SchedulerTechnicalService implements ClockListener {
                 ManagedScheduledFutureTask task = scheduler.scheduleAtFixedRate(job.getPeriodicRunnable(),
                         job.getPeriod(), job.getPeriod(), job.getUnit());
                 job.submitted(task);
-                LOGGER.info(" Rescheduling of " + key + "done with " + job.getPeriod() + " in " + job.getUnit());
             }
         }
         for (Long key : m_scheduledJobs.keySet()) {

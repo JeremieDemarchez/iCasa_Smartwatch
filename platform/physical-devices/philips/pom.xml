@@ -29,9 +29,10 @@
 	<name>${productName} :: ${projectName}</name>
 
 	<modules>
-        <module>huesdk-bundle</module>
-		<module>discovery</module>
+        <module>importers</module>
+        <module>philips-set-up</module>
 	</modules>
+
    <build>
       <plugins>
          <plugin>

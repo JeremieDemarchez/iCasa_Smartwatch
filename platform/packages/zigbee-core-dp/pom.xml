@@ -47,6 +47,11 @@
             <artifactId>zigbee.device.factories</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>zigbee.device.fuchsia.set.up</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -59,12 +64,6 @@
                     <writeExtraData>true</writeExtraData>
                     <includeDependencies>true</includeDependencies>
                     <deploymentPackage>
-                        <resources>
-                            <processedResource>
-                                <processor>org.osgi.deployment.rp.autoload</processor>
-                                <filePath>/src/main/resources/rose-conf-zigbee_driver.json</filePath>
-                            </processedResource>
-                        </resources>
                     </deploymentPackage>
                 </configuration>
             </plugin>
