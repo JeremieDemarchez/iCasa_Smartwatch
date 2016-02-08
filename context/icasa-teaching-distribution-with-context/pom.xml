@@ -129,14 +129,19 @@
 
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.context.model.remote</artifactId>
+            <artifactId>icasa.context.extensions.remote</artifactId>
             <version>${project.version}</version>
         </dependency>
 
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.context.model.command</artifactId>
+            <artifactId>icasa.context.extensions.command</artifactId>
             <version>${project.version}</version>
+        </dependency>
+        <dependency>
+        	<groupId>fr.liglab.adele.icasa</groupId>
+        	<artifactId>icasa.context.model.runtime</artifactId>
+        	<version>${project.version}</version>
         </dependency>
     </dependencies>
 

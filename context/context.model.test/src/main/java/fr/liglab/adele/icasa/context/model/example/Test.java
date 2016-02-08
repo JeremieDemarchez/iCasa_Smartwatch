@@ -2,9 +2,11 @@ package fr.liglab.adele.icasa.context.model.example;
 
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
-import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-import fr.liglab.adele.icasa.context.handler.creator.entity.Creator;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Entity.Creator;
+
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -26,11 +28,10 @@ public class Test {
     @Requires(optional = true)
     ContextEntityDescription description;
 
-    @Requires(specification = Factory.class,optional = false,proxy = false,filter = "("+ Entity.FACTORY_OF_ENTITY+"=true)")
+    @Requires(specification = Factory.class,optional = false,proxy = false,filter = "("+ ContextEntity.ENTITY_CONTEXT_SERVICES+"=*)")
     Factory factoryTest;
 
-    @EntityCreator(entity = ContextEntityImpl.class)
-    Creator creatorValidComponent;
+    @Creator.Field Entity.Creator<ContextEntityImpl> creatorValidComponent;
 
     @Command
     public void testEntity(){
@@ -38,14 +39,25 @@ public class Test {
     }
 
     @Command
+    public void testSetEntity(String value){
+    	description.setHello(value);
+    }
+    
+    @Command
+    public void testPushEntity(String value){
+    	description.externalNotification(value);
+    }
+    
+    
+    @Command
     public void createWorkingEntity(){
        creatorValidComponent.createEntity("ValidEntity");
     }
 
     @Command
     public void createWorkingEntityWithValidConfig(){
-            Map entityInit = new Hashtable<>();
-            entityInit.put(ContextEntityDescription.HELLO_STATE,"initValue");
+            Map<String,Object> entityInit = new Hashtable<>();
+            entityInit.put(State.ID(ContextEntityDescription.class,ContextEntityDescription.HELLO),"initValue");
        // entityInit.put(Zone.ZONE_NAME,"initValue");
             creatorValidComponent.createEntity("ValidEntityWithValidConfig", entityInit);
     }

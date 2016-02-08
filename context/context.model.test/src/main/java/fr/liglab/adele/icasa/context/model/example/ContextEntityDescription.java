@@ -1,11 +1,16 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.annotation.EntityType;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 
-@EntityType(states = {"hello"})
-public interface ContextEntityDescription extends ContextEntityFirstLevel {
 
-    public static final String HELLO_STATE = "hello";
+public @ContextService interface ContextEntityDescription extends ContextEntityFirstLevel {
+
+    public static final @State String HELLO = "hello";
 
     String hello();
+    
+    void setHello(String hello);
+    
+    public String externalNotification(String externalEvent);
 }

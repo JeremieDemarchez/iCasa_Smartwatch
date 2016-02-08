@@ -1,7 +1,5 @@
 package fr.liglab.adele.icasa.context.model;
 
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 

@@ -16,34 +16,35 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
-import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.annotation.StateField;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Validate;
 
-@Entity(spec = Zone.class)
+@ContextEntity(services = Zone.class)
 public class ZoneImpl implements Zone {
 
 
-	@StateField(name = ZONE_NAME)
+	@State.Field(service=Zone.class,state=Zone.NAME)
 	private String zoneName;
+	
+	@State.Field(service=Zone.class, state=Zone.X, directAccess = true)
+	private  int x;
 
-	@StateField(name = ZONE_X,directAccess = true)
-	private int x;
-
-	@StateField(name = ZONE_Y,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Y, directAccess = true)
 	private int y;
 
-	@StateField(name = ZONE_Z,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Z, directAccess = true)
 	private int z;
 
-	@StateField(name = ZONE_X_LENGHT,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.X_LENGHT, directAccess = true)
 	private int xLength;
 
-	@StateField(name = ZONE_Y_LENGHT,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Y_LENGHT, directAccess = true)
 	private int yLength;
 
-	@StateField(name = ZONE_Z_LENGHT,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Z_LENGHT, directAccess = true)
 	private int zLength;
 
 	@Override

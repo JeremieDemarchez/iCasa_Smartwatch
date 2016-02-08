@@ -56,14 +56,8 @@
                 <extensions>true</extensions>
                 <configuration>
                     <instructions>
-                        <Export-Package>fr.liglab.adele.icasa.context.model;
-                            fr.liglab.adele.icasa.context.annotation;
-                            fr.liglab.adele.icasa.context.transformation;
-                            fr.liglab.adele.icasa.context.handler.creator;
-                            fr.liglab.adele.icasa.context.handler.creator.entity;
-                            fr.liglab.adele.icasa.context.handler.creator.relation;
-                            fr.liglab.adele.icasa.context.handler.relation;
-                            fr.liglab.adele.icasa.context.handler.synchronization
+                        <Export-Package>
+                        	fr.liglab.adele.icasa.context.model.*;
                         </Export-Package>
                     </instructions>
                 </configuration>

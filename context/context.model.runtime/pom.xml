@@ -65,6 +65,7 @@
                 <configuration>
                     <instructions>
                         <Export-Package>
+                        fr.liglab.adele.icasa.context.runtime
                         </Export-Package>
                     </instructions>
                 </configuration>
