@@ -1,3 +1,8 @@
+function clearBox(elementID){
+
+    console.log("Clear " + elementID);
+    document.getElementById(elementID).innerHTML = "";
+}
 
 function drawFactoryPanel(factoryId,data){
 
@@ -45,6 +50,8 @@ function getContextFactory(factoryId){
 }
 
 function getListOfContextFactories(){
+
+    clearBox("factoriesSection");
     console.log("Get List of Context Entity Type");
     t = $.get("/context/factories",function(data) {
         $.each(data,function(key,value){
