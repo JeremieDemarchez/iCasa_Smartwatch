@@ -19,9 +19,15 @@
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.remote.wisdom.SimulatedDeviceManager;
+import fr.liglab.adele.icasa.device.button.PushButton;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.light.Photometer;
+import fr.liglab.adele.icasa.device.motion.MotionSensor;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.device.temperature.Cooler;
+import fr.liglab.adele.icasa.device.temperature.Heater;
+import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.Component;
@@ -29,7 +35,10 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONArray;
+import org.json.JSONException;
 import org.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Path;
@@ -37,12 +46,9 @@ import org.wisdom.api.annotations.Route;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.MimeTypes;
 import org.wisdom.api.http.Result;
-import org.wisdom.api.http.Status;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 /**
  *
@@ -54,28 +60,46 @@ import java.util.Map;
 @Path("/icasa/devices")
 public class DeviceREST extends DefaultController {
 
-   /** @Requires (optional = true)
-    SimulatedDeviceManager simulator;
+    private final static Logger LOG = LoggerFactory.getLogger(DeviceREST.class);
 
-    @Route(method = HttpMethod.GET, uri = "/deviceTypes")
-    public Result deviceTypes() {
-        return ok(getDeviceTypes()).as(MimeTypes.JSON);
-    }
+    @Requires(optional = true)
+    List<BinaryLight> binaryLights;
+
+    @Requires(optional = true)
+    List<DimmerLight> dimmerLights;
+
+    @Requires(optional = true)
+    List<PresenceSensor> presenceSensors;
+
+    @Requires(optional = true)
+    List<MotionSensor> motionSensors;
+
+    @Requires(optional = true)
+    List<PushButton> pushButtons;
 
 
+    @Requires(optional = true)
+    List<Photometer> photometers;
 
-    @Route(method = HttpMethod.GET, uri = "/simulatedDeviceTypes")
-    public Result simulatedDeviceTypes() {
-    	if(simulator == null) {
-    		return internalServerError();
-    	}
-        return ok(getSimulatedDeviceTypes()).as(MimeTypes.JSON);
-    }
-    
+
+    @Requires(optional = true)
+    List<Thermometer> thermometers;
+
+
+    @Requires(optional = true)
+    List<Cooler> coolers;
+
+    @Requires(optional = true)
+    List<Heater> heaters;
 
     @Route(method = HttpMethod.GET, uri = "/devices")
     public Result devices() {
-        return ok(getDevices()).as(MimeTypes.JSON);
+        try {
+            String deviceList = getDevices();
+            return ok(getDevices()).as(MimeTypes.JSON);
+        }catch (JSONException e){
+            return internalServerError(e);
+        }
     }
 
     /**
@@ -86,28 +110,95 @@ public class DeviceREST extends DefaultController {
      * return <code>null<code> if the device does not exist.
      * @throws java.text.ParseException
      */
-   /** @Route(method = HttpMethod.GET, uri = "/device/{deviceId}")
-    public Result device(@Parameter("deviceId") String deviceId) {
+    @Route(method = HttpMethod.GET, uri = "/device/{deviceId}")
+    public synchronized Result device(@Parameter("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return ok(getDevices()).as(MimeTypes.JSON);
+            return internalServerError();
         }
 
-        LocatedDevice foundDevice = findDevice(deviceId);
+        GenericDevice foundDevice = findDevice(deviceId);
+
         if (foundDevice == null) {
             return notFound();
         } else {
-            JSONObject foundDeviceJSON = IcasaJSONUtil.getDeviceJSON(foundDevice, _contextMgr);
+            JSONObject deviceJSON = null;
+            if (foundDevice instanceof Heater){
+                try {
+                    deviceJSON = IcasaJSONUtil.getHeaterJSON((Heater) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
 
-            return ok(foundDeviceJSON.toString()).as(MimeTypes.JSON);
+            if (foundDevice instanceof Cooler){
+                try {
+                    deviceJSON = IcasaJSONUtil.getCoolerJSON((Cooler) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof Thermometer){
+                try {
+                    deviceJSON = IcasaJSONUtil.getThermometerJSON((Thermometer) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof BinaryLight){
+                try {
+                    deviceJSON = IcasaJSONUtil.getBinaryLightJSON((BinaryLight) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof DimmerLight){
+                try {
+                    deviceJSON = IcasaJSONUtil.getDimmerLightJSON((DimmerLight) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof PresenceSensor){
+                try {
+                    deviceJSON = IcasaJSONUtil.getPresenceSensorJSON((PresenceSensor) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof MotionSensor){
+                try {
+                    deviceJSON = IcasaJSONUtil.getMotionSensorJSON((MotionSensor) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof Photometer){
+                try {
+                    deviceJSON = IcasaJSONUtil.getPhotometerJSON((Photometer) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+
+            if (foundDevice instanceof PushButton){
+                try {
+                    deviceJSON = IcasaJSONUtil.getPushButtonJSON((PushButton) foundDevice);
+                } catch (JSONException e) {
+                    return internalServerError(e);
+                }
+            }
+            return ok(deviceJSON.toString()).as(MimeTypes.JSON);
         }
     }
 
-    private LocatedDevice findDevice(String deviceId) {
-        return _contextMgr.getDevice(deviceId);
-    }
-
     @Route(method = HttpMethod.PUT, uri = "/device/{deviceId}")
-    public Result updatesDevice(@Parameter("deviceId") String deviceId) {
+    public synchronized Result updatesDevice(@Parameter("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
             return notFound();
         }
@@ -116,168 +207,97 @@ public class DeviceREST extends DefaultController {
         try {
             content = IcasaJSONUtil.getContent(context().reader());
         } catch (IOException e) {
-            e.printStackTrace();
+            LOG.error("",e);
             return internalServerError();
         }
 
-        LocatedDevice device = findDevice(deviceId);
+        GenericDevice device = findDevice(deviceId);
         if (device == null){
             return notFound();
         }
 
         DeviceJSON updatedDevice = DeviceJSON.fromString(content);
         if (updatedDevice != null) {
-            updatedDevice.setId(deviceId);
-
-            if (updatedDevice.getState() != null)
-                device.setPropertyValue(GenericDevice.STATE_PROPERTY_NAME, updatedDevice.getState());
-            if (updatedDevice.getFault() != null)
-                device.setPropertyValue(GenericDevice.FAULT_PROPERTY_NAME, updatedDevice.getFault());
-            if ((updatedDevice.getPositionX() != null) || (updatedDevice.getPositionY() != null)) {
-                Position position = _contextMgr.getDevicePosition(deviceId);
-                int newPosX = position.x;
-                int newPosY = position.y;
-                if (updatedDevice.getPositionX() != null)
-                    newPosX = updatedDevice.getPositionX();
-                if (updatedDevice.getPositionY() != null)
-                    newPosY = updatedDevice.getPositionY();
-                _contextMgr.setDevicePosition(deviceId, new Position(newPosX, newPosY));
-            } else if (updatedDevice.getLocation() != null)
-                _contextMgr.getDevice(device.getSerialNumber()).setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, updatedDevice.getLocation());
-        }
-
-        JSONObject deviceJSON = IcasaJSONUtil.getDeviceJSON(device, _contextMgr);
-
-        return ok(deviceJSON.toString()).as(MimeTypes.JSON);
-    }
-
-    /**
-     * Create a new device.
-     *
-     * @return
-     */
-/**    @Route(method = HttpMethod.POST, uri = "/device")
-    public Result createDevice() {
-        String content = null;
-        try {
-            BufferedReader reader = context().reader();
-            content = IcasaJSONUtil.getContent(reader);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return internalServerError();
-        }
-    	if(simulator == null) {
-
-    		return internalServerError();
-    	}
-        DeviceJSON deviceJSON = DeviceJSON.fromString(content);
-
-        String deviceType = deviceJSON.getType();
-
-        LocatedDevice newDevice = null;
-        if (deviceType != null) {
-
-            String deviceId = deviceJSON.getId();
-            
-            Map<String, Object> properties = new HashMap<String, Object>();
-            properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, deviceId);
-
-            try {
-            	simulator.createDevice(deviceType, deviceId, properties);
-            } catch (Exception e) {
-                e.printStackTrace();
-                newDevice = null;
-            }
-
-            newDevice = _contextMgr.getDevice(deviceId);
-        }
-
-        if (newDevice == null)
-            return internalServerError();
-
-        JSONObject newDeviceJSON = IcasaJSONUtil.getDeviceJSON(newDevice, _contextMgr);
-
-        return ok(newDeviceJSON.toString()).as(MimeTypes.JSON);
-    }
-
-    /**
-     * Delete specified device.
-     *
-     * @param deviceId device id
-     * @return true if chain is successful deleted, false if it does not exist.
-     */
-  /**  @Route(method = HttpMethod.DELETE, uri = "/device/{deviceId}")
-    public Result deleteDevice(@Parameter("deviceId") String deviceId) {
-
-    	if(simulator == null) {
-    		return status(Status.INTERNAL_SERVER_ERROR);
-    	}
-        LocatedDevice foundDevice = findDevice(deviceId);
-        if (foundDevice == null)
-            return notFound();
-        try {
-            simulator.removeDevice(deviceId);
-        } catch (Exception e) {
-            return status(Status.INTERNAL_SERVER_ERROR);
+            //Change Device Position
         }
 
         return ok();
     }
-    
-    
-    /**
-     * Returns a JSON array containing all devices.
-     *
-     * @return a JSON array containing all devices.
-     */
-  /**  private String getDeviceTypes() {
-        JSONArray currentDevices = new JSONArray();
-        for (String deviceTypeStr : _contextMgr.getDeviceTypes()) {
-            JSONObject deviceType = IcasaJSONUtil.getDeviceTypeJSON(deviceTypeStr, _contextMgr);
-            if (deviceType == null)
-                continue;
 
-            currentDevices.put(deviceType);
+    private synchronized GenericDevice findDevice(String deviceSerialNumber){
+        for (Heater heater:heaters){
+            if (heater.getSerialNumber().equals(deviceSerialNumber))return heater;
         }
-
-        return currentDevices.toString();
-    }
-    
-    /**
-     * Returns a JSON array containing all devices.
-     *
-     * @return a JSON array containing all devices.
-     */
-  /**  private String getSimulatedDeviceTypes() {
-        JSONArray currentDevices = new JSONArray();
-        for (String deviceTypeStr : simulator.getDeviceTypes()) {
-            JSONObject deviceType = IcasaJSONUtil.getDeviceTypeJSON(deviceTypeStr, _contextMgr);
-            if (deviceType == null)
-                continue;
-
-            currentDevices.put(deviceType);
+        for (DimmerLight light:dimmerLights){
+            if (light.getSerialNumber().equals(deviceSerialNumber))return light;
         }
-
-        return currentDevices.toString();
+        for (Cooler cooler:coolers){
+            if (cooler.getSerialNumber().equals(deviceSerialNumber))return cooler;
+        }
+        for (Thermometer thermometer:thermometers){
+            if (thermometer.getSerialNumber().equals(deviceSerialNumber))return thermometer;
+        }
+        for (BinaryLight binaryLight:binaryLights){
+            if (binaryLight.getSerialNumber().equals(deviceSerialNumber))return binaryLight;
+        }
+        for (PresenceSensor presenceSensor:presenceSensors){
+            if (presenceSensor.getSerialNumber().equals(deviceSerialNumber))return presenceSensor;
+        }
+        for (MotionSensor motionSensor:motionSensors){
+            if (motionSensor.getSerialNumber().equals(deviceSerialNumber))return motionSensor;
+        }
+        for (PushButton pushButton:pushButtons){
+            if (pushButton.getSerialNumber().equals(deviceSerialNumber))return pushButton;
+        }
+        for (Photometer photometer : photometers){
+            if (photometer.getSerialNumber().equals(deviceSerialNumber))return photometer;
+        }
+        return null;
     }
-    
+
     /**
      * Returns a JSON array containing all devices.
      *
      * @return a JSON array containing all devices.
      */
-   /** private String getDevices() {
-        //boolean atLeastOne = false;
+    private String getDevices() throws JSONException {
         JSONArray currentDevices = new JSONArray();
-        for (LocatedDevice device : _contextMgr.getDevices()) {
-            JSONObject deviceJSON =  IcasaJSONUtil.getDeviceJSON(device, _contextMgr);
-            if (deviceJSON == null)
-                continue;
-
+        for (Heater heater:heaters){
+            JSONObject deviceJSON =  IcasaJSONUtil.getHeaterJSON(heater);
             currentDevices.put(deviceJSON);
         }
-
+        for (DimmerLight light:dimmerLights){
+            JSONObject deviceJSON =  IcasaJSONUtil.getDimmerLightJSON(light);
+            currentDevices.put(deviceJSON);
+        }
+        for (Cooler cooler:coolers){
+            JSONObject deviceJSON =  IcasaJSONUtil.getCoolerJSON(cooler);
+            currentDevices.put(deviceJSON);
+        }
+        for (Thermometer thermometer:thermometers){
+            JSONObject deviceJSON =  IcasaJSONUtil.getThermometerJSON(thermometer);
+            currentDevices.put(deviceJSON);
+        }
+        for (BinaryLight binaryLight:binaryLights){
+            JSONObject deviceJSON =  IcasaJSONUtil.getBinaryLightJSON(binaryLight);
+            currentDevices.put(deviceJSON);
+        }
+        for (PresenceSensor presenceSensor:presenceSensors){
+            JSONObject deviceJSON =  IcasaJSONUtil.getPresenceSensorJSON(presenceSensor);
+            currentDevices.put(deviceJSON);
+        }
+        for (MotionSensor motionSensor:motionSensors){
+            JSONObject deviceJSON =  IcasaJSONUtil.getMotionSensorJSON(motionSensor);
+            currentDevices.put(deviceJSON);
+        }
+        for (PushButton pushButton:pushButtons){
+            JSONObject deviceJSON =  IcasaJSONUtil.getPushButtonJSON(pushButton);
+            currentDevices.put(deviceJSON);
+        }
+        for (Photometer photometer : photometers){
+            JSONObject deviceJSON =  IcasaJSONUtil.getPhotometerJSON(photometer);
+            currentDevices.put(deviceJSON);
+        }
         return currentDevices.toString();
     }
-**/
 }
