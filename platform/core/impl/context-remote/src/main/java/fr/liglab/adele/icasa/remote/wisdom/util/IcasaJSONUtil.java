@@ -125,7 +125,9 @@ public class IcasaJSONUtil {
     }
 
     private static void addDevicePosition(JSONObject jsonObject,GenericDevice device) throws JSONException{
-
+        jsonObject.put(DeviceJSON.POSITION_X_PROP, device.getPosition().x);
+        jsonObject.put(DeviceJSON.POSITION_Y_PROP, device.getPosition().y);
+        jsonObject.put(DeviceJSON.LOCATION_PROP, NO_UNIT); //TODO change
     }
 
     private static void addSerialNumber(JSONObject jsonObject,GenericDevice device)throws JSONException{
