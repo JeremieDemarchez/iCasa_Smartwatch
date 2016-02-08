@@ -20,75 +20,57 @@
 package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.introspection.EntityCreatorHandlerIntrospection;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Route;
-import org.wisdom.api.annotations.View;
 import org.wisdom.api.content.Json;
 import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
-import org.wisdom.api.templates.Template;
 
 import java.util.List;
-import java.util.Map;
 
 @Controller
-public class ContextController extends DefaultController {
+public class ContextProviderController extends DefaultController {
 
     @Requires
     Json json;
 
-    /**
-     * Injects a template named 'welcome'.
-     */
-    @View("ContextMainPage")
-    Template welcome;
+    @Requires(specification = EntityCreatorHandlerIntrospection.class,optional = true)
+    List<EntityCreatorHandlerIntrospection> creatorHandlers;
 
-    @Requires(specification = ContextEntity.class,optional = true)
-    List<ContextEntity> entities;
-
-    /**
-     * The action method returning the welcome page. It handles
-     * HTTP GET request on the "/" URL.
-     *
-     * @return the welcome page
-     */
-    @Route(method = HttpMethod.GET, uri = "/context")
-    public Result welcome() {
-        return ok(render(welcome, "welcome", "Welcome to Wisdom Framework!"));
-    }
-
-    @Route(method = HttpMethod.GET, uri = "/context/entities")
-    public Result getEntities(){
+    @Route(method = HttpMethod.GET, uri = "/context/providers")
+    public Result getContextProviders(){
         ObjectNode result = json.newObject();
 
-        int i = 0;
-        for (ContextEntity entity : entities){
-            result.put(entity.getId(),true);
 
+        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers){
+            result.put(creatorHandler.getAttachedComponentInstanceName(),true);
         }
+
         return ok(result);
     }
 
-    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}")
-    public Result getEntity(@Parameter(value = "id") String id){
+    @Route(method = HttpMethod.GET, uri = "/context/providers/{id}")
+    public Result getContextProvider(@Parameter(value = "id") String id){
         if (id == null){
-            return internalServerError(new NullPointerException(" id is null"));
+            return internalServerError(new NullPointerException("Provider id is null"));
         }
 
         ObjectNode result = json.newObject();
 
-        for (ContextEntity entity : entities){
-            if (entity.getId().equals(id)){
-                for (Map.Entry<String,Object> entry : entity.dumpState(null).entrySet()){
-                    result.put(entry.getKey(),entry.getValue().toString());
+        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers){
+            if (creatorHandler.getAttachedComponentInstanceName().equals(id)){
+                for (String implemSpecification : creatorHandler.getImplementations()){
+                    result.put(implemSpecification,creatorHandler.getImplentationState(implemSpecification));
                 }
                 return ok(result);
             }
         }
         return notFound();
     }
+
+
 }
