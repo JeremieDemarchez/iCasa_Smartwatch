@@ -106,6 +106,11 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+        	<groupId>fr.liglab.adele.icasa</groupId>
+        	<artifactId>icasa.context.model.runtime</artifactId>
+        	<version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>

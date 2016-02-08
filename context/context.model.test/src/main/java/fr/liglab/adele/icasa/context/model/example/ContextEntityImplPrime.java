@@ -1,12 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.annotation.StateField;
-import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 
-import java.util.Map;
-
-@Entity(spec = ContextEntityDescription.class)
+@ContextEntity(services = ContextEntityDescription.class)
 public class ContextEntityImplPrime implements ContextEntityDescription{
 
     @Override
@@ -18,4 +14,13 @@ public class ContextEntityImplPrime implements ContextEntityDescription{
     public String getSerialNumber() {
         return null;
     }
+
+	@Override
+	public void setHello(String hello) {
+	}
+
+	@Override
+	public String externalNotification(String externalEvent) {
+		return null;
+	}
 }

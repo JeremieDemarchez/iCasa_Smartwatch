@@ -20,9 +20,7 @@
 package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.context.transformation.Aggregation;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
@@ -35,6 +33,7 @@ import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
 
 import java.util.List;
+import java.util.Map;
 
 @Controller
 public class ContextController extends DefaultController {
@@ -45,11 +44,8 @@ public class ContextController extends DefaultController {
     /**
      * Injects a template named 'welcome'.
      */
-    @View("welcome")
+    @View("ContextMainPage")
     Template welcome;
-
-    @Requires(specification = Relation.class,optional = true)
-    List<Relation> relations;
 
     @Requires(specification = ContextEntity.class,optional = true)
     List<ContextEntity> entities;
@@ -68,93 +64,31 @@ public class ContextController extends DefaultController {
     @Route(method = HttpMethod.GET, uri = "/context/entities")
     public Result getEntities(){
         ObjectNode result = json.newObject();
-        result.put("size", entities.size());
+
         int i = 0;
         for (ContextEntity entity : entities){
-            result.put("entity"+i,entity.getId());
-            i++;
+            result.put(entity.getId(),true);
+
         }
         return ok(result);
     }
 
     @Route(method = HttpMethod.GET, uri = "/context/entities/{id}")
-    public Result getEntityStateExtended(@Parameter("id") String id){
-        System.out.println(" GET " + id);
+    public Result getEntity(@Parameter(value = "id") String id){
+        if (id == null){
+            return internalServerError(new NullPointerException(" id is null"));
+        }
+
         ObjectNode result = json.newObject();
+
         for (ContextEntity entity : entities){
-            String entityId = entity.getId();
-            if (entityId.equals(id)){
-                for (String key : entity.getStates()){
-                    result.put(key,entity.getStateValue(key).toString());
+            if (entity.getId().equals(id)){
+                for (Map.Entry<String,Object> entry : entity.dumpState(null).entrySet()){
+                    result.put(entry.getKey(),entry.getValue().toString());
                 }
                 return ok(result);
             }
         }
         return notFound();
     }
-
-    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/state")
-    public Result getEntityStateExtension(@Parameter("id") String id){
-        System.out.println(" GET " + id);
-        ObjectNode result = json.newObject();
-        for (ContextEntity entity : entities){
-            String entityId = entity.getId();
-            if (entityId.equals(id)){
-                for (String key : entity.getStates()){
-                    result.put(key,entity.getStateValue(key).toString());
-                }
-                return ok(result);
-            }
-        }
-        return notFound();
-    }
-
-    @Route(method = HttpMethod.GET, uri = "/context/relations")
-    public Result getRelations(){
-        ObjectNode result = json.newObject();
-        result.put("size", relations.size());
-        int i = 0;
-        for (Relation relation : relations){
-            result.put("relation"+i+"name",relation.getName());
-            result.put("relation"+i+"source",relation.getSource());
-            result.put("relation"+i+"end",relation.getEnd());
-            i++;
-        }
-        return ok(result);
-    }
-
-    @Route(method = HttpMethod.GET, uri = "/context/relations/{id}")
-    public Result getRelation(@Parameter("id") String id){
-        System.out.println(" GET " + id);
-        ObjectNode result = json.newObject();
-        for (Relation relation : relations){
-            String relationId = relation.getId();
-            if (relationId.equals(id)){
-                result.put("relation.name",relation.getName());
-                result.put("relation.source",relation.getSource());
-                result.put("relation.end",relation.getEnd());
-                result.put("relation.state.extension.name",relation.getExtendedState().getName());
-                result.put("relation.state.extension.value",relation.getExtendedState().getValue().toString());
-                result.put("relation.state.extension.isAggregate",relation.getExtendedState().isAggregate());
-                return ok(result);
-            }
-        }
-        return notFound();
-    }
-
-
-  /**  @Route(method = HttpMethod.GET, uri = "/context/aggregations")
-    public Result getAggregation(){
-        ObjectNode result = json.newObject();
-        result.put("size", aggregations.size());
-        int i = 0;
-        for (Aggregation aggregation : aggregations){
-            result.put("aggregation"+i+"name",aggregation.getName());
-            result.put("aggregation"+i+"filter",aggregation.getFilter());
-            result.put("aggregation"+i+"sources",aggregation.getSources().toString());
-            result.put("aggregation"+i+"result",aggregation.getResult().toString());
-            i++;
-        }
-        return ok(result);
-    }**/
 }

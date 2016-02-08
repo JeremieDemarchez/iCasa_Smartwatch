@@ -1,9 +1,8 @@
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.annotation.EntityType;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
 
-@EntityType(states = {"serial.number"})
-public interface ContextEntityFirstLevel {
+public @ContextService interface ContextEntityFirstLevel {
 
     String getSerialNumber();
 }

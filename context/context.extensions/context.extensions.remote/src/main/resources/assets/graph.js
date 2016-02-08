@@ -99,10 +99,11 @@ function draw(){
         nodes: nodes,
         edges: edges
     };
+
     var options = {interaction:{hover:true}};
     network = new vis.Network(container, data, options);
 
-    network.on("selectEdge", function (params) {
+ /**   network.on("selectEdge", function (params) {
         var edgeToUpdate =  params["edges"];
         console.log('selectEdge Event:', edgeToUpdate);
         edgeToUpdate.forEach(function(y){
@@ -113,40 +114,41 @@ function draw(){
                 addRelationStatePanel(y,data);
             });
         });
-    });
+    });**/
 
-    network.on("deselectEdge", function (params) {
+/**    network.on("deselectEdge", function (params) {
         var edgeToRemove =  params["previousSelection"]["edges"];
         console.log('deselectEdge Event:', edgeToRemove);
         edgeToRemove.forEach(function(y){
             edges.update({id: y,label: ""});
             removeRelationStatePanel(y);
         });
-    });
+    });**/
 
     network.on("selectNode", function (params) {
         var nodeToUpdate =  params["nodes"];
         console.log('selectNode Event:', nodeToUpdate);
         nodeToUpdate.forEach(function(y) {
             createNodeStatePanel(y);
-            var urlState = "/context/entities/" + y+"/state";
+            var urlState = "/context/entities/" + y;
 
             var t = $.get(urlState, function (data) {
                 addNodeStatePanel(y,data);
             });
-            var urlExtensions = "/context/entities/" + y+"/extensions";
+
+       /**     var urlExtensions = "/context/entities/" + y+"/extensions";
             var t = $.get(urlExtensions, function (data) {
                 addNodeStateExtensionPanel(y,data);
-            });
+            });**/
         });
     });
 
-    network.on("deselectNode", function (params) {
+  /**  network.on("deselectNode", function (params) {
         var nodesToRemove =  params["previousSelection"]["nodes"];
         nodesToRemove.forEach(function(y) {
             removeNodeStatePanel(y);
         });
-    });
+    });**/
 }
 
 
@@ -156,24 +158,18 @@ function init() {
     nodes = new vis.DataSet();
     edges = new vis.DataSet();
     stateColumn = $("#stateColumn");
+
     var t = $.get("/context/entities",function(data) {
-        var numberOfEntities = data.size;
-        console.log(data.size);
-        for(var i = 0;i<numberOfEntities;i ++){
-            console.log(i);
-            var entityId = "entity"+i;
-            console.log(entityId);
-            console.log(data[entityId]);
-            var ContextEntityName = data[entityId];
+        $.each(data,function(key,value){
             nodes.add({
-                id: ContextEntityName,
-                label: ContextEntityName
+                id: key,
+                label: key
             });
-        }
+        });
         draw();
     });
 
-    var y = $.get("/context/relations",function(data) {
+   /** var y = $.get("/context/relations",function(data) {
         var numberOfRelations = data.size;
         console.log(data.size);
         for(var i = 0;i<numberOfRelations;i ++){
@@ -190,6 +186,6 @@ function init() {
             });
         }
         draw();
-    });
+    });**/
 }
 

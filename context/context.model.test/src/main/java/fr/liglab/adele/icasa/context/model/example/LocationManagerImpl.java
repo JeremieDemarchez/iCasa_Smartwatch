@@ -15,8 +15,10 @@
  */
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.handler.creator.entity.EntityCreator;
-import fr.liglab.adele.icasa.context.handler.creator.entity.Creator;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Relation;
+
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -27,22 +29,24 @@ import java.util.Set;
 
 @Component(immediate = true)
 @Provides
-@Instantiate(name = "LocationManage-0")
+@Instantiate(name = "LocationManager-0")
 public class LocationManagerImpl implements LocationManager {
 
-	@EntityCreator(entity= ZoneImpl.class)
-	Creator creator;
+	@Entity.Creator.Field Entity.Creator<ZoneImpl> creator;
+	@Relation.Creator.Field("myrelation") Relation.Creator creatorRelation;
 
 	@Override
 	public void createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {
-		Map propertiesInit = new HashMap<>();
-		propertiesInit.put(Zone.ZONE_NAME,id);
-		propertiesInit.put(Zone.ZONE_X,leftX);
-		propertiesInit.put(Zone.ZONE_Y,topY);
-		propertiesInit.put(Zone.ZONE_Z,bottomZ);
-		propertiesInit.put(Zone.ZONE_X_LENGHT,width);
-		propertiesInit.put(Zone.ZONE_Y_LENGHT,height);
-		propertiesInit.put(Zone.ZONE_Z_LENGHT,depth);
+		Map<String,Object> propertiesInit = new HashMap<>();
+		
+		propertiesInit.put(State.ID(Zone.class,Zone.NAME),id);
+		propertiesInit.put(State.ID(Zone.class,Zone.X),leftX);
+		propertiesInit.put(State.ID(Zone.class,Zone.Y),topY);
+		propertiesInit.put(State.ID(Zone.class,Zone.Z),bottomZ);
+		propertiesInit.put(State.ID(Zone.class,Zone.X_LENGHT),width);
+		propertiesInit.put(State.ID(Zone.class,Zone.Y_LENGHT),height);
+		propertiesInit.put(State.ID(Zone.class,Zone.Z_LENGHT),depth);
+		
 		creator.createEntity(id,propertiesInit);
 	}
 
