@@ -43,7 +43,7 @@ public class IcasaJSONUtil {
 
     private final static Logger LOG = LoggerFactory.getLogger(IcasaJSONUtil.class);
 
-    private final String NO_UNIT = "N/A";
+    private final static String NO_UNIT = "N/A";
 
     public static  JSONObject getPushButtonJSON(PushButton pushButton) throws JSONException{
             JSONObject deviceJSON = buildDeviceJsonObject(pushButton);
@@ -189,17 +189,17 @@ public class IcasaJSONUtil {
 
             JSONArray propObject = new JSONArray();
             JSONObject xlenghtPoperty = new JSONObject();
-            xlenghtPoperty.put("name", Zone.ZONE_X_LENGHT);
+            xlenghtPoperty.put("name", Zone.X_LENGHT);
             xlenghtPoperty.put("value", getValidObject(zone.getXLength()));
             xlenghtPoperty.put("unit", "m");
             propObject.put(xlenghtPoperty);
             JSONObject ylenghtPoperty = new JSONObject();
-            ylenghtPoperty.put("name", Zone.ZONE_Y_LENGHT);
+            ylenghtPoperty.put("name", Zone.Y_LENGHT);
             ylenghtPoperty.put("value", getValidObject(zone.getYLength()));
             ylenghtPoperty.put("unit", "m");
             propObject.put(ylenghtPoperty);
             JSONObject zlenghtPoperty = new JSONObject();
-            zlenghtPoperty.put("name", Zone.ZONE_Z_LENGHT);
+            zlenghtPoperty.put("name", Zone.Z_LENGHT);
             zlenghtPoperty.put("value", getValidObject(zone.getZLength()));
             zlenghtPoperty.put("unit", "m");
             propObject.put(zlenghtPoperty);

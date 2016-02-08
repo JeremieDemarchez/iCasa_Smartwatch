@@ -15,7 +15,8 @@
  */
 package fr.liglab.adele.icasa.location;
 
-import fr.liglab.adele.icasa.context.annotation.EntityType;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 
 /**
  * This interface represents a Zone (a rectangular surface) into the iCasa platform. Zones can be embeded, a zone can
@@ -23,16 +24,20 @@ import fr.liglab.adele.icasa.context.annotation.EntityType;
  *
  *
  */
-@EntityType(states = {"zone.name","zone.x","zone.y","zone.z","zone.x.lenght","zone.y.lenght","zone.z.lenght"})
-public interface Zone {
+public @ContextService interface Zone {
 
-	public final static String ZONE_NAME = "zone.name";
-	public final static String ZONE_X ="zone.x";
-	public final static String ZONE_Y ="zone.y";
-	public final static String ZONE_Z ="zone.z";
-	public final static String ZONE_X_LENGHT ="zone.x.lenght";
-	public final static String ZONE_Y_LENGHT ="zone.y.lenght";
-	public final static String ZONE_Z_LENGHT ="zone.z.lenght";
+	public final static @State
+	String NAME 		= "name";
+
+	public final static @State String X			= "x";
+	public final static @State String X_LENGHT 	= "x.lenght";
+
+	public final static @State String Y 		= "y";
+	public final static @State String Y_LENGHT 	= "y.lenght";
+
+	public final static @State String Z 		= "z";
+	public final static @State String Z_LENGHT 	= "z.lenght";
+
 
 	/**
 	 * Returns the zone id.

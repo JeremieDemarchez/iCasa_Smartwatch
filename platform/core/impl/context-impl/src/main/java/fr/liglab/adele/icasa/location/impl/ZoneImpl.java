@@ -15,40 +15,35 @@
  */
 package fr.liglab.adele.icasa.location.impl;
 
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.context.annotation.Entity;
-import fr.liglab.adele.icasa.context.annotation.StateField;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Validate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-@Entity(spec = Zone.class)
+@ContextEntity(services = Zone.class)
 public class ZoneImpl implements Zone {
 
-	protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
-
-	@StateField(name = ZONE_NAME)
+	@State.Field(service=Zone.class,state=Zone.NAME)
 	private String zoneName;
 
-	@StateField(name = ZONE_X,directAccess = true)
-	private int x;
+	@State.Field(service=Zone.class, state=Zone.X, directAccess = true)
+	private  int x;
 
-	@StateField(name = ZONE_Y,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Y, directAccess = true)
 	private int y;
 
-	@StateField(name = ZONE_Z,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Z, directAccess = true)
 	private int z;
 
-	@StateField(name = ZONE_X_LENGHT,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.X_LENGHT, directAccess = true)
 	private int xLength;
 
-	@StateField(name = ZONE_Y_LENGHT,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Y_LENGHT, directAccess = true)
 	private int yLength;
 
-	@StateField(name = ZONE_Z_LENGHT,directAccess = true)
+	@State.Field(service=Zone.class, state=Zone.Z_LENGHT, directAccess = true)
 	private int zLength;
 
 	@Override
