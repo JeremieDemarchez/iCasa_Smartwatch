@@ -15,39 +15,26 @@
  */
 package fr.liglab.adele.icasa.location;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+
 /**
  * This interface represents a object that can be placed using a point into a coordinate system.
  *
  * 
  */
-public interface LocatedObject {
+public @ContextService interface LocatedObject {
 
-	/**
-	 * Gets the absolute (x,y) point of the object.
-	 * 
-	 * @return The absolute (x,y) point of the object.
-	 */
-	public Position getCenterAbsolutePosition();
+	public static final @State String OBJECT_X = "object.position.x";
 
-	/**
-	 * Sets the absolute (x,y) point of the object.
-	 * 
-	 * @param position the new position
-	 */
-	public void setCenterAbsolutePosition(Position position);
+	public static final @State String OBJECT_Y = "object.position.y";
 
-	/**
-	 * Attaches other object to this one. Both objects are moved at same time.
-	 * 
-	 * @param object The object to be attached.
-	 */
-	public void attachObject(LocatedObject object);
+	public static final @State String ZONE = "object.zone";
 
-	/**
-	 * Detaches the object from this one.
-	 * 
-	 * @param object The object to be detached.
-	 */
-	public void detachObject(LocatedObject object);
+	public String getZone();
+
+	public Position getPosition();
+
+	public void setPosition(Position position);
 	
 }

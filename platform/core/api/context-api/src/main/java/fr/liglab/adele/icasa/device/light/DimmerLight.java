@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.device.light;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Service definition of a simple dimmer light device.
  *
  */
-public interface DimmerLight extends GenericDevice {
+public @ContextService interface DimmerLight extends GenericDevice {
 
 	/**
 	 * Device property indicating the current power level of the dimmer light.
@@ -37,21 +39,7 @@ public interface DimmerLight extends GenericDevice {
 	 * @see #getPowerLevel()
 	 * @see #setPowerLevel(double)
 	 */
-	String DIMMER_LIGHT_POWER_LEVEL = "dimmerLight.powerLevel";
-
-	/**
-	 * Device property indicating the maximum power level of the dimmer light.
-	 * 
-	 * <ul>
-	 * <li>This property is <b>mandatory</b></li>
-	 * <li>Type of values : <b><code>java.lang.Double</code></b>, is
-	 * <code>100</code> Watts</li>
-	 * <li>Description : value is the wattage of the light.  <code>100</code> watts for a normal lamp.</li>
-	 * </ul>
-	 * 
-	 * @see #getMaxPowerLevel()
-	 */
-	String DIMMER_LIGHT_MAX_POWER_LEVEL = "dimmerLight.maxPowerLevel";
+	@State String DIMMER_LIGHT_POWER_LEVEL = "dimmerLight.powerLevel";
 
 	/**
 	 * Return the current power level of this dimmer light.
@@ -72,13 +60,6 @@ public interface DimmerLight extends GenericDevice {
 	 * @see #DIMMER_LIGHT_POWER_LEVEL
 	 */
 	double setPowerLevel(double level);
-	
-	/**
-	 * Return the current power level of this dimmer light
-	 * @return the power level of this dimmer light
-	 * 
-	 * @see #DIMMER_LIGHT_MAX_POWER_LEVEL
-	 */
-	double getMaxPowerLevel();
+
 
 }

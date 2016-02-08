@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.device.light;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Service definition of a simple photometer device.
  *
  */
-public interface Photometer extends GenericDevice {
+public @ContextService interface Photometer extends GenericDevice {
 
     /**
      * Service property indicating the current illuminance sensed by the
@@ -36,7 +38,7 @@ public interface Photometer extends GenericDevice {
      * 
      * @see #getIlluminance()
      */
-    String PHOTOMETER_CURRENT_ILLUMINANCE = "photometer.currentIlluminance";
+    @State String PHOTOMETER_CURRENT_ILLUMINANCE = "photometer.currentIlluminance";
 
     /**
      * Return the current illuminance sensed by this photometer, expressed in

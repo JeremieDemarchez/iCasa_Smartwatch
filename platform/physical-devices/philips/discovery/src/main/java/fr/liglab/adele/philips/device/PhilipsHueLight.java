@@ -24,7 +24,6 @@ import fr.liglab.adele.icasa.device.PowerObservable;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.ColorLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;

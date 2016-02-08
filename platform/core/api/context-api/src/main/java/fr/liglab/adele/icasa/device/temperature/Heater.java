@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.device.temperature;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Service definition of a simple heater device.
  *
  */
-public interface Heater extends GenericDevice {
+public @ContextService interface Heater extends GenericDevice {
 
     /**
      * Service property indicating the current power level of the heater.
@@ -37,22 +39,7 @@ public interface Heater extends GenericDevice {
      * @see #getPowerLevel()
      * @see #setPowerLevel(double)
      */
-    String HEATER_POWER_LEVEL = "heater.powerLevel";
-    
-    /**
-     * Service property indicating the max power level of the heater in Watts.
-     * 
-     * <ul>
-     * <li>This property is <b>mandatory</b></li>
-     * <li>Type of value : <b><code>java.lang.Double</code></b> fixed to 1000.0 Watts.
-     * </ul>
-     * 
-     * @see #getMaxPowerLevel()
-     * 
-     */
-    String HEATER_MAX_POWER_LEVEL ="heater.maxPowerLevel";
-    
-    String HEATER_UPDATE_PERIOD = "heater.updaterThread.period";
+    @State String HEATER_POWER_LEVEL = "heater.powerLevel";
 
     /**
      * Return the current power level of this heater.
@@ -73,13 +60,6 @@ public interface Heater extends GenericDevice {
      * @see #HEATER_POWER_LEVEL
      */
     double setPowerLevel(double level);
-    
-    /**
-     * Return the max power level of this heater
-     * 
-     * @return the max power level of this heater in Watts.
-     * @see #HEATER_MAX_POWER_LEVEL
-     */
-    double getMaxPowerLevel();
+
 
 }

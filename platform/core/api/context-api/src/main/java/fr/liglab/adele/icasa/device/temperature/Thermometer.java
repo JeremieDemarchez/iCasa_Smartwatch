@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.device.temperature;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Service definition of a simple thermometer device.
  *
  */
-public interface Thermometer extends GenericDevice {
+public @ContextService interface Thermometer extends GenericDevice {
 
     /**
      * Service property indicating the current temperature sensed by the
@@ -36,7 +38,7 @@ public interface Thermometer extends GenericDevice {
      * 
      * @see #getTemperature()
      */
-    String THERMOMETER_CURRENT_TEMPERATURE = "thermometer.currentTemperature";
+    @State String THERMOMETER_CURRENT_TEMPERATURE = "thermometer.currentTemperature";
 
     /**
      * Return the current temperature sensed by this thermometer, expressed in

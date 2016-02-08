@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.device.light;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Service definition of a simple binary light device.
  *
  */
-public interface BinaryLight extends GenericDevice {
+public @ContextService interface BinaryLight extends GenericDevice {
 
 	/**
 	 * Service property indicating whether the binary light is is turned on or
@@ -37,22 +39,7 @@ public interface BinaryLight extends GenericDevice {
 	 * @see #getPowerStatus()
 	 * @see #setPowerStatus(boolean)
 	 */
-	String BINARY_LIGHT_POWER_STATUS = "binaryLight.powerStatus";
-
-	/**
-	 * Device property indicating the maximum power level of the binary light.
-	 * 
-	 * <ul>
-	 * <li>This property is <b>mandatory</b></li>
-	 * <li>Type of values : <b><code>java.lang.Double</code></b>, is
-	 * <code>100</code> Watts</li>
-	 * <li>Description : value is the wattage of the light.  <code>100</code> watts for a normal lamp.</li>
-	 * </ul>
-	 * 
-	 * @see #getMaxPowerLevel()
-	 */
-	String BINARY_LIGHT_MAX_POWER_LEVEL = "binaryLight.maxPowerLevel";
-
+	public final static @State String BINARY_LIGHT_POWER_STATUS = "binaryLight.powerStatus";
 
 	/**
 	 * Return the current power state of this binary light.
@@ -84,12 +71,6 @@ public interface BinaryLight extends GenericDevice {
 	 */
 	void turnOff();
 	
-	/**
-	 * Return the current power level of this binary light
-	 * @return the power level of this binary light
-	 * 
-	 * @see #BINARY_LIGHT_MAX_POWER_LEVEL
-	 */
-	double getMaxPowerLevel();
+
 
 }

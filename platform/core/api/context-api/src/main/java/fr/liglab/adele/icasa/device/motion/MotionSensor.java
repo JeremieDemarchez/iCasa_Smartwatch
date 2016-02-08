@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.device.motion;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
@@ -22,5 +23,5 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  *  The implementation must call {@link fr.liglab.adele.icasa.device.util.AbstractDevice#notifyListeners(fr.liglab.adele.icasa.device.DeviceDataEvent)}
  *  to notify the captured motion.
  */
-public interface MotionSensor extends GenericDevice {
+public @ContextService interface MotionSensor extends GenericDevice {
 }

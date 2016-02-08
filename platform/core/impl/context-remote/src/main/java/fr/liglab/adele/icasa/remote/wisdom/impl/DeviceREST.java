@@ -28,6 +28,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import org.apache.felix.ipojo.annotations.Component;
@@ -218,7 +219,10 @@ public class DeviceREST extends DefaultController {
 
         DeviceJSON updatedDevice = DeviceJSON.fromString(content);
         if (updatedDevice != null) {
-            //Change Device Position
+            if (updatedDevice.getPositionX() != null && updatedDevice.getPositionY() != null){
+                Position newPostion = new Position(updatedDevice.getPositionX(),updatedDevice.getPositionY());
+                device.setPosition(newPostion);
+            }
         }
 
         return ok();

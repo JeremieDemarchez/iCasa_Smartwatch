@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.device.presence;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Service definition of a simple presence sensor device.
  *
  */
-public interface PresenceSensor extends GenericDevice {
+public @ContextService interface PresenceSensor extends GenericDevice {
 
     /**
      * Service property indicating the current sensed presence.
@@ -35,7 +37,7 @@ public interface PresenceSensor extends GenericDevice {
      * 
      * @see #getSensedPresence()
      */
-    String PRESENCE_SENSOR_SENSED_PRESENCE = "presenceSensor.sensedPresence";
+    @State String PRESENCE_SENSOR_SENSED_PRESENCE = "presenceSensor.sensedPresence";
     
     /**
      * Return the current presence sensed by this presence sensor.

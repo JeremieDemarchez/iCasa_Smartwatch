@@ -17,8 +17,6 @@ package fr.liglab.adele.icasa.gateway.box.impl;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.box.Box;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.service.preferences.Preferences;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -26,7 +24,7 @@ import org.osgi.framework.ServiceRegistration;
 import java.util.Hashtable;
 import java.util.UUID;
 
-
+/**
 @Instantiate(name = "gateway-box-device-0")
 @Component(name = "gateway-box-device")
 public class GatewayBoxImpl extends AbstractDevice implements Box {
@@ -76,4 +74,4 @@ public class GatewayBoxImpl extends AbstractDevice implements Box {
             _serviceReg = null;
         }
     }
-}
+}**/
