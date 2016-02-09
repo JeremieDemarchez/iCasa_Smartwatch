@@ -18,12 +18,12 @@ function drawProviderPanel(providerId,data){
     tableRHead.appendTo(tableHead);
 
     tableHead.appendTo(table);
-    var tableBody =  $("<tbody></tbody>");
+    var tableBody =  $("<tbody></tbody>").attr("id",providerId);
 
     $.each(data,function(key,value){
         console.log("Draw For Each " + key + " value " + value);
         var row = $("<tr></tr>");
-        var specification =  $("<td>"+key+"</td>");
+        var specification =  $("<td>"+key+"</td>").attr("id",key);
         if(value == true) {
             var status =  $("<td>"+value+"</td>").attr('class',"enab btn btn-success");
         } else {
@@ -67,21 +67,46 @@ function getListOfProviders(){
 $(document).ready(function() {
     $('#providersSection').on('click', '.enab', function(e) {
         e.preventDefault();
-        $(this).removeClass('btn-success');
-        $(this).removeClass('enab');
-        $(this).html('false');
-        $(this).addClass('disab');
-        $(this).addClass('btn-warning');
+
+        var providerId = $(this).parent().parent().attr('id');
+        var implem = $(this).prev().attr('id');
+        var button = this;
+        t = $.post("/context/providers/"+providerId+"/"+implem+"/"+false, function(data) {
+            $.each(data,function(key, value){
+                updateButton(button, value);
+            });
+        });
+
 
     });
 
     $('#providersSection').on('click', '.disab', function(e) {
-            e.preventDefault();
-            $(this).removeClass('btn-warning');
-            $(this).removeClass('disab');
-            $(this).html('true');
-            $(this).addClass('enab');
-            $(this).addClass('btn-success');
+        e.preventDefault();
+        var providerId = $(this).parent().parent().attr('id');
+        var implem = $(this).prev().attr('id');
+        var button = this;
+        t = $.post("/context/providers/"+providerId+"/"+implem+"/"+true, function(data) {
+            $.each(data,function(key,value){
+                updateButton(button, value);
+            });
+        });
 
     });
 });
+
+function updateButton(button, state){
+    if(state == true){
+        $(button).removeClass('btn-warning');
+        $(button).removeClass('disab');
+        $(button).html('true');
+        $(button).addClass('enab');
+        $(button).addClass('btn-success');
+    } else {
+        $(button).removeClass('btn-success');
+        $(button).removeClass('enab');
+        $(button).html('false');
+        $(button).addClass('disab');
+        $(button).addClass('btn-warning');
+    }
+
+}
