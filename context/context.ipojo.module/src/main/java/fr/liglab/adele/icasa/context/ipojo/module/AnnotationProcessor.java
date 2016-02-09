@@ -75,6 +75,19 @@ public abstract class AnnotationProcessor<A extends Annotation> implements Annot
 		return getWorkbench().getType();
 	}
 
+	protected String getAnnotatedClassName() {
+		return	getAnnotatedClassName(false); 
+	}
+
+	protected String getAnnotatedClassName(boolean simple) {
+		String className 	= getAnnotatedClassType().getClassName();
+		return	simple ? getSimpleClassName(className) : className; 
+	}
+
+	protected static final String getSimpleClassName(String className) {
+		return className.substring(className.lastIndexOf('.')+1); 
+	}
+	
 	protected MethodNode getAnnotatedMethod() {
 		return context.getMethodNode();
 	}

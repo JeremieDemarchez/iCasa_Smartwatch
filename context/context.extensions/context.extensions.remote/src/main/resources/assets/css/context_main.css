@@ -1,0 +1,62 @@
+#contextNetwork {
+    width: 100%;
+    height: 100%;
+}
+
+#stateColumn {
+    width: 100%;
+    height: 100%;
+}
+
+.page {
+    position : absolute;
+    left : 0;
+    top : 0;
+    width : 100%;
+    height: 100%;
+
+    display: none;
+}
+
+.context{
+    border: 2px solid black;
+    border-radius: 5px;
+    background-color: #f7f7f7;
+}
+
+/*.hidden {
+     display: none;
+}*/
+
+
+
+/*
+div#ContextProviders {
+    position : absolute;
+    left : 15%;
+    top : 53;
+    bottom : 0;
+    width : 85%;
+    background-color :#f7f7f7;
+    display : none;
+}
+
+div#Applications {
+    position : absolute;
+    left : 15%;
+    top : 53;
+    bottom : 0;
+    width : 85%;
+    background-color :#f7f7f7;
+    display : none;
+}
+
+div#ContextFactories {
+    position : absolute;
+    left : 15%;
+    top : 53;
+    bottom : 0;
+    width : 85%;
+    background-color :#f7f7f7;
+    display : none;
+}*/

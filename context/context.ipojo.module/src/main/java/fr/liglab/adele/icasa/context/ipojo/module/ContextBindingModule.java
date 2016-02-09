@@ -1,22 +1,27 @@
 package fr.liglab.adele.icasa.context.ipojo.module;
 
 import static org.apache.felix.ipojo.manipulator.spi.helper.Predicates.and;
+import static org.apache.felix.ipojo.manipulator.spi.helper.Predicates.or;
 import static org.apache.felix.ipojo.manipulator.spi.helper.Predicates.on;
 import static org.apache.felix.ipojo.manipulator.spi.helper.Predicates.reference;
 
+import java.lang.annotation.Annotation;
 import java.lang.annotation.ElementType;
+import java.util.List;
 
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.manipulator.spi.AbsBindingModule;
 import org.apache.felix.ipojo.manipulator.spi.BindingContext;
 import org.apache.felix.ipojo.manipulator.spi.Predicate;
 import org.objectweb.asm.AnnotationVisitor;
 import org.objectweb.asm.Type;
+import org.objectweb.asm.tree.AnnotationNode;
+import org.objectweb.asm.tree.FieldNode;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
-
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 
 /**
  * Created by aygalinc on 14/01/16.
@@ -67,17 +72,23 @@ public class ContextBindingModule extends AbsBindingModule {
            		new PushMethodProcessor(classReferenceLoader)
         );
 
+        bind(Relation.Field.class)
+	    	.when(and( on(ElementType.FIELD), field().hasAnnotation(Requires.class)))
+        	.to(
+             	new RelationProcessor(classReferenceLoader)
+    	);
+
     	/*
     	 * Bind the context provider annotation processors
     	 */
-        bind(Entity.Creator.Field.class)
-	    	.when(and( on(ElementType.FIELD), field().hasType(Entity.Creator.class)))
+        bind(Creator.Field.class)
+	    	.when(and( on(ElementType.FIELD), field().hasType(Creator.Entity.class)))
 	    	.to( 
 	   			new EntityProviderProcessor(classReferenceLoader)
     	);
         
-        bind(Relation.Creator.Field.class)
-	    	.when(and( on(ElementType.FIELD), field().hasType(Relation.Creator.class)))
+        bind(Creator.Field.class)
+	    	.when(and( on(ElementType.FIELD), field().hasType(Creator.Relation.class)))
 	    	.to( 
 	   			new RelationProviderProcessor(classReferenceLoader)
     	);
@@ -122,28 +133,39 @@ public class ContextBindingModule extends AbsBindingModule {
     			error(context,"Push method '%s' in class %s must have a return type. The value of this return is affected in the state buffer each time the method is called.",
     					context.getMethodNode().name, context.getWorkbench().getClassNode().name)
         );
+
+        /*
+         * TODO currently the iPOJO annotation matadata provider doesn't give access to all the annotations of
+         * the field
+         */
+        bind(Relation.Field.class)
+	    	.when(and( on(ElementType.FIELD), not(field().hasAnnotation(Requires.class))))
+        	.to(
+        		new RelationProcessor(classReferenceLoader)
+        		/*
+        		(BindingContext context) -> 
+    			error(context,"Relation field '%s' in class %s must be annotated using iPOJO annotation 'Requires'",
+    					context.getFieldNode().name, context.getWorkbench().getClassNode().name)
+    			*/
+    	);
         
-        bind(Entity.Creator.Field.class)
-	    	.when(and( on(ElementType.FIELD), not(field().hasType(Entity.Creator.class))))
+        
+        bind(Creator.Field.class)
+	    	.when( and( on(ElementType.FIELD), 
+	    				not( or( field().hasType(Creator.Entity.class), field().hasType(Creator.Relation.class)))
+	    			))
         	.to((BindingContext context) -> 
-    			error(context,"Entity creator field '%s' in class %s must have type Entity.Creator",
+    			error(context,"Creator field '%s' in class %s must have type Creator.Entity or Creator.Relation",
     					context.getFieldNode().name, context.getWorkbench().getClassNode().name)
     	);
         
-        bind(Relation.Creator.Field.class)
-	    	.when(and( on(ElementType.FIELD), not(field().hasType(Relation.Creator.class))))
-        	.to((BindingContext context) -> 
-			error(context,"Entity creator field '%s' in class %s must have type Relation.Creator",
-					context.getFieldNode().name, context.getWorkbench().getClassNode().name)
-    	);
-       
     }
     
     private static final AnnotationVisitor error(BindingContext context, String message,  Object... args) {
         context.getReporter().error(message, args);
     	return null;
     }
-    
+   
     private static final Predicate not(Predicate predicate) {
     	return context -> ! predicate.matches(context);
     }
@@ -169,6 +191,7 @@ public class ContextBindingModule extends AbsBindingModule {
     } 
     
     public static class Field {
+    	
         /**
          * Restrict execution if the supported {@literal FieldNode} has the given type.
          */
@@ -177,6 +200,42 @@ public class ContextBindingModule extends AbsBindingModule {
             					Type.getType(context.getFieldNode().desc).equals(Type.getType(expected));
             
         }
+        
+        /**
+         * Restrict execution if the supported {@literal FieldNode} is annotated with the given type.
+         */
+        public <A extends Annotation> Predicate hasAnnotation(final Class<A> expected) {
+            return 	context ->	context.getFieldNode() != null && 
+            					hasAnnotation(context.getFieldNode(),expected);
+            
+        }
+
+        /**
+         * Checks if a field node's declared annotations node contain the expected annotation
+         * 
+         */
+        @SuppressWarnings("unchecked")
+		private static <A extends Annotation> boolean hasAnnotation(FieldNode field, Class<A> expected) {
+        	return 	hasAnnotation((List<AnnotationNode>)field.invisibleAnnotations,expected) ||
+        			hasAnnotation((List<AnnotationNode>)field.visibleAnnotations,expected);
+        }
+        
+        /**
+         * Checks if a list of annotations node contains the expected annotation
+         */
+        private static <A extends Annotation> boolean hasAnnotation(List<AnnotationNode> annotations, Class<A> expected) {
+        	
+        	if (annotations == null)
+        		return false;
+        	
+        	for (AnnotationNode annotation : annotations) {
+				if (Type.getType(annotation.desc).equals(Type.getType(expected))) {
+					return true;
+				}
+			}
+        	
+        	return false;
+        } 
     }
     
 }

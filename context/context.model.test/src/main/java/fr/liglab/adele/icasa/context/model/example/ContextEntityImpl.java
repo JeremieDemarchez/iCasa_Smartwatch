@@ -5,7 +5,8 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+
 
 @ContextEntity(services = ContextEntityDescription.class)
 public class ContextEntityImpl implements ContextEntityDescription {

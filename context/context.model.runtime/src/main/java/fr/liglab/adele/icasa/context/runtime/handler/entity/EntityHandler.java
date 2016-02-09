@@ -208,7 +208,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
                 if (configuredValue == null) {
                 	
                     String defaultValue 	= state.getAttribute("value");
-                    boolean hasDefaultValue	= defaultValue != fr.liglab.adele.icasa.context.model.annotations.entity.State.Field.NO_VALUE;
+                    boolean hasDefaultValue	= defaultValue != fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State.Field.NO_VALUE;
                     if (hasDefaultValue) {
                         configuredValue = defaultValue;
                     	setStateConfiguredValue(stateId,defaultValue,configuration);
@@ -294,7 +294,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     	 * The value of the field is the name of the state.
     	 * 
     	 */
-    	for (Field field : service.getFields()) {
+    	for (Field field : service.getDeclaredFields()) {
     		if (Modifier.isStatic(field.getModifiers()) && field.getType().equals(String.class) && field.isAnnotationPresent(State.class)) {
 				try {
 					String stateName = String.class.cast(field.get(null));
