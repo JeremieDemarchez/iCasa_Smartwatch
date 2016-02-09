@@ -36,6 +36,11 @@
 		    <groupId>junit</groupId>
 		    <artifactId>junit</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>icasa.context.model</artifactId>
+			<version>1.2.7-SNAPSHOT</version>
+		</dependency>
 	</dependencies>
 
 	<build>

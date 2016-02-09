@@ -15,52 +15,70 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
-import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
-import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
-import org.apache.felix.ipojo.annotations.*;
-
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
+import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
+import org.apache.felix.ipojo.annotations.Requires;
 
-@Component(name="zigbeePresenceSensor")
-@Provides
-/**
- * Zigbee presence sensor factory.
- *
- */
-public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker {
-	
-	@Requires
-	private ZigbeeDriver driver;
-	
-	@Property(mandatory=true, name="zigbee.moduleAddress")
-	private String moduleAddress;
-	
-	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
-	private String serialNumber;
-	
-	public ZigbeePresenceSensor(){
-		super();
-        super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, false);
-        super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
-	}
+@ContextEntity(services = {PresenceSensor.class,ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker {
 
-	@Override
-	public boolean getSensedPresence() {
-		Boolean presence = (Boolean) getPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE);
-		if (presence != null)
-			return presence;
-		return false;
-	}
+    @Requires
+    private ZigbeeDriver driver;
 
-	@Override
-	public String getSerialNumber() {
-		return serialNumber;
-	}
+    @State.Field(service = PresenceSensor.class,state = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE)
+    private boolean sensedPresence;
+
+    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    private int x;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    private int y;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
+    private String zone;
+
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    private String moduleAddress;
+
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    private float batteryLevel;
+
+    @Override
+    public boolean getSensedPresence() {
+        return sensedPresence;
+    }
+
+    @Override
+    public String getZone() {
+        return zone;
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
+    }
+
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 
     /**
      * Called when a new device has been discovered by the driver.
@@ -95,10 +113,14 @@ public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSens
             }else{
                 status = false;
             }
-            setPropertyValue(PRESENCE_SENSOR_SENSED_PRESENCE, status);
+            pushSensedStatus(status);
         }
     }
 
+    @State.Push(service = PresenceSensor.class,state = PRESENCE_SENSOR_SENSED_PRESENCE)
+    public boolean pushSensedStatus(boolean status){
+        return status;
+    }
     /**
      * Called when a device battery level has changed.
      *
@@ -109,7 +131,12 @@ public class ZigbeePresenceSensor extends AbstractDevice implements PresenceSens
     @Override
     public void deviceBatteryLevelChanged(String address, float oldBatteryLevel, float newBatteryLevel) {
         if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
-            setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
+            pushBatteryLevel(newBatteryLevel);
         }
+    }
+
+    @State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    public float pushBatteryLevel(float battery){
+        return battery;
     }
 }

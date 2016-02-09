@@ -18,14 +18,19 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+
 /**
  * Generic interface for zigbee devices.
  */
-public interface ZigbeeDevice {
+public @ContextService interface ZigbeeDevice {
 
     /**
      * Zigbee device battery level.
      */
-    static final String BATTERY_LEVEL = "ZigBeeDevice.batteryLevel";
+    static final @State String BATTERY_LEVEL = "ZigBeeDevice.batteryLevel";
+
+    static final @State String MODULE_ADRESS = "ZigBeeDevice.module.adress";
 
 }

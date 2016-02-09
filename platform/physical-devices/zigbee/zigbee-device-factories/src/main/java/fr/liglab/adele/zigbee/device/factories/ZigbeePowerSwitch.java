@@ -14,26 +14,23 @@
  *   limitations under the License.
  */
 /**
- * 
+ *
  */
 package fr.liglab.adele.zigbee.device.factories;
 
 import fr.liglab.adele.icasa.Constants;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.power.PowerSwitch;
+import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.power.PowerSwitch;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
-import fr.liglab.adele.icasa.device.zigbee.driver.Data;
-import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
-import org.omg.CORBA.PRIVATE_MEMBER;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,54 +39,58 @@ import org.slf4j.LoggerFactory;
  */
 @Component(name="zigbeePowerSwitch")
 @Provides
-public class ZigbeePowerSwitch extends AbstractDevice implements PowerSwitch, ZigbeeDevice, ZigbeeDeviceTracker {
+public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDeviceTracker {
 
     @Requires
-	private ZigbeeDriver driver;
+    private ZigbeeDriver driver;
 
-	@Property(mandatory = true, name = "zigbee.moduleAddress")
-	private String moduleAddress;
+    @State.Field(service = PowerSwitch.class,state = PowerSwitch.POWER_SWITCH_CURRENT_STATUS)
+    private boolean status;
 
+    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
 
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    private int x;
 
-    private static final Logger logger = LoggerFactory
-            .getLogger(Constants.ICASA_LOG_DEVICE + ".zigBee.powerSwitch");
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    private int y;
 
-	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
-	private String serialNumber;
-	
-	@Override
-	public String getSerialNumber() {
-		return serialNumber;
-	}
-	
-	public ZigbeePowerSwitch(){
-		super();
-		super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(POWER_SWITCH_CURRENT_STATUS, false);
-        super.setPropertyValue(BATTERY_LEVEL, 0f);
-	}
+    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
+    private String zone;
 
-	@Override
-	public boolean getStatus() {
-		Boolean powerStatus = (Boolean) getPropertyValue(PowerSwitch.POWER_SWITCH_CURRENT_STATUS);
-		if (powerStatus == null){
-			return false;
-        }
-		return powerStatus;
-	}
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    private String moduleAddress;
 
-	@Override
-	public boolean switchOff() {
-        logger.error("Power switch status modification is not allowed");
-		return getStatus();
-	}
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    private float batteryLevel;
 
-	@Override
-	public boolean switchOn() {
-        logger.error("Power switch status modification is not allowed");
-		return getStatus();
-	}
+    @Override
+    public String getZone() {
+        return zone;
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
+    }
+
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    @Override
+    public boolean getStatus() {
+        return status;
+    }
+
     /**
      * Called when a new device has been discovered by the driver.
      *
@@ -117,10 +118,14 @@ public class ZigbeePowerSwitch extends AbstractDevice implements PowerSwitch, Zi
     public void deviceDataChanged(String address, Data oldData, Data newData) {
         if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
             boolean status = newData.getData().equalsIgnoreCase("1")? true: false;
-            setPropertyValue(PowerSwitch.POWER_SWITCH_CURRENT_STATUS, status);
+            pushStatus(status);
         }
     }
 
+    @State.Push(service = PowerSwitch.class,state = POWER_SWITCH_CURRENT_STATUS)
+    private boolean pushStatus(boolean status){
+        return status;
+    }
     /**
      * Called when a device battery level has changed.
      *
@@ -131,7 +136,12 @@ public class ZigbeePowerSwitch extends AbstractDevice implements PowerSwitch, Zi
     @Override
     public void deviceBatteryLevelChanged(String address, float oldBatteryLevel, float newBatteryLevel) {
         if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
-            setPropertyValue(BATTERY_LEVEL, newBatteryLevel);
+            pushBatteryLevel(newBatteryLevel);
         }
+    }
+
+    @State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    public float pushBatteryLevel(float battery){
+        return battery;
     }
 }

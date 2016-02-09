@@ -15,6 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.power;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 
@@ -22,7 +24,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
  * Service definition for a simple powerswitch device
  *
  */
-public interface PowerSwitch extends GenericDevice {
+public @ContextService interface PowerSwitch extends GenericDevice {
 	
 	/**
 	 * Service Property indicating the current Status of the power switch
@@ -34,7 +36,7 @@ public interface PowerSwitch extends GenericDevice {
      * </ul>
 	 * @see #getStatus()
 	 */
-	String POWER_SWITCH_CURRENT_STATUS = "powerSwitch.currentStatus";
+	@State String POWER_SWITCH_CURRENT_STATUS = "powerSwitch.currentStatus";
 	
 	/**
 	 * Return the current status of the powerswitch
@@ -45,21 +47,5 @@ public interface PowerSwitch extends GenericDevice {
 	 * @see #POWER_SWITCH_CURRENT_STATUS
 	 */
 	boolean getStatus();
-	
-	/**
-	 * Switches the power on
-	 * 
-	 * @return 'true' if the switch was off and now on, 'false' if the switch was already on
-	 * @see #switchOff()
-	 */
-	boolean switchOn();
-	
-	/**
-	 * Switches the power off
-	 * 
-	 * @return 'true' if the switch was on and now off, 'false' if the switch was already off
-	 * @see #switchOn()
-	 */
-	boolean switchOff();
-	
+
 }

@@ -15,44 +15,55 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-
-import fr.liglab.adele.icasa.device.DeviceDataEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
-import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
 
 /**
  *
  */
-@Component(name="zigbeeMotionSensor")
-@Provides
-public class ZigbeeMotionSensor extends AbstractDevice implements MotionSensor, ZigbeeDevice, ZigbeeDeviceTracker {
+@ContextEntity(services = {MotionSensor.class,ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDeviceTracker {
 
-    @Requires
-    private ZigbeeDriver driver;
-
-    @Property(mandatory=true, name="zigbee.moduleAddress")
-    private String moduleAddress;
-
-    @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
+    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    public ZigbeeMotionSensor(){
-        super();
-        super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME, GenericDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    private int x;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    private int y;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
+    private String zone;
+
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    private String moduleAddress;
+
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    private float batteryLevel;
+
+    @Override
+    public String getZone() {
+        return zone;
     }
 
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
+    }
 
     @Override
     public String getSerialNumber() {
@@ -87,7 +98,7 @@ public class ZigbeeMotionSensor extends AbstractDevice implements MotionSensor, 
         if(address.compareTo(this.moduleAddress) == 0){
             String data = newData.getData();
             if (Integer.parseInt(data) == 1){
-                this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
+                //TODO   this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
             }
         }
     }
@@ -102,7 +113,13 @@ public class ZigbeeMotionSensor extends AbstractDevice implements MotionSensor, 
     @Override
     public void deviceBatteryLevelChanged(String address, float oldBatteryLevel, float newBatteryLevel) {
         if(address.compareToIgnoreCase(this.moduleAddress) == 0){ //this device.
-            setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
+            pushBatteryLevel(newBatteryLevel);
         }
     }
+
+    @State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    public float pushBatteryLevel(float battery){
+        return battery;
+    }
+
 }

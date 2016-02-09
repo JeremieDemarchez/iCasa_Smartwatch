@@ -18,6 +18,7 @@ package fr.liglab.adele.philips.device;
 import com.philips.lighting.hue.sdk.utilities.PHUtilities;
 import com.philips.lighting.model.PHLight;
 import com.philips.lighting.model.PHLightState;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.PowerObservable;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -35,12 +36,10 @@ import java.awt.*;
 /**
  * Philips Hue light implementation that allows to change its state (color, brightness)
  */
-@Component(name = "philipsHueLight")
-@Provides(specifications={GenericDevice.class, DimmerLight.class, ColorLight.class,PowerObservable.class})
-public class PhilipsHueLight extends AbstractDevice implements
-        ColorLight,PowerObservable {
+public class PhilipsHueLight /** implements DimmerLight**/ {
 
-    private final Object m_lock;
+  /**  private final Object m_lock;
+
     @ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
     private String serialNumber;
 
@@ -107,36 +106,6 @@ public class PhilipsHueLight extends AbstractDevice implements
             return 0;
         }
     }
+    **/
 
-    @Override
-    public double getMaxPowerLevel() {
-        Double maxLevel = (Double) getPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL);
-        if (maxLevel == null)
-            return 0;
-
-        return maxLevel;
-    }
-
-    @Override
-    public void setColor(Color color) {
-        PHLightState lightState = new PHLightState();
-        float[] xy = PHUtilities.calculateXYFromRGB(color.getRed(), color.getGreen(), color.getBlue(), light.getIdentifier());
-        lightState.setX(xy[0]);
-        lightState.setY(xy[1]);
-        bridge.updateLightState(light, lightState);
-    }
-
-    @Override
-    public Color getColor() {
-        Color color=new Color(0,0,0);
-        return color;
-    }
-
-    @Override
-    public double getCurrentConsumption() {
-        Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
-        Double powerLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL);
-        super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,(double)(powerLevel*maxLevel));
-        return powerLevel*maxLevel;
-    }
 }

@@ -15,162 +15,185 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
-import java.text.DecimalFormat;
-import java.text.DecimalFormatSymbols;
-import java.util.Locale;
-
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
+import org.apache.felix.ipojo.annotations.Requires;
 
-/**
- *
- */
-@Component(name = "zigbeeThermometer")
-@Provides
-public class ZigbeeThermometer extends AbstractDevice implements Thermometer,
-		ZigbeeDevice, ZigbeeDeviceTracker {
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
+import java.util.Locale;
 
-	@Requires
-	private ZigbeeDriver driver;
+@ContextEntity(services = {Thermometer.class,ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+public class ZigbeeThermometer implements Thermometer,ZigbeeDevice, ZigbeeDeviceTracker {
 
-	@Property(mandatory = true, name = "zigbee.moduleAddress")
-	private String moduleAddress;
+    @Requires
+    private ZigbeeDriver driver;
 
-	@ServiceProperty(name = GenericDevice.DEVICE_SERIAL_NUMBER, mandatory = true)
-	private String serialNumber;
+    @State.Field(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE )
+    private double currentTemperature;
 
-	public ZigbeeThermometer() {
-		super();
-		super.setPropertyValue(GenericDevice.LOCATION_PROPERTY_NAME,
-				GenericDevice.LOCATION_UNKNOWN);
-		super.setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, 0f);
-	}
+    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
 
-	@Override
-	public String getSerialNumber() {
-		return serialNumber;
-	}
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    private int x;
 
-	/**
-	 * Called when a new device has been discovered by the driver.
-	 * 
-	 * @param deviceInfo
-	 *            information about the device
-	 */
-	@Override
-	public void deviceAdded(DeviceInfo deviceInfo) {/* nothing to do */
-	}
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    private int y;
 
-	/**
-	 * Called when a device has been removed by the driver.
-	 * 
-	 * @param deviceInfo
-	 *            information about the device
-	 */
-	@Override
-	public void deviceRemoved(DeviceInfo deviceInfo) {/* nothing to do */
-	}
+    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
+    private String zone;
 
-	/**
-	 * Called when a device data has changed.
-	 * 
-	 * @param address
-	 *            a device module address
-	 * @param oldData
-	 *            previous device data
-	 * @param newData
-	 *            new device data
-	 */
-	@Override
-	public void deviceDataChanged(String moduleAddress, Data oldData,
-			Data newData) {
-		if (moduleAddress.compareTo(this.moduleAddress) == 0) {
-			String data = newData.getData();
-			String computedTemperature = computeTemperature(data);
-			if (computedTemperature != null) {
-				setPropertyValue(THERMOMETER_CURRENT_TEMPERATURE,
-						computedTemperature);
-			}
-		}
-	}
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    private String moduleAddress;
 
-	/**
-	 * Compute temperature from the given hexadecimal value.
-	 * 
-	 * @param data
-	 * @return
-	 */
-	public String computeTemperature(String data) {
+    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    private float batteryLevel;
 
-		if (data.length() != 4) {
-			return null;
-		}
 
-		double computedTemp;
+    @Override
+    public double getTemperature() {
+        return currentTemperature;
+    }
 
-		StringBuilder convertedData = new StringBuilder();
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
+    }
 
-		for (byte b : data.getBytes()) {
-			String hex = String.format("%04x", (int) b);
-			char c = hex.charAt(hex.length() - 1);
-			convertedData.append(c);
-		}
-		convertedData.deleteCharAt(convertedData.length() - 1);
+    @Override
+    public String getZone() {
+        return zone;
+    }
 
-		String sign = convertedData.substring(0, 1);
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
 
-		if (Integer.valueOf(sign, 16) > 7) { // negative value
-			computedTemp = -(Integer.parseInt("1000", 16) - Integer.valueOf(
-					convertedData.toString(), 16)) * 0.0625;
-		} else { // positive value
-			computedTemp = Integer.valueOf(convertedData.toString(), 16) * 0.0625;
-		}
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
+    }
 
-		// format temperature to take integer part and 2 decimal values
-		DecimalFormat df = new DecimalFormat();
-		df.setMinimumFractionDigits(2);
-		df.setMaximumFractionDigits(2);
-		df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
-		
-		return df.format(computedTemp);
-	}
 
-	/**
-	 * Called when a device battery level has changed.
-	 * 
-	 * @param address
-	 *            a device module address
-	 * @param oldBatteryLevel
-	 *            previous device battery level
-	 * @param newBatteryLevel
-	 *            new device battery level
-	 */
-	@Override
-	public void deviceBatteryLevelChanged(String moduleAddress,
-			float oldBatteryLevel, float newBatteryLevel) {
-		if (moduleAddress.compareToIgnoreCase(this.moduleAddress) == 0) { // this
-																			// device.
-			setPropertyValue(ZigbeeDevice.BATTERY_LEVEL, newBatteryLevel);
-		}
-	}
+    /**
+     * Called when a new device has been discovered by the driver.
+     *
+     * @param deviceInfo
+     *            information about the device
+     */
+    @Override
+    public void deviceAdded(DeviceInfo deviceInfo) {/* nothing to do */
+    }
 
-	@Override
-	public double getTemperature() {
-		Double temperature = (Double) getPropertyValue(THERMOMETER_CURRENT_TEMPERATURE);
-		if (temperature == null) {
-			return 0;
-		}
-		return temperature;
-	}
+    /**
+     * Called when a device has been removed by the driver.
+     *
+     * @param deviceInfo
+     *            information about the device
+     */
+    @Override
+    public void deviceRemoved(DeviceInfo deviceInfo) {/* nothing to do */
+    }
+
+    /**
+     * Called when a device data has changed.
+     *
+     * @param moduleAddress
+     *            a device module address
+     * @param oldData
+     *            previous device data
+     * @param newData
+     *            new device data
+     */
+    @Override
+    public void deviceDataChanged(String moduleAddress, Data oldData,
+                                  Data newData) {
+        if (moduleAddress.compareTo(this.moduleAddress) == 0) {
+            String data = newData.getData();
+            String computedTemperature = computeTemperature(data);
+            pushTemperature(Double.valueOf(computedTemperature));
+        }
+    }
+
+    @State.Push(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE)
+    public double pushTemperature(double temperature){
+        return temperature;
+    }
+
+    /**
+     * Compute temperature from the given hexadecimal value.
+     *
+     * @param data
+     * @return
+     */
+    public String computeTemperature(String data) {
+
+        if (data.length() != 4) {
+            return null;
+        }
+
+        double computedTemp;
+
+        StringBuilder convertedData = new StringBuilder();
+
+        for (byte b : data.getBytes()) {
+            String hex = String.format("%04x", (int) b);
+            char c = hex.charAt(hex.length() - 1);
+            convertedData.append(c);
+        }
+        convertedData.deleteCharAt(convertedData.length() - 1);
+
+        String sign = convertedData.substring(0, 1);
+
+        if (Integer.valueOf(sign, 16) > 7) { // negative value
+            computedTemp = -(Integer.parseInt("1000", 16) - Integer.valueOf(
+                    convertedData.toString(), 16)) * 0.0625;
+        } else { // positive value
+            computedTemp = Integer.valueOf(convertedData.toString(), 16) * 0.0625;
+        }
+
+        // format temperature to take integer part and 2 decimal values
+        DecimalFormat df = new DecimalFormat();
+        df.setMinimumFractionDigits(2);
+        df.setMaximumFractionDigits(2);
+        df.setDecimalFormatSymbols(new DecimalFormatSymbols(Locale.US));
+
+        return df.format(computedTemp);
+    }
+
+    /**
+     * Called when a device battery level has changed.
+     *
+     * @param moduleAddress
+     *            a device module address
+     * @param oldBatteryLevel
+     *            previous device battery level
+     * @param newBatteryLevel
+     *            new device battery level
+     */
+    @Override
+    public void deviceBatteryLevelChanged(String moduleAddress,
+                                          float oldBatteryLevel, float newBatteryLevel) {
+        if (moduleAddress.compareToIgnoreCase(this.moduleAddress) == 0) { // this
+            // device.
+            pushBatteryLevel(newBatteryLevel);
+        }
+    }
+
+    @State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    public float pushBatteryLevel(float battery){
+        return battery;
+    }
+
 }
