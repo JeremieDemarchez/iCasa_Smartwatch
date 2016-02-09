@@ -294,7 +294,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     	 * The value of the field is the name of the state.
     	 * 
     	 */
-    	for (Field field : service.getFields()) {
+    	for (Field field : service.getDeclaredFields()) {
     		if (Modifier.isStatic(field.getModifiers()) && field.getType().equals(String.class) && field.isAnnotationPresent(State.class)) {
 				try {
 					String stateName = String.class.cast(field.get(null));
