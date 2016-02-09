@@ -3,9 +3,9 @@ package fr.liglab.adele.icasa.context.model.example;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity.Creator;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Component;
@@ -31,7 +31,7 @@ public class Test {
     @Requires(specification = Factory.class,optional = false,proxy = false,filter = "("+ ContextEntity.ENTITY_CONTEXT_SERVICES+"=*)")
     Factory factoryTest;
 
-    @Creator.Field Entity.Creator<ContextEntityImpl> creatorValidComponent;
+    @Creator.Field Creator.Entity<ContextEntityImpl> creatorValidComponent;
 
     @Command
     public void testEntity(){

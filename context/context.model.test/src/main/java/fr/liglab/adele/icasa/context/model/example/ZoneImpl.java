@@ -16,10 +16,14 @@
 package fr.liglab.adele.icasa.context.model.example;
 
 
+import java.util.List;
+
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
 
 import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Validate;
 
 @ContextEntity(services = Zone.class)
@@ -46,6 +50,14 @@ public class ZoneImpl implements Zone {
 
 	@State.Field(service=Zone.class, state=Zone.Z_LENGHT, directAccess = true)
 	private int zLength;
+
+	@Relation.Field("contains")
+	@Requires(optional=true)
+	private List<Zone> containedZones;
+
+	@Relation.Field("contains")
+	@Requires(optional=true, filter="(zone.name=kit*)")
+	private List<Zone> containedZonesFiltered;
 
 	@Override
 	public String getZoneName() {

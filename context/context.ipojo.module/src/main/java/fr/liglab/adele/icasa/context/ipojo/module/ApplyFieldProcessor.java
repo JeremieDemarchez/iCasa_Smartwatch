@@ -1,6 +1,6 @@
 package fr.liglab.adele.icasa.context.ipojo.module;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 
 /**
  * Created by aygalinc on 15/01/16.

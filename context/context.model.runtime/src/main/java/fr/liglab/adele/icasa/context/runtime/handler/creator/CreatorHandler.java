@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.context.model.introspection.EntityCreatorHandlerIntrospection;
 
 @Handler(name = HandlerReference.CREATOR_HANDLER, namespace = HandlerReference.NAMESPACE)
@@ -215,7 +215,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityCreatorHan
         }
     }
 
-    private class EntityCreatorImpl implements Entity.Creator<Object> {
+    private class EntityCreatorImpl implements Creator.Entity<Object> {
 
         private String myEntityImplementation;
 

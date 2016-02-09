@@ -15,9 +15,8 @@
  */
 package fr.liglab.adele.icasa.context.model.example;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -32,8 +31,8 @@ import java.util.Set;
 @Instantiate(name = "LocationManager-0")
 public class LocationManagerImpl implements LocationManager {
 
-	@Entity.Creator.Field Entity.Creator<ZoneImpl> creator;
-	@Relation.Creator.Field("myrelation") Relation.Creator creatorRelation;
+	@Creator.Field 				Creator.Entity<ZoneImpl> creator;
+	@Creator.Field("contains") 	Creator.Relation<ZoneImpl,Zone> creatorRelation;
 
 	@Override
 	public void createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {
