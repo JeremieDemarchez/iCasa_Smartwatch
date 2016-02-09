@@ -19,7 +19,6 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -35,40 +34,40 @@ import java.io.PrintStream;
  *
  *
  */
-@Component(name = "MovePersonIntoZoneCommand")
-@Provides
-@Instantiate(name = "move-person-zone-command")
-public class MovePersonIntoZoneCommand extends AbstractCommand {
-
-	@Requires
-	private SimulationManager simulationManager;
-
-    public MovePersonIntoZoneCommand() {
-        addSignature(new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.ZONE_ID}));
-    }
-
-
-	@Override
-	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String personId = param.getString(ScriptLanguage.PERSON_ID);
-        String zoneId = param.getString(ScriptLanguage.ZONE_ID);
-        System.out.println("Moving " + personId + " to Zone " + zoneId);
-		simulationManager.setPersonZone(personId, zoneId);
-		return null;
-	}
-	
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return "move-person-zone";
-    }
-
-    @Override
-    public String getDescription(){
-        return "Move a person into a zone.\n\t" + super.getDescription();
-    }
-}
+//@Component(name = "MovePersonIntoZoneCommand")
+//@Provides
+//@Instantiate(name = "move-person-zone-command")
+//public class MovePersonIntoZoneCommand extends AbstractCommand {
+//
+//	@Requires
+//	private SimulationManager simulationManager;
+//
+//    public MovePersonIntoZoneCommand() {
+//        addSignature(new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.ZONE_ID}));
+//    }
+//
+//
+//	@Override
+//	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+//        String personId = param.getString(ScriptLanguage.PERSON_ID);
+//        String zoneId = param.getString(ScriptLanguage.ZONE_ID);
+//        System.out.println("Moving " + personId + " to Zone " + zoneId);
+//		simulationManager.setPersonZone(personId, zoneId);
+//		return null;
+//	}
+//
+//    /**
+//     * Get the name of the  Script and command gogo.
+//     *
+//     * @return The command name.
+//     */
+//    @Override
+//    public String getName() {
+//        return "move-person-zone";
+//    }
+//
+//    @Override
+//    public String getDescription(){
+//        return "Move a person into a zone.\n\t" + super.getDescription();
+//    }
+//}

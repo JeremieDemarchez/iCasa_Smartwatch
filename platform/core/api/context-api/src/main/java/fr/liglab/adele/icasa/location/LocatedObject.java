@@ -25,6 +25,8 @@ import fr.liglab.adele.icasa.context.model.annotations.State;
  */
 public @ContextService interface LocatedObject {
 
+	public static final String LOCATION_UNKNOWN = "unknown";
+
 	public static final @State String OBJECT_X = "object.position.x";
 
 	public static final @State String OBJECT_Y = "object.position.y";

@@ -15,74 +15,77 @@
  */
 package fr.liglab.adele.icasa.device.light.impl;
 
-import fr.liglab.adele.icasa.device.PowerObservable;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.osgi.framework.Constants;
-
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
 /**
  * Implementation of a simulated dimmer light device.
  *
  */
-@Component(name = "iCasa.DimmerLight")
-@Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedDimmerLightImpl extends AbstractDevice implements DimmerLight, SimulatedDevice,PowerObservable {
+@ContextEntity(services = {DimmerLight.class,SimulatedDevice.class})
+public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice{
 
-    @ServiceProperty(name = DimmerLight.DEVICE_SERIAL_NUMBER, mandatory = true)
-    private String m_serialNumber;
+    public final static String SIMULATED_DIMMER_LIGHT = "iCasa.DimmerLight";
 
-    public SimulatedDimmerLightImpl() {
-        super();
-        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL, 100.0d);
-        super.setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, 0.0d);
-        super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL, 0.0d);
+    @State.Field(service = DimmerLight.class,state = DIMMER_LIGHT_POWER_LEVEL)
+    private double powerLevel;
+
+    @State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_DIMMER_LIGHT)
+    private String deviceType;
+
+    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    private int x;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    private int y;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
+    private String zone;
+
+    @Override
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    @Override
+    public String getZone() {
+        return zone;
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
     }
 
     @Override
     public String getSerialNumber() {
-        return m_serialNumber;
+        return serialNumber;
     }
 
     @Override
     public synchronized double getPowerLevel() {
-        Double powerLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL);
-        if (powerLevel == null)
-            return 0.0d;
         return powerLevel;
     }
 
     @Override
-    public synchronized double setPowerLevel(double level) {
+    public synchronized void setPowerLevel(double level) {
         if (level < 0.0d || level > 1.0d || Double.isNaN(level)){
             throw new IllegalArgumentException("Invalid power level : " + level);
         }
-
-        setPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL, level);
-        getCurrentConsumption();
-        return level;
+        powerLevel = level;
     }
-
-    @Override
-    public double getMaxPowerLevel() {
-        Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
-        if (maxLevel == null)
-            return 0;
-        return maxLevel;
-    }
-
-    @Override
-    public synchronized double getCurrentConsumption() {
-        Double maxLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_MAX_POWER_LEVEL);
-        Double powerLevel = (Double) getPropertyValue(DimmerLight.DIMMER_LIGHT_POWER_LEVEL);
-        setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,(double)(powerLevel*maxLevel));
-        return powerLevel*maxLevel;
-    }
-
 }

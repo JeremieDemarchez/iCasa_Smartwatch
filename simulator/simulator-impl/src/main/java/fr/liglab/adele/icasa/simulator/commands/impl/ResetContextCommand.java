@@ -25,7 +25,6 @@ import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.json.JSONObject;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 
 import java.io.InputStream;
 import java.io.PrintStream;
@@ -36,41 +35,41 @@ import java.io.PrintStream;
  *
  *
  */
-@Component(name = "ResetContextCommand")
-@Provides
-@Instantiate(name = "reset-context-command")
-public class ResetContextCommand extends AbstractCommand {
-
-	@Requires
-	private SimulationManager simulationManager;
-
-
-    private static final String NAME= "reset-context";
-
-    public ResetContextCommand(){
-        addSignature(EMPTY_SIGNATURE);
-    }
-
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return NAME;
-    }
-
-
-
-    @Override
-	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-	//	simulationManager.resetContext();
-		return null;
-	}
-
-    @Override
-    public String getDescription(){
-        return "Remove all the zones, persons and devices from the iCasa Context.\n\t" + super.getDescription();
-    }
-}
+//@Component(name = "ResetContextCommand")
+//@Provides
+//@Instantiate(name = "reset-context-command")
+//public class ResetContextCommand extends AbstractCommand {
+//
+//	@Requires
+//	private SimulationManager simulationManager;
+//
+//
+//    private static final String NAME= "reset-context";
+//
+//    public ResetContextCommand(){
+//        addSignature(EMPTY_SIGNATURE);
+//    }
+//
+//    /**
+//     * Get the name of the  Script and command gogo.
+//     *
+//     * @return The command name.
+//     */
+//    @Override
+//    public String getName() {
+//        return NAME;
+//    }
+//
+//
+//
+//    @Override
+//	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+//	//	simulationManager.resetContext();
+//		return null;
+//	}
+//
+//    @Override
+//    public String getDescription(){
+//        return "Remove all the zones, persons and devices from the iCasa Context.\n\t" + super.getDescription();
+//    }
+//}

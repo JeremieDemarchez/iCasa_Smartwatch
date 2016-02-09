@@ -73,9 +73,8 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
     }
 
     @Override
-    public boolean setPowerStatus(boolean status) {
+    public void setPowerStatus(boolean status) {
         powerStatus = status;
-        return powerStatus;
     }
 
     @Override
@@ -87,7 +86,6 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
     public void turnOff() {
         powerStatus = false;
     }
-
 
     @Override
     public String getZone() {

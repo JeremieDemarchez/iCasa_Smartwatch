@@ -18,52 +18,99 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import java.util.Map;
-import java.util.Set;
-
-import fr.liglab.adele.icasa.remote.wisdom.SimulatedDeviceManager;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
+import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.simulator.SimulatedDeviceManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.wisdom.api.Controller;
+import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Parameter;
+import org.wisdom.api.annotations.Path;
+import org.wisdom.api.annotations.Route;
+import org.wisdom.api.http.HttpMethod;
+import org.wisdom.api.http.MimeTypes;
+import org.wisdom.api.http.Result;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  *
  */
 @Component
 @Instantiate
-@Provides(specifications={SimulatedDeviceManager.class})
-public class SimulatedDeviceREST implements SimulatedDeviceManager {
+@Provides(specifications={Controller.class})
+@Path("/icasa/devices")
+public class SimulatedDeviceREST extends DefaultController {
 
     @Requires
-    private SimulationManager _simulationMgr;
-   
-	/* (non-Javadoc)
-	 * @see fr.liglab.adele.icasa.remote.SimulatedDeviceManager#createDevice(java.lang.String, java.lang.String, java.util.Map)
-	 */
-	@Override
-	public void createDevice(String deviceType, String deviceId,
-			Map<String, Object> properties) {
-		_simulationMgr.createDevice(deviceType, deviceId, properties);		
-	}
+    private SimulatedDeviceManager mySimulatedDeviceManager;
 
-	/* (non-Javadoc)
-	 * @see fr.liglab.adele.icasa.remote.SimulatedDeviceManager#removeDevice(java.lang.String)
-	 */
-	@Override
-	public void removeDevice(String deviceId) {
-        _simulationMgr.removeDevice(deviceId);
-	}
+    @Route(method = HttpMethod.POST, uri = "/device")
+    public Result createDevice() {
+        String content = null;
+        try {
+            BufferedReader reader = context().reader();
+            content = IcasaJSONUtil.getContent(reader);
+        } catch (IOException e) {
+            return internalServerError(e);
+        }
+        DeviceJSON deviceJSON = DeviceJSON.fromString(content);
 
-	/* (non-Javadoc)
-	 * @see fr.liglab.adele.icasa.remote.SimulatedDeviceManager#getDeviceTypes()
-	 */
-	@Override
-	public Set<String> getDeviceTypes() {
-		return _simulationMgr.getSimulatedDeviceTypes();
-	}
-    
-  
+        String deviceType = deviceJSON.getType();
+
+        if (deviceType != null) {
+
+            String deviceId = deviceJSON.getId();
+
+            mySimulatedDeviceManager.createDevice(deviceType, deviceId);
+        }
+        return ok();
+    }
+
+    @Route(method = HttpMethod.DELETE, uri = "/device/{deviceId}")
+    public Result deleteDevice(@Parameter("deviceId") String deviceId) {
+        mySimulatedDeviceManager.removeSimulatedDevice(deviceId);
+        return ok();
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/simulatedDeviceTypes")
+    public Result deviceTypes(){
+        try{
+            String deviceTypes = getDeviceTypes();
+            return ok(deviceTypes).as(MimeTypes.JSON);
+        }catch (JSONException e){
+            return internalServerError(e);
+        }
+
+    }
+
+    private String getDeviceTypes() throws JSONException{
+        JSONArray currentDevices = new JSONArray();
+        for (String deviceTypeStr : mySimulatedDeviceManager.getSimulatedDeviceTypes()) {
+            JSONObject deviceType = getDeviceTypeJSON(deviceTypeStr);
+            if (deviceType == null)
+                continue;
+            currentDevices.put(deviceType);
+        }
+
+        return currentDevices.toString();
+    }
+
+    private JSONObject getDeviceTypeJSON(String deviceTypeStr) throws JSONException{
+        JSONObject deviceTypeJSON = new JSONObject();
+        deviceTypeJSON.putOnce("id", deviceTypeStr);
+        deviceTypeJSON.putOnce("name", deviceTypeStr);
+
+        return deviceTypeJSON;
+    }
 }

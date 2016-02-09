@@ -74,6 +74,19 @@
             <groupId>org.wisdom-framework</groupId>
             <artifactId>akka-system</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.model</artifactId>
+            <version>1.2.7-SNAPSHOT</version>
+        </dependency>
+
+
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>device.light</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -98,6 +111,20 @@
             <plugin>
                 <groupId>org.apache.felix</groupId>
                 <artifactId>maven-ipojo-plugin</artifactId>
+                <dependencies>
+                    <dependency>
+                        <groupId>fr.liglab.adele.icasa</groupId>
+                        <artifactId>icasa.context.ipojo.module</artifactId>
+                        <version>${project.version}</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>ipojo-bundle</goal>
+                        </goals>
+                    </execution>
+                </executions>
             </plugin>
         </plugins>
     </build>

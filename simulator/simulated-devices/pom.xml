@@ -30,19 +30,19 @@
 
 	<modules>
 		<module>light</module>
-		<module>power</module>
-      	<module>button</module>
-		<module>presence</module>
-		<module>motion</module>
-		<module>sprinkler</module>
-		<module>sound</module>
-		<module>temperature</module>
-		<module>gasSensor</module>
-		<module>personal</module>
-		<module>continua-rest-client</module>
-		<module>bathroom-scale</module>
-		<module>security</module>
-		<module>door-window</module>
+		<!--  	<module>power</module>
+            <module>button</module>
+            <module>presence</module>
+            <module>motion</module>
+            <module>sprinkler</module>
+            <module>sound</module>
+            <module>temperature</module>
+            <module>gasSensor</module>
+            <module>personal</module>
+            <module>continua-rest-client</module>
+            <module>bathroom-scale</module>
+            <module>security</module>
+            <module>door-window</module>-->
 	</modules>
    <build>
       <plugins>

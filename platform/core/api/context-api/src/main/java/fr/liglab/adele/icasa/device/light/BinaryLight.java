@@ -59,7 +59,7 @@ public @ContextService interface BinaryLight extends GenericDevice {
 	 * @see #getPowerStatus()
 	 * @see #BINARY_LIGHT_POWER_STATUS
 	 */
-	boolean setPowerStatus(boolean state);
+	void setPowerStatus(boolean state);
 	
 	/**
 	 * Change the power status to true

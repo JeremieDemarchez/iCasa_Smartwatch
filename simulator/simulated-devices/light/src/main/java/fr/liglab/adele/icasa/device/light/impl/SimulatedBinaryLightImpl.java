@@ -15,64 +15,75 @@
  */
 package fr.liglab.adele.icasa.device.light.impl;
 
-import fr.liglab.adele.icasa.device.PowerObservable;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-import org.osgi.framework.Constants;
-
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.util.AbstractDevice;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 
 /**
  * Implementation of a simulated binary light device.
  *
  */
-@Component(name = "iCasa.BinaryLight")
-@Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLight, SimulatedDevice,PowerObservable {
+@ContextEntity(services = {BinaryLight.class,SimulatedDevice.class})
+public class SimulatedBinaryLightImpl implements BinaryLight, SimulatedDevice{
 
-    @ServiceProperty(name = BinaryLight.DEVICE_SERIAL_NUMBER, mandatory = true)
-    private String m_serialNumber;
+    public final static String SIMULATED_BINARY_LIGHT = "iCasa.BinaryLight";
 
-    public SimulatedBinaryLightImpl() {
-        super();
-        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-        super.setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, false);
-        super.setPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL, 100.0d);
-        super.setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL, 0.0d);
+    @State.Field(service = BinaryLight.class,state = BinaryLight.BINARY_LIGHT_POWER_STATUS,directAccess = true)
+    private boolean powerStatus;
+
+    @State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_BINARY_LIGHT)
+    private String deviceType;
+
+    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    private int x;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    private int y;
+
+    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
+    private String zone;
+
+    @Override
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    @Override
+    public String getZone() {
+        return zone;
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
     }
 
     @Override
     public String getSerialNumber() {
-        return m_serialNumber;
+        return serialNumber;
     }
 
     @Override
     public boolean getPowerStatus() {
-        Boolean powerStatus = (Boolean) getPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS);
-        if (powerStatus == null)
-            return false;
-
         return powerStatus;
     }
 
     @Override
-    public synchronized boolean setPowerStatus(boolean status) {
-        setPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS, (Boolean) status);
-        getCurrentConsumption();
-        return status;
-    }
-
-    @Override
-    public double getMaxPowerLevel() {
-        Double maxLevel = (Double) getPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL);
-        if (maxLevel == null)
-            return 0;
-
-        return maxLevel;
+    public void setPowerStatus(boolean status) {
+        powerStatus = status;
     }
 
     @Override
@@ -83,19 +94,6 @@ public class SimulatedBinaryLightImpl extends AbstractDevice implements BinaryLi
     @Override
     public void turnOff() {
         setPowerStatus(false);
-    }
-
-    @Override
-    public synchronized double getCurrentConsumption() {
-        Double maxLevel = (Double) getPropertyValue(BinaryLight.BINARY_LIGHT_MAX_POWER_LEVEL);
-        boolean status = (Boolean) getPropertyValue(BinaryLight.BINARY_LIGHT_POWER_STATUS);
-        if (status){
-            setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,maxLevel);
-            return maxLevel;
-        }else{
-            setPropertyValue(PowerObservable.POWER_OBSERVABLE_CURRENT_POWER_LEVEL,0.0d);
-            return 0.0d;
-        }
     }
 
 }

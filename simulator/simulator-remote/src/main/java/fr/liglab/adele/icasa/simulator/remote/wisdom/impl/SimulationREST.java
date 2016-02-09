@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -36,8 +35,7 @@ import org.wisdom.api.http.Result;
 @Provides
 @Instantiate
 public class SimulationREST extends DefaultController {
-    @Requires
-    private SimulationManager _simulationMgr;
+
 
 
     /**

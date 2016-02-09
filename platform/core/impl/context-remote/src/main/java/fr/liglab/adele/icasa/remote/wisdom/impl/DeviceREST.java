@@ -55,7 +55,7 @@ import java.util.List;
  *
  *
  */
-@Component
+@Component(immediate = true)
 @Provides
 @Instantiate
 @Path("/icasa/devices")
@@ -63,34 +63,31 @@ public class DeviceREST extends DefaultController {
 
     private final static Logger LOG = LoggerFactory.getLogger(DeviceREST.class);
 
-    @Requires(optional = true)
+    @Requires(specification = BinaryLight.class,optional = true)
     List<BinaryLight> binaryLights;
 
-    @Requires(optional = true)
+    @Requires(specification = DimmerLight.class,optional = true)
     List<DimmerLight> dimmerLights;
 
-    @Requires(optional = true)
+    @Requires(specification = PresenceSensor.class,optional = true)
     List<PresenceSensor> presenceSensors;
 
-    @Requires(optional = true)
+    @Requires(specification = MotionSensor.class,optional = true)
     List<MotionSensor> motionSensors;
 
-    @Requires(optional = true)
+    @Requires(specification = PushButton.class,optional = true)
     List<PushButton> pushButtons;
 
-
-    @Requires(optional = true)
+    @Requires(specification = Photometer.class, optional = true)
     List<Photometer> photometers;
 
-
-    @Requires(optional = true)
+    @Requires(specification = Thermometer.class,optional = true)
     List<Thermometer> thermometers;
 
-
-    @Requires(optional = true)
+    @Requires(specification = Cooler.class,optional = true)
     List<Cooler> coolers;
 
-    @Requires(optional = true)
+    @Requires(specification = Heater.class,optional = true)
     List<Heater> heaters;
 
     @Route(method = HttpMethod.GET, uri = "/devices")

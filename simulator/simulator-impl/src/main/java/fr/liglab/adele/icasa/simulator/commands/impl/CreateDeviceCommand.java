@@ -19,7 +19,6 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -36,37 +35,37 @@ import java.util.HashMap;
  *
  *
  */
-@Component(name = "CreateDeviceCommand")
-@Provides
-@Instantiate(name="create-device-command")
-public class CreateDeviceCommand extends AbstractCommand {
-
-	@Requires	
-	private SimulationManager simulationManager;
-
-    public CreateDeviceCommand(){
-        addSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
-    }
-
-	@Override
-   public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-        String deviceId = param.getString(ScriptLanguage.ID);
-        String deviceType = param.getString(ScriptLanguage.TYPE);
-		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
-		return null;
-   }
-    /**
-     * Get the name of the  Script and command gogo.
-     *
-     * @return The command name.
-     */
-    @Override
-    public String getName() {
-        return "create-device";
-    }
-
-    @Override
-    public String getDescription(){
-        return "Creates a new simulated device instance.\n\t" + super.getDescription();
-    }
-}
+//@Component(name = "CreateDeviceCommand")
+//@Provides
+//@Instantiate(name="create-device-command")
+//public class CreateDeviceCommand extends AbstractCommand {
+//
+//	@Requires
+//	private SimulationManager simulationManager;
+//
+//    public CreateDeviceCommand(){
+//        addSignature(new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.TYPE}));
+//    }
+//
+//	@Override
+//   public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+//        String deviceId = param.getString(ScriptLanguage.ID);
+//        String deviceType = param.getString(ScriptLanguage.TYPE);
+//		simulationManager.createDevice(deviceType, deviceId, new HashMap<String, Object>());
+//		return null;
+//   }
+//    /**
+//     * Get the name of the  Script and command gogo.
+//     *
+//     * @return The command name.
+//     */
+//    @Override
+//    public String getName() {
+//        return "create-device";
+//    }
+//
+//    @Override
+//    public String getDescription(){
+//        return "Creates a new simulated device instance.\n\t" + super.getDescription();
+//    }
+//}

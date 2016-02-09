@@ -59,7 +59,7 @@ public @ContextService interface DimmerLight extends GenericDevice {
 	 * @see #getPowerLevel()
 	 * @see #DIMMER_LIGHT_POWER_LEVEL
 	 */
-	double setPowerLevel(double level);
+	void setPowerLevel(double level);
 
 
 }

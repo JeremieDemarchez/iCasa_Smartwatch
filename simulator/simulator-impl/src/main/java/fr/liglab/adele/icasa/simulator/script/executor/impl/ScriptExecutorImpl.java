@@ -18,7 +18,7 @@ package fr.liglab.adele.icasa.simulator.script.executor.impl;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 import fr.liglab.adele.icasa.commands.ICasaCommand;
-import fr.liglab.adele.icasa.simulator.SimulationManager;
+//import fr.liglab.adele.icasa.simulator.SimulationManager;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutorListener;
 import org.apache.felix.ipojo.annotations.*;
@@ -54,8 +54,8 @@ public class ScriptExecutorImpl extends AbstractDeployer implements ScriptExecut
     @Requires
     private Clock clock;
 
-    @Requires
-    private SimulationManager simulationManager;
+//    @Requires
+//    private SimulationManager simulationManager;
 
     @Requires
     AkkaSystemService akka;

@@ -143,24 +143,6 @@ public class IcasaJSONUtil {
         return prop;
     }
 
-    /**	public static JSONObject getDeviceTypeJSON(String deviceTypeStr, ContextManager ctx) {
-     JSONObject deviceTypeJSON = null;
-     Set<String> specifications = ctx.getProvidedServices(deviceTypeStr);
-     try {
-     deviceTypeJSON = new JSONObject();
-     deviceTypeJSON.putOnce("id", deviceTypeStr);
-     deviceTypeJSON.putOnce("name", deviceTypeStr);
-     if(specifications != null){
-     deviceTypeJSON.put(DeviceJSON.SERVICES, specifications );
-     }
-     } catch (JSONException e) {
-     e.printStackTrace();
-     deviceTypeJSON = null;
-     }
-
-     return deviceTypeJSON;
-     }**/
-
     public static JSONObject getPersonTypeJSON(String personTypeStr) {
         JSONObject personTypeJSON = null;
         try {

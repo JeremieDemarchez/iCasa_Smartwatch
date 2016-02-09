@@ -35,7 +35,7 @@ public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 			personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
 			personJSON.putOnce(PersonJSON.TYPE_PROP, person.getPersonType().getName());
 
-			Position personPosition = person.getCenterAbsolutePosition();
+			Position personPosition = person.getPosition();
 			if (personPosition != null) {
 				personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
 				personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
