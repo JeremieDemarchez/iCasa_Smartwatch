@@ -1,9 +1,3 @@
-function clearBox(elementID){
-
-    console.log("Clear " + elementID);
-    document.getElementById(elementID).innerHTML = "";
-}
-
 function drawFactoryPanel(factoryId,data){
 
     var factorySection = $("#factoriesSection");
@@ -30,7 +24,6 @@ function drawFactoryPanel(factoryId,data){
     });
 
     listBody.appendTo(panelCollapse);
-
 
     panelCollapse.appendTo(panel);
 
@@ -59,4 +52,6 @@ function getListOfContextFactories(){
         });
     });
 }
+
+
 
