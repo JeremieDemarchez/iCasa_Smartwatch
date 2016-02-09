@@ -18,8 +18,7 @@
  */
 package fr.liglab.adele.zigbee.device.factories;
 
-import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
@@ -31,8 +30,6 @@ import fr.liglab.adele.icasa.location.Position;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Zigbee power switch factory.
@@ -44,25 +41,25 @@ public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDevic
     @Requires
     private ZigbeeDriver driver;
 
-    @State.Field(service = PowerSwitch.class,state = PowerSwitch.POWER_SWITCH_CURRENT_STATUS)
+    @ContextEntity.State.Field(service = PowerSwitch.class,state = PowerSwitch.POWER_SWITCH_CURRENT_STATUS)
     private boolean status;
 
-    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
     private int x;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
     private int y;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
     private String zone;
 
-    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
     private String moduleAddress;
 
-    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
     private float batteryLevel;
 
     @Override
@@ -122,7 +119,7 @@ public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDevic
         }
     }
 
-    @State.Push(service = PowerSwitch.class,state = POWER_SWITCH_CURRENT_STATUS)
+    @ContextEntity.State.Push(service = PowerSwitch.class,state = POWER_SWITCH_CURRENT_STATUS)
     private boolean pushStatus(boolean status){
         return status;
     }
@@ -140,7 +137,7 @@ public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDevic
         }
     }
 
-    @State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
     }

@@ -18,7 +18,7 @@
  */
 package fr.liglab.adele.zigbee.device.importer;
 
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.zigbee.driver.TypeCode;
@@ -53,19 +53,19 @@ public class ZigbeeImporter extends AbstractImporterComponent {
     @ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
     private String name;
 
-    private @Entity.Creator.Field Entity.Creator<ZigbeePhotometer> photometerFactory;
+    private @Creator.Field Creator.Entity<ZigbeePhotometer> photometerFactory;
 
-    private @Entity.Creator.Field Entity.Creator<ZigbeeBinaryLight> binaryLightFactory;
+    private @Creator.Field Creator.Entity<ZigbeeBinaryLight> binaryLightFactory;
 
-    private @Entity.Creator.Field Entity.Creator<ZigbeeMotionSensor> motionSensorFactory;
+    private @Creator.Field Creator.Entity<ZigbeeMotionSensor> motionSensorFactory;
 
-    private @Entity.Creator.Field Entity.Creator<ZigbeePowerSwitch> powerSwitchFactory;
+    private @Creator.Field Creator.Entity<ZigbeePowerSwitch> powerSwitchFactory;
 
-    private @Entity.Creator.Field Entity.Creator<ZigbeePushButton> pushButtonFactory;
+    private @Creator.Field Creator.Entity<ZigbeePushButton> pushButtonFactory;
 
-    private @Entity.Creator.Field Entity.Creator<ZigbeeThermometer> thermometerFactory;
+    private @Creator.Field Creator.Entity<ZigbeeThermometer> thermometerFactory;
 
-    private @Entity.Creator.Field Entity.Creator<PresenceSensor> presenceSensorFactory;
+    private @Creator.Field Creator.Entity<PresenceSensor> presenceSensorFactory;
 
     private static final Logger logger = LoggerFactory.getLogger(ZigbeeImporter.class);
 
@@ -83,9 +83,6 @@ public class ZigbeeImporter extends AbstractImporterComponent {
     public void registration(ServiceReference serviceReference) {
         super.setServiceReference(serviceReference);
     }
-
-
-
 
     @Override
     protected synchronized void useImportDeclaration(ImportDeclaration importDeclaration) throws BinderException {
@@ -107,7 +104,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
                 properties.put(ZigbeeDevice.MODULE_ADRESS, moduleAddress);
                 properties.put(GenericDevice.DEVICE_SERIAL_NUMBER, serialNumber);
 
-                Entity.Creator creator = getCreator(deviceType);
+                Creator.Entity creator = getCreator(deviceType);
                 if (creator != null){
                     creator.createEntity(serialNumber,properties);
                 }
@@ -125,7 +122,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
         Map<String, Object> epdProps = importDeclaration.getMetadata();
         String deviceType = (String) epdProps.get("zigbee.device.type.code");
         String serialNumber = (String) epdProps.get(RemoteConstants.ENDPOINT_ID);
-        Entity.Creator creator = getCreator(deviceType);
+        Creator.Entity creator = getCreator(deviceType);
         if (creator != null){
             creator.deleteEntity(serialNumber);
         }
@@ -137,7 +134,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
         return name;
     }
 
-    private Entity.Creator getCreator(String deviceType){
+    private Creator.Entity getCreator(String deviceType){
         if (TypeCode.A001.toString().equals(deviceType)) {
             return binaryLightFactory;
         } else if (TypeCode.C004.toString().equals(deviceType)) {

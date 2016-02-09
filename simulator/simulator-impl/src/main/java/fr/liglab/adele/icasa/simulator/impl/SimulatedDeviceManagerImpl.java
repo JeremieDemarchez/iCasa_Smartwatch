@@ -15,13 +15,11 @@
  */
 package fr.liglab.adele.icasa.simulator.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.device.light.impl.SimulatedBinaryLightImpl;
-import fr.liglab.adele.icasa.device.light.impl.SimulatedDimmerLightImpl;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.simulator.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.SimulatedDeviceManager;
@@ -41,9 +39,9 @@ public class SimulatedDeviceManagerImpl implements SimulatedDeviceManager{
     @Requires(specification = SimulatedDevice.class,optional = true)
     List<SimulatedDevice> simulatedDevices;
 
-    @Entity.Creator.Field Entity.Creator<SimulatedBinaryLightImpl> simulatedBinaryLightCreator;
+    @Creator.Field Creator.Entity<SimulatedBinaryLightImpl> simulatedBinaryLightCreator;
 
- //   @Entity.Creator.Field Entity.Creator<SimulatedDimmerLightImpl> simulatedDimmerLightCreator;
+    //   @Entity.Creator.Field Entity.Creator<SimulatedDimmerLightImpl> simulatedDimmerLightCreator;
 
     @Validate
     public void start(){
@@ -65,12 +63,12 @@ public class SimulatedDeviceManagerImpl implements SimulatedDeviceManager{
             return;
         }
         Map<String,Object> entityParam = new HashMap<>();
-        Entity.Creator creator = this.getCreator(deviceType,entityParam);
+        Creator.Entity creator = this.getCreator(deviceType,entityParam);
         if (creator == null){
             return;
         }
 
-        entityParam.put(State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),deviceId);
+        entityParam.put(ContextEntity.State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),deviceId);
         creator.createEntity(deviceId,entityParam);
     }
 
@@ -81,7 +79,7 @@ public class SimulatedDeviceManagerImpl implements SimulatedDeviceManager{
         }
         for (SimulatedDevice device : simulatedDevices){
             if (device.getSerialNumber() != null && device.getSerialNumber().equals(deviceId)){
-                Entity.Creator creator = getCreator(device.getDeviceType(),new HashMap<>());
+                Creator.Entity creator = getCreator(device.getDeviceType(),new HashMap<>());
                 if (creator == null){
                     return;
                 }
@@ -94,26 +92,26 @@ public class SimulatedDeviceManagerImpl implements SimulatedDeviceManager{
     public Set<String> getSimulatedDeviceTypes() {
         Set<String> returnSet = new HashSet<>();
         returnSet.add(SimulatedBinaryLightImpl.SIMULATED_BINARY_LIGHT);
-   //     returnSet.add(SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT);
+        //     returnSet.add(SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT);
         return returnSet;
     }
 
     @Override
     public void removeAllSimulatedDevices() {
         simulatedBinaryLightCreator.deleteAllEntities();
-  //      simulatedDimmerLightCreator.deleteAllEntities();
+        //      simulatedDimmerLightCreator.deleteAllEntities();
     }
 
-    private Entity.Creator getCreator(String deviceType,Map<String,Object> defaultProperties){
-        defaultProperties.put(State.ID(LocatedObject.class,LocatedObject.OBJECT_X),40);
-        defaultProperties.put(State.ID(LocatedObject.class,LocatedObject.OBJECT_Y),40);
+    private Creator.Entity getCreator(String deviceType,Map<String,Object> defaultProperties){
+        defaultProperties.put(ContextEntity.State.ID(LocatedObject.class,LocatedObject.OBJECT_X),40);
+        defaultProperties.put(ContextEntity.State.ID(LocatedObject.class,LocatedObject.OBJECT_Y),40);
         switch (deviceType) {
             case SimulatedBinaryLightImpl.SIMULATED_BINARY_LIGHT:
-                defaultProperties.put(State.ID(BinaryLight.class,BinaryLight.BINARY_LIGHT_POWER_STATUS),false);
+                defaultProperties.put(ContextEntity.State.ID(BinaryLight.class,BinaryLight.BINARY_LIGHT_POWER_STATUS),false);
                 return simulatedBinaryLightCreator;
-  /**          case SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT:
-                defaultProperties.put(State.ID(DimmerLight.class, DimmerLight.DIMMER_LIGHT_POWER_LEVEL),0d);
-                return simulatedDimmerLightCreator;**/
+            /**          case SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT:
+             defaultProperties.put(State.ID(DimmerLight.class, DimmerLight.DIMMER_LIGHT_POWER_LEVEL),0d);
+             return simulatedDimmerLightCreator;**/
             default:return null;
         }
     }

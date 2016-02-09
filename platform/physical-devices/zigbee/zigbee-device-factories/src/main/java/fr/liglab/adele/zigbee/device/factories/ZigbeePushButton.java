@@ -16,7 +16,6 @@
 package fr.liglab.adele.zigbee.device.factories;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.button.PushButton;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
@@ -33,25 +32,25 @@ public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceT
     @Requires
     private ZigbeeDriver driver;
 
-    @State.Field(service = PushButton.class,state = PUSH_AND_HOLD)
+    @ContextEntity.State.Field(service = PushButton.class,state = PUSH_AND_HOLD)
     private boolean isPush;
 
-    @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
     private int x;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
     private int y;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
     private String zone;
 
-    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
     private String moduleAddress;
 
-    @State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
     private float batteryLevel;
 
     @Override
@@ -111,7 +110,7 @@ public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceT
         }
     }
 
-    @State.Push(service = PushButton.class,state = PUSH_AND_HOLD)
+    @ContextEntity.State.Push(service = PushButton.class,state = PUSH_AND_HOLD)
     public boolean pushStatus(boolean status){
         return status;
     }
@@ -130,7 +129,7 @@ public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceT
         }
     }
 
-    @State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
     }

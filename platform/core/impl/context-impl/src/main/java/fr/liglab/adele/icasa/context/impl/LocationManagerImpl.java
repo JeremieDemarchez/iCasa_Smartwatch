@@ -17,8 +17,8 @@ package fr.liglab.adele.icasa.context.impl;
 
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.LocationManager;
-import fr.liglab.adele.icasa.context.model.annotations.entity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Entity;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import org.apache.felix.ipojo.annotations.Component;
@@ -38,20 +38,18 @@ public class LocationManagerImpl implements LocationManager {
 
 	protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
-
-
-	@Entity.Creator.Field Entity.Creator<ZoneImpl> creator;
+	@Creator.Field 	 Creator.Entity<ZoneImpl> creator;
 
 	@Override
 	public void createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {
 		Map propertiesInit = new HashMap<>();
-		propertiesInit.put(State.ID(Zone.class,Zone.NAME),id);
-		propertiesInit.put(State.ID(Zone.class,Zone.X),leftX);
-		propertiesInit.put(State.ID(Zone.class,Zone.Y),topY);
-		propertiesInit.put(State.ID(Zone.class,Zone.Z),bottomZ);
-		propertiesInit.put(State.ID(Zone.class,Zone.X_LENGHT),width);
-		propertiesInit.put(State.ID(Zone.class,Zone.Y_LENGHT),height);
-		propertiesInit.put(State.ID(Zone.class,Zone.Z_LENGHT),depth);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.NAME),id);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.X),leftX);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Y),topY);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Z),bottomZ);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.X_LENGHT),width);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Y_LENGHT),height);
+		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Z_LENGHT),depth);
 		creator.createEntity(id,propertiesInit);
 	}
 
