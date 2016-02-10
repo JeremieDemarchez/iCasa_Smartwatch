@@ -104,6 +104,9 @@ public class ZoneImpl implements Zone {
 
 	@Override
 	public boolean canContains(Position position) {
+		if ((position.x <= x + xLength ) && (position.x >= x ) && (position.y <= y + yLength ) && (position.y >= y )){
+			return true;
+		}
 		return false;
 	}
 
