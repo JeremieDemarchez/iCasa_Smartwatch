@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.temperature.impl;
+package fr.liglab.adele.icasa.simulator.model.temperature;
 
 
 //import fr.liglab.adele.icasa.device.GenericDevice;
@@ -24,11 +24,11 @@ package fr.liglab.adele.icasa.simulator.temperature.impl;
 //
 //import java.util.*;
 //
-//import static fr.liglab.adele.icasa.simulator.temperature.impl.TemperaturePMImpl.VOLUME_PROP_NAME;
+//import static impl.TemperaturePMImpl.VOLUME_PROP_NAME;
 //
-//import static fr.liglab.adele.icasa.simulator.temperature.impl.TemperaturePMImpl.AIR_MASS;
+//import static impl.TemperaturePMImpl.AIR_MASS;
 //
-//import static fr.liglab.adele.icasa.simulator.temperature.impl.TemperaturePMImpl.AIR_MASS_CAPACITY;
+//import static impl.TemperaturePMImpl.AIR_MASS_CAPACITY;
 //
 ///**
 // * Model of a zone used to compute thermal properties.

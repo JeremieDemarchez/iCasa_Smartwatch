@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.temperature.impl;
+package fr.liglab.adele.icasa.simulator.model.temperature;
 
 //import fr.liglab.adele.icasa.Variable;
 //import fr.liglab.adele.icasa.location.LocatedDevice;

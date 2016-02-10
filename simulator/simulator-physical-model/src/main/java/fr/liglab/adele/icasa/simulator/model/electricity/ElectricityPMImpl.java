@@ -1,3 +1,5 @@
+
+package fr.liglab.adele.icasa.simulator.model.electricity;
 /**
  *
  *   Copyright 2011-2013 Universite Joseph Fourier, LIG, ADELE Research
@@ -28,7 +30,6 @@
 // *   See the License for the specific language governing permissions and
 // *   limitations under the License.
 // */
-//package fr.liglab.adele.icasa.simulator.electricity.impl;
 //
 //import fr.liglab.adele.icasa.Variable;
 //import fr.liglab.adele.icasa.location.LocatedDevice;

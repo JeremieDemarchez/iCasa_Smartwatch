@@ -31,6 +31,7 @@
 	<modules>
 		<module>clock-simulated-impl</module>
 		<module>simulator-api</module>
+        <module>simulator-physical-model</module>
         <module>simulator-devices</module>
 		<module>simulator-impl</module>
         <module>simulator-remote</module>

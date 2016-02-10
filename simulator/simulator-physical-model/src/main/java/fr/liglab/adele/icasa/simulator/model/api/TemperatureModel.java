@@ -13,24 +13,18 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.temperature.impl;
+package fr.liglab.adele.icasa.simulator.model.api;
+
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 
 /**
- * Represents an integer interval.
- * Min and max numbers must be positive.
- *
+ * Created by aygalinc on 10/02/16.
  */
-public class Interval {
+public @ContextService interface TemperatureModel {
 
-    public Interval(int min, int max) {
-        this.min = min;
-        this.max = max;
-    }
+    public static final @State String CURRENT_TEMPERATURE = "current.temperature";
 
-    public int min;
-    public int max;
+    public double getCurrentTemperature();
 
-    public int getLength() {
-        return max - min;
-    }
 }

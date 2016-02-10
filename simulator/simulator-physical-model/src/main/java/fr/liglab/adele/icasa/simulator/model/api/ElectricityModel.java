@@ -13,21 +13,18 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.temperature.impl;
+package fr.liglab.adele.icasa.simulator.model.api;
+
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 
 /**
- * Represents a parallelepiped.
- *
+ * Created by aygalinc on 10/02/16.
  */
-public class Parallelepiped {
+public @ContextService interface ElectricityModel {
 
-    public Parallelepiped(Interval xInterval, Interval yInterval, Interval zInterval) {
-        this.xInterval = xInterval;
-        this.yInterval = yInterval;
-        this.zInterval = zInterval;
-    }
+    public static final @State String CURRENT_CONSUMPTION = "current.electricity.consumption";
 
-    public Interval xInterval;
-    public Interval yInterval;
-    public Interval zInterval;
+    public double getCurrentConsumption();
+
 }
