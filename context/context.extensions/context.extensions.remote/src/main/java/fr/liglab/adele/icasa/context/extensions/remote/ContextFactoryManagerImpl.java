@@ -13,7 +13,7 @@ import java.util.*;
 public class ContextFactoryManagerImpl implements ContextFactoryManager {
 
 
-    @Requires(id = "factories",specification = Factory.class,optional = true,proxy = false,filter = "("+ ContextEntity.ENTITY_CONTEXT_SERVICES+"=true)")
+    @Requires(id = "factories",specification = Factory.class,optional = true,proxy = false,filter = "("+ ContextEntity.ENTITY_CONTEXT_SERVICES+"=*)")
     private List<Factory> myFactories;
 
     private final Map<String,Set<String>> myContextFactoriesWithContextSpec = new HashMap<String, Set<String>>();

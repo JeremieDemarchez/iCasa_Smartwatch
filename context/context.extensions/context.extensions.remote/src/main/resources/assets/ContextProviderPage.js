@@ -1,17 +1,19 @@
 function drawProviderPanel(providerId,data){
 
     var providersSection = $("#providersSection");
+    var providerHash = String.hashCode(providerId);
 
     var panel = $("<div></div>").attr('class',"panel panel-primary providerPanel").attr('id',"provider"+providerId);
     var panelHeading =  $("<div></div>").attr('class',"panel-heading");
     var panelPanelTitle = $("<h4></h4>").attr('class',"panel-title");
-    var panelPanelTitleCollapsible = $("<a>"+providerId+"</a>").attr('data-toggle','collapse').attr('href',"#provider"+providerId+"table");
+    var panelPanelTitleCollapsible = $("<a>"+providerId+"</a>").attr('data-toggle','collapse').attr('href',"#provider"+providerHash);
 
     panelPanelTitleCollapsible.appendTo(panelPanelTitle);
     panelPanelTitle.appendTo(panelHeading);
     panelHeading.appendTo(panel);
 
-    var table =  $("<table></table>").attr('class',"table  collapse in").attr("id","provider"+providerId+"table");
+    var div_collapse =  $("<div></div>").attr('class',"table-responsive collapse in").attr("id","provider"+providerHash);
+    var table =  $("<table></table>").attr('class',"table");
 
     var tableHead =  $("<thead></thead>");
     var tableRHead =  $("<tr><th>Implementation</th><th>Enabled</th></tr>");
@@ -24,11 +26,8 @@ function drawProviderPanel(providerId,data){
         console.log("Draw For Each " + key + " value " + value);
         var row = $("<tr></tr>");
         var specification =  $("<td>"+key+"</td>").attr('class', "col-md-9");
-        if(value == true) {
-            var status =  $("<td>"+value+"</td>").attr('class',"enabler btn btn-success col-md-1").attr('data-provider', providerId).attr('data-implem',key).attr('data-state',value);
-        } else {
-            var status =  $("<td>"+value+"</td>").attr('class',"enabler btn btn-warning col-md-1").attr('data-provider', providerId).attr('data-implem',key).attr('data-state',value);
-        }
+        var status =  $("<td>"+value+"</td>").attr('class',"enabler btn col-md-1").attr('data-provider', providerId).attr('data-implem',key);
+        updateButton(status, value);
 
         specification.appendTo(row);
         status.appendTo(row);
@@ -36,10 +35,8 @@ function drawProviderPanel(providerId,data){
     });
 
     tableBody.appendTo(table);
-
-
-    table.appendTo(panel);
-
+    table.appendTo(div_collapse);
+    div_collapse.appendTo(panel);
     panel.appendTo(providersSection);
 }
 

@@ -42,6 +42,14 @@ public class ContextProviderController extends DefaultController {
     @Requires(specification = EntityCreatorHandlerIntrospection.class,optional = true)
     List<EntityCreatorHandlerIntrospection> creatorHandlers;
 
+//    List<EntityCreatorHandlerIntrospection> fake = new ArrayList<EntityCreatorHandlerIntrospection>();
+//
+//    ContextProviderController(){
+//        fake.add(0,new FakeCreator("Creator1","fr.entity.1"));
+//        fake.add(1,new FakeCreator("Creator2","fr.entity.2"));
+//        fake.add(1,new FakeCreator("German","fr.entity.sd2"));
+//    }
+
     @Route(method = HttpMethod.GET, uri = "/context/providers")
     public Result getContextProviders(){
         ObjectNode result = json.newObject();
@@ -93,14 +101,6 @@ public class ContextProviderController extends DefaultController {
         }
 
         return notFound();
-    }
-
-    List<EntityCreatorHandlerIntrospection> fake = new ArrayList<EntityCreatorHandlerIntrospection>();
-
-    ContextProviderController(){
-        fake.add(0,new FakeCreator("Creator1","fr.entity.1"));
-        fake.add(1,new FakeCreator("Creator2","fr.entity.2"));
-        fake.add(1,new FakeCreator("German","fr.entity.sd2"));
     }
 
     @Route(method = HttpMethod.POST, uri = "/context/providers/{id}/{implem}/{state}")
