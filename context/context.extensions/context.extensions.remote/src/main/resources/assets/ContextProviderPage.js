@@ -18,16 +18,16 @@ function drawProviderPanel(providerId,data){
     tableRHead.appendTo(tableHead);
 
     tableHead.appendTo(table);
-    var tableBody =  $("<tbody></tbody>").attr("id",providerId);
+    var tableBody =  $("<tbody></tbody>");
 
     $.each(data,function(key,value){
         console.log("Draw For Each " + key + " value " + value);
         var row = $("<tr></tr>");
-        var specification =  $("<td>"+key+"</td>").attr("id",key);
+        var specification =  $("<td>"+key+"</td>").attr('class', "col-md-9");
         if(value == true) {
-            var status =  $("<td>"+value+"</td>").attr('class',"enab btn btn-success");
+            var status =  $("<td>"+value+"</td>").attr('class',"enabler btn btn-success col-md-1").attr('data-provider', providerId).attr('data-implem',key).attr('data-state',value);
         } else {
-            var status =  $("<td>"+value+"</td>").attr('class',"disab btn btn-warning");
+            var status =  $("<td>"+value+"</td>").attr('class',"enabler btn btn-warning col-md-1").attr('data-provider', providerId).attr('data-implem',key).attr('data-state',value);
         }
 
         specification.appendTo(row);
@@ -65,13 +65,14 @@ function getListOfProviders(){
 }
 
 $(document).ready(function() {
-    $('#providersSection').on('click', '.enab', function(e) {
+    $('#providersSection').on('click', '.enabler', function(e) {
         e.preventDefault();
 
-        var providerId = $(this).parent().parent().attr('id');
-        var implem = $(this).prev().attr('id');
+        var providerId = $(this).attr('data-provider');
+        var implem = $(this).attr('data-implem');
+        var state = $(this).attr('data-state');
         var button = this;
-        t = $.post("/context/providers/"+providerId+"/"+implem+"/"+false, function(data) {
+        t = $.post("/context/providers/"+providerId+"/"+implem+"/"+ (state == 'false'), function(data) {
             $.each(data,function(key, value){
                 updateButton(button, value);
             });
@@ -79,34 +80,17 @@ $(document).ready(function() {
 
 
     });
-
-    $('#providersSection').on('click', '.disab', function(e) {
-        e.preventDefault();
-        var providerId = $(this).parent().parent().attr('id');
-        var implem = $(this).prev().attr('id');
-        var button = this;
-        t = $.post("/context/providers/"+providerId+"/"+implem+"/"+true, function(data) {
-            $.each(data,function(key,value){
-                updateButton(button, value);
-            });
-        });
-
-    });
 });
 
 function updateButton(button, state){
+    $(button).attr('data-state', state);
     if(state == true){
         $(button).removeClass('btn-warning');
-        $(button).removeClass('disab');
         $(button).html('true');
-        $(button).addClass('enab');
         $(button).addClass('btn-success');
     } else {
         $(button).removeClass('btn-success');
-        $(button).removeClass('enab');
         $(button).html('false');
-        $(button).addClass('disab');
         $(button).addClass('btn-warning');
     }
-
 }

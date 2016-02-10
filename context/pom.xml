@@ -19,7 +19,7 @@
         <module>context.model.runtime</module>
         <!--   <module>context.model.example</module>-->
         <module>context.extensions</module>
-        <!-- <module>icasa-teaching-distribution-with-context</module>-->
+        <module>icasa-teaching-distribution-with-context</module>
         <module>context.model.test</module>
     </modules>
 

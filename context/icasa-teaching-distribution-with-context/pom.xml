@@ -121,9 +121,17 @@
             <version>${project.version}</version>
         </dependency>
 
+<!--
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>icasa.context.model.example</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+-->
+
+        <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.context.model.test</artifactId>
             <version>${project.version}</version>
         </dependency>
 

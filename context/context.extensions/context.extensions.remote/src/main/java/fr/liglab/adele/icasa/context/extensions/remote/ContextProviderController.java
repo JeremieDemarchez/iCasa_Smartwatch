@@ -39,15 +39,15 @@ public class ContextProviderController extends DefaultController {
     @Requires
     Json json;
 
-//    @Requires(specification = EntityCreatorHandlerIntrospection.class,optional = true)
-//    List<EntityCreatorHandlerIntrospection> creatorHandlers;
+    @Requires(specification = EntityCreatorHandlerIntrospection.class,optional = true)
+    List<EntityCreatorHandlerIntrospection> creatorHandlers;
 
     @Route(method = HttpMethod.GET, uri = "/context/providers")
     public Result getContextProviders(){
         ObjectNode result = json.newObject();
 
 
-        for (EntityCreatorHandlerIntrospection creatorHandler : fake){
+        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers){
             result.put(creatorHandler.getAttachedComponentInstanceName(),true);
         }
 
@@ -62,7 +62,7 @@ public class ContextProviderController extends DefaultController {
 
         ObjectNode result = json.newObject();
 
-        for (EntityCreatorHandlerIntrospection creatorHandler : fake){
+        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers){
             if (creatorHandler.getAttachedComponentInstanceName().equals(id)){
                 for (String implemSpecification : creatorHandler.getImplementations()){
                     result.put(implemSpecification,creatorHandler.getImplentationState(implemSpecification));
@@ -81,7 +81,7 @@ public class ContextProviderController extends DefaultController {
 
         ObjectNode result = json.newObject();
 
-        for (EntityCreatorHandlerIntrospection creatorHandler : fake) {
+        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers) {
             if (creatorHandler.getAttachedComponentInstanceName().equals(id)) {
                 for (String implemSpecification : creatorHandler.getImplementations()) {
                     if (implemSpecification.equals(implem)) {
@@ -112,11 +112,12 @@ public class ContextProviderController extends DefaultController {
         ObjectNode result = json.newObject();
 
 
-        for (EntityCreatorHandlerIntrospection creatorHandler : fake) {
+        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers) {
             if (creatorHandler.getAttachedComponentInstanceName().equals(id)) {
                 for (String implemSpecification : creatorHandler.getImplementations()) {
                     if (implemSpecification.equals(implem)) {
-                        result.put(implemSpecification, creatorHandler.switchCreation(implem, state));
+                        creatorHandler.switchCreation(implem, state);
+                        result.put(implemSpecification, creatorHandler.getImplentationState(implemSpecification));
                     }
                 }
                 return ok(result);
