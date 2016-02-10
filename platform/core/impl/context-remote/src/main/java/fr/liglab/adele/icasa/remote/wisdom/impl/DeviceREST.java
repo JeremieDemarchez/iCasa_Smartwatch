@@ -111,7 +111,7 @@ public class DeviceREST extends DefaultController {
     @Route(method = HttpMethod.GET, uri = "/device/{deviceId}")
     public synchronized Result device(@Parameter("deviceId") String deviceId) {
         if (deviceId == null || deviceId.length()<1){
-            return internalServerError();
+            return devices();
         }
 
         GenericDevice foundDevice = findDevice(deviceId);

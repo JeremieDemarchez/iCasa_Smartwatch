@@ -38,6 +38,7 @@ import org.slf4j.LoggerFactory;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.HashSet;
+import java.util.Set;
 
 public class IcasaJSONUtil {
 
@@ -46,75 +47,101 @@ public class IcasaJSONUtil {
     private final static String NO_UNIT = "N/A";
 
     public static  JSONObject getPushButtonJSON(PushButton pushButton) throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(pushButton);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(PushButton.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(PushButton.PUSH_AND_HOLD,pushButton.isPushed(),"Lux"));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(pushButton);
+        Set<String> services = new HashSet<>();
+        services.add(PushButton.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(PushButton.PUSH_AND_HOLD,pushButton.isPushed(),"Lux"));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     public static JSONObject getPhotometerJSON(Photometer photometer)throws JSONException{
 
-            JSONObject deviceJSON = buildDeviceJsonObject(photometer);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(Photometer.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,photometer.getIlluminance(),"Lux"));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(photometer);
+        Set<String> services = new HashSet<>();
+        services.add(Photometer.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,photometer.getIlluminance(),"Lux"));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     public static JSONObject getHeaterJSON(Heater heater) throws JSONException {
-            JSONObject deviceJSON = buildDeviceJsonObject(heater);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(Heater.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(Heater.HEATER_POWER_LEVEL,heater.getPowerLevel(),NO_UNIT));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(heater);
+        Set<String> services = new HashSet<>();
+        services.add(Heater.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(Heater.HEATER_POWER_LEVEL,heater.getPowerLevel(),NO_UNIT));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
 
     }
 
     public static JSONObject getCoolerJSON(Cooler cooler) throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(cooler);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(Cooler.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(Cooler.COOLER_POWER_LEVEL,cooler.getPowerLevel(),NO_UNIT));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(cooler);
+        Set<String> services = new HashSet<>();
+        services.add(Cooler.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(Cooler.COOLER_POWER_LEVEL,cooler.getPowerLevel(),NO_UNIT));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     public static JSONObject getPresenceSensorJSON(PresenceSensor presenceSensor)throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(presenceSensor);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(PresenceSensor.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE,presenceSensor.getSensedPresence(),NO_UNIT));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(presenceSensor);
+        Set<String> services = new HashSet<>();
+        services.add(PresenceSensor.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE,presenceSensor.getSensedPresence(),NO_UNIT));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     public static JSONObject getMotionSensorJSON(MotionSensor motion)throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(motion);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(MotionSensor.class.getName()));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(motion);
+        Set<String> services = new HashSet<>();
+        services.add(MotionSensor.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        return deviceJSON;
     }
 
     public static JSONObject getDimmerLightJSON(DimmerLight dimmerLight)throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(dimmerLight);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(DimmerLight.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,dimmerLight.getPowerLevel(),NO_UNIT));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(dimmerLight);
+        Set<String> services = new HashSet<>();
+        services.add(DimmerLight.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,dimmerLight.getPowerLevel(),NO_UNIT));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     public static JSONObject getBinaryLightJSON(BinaryLight binaryLight) throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(binaryLight);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(binaryLight.getClass().getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(BinaryLight.BINARY_LIGHT_POWER_STATUS,binaryLight.getPowerStatus(),NO_UNIT));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(binaryLight);
+        Set<String> services = new HashSet<>();
+        services.add(BinaryLight.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(BinaryLight.BINARY_LIGHT_POWER_STATUS,binaryLight.getPowerStatus(),NO_UNIT));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     public static JSONObject getThermometerJSON(Thermometer thermometer)throws JSONException{
-            JSONObject deviceJSON = buildDeviceJsonObject(thermometer);
-            deviceJSON.putOnce(DeviceJSON.SERVICES,new HashSet<>().add(Thermometer.class.getName()));
-            JSONArray propObject = new JSONArray();
-            propObject.put(buildDeviceProperty(Thermometer.THERMOMETER_CURRENT_TEMPERATURE,thermometer.getTemperature(),"Kelvin"));
-            return deviceJSON;
+        JSONObject deviceJSON = buildDeviceJsonObject(thermometer);
+        Set<String> services = new HashSet<>();
+        services.add(Thermometer.class.getName());
+        deviceJSON.putOnce(DeviceJSON.SERVICES,services);
+        JSONArray propObject = new JSONArray();
+        propObject.put(buildDeviceProperty(Thermometer.THERMOMETER_CURRENT_TEMPERATURE,thermometer.getTemperature(),"Kelvin"));
+        deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
+        return deviceJSON;
     }
 
     private static JSONObject buildDeviceJsonObject(GenericDevice device)throws JSONException{
