@@ -28,7 +28,7 @@
     </dependency>
   <dependency>
       <groupId>${project.groupId}</groupId>
-      <artifactId>device.light</artifactId>
+      <artifactId>simulator.devices</artifactId>
       <version>${project.version}</version>
     </dependency>
     <!--    <dependency>

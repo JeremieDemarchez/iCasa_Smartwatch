@@ -20,7 +20,7 @@ package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
 import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.simulator.simulated.device.SimulatedDeviceManager;
+import fr.liglab.adele.icasa.simulator.device.SimulatedDeviceProvider;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -50,7 +50,7 @@ import java.io.IOException;
 public class SimulatedDeviceREST extends DefaultController {
 
     @Requires
-    private SimulatedDeviceManager mySimulatedDeviceManager;
+    private SimulatedDeviceProvider mySimulatedDeviceManager;
 
     @Route(method = HttpMethod.POST, uri = "/device")
     public Result createDevice() {

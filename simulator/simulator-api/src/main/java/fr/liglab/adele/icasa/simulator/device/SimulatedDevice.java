@@ -13,20 +13,21 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.simulated.device;
+package fr.liglab.adele.icasa.simulator.device;
 
-import java.util.Set;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.icasa.device.GenericDevice;
 
+/**
+ * Service interface which must be provided by simulated devices.
+ * It means that all devices implementing this interface can be created and destroyed using the simulator.
+ *
+ */
+public @ContextService interface SimulatedDevice extends GenericDevice {
 
-public interface SimulatedDeviceProvider {
+    public @State static final String SIMULATED_DEVICE_TYPE = "simulated.device.type";
 
-
-    public void createDevice(String deviceType, String deviceId);
-
-    public void removeSimulatedDevice(String deviceId);
-
-    public Set<String> getSimulatedDeviceTypes();
-
-    public void removeAllSimulatedDevices();
-
+    String getDeviceType();
+	
 }

@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.simulated.device;
+package fr.liglab.adele.icasa.simulator.device;
 
 import java.util.Map;
 import java.util.Set;
@@ -22,7 +22,7 @@ import java.util.Set;
  * The simulation Mananger deals with operations associated to simulation
  *
  */
-public interface SimulatedDeviceManager  {
+public interface SimulatedDeviceProvider {
 
     /**
      * Creates an instance of a simulated device.
