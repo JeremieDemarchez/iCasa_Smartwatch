@@ -16,7 +16,6 @@
 package fr.liglab.adele.icasa.dependency.manager.interceptor;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.LocationManager;
 import fr.liglab.adele.icasa.access.AccessManager;
 import fr.liglab.adele.icasa.access.AccessRight;
 import fr.liglab.adele.icasa.dependency.manager.DeviceDependency;
@@ -118,10 +117,10 @@ public class DeviceAccessTrackingInterceptor implements ServiceTrackingIntercept
         String[] specs = dependency.getComponentInstance().getFactory().getComponentDescription()
                 .getprovidedServiceSpecification();
 
-        for (String specification : specs) {
-            if (specification.equals(LocationManager.class.getName()))
+       /** for (String specification : specs) {
+            if (specification.equals(LocationManagerImpl.class.getName()))
                 return true;
-        }
+        }**/
 
         return false;
     }

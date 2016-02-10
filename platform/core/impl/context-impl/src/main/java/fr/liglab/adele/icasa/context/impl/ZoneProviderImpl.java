@@ -36,8 +36,6 @@ import java.util.Set;
 @Instantiate(name = "ZoneProvider-0")
 public class ZoneProviderImpl implements ZoneProvider {
 
-	protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
-
 	@Creator.Field 	 Creator.Entity<ZoneImpl> creator;
 
 	@Override

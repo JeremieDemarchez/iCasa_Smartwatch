@@ -26,8 +26,8 @@ import fr.liglab.adele.icasa.simulator.SimulatedDevice;
  * Implementation of a simulated binary light device.
  *
  */
-@ContextEntity(services = {BinaryLight.class,SimulatedDevice.class})
-public class SimulatedBinaryLightImpl implements BinaryLight, SimulatedDevice{
+@ContextEntity(services = {LocatedObject.class,BinaryLight.class,SimulatedDevice.class})
+public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, SimulatedDevice{
 
     public final static String SIMULATED_BINARY_LIGHT = "iCasa.BinaryLight";
 
@@ -40,10 +40,10 @@ public class SimulatedBinaryLightImpl implements BinaryLight, SimulatedDevice{
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "10")
     private int y;
 
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)

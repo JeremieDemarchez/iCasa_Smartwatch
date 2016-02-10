@@ -103,8 +103,8 @@ public class SimulatedDeviceManagerImpl implements SimulatedDeviceManager{
     }
 
     private Creator.Entity getCreator(String deviceType,Map<String,Object> defaultProperties){
-        defaultProperties.put(ContextEntity.State.ID(LocatedObject.class,LocatedObject.OBJECT_X),0);
-        defaultProperties.put(ContextEntity.State.ID(LocatedObject.class,LocatedObject.OBJECT_Y),0);
+//    /    defaultProperties.put(ContextEntity.State.ID(LocatedObject.class,LocatedObject.OBJECT_X),0);
+//        defaultProperties.put(ContextEntity.State.ID(LocatedObject.class,LocatedObject.OBJECT_Y),0);
         switch (deviceType) {
             case SimulatedBinaryLightImpl.SIMULATED_BINARY_LIGHT:
                 defaultProperties.put(ContextEntity.State.ID(BinaryLight.class,BinaryLight.BINARY_LIGHT_POWER_STATUS),false);
