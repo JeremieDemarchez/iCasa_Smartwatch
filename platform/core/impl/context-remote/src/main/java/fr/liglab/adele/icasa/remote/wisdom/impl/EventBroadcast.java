@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.remote.wisdom.impl;
 import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.ClockListener;
+import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.listener.MultiEventListener;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
@@ -211,5 +212,42 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 
 	}
 
+	@Bind(id="binaryLights",specification = BinaryLight.class,optional = true,aggregate = true)
+	public synchronized void bindBinaryLight(BinaryLight binaryLight){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", binaryLight.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getBinaryLightJSON(binaryLight));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="binaryLights")
+	public synchronized void modifiedBinaryLight(BinaryLight binaryLight){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", binaryLight.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getBinaryLightJSON(binaryLight));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="binaryLights")
+	public synchronized void unbindBinaryLight(BinaryLight binaryLight){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", binaryLight.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
 
 }
