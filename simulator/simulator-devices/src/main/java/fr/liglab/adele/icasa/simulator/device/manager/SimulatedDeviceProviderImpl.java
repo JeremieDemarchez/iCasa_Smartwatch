@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.*;
 
-@Component(immediate = true)
+@Component(immediate = true,publicFactory=false)
 @Provides(specifications = SimulatedDeviceProvider.class)
 @Instantiate
 public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
