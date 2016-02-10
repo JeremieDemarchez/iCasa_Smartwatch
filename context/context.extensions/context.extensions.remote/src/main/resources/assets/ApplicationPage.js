@@ -1,9 +1,3 @@
-function clearBox(elementID){
-
-    console.log("Clear " + elementID);
-    document.getElementById(elementID).innerHTML = "";
-}
-
 function getApplication(providerId){
 
     t = $.get("/context/applications/"+providerId,function(data) {
@@ -23,4 +17,3 @@ function getListOfApplications(){
         });
     });
 }
-

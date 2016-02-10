@@ -1,157 +1,133 @@
 <html>
 <head>
-    <link rel="stylesheet" href="/libs/css/bootstrap.css" media="screen"/>
-    <link href="/assets/css/context_main.css" rel="stylesheet" type="text/css" />
-    <link href="/assets/css/vis.min.css" rel="stylesheet" type="text/css" />
     <script src="/libs/jquery.min.js"></script>
+    <link rel="stylesheet" href="/libs/css/bootstrap.css" media="screen"/>
     <script src="/libs/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="/assets/libs/jquery.mixitup.min.js"></script>
     <script type="text/javascript" src="/assets/libs/vis.min.js"></script>
+    <link href="/assets/css/vis.min.css" rel="stylesheet" type="text/css" />
+    <link href="/assets/css/context_main.css" rel="stylesheet" type="text/css" />
+
+
+
+
+    <script src="/assets/MainContext.js"></script>
+    <script src="/assets/ContextModelPage.js"></script>
+    <script src="/assets/ContextProviderPage.js"></script>
+    <script src="/assets/ContextFactoryPage.js"></script>
+    <script src="/assets/ApplicationPage.js"></script>
 </head>
 
 <body>
-
-<div class="container-fluid">
-
-    <nav class="navbar navbar-inverse">
+    <nav class="navbar navbar-inverse navbar-static-top">
         <div class="container-fluid">
             <ul class="nav navbar-nav">
-                <li class="active"> <a href="#" id="ContextModelMenu">Context Model</a> </li>
-                <li> <a href="#" id="ContextProvidersMenu">Context Providers</a> </li>
-                <li> <a href="#" id="ContextFactoriesMenu">Context Factories</a> </li>
-                <li> <a href="#" id="ContextApplicationsMenu">Applications</a> </li>
+                <li class="active" id="ContextModelMenu"> <a href="#">Context Model</a> </li>
+                <li id="ContextProvidersMenu"> <a href="#">Context Providers</a> </li>
+                <li id="ContextFactoriesMenu"> <a href="#">Context Factories</a> </li>
+                <li id="ContextApplicationsMenu"> <a href="#">Applications</a> </li>
             </ul>
         </div>
     </nav>
 
-    <div class="row">
+    <div id="ContextMain" class="container-fluid container-height">
 
-        <div class="col-md-4">
-            <div class="jumbotron">
-                <div id="stateColumn"></div>
+        <div id="ContextModel" class="row-fluid full-height">
+
+            <div class="col-md-4">
+                <div class="jumbotron scroll">
+                    <div id="ColumnInfo"></div>
+                </div>
             </div>
-        </div>
 
-        <div class="col-md-8">
-            <div class="jumbotron">
-                <div id="contextNetwork"></div>
+            <div class="col-md-8">
+                <div class="jumbotron">
+                    <div id="ContextNetwork"></div>
 
-                <div id="ContextProviders" class="page">
-
-                    <div class="page-container context">
-                        <div class="pageheader">
-                            <div class="headercontent">
-                                <div class="section-container">
-                                    <h2 class="title">Context Providers</h2>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pagecontents">
-                            <div class="section container">
-                                <div class="row">
-                                    <div class="col-md-12" id="providersSection">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-
-                <div id="ContextFactories" class="page">
-
-                    <div class="page-container context">
-                        <div class="pageheader">
-                            <div class="headercontent">
-                                <div class="section-container">
-                                    <h2 class="title">Context Factories</h2>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pagecontents">
-                            <div class="section container">
-                                <div class="row">
-                                    <div class="col-md-12" id="factoriesSection">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-
-                <div id="ContextApplications" class="page">
-
-                    <div class="page-container context">
-                        <div class="pageheader">
-                            <div class="headercontent">
-                                <div class="section-container">
-                                    <h2 class="title">Applications</h2>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="pagecontents">
-                            <div class="section container">
-                                <div class="row">
-                                    <div class="col-md-12" id="applicationsSection">
-
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
 
                 </div>
             </div>
+
         </div>
+
+        <div id="ContextProviders" class="page jumbotron scroll">
+
+            <div class="page-container">
+                <div class="pageheader">
+                    <div class="headercontent">
+                        <div class="section-container">
+                            <h2 class="title">Context Providers</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagecontents">
+                    <div class="section container">
+                        <div class="row" id="providersSection">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <div id="ContextFactories" class="page jumbotron scroll">
+
+            <div class="page-container ">
+                <div class="pageheader">
+                    <div class="headercontent">
+                        <div class="section-container">
+                            <h2 class="title">Context Factories</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagecontents">
+                    <div class="section container">
+                        <div class="row" id="factoriesSection">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div id="ContextApplications" class="page jumbotron scroll">
+
+            <div class="page-container">
+                <div class="pageheader">
+                    <div class="headercontent">
+                        <div class="section-container">
+                            <h2 class="title">Applications</h2>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pagecontents">
+                    <div class="section container">
+                        <div class="row" id="applicationsSection">
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
     </div>
 
-</div>
 
-
+    <footer class="footer navbar-inverse navbar-fixed-bottom">
+        <div class="container">
+            <p class="navbar-text navbar-right">PerCom2016 - iCasa Demo - ADELE Team, LIG Lab, France</p>
+        </div>
+    </footer>
 
 
 </body>
-<script src="/assets/ContextProviderPage.js"></script>
-<script src="/assets/ContextFactoryPage.js"></script>
-<script src="/assets/ApplicationPage.js"></script>
-<script src="/assets/graph.js"></script>
-
-<script>
-    $(document).ready(function() {
-        $('#ContextModelMenu').click(function(e){
-            e.preventDefault();
-            $('#ContextFactories').hide("slow");
-            $('#ContextApplications').hide("slow");
-            $('#ContextProviders').hide("slow");
-        });
-        $('#ContextProvidersMenu').click(function(e){
-            e.preventDefault();
-            $('#ContextFactories').hide("slow");
-            $('#ContextApplications').hide("slow");
-            $('#ContextProviders').show("slow");
-            getListOfProviders();
-        });
-        $('#ContextFactoriesMenu').click(function(e){
-            e.preventDefault();
-            $('#ContextProviders').hide("slow");
-            $('#ContextApplications').hide("slow");
-            $('#ContextFactories').show("slow");
-            getListOfContextFactories();
-        });
-        $('#ContextApplicationsMenu').click(function(e){
-            e.preventDefault();
-            $('#ContextTypes').hide("slow");
-            $('#ContextFactories').hide("slow");
-            $('#ContextApplications').show("slow");
-        });
-    });
-</script>
 
 </html>
 

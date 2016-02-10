@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 @Controller
-public class ContextController extends DefaultController {
+public class ContextModelController extends DefaultController {
 
     @Requires
     Json json;
@@ -68,7 +68,6 @@ public class ContextController extends DefaultController {
         int i = 0;
         for (ContextEntity entity : entities){
             result.put(entity.getId(),true);
-
         }
         return ok(result);
     }
@@ -86,6 +85,24 @@ public class ContextController extends DefaultController {
                 for (Map.Entry<String,Object> entry : entity.dumpState(null).entrySet()){
                     result.put(entry.getKey(),entry.getValue().toString());
                 }
+                return ok(result);
+            }
+        }
+        return notFound();
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/context/entities/factory/{id}")
+    public Result getEntityFactory(@Parameter(value = "id") String id){
+        if (id == null){
+            return internalServerError(new NullPointerException(" id is null"));
+        }
+
+        ObjectNode result = json.newObject();
+
+        for (ContextEntity entity : entities){
+            if (entity.getId().equals(id)){
+                //TODO: getFactory
+                //result.put(entity.getClass().getName(), true);
                 return ok(result);
             }
         }
