@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
-@Component(immediate = true)
+@Component(immediate = true,publicFactory=false)
 @Instantiate(name = "LocationManagerImpl-0")
 public class LocationManagerImpl{
 

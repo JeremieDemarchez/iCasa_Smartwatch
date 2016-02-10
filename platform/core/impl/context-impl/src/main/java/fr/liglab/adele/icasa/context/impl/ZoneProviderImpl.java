@@ -31,7 +31,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-@Component(immediate = true)
+@Component(immediate = true,publicFactory=false)
 @Provides
 @Instantiate(name = "ZoneProvider-0")
 public class ZoneProviderImpl implements ZoneProvider {
