@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.ZoneProvider;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
@@ -40,7 +40,7 @@ import java.io.PrintStream;
 public class ResizeZoneCommand extends AbstractCommand {
 
     @Requires
-    private LocationManager simulationManager;
+    private ZoneProvider simulationManager;
 
     private static final Signature RESIZE = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.X_LENGTH, ScriptLanguage.Y_LENGTH});
     private static final Signature RESIZE_WZ = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.X_LENGTH, ScriptLanguage.Y_LENGTH, ScriptLanguage.Z_LENGTH});

@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.ZoneProvider;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
@@ -47,7 +47,7 @@ import java.util.List;
 public class ZoneREST extends DefaultController implements Controller {
 
 	@Requires
-	private LocationManager m_locationManager;
+	private ZoneProvider m_locationManager;
 
 	@Requires(id = "zones", specification = Zone.class,optional = true)
 	List<Zone>  zones;

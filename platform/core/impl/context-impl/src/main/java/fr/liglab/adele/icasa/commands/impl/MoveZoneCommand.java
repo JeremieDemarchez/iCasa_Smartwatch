@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.ZoneProvider;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
@@ -42,7 +42,7 @@ public class MoveZoneCommand extends AbstractCommand {
     private static final String NAME= "move-zone";
 
 	@Requires
-	private LocationManager simulationManager;
+	private ZoneProvider simulationManager;
 
     private static Signature MOVE = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y});
     private static Signature MOVE_WZ = new Signature(new String[]{ScriptLanguage.ZONE_ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y, ScriptLanguage.BOTTOM_Z});

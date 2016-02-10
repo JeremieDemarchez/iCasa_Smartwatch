@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.util;
 
-import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.ZoneProvider;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -77,12 +77,12 @@ public class ZoneJSON {
 			if (json.has(POSITION_BOTTOMZ_PROP)){
 				zone.setBottomZ(json.getInt(POSITION_BOTTOMZ_PROP));
 			} else {
-				zone.setBottomZ(LocationManager.ZONE_DEFAULT_Z);
+				zone.setBottomZ(ZoneProvider.ZONE_DEFAULT_Z);
 			}
 			if (json.has(POSITION_TOPZ_PROP)){
 				zone.setTopZ(json.getInt(POSITION_TOPZ_PROP));
 			} else {
-				zone.setTopZ(zone.getBottomZ() + LocationManager.ZONE_DEFAULT_Z_LENGHT);
+				zone.setTopZ(zone.getBottomZ() + ZoneProvider.ZONE_DEFAULT_Z_LENGHT);
 			}
 
 		} catch (JSONException e) {

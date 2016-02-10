@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.commands.impl;
 
-import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.ZoneProvider;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
@@ -40,7 +40,7 @@ import java.io.PrintStream;
 public class CreateZoneCommand extends AbstractCommand {
 
 	@Requires
-	private LocationManager simulationManager;
+	private ZoneProvider simulationManager;
 
 	private static Signature CREATE_ZONE = new Signature(new String[]{ScriptLanguage.ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y, ScriptLanguage.Y_LENGTH,
 			ScriptLanguage.X_LENGTH} );
@@ -59,8 +59,8 @@ public class CreateZoneCommand extends AbstractCommand {
 		int topY = param.getInt(ScriptLanguage.TOP_Y);
 		int height = param.getInt(ScriptLanguage.Y_LENGTH);
 		int width = param.getInt(ScriptLanguage.X_LENGTH);
-		int depth = LocationManager.ZONE_DEFAULT_Z_LENGHT;
-		int bottomZ = LocationManager.ZONE_DEFAULT_Z;
+		int depth = ZoneProvider.ZONE_DEFAULT_Z_LENGHT;
+		int bottomZ = ZoneProvider.ZONE_DEFAULT_Z;
 		if (signature.equals(CREATE_ZONE_WZ)){
 			depth = param.getInt(ScriptLanguage.Z_LENGTH);
 			bottomZ = param.getInt(ScriptLanguage.BOTTOM_Z);

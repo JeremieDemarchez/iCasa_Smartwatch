@@ -29,7 +29,7 @@ import java.util.Set;
  * entry point of the iCasa platform. Most operations on the platform should be made using this service instead of
  * modifying directly the platform objects (Zones, Devices).
  */
-public interface LocationManager {
+public interface ZoneProvider {
 
 	public final static int ZONE_DEFAULT_Z = 0;
 

@@ -16,7 +16,7 @@
 package fr.liglab.adele.icasa.context.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.LocationManager;
+import fr.liglab.adele.icasa.ZoneProvider;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.Zone;
@@ -33,8 +33,8 @@ import java.util.Set;
 
 @Component(immediate = true)
 @Provides
-@Instantiate(name = "ContextManager-0")
-public class LocationManagerImpl implements LocationManager {
+@Instantiate(name = "ZoneProvider-0")
+public class ZoneProviderImpl implements ZoneProvider {
 
 	protected static Logger logger = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
