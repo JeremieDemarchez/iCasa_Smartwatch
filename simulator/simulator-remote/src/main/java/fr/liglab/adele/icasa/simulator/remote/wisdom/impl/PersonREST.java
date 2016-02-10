@@ -16,28 +16,28 @@
 package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
 
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.simulator.Person;
-import fr.liglab.adele.icasa.simulator.PersonType;
-import fr.liglab.adele.icasa.simulator.remote.wisdom.util.IcasaSimulatorJSONUtil;
-import fr.liglab.adele.icasa.simulator.remote.wisdom.util.PersonJSON;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.json.JSONArray;
-import org.json.JSONObject;
-import org.wisdom.api.DefaultController;
-import org.wisdom.api.annotations.Controller;
-import org.wisdom.api.annotations.Parameter;
-import org.wisdom.api.annotations.Path;
-import org.wisdom.api.annotations.Route;
-import org.wisdom.api.http.HttpMethod;
-import org.wisdom.api.http.MimeTypes;
-import org.wisdom.api.http.Result;
-
-import java.io.IOException;
+//import fr.liglab.adele.icasa.location.Position;
+//import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+//import fr.liglab.adele.icasa.simulator.person.Person;
+//import fr.liglab.adele.icasa.simulator.person.PersonType;
+//import fr.liglab.adele.icasa.simulator.remote.wisdom.util.IcasaSimulatorJSONUtil;
+//import fr.liglab.adele.icasa.simulator.remote.wisdom.util.PersonJSON;
+//import org.apache.felix.ipojo.annotations.Component;
+//import org.apache.felix.ipojo.annotations.Instantiate;
+//import org.apache.felix.ipojo.annotations.Provides;
+//import org.apache.felix.ipojo.annotations.Requires;
+//import org.json.JSONArray;
+//import org.json.JSONObject;
+//import org.wisdom.api.DefaultController;
+//import org.wisdom.api.annotations.Controller;
+//import org.wisdom.api.annotations.Parameter;
+//import org.wisdom.api.annotations.Path;
+//import org.wisdom.api.annotations.Route;
+//import org.wisdom.api.http.HttpMethod;
+//import org.wisdom.api.http.MimeTypes;
+//import org.wisdom.api.http.Result;
+//
+//import java.io.IOException;
 
 //import org.wisdom.api.http.Response;
 

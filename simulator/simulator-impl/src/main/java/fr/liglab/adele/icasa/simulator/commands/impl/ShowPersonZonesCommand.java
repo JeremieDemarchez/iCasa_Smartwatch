@@ -19,7 +19,7 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 //import fr.liglab.adele.icasa.commands.AbstractCommand;
 //import fr.liglab.adele.icasa.commands.ScriptLanguage;
 //import fr.liglab.adele.icasa.location.Zone;
-//import fr.liglab.adele.icasa.simulator.Person;
+//import fr.liglab.adele.icasa.simulator.person.Person;
 //import fr.liglab.adele.icasa.simulator.SimulationManager;
 //import org.apache.felix.ipojo.annotations.Component;
 //import org.apache.felix.ipojo.annotations.Instantiate;

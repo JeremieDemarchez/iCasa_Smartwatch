@@ -18,10 +18,9 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.simulator.SimulatedDeviceManager;
+import fr.liglab.adele.icasa.simulator.simulated.device.SimulatedDeviceManager;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -40,8 +39,6 @@ import org.wisdom.api.http.Result;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  *

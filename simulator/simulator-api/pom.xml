@@ -28,8 +28,8 @@
        <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>${project.groupId}</groupId>
-      <artifactId>context.api</artifactId>
+      <groupId>fr.liglab.adele.icasa</groupId>
+      <artifactId>icasa.context.model</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>
@@ -42,8 +42,6 @@
         <configuration>
           <instructions>
             <Export-Package>fr.liglab.adele.icasa.simulator,fr.liglab.adele.icasa.simulator.services,
-              fr.liglab.adele.icasa.simulator.listener,
-              fr.liglab.adele.icasa.simulator.listener.util,
               fr.liglab.adele.icasa.simulator.script.executor</Export-Package>
           </instructions>
         </configuration>

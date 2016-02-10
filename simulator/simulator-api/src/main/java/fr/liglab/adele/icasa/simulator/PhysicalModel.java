@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator;
 
-import fr.liglab.adele.icasa.location.LocatedDevice;
 import fr.liglab.adele.icasa.Variable;
 
 import java.util.Set;
@@ -47,5 +46,5 @@ public interface PhysicalModel {
      *
      * @return all devices used by it to perform variable computation.
      */
-    Set<LocatedDevice> getUsedDevices();
+  //  Set<LocatedDevice> getUsedDevices();
 }

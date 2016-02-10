@@ -13,10 +13,9 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator;
+package fr.liglab.adele.icasa.simulator.person;
 
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 
 /**
  * This interface represents a person in the icasa simulated Environment
@@ -63,18 +62,6 @@ public interface Person extends LocatedObject {
 	 */
 	public String getLocation();
 
-	/**
-	 * Adds a listener to the person.
-	 * 
-	 * @param listener the listener to be added.
-	 */
-	public void addListener(final PersonListener listener);
 
-	/**
-	 * Removes a listener from the person.
-	 * 
-	 * @param listener the listener to be removed.
-	 */
-	public void removeListener(final PersonListener listener);
 
 }

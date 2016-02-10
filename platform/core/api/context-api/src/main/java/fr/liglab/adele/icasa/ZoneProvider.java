@@ -15,13 +15,6 @@
  */
 package fr.liglab.adele.icasa;
 
-import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.listener.IcasaListener;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-
-import java.util.List;
 import java.util.Set;
 
 /**

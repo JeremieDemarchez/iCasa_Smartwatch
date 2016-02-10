@@ -13,26 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device;
+package fr.liglab.adele.icasa.simulator.simulated.device;
+
+import java.util.Set;
 
 
-/**
- * Store an Immutable event data triggered by a device.
- * @param <T>
- */
-public class DeviceDataEvent<T> extends DeviceEvent {
-    private final T data;
+public interface SimulatedDeviceProvider {
 
-    public DeviceDataEvent(GenericDevice device, DeviceEventType type,  T _data){
-        super(device, type);
-        this.data = _data;
-    }
 
-    /**
-     * Get the event data.
-     * @return
-     */
-    public T getData() {
-        return data;
-    }
+    public void createDevice(String deviceType, String deviceId);
+
+    public void removeSimulatedDevice(String deviceId);
+
+    public Set<String> getSimulatedDeviceTypes();
+
+    public void removeAllSimulatedDevices();
+
 }

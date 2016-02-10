@@ -34,7 +34,7 @@ package fr.liglab.adele.icasa.simulator.context.impl;
 //
 //import fr.liglab.adele.icasa.location.LocatedDevice;
 //import fr.liglab.adele.icasa.location.Position;
-//import fr.liglab.adele.icasa.simulator.Person;
+//import fr.liglab.adele.icasa.simulator.person.Person;
 //import fr.liglab.adele.icasa.simulator.SimulationManager;
 //import fr.liglab.adele.icasa.simulator.listener.PersonListener;
 //

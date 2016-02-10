@@ -19,8 +19,6 @@ import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.ClockListener;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.listener.MultiEventListener;
-import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.RemoteEventBroadcast;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;

@@ -34,8 +34,6 @@ import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.liglab.adele.icasa.device.DeviceDataEvent;
-import fr.liglab.adele.icasa.device.DeviceEventType;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.zwave.device.importer.ZWaveImporter;

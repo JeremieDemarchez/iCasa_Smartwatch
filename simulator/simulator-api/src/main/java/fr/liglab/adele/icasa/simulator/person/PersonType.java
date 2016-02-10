@@ -13,27 +13,52 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.device;
-
-import fr.liglab.adele.icasa.listener.IcasaListener;
+package fr.liglab.adele.icasa.simulator.person;
 
 /**
- * Listener used to be notified about the device types in the platform.
+ * This class represents a person type
  *
+ * 
  */
-public interface DeviceTypeListener extends IcasaListener {
+public class PersonType {
+
+	private String name;
 
 	/**
-	 * Callback notifying the addition of a device type to the platform.
-	 * 
-	 * @param deviceType Device type added
+	 * Default constructor
+	 * @param name person type name
 	 */
-	public void deviceTypeAdded(String deviceType);
+	public PersonType(String name) {
+		this.name = name;
+	}
 
 	/**
-	 * Callback notifying the elimination of a device type from the platform.
+	 * Gets the person type name (id)
 	 * 
-	 * @param deviceType Device type removed
+	 * @return person type name
 	 */
-	public void deviceTypeRemoved(String deviceType);
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (this == o)
+			return true;
+		if (o == null || getClass() != o.getClass())
+			return false;
+
+		PersonType that = (PersonType) o;
+
+		if (!name.equals(that.name))
+			return false;
+
+		return true;
+	}
+
+	@Override
+	public int hashCode() {
+		return name.hashCode();
+	}
+
 }

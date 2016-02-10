@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator;
+package fr.liglab.adele.icasa.simulator.simulated.device;
 
 import java.util.Map;
 import java.util.Set;
@@ -30,7 +30,6 @@ public interface SimulatedDeviceManager  {
      * @param deviceType The device type
      * @param deviceId The new device identifier.
      * @return The device wrapper object.
-     * @see fr.liglab.adele.icasa.location.LocatedDevice
      * @throws IllegalArgumentException if a device instance exists with the same identifier.
      * @throws IllegalStateException if there no exists a factory matching the <code>deviceType</code> argument.
      */

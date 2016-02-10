@@ -15,69 +15,69 @@
  */
 package fr.liglab.adele.icasa.dependency.manager;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
-import fr.liglab.adele.icasa.location.LocatedDevice;
-import fr.liglab.adele.icasa.location.Position;
-
-public class LocatedDeviceManager implements LocatedDeviceTrackerCustomizer {
-
-    private List<LocatedDevice> m_devices = new ArrayList<LocatedDevice>();
-
-    private DeviceDependency m_dependency;
-    
-    public LocatedDeviceManager(DeviceDependency dependency) {
-        m_dependency = dependency;
-    }
-    
-    @Override
-    public boolean addingDevice(LocatedDevice device) {
-        System.out.println("Adding device " + device.getSerialNumber());
-        return true;
-    }
-
-    @Override
-    public void addedDevice(LocatedDevice device) {
-        synchronized (m_devices) {
-            m_devices.add(device);
-        }
-        System.out.println("Added device " + device.getSerialNumber());
-        m_dependency.invalidateMatchingServices();
-    }
-
-    @Override
-    public void removedDevice(LocatedDevice device) {
-        synchronized (m_devices) {
-            m_devices.remove(device);
-        }
-        m_dependency.invalidateMatchingServices();        
-    }
-
-    @Override
-    public void modifiedDevice(LocatedDevice device, String propertyName, Object oldValue, Object newValue) {
-        // TODO Auto-generated method stub
-
-    }
-
-    @Override
-    public void movedDevice(LocatedDevice device, Position oldPosition, Position newPosition) {
-        // TODO Auto-generated method stub
-
-    }
-
-    public boolean contains(String deviceId) {
-        List<LocatedDevice> copyList = new ArrayList<LocatedDevice>();
-        synchronized (m_devices) {
-            copyList.addAll(m_devices);
-        }
-        for (LocatedDevice locatedDevice : copyList) {
-            if (locatedDevice.getSerialNumber().equals(deviceId)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-}
+//import java.util.ArrayList;
+//import java.util.List;
+//
+//import fr.liglab.adele.icasa.device.util.LocatedDeviceTrackerCustomizer;
+//import fr.liglab.adele.icasa.location.LocatedDevice;
+//import fr.liglab.adele.icasa.location.Position;
+//
+//public class LocatedDeviceManager implements LocatedDeviceTrackerCustomizer {
+//
+//    private List<LocatedDevice> m_devices = new ArrayList<LocatedDevice>();
+//
+//    private DeviceDependency m_dependency;
+//
+//    public LocatedDeviceManager(DeviceDependency dependency) {
+//        m_dependency = dependency;
+//    }
+//
+//    @Override
+//    public boolean addingDevice(LocatedDevice device) {
+//        System.out.println("Adding device " + device.getSerialNumber());
+//        return true;
+//    }
+//
+//    @Override
+//    public void addedDevice(LocatedDevice device) {
+//        synchronized (m_devices) {
+//            m_devices.add(device);
+//        }
+//        System.out.println("Added device " + device.getSerialNumber());
+//        m_dependency.invalidateMatchingServices();
+//    }
+//
+//    @Override
+//    public void removedDevice(LocatedDevice device) {
+//        synchronized (m_devices) {
+//            m_devices.remove(device);
+//        }
+//        m_dependency.invalidateMatchingServices();
+//    }
+//
+//    @Override
+//    public void modifiedDevice(LocatedDevice device, String propertyName, Object oldValue, Object newValue) {
+//        // TODO Auto-generated method stub
+//
+//    }
+//
+//    @Override
+//    public void movedDevice(LocatedDevice device, Position oldPosition, Position newPosition) {
+//        // TODO Auto-generated method stub
+//
+//    }
+//
+//    public boolean contains(String deviceId) {
+//        List<LocatedDevice> copyList = new ArrayList<LocatedDevice>();
+//        synchronized (m_devices) {
+//            copyList.addAll(m_devices);
+//        }
+//        for (LocatedDevice locatedDevice : copyList) {
+//            if (locatedDevice.getSerialNumber().equals(deviceId)) {
+//                return true;
+//            }
+//        }
+//        return false;
+//    }
+//
+//}

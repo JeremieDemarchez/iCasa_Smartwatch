@@ -20,7 +20,7 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulator.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.simulated.device.SimulatedDevice;
 
 /**
  * Implementation of a simulated dimmer light device.

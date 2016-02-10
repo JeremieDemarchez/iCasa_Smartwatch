@@ -27,7 +27,7 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 //import org.apache.felix.ipojo.annotations.Provides;
 //import org.apache.felix.ipojo.annotations.Requires;
 //
-//import fr.liglab.adele.icasa.simulator.Person;
+//import fr.liglab.adele.icasa.simulator.person.Person;
 //import fr.liglab.adele.icasa.simulator.SimulationManager;
 //import org.json.JSONObject;
 //

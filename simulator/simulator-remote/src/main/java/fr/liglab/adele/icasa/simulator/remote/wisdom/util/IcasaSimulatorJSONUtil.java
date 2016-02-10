@@ -16,13 +16,13 @@
 package fr.liglab.adele.icasa.simulator.remote.wisdom.util;
 
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
-import fr.liglab.adele.icasa.simulator.PersonType;
+import fr.liglab.adele.icasa.simulator.person.PersonType;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
 import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulator.Person;
+import fr.liglab.adele.icasa.simulator.person.Person;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 
 public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
