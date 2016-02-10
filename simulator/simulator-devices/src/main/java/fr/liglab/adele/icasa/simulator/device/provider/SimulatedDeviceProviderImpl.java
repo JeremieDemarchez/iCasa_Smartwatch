@@ -43,7 +43,7 @@
 //// *   See the License for the specific language governing permissions and
 //// *   limitations under the License.
 ////
-package fr.liglab.adele.icasa.simulator.device.manager;
+package fr.liglab.adele.icasa.simulator.device.provider;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;

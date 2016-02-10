@@ -65,7 +65,10 @@
 				<artifactId>maven-bundle-plugin</artifactId>
 				<configuration>
 					<instructions>
-						<Private-Package>fr.liglab.adele.icasa.simulator.device.light.impl</Private-Package>
+						<Private-Package>fr.liglab.adele.icasa.simulator.device.light.impl,
+							fr.liglab.adele.icasa.simulator.device.provider,
+							fr.liglab.adele.icasa.simulator.device.temperature.impl
+						</Private-Package>
 					</instructions>
 				</configuration>
 			</plugin>

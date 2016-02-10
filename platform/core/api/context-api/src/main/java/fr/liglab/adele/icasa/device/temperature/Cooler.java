@@ -55,10 +55,9 @@ public @ContextService interface Cooler extends GenericDevice {
      * 
      * @param level
      *            the new power level of this cooler.
-     * @return the previous power level of this cooler.
      * @see #getPowerLevel()
      * @see #COOLER_POWER_LEVEL
      */
-    double setPowerLevel(double level);
+    void setPowerLevel(double level);
 
 }

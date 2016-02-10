@@ -59,7 +59,7 @@ public @ContextService interface Heater extends GenericDevice {
      * @see #getPowerLevel()
      * @see #HEATER_POWER_LEVEL
      */
-    double setPowerLevel(double level);
+    void setPowerLevel(double level);
 
 
 }
