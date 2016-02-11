@@ -73,49 +73,24 @@ function addNodeStatesPanel(elementId,data){
     div_collapse.appendTo(panelState);
 }
 
-//function addNodeStateExtensionPanel(elementId,data){
-//    var panelExtensionState = $("#stateExtensionPanel"+elementId);
-//    var panelBody =  $("<div></div>").attr('class',"panel-body");
-//    var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
-//    $.each(data,function(key,val){
-//        console.log("KEY : " + key + " , VAL : " + val);
-//        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
-//        var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
-//        stateGroupListValue.appendTo(stateGroupListItem);
-//        stateGroupListItem.appendTo(stateGroupList);
-//        stateGroupList.appendTo(panelBody);
-//    });
-//
-//    /** Append all to panel**/
-//    panelBody.appendTo(panelExtensionState);
-//}
+function addNodeRelationsPanel(elementId,data){
+var panelState = $("#relationsPanel"+elementId);
+    var div_collapse =  $("<div></div>").attr('class',"collapse in").attr("id","relationsPanelInfo");
+    var panelBody =  $("<div></div>").attr('class',"panel-body");
+    var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
+    $.each(data,function(key,val){
+        console.log("KEY : " + key + " , VAL : " + val);
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
+        stateGroupListValue.appendTo(stateGroupListItem);
+        stateGroupListItem.appendTo(stateGroupList);
+        stateGroupList.appendTo(panelBody);
+    });
 
-
-
-//function addRelationStatePanel(elementId,data){
-//    $("#relationStatePanel"+elementId).remove();
-//    var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"relationStatePanel"+elementId);
-//    var panelHeading =  $("<div>Relation State</div>").attr('class',"panel-heading");
-//    var panelBody =  $("<div></div>").attr('class',"panel-body");
-//    var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
-//    $.each(data,function(key,val){
-//        console.log("KEY : " + key + " , VAL : " + val);
-//        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
-//        var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
-//        stateGroupListValue.appendTo(stateGroupListItem);
-//        stateGroupListItem.appendTo(stateGroupList);
-//        stateGroupList.appendTo(panelBody);
-//    });
-//
-//    /** Append all to panel**/
-//    panelHeading.appendTo(panel);
-//    panelBody.appendTo(panel);
-//    panel.appendTo(columnInfo);
-//}
-//
-//function removeRelationStatePanel(elementId){
-//    $("#relationStatePanel"+elementId).remove();
-//}
+    /** Append all to panel**/
+    panelBody.appendTo(div_collapse);
+    div_collapse.appendTo(panelState);
+}
 
 function graphDraw(){
     // create a network
@@ -130,27 +105,22 @@ function graphDraw(){
     var options = {interaction:{hover:true}};
     network = new vis.Network(container, data, options);
 
- /**   network.on("selectEdge", function (params) {
+    network.on("selectEdge", function (params) {
         var edgeToUpdate =  params["edges"];
         console.log('selectEdge Event:', edgeToUpdate);
         edgeToUpdate.forEach(function(y){
             console.log("Edge Name " + edges.get(y).name);
-            edges.update({id: y,label: edges.get(y).name});
-            var url = "/context/relations/"+y;
-            var t = $.get(url,function(data) {
-                addRelationStatePanel(y,data);
-            });
+            edges.update({id: y, label: edges.get(y).name});
         });
-    });**/
+    });
 
-/**    network.on("deselectEdge", function (params) {
+    network.on("deselectEdge", function (params) {
         var edgeToRemove =  params["previousSelection"]["edges"];
         console.log('deselectEdge Event:', edgeToRemove);
         edgeToRemove.forEach(function(y){
-            edges.update({id: y,label: ""});
-            removeRelationStatePanel(y);
+            edges.update({id: y, label: ""});
         });
-    });**/
+    });
 
     network.on("selectNode", function (params) {
         var nodeToUpdate =  params["nodes"];
@@ -158,9 +128,8 @@ function graphDraw(){
         nodeToUpdate.forEach(function(y) {
             createNodeEntityPanel(y);
             var urlStates = "/context/entities/" + y;
-            var urlFactory = "/context/entities/factory/" + y;
-
-
+            var urlFactory = "/context/entities/" + y + "/factory";
+            var urlRelations = "/context/entities/" + y +"/relations";
 
             var t = $.get(urlFactory, function (data) {
                 addNodeFactoryPanel(y,data);
@@ -170,10 +139,10 @@ function graphDraw(){
                 addNodeStatesPanel(y,data);
             });
 
-       /**     var urlExtensions = "/context/entities/" + y+"/extensions";
-            var t = $.get(urlExtensions, function (data) {
-                addNodeStateExtensionPanel(y,data);
-            });**/
+
+            var t = $.get(urlRelations, function (data) {
+                addNodeRelationsPanel(y,data);
+            });
         });
     });
 
@@ -188,7 +157,6 @@ function graphDraw(){
 
 function graphInit(time) {
     //   registerWebSocket();
-// create an array with nodes
     clearBox("ColumnInfo");
     clearBox("ContextNetwork");
 
@@ -198,32 +166,33 @@ function graphInit(time) {
 
     var t = $.get("/context/entities",function(data) {
         $.each(data,function(key,value){
+            console.log('Node Id:', key);
             nodes.add({
                 id: key,
                 label: key
             });
         });
-        var timer = window.setTimeout(graphDraw, time);
-//        graphDraw();
     });
 
-   /** var y = $.get("/context/relations",function(data) {
+    var y = $.get("/context/relations",function(data) {
         var numberOfRelations = data.size;
-        console.log(data.size);
         for(var i = 0;i<numberOfRelations;i ++){
-            console.log(data["relation"+i+"name"]);
-            console.log(data["relation"+i+"source"]);
-            console.log(data["relation"+i+"end"]);
-            var nodeId = data["relation"+i+"name"]+data["relation"+i+"source"]+data["relation"+i+"end"];
-            edges.add({
-                id: nodeId,
-                from: data["relation"+i+"source"],
-                to: data["relation"+i+"end"],
-                arrows:'to',
-                name: data["relation"+i+"name"]
-            });
+            var name = data["relation"+i+"name"];
+            var source = data["relation"+i+"source"];
+            var target = data["relation"+i+"target"];
+            if ((null != nodes.get(source)) && (null != nodes.get(target))){
+                var edgeId = name+source+target;
+                edges.add({
+                    id: edgeId,
+                    from: source,
+                    to: target,
+                    arrows:'to',
+                    name: name
+                });
+            }
         }
-        graphDraw();
-    });**/
+    });
+
+    var timer = window.setTimeout(graphDraw, time);
 }
 

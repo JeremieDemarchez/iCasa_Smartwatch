@@ -21,7 +21,11 @@ package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.runtime.Relation;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.util.Logger;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Parameter;
@@ -32,6 +36,7 @@ import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -47,8 +52,24 @@ public class ContextModelController extends DefaultController {
     @View("ContextMainPage")
     Template welcome;
 
-    @Requires(specification = ContextEntity.class,optional = true)
+    @Requires(specification = ContextEntity.class, optional = true)
     List<ContextEntity> entities;
+
+    @Requires(specification = Relation.class, optional = true)
+    List<Relation> relations;
+
+    Map<ContextEntity, Object> entities_factories = new HashMap<ContextEntity, Object>();
+
+    @Bind(specification = ContextEntity.class, aggregate = true, optional = true)
+    void bindContextEntity(ContextEntity contextEntity, Map<String, Object> properties){
+        entities_factories.put(contextEntity, properties.get("factory.name"));
+
+    }
+
+    @Unbind(specification = ContextEntity.class)
+    void unbindContextEntity(ContextEntity contextEntity){
+        entities_factories.remove(contextEntity);
+    }
 
     /**
      * The action method returning the welcome page. It handles
@@ -65,7 +86,6 @@ public class ContextModelController extends DefaultController {
     public Result getEntities(){
         ObjectNode result = json.newObject();
 
-        int i = 0;
         for (ContextEntity entity : entities){
             result.put(entity.getId(),true);
         }
@@ -81,7 +101,7 @@ public class ContextModelController extends DefaultController {
         ObjectNode result = json.newObject();
 
         for (ContextEntity entity : entities){
-            if (entity.getId().equals(id)){
+            if (id.equals(entity.getId())){
                 for (Map.Entry<String,Object> entry : entity.dumpState().entrySet()){
                     result.put(entry.getKey(),entry.getValue().toString());
                 }
@@ -91,7 +111,7 @@ public class ContextModelController extends DefaultController {
         return notFound();
     }
 
-    @Route(method = HttpMethod.GET, uri = "/context/entities/factory/{id}")
+    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/factory")
     public Result getEntityFactory(@Parameter(value = "id") String id){
         if (id == null){
             return internalServerError(new NullPointerException(" id is null"));
@@ -100,12 +120,48 @@ public class ContextModelController extends DefaultController {
         ObjectNode result = json.newObject();
 
         for (ContextEntity entity : entities){
-            if (entity.getId().equals(id)){
+            if (id.equals(entity.getId())){
                 //TODO: getFactory
-                //result.put(entity.getClass().getName(), true);
+                result.put(entities_factories.get(entity).toString(), true);
                 return ok(result);
             }
         }
         return notFound();
     }
+
+    @Route(method = HttpMethod.GET, uri = "/context/relations")
+    public Result getRelations(){
+
+        ObjectNode result = json.newObject();
+
+        result.put("size", relations.size());
+        int i = 0;
+        for (Relation relation : relations){
+            result.put("relation"+i+"name",relation.getName());
+            result.put("relation"+i+"source",relation.getSource());
+            result.put("relation"+i+"target",relation.getTarget());
+            i++;
+        }
+        return ok(result);
+    }
+
+    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/relations")
+    public Result getEntityRelations(@Parameter(value = "id") String id){
+        if (id == null){
+            return internalServerError(new NullPointerException(" id is null"));
+        }
+
+        ObjectNode result = json.newObject();
+
+        for (Relation relation : relations){
+            String source = relation.getSource();
+            if (id.equals(source)){
+                result.put(relation.getName(),relation.getTarget());
+
+            }
+
+        }
+        return ok(result);
+    }
+
 }

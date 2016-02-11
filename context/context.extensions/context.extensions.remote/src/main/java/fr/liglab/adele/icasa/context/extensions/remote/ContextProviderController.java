@@ -21,6 +21,7 @@ package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.context.model.introspection.EntityProvider;
+import fr.liglab.adele.icasa.context.model.introspection.RelationProvider;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
@@ -39,34 +40,34 @@ public class ContextProviderController extends DefaultController {
     Json json;
 
     @Requires(specification = EntityProvider.class, optional = true)
-    List<EntityProvider> creatorHandlers;
+    List<EntityProvider> entityProviders;
 
     @Route(method = HttpMethod.GET, uri = "/context/providers")
-    public Result getContextProviders() {
+    public Result getEntityProviders() {
         ObjectNode result = json.newObject();
 
 
-        for (EntityProvider creatorHandler : creatorHandlers) {
-            result.put(creatorHandler.getName(), true);
+        for (EntityProvider provider : entityProviders) {
+            result.put(provider.getName(), true);
         }
 
         return ok(result);
     }
 
     @Route(method = HttpMethod.GET, uri = "/context/providers/{id}")
-    public Result getContextProvider(@Parameter(value = "id") String id) {
+    public Result getEntityProvider(@Parameter(value = "id") String id) {
         if (id == null) {
             return internalServerError(new NullPointerException("Provider id is null"));
         }
 
         ObjectNode result = json.newObject();
 
-        for (EntityProvider creatorHandler : creatorHandlers) {
-            if (! creatorHandler.getName().equals(id)) {
+        for (EntityProvider provider : entityProviders) {
+            if (! provider.getName().equals(id)) {
                 continue;
             }
-            for (String implemSpecification : creatorHandler.getProvidedEntities()) {
-                result.put(implemSpecification, creatorHandler.isEnabled(implemSpecification));
+            for (String implemSpecification : provider.getProvidedEntities()) {
+                result.put(implemSpecification, provider.isEnabled(implemSpecification));
             }
             return ok(result);
         }
@@ -74,20 +75,20 @@ public class ContextProviderController extends DefaultController {
     }
 
     @Route(method = HttpMethod.GET, uri = "/context/providers/{id}/{implem}")
-    public Result getContextProviderImpl(@Parameter(value = "id") String id, @Parameter(value = "implem") String implem) {
-        if (id == null) {
-            return internalServerError(new NullPointerException("Provider id is null"));
+    public Result getEntityProviderImpl(@Parameter(value = "id") String id, @Parameter(value = "implem") String implem) {
+        if ((id == null)||(implem == null)) {
+            return internalServerError(new NullPointerException("Provider param is null"));
         }
 
         ObjectNode result = json.newObject();
 
-        for (EntityProvider creatorHandler : creatorHandlers) {
-            if (! creatorHandler.getName().equals(id)) {
+        for (EntityProvider provider : entityProviders) {
+            if (! provider.getName().equals(id)) {
                 continue;
             }
-            for (String implemSpecification : creatorHandler.getProvidedEntities()) {
+            for (String implemSpecification : provider.getProvidedEntities()) {
                 if (implemSpecification.equals(implem)) {
-                    result.put(implemSpecification, creatorHandler.isEnabled(implemSpecification));
+                    result.put(implemSpecification, provider.isEnabled(implemSpecification));
                 }
             }
             return ok(result);
@@ -98,27 +99,27 @@ public class ContextProviderController extends DefaultController {
     }
 
     @Route(method = HttpMethod.POST, uri = "/context/providers/{id}/{implem}/{state}")
-    public Result switchContextProviderState(@Parameter(value = "id") String id, @Parameter(value = "implem") String implem, @Parameter(value = "state") boolean state) {
-        if (id == null) {
-            return internalServerError(new NullPointerException("Provider id is null"));
+    public Result switchEntityProviderState(@Parameter(value = "id") String id, @Parameter(value = "implem") String implem, @Parameter(value = "state") boolean state) {
+        if ((id == null)||(implem == null)) {
+            return internalServerError(new NullPointerException("Provider param is null"));
         }
 
         ObjectNode result = json.newObject();
 
 
-        for (EntityProvider creatorHandler : creatorHandlers) {
-            if (!creatorHandler.getName().equals(id)) {
+        for (EntityProvider provider : entityProviders) {
+            if (!provider.getName().equals(id)) {
                 continue;
             }
-            for (String implemSpecification : creatorHandler.getProvidedEntities()) {
+            for (String implemSpecification : provider.getProvidedEntities()) {
                 if (implemSpecification.equals(implem)) {
                     if (state){
-                        creatorHandler.enable(implem);
+                        provider.enable(implem);
                     }
                     else {
-                        creatorHandler.disable(implem);
+                        provider.disable(implem);
                     }
-                    result.put(implemSpecification, creatorHandler.isEnabled(implemSpecification));
+                    result.put(implemSpecification, provider.isEnabled(implemSpecification));
                     return ok(result);
                 }
             }
