@@ -21,6 +21,7 @@ import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.ServiceController;
+import org.apache.felix.ipojo.architecture.HandlerDescription;
 import org.apache.felix.ipojo.handlers.providedservice.ProvidedServiceHandler;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
@@ -257,6 +258,8 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
             throw new ConfigurationException("Try to instantiate a context entity without and context.entity.id element");
         }
         
+        update(CONTEXT_ENTITY_ID,configuration.get(CONTEXT_ENTITY_ID));
+        
         /*
          * Initialize the state map with the configured values
          */
@@ -304,10 +307,45 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     			
     		}
 		}
-    	
-        for (Class<?> inheritedService : service.getInterfaces()){
-        	extractDefinedStatesForService(inheritedService);
+    }
+    
+    @Override
+    public HandlerDescription getDescription() {
+        return new EntityHandlerDescription();
+    }
+
+    /**
+     * The description of the handler.
+     * 
+     * This class exposes the generic interface ContextEntity to allow external code to introspect the
+     * component instance and obtain the current state values.
+     * 
+     */
+    public class EntityHandlerDescription extends HandlerDescription implements ContextEntity {
+
+        private EntityHandlerDescription() {
+        	super(EntityHandler.this);
         }
+
+		@Override
+		public String getId() {
+			return EntityHandler.this.getId();
+		}
+
+		@Override
+		public Object getStateValue(String getStateValue) {
+			return EntityHandler.this.getStateValue(getStateValue);
+		}
+
+		@Override
+		public Set<String> getStates() {
+			return EntityHandler.this.getStates();
+		}
+
+		@Override
+		public Map<String, Object> dumpState() {
+			return EntityHandler.this.dumpState();
+		}
     }
     
     /**
@@ -334,7 +372,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     }
 
     @Override
-    public Map<String, Object> dumpState(String state) {
+    public Map<String, Object> dumpState() {
         return new HashMap<>(stateValues);
     }
 

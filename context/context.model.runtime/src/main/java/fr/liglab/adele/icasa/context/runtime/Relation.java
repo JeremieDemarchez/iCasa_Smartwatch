@@ -5,13 +5,10 @@ package fr.liglab.adele.icasa.context.runtime;
  */
 public interface Relation {
 
-    String getId();
+    public String getName();
 
-    String getName();
+    public String getSource();
 
-    String getSource();
+    public String getTarget();
 
-    String getEnd();
-
-    ExtendedState getExtendedState();
 }

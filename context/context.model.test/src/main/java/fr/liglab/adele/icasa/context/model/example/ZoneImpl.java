@@ -51,12 +51,14 @@ public class ZoneImpl implements Zone {
 	@State.Field(service=Zone.class, state=Zone.Z_LENGHT, directAccess = true)
 	private int zLength;
 
-	@Relation.Field("contains")
-	@Requires(optional=true)
+	public static final String RELATION_CONTAINS = "contains";
+	
+	@Relation.Field(RELATION_CONTAINS)
+	@Requires(specification=Zone.class,optional=true)
 	private List<Zone> containedZones;
 
-	@Relation.Field("contains")
-	@Requires(optional=true, filter="(zone.name=kit*)")
+	@Relation.Field(RELATION_CONTAINS)
+	@Requires(specification=Zone.class,optional=true, filter="(zone.name=kit*)")
 	private List<Zone> containedZonesFiltered;
 
 	@Override
@@ -68,6 +70,7 @@ public class ZoneImpl implements Zone {
 	public void setLeftTopAbsolutePosition(Position position) {
 		x = position.x;
 		y = position.y;
+		z = position.z;
 	}
 
 	@Override

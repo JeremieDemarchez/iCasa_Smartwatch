@@ -4,7 +4,6 @@ import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
-
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 
 import org.apache.felix.ipojo.Factory;
@@ -22,7 +21,7 @@ import java.util.Map;
 public class Test {
 
 
-    @Requires
+    @Requires(proxy=false)
     LocationManager locationManager;
 
     @Requires(optional = true)
@@ -51,7 +50,7 @@ public class Test {
     
     @Command
     public void createWorkingEntity(){
-       creatorValidComponent.createEntity("ValidEntity");
+       creatorValidComponent.create("ValidEntity");
     }
 
     @Command
@@ -59,14 +58,24 @@ public class Test {
             Map<String,Object> entityInit = new Hashtable<>();
             entityInit.put(State.ID(ContextEntityDescription.class,ContextEntityDescription.HELLO),"initValue");
        // entityInit.put(Zone.ZONE_NAME,"initValue");
-            creatorValidComponent.createEntity("ValidEntityWithValidConfig", entityInit);
+            creatorValidComponent.create("ValidEntityWithValidConfig", entityInit);
     }
 
    @Command
-   public void createZone(){
-       locationManager.createZone("Kitchen", 10, 10, 10, 10, 10, 10);
+   public void createZone(String id){
+       locationManager.createZone(id, 10, 10, 10, 10, 10, 10);
    }
 
+   @Command
+   public void createContains(String container, String contained){
+       locationManager.createContainement(container,contained);
+   }
+
+   @Command
+   public void removeContains(String container, String contained){
+       locationManager.removeContainement(container,contained);
+   }
+   
     @Command
     public void getZone(){
         for (String zoneid : locationManager.getZoneIds()){
@@ -74,6 +83,11 @@ public class Test {
         }
     }
 
+    @Command
+    public void moveZone() throws Exception {
+    	locationManager.moveZone("Kitchen", 50,50,2);
+    }
+    
     @Command
     public void testFilter(){
         System.out.println(" Filter work ? " + !(factoryTest == null));

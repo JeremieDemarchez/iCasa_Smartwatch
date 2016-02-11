@@ -28,6 +28,9 @@ public interface LocationManager {
 
 	public final static int ZONE_DEFAULT_Z_LENGHT = 4;
 
+	public void createContainement(String containerZone, String containedZone);
+	public void removeContainement(String containerZone, String containedZone);
+	
 	// -- Zone related methods --//
 
 	/**
