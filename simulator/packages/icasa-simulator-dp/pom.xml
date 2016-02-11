@@ -18,6 +18,11 @@
     <!-- Simulator -->
     <dependency>
       <groupId>${project.groupId}</groupId>
+      <artifactId>simulator.physical.model</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
       <artifactId>simulator.api</artifactId>
       <version>${project.version}</version>
     </dependency>
