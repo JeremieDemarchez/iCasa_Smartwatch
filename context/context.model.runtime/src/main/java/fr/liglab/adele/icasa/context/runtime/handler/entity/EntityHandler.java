@@ -307,6 +307,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     			
     		}
 		}
+        for (Class<?> inheritedService : service.getInterfaces()){
+            extractDefinedStatesForService(inheritedService);
+        }
     }
     
     @Override
