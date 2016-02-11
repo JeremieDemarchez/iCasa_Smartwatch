@@ -16,146 +16,32 @@
 package fr.liglab.adele.icasa.simulator.model.temperature;
 
 
-//import fr.liglab.adele.icasa.device.GenericDevice;
-//import fr.liglab.adele.icasa.device.temperature.Cooler;
-//import fr.liglab.adele.icasa.device.temperature.Heater;
-//import fr.liglab.adele.icasa.location.LocatedDevice;
-//import fr.liglab.adele.icasa.location.Zone;
-//
-//import java.util.*;
-//
-//import static impl.TemperaturePMImpl.VOLUME_PROP_NAME;
-//
-//import static impl.TemperaturePMImpl.AIR_MASS;
-//
-//import static impl.TemperaturePMImpl.AIR_MASS_CAPACITY;
-//
-///**
-// * Model of a zone used to compute thermal properties.
-// *
-// */
-//public class ZoneModel {
-//
-//    private double _thermalCapacity;
-//
-//    private Map<String, Double> _wallSurfaceMap = new HashMap<String, Double>();
-//
-//    private double _totalPower;
-//
-//    private Zone _zone;
-//
-//    private boolean updateDevice = true;
-//
-//    private boolean updateThermalCapacity = true;
-//
-//    private boolean updatePower = true;
-//
-//    private Set<LocatedDevice> _temperatureDevices = new HashSet<LocatedDevice>();
-//
-//    private Set<GenericDevice> _devices = new HashSet<GenericDevice>();
-//
-//    private Set<Heater> _heaters = new HashSet<Heater>();
-//
-//    private Set<Cooler> _coolers = new HashSet<Cooler>();
-//
-//
-//    public ZoneModel(Zone zone,Set<LocatedDevice> temperatureDevices) {
-//         this._temperatureDevices = temperatureDevices;
-//        this._zone = zone;
-//    }
-//
-//    public Zone getZone() {
-//        return _zone;
-//    }
-//
-//    public String getZoneId() {
-//        return _zone.getZoneName();
-//    }
-//
-//    public double getThermalCapacity() {
-//        return _thermalCapacity;
-//    }
-//
-//    public void updateThermalCapacity() {
-//    /**    if (updateThermalCapacity){
-//            double newVolume = 2.5d; // use this value as default to avoid divide by zero
-//            Double zoneVolume = (Double) _zone.getVariableValue(VOLUME_PROP_NAME);
-//            if ((zoneVolume != null) && ((zoneVolume) > 0.0d)){
-//                newVolume =  zoneVolume;
-//            }
-//            _thermalCapacity = AIR_MASS * AIR_MASS_CAPACITY * newVolume;
-//        }**/
-//    }
-//
-//
-//    public Set<Map.Entry<String, Double>> getWallSurfaces() {
-//        return _wallSurfaceMap.entrySet();
-//    }
-//
-//    public double getWallSurface(String zoneId) {
-//        Double surface = _wallSurfaceMap.get(zoneId);
-//        if (surface == null)
-//            return 0.0d;
-//        else
-//            return surface;
-//    }
-//
-//    public void setWallSurface(String zoneId, double wallSurface) {
-//        _wallSurfaceMap.put(zoneId, wallSurface);
-//    }
-//
-//    public void removeWallSurface(String zoneId) {
-//        _wallSurfaceMap.remove(zoneId);
-//    }
-//
-//
-//    public boolean isInTheZone(LocatedDevice device) {
-//   /**     if ((device != null) && (_zone.contains(device))) {
-//            return true;
-//        }**/
-//        return false;
-//    }
-//
-//    public void updateTemperatureDevices() {
-//        _coolers.clear();
-//        _heaters.clear();
-//        _devices.clear();
-//        for(LocatedDevice device : _temperatureDevices){
-//            if (isInTheZone(device)){
-//
-//                GenericDevice deviceObj = device.getDeviceObject();
-//
-//                if (deviceObj instanceof Cooler){
-//                    _devices.add(deviceObj);
-//                    _coolers.add((Cooler)deviceObj);
-//
-//                }else if(deviceObj instanceof Heater){
-//                    _heaters.add((Heater)deviceObj);
-//                    _devices.add(deviceObj);
-//                }
-//            }
-//        }
-//    }
-//
-//
-//    public Set<GenericDevice> getDevices() {
-//        return _devices;
-//    }
-//
-//
-//
-//    public void updateTotalPower() {
-//        _totalPower = 0;
-//        for (Heater heater : _heaters){
-//            _totalPower += heater.getPowerLevel() * heater.getMaxPowerLevel();
-//        }
-//
-//        for (Cooler cooler : _coolers){
-//            _totalPower -= cooler.getPowerLevel() * cooler.getMaxPowerLevel();
-//        }
-//    }
-//
-//    public double getTotalPower() {
-//        return _totalPower;
-//    }
-//}
+import fr.liglab.adele.icasa.location.Zone;
+
+
+/**
+ * Model of a zone used to compute thermal properties.
+ *
+ */
+public class ZoneModel {
+
+    private final Zone myZone;
+
+    public ZoneModel(Zone zone) {
+        this.myZone = zone;
+    }
+
+    public String getZoneId() {
+        return myZone.getZoneName();
+    }
+
+    public double getThermalCapacity() {
+        double newVolume = 2.5d; // use this value as default to avoid divide by zero
+        double zoneVolume =  (myZone.getYLength()*myZone.getXLength()*myZone.getZLength());
+        if (zoneVolume > 0.0d){
+            newVolume =  zoneVolume;
+        }
+        return TemperaturePMImpl.AIR_MASS * TemperaturePMImpl.AIR_MASS_CAPACITY * newVolume;
+
+    }
+}

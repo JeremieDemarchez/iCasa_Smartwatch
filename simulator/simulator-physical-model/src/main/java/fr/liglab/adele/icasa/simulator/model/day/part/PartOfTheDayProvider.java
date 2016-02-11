@@ -13,21 +13,27 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.model.temperature;
+package fr.liglab.adele.icasa.simulator.model.day.part;
 
-/**
- * Represents a parallelepiped.
- *
- */
-public class Parallelepiped {
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Validate;
 
-    public Parallelepiped(Interval xInterval, Interval yInterval, Interval zInterval) {
-        this.xInterval = xInterval;
-        this.yInterval = yInterval;
-        this.zInterval = zInterval;
+@Component(immediate = true,publicFactory = false)
+@Instantiate
+public class PartOfTheDayProvider {
+
+    @Creator.Field Creator.Entity<MomentOfTheDaySimulatedImpl> creator;
+
+    @Validate
+    public void start(){
+        creator.createEntity("MomentOfTheDay");
     }
 
-    public Interval xInterval;
-    public Interval yInterval;
-    public Interval zInterval;
+    @Invalidate
+    public void stop(){
+
+    }
 }
