@@ -82,7 +82,7 @@ public class ContextModelController extends DefaultController {
 
         for (ContextEntity entity : entities){
             if (entity.getId().equals(id)){
-                for (Map.Entry<String,Object> entry : entity.dumpState(null).entrySet()){
+                for (Map.Entry<String,Object> entry : entity.dumpState().entrySet()){
                     result.put(entry.getKey(),entry.getValue().toString());
                 }
                 return ok(result);

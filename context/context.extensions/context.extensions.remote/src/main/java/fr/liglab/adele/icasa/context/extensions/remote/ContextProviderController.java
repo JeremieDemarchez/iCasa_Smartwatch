@@ -20,7 +20,7 @@
 package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.context.model.introspection.EntityCreatorHandlerIntrospection;
+import fr.liglab.adele.icasa.context.model.introspection.EntityProvider;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
@@ -39,8 +39,8 @@ public class ContextProviderController extends DefaultController {
     @Requires
     Json json;
 
-    @Requires(specification = EntityCreatorHandlerIntrospection.class,optional = true)
-    List<EntityCreatorHandlerIntrospection> creatorHandlers;
+    @Requires(specification = EntityProvider.class,optional = true)
+    List<EntityProvider> creatorHandlers;
 
 //    List<EntityCreatorHandlerIntrospection> fake = new ArrayList<EntityCreatorHandlerIntrospection>();
 //
@@ -55,8 +55,8 @@ public class ContextProviderController extends DefaultController {
         ObjectNode result = json.newObject();
 
 
-        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers){
-            result.put(creatorHandler.getAttachedComponentInstanceName(),true);
+        for (EntityProvider creatorHandler : creatorHandlers){
+            result.put(creatorHandler.getName(),true);
         }
 
         return ok(result);
@@ -70,10 +70,10 @@ public class ContextProviderController extends DefaultController {
 
         ObjectNode result = json.newObject();
 
-        for (EntityCreatorHandlerIntrospection creatorHandler : creatorHandlers){
-            if (creatorHandler.getAttachedComponentInstanceName().equals(id)){
-                for (String implemSpecification : creatorHandler.getImplementations()){
-                    result.put(implemSpecification,creatorHandler.getImplentationState(implemSpecification));
+        for (EntityProvider creatorHandler : creatorHandlers){
+            if (creatorHandler.getName().equals(id)){
+                for (String implemSpecification : creatorHandler.getProvidedEntities()){
+                    result.put(implemSpecification,creatorHandler.isEnabled(implemSpecification));
                 }
                 return ok(result);
             }

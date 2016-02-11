@@ -33,8 +33,7 @@ public class ContextModelGoGoCommand  {
         String out = new String();
         for (Relation relation: relations){
             out = out +"Relation Name : " + relation.getName()+ "\n";
-            out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
-                    +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
+            out = out +relation.getSource() + " --------> " + relation.getTarget()+"\n";
         }
         LOG.info(out);
     }
@@ -45,8 +44,7 @@ public class ContextModelGoGoCommand  {
         for (Relation relation: relations) {
             if (relation.getName().equals(name)) {
                 out = out +"Relation Name : " + relation.getName()+ "\n";
-                out = out + relation.getSource() + " --------> " + relation.getEnd() + "\n"
-                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
+                out = out + relation.getSource() + " --------> " + relation.getTarget() + "\n";
             }
         }
         LOG.info(out);
@@ -58,8 +56,7 @@ public class ContextModelGoGoCommand  {
         for (Relation relation: relations) {
             if (relation.getSource().equals(source)) {
                 out = out +"Relation Name : " + relation.getName() + "\n";
-                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
-                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
+                out = out +relation.getSource() + " --------> " + relation.getTarget()+"\n";
             }
         }
         LOG.info(out);
@@ -69,10 +66,9 @@ public class ContextModelGoGoCommand  {
     public void relationsByEnd(String end){
         String out = new String();
         for (Relation relation: relations) {
-            if (relation.getEnd().equals(end)) {
+            if (relation.getTarget().equals(end)) {
                 out = out + "Relation Name : " + relation.getName()+"\n";
-                out = out +relation.getSource() + " --------> " + relation.getEnd()+"\n"
-                        +"Exented state : " + relation.getExtendedState().getName() + " : " + relation.getExtendedState().getValue()+ "\n";
+                out = out +relation.getSource() + " --------> " + relation.getTarget()+"\n";
             }
         }
         LOG.info(out);

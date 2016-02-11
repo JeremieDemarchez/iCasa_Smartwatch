@@ -31,8 +31,8 @@ import java.util.Set;
 @Instantiate(name = "LocationManager-0")
 public class LocationManagerImpl implements LocationManager {
 
-	@Creator.Field 				Creator.Entity<ZoneImpl> creator;
-	@Creator.Field("contains") 	Creator.Relation<ZoneImpl,Zone> creatorRelation;
+	@Creator.Field 								Creator.Entity<ZoneImpl> creator;
+	@Creator.Field(ZoneImpl.RELATION_CONTAINS) 	Creator.Relation<ZoneImpl,Zone> containsCreator;
 
 	@Override
 	public void createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {
@@ -46,28 +46,37 @@ public class LocationManagerImpl implements LocationManager {
 		propertiesInit.put(State.ID(Zone.class,Zone.Y_LENGHT),height);
 		propertiesInit.put(State.ID(Zone.class,Zone.Z_LENGHT),depth);
 		
-		creator.createEntity(id,propertiesInit);
+		creator.create(id, propertiesInit);
 	}
 
+	@Override
+	public void createContainement(String containerZone, String containedZone) {
+		containsCreator.create(containerZone, containedZone);
+	}
 
 	@Override
+	public void removeContainement(String containerZone, String containedZone) {
+		containsCreator.delete(containerZone, containedZone);
+	}
+	
+	@Override
 	public void removeZone(String id) {
-		creator.deleteEntity(id);
+		creator.delete(id);
 	}
 
 	@Override
 	public void moveZone(String id, int leftX, int topY, int bottomZ) throws Exception {
-
+		creator.getInstance(id).setLeftTopAbsolutePosition(new Position(leftX,topY,bottomZ));
 	}
 
 	@Override
 	public void resizeZone(String id, int width, int height, int depth) throws Exception {
-
+		creator.getInstance(id).resize(width,height,depth);
 	}
 
 	@Override
 	public void removeAllZones() {
-		creator.deleteAllEntities();
+		creator.deleteAll();
 	}
 
 	@Override
