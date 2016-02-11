@@ -70,7 +70,7 @@ public class SimulatedLuminosityModel implements LuminosityModel{
     // In the night, there is no need to use the full illuminance
     public static final double  NIGHT_EXTERNAL_SOURCE_POWER = 200;
 
-    private double currentExternalSource;
+    private double currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
 
     @Validate
     public void start(){

@@ -16,14 +16,17 @@
 package fr.liglab.adele.icasa.context.impl;
 
 import fr.liglab.adele.icasa.Constants;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.List;
+import java.util.Map;
 
 @Component(immediate = true,publicFactory=false)
 @Instantiate(name = "LocationManagerImpl-0")
@@ -36,6 +39,8 @@ public class LocationManagerImpl{
 
     @Requires(id = "locatedObjects",specification = LocatedObject.class,optional = true)
     List<LocatedObject> locatedObjects;
+
+    @Creator.Field(ZoneImpl.RELATION_CONTAINS) 	Creator.Relation<ZoneImpl,LocatedObject> containsCreator;
 
     @Bind(id = "zones")
     public synchronized void bindZone(Zone zone){
@@ -54,25 +59,31 @@ public class LocationManagerImpl{
 
 
     @Bind(id = "locatedObjects")
-    public synchronized void bindLocatedObject(LocatedObject object){
+    public synchronized void bindLocatedObject(LocatedObject object, Map<String,Object> properties){
         for (Zone zone : zones) {
-            if (zone.canContains(object.getPosition())) {
-                LOG.info(" Zone can contains object ");
+            if (! zone.canContains(object.getPosition())) {
+                continue;
             }
+            LOG.info("create");
+            containsCreator.create((String)properties.get(ContextEntity.CONTEXT_ENTITY_ID),zone.getZoneName());
         }
     }
 
     @Modified(id = "locatedObjects")
-    public synchronized void modifiedLocatedObject(LocatedObject object){
+    public synchronized void modifiedLocatedObject(LocatedObject object,Map<String,Object> properties){
         for (Zone zone : zones) {
             if (zone.canContains(object.getPosition())) {
-                LOG.info(" Zone can contains object ");
+                LOG.info("create source : " +  zone.getZoneName()  + " and target : " + (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+            }else {
+                LOG.info("delete  source : " + zone.getZoneName() + " and target : " +   (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                containsCreator.delete(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
             }
         }
     }
 
     @Unbind(id = "locatedObjects")
-    public synchronized void unbindLocatedObject(LocatedObject object){
-
+    public synchronized void unbindLocatedObject(LocatedObject object,Map<String,Object> properties){
+        containsCreator.delete(object.getZone(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
     }
 }

@@ -28,7 +28,7 @@ public class SimulatedLuminosityProvider {
 
     @Creator.Field Creator.Entity<SimulatedLuminosityModel> creator;
 
-    @Bind(id = "zones",specification = Zone.class,aggregate = true,optional = true)
+ /**   @Bind(id = "zones",specification = Zone.class,aggregate = true,optional = true)
     public void bindZone(Zone zone){
         creator.create(generateEntityName(zone));
     }
@@ -40,5 +40,5 @@ public class SimulatedLuminosityProvider {
 
     private String generateEntityName(Zone zone){
         return zone.getZoneName()+".illuminance";
-    }
+    }**/
 }

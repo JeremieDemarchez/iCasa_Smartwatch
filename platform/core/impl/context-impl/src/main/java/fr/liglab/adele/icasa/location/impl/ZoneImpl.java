@@ -16,10 +16,16 @@
 package fr.liglab.adele.icasa.location.impl;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Validate;
+
+import java.util.List;
+import java.util.Map;
 
 @ContextEntity(services = Zone.class)
 public class ZoneImpl implements Zone {
@@ -44,6 +50,12 @@ public class ZoneImpl implements Zone {
 
 	@ContextEntity.State.Field(service=Zone.class, state=Zone.Z_LENGHT, directAccess = true)
 	private int zLength;
+
+	public static final String RELATION_CONTAINS = "contains";
+
+	@ContextEntity.Relation.Field(RELATION_CONTAINS)
+	@Requires(specification=LocatedObject.class,optional=true)
+	private List<LocatedObject> containedObject;
 
 	@Override
 	public String getZoneName() {

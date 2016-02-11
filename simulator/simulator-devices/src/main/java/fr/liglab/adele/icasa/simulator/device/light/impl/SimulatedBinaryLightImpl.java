@@ -49,6 +49,7 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
     private String zone;
 
+
     @Override
     public String getDeviceType() {
         return deviceType;
