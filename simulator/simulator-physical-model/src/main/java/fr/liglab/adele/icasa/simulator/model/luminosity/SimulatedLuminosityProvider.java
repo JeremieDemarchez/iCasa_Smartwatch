@@ -30,12 +30,12 @@ public class SimulatedLuminosityProvider {
 
     @Bind(id = "zones",specification = Zone.class,aggregate = true,optional = true)
     public void bindZone(Zone zone){
-        creator.createEntity(generateEntityName(zone));
+        creator.create(generateEntityName(zone));
     }
 
     @Unbind(id = "zones")
     public void unbindZone(Zone zone){
-        creator.createEntity(generateEntityName(zone));
+        creator.create(generateEntityName(zone));
     }
 
     private String generateEntityName(Zone zone){

@@ -98,7 +98,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
         }
 
         entityParam.put(ContextEntity.State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),deviceId);
-        creator.createEntity(deviceId,entityParam);
+        creator.create(deviceId,entityParam);
     }
 
     @Override
@@ -112,7 +112,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
                 if (creator == null){
                     return;
                 }
-                creator.deleteEntity(deviceId);
+                creator.delete(deviceId);
             }
         }
     }
@@ -127,7 +127,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
 
     @Override
     public void removeAllSimulatedDevices() {
-        simulatedBinaryLightCreator.deleteAllEntities();
+        simulatedBinaryLightCreator.deleteAll();
         //      simulatedDimmerLightCreator.deleteAllEntities();
     }
 

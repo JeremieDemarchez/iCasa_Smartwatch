@@ -106,7 +106,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 
                 Creator.Entity creator = getCreator(deviceType);
                 if (creator != null){
-                    creator.createEntity(serialNumber,properties);
+                    creator.create(serialNumber,properties);
                 }
                 super.handleImportDeclaration(importDeclaration);
 
@@ -124,7 +124,7 @@ public class ZigbeeImporter extends AbstractImporterComponent {
         String serialNumber = (String) epdProps.get(RemoteConstants.ENDPOINT_ID);
         Creator.Entity creator = getCreator(deviceType);
         if (creator != null){
-            creator.deleteEntity(serialNumber);
+            creator.delete(serialNumber);
         }
         unhandleImportDeclaration(importDeclaration);
     }

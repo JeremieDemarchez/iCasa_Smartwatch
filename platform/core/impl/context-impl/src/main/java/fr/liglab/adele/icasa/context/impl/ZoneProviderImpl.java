@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.context.impl;
 
-import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.ZoneProvider;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
@@ -24,8 +23,6 @@ import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,13 +45,13 @@ public class ZoneProviderImpl implements ZoneProvider {
 		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.X_LENGHT),width);
 		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Y_LENGHT),height);
 		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Z_LENGHT),depth);
-		creator.createEntity(id,propertiesInit);
+		creator.create(id,propertiesInit);
 	}
 
 
 	@Override
 	public void removeZone(String id) {
-		creator.deleteEntity(id);
+		creator.delete(id);
 	}
 
 	@Override
@@ -69,7 +66,7 @@ public class ZoneProviderImpl implements ZoneProvider {
 
 	@Override
 	public void removeAllZones() {
-		creator.deleteAllEntities();
+		creator.deleteAll();
 	}
 
 	@Override

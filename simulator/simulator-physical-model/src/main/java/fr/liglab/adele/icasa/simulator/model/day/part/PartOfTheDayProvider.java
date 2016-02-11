@@ -29,7 +29,7 @@ public class PartOfTheDayProvider {
 
     @Validate
     public void start(){
-        creator.createEntity("MomentOfTheDay");
+        creator.create("MomentOfTheDay");
     }
 
     @Invalidate
