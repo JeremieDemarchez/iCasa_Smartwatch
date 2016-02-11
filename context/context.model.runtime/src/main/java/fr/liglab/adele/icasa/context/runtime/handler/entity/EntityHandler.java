@@ -39,6 +39,11 @@ import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference
 public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
 	/**
+	 * The list of implemented context services
+	 */
+	private final Set<String> services 			= new HashSet<>();
+
+	/**
      * The list of states defined in the implemented context services
      */
     private final Set<String> stateIds 			= new HashSet<>();
@@ -284,12 +289,14 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     	if (!service.isAnnotationPresent(ContextService.class)) {
     		return;
     	}
-    	
+
+		services.add(service.getName());
+
     	String contextServiceName = service.getAnnotation(ContextService.class).value();
     	if (contextServiceName.equals(ContextService.DEFAULT_VALUE)) {
     		contextServiceName = service.getSimpleName().toLowerCase();
     	}
-    			
+
     	/*
     	 * look for all states defined in the context service interface.
     	 * 
@@ -331,6 +338,11 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
 
 		@Override
+		public Set<String> getServices() {
+			return EntityHandler.this.getServices();
+		}
+
+		@Override
 		public String getId() {
 			return EntityHandler.this.getId();
 		}
@@ -350,12 +362,18 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 			return EntityHandler.this.dumpState();
 		}
     }
-    
-    /**
+
+	/**
      *
      * Context Entity Implementation
      *
      */
+
+	@Override
+	public Set<String> getServices() {
+		return services;
+	}
+
     @Override
     public String getId() {
     	return (String) stateValues.get(CONTEXT_ENTITY_ID);
