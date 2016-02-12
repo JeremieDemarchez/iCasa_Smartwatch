@@ -20,11 +20,14 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import fr.liglab.adele.icasa.simulator.model.api.LuminosityModel;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Modified;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 
 /**
  * Implementation of a simulated photometer device.
@@ -35,7 +38,7 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
 
     public final static String SIMULATED_PHOTOMETER = "iCasa.Photometer";
 
-    @ContextEntity.State.Field(service = Photometer.class,state=PHOTOMETER_CURRENT_ILLUMINANCE)
+    @ContextEntity.State.Field(service = Photometer.class,state=PHOTOMETER_CURRENT_ILLUMINANCE,value = "0.0")
     private double currentSensedIlluminance;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_PHOTOMETER)
@@ -47,7 +50,7 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "10")
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
@@ -101,4 +104,26 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
     public double pushIlluminance(double illuminance){
         return illuminance;
     }
+//
+//    @Requires(filter = "luminositymodel.zone.attached=${locatedobject.object.zone}")
+//    LuminosityModel lum;
+//
+//    @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
+//    @Requires(id="zone",specification=Zone.class,optional=true)
+//    private Zone zone;
+//
+//    @Bind(id = "zone")
+//    public void bindZone(Zone zone){
+//        pushZone(zone.getZoneName());
+//    }
+//
+//    @Unbind(id= "zone")
+//    public void unbindZone(Zone zone){
+//        pushZone(LOCATION_UNKNOWN);
+//    }
+//
+//    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+//    public String pushZone(String zoneName) {
+//        return zoneName;
+//    }
 }

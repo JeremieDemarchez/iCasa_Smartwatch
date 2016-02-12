@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.simulator.device.temperature.impl;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
@@ -30,9 +29,9 @@ import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 @ContextEntity(services = {Heater.class,SimulatedDevice.class,LocatedObject.class})
 public class SimulatedHeaterImpl implements Heater,SimulatedDevice,LocatedObject{
 
-    public final static String SIMULATED_HEATER= "iCasa.Cooler";
+    public final static String SIMULATED_HEATER= "iCasa.Heater";
 
-    @ContextEntity.State.Field(service = BinaryLight.class,state = BinaryLight.BINARY_LIGHT_POWER_STATUS,directAccess = true,value ="0")
+    @ContextEntity.State.Field(service = Heater.class,state = HEATER_POWER_LEVEL,directAccess = true,value ="0.0")
     private double powerLevel;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_HEATER)
@@ -44,7 +43,7 @@ public class SimulatedHeaterImpl implements Heater,SimulatedDevice,LocatedObject
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "10")
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)

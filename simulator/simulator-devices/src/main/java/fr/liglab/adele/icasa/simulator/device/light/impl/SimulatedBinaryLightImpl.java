@@ -27,8 +27,6 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 
-import java.util.List;
-
 /**
  * Implementation of a simulated binary light device.
  *
@@ -38,7 +36,7 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
 
     public final static String SIMULATED_BINARY_LIGHT = "iCasa.BinaryLight";
 
-    @ContextEntity.State.Field(service = BinaryLight.class,state = BinaryLight.BINARY_LIGHT_POWER_STATUS,directAccess = true)
+    @ContextEntity.State.Field(service = BinaryLight.class,state = BinaryLight.BINARY_LIGHT_POWER_STATUS,directAccess = true,value = "false")
     private boolean powerStatus;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_BINARY_LIGHT)
@@ -50,7 +48,7 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "10")
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
@@ -115,7 +113,7 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
 
     @Unbind(id= "zone")
     public void unbindZone(Zone zone){
-        pushZone(zone.getZoneName());
+        pushZone(LOCATION_UNKNOWN);
     }
 
     @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)

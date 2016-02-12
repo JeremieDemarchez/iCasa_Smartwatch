@@ -31,7 +31,7 @@ public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice{
 
     public final static String SIMULATED_DIMMER_LIGHT = "iCasa.DimmerLight";
 
-    @ContextEntity.State.Field(service = DimmerLight.class,state = DIMMER_LIGHT_POWER_LEVEL)
+    @ContextEntity.State.Field(service = DimmerLight.class,state = DIMMER_LIGHT_POWER_LEVEL,value = "0.0")
     private double powerLevel;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_DIMMER_LIGHT)
@@ -40,13 +40,13 @@ public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice{
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
     private String zone;
 
     @Override

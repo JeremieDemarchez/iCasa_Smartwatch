@@ -48,12 +48,13 @@ package fr.liglab.adele.icasa.simulator.device.provider;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDeviceProvider;
+import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
+import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImpl;
+import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
+import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
+import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -72,7 +73,13 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
 
     @Creator.Field Creator.Entity<SimulatedBinaryLightImpl> simulatedBinaryLightCreator;
 
-    //   @Entity.Creator.Field Entity.Creator<SimulatedDimmerLightImpl> simulatedDimmerLightCreator;
+    @Creator.Field Creator.Entity<SimulatedDimmerLightImpl> simulatedDimmerLightCreator;
+
+    @Creator.Field Creator.Entity<SimulatedPhotometerImpl> simulatedPhotometerLightCreator;
+
+    @Creator.Field Creator.Entity<SimulatedCoolerImpl> simulatedCoolerLightCreator;
+
+    @Creator.Field Creator.Entity<SimulatedHeaterImpl> simulatedHeaterLightCreator;
 
     @Validate
     public void start(){
@@ -94,7 +101,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
             return;
         }
         Map<String,Object> entityParam = new HashMap<>();
-        Creator.Entity creator = this.getCreator(deviceType,entityParam);
+        Creator.Entity creator = this.getCreator(deviceType);
         if (creator == null){
             return;
         }
@@ -110,7 +117,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
         }
         for (SimulatedDevice device : simulatedDevices){
             if (device.getSerialNumber() != null && device.getSerialNumber().equals(deviceId)){
-                Creator.Entity creator = getCreator(device.getDeviceType(),new HashMap<>());
+                Creator.Entity creator = getCreator(device.getDeviceType());
                 if (creator == null){
                     return;
                 }
@@ -123,24 +130,34 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
     public Set<String> getSimulatedDeviceTypes() {
         Set<String> returnSet = new HashSet<>();
         returnSet.add(SimulatedBinaryLightImpl.SIMULATED_BINARY_LIGHT);
-        //     returnSet.add(SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT);
+        returnSet.add(SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT);
+        returnSet.add(SimulatedPhotometerImpl.SIMULATED_PHOTOMETER);
+        returnSet.add(SimulatedCoolerImpl.SIMULATED_COOLER);
+        returnSet.add(SimulatedHeaterImpl.SIMULATED_HEATER);
         return returnSet;
     }
 
     @Override
     public void removeAllSimulatedDevices() {
         simulatedBinaryLightCreator.deleteAll();
-        //      simulatedDimmerLightCreator.deleteAllEntities();
+        simulatedDimmerLightCreator.deleteAll();
+        simulatedCoolerLightCreator.deleteAll();
+        simulatedHeaterLightCreator.deleteAll();
+        simulatedPhotometerLightCreator.deleteAll();
     }
 
-    private Creator.Entity getCreator(String deviceType,Map<String,Object> defaultProperties){
+    private Creator.Entity getCreator(String deviceType){
         switch (deviceType) {
             case SimulatedBinaryLightImpl.SIMULATED_BINARY_LIGHT:
-                defaultProperties.put(ContextEntity.State.ID(BinaryLight.class,BinaryLight.BINARY_LIGHT_POWER_STATUS),false);
                 return simulatedBinaryLightCreator;
-      /*             case SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT:
-             defaultProperties.put(State.ID(DimmerLight.class, DimmerLight.DIMMER_LIGHT_POWER_LEVEL),0d);
-             return simulatedDimmerLightCreator;*/
+            case SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT:
+                return simulatedDimmerLightCreator;
+            case SimulatedPhotometerImpl.SIMULATED_PHOTOMETER:
+                return simulatedDimmerLightCreator;
+            case SimulatedHeaterImpl.SIMULATED_HEATER:
+                return simulatedDimmerLightCreator;
+            case SimulatedCoolerImpl.SIMULATED_COOLER:
+                return simulatedDimmerLightCreator;
             default:return null;
         }
     }
