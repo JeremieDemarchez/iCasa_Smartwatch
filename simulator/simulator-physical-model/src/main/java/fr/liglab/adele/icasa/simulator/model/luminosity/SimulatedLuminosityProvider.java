@@ -28,17 +28,23 @@ public class SimulatedLuminosityProvider {
 
     @Creator.Field Creator.Entity<SimulatedLuminosityModel> creator;
 
- /**   @Bind(id = "zones",specification = Zone.class,aggregate = true,optional = true)
+    @Creator.Field(SimulatedLuminosityModel.RELATION_IS_ATTACHED) Creator.Relation<SimulatedLuminosityModel,Zone> attachedLumModelCreator;
+
+    @Bind(id = "zones",specification = Zone.class,aggregate = true,optional = true)
     public void bindZone(Zone zone){
-        creator.create(generateEntityName(zone));
+        String name = generateEntityName(zone);
+        creator.create(name);
+        attachedLumModelCreator.create(name,zone.getZoneName());
     }
 
     @Unbind(id = "zones")
     public void unbindZone(Zone zone){
-        creator.create(generateEntityName(zone));
+        String name = generateEntityName(zone);
+        creator.delete(name);
+        attachedLumModelCreator.delete(name,zone.getZoneName());
     }
 
     private String generateEntityName(Zone zone){
         return zone.getZoneName()+".illuminance";
-    }**/
+    }
 }

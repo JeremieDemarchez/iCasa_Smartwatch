@@ -15,15 +15,12 @@
  */
 package fr.liglab.adele.icasa.context.impl;
 
-import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import org.apache.felix.ipojo.annotations.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.List;
 import java.util.Map;
@@ -31,8 +28,6 @@ import java.util.Map;
 @Component(immediate = true,publicFactory=false)
 @Instantiate(name = "LocationManagerImpl-0")
 public class LocationManagerImpl{
-
-    protected static Logger LOG = LoggerFactory.getLogger(Constants.ICASA_LOG);
 
     @Requires(id = "zones",specification = Zone.class,optional = true)
     List<Zone> zones;
@@ -64,7 +59,6 @@ public class LocationManagerImpl{
             if (! zone.canContains(object.getPosition())) {
                 continue;
             }
-            LOG.info("create");
             containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
         }
     }
@@ -74,13 +68,11 @@ public class LocationManagerImpl{
         for (Zone zone : zones) {
             if (zone.canContains(object.getPosition())) {
                 try{
-                    LOG.info("create source : " +  zone.getZoneName()  + " and target : " + (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
                     containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
                 }catch (IllegalArgumentException e){
 
                 }
             }else {
-                LOG.info("delete  source : " + zone.getZoneName() + " and target : " +   (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
                 containsCreator.delete(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
             }
         }

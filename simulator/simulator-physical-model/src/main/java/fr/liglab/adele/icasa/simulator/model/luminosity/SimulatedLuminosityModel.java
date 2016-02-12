@@ -35,10 +35,13 @@ import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.PowerObservable;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.model.api.LuminosityModel;
 import fr.liglab.adele.icasa.simulator.model.api.MomentOfTheDay;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 
 import java.util.List;
@@ -46,6 +49,8 @@ import java.util.function.Supplier;
 
 @ContextEntity(services = {LuminosityModel.class})
 public class SimulatedLuminosityModel implements LuminosityModel{
+
+    public static final String RELATION_IS_ATTACHED="illuminance.model.of";
 
     @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.CURRENT_LUMINOSITY)
     public double currentLuminosity;
@@ -84,18 +89,28 @@ public class SimulatedLuminosityModel implements LuminosityModel{
     @Requires(specification = MomentOfTheDay.class)
     MomentOfTheDay momentOfTheDay;
 
-    @Requires(specification = BinaryLight.class)
+    @Requires(specification = BinaryLight.class,filter = "(locatedobject.object.zone=${luminositymodel.zone.attached})",optional = true)
     List<BinaryLight> binaryLights;
 
-
-    @Requires(specification = DimmerLight.class)
+    @Requires(specification = DimmerLight.class,filter = "(locatedobject.object.zone=${luminositymodel.zone.attached})",optional = true)
     List<DimmerLight> dimmerLights;
 
-    @Requires(specification = Zone.class)
+    @ContextEntity.Relation.Field(RELATION_IS_ATTACHED)
+    @Requires(id="zone",specification=Zone.class,optional=false)
     Zone zone;
 
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @ContextEntity.State.Push(service = LuminosityModel.class,state = LuminosityModel.ZONE_ATTACHED)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 
     private final double DEFAUT_VALUE = 100d;
+
     /**
      * Computes and updates the illuminance property value of specified zone .
      * The formula used to compute the illuminance is :
@@ -142,5 +157,4 @@ public class SimulatedLuminosityModel implements LuminosityModel{
             default: return MORNING_EXTERNAL_SOURCE_POWER;
         }
     }
-
 }

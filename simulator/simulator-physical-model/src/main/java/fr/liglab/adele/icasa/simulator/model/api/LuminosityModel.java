@@ -28,7 +28,6 @@ public @ContextService interface LuminosityModel {
 
     public static final @State String ZONE_ATTACHED = "zone.attached";
 
-    public static final String STATE_ZONE_ATTACHED_ID = "luminositymodel.zone.attached";
     public double getCurrentLuminosity();
 
 }

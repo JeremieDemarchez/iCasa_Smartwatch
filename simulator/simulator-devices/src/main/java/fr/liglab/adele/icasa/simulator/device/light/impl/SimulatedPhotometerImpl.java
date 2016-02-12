@@ -38,7 +38,7 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
 
     public final static String SIMULATED_PHOTOMETER = "iCasa.Photometer";
 
-    @ContextEntity.State.Field(service = Photometer.class,state=PHOTOMETER_CURRENT_ILLUMINANCE,value = "0.0")
+    @ContextEntity.State.Field(service = Photometer.class,state=PHOTOMETER_CURRENT_ILLUMINANCE,value = "-1")
     private double currentSensedIlluminance;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_PHOTOMETER)
@@ -92,8 +92,26 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
         return illuminance;
     }
 
-    @Requires(filter = "(luminositymodel.zone.attached=${locatedobject.object.zone})",optional = true)
+    @Requires(id = "IlluminanceModelDependency",filter = "(luminositymodel.zone.attached=${locatedobject.object.zone})",optional = true)
     LuminosityModel lum;
+
+    @Bind(id ="IlluminanceModelDependency")
+    public void bindIllu(LuminosityModel model){
+        System.out.println("Bind " + FAULT_VALUE);
+        pushIlluminance(model.getCurrentLuminosity());
+    }
+
+    @Modified(id = "IlluminanceModelDependency")
+    public void modifiedIllu(LuminosityModel model){
+        System.out.println(" UPDATE " + FAULT_VALUE);
+        pushIlluminance(model.getCurrentLuminosity());
+    }
+
+    @Unbind(id = "IlluminanceModelDependency")
+    public void unbindIllu(LuminosityModel model){
+        System.out.println(" unbind " + FAULT_VALUE);
+        pushIlluminance(FAULT_VALUE);
+    }
 
     @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
     @Requires(id="zone",specification=Zone.class,optional=true)
@@ -101,13 +119,11 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
 
     @Bind(id = "zone")
     public void bindZone(Zone zone){
-        System.out.print(" Bind to " + zone.getZoneName());
         pushZone(zone.getZoneName());
     }
 
     @Unbind(id= "zone")
     public void unbindZone(Zone zone){
-        System.out.print(" UnBind to " + zone.getZoneName());
         pushZone(LOCATION_UNKNOWN);
     }
 
