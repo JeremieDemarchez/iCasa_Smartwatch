@@ -46,7 +46,7 @@ public class SimulatedHeaterImpl implements Heater,SimulatedDevice,LocatedObject
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
     private String zone;
 
     @Override

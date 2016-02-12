@@ -53,8 +53,8 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
-    private String zone;
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
 
     @Override
     public String getDeviceType() {
@@ -63,7 +63,7 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
 
     @Override
     public String getZone() {
-        return zone;
+        return zoneName;
     }
 
     @Override
@@ -87,43 +87,32 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
         return serialNumber;
     }
 
-    @Requires(id = "luminosity")
-    LuminosityModel luminosityModel;
-
-    @Bind(id = "luminosity")
-    public void bindLuminosity(LuminosityModel model){
-        pushIlluminance(model.getCurrentLuminosity());
-    }
-
-    @Modified(id = "luminosity")
-    public void modifiedLuminosity(LuminosityModel model){
-        pushIlluminance(model.getCurrentLuminosity());
-    }
-
     @ContextEntity.State.Push(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
     public double pushIlluminance(double illuminance){
         return illuminance;
     }
-//
-//    @Requires(filter = "luminositymodel.zone.attached=${locatedobject.object.zone}")
-//    LuminosityModel lum;
-//
-//    @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
-//    @Requires(id="zone",specification=Zone.class,optional=true)
-//    private Zone zone;
-//
-//    @Bind(id = "zone")
-//    public void bindZone(Zone zone){
-//        pushZone(zone.getZoneName());
-//    }
-//
-//    @Unbind(id= "zone")
-//    public void unbindZone(Zone zone){
-//        pushZone(LOCATION_UNKNOWN);
-//    }
-//
-//    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-//    public String pushZone(String zoneName) {
-//        return zoneName;
-//    }
+
+    @Requires(filter = "(luminositymodel.zone.attached=${locatedobject.object.zone})",optional = true)
+    LuminosityModel lum;
+
+    @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        System.out.print(" Bind to " + zone.getZoneName());
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        System.out.print(" UnBind to " + zone.getZoneName());
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 }

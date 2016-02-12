@@ -153,11 +153,11 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
             case SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT:
                 return simulatedDimmerLightCreator;
             case SimulatedPhotometerImpl.SIMULATED_PHOTOMETER:
-                return simulatedDimmerLightCreator;
+                return simulatedPhotometerLightCreator;
             case SimulatedHeaterImpl.SIMULATED_HEATER:
-                return simulatedDimmerLightCreator;
+                return simulatedHeaterLightCreator;
             case SimulatedCoolerImpl.SIMULATED_COOLER:
-                return simulatedDimmerLightCreator;
+                return simulatedCoolerLightCreator;
             default:return null;
         }
     }
