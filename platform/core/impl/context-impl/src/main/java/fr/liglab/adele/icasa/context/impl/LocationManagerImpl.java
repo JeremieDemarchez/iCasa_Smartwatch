@@ -65,7 +65,7 @@ public class LocationManagerImpl{
                 continue;
             }
             LOG.info("create");
-            containsCreator.create((String)properties.get(ContextEntity.CONTEXT_ENTITY_ID),zone.getZoneName());
+            containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
         }
     }
 
@@ -73,8 +73,12 @@ public class LocationManagerImpl{
     public synchronized void modifiedLocatedObject(LocatedObject object,Map<String,Object> properties){
         for (Zone zone : zones) {
             if (zone.canContains(object.getPosition())) {
-                LOG.info("create source : " +  zone.getZoneName()  + " and target : " + (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
-                containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                try{
+                    LOG.info("create source : " +  zone.getZoneName()  + " and target : " + (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                    containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                }catch (IllegalArgumentException e){
+
+                }
             }else {
                 LOG.info("delete  source : " + zone.getZoneName() + " and target : " +   (String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
                 containsCreator.delete(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));

@@ -20,7 +20,14 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.device.utils.Constant;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
+
+import java.util.List;
 
 /**
  * Implementation of a simulated binary light device.
@@ -46,8 +53,8 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "10")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true,value = LOCATION_UNKNOWN)
-    private String zone;
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
 
 
     @Override
@@ -57,7 +64,7 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
 
     @Override
     public String getZone() {
-        return zone;
+        return zoneName;
     }
 
     @Override
@@ -96,4 +103,23 @@ public class SimulatedBinaryLightImpl implements LocatedObject,BinaryLight, Simu
         setPowerStatus(false);
     }
 
+
+    @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 }
