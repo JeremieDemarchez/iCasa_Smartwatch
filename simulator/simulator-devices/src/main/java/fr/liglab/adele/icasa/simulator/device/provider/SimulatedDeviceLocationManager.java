@@ -56,7 +56,7 @@ public class SimulatedDeviceLocationManager {
         }
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
-                creator.create(simulatedDevice.getSerialNumber(),(zone.getZoneName());
+                creator.create(simulatedDevice.getSerialNumber(),zone.getZoneName());
             }
         }
     }
@@ -75,7 +75,7 @@ public class SimulatedDeviceLocationManager {
 
                 }
             }else {
-                creator.delete(simulatedDevice.getSerialNumber(),(zone.getZoneName());
+                creator.delete(simulatedDevice.getSerialNumber(),zone.getZoneName());
             }
         }
     }
