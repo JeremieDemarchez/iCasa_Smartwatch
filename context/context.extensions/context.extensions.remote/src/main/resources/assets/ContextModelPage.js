@@ -102,7 +102,31 @@ function graphDraw(){
         edges: edges
     };
 
-    var options = {interaction:{hover:true}};
+    var options = {
+        nodes: {
+            shape: 'circle',
+            scaling: {
+                min: 10,
+                max: 30,
+                label: {
+                    min: 10,
+                    max: 30,
+                    drawThreshold: 12,
+                    maxVisible: 30
+                }
+            }
+        }, edges:{
+            smooth: {forceDirection: 'none'}
+        }, interaction:{
+            hover: true,
+            navigationButtons: true
+        },
+        physics: {
+            forceAtlas2Based: {springLength: 100},
+            minVelocity: 0.75,
+            solver: 'forceAtlas2Based'
+        }
+    };
     network = new vis.Network(container, data, options);
 
     network.on("selectEdge", function (params) {
@@ -187,7 +211,8 @@ function graphInit(time) {
                     from: source,
                     to: target,
                     arrows:'to',
-                    name: name
+                    name: name,
+                    font: {align: 'horizontal'}
                 });
             }
         }
