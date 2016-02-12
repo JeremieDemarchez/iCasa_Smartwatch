@@ -1,14 +1,14 @@
 package fr.liglab.adele.icasa.context.runtime.handler.entity;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.FieldInterceptor;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Interceptor to handle state fields that are directly manipulated by the entity code

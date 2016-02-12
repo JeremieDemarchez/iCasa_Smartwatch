@@ -1,13 +1,13 @@
 package fr.liglab.adele.icasa.context.runtime.handler.creator;
 
-import java.util.Collections;
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
-
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
+import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.icasa.context.model.introspection.EntityProvider;
+import fr.liglab.adele.icasa.context.model.introspection.RelationProvider;
+import fr.liglab.adele.icasa.context.runtime.RelationImpl;
+import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.InstanceManager;
@@ -22,68 +22,63 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.osgi.framework.ServiceReference;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
-import fr.liglab.adele.icasa.context.model.introspection.EntityProvider;
-import fr.liglab.adele.icasa.context.model.introspection.RelationProvider;
-import fr.liglab.adele.icasa.context.runtime.RelationImpl;
-import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Handler(name = HandlerReference.CREATOR_HANDLER, namespace = HandlerReference.NAMESPACE)
 @Provides(specifications = EntityProvider.class)
 
 public class CreatorHandler extends PrimitiveHandler implements EntityProvider, RelationProvider {
 
-    private final Map<String,String> fieldToContext		= new HashMap<>();
+	private final Map<String,String> fieldToContext		= new HashMap<>();
 
-    private final Map<String,ComponentCreator> creators 	= new HashMap<>();
+	private final Map<String,ComponentCreator> creators 	= new HashMap<>();
 
-    @Override
-    public void configure(Element metadata, @SuppressWarnings("rawtypes") Dictionary configuration) throws ConfigurationException {
+	@Override
+	public void configure(Element metadata, @SuppressWarnings("rawtypes") Dictionary configuration) throws ConfigurationException {
 
-        InstanceManager instanceManager = getInstanceManager();
+		InstanceManager instanceManager = getInstanceManager();
 
-        Element[] creatorElements = metadata.getElements(HandlerReference.CREATOR_HANDLER, HandlerReference.NAMESPACE);
+		Element[] creatorElements = metadata.getElements(HandlerReference.CREATOR_HANDLER, HandlerReference.NAMESPACE);
 
-        for (Element creator: creatorElements) {
-            
-        	
-        	String fieldName		= creator.getAttribute("field");
-        	String componentName	= instanceManager.getClassName();
-        	
-        	FieldMetadata field		 = getPojoMetadata().getField(fieldName);
-			
-        	if (field == null) {
+		for (Element creator: creatorElements) {
+
+
+			String fieldName		= creator.getAttribute("field");
+			String componentName	= instanceManager.getClassName();
+
+			FieldMetadata field		 = getPojoMetadata().getField(fieldName);
+
+			if (field == null) {
 				throw new ConfigurationException("Malformed Manifest : the specified creator field '"+fieldName+"' is not defined in class "+componentName);
-        	}
+			}
 
-            String entity 				= creator.getAttribute("entity");
-            String relation				= creator.getAttribute("relation");
-        
-            if (entity == null && relation == null) {
+			String entity 				= creator.getAttribute("entity");
+			String relation				= creator.getAttribute("relation");
+
+			if (entity == null && relation == null) {
 				throw new ConfigurationException("Malformed Manifest : the creator entity or relation is not specified for field '"+fieldName+"' in class "+componentName);
-            }
+			}
 
-            if (entity != null && relation == null) {
-                instantiateEntityCreator(entity);
-                fieldToContext.put(fieldName,entity);
-            }
-            
-            if (entity != null && relation != null) {
-            	instantiateRelationCreator(relation);
-            	fieldToContext.put(fieldName,relation);
-            }
-           
-            instanceManager.register(getPojoMetadata().getField(fieldName),this);
-        }
-    }
+			if (entity != null && relation == null) {
+				instantiateEntityCreator(entity);
+				fieldToContext.put(fieldName,entity);
+			}
+
+			if (entity != null && relation != null) {
+				instantiateRelationCreator(relation);
+				fieldToContext.put(fieldName,relation);
+			}
+
+			instanceManager.register(getPojoMetadata().getField(fieldName),this);
+		}
+	}
 
 	/**
 	 * Instantiate, if necessary, the creator associated with a given entity
 	 */
 	private void instantiateEntityCreator(String entity) {
-		
+
 		ComponentCreator creator = creators.get(entity);
 		if (creator == null) {
 			creator = new EntityCreator(entity);
@@ -95,44 +90,44 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 	 *Instantiate, if necessary, the creator associated with a given relation
 	 */
 	private void instantiateRelationCreator(String relation) {
-		
+
 		ComponentCreator creator = creators.get(relation);
 		if (creator == null) {
 			creator = new RelationCreator(relation);
 			creators.put(relation,creator);
 		}
 	}
-    
+
 	@Override
-    public Object onGet(Object pojo, String fieldName, Object value){
-    	return creators.get(fieldToContext.get(fieldName));
-    }
+	public Object onGet(Object pojo, String fieldName, Object value){
+		return creators.get(fieldToContext.get(fieldName));
+	}
 
-    @Override
-    public void onSet(Object pojo, String fieldName, Object value) {
-    }
+	@Override
+	public void onSet(Object pojo, String fieldName, Object value) {
+	}
 
-    /**
-     * Binds an iPOJO factory, it verifies that the factory is not required by any  
-     */
-    @Bind(id="ipojo.factory", aggregate=true, proxy=false, optional=true)
-    public void bindFactory(Factory factory, ServiceReference<Factory> reference) {
-    	for (ComponentCreator creator : creators.values()) {
+	/**
+	 * Binds an iPOJO factory, it verifies that the factory is not required by any
+	 */
+	@Bind(id="ipojo.factory", aggregate=true, proxy=false, optional=true)
+	public void bindFactory(Factory factory, ServiceReference<Factory> reference) {
+		for (ComponentCreator creator : creators.values()) {
 			if (creator.shouldBind(reference)) {
 				creator.bindFactory(factory);
 			}
 		}
-    }
+	}
 
-    @Unbind(id="ipojo.factory")
-    public void unbindFactory(Factory factory, ServiceReference<Factory> reference) {
-    	for (ComponentCreator creator : creators.values()) {
+	@Unbind(id="ipojo.factory")
+	public void unbindFactory(Factory factory, ServiceReference<Factory> reference) {
+		for (ComponentCreator creator : creators.values()) {
 			if (creator.shouldBind(reference)) {
 				creator.unbindFactory();
 			}
 		}
-    }
-    
+	}
+
 	@Override
 	public void start() {
 	}
@@ -141,7 +136,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 	public void stop() {
 	}
 
-	
+
 	@Override
 	public String getName() {
 		return getInstanceManager().getClassName();
@@ -150,15 +145,15 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 	@Override
 	public Set<String> getProvidedEntities() {
 		return creators.keySet().stream()
-					.filter(item -> creators.get(item) instanceof EntityCreator)
-					.collect(Collectors.toSet());
+				.filter(item -> creators.get(item) instanceof EntityCreator)
+				.collect(Collectors.toSet());
 	}
 
 	@Override
 	public Set<String> getProvidedRelations() {
 		return creators.keySet().stream()
-					.filter(item -> creators.get(item) instanceof RelationCreator)
-					.collect(Collectors.toSet());
+				.filter(item -> creators.get(item) instanceof RelationCreator)
+				.collect(Collectors.toSet());
 	}
 
 	@Override
@@ -166,7 +161,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		if (creators.get(contextItem) == null) {
 			return false;
 		}
-		
+
 		return creators.get(contextItem) != null ? creators.get(contextItem).isEnabled(): false;
 	}
 
@@ -175,7 +170,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		if (creators.get(contextItem) == null) {
 			return false;
 		}
-		
+
 		return creators.get(contextItem).setEnabled(true);
 	}
 
@@ -184,7 +179,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		if (creators.get(contextItem) == null) {
 			return false;
 		}
-		
+
 		return creators.get(contextItem).setEnabled(false);
 	}
 
@@ -193,19 +188,19 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		if (creators.get(contextItem) == null) {
 			return Collections.emptySet();
 		}
-		
+
 		return creators.get(contextItem).getInstanceDeclarations(instance -> includePending || instance.isInstantiated())
-					.map(InstanceDeclaration::getName)
-					.collect(Collectors.toSet());
+				.map(InstanceDeclaration::getName)
+				.collect(Collectors.toSet());
 	}
 
 	@Override
 	public boolean deleteInstances(String contextItem, boolean onlyPending) {
-		
+
 		if (creators.get(contextItem) == null) {
 			return false;
 		}
-		
+
 		Set<String> instances = creators.get(contextItem).getInstanceDeclarations(instance -> (!onlyPending) || !instance.isInstantiated())
 				.map(InstanceDeclaration::getName)
 				.collect(Collectors.toSet());
@@ -213,21 +208,21 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		for (String instance : instances) {
 			creators.get(contextItem).delete(instance);
 		}
-		
+
 		return true;
 	}
-	
-    private static class RelationCreator extends ComponentCreator implements Creator.Relation<Object,Object> {
 
-    	/**
-    	 * The relation created by this factory
-    	 */
-    	private final String relation;
-     	
-        protected RelationCreator(String relation) {
-        	super("Relation"+relation);
-        	this.relation = relation;
-        }
+	private static class RelationCreator extends ComponentCreator implements Creator.Relation<Object,Object> {
+
+		/**
+		 * The relation created by this factory
+		 */
+		private final String relation;
+
+		protected RelationCreator(String relation) {
+			super("Relation"+relation);
+			this.relation = relation;
+		}
 
 		@Override
 		public boolean shouldBind(ServiceReference<Factory> referenceFactory) {
@@ -238,23 +233,25 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		private final String id(String sourceId, String targetId) {
 			return relation+"["+sourceId+"-"+targetId+"]";
 		}
-		
+
 		@Override
-		public void create(String sourceId, String targetId) {
-			
+		public String create(String sourceId, String targetId) {
+
 			String id	= id(sourceId,targetId);
 			if (this.instances.containsKey(id)) {
 				throw new IllegalArgumentException("Relation "+relation+" from "+sourceId+" to "+targetId+" already created");
 			}
-			
-			Dictionary<String, Object> configuration = new Hashtable<String,Object>();
-			
+
+			Dictionary<String, Object> configuration = new Hashtable<>();
+
 			configuration.put("instance.name",id);
 			configuration.put("relation.id",relation);
 			configuration.put("relation.source.id",sourceId);
 			configuration.put("relation.target.id",targetId);
-			
+
 			super.create(new InstanceDeclaration(id,configuration));
+
+			return id;
 		}
 
 
@@ -262,17 +259,17 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		public void delete(String sourceId, String targetId) {
 			delete(id(sourceId,targetId));
 		}
-		
+
 		@Override
 		public void delete(String id) {
 			super.delete(id);
 		}
-		
+
 		@Override
 		public Set<String> getInstances() {
 			return getInstanceDeclarations()
-						.map(InstanceDeclaration::getName)
-						.collect(Collectors.toSet());
+					.map(InstanceDeclaration::getName)
+					.collect(Collectors.toSet());
 		}
 
 		@Override
@@ -282,20 +279,38 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 				delete(instance);
 			}
 		}
-    }
-    
-    private static class EntityCreator extends ComponentCreator implements Creator.Entity<Object> {
 
-    	/**
-    	 * The entity created by this factory
-    	 */
-    	private final String entity;
+		@Override
+		public Relation getInstance(String id) {
+			InstanceDeclaration declaration = this.instances.get(id);
+			if (declaration == null) {
+				return null;
+			}
 
-        protected EntityCreator(String entity){
-        	super("Entity "+entity);
-        	
-        	this.entity = entity;
-        }
+			if (declaration.instance == null) {
+				return null;
+			}
+
+			if (! (declaration.instance instanceof InstanceManager)) {
+				return null;
+			}
+
+			return (Relation)((InstanceManager)declaration.instance).getPojoObject();
+		}
+	}
+
+	private static class EntityCreator extends ComponentCreator implements Creator.Entity<Object> {
+
+		/**
+		 * The entity created by this factory
+		 */
+		private final String entity;
+
+		protected EntityCreator(String entity){
+			super("Entity "+entity);
+
+			this.entity = entity;
+		}
 
 		@Override
 		public boolean shouldBind(ServiceReference<Factory> referenceFactory) {
@@ -307,47 +322,47 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		public void create(String id) {
 			create(id,null);
 		}
-		
+
 		@Override
 		public void create(String id, Map<String, Object> initialization) {
-			
+
 			if (this.instances.containsKey(id)) {
 				throw new IllegalArgumentException("Entity "+id+" already created");
 			}
-			
+
 			int endPackageName = entity.lastIndexOf('.');
 			String qualifiedName = (endPackageName != -1 ? entity.substring(0, endPackageName+1) : "")+id;
 
 			Dictionary<String, Object> configuration = new Hashtable<String,Object>();
-			
+
 			configuration.put("instance.name",qualifiedName);
 			configuration.put(ContextEntity.CONTEXT_ENTITY_ID,id);
-			
+
 			if (initialization != null) {
-	            configuration.put("context.entity.init",initialization);
+				configuration.put("context.entity.init",initialization);
 			}
-			
+
 			super.create(new InstanceDeclaration(id,configuration) {
-				
+
 				@Override
 				public void dispose() {
-					
+
 					/**
 					 * For entities we try to save the state of the entity before disposing it
 					 */
 					if (this.instance != null) {
 						String handlerId 						= HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER;
 						HandlerDescription handlerDescription	= instance.getInstanceDescription().getHandlerDescription(handlerId);
-						
+
 						if (handlerDescription instanceof EntityHandler.EntityHandlerDescription) {
 							ContextEntity entity = (EntityHandler.EntityHandlerDescription) handlerDescription;
 							configuration.put("context.entity.init",entity.dumpState());
 						}
 					}
-					
+
 					super.dispose();
 				}
-				
+
 			});
 		}
 
@@ -355,30 +370,30 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		public void delete(String id) {
 			super.delete(id);
 		}
-		
+
 		@Override
 		public Object getInstance(String id) {
 			InstanceDeclaration declaration = this.instances.get(id);
 			if (declaration == null) {
 				return null;
 			}
-			
+
 			if (declaration.instance == null) {
 				return null;
 			}
-			
+
 			if (! (declaration.instance instanceof InstanceManager)) {
 				return null;
 			}
-			
+
 			return ((InstanceManager)declaration.instance).getPojoObject();
 		}
-		
+
 		@Override
 		public Set<String> getInstances() {
 			return getInstanceDeclarations()
-						.map(InstanceDeclaration::getName)
-						.collect(Collectors.toSet());
+					.map(InstanceDeclaration::getName)
+					.collect(Collectors.toSet());
 		}
 
 		@Override
@@ -388,38 +403,38 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 				delete(instance);
 			}
 		}
-		
-    }
 
-    @Override
-    public HandlerDescription getDescription() {
-        return new EntityCreatorHandlerDescription();
-    }
+	}
+
+	@Override
+	public HandlerDescription getDescription() {
+		return new EntityCreatorHandlerDescription();
+	}
 
 
-    public class EntityCreatorHandlerDescription extends HandlerDescription {
+	public class EntityCreatorHandlerDescription extends HandlerDescription {
 
-        private EntityCreatorHandlerDescription() {
-        	super(CreatorHandler.this);
-        }
+		private EntityCreatorHandlerDescription() {
+			super(CreatorHandler.this);
+		}
 
-        public synchronized Element getHandlerInfo() {
-            
-            Element creatorHandlerDescription = super.getHandlerInfo();
+		public synchronized Element getHandlerInfo() {
 
-            for (Map.Entry<String,String> injectedField : fieldToContext.entrySet()) {
-            	String fieldName 		= injectedField.getValue();
-            	ComponentCreator creator	= creators.get(injectedField.getValue());
+			Element creatorHandlerDescription = super.getHandlerInfo();
 
-                Element creatorElement = new Element("Creator","");
-                creatorElement.addAttribute(new Attribute("field",fieldName));
-                creatorElement.addAttribute(new Attribute("context", creator.getDescription()));
-                
-                creatorHandlerDescription.addElement(creatorElement);
+			for (Map.Entry<String,String> injectedField : fieldToContext.entrySet()) {
+				String fieldName 		= injectedField.getValue();
+				ComponentCreator creator	= creators.get(injectedField.getValue());
+
+				Element creatorElement = new Element("Creator","");
+				creatorElement.addAttribute(new Attribute("field",fieldName));
+				creatorElement.addAttribute(new Attribute("context", creator.getDescription()));
+
+				creatorHandlerDescription.addElement(creatorElement);
 			}
-            
-             return creatorHandlerDescription;
-        }
-    }
+
+			return creatorHandlerDescription;
+		}
+	}
 
 }
