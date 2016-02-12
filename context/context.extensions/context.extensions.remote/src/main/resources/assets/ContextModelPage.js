@@ -104,24 +104,33 @@ function graphDraw(){
 
     var options = {
         nodes: {
-            shape: 'circle',
+            shape: 'dot',
+            font:{
+                strokeWidth: 2,
+                strokeColor:'#FFFFFF'
+            },
             scaling: {
-                min: 10,
-                max: 30,
+                min: 20,
+                max: 35,
                 label: {
-                    min: 10,
+                    min: 18,
                     max: 30,
                     drawThreshold: 12,
                     maxVisible: 30
                 }
             }
-        }, edges:{
+        },
+        edges:{
             smooth: {forceDirection: 'none'}
-        }, interaction:{
+        },
+        interaction:{
             hover: true
         },
         physics: {
-            forceAtlas2Based: {springLength: 100},
+            forceAtlas2Based: {
+                centralGravity: 0.01,
+                springLength: 150
+            },
             minVelocity: 0.75,
             solver: 'forceAtlas2Based'
         }
