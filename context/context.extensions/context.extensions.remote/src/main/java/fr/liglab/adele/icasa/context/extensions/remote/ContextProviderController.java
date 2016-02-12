@@ -74,29 +74,27 @@ public class ContextProviderController extends DefaultController {
         return notFound();
     }
 
-    @Route(method = HttpMethod.GET, uri = "/context/providers/{id}/{implem}")
-    public Result getEntityProviderImpl(@Parameter(value = "id") String id, @Parameter(value = "implem") String implem) {
-        if ((id == null)||(implem == null)) {
-            return internalServerError(new NullPointerException("Provider param is null"));
-        }
-
-        ObjectNode result = json.newObject();
-
-        for (EntityProvider provider : entityProviders) {
-            if (! provider.getName().equals(id)) {
-                continue;
-            }
-            for (String implemSpecification : provider.getProvidedEntities()) {
-                if (implemSpecification.equals(implem)) {
-                    result.put(implemSpecification, provider.isEnabled(implemSpecification));
-                }
-            }
-            return ok(result);
-        }
-
-
-        return notFound();
-    }
+//    @Route(method = HttpMethod.GET, uri = "/context/providers/{id}/relations")
+//    public Result getEntityProviderRelations(@Parameter(value = "id") String id) {
+//        if (id == null) {
+//            return internalServerError(new NullPointerException("Provider id is null"));
+//        }
+//
+//        ObjectNode result = json.newObject();
+//
+//        for (EntityProvider provider : entityProviders) {
+//            if (! provider.getName().equals(id)) {
+//                continue;
+//            }
+//            if(provider instanceof RelationProvider){
+//                RelationProvider relationProvider = (RelationProvider)provider;
+//                String relationName = relationProvider.getName();
+//                result.put(relationName, relationProvider.isEnabled(relationName));
+//            }
+//            return ok(result);
+//        }
+//        return notFound();
+//    }
 
     @Route(method = HttpMethod.POST, uri = "/context/providers/{id}/{implem}/{state}")
     public Result switchEntityProviderState(@Parameter(value = "id") String id, @Parameter(value = "implem") String implem, @Parameter(value = "state") boolean state) {

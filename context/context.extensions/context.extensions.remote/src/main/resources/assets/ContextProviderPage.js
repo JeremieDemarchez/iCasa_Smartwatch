@@ -25,8 +25,8 @@ function drawProviderPanel(providerId,data){
     $.each(data,function(key,value){
         console.log("Draw For Each " + key + " value " + value);
         var row = $("<tr></tr>");
-        var specification =  $("<td>"+key+"</td>").attr('class', "col-md-9");
-        var status =  $("<td>"+value+"</td>").attr('class',"enabler btn col-md-1").attr('data-provider', providerId).attr('data-implem',key);
+        var specification =  $("<td>"+key+"</td>").attr('class', "col-md-8");
+        var status =  $("<td>"+value+"</td>").attr('class',"enabler btn col-md-2").attr('data-provider', providerId).attr('data-implem',key);
         updateButton(status, value);
 
         specification.appendTo(row);

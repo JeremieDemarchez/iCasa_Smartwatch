@@ -35,10 +35,7 @@ import org.wisdom.api.http.HttpMethod;
 import org.wisdom.api.http.Result;
 import org.wisdom.api.templates.Template;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Controller
 public class ContextModelController extends DefaultController {
@@ -58,19 +55,6 @@ public class ContextModelController extends DefaultController {
     @Requires(specification = Relation.class, optional = true)
     List<Relation> relations;
 
-    Map<ContextEntity, Object> entities_factories = new HashMap<ContextEntity, Object>();
-
-    @Bind(specification = ContextEntity.class, aggregate = true, optional = true)
-    void bindContextEntity(ContextEntity contextEntity, Map<String, Object> properties){
-        entities_factories.put(contextEntity, properties.get("factory.name"));
-
-    }
-
-    @Unbind(specification = ContextEntity.class)
-    void unbindContextEntity(ContextEntity contextEntity){
-        entities_factories.remove(contextEntity);
-    }
-
     /**
      * The action method returning the welcome page. It handles
      * HTTP GET request on the "/" URL.
@@ -87,13 +71,14 @@ public class ContextModelController extends DefaultController {
         ObjectNode result = json.newObject();
 
         for (ContextEntity entity : entities){
-            result.put(entity.getId(),true);
+            String id = entity.getId();
+            result.put(id, id.hashCode());
         }
         return ok(result);
     }
 
     @Route(method = HttpMethod.GET, uri = "/context/entities/{id}")
-    public Result getEntity(@Parameter(value = "id") String id){
+    public Result getEntity(@Parameter(value = "id") Integer id){
         if (id == null){
             return internalServerError(new NullPointerException(" id is null"));
         }
@@ -101,7 +86,7 @@ public class ContextModelController extends DefaultController {
         ObjectNode result = json.newObject();
 
         for (ContextEntity entity : entities){
-            if (id.equals(entity.getId())){
+            if (id.equals(entity.getId().hashCode())){
                 for (Map.Entry<String,Object> entry : entity.dumpState().entrySet()){
                     result.put(entry.getKey(),entry.getValue().toString());
                 }
@@ -112,7 +97,7 @@ public class ContextModelController extends DefaultController {
     }
 
     @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/services")
-    public Result getEntityServices(@Parameter(value = "id") String id){
+    public Result getEntityServices(@Parameter(value = "id") Integer id){
         if (id == null){
             return internalServerError(new NullPointerException(" id is null"));
         }
@@ -120,7 +105,7 @@ public class ContextModelController extends DefaultController {
         ObjectNode result = json.newObject();
 
         for (ContextEntity entity : entities){
-            if (id.equals(entity.getId())){
+            if (id.equals(entity.getId().hashCode())){
                 Set<String> services = entity.getServices();
                 for(String service : services){
                     result.put(service, true);
@@ -140,15 +125,16 @@ public class ContextModelController extends DefaultController {
         int i = 0;
         for (Relation relation : relations){
             result.put("relation"+i+"name",relation.getName());
-            result.put("relation"+i+"source",relation.getSource());
-            result.put("relation"+i+"target",relation.getTarget());
+            result.put("relation"+i+"nameId",relation.getName().hashCode());
+            result.put("relation"+i+"sourceId",relation.getSource().hashCode());
+            result.put("relation"+i+"targetId",relation.getTarget().hashCode());
             i++;
         }
         return ok(result);
     }
 
     @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/relations")
-    public Result getEntityRelations(@Parameter(value = "id") String id){
+    public Result getEntityRelations(@Parameter(value = "id") Integer id){
         if (id == null){
             return internalServerError(new NullPointerException(" id is null"));
         }
@@ -157,7 +143,7 @@ public class ContextModelController extends DefaultController {
 
         for (Relation relation : relations){
             String source = relation.getSource();
-            if (id.equals(source)){
+            if (id.equals(source.hashCode())){
                 result.put(relation.getName(),relation.getTarget());
 
             }

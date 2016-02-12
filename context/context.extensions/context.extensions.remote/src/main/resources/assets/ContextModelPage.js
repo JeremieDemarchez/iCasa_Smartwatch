@@ -13,7 +13,7 @@ var nodes, edges, network, columnInfo;
 function createNodeEntityPanel(elementId){
     $("#nodeEntityPanel"+elementId).remove();
     var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"nodeEntityPanel"+elementId);
-    var panelHeading =  $("<div>Entity : "+elementId+"</div>").attr('class',"panel-heading");
+    var panelHeading =  $("<div>Entity : "+nodes.get(elementId).label +"</div>").attr('class',"panel-heading");
 
     var panelServices = $("<div></div>").attr('class',"panel panel-info").attr('id',"servicesPanel"+elementId);
     var panelServicesHeading =  $("<div>Context Services</div>").attr('class',"panel-heading").attr('data-toggle','collapse').attr('href',"#servicesPanelInfo");
@@ -118,8 +118,7 @@ function graphDraw(){
         }, edges:{
             smooth: {forceDirection: 'none'}
         }, interaction:{
-            hover: true,
-            navigationButtons: true
+            hover: true
         },
         physics: {
             forceAtlas2Based: {springLength: 100},
@@ -192,7 +191,7 @@ function graphInit(time) {
         $.each(data,function(key,value){
             console.log('Node Id:', key);
             nodes.add({
-                id: key,
+                id: value,
                 label: key
             });
         });
@@ -202,14 +201,17 @@ function graphInit(time) {
         var numberOfRelations = data.size;
         for(var i = 0;i<numberOfRelations;i ++){
             var name = data["relation"+i+"name"];
-            var source = data["relation"+i+"source"];
-            var target = data["relation"+i+"target"];
-            if ((null != nodes.get(source)) && (null != nodes.get(target))){
-                var edgeId = name+source+target;
+            var nameId = data["relation"+i+"nameId"];
+            var sourceId = data["relation"+i+"sourceId"];
+            var targetId = data["relation"+i+"targetId"];
+            console.log('Relation with Id: ', name+"/"+nameId+"/"+sourceId+"/"+targetId);
+            if ((null != nodes.get(sourceId)) && (null != nodes.get(targetId))){
+                var edgeId = ""+nameId+""+sourceId+""+targetId;
+                console.log('Relation: ', name);
                 edges.add({
                     id: edgeId,
-                    from: source,
-                    to: target,
+                    from: sourceId,
+                    to: targetId,
                     arrows:'to',
                     name: name,
                     font: {align: 'horizontal'}
