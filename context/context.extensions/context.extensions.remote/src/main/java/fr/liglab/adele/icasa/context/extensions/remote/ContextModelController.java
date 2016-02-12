@@ -21,12 +21,10 @@ package fr.liglab.adele.icasa.context.extensions.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.runtime.Relation;
-import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
+import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
-import org.apache.felix.ipojo.util.Logger;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Parameter;

@@ -1,5 +1,6 @@
 package fr.liglab.adele.icasa.context.runtime;
 
+import fr.liglab.adele.icasa.context.model.Relation;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
