@@ -202,7 +202,7 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 	@Override
 	public boolean deleteInstances(String contextItem, boolean onlyPending) {
 		
-		if (creators.get(contextItem) != null) {
+		if (creators.get(contextItem) == null) {
 			return false;
 		}
 		

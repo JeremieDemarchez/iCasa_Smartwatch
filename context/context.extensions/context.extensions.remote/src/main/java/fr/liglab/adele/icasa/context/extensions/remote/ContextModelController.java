@@ -22,6 +22,7 @@ package fr.liglab.adele.icasa.context.extensions.remote;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.runtime.Relation;
+import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
@@ -39,6 +40,7 @@ import org.wisdom.api.templates.Template;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 @Controller
 public class ContextModelController extends DefaultController {
@@ -111,8 +113,8 @@ public class ContextModelController extends DefaultController {
         return notFound();
     }
 
-    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/factory")
-    public Result getEntityFactory(@Parameter(value = "id") String id){
+    @Route(method = HttpMethod.GET, uri = "/context/entities/{id}/services")
+    public Result getEntityServices(@Parameter(value = "id") String id){
         if (id == null){
             return internalServerError(new NullPointerException(" id is null"));
         }
@@ -121,8 +123,10 @@ public class ContextModelController extends DefaultController {
 
         for (ContextEntity entity : entities){
             if (id.equals(entity.getId())){
-                //TODO: getFactory
-                result.put(entities_factories.get(entity).toString(), true);
+                Set<String> services = entity.getServices();
+                for(String service : services){
+                    result.put(service, true);
+                }
                 return ok(result);
             }
         }

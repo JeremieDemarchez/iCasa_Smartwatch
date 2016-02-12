@@ -24,7 +24,7 @@ public class Test {
     @Requires(proxy=false)
     LocationManager locationManager;
 
-    @Requires(optional = true)
+    @Requires(optional = true,proxy=false,nullable = false)
     ContextEntityDescription description;
 
     @Requires(specification = Factory.class,optional = false,proxy = false,filter = "("+ ContextEntity.ENTITY_CONTEXT_SERVICES+"=*)")

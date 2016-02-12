@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.HandlerFactory;
@@ -27,6 +29,7 @@ import org.apache.felix.ipojo.metadata.Element;
 import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.util.Property;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
+import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.ContextService;
@@ -37,6 +40,11 @@ import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference
 @Provides(specifications = ContextEntity.class)
 
 public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
+
+	/**
+	 * The list of exposed context services
+	 */
+	private final Set<String> services 			= new HashSet<>();
 
 	/**
      * The list of states defined in the implemented context services
@@ -59,6 +67,17 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
      * The provider handler of my associated iPOJO component instance
      */
     private ProvidedServiceHandler providerHandler;
+
+    /**
+     * The Wisdom Scheduler used to handle periodic tasks
+     */
+    @Requires(id="scheduler",proxy = false)
+    public ManagedScheduledExecutorService scheduler;
+    
+    /**
+     * The list of periodic task to execute on behalf of interceptors
+     */
+    private final List<PeriodicTask> tasks = new ArrayList<PeriodicTask>();
     
     /**
      * Updates the value of a state property, propagating the change to the published service properties
@@ -118,11 +137,27 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 
         if (state == InstanceManager.VALID) {
             instanceIsActive = true;
+            
             propagate(new Hashtable<>(stateValues));
+            
+            /*
+             * restart periodic tasks
+             */
+            for (PeriodicTask task : tasks) {
+				task.start();
+			}
         }
 
         if (state == InstanceManager.INVALID) {
             instanceIsActive = false;
+            
+            /*
+             * stop periodic tasks
+             */
+            for (PeriodicTask task : tasks) {
+				task.stop();
+			}
+            
          }
     }
     
@@ -136,13 +171,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         providerHandler = null;
     }
 
-    /**
-     * Wisdom Scheduler dependency
-     */
-    @Requires(specification = ManagedScheduledExecutorService.class,id="scheduler",proxy = false)
-    public ManagedScheduledExecutorService scheduler;
-
-
+    
     @SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
     public void configure(Element element, Dictionary rawConfiguration) throws ConfigurationException {
@@ -159,6 +188,13 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
          */
         for(Class<?> service : getInstanceManager().getClazz().getInterfaces()) {
         	extractDefinedStatesForService(service);
+
+			/**
+			 * keeps only exposed context services
+			 */
+			if (service.isAnnotationPresent(ContextService.class)) {
+				services.add(service.getName());
+			}
         }
 
         /*
@@ -284,12 +320,12 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
     	if (!service.isAnnotationPresent(ContextService.class)) {
     		return;
     	}
-    	
+
     	String contextServiceName = service.getAnnotation(ContextService.class).value();
     	if (contextServiceName.equals(ContextService.DEFAULT_VALUE)) {
     		contextServiceName = service.getSimpleName().toLowerCase();
     	}
-    			
+
     	/*
     	 * look for all states defined in the context service interface.
     	 * 
@@ -312,6 +348,67 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         }
     }
     
+    /**
+     * Add a new periodic task that will be executed on behalf of registered interceptors.
+     * 
+     * The action to be performed is specified as a consumer that will be given access to the component
+     * instance 
+     */
+    public void schedule(Consumer<InstanceManager> action, long period, TimeUnit unit) {
+    	tasks.add(new PeriodicTask(action,period,unit));
+    }
+    
+    
+    /**
+     * This class keeps track of all the information required to schedule periodic tasks
+     */
+    private class PeriodicTask {
+    		
+    	private final Consumer<InstanceManager> action;
+    	
+    	private final long period;
+    	
+    	private final TimeUnit unit;
+
+		private ManagedScheduledFutureTask<?> taskHandle;
+    	
+    	public PeriodicTask(Consumer<InstanceManager> action, long period, TimeUnit unit) {
+    		this.action = action;
+    		this.period	= period;
+    		this.unit	= unit;
+    		
+    		/*
+    		 * If the instance is active schedule the task immediately
+    		 */
+    		if (instanceIsActive) {
+    			start();
+    		}
+    	}
+    	
+    	/**
+    	 * Start executing the action periodically
+    	 */
+    	public void start() {
+    		taskHandle = scheduler.scheduleAtFixedRate( 
+    						() -> { 
+    							if (instanceIsActive) {
+        							action.accept(getInstanceManager());
+    							}
+    						},
+    						period, period, unit);
+    	}
+    	
+    	/**
+    	 * Stop executing the action
+    	 */
+    	public void stop() {
+    		if (taskHandle != null) {
+    			taskHandle.cancel(true);
+    			taskHandle = null;
+    		}
+    	}
+    }
+    
     @Override
     public HandlerDescription getDescription() {
         return new EntityHandlerDescription();
@@ -329,6 +426,11 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
         private EntityHandlerDescription() {
         	super(EntityHandler.this);
         }
+
+		@Override
+		public Set<String> getServices() {
+			return EntityHandler.this.getServices();
+		}
 
 		@Override
 		public String getId() {
@@ -350,12 +452,18 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity  {
 			return EntityHandler.this.dumpState();
 		}
     }
-    
-    /**
+
+	/**
      *
      * Context Entity Implementation
      *
      */
+
+	@Override
+	public Set<String> getServices() {
+		return services;
+	}
+
     @Override
     public String getId() {
     	return (String) stateValues.get(CONTEXT_ENTITY_ID);
