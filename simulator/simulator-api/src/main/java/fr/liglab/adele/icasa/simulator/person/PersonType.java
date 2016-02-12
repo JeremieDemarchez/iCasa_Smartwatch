@@ -20,15 +20,18 @@ package fr.liglab.adele.icasa.simulator.person;
  *
  * 
  */
-public class PersonType {
+public enum PersonType {
+	OLD_MAN("Old man"),OLD_WOMAN("Old woman"),WOMAN("Woman"), MAN("Man"),
+	GRANDFATHER("Grandfather"),GRANDMOTHER("Grandmother"),FATHER("Father"),MOTHER("Mother"),
+	BOY("Boy"),GIRL("Girl");
 
-	private String name;
+	private final String name;
 
 	/**
 	 * Default constructor
 	 * @param name person type name
 	 */
-	public PersonType(String name) {
+	private PersonType(String name) {
 		this.name = name;
 	}
 
@@ -41,24 +44,45 @@ public class PersonType {
 		return name;
 	}
 
-	@Override
-	public boolean equals(Object o) {
-		if (this == o)
-			return true;
-		if (o == null || getClass() != o.getClass())
-			return false;
-
-		PersonType that = (PersonType) o;
-
-		if (!name.equals(that.name))
-			return false;
-
-		return true;
+	/**
+	 *
+	 *
+	 * @return person type name
+	 */
+	public static PersonType getPersonType(String personType) {
+		if (personType == null){
+			return null;
+		}
+		if (personType.equals(OLD_MAN.getName())){
+			return OLD_MAN;
+		}
+		if (personType.equals(OLD_WOMAN.getName())){
+			return OLD_WOMAN;
+		}
+		if (personType.equals(WOMAN.getName())){
+			return WOMAN;
+		}
+		if (personType.equals(MAN.getName())){
+			return MAN;
+		}
+		if (personType.equals(GRANDFATHER.getName())){
+			return GRANDFATHER;
+		}
+		if (personType.equals(GRANDMOTHER.getName())){
+			return GRANDMOTHER;
+		}
+		if (personType.equals(FATHER.getName())){
+			return FATHER;
+		}
+		if (personType.equals(MOTHER.getName())){
+			return MOTHER;
+		}
+		if (personType.equals(BOY.getName())){
+			return BOY;
+		}
+		if (personType.equals(GIRL.getName())){
+			return GIRL;
+		}
+		return null;
 	}
-
-	@Override
-	public int hashCode() {
-		return name.hashCode();
-	}
-
 }
