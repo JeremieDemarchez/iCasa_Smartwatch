@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.runtime;
+package fr.liglab.adele.icasa.context.model;
 
 /**
  * Created by aygalinc on 15/09/15.

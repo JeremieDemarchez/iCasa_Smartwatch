@@ -1,21 +1,14 @@
 package fr.liglab.adele.icasa.context.runtime.handler.relation;
 
-import java.util.Dictionary;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
-
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
+import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.InstanceManager;
 import org.apache.felix.ipojo.PrimitiveHandler;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.BindingPolicy;
-import org.apache.felix.ipojo.annotations.Handler;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.ServiceProperty;
-import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.annotations.*;
 import org.apache.felix.ipojo.dependency.interceptors.DependencyInterceptor;
 import org.apache.felix.ipojo.dependency.interceptors.ServiceTrackingInterceptor;
 import org.apache.felix.ipojo.dependency.interceptors.TransformedServiceReference;
@@ -25,10 +18,11 @@ import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.util.DependencyModel;
 import org.osgi.framework.BundleContext;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
-import fr.liglab.adele.icasa.context.runtime.Relation;
-import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
+import java.util.Dictionary;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Handler(name = HandlerReference.RELATION_HANDLER, namespace = HandlerReference.NAMESPACE)
 @Provides(specifications = ServiceTrackingInterceptor.class)
