@@ -37,13 +37,6 @@ public @ContextService interface Person extends LocatedObject {
 	public String getName();
 
 	/**
-	 * Sets the person name.
-	 * 
-	 * @param name the person new name.
-	 */
-	public void setName(String name);
-
-	/**
 	 * Gets the person type.
 	 * 
 	 * @return The person type.

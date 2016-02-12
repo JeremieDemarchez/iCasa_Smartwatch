@@ -22,9 +22,7 @@ import java.util.Set;
  */
 public interface PersonProvider {
 
-    public void createPerson(String personId, String personName, String personType);
-
-    public String createPerson(String personName, String personType);
+    public void createPerson(String personName, String personType);
 
     public void removePersonById(String personId);
 

@@ -37,24 +37,13 @@ public class PersonProviderImpl implements PersonProvider {
     @Creator.Field Creator.Entity<PersonImpl> personCreator;
 
     @Override
-    public void createPerson(String personId, String personName, String personType) {
+    public void createPerson(String personName, String personType) {
         Map<String, Object> properties = new HashMap<>();
         properties.put(State.ID(Person.class,Person.NAME), personName);
         properties.put(State.ID(Person.class,Person.TYPE), PersonType.getPersonType(personType));
-        properties.put(State.ID(Person.class,Person.OBJECT_X), 10);
-        properties.put(State.ID(Person.class,Person.OBJECT_Y), 10);
-        properties.put(State.ID(Person.class,Person.ZONE), Person.LOCATION_UNKNOWN);
-
         System.out.println(properties);
 
-        personCreator.create(personId, properties);
-    }
-
-    @Override
-    public String createPerson(String personName, String personType) {
-        String id = UUID.randomUUID().toString();
-        createPerson(id, personName, personType);
-        return id;
+        personCreator.create(personName, properties);
     }
 
     @Override

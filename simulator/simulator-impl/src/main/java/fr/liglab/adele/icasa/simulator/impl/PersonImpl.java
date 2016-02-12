@@ -16,8 +16,8 @@
 package fr.liglab.adele.icasa.simulator.impl;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
@@ -27,13 +27,11 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 
-import java.util.List;
-
 /**
  * Created by Eva on 12/02/2016.
  */
-@ContextEntity(services=Person.class)
-public class PersonImpl implements Person{
+@ContextEntity(services={Person.class,LocatedObject.class})
+public class PersonImpl implements Person,LocatedObject{
 
     @State.Field(service = Person.class, state = NAME, directAccess = true)
     private String personName;
@@ -42,11 +40,11 @@ public class PersonImpl implements Person{
     private PersonType personType;
 
     /*TODO : le type n'étant pas spécifié, je me suis basée sur position (pour être en accord avec l'interface)*/
-    @State.Field(service = LocatedObject.class, state = OBJECT_X, directAccess = true)
+    @State.Field(service = LocatedObject.class, state = OBJECT_X, directAccess = true,value = "0")
     private int x;
 
     /*TODO : le type n'étant pas spécifié, je me suis basée sur position (pour être en accord avec l'interface)*/
-    @State.Field(service = LocatedObject.class, state = OBJECT_Y, directAccess = true)
+    @State.Field(service = LocatedObject.class, state = OBJECT_Y, directAccess = true,value = "0")
     private int y;
 
     public static final String RELATION_IS_CONTAINED = "is contained";
@@ -71,11 +69,6 @@ public class PersonImpl implements Person{
     @Override
     public String getName() {
         return personName;
-    }
-
-    @Override
-    public void setName(String name) {
-        this.personName = name;
     }
 
     @Override
