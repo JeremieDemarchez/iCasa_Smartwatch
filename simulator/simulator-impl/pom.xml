@@ -81,12 +81,6 @@
             <version>1.2.7-SNAPSHOT</version>
         </dependency>
 
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
-            <artifactId>device.light</artifactId>
-            <version>${project.version}</version>
-        </dependency>
     </dependencies>
 
     <build>
@@ -98,10 +92,8 @@
                     <instructions>
                         <Private-Package>fr.liglab.adele.icasa.simulator.context.impl,
                             fr.liglab.adele.icasa.simulator.impl,
+                            fr.liglab.adele.icasa.simulator.provider,
                             fr.liglab.adele.icasa.simulator.commands.impl,
-                            impl,
-                            impl,
-                            impl,
                             fr.liglab.adele.icasa.simulator.script.executor.impl,
                             fr.liglab.adele.icasa.simulator.script.executor.impl.commands</Private-Package>
                         <Export-Package />

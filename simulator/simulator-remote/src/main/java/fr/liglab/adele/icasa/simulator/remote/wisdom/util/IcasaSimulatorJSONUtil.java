@@ -40,7 +40,7 @@ public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 				personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
 				personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
 			}
-			personJSON.putOnce(PersonJSON.LOCATION_PROP, person.getLocation());
+			personJSON.putOnce(PersonJSON.LOCATION_PROP, person.getZone());
 		} catch (JSONException e) {
 			e.printStackTrace();
 			personJSON = null;

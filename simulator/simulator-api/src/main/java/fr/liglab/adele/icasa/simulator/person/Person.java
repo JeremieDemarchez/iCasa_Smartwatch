@@ -15,17 +15,19 @@
  */
 package fr.liglab.adele.icasa.simulator.person;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.location.LocatedObject;
 
 /**
  * This interface represents a person in the icasa simulated Environment
  *
  */
-public interface Person extends LocatedObject {
+public @ContextService interface Person extends LocatedObject {
 
-	public static final int DEFAULT_WIDTH = 50;
+	@State String NAME 	= "name";
 
-	public static final int DEFAULT_HEIGHT = 50;
+	@State String TYPE	= "type";
 
 	/**
 	 * Gets the person name.
@@ -54,14 +56,5 @@ public interface Person extends LocatedObject {
 	 * @param personType the new person type.
 	 */
 	public void setPersonType(PersonType personType);
-
-	/**
-	 * Gets the person logical location.
-	 * 
-	 * @return the person location (zone name) or null.
-	 */
-	public String getLocation();
-
-
 
 }
