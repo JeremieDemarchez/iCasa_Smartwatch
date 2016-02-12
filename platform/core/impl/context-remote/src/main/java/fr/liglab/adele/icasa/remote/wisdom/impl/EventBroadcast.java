@@ -19,6 +19,12 @@ import fr.liglab.adele.icasa.Constants;
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.clockservice.ClockListener;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
+import fr.liglab.adele.icasa.device.light.DimmerLight;
+import fr.liglab.adele.icasa.device.light.Photometer;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.device.temperature.Cooler;
+import fr.liglab.adele.icasa.device.temperature.Heater;
+import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.RemoteEventBroadcast;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
@@ -241,6 +247,234 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 		JSONObject json = new JSONObject();
 		try {
 			json.put("deviceId", binaryLight.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Bind(id="dimmerLights",specification = DimmerLight.class,optional = true,aggregate = true)
+	public synchronized void bindDimmerLight(DimmerLight dimmerLight){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", dimmerLight.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getDimmerLightJSON(dimmerLight));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="dimmerLights")
+	public synchronized void modifiedDimmerLight(DimmerLight dimmerLight){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", dimmerLight.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getDimmerLightJSON(dimmerLight));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="dimmerLights")
+	public synchronized void unbindDimmerLight(DimmerLight dimmerLight){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", dimmerLight.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Bind(id="thermometers",specification = Thermometer.class,optional = true,aggregate = true)
+	public synchronized void bindThermometer(Thermometer thermometer){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", thermometer.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getThermometerJSON(thermometer));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="thermometers")
+	public synchronized void modifiedThermometer(Thermometer thermometer){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", thermometer.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getThermometerJSON(thermometer));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="thermometers")
+	public synchronized void unbindThermometer(Thermometer thermometer){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", thermometer.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Bind(id="coolers",specification = Cooler.class,optional = true,aggregate = true)
+	public synchronized void bindCooler(Cooler cooler){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", cooler.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getCoolerJSON(cooler));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="coolers")
+	public synchronized void modifiedCooler(Cooler cooler){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", cooler.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getCoolerJSON(cooler));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="coolers")
+	public synchronized void unbindCooler(Cooler cooler){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", cooler.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Bind(id="heaters",specification = Heater.class,optional = true,aggregate = true)
+	public synchronized void bindHeater(Heater heater){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", heater.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getHeaterJSON(heater));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="heaters")
+	public synchronized void modifiedHeater(Heater heater){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", heater.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getHeaterJSON(heater));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="heaters")
+	public synchronized void unbindHeater(Heater heater){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", heater.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Bind(id="photometers",specification = Photometer.class,optional = true,aggregate = true)
+	public synchronized void bindPhotometer(Photometer photometer){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", photometer.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getPhotometerJSON(photometer));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="photometers")
+	public synchronized void modifiedPhotometer(Photometer photometer){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", photometer.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getPhotometerJSON(photometer));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="photometers")
+	public synchronized void unbindPhotometer(Photometer photometer){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", photometer.getSerialNumber());
+			sendEvent("device-removed", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Bind(id="presenceSensors",specification = PresenceSensor.class,optional = true,aggregate = true)
+	public synchronized void bindPresenceSensor(PresenceSensor presenceSensor){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", presenceSensor.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getPresenceSensorJSON(presenceSensor));
+			sendEvent("device-added", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Modified(id="presenceSensors")
+	public synchronized void modifiedPresenceSensor(PresenceSensor presenceSensor){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", presenceSensor.getSerialNumber());
+			json.put("device", IcasaJSONUtil.getPresenceSensorJSON	(presenceSensor));
+			sendEvent("device-position-update", json);
+		} catch (JSONException e) {
+			logger.error("Building message error" + json, e);
+			e.printStackTrace();
+		}
+	}
+
+	@Unbind(id="presenceSensors")
+	public synchronized void unbindPresenceSensor(PresenceSensor presenceSensor){
+		JSONObject json = new JSONObject();
+		try {
+			json.put("deviceId", presenceSensor.getSerialNumber());
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
