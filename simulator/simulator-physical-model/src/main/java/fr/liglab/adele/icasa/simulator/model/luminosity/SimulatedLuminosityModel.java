@@ -50,6 +50,9 @@ public class SimulatedLuminosityModel implements LuminosityModel{
     @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.CURRENT_LUMINOSITY)
     public double currentLuminosity;
 
+    @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.ZONE_ATTACHED)
+    public String zoneName;
+
     @Override
     public double getCurrentLuminosity() {
         return currentLuminosity;
