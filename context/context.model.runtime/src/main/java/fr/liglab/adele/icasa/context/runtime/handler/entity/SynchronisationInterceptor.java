@@ -3,6 +3,7 @@ package fr.liglab.adele.icasa.context.runtime.handler.entity;
 import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -18,7 +19,7 @@ import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 
 /**
- * Interceptor to handle state fields that are not handler by direct access, but using synchronisation
+ * Interceptor to handle state fields that are not handler by direct access, but using synchronization
  * functions (push,pull,apply) 
  */
 public class SynchronisationInterceptor implements FieldInterceptor, MethodInterceptor {
@@ -126,10 +127,28 @@ public class SynchronisationInterceptor implements FieldInterceptor, MethodInter
 	    		return supplier.get();
 	    	});
 	    	
-	    	/* TODO
+	    	
+	    	/*
+	    	 * Register periodic task if necessary
+	    	 */
 	    	Long period 	= Long.valueOf(state.getAttribute("period"));
 	    	TimeUnit unit	= TimeUnit.valueOf(state.getAttribute("unit"));
-	    	 */
+	    	
+	    	if (period != -1L) {
+	    		entityHandler.schedule(
+	    				(InstanceManager instance) -> {
+	    					
+	    					/*
+	    					 * Execute the pull function on the pojo object and notify a state change
+	    					 */
+	    			    	Function<Object,Object> pullFunction = pullFunctions.get(stateField);
+	    			    	if (pullFunction != null) {
+	    			    		Object pulledValue = pullFunction.apply(instance.getPojoObject());
+		    			    	entityHandler.update(stateId,pulledValue);
+	    			    	}
+	    				},
+	    				period, unit);
+	    	}
 	    }
 
         /*
