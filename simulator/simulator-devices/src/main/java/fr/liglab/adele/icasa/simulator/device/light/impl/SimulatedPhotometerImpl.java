@@ -87,30 +87,24 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Loca
         return serialNumber;
     }
 
-    @ContextEntity.State.Push(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
-    public double pushIlluminance(double illuminance){
-        return illuminance;
-    }
-
-    @Requires(id = "IlluminanceModelDependency",filter = "(luminositymodel.zone.attached=${locatedobject.object.zone})",optional = true)
-    LuminosityModel lum;
-
-    @Bind(id ="IlluminanceModelDependency")
+    @Bind(id ="IlluminanceModelDependency" ,filter = "(luminositymodel.zone.attached=${locatedobject.object.zone})",optional = true,aggregate = true)
     public void bindIllu(LuminosityModel model){
-        System.out.println("Bind " + FAULT_VALUE);
         pushIlluminance(model.getCurrentLuminosity());
     }
 
     @Modified(id = "IlluminanceModelDependency")
     public void modifiedIllu(LuminosityModel model){
-        System.out.println(" UPDATE " + FAULT_VALUE);
         pushIlluminance(model.getCurrentLuminosity());
     }
 
     @Unbind(id = "IlluminanceModelDependency")
     public void unbindIllu(LuminosityModel model){
-        System.out.println(" unbind " + FAULT_VALUE);
         pushIlluminance(FAULT_VALUE);
+    }
+
+    @ContextEntity.State.Push(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
+    public double pushIlluminance(double illuminance){
+        return illuminance;
     }
 
     @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
