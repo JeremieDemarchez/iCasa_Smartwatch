@@ -37,7 +37,7 @@ public @ContextService interface PresenceSensor extends GenericDevice {
      * 
      * @see #getSensedPresence()
      */
-    @State String PRESENCE_SENSOR_SENSED_PRESENCE = "presenceSensor.sensedPresence";
+    @State String PRESENCE_SENSOR_SENSED_PRESENCE = "sensedPresence";
     
     /**
      * Return the current presence sensed by this presence sensor.

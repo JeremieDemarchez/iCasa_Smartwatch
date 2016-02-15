@@ -72,6 +72,7 @@
 				<configuration>
 					<instructions>
 						<Private-Package>fr.liglab.adele.icasa.simulator.device.light.impl,
+							fr.liglab.adele.icasa.simulator.device.presence.impl,
 							fr.liglab.adele.icasa.simulator.device.provider,
 							fr.liglab.adele.icasa.simulator.device.temperature.impl
 						</Private-Package>

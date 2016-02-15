@@ -13,20 +13,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.person;
+package fr.liglab.adele.icasa.simulator.model.api;
 
-import java.util.Set;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.icasa.location.Zone;
 
-/**
- * Created by Eva on 12/02/2016.
- */
-public interface PersonProvider {
+public @ContextService interface PresenceModel {
 
-    public void createPerson(String personName, String personType);
+    public static final @State String CURRENT_PRESENCE = "current.presence";
 
-    public void removePerson(String personName);
+    public static final @State String ZONE_ATTACHED = "zone.attached";
 
-    public Set<String> getPersonTypes();
+    public boolean getCurrentPresence();
 
-    public void removeAllPersons();
+    public String getAttachedZone();
 }

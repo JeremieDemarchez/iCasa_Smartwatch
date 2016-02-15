@@ -75,6 +75,7 @@
                             fr.liglab.adele.icasa.simulator.model.temperature,
                             fr.liglab.adele.icasa.simulator.model.luminosity,
                             fr.liglab.adele.icasa.simulator.model.day.part,
+                            fr.liglab.adele.icasa.simulator.model.presence
                         </Private-Package>
                     </instructions>
                 </configuration>

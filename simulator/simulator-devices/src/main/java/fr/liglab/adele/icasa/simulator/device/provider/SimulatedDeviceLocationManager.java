@@ -21,6 +21,7 @@ import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImpl;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
+import fr.liglab.adele.icasa.simulator.device.presence.impl.SimulatedPresenceSensorImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
 import fr.liglab.adele.icasa.simulator.device.utils.Constant;
@@ -47,6 +48,8 @@ public class SimulatedDeviceLocationManager {
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedCoolerImpl,Zone> isInCoolerCreator;
 
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedHeaterImpl,Zone> isInHeaterCreator;
+
+    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedPresenceSensorImpl,Zone> isInPresenceSensor;
 
     @Bind(id = "simulatedDevices")
     public void bindSimulatedDevice(SimulatedDevice simulatedDevice){
@@ -108,6 +111,9 @@ public class SimulatedDeviceLocationManager {
         }
         if (device instanceof SimulatedHeaterImpl){
             return isInHeaterCreator;
+        }
+        if (device instanceof SimulatedPresenceSensorImpl){
+            return isInPresenceSensor;
         }
         return null;
     }

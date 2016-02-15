@@ -27,9 +27,6 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 
-/**
- * Created by Eva on 12/02/2016.
- */
 @ContextEntity(services={Person.class,LocatedObject.class})
 public class PersonImpl implements Person,LocatedObject{
 
@@ -39,11 +36,9 @@ public class PersonImpl implements Person,LocatedObject{
     @State.Field(service = Person.class, state = TYPE, directAccess = true)
     private PersonType personType;
 
-    /*TODO : le type n'étant pas spécifié, je me suis basée sur position (pour être en accord avec l'interface)*/
     @State.Field(service = LocatedObject.class, state = OBJECT_X, directAccess = true,value = "0")
     private int x;
 
-    /*TODO : le type n'étant pas spécifié, je me suis basée sur position (pour être en accord avec l'interface)*/
     @State.Field(service = LocatedObject.class, state = OBJECT_Y, directAccess = true,value = "0")
     private int y;
 

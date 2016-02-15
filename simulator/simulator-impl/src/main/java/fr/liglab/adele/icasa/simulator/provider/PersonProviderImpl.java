@@ -41,26 +41,13 @@ public class PersonProviderImpl implements PersonProvider {
         Map<String, Object> properties = new HashMap<>();
         properties.put(State.ID(Person.class,Person.NAME), personName);
         properties.put(State.ID(Person.class,Person.TYPE), PersonType.getPersonType(personType));
-        System.out.println(properties);
 
         personCreator.create(personName, properties);
     }
 
     @Override
-    public void removePersonById(String personId) {
-        personCreator.delete(personId);
-    }
-
-    @Override
-    public boolean removePersonByName(String personName) {
-        for (String pId : personCreator.getInstances()){
-            String pName = personCreator.getInstance(pId).getName();
-            if (pName.equals(personName)) {
-                removePersonById(pId);
-                return true;
-            }
-        }
-        return false;
+    public void removePerson(String personName) {
+        personCreator.delete(personName);
     }
 
     @Override

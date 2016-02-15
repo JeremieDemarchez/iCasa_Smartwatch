@@ -53,6 +53,7 @@ import fr.liglab.adele.icasa.simulator.device.SimulatedDeviceProvider;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImpl;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
+import fr.liglab.adele.icasa.simulator.device.presence.impl.SimulatedPresenceSensorImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
 import org.apache.felix.ipojo.annotations.*;
@@ -80,6 +81,8 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
     @Creator.Field Creator.Entity<SimulatedCoolerImpl> simulatedCoolerLightCreator;
 
     @Creator.Field Creator.Entity<SimulatedHeaterImpl> simulatedHeaterLightCreator;
+
+    @Creator.Field Creator.Entity<SimulatedPresenceSensorImpl> simulatedPresenceSensorCreator;
 
     @Validate
     public void start(){
@@ -134,6 +137,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
         returnSet.add(SimulatedPhotometerImpl.SIMULATED_PHOTOMETER);
         returnSet.add(SimulatedCoolerImpl.SIMULATED_COOLER);
         returnSet.add(SimulatedHeaterImpl.SIMULATED_HEATER);
+        returnSet.add(SimulatedPresenceSensorImpl.SIMULATED_PRESENCE_SENSOR);
         return returnSet;
     }
 
@@ -144,6 +148,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
         simulatedCoolerLightCreator.deleteAll();
         simulatedHeaterLightCreator.deleteAll();
         simulatedPhotometerLightCreator.deleteAll();
+        simulatedPresenceSensorCreator.deleteAll();
     }
 
     private Creator.Entity getCreator(String deviceType){
@@ -158,6 +163,8 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
                 return simulatedHeaterLightCreator;
             case SimulatedCoolerImpl.SIMULATED_COOLER:
                 return simulatedCoolerLightCreator;
+            case SimulatedPresenceSensorImpl.SIMULATED_PRESENCE_SENSOR:
+                return simulatedPresenceSensorCreator;
             default:return null;
         }
     }
