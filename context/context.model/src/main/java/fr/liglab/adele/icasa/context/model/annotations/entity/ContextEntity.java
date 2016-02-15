@@ -37,7 +37,15 @@ public @interface ContextEntity {
         @Target(ElementType.FIELD)
         public @interface Field {
 
-        	/**
+        	public static final Class<?> DEFAULT_OWNER = Object.class;
+        	
+			/**
+			 * The class of the service virtually owning the relation
+			 * 
+			 */
+		    Class<?> owner() default Object.class;
+		    
+		    /**
 	    	 * The name of the relation
 	    	 */
         	String value();

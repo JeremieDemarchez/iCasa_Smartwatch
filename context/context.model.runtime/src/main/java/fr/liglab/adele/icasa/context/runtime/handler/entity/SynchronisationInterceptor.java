@@ -9,6 +9,8 @@ import org.apache.felix.ipojo.parser.FieldMetadata;
 import org.apache.felix.ipojo.parser.MethodMetadata;
 import org.apache.felix.ipojo.parser.PojoMetadata;
 
+import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler.PeriodicTask;
+
 import java.lang.reflect.Member;
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +24,7 @@ import java.util.function.Supplier;
  * Interceptor to handle state fields that are not handler by direct access, but using synchronization
  * functions (push,pull,apply) 
  */
-public class SynchronisationInterceptor implements FieldInterceptor, MethodInterceptor {
+public class SynchronisationInterceptor implements StateInterceptor, FieldInterceptor, MethodInterceptor {
 
 	/**
 	 * The invocation handlers used in every field access
@@ -30,6 +32,11 @@ public class SynchronisationInterceptor implements FieldInterceptor, MethodInter
 	private final Map<String,BiConsumer<Object,Object>> applyFunctions	= new HashMap<>();
     private final Map<String,Function<Object,Object>> pullFunctions 	= new HashMap<>();
 
+    /**
+     * The periodic tasks associated to pull fields
+     */
+    private final Map<String,PeriodicTask> pullTasks 	= new HashMap<>();
+    
     /**
      * The associated entity handler in charge of keeping the context state
      */
@@ -129,26 +136,20 @@ public class SynchronisationInterceptor implements FieldInterceptor, MethodInter
 	    	
 	    	
 	    	/*
-	    	 * Register periodic task if necessary
+	    	 * Register a task associated with the pull function to periodically update the state
 	    	 */
-	    	Long period 	= Long.valueOf(state.getAttribute("period"));
-	    	TimeUnit unit	= TimeUnit.valueOf(state.getAttribute("unit"));
+	    	Long period 			= Long.valueOf(state.getAttribute("period"));
+	    	TimeUnit unit			= TimeUnit.valueOf(state.getAttribute("unit"));
 	    	
-	    	if (period != -1L) {
-	    		entityHandler.schedule(
-	    				(InstanceManager instance) -> {
-	    					
-	    					/*
-	    					 * Execute the pull function on the pojo object and notify a state change
-	    					 */
-	    			    	Function<Object,Object> pullFunction = pullFunctions.get(stateField);
-	    			    	if (pullFunction != null) {
-	    			    		Object pulledValue = pullFunction.apply(instance.getPojoObject());
-		    			    	entityHandler.update(stateId,pulledValue);
-	    			    	}
-	    				},
-	    				period, unit);
-	    	}
+	    	PeriodicTask pullTask 	= entityHandler.schedule( (InstanceManager instance) -> {
+		    	Function<Object,Object> pullFunction = pullFunctions.get(stateField);
+		    	if (pullFunction != null) {
+		    		Object pulledValue = pullFunction.apply(instance.getPojoObject());
+			    	entityHandler.update(stateId,pulledValue);
+		    	}
+			},period,unit);
+	    	
+	    	pullTasks.put(stateField,pullTask);
 	    }
 
         /*
@@ -199,64 +200,28 @@ public class SynchronisationInterceptor implements FieldInterceptor, MethodInter
 	    }
 	}
 
+	@Override
 	public void validate() {
-		/*
-        for (String stateId : stateIds){
-            if (myPullFunction.containsKey(stateId)) {
-                ScheduledFunction getFunction = myPullFunction.get(stateId);
-                Object returnObj = getFunction.apply(stateId);
-                update(stateId,returnObj);
-
-                if (getFunction.getPeriod() > 0){
-                    ManagedScheduledFutureTask futur = scheduler.scheduleAtFixedRate(getFunction, getFunction.getPeriod(), getFunction.getPeriod(), getFunction.getUnit());
-                    getFunction.submitted(futur);
-
-                       ManagedFutureTask.SuccessCallback<Object> onSucces =  (ManagedFutureTask<Object> var1, Object var2) -> {
-                     LOG.info("On success called on  " + stateId + " with  " + var2);
-                     if (var2 != null) {
-                     synchronized (myStateLock) {
-                     if (var2.equals(myStateValue.get(stateId))) {
-
-                     } else {
-                     myStateValue.replace(stateId, var2);
-                     updateState(stateId, var2);
-                     }
-                     }
-                     } else {
-                     LOG.error("Pull fonction " + stateId + " return null Object ! ");
-                     }
-                     };
-                     futur.onSuccess(onSucces);
-                     
-                }
-
-            }
-        }*/
-
+		for (PeriodicTask pullTask : pullTasks.values()) {
+			pullTask.start();
+		}
 	}
-	
+
+	@Override
 	public void invalidate() {
-		/*
-        for (String stateId : stateIds){
-            if (myPullFunction.containsKey(stateId)) {
-                ScheduledFunction getFunction = myPullFunction.get(stateId);
-                if (getFunction.getPeriod() > 0){
-                    getFunction.task().cancel(true);
-                    getFunction.submitted(null);
-                }
-            }
-        }*/
-		
+		for (PeriodicTask pullTask : pullTasks.values()) {
+			pullTask.stop();
+		}
 	}
     
     @Override
     public void onEntry(Object pojo, Member method, Object[] args) {}
-
 
     @Override
     public void onError(Object pojo, Member method, Throwable throwable) {}
 
     @Override
     public void onFinally(Object pojo, Member method) {}
+
     
 }
