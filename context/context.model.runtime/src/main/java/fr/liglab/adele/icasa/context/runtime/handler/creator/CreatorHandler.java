@@ -8,9 +8,11 @@ import fr.liglab.adele.icasa.context.model.introspection.EntityProvider;
 import fr.liglab.adele.icasa.context.model.introspection.RelationProvider;
 import fr.liglab.adele.icasa.context.runtime.RelationImpl;
 import fr.liglab.adele.icasa.context.runtime.handler.entity.EntityHandler;
+
 import org.apache.felix.ipojo.ConfigurationException;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.Pojo;
 import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Handler;
@@ -254,17 +256,15 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			return id;
 		}
 
-
 		@Override
-		public void delete(String sourceId, String targetId) {
-			delete(id(sourceId,targetId));
+		public String create(Object source, Object target) {
+			if ((source instanceof Pojo) && (target instanceof Pojo)) {
+				return create(EntityHandler.getContextEntity((Pojo)source).getId(),EntityHandler.getContextEntity((Pojo)target).getId());
+			}
+			
+			throw new IllegalArgumentException("source or target object is not a context entity");
 		}
-
-		@Override
-		public void delete(String id) {
-			super.delete(id);
-		}
-
+		
 		@Override
 		public Set<String> getInstances() {
 			return getInstanceDeclarations()
@@ -273,15 +273,10 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		}
 
 		@Override
-		public void deleteAll() {
-			Set<String> instances = getInstances();
-			for (String instance : instances) {
-				delete(instance);
-			}
-		}
-
-		@Override
 		public Relation getInstance(String id) {
+			if (id == null)
+				return null;
+			
 			InstanceDeclaration declaration = this.instances.get(id);
 			if (declaration == null) {
 				return null;
@@ -297,6 +292,54 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 
 			return (Relation)((InstanceManager)declaration.instance).getPojoObject();
 		}
+
+		@Override
+		public List<Relation> getInstancesRelatedTo(String sourceId) {
+			List<Relation> relations = new ArrayList<>();
+			for (String relationId : this.instances.keySet()) {
+				Relation relation = getInstance(relationId);
+				if (relation != null && relation.getSource().equals(sourceId)) {
+					relations.add(relation);
+				}
+			}
+			return relations;
+		}
+
+		@Override
+		public List<Relation> getInstancesRelatedTo(Object source) {
+			if (source instanceof Pojo) {
+				return getInstancesRelatedTo(EntityHandler.getContextEntity((Pojo)source).getId());
+			}
+			
+			throw new IllegalArgumentException("source object is not a context entity");
+		}
+		
+		@Override
+		public void delete(String sourceId, String targetId) {
+			delete(id(sourceId,targetId));
+		}
+
+		@Override
+		public void delete(Object source, Object target) {
+			if ((source instanceof Pojo) && (target instanceof Pojo)) {
+				delete(EntityHandler.getContextEntity((Pojo)source).getId(),EntityHandler.getContextEntity((Pojo)target).getId());
+			}
+		}
+
+		@Override
+		public void delete(String id) {
+			super.delete(id);
+		}
+
+		
+		@Override
+		public void deleteAll() {
+			Set<String> instances = getInstances();
+			for (String instance : instances) {
+				delete(instance);
+			}
+		}
+
 	}
 
 	private static class EntityCreator extends ComponentCreator implements Creator.Entity<Object> {
