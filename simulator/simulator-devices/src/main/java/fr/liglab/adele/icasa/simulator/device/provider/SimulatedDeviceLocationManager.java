@@ -24,6 +24,7 @@ import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl
 import fr.liglab.adele.icasa.simulator.device.presence.impl.SimulatedPresenceSensorImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
+import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedThermometerImpl;
 import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import org.apache.felix.ipojo.annotations.*;
 
@@ -48,6 +49,8 @@ public class SimulatedDeviceLocationManager {
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedCoolerImpl,Zone> isInCoolerCreator;
 
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedHeaterImpl,Zone> isInHeaterCreator;
+
+    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedThermometerImpl,Zone> isInThermometerCreator;
 
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedPresenceSensorImpl,Zone> isInPresenceSensor;
 
@@ -112,8 +115,10 @@ public class SimulatedDeviceLocationManager {
         if (device instanceof SimulatedHeaterImpl){
             return isInHeaterCreator;
         }
+        if (device instanceof SimulatedThermometerImpl) {
+            return isInThermometerCreator;
+        }
         if (device instanceof SimulatedPresenceSensorImpl){
-            return isInPresenceSensor;
         }
         return null;
     }

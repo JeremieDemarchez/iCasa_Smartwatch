@@ -25,6 +25,8 @@ public @ContextService interface TemperatureModel {
 
     public static final @State String CURRENT_TEMPERATURE = "current.temperature";
 
+    public static final @State String ZONE_ATTACHED = "zone.attached";
+
     public double getCurrentTemperature();
 
 }
