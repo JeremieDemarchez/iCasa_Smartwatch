@@ -74,14 +74,22 @@ public interface Creator {
 
 		public List<fr.liglab.adele.icasa.context.model.Relation> getInstancesRelatedTo(S source);
 
-		public String create(String sourceId, String targetId);
-
 		public String create(S source, T target);
 
-		public void delete(String sourceId, String targetId);
+		public String create(String sourceId, String targetId);
+
+		public String create(S source, String targetId);
+
+		public String create(String sourceId, T target);
 
 		public void delete(S source, T target);
 
+		public void delete(String sourceId, String targetId);
+
+		public void delete(S source, String targetId);
+
+		public void delete(String sourceId, T target);
+		
 		void delete(String id);
 
 		void deleteAll();

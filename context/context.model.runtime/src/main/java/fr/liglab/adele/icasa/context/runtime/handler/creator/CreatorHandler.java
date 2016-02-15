@@ -266,6 +266,25 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		}
 		
 		@Override
+		public String create(Object source, String targetId) {
+			if ((source instanceof Pojo) && (targetId != null)) {
+				return create(EntityHandler.getContextEntity((Pojo)source).getId(),targetId);
+			}
+			
+			throw new IllegalArgumentException("source or target object is not a context entity");
+		}
+
+		@Override
+		public String create(String sourceId, Object target) {
+			if ((sourceId != null) && (target instanceof Pojo)) {
+				return create(sourceId,EntityHandler.getContextEntity((Pojo)target).getId());
+			}
+			
+			throw new IllegalArgumentException("source or target object is not a context entity");
+		}
+		
+		
+		@Override
 		public Set<String> getInstances() {
 			return getInstanceDeclarations()
 					.map(InstanceDeclaration::getName)
@@ -313,7 +332,12 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 			
 			throw new IllegalArgumentException("source object is not a context entity");
 		}
-		
+
+		@Override
+		public void delete(String id) {
+			super.delete(id);
+		}
+
 		@Override
 		public void delete(String sourceId, String targetId) {
 			delete(id(sourceId,targetId));
@@ -327,10 +351,18 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 		}
 
 		@Override
-		public void delete(String id) {
-			super.delete(id);
+		public void delete(Object source, String targetId) {
+			if ((source instanceof Pojo) && (targetId != null)) {
+				delete(EntityHandler.getContextEntity((Pojo)source).getId(),targetId);
+			}
 		}
 
+		@Override
+		public void delete(String sourceId, Object target) {
+			if ((sourceId != null) && (target instanceof Pojo)) {
+				delete(sourceId,EntityHandler.getContextEntity((Pojo)target).getId());
+			}
+		}
 		
 		@Override
 		public void deleteAll() {
