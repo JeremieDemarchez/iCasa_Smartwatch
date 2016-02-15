@@ -123,7 +123,7 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
         return temperature;
     }
 
-    @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
+    @ContextEntity.Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
     @Requires(id="zone",specification=Zone.class,optional=true)
     private Zone zone;
 

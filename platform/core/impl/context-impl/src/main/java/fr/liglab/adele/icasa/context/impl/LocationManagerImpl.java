@@ -100,7 +100,7 @@ public class LocationManagerImpl{
     }
 
     @Unbind(id = "locatedObjects")
-    public synchronized void unbindLocatedObject(LocatedObject object,Map<String,Object> properties){
-        containsCreator.delete(object.getZone(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+    public synchronized void unbindLocatedObject(LocatedObject object){
+        containsCreator.delete(object.getZone(),object);
     }
 }

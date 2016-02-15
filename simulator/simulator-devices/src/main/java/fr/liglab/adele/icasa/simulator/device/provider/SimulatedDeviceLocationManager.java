@@ -42,78 +42,63 @@ public class SimulatedDeviceLocationManager {
 
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<LocatedObject,Zone> isInLocatedObjectRelationCreator;
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedDimmerLightImpl,Zone> isInDimmerCreator;
+    @Bind(id = "zones")
+    public void bindZone(Zone zone){
+        for (SimulatedDevice simulatedDevice : simulatedDevices){
+            if (zone.canContains(simulatedDevice.getPosition())){
+                isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+            }
+        }
+    }
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedCoolerImpl,Zone> isInCoolerCreator;
+    @Modified(id = "zones")
+    public void modifiedZone(Zone zone){
+        for (SimulatedDevice simulatedDevice : simulatedDevices){
+            if (zone.canContains(simulatedDevice.getPosition())){
+                try {
+                    isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+                }catch (IllegalArgumentException e){
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedHeaterImpl,Zone> isInHeaterCreator;
+                }
+            }else {
+                isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
+            }
+        }
+    }
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedThermometerImpl,Zone> isInThermometerCreator;
+    @Unbind(id = "zones")
+    public void unbindZone(Zone zone){
+        for (SimulatedDevice simulatedDevice : simulatedDevices){
+                isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
+        }
+    }
 
     @Bind(id = "simulatedDevices")
     public void bindSimulatedDevice(SimulatedDevice simulatedDevice){
-        Creator.Relation creator = getCreator(simulatedDevice);
-        if (creator == null){
-            return;
-        }
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
-                creator.create(simulatedDevice.getSerialNumber(),zone.getZoneName());
+                isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
             }
         }
     }
 
     @Modified(id = "simulatedDevices")
     public void modifiedSimulatedDevice(SimulatedDevice simulatedDevice){
-        Creator.Relation creator = getCreator(simulatedDevice);
-        if (creator == null){
-            return;
-        }
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
                 try {
-                    creator.create(simulatedDevice.getSerialNumber(),zone.getZoneName());
+                    isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
                 }catch (IllegalArgumentException e){
 
                 }
             }else {
-                creator.delete(simulatedDevice.getSerialNumber(),zone.getZoneName());
+                isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
             }
         }
     }
 
     @Unbind(id = "simulatedDevices")
     public void unbindSimulatedDevice(SimulatedDevice simulatedDevice){
-        Creator.Relation creator = getCreator(simulatedDevice);
-        if (creator == null){
-            return;
-        }
-        for (Zone zone:zones){
-            if (zone.canContains(simulatedDevice.getPosition())){
-                creator.delete(simulatedDevice.getSerialNumber(),zone.getZoneName());
-            }
-        }
-    }
-
-    private Creator.Relation getCreator(SimulatedDevice device){
-        if (device instanceof SimulatedBinaryLightImpl){
-            return isInLocatedObjectRelationCreator;
-        }
-        if (device instanceof SimulatedDimmerLightImpl){
-            return isInDimmerCreator;
-        }
-        if (device instanceof SimulatedPhotometerImpl){
-            return isInLocatedObjectRelationCreator;
-        }
-        if (device instanceof SimulatedCoolerImpl){
-            return isInCoolerCreator;
-        }
-        if (device instanceof SimulatedHeaterImpl){
-            return isInHeaterCreator;
-        }
-        if (device instanceof SimulatedThermometerImpl){
-            return isInThermometerCreator;
-        }
-        return null;
+        isInLocatedObjectRelationCreator.delete(simulatedDevice,simulatedDevice.getZone());
     }
 }
