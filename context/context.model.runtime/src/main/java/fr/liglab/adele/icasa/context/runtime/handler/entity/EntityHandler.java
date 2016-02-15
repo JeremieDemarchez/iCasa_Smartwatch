@@ -1,10 +1,29 @@
 package fr.liglab.adele.icasa.context.runtime.handler.entity;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
-import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
-import org.apache.felix.ipojo.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import org.apache.felix.ipojo.ComponentInstance;
+import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.ContextListener;
+import org.apache.felix.ipojo.ContextSource;
+import org.apache.felix.ipojo.HandlerFactory;
+import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.Pojo;
+import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -17,13 +36,10 @@ import org.apache.felix.ipojo.util.Property;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
 
 @Handler(name =HandlerReference.ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
 @Provides(specifications = ContextEntity.class)
@@ -419,6 +435,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 		return stateValues.get(property);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Dictionary getContext() {
 		return new Hashtable<>(stateValues);
@@ -448,6 +465,33 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 	public HandlerDescription getDescription() {
 		return new EntityHandlerDescription();
 	}
+	
+	/**
+	 * Given an iPOJO instance with the entity handler attached, return the associated context entity
+	 */
+	public static ContextEntity getContextEntity(ComponentInstance instance) {
+		
+		if (instance == null) {
+			return null;
+		}
+
+		String handlerId 						= HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER;
+		HandlerDescription handlerDescription	= instance.getInstanceDescription().getHandlerDescription(handlerId);
+
+		if (handlerDescription instanceof EntityHandlerDescription) {
+			return (EntityHandlerDescription) handlerDescription;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Given an iPOJO object with the entity handler attached, return the associated context entity
+	 */
+	public static ContextEntity getContextEntity(Pojo pojo) {
+		return getContextEntity(pojo.getComponentInstance());
+	}
+	
 
 	/**
 	 * The description of the handler.

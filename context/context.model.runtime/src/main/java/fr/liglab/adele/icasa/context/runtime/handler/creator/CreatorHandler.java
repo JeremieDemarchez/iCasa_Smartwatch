@@ -350,14 +350,9 @@ public class CreatorHandler extends PrimitiveHandler implements EntityProvider, 
 					/**
 					 * For entities we try to save the state of the entity before disposing it
 					 */
-					if (this.instance != null) {
-						String handlerId 						= HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER;
-						HandlerDescription handlerDescription	= instance.getInstanceDescription().getHandlerDescription(handlerId);
-
-						if (handlerDescription instanceof EntityHandler.EntityHandlerDescription) {
-							ContextEntity entity = (EntityHandler.EntityHandlerDescription) handlerDescription;
-							configuration.put("context.entity.init",entity.dumpState());
-						}
+					ContextEntity entity = EntityHandler.getContextEntity(this.instance);
+					if (entity != null) {
+						configuration.put("context.entity.init",entity.dumpState());
 					}
 
 					super.dispose();
