@@ -19,12 +19,6 @@ import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImpl;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
-import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
-import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
-import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedThermometerImpl;
 import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import org.apache.felix.ipojo.annotations.*;
 
@@ -69,7 +63,7 @@ public class SimulatedDeviceLocationManager {
     @Unbind(id = "zones")
     public void unbindZone(Zone zone){
         for (SimulatedDevice simulatedDevice : simulatedDevices){
-                isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
+            isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
         }
     }
 
@@ -101,4 +95,5 @@ public class SimulatedDeviceLocationManager {
     public void unbindSimulatedDevice(SimulatedDevice simulatedDevice){
         isInLocatedObjectRelationCreator.delete(simulatedDevice,simulatedDevice.getZone());
     }
+
 }

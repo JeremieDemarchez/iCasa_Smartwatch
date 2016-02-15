@@ -24,9 +24,7 @@ public interface PersonProvider {
 
     public void createPerson(String personName, String personType);
 
-    public void removePersonById(String personId);
-
-    public boolean removePersonByName(String personName);
+    public void removePerson(String personName);
 
     public Set<String> getPersonTypes();
 

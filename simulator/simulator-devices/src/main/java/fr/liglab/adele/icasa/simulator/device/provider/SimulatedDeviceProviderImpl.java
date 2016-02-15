@@ -53,6 +53,7 @@ import fr.liglab.adele.icasa.simulator.device.SimulatedDeviceProvider;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImpl;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
+import fr.liglab.adele.icasa.simulator.device.presence.impl.SimulatedPresenceSensorImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedThermometerImpl;
@@ -83,6 +84,8 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
     @Creator.Field Creator.Entity<SimulatedHeaterImpl> simulatedHeaterCreator;
 
     @Creator.Field Creator.Entity<SimulatedThermometerImpl> simulatedThermometerCreator;
+
+    @Creator.Field Creator.Entity<SimulatedPresenceSensorImpl> simulatedPresenceSensorCreator;
 
     @Validate
     public void start(){
@@ -138,6 +141,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
         returnSet.add(SimulatedCoolerImpl.SIMULATED_COOLER);
         returnSet.add(SimulatedHeaterImpl.SIMULATED_HEATER);
         returnSet.add(SimulatedThermometerImpl.SIMULATED_THERMOMETER);
+        returnSet.add(SimulatedPresenceSensorImpl.SIMULATED_PRESENCE_SENSOR);
         return returnSet;
     }
 
@@ -145,10 +149,11 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
     public void removeAllSimulatedDevices() {
         simulatedBinaryLightCreator.deleteAll();
         simulatedDimmerLightCreator.deleteAll();
+        simulatedPhotometerCreator.deleteAll();
         simulatedCoolerCreator.deleteAll();
         simulatedHeaterCreator.deleteAll();
-        simulatedPhotometerCreator.deleteAll();
         simulatedThermometerCreator.deleteAll();
+        simulatedPresenceSensorCreator.deleteAll();
     }
 
     private Creator.Entity getCreator(String deviceType){
@@ -165,6 +170,8 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
                 return simulatedCoolerCreator;
             case SimulatedThermometerImpl.SIMULATED_THERMOMETER:
                 return simulatedThermometerCreator;
+            case SimulatedPresenceSensorImpl.SIMULATED_PRESENCE_SENSOR:
+                return simulatedPresenceSensorCreator;
             default:return null;
         }
     }

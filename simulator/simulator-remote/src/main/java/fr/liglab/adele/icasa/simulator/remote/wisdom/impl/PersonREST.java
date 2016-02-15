@@ -165,8 +165,6 @@ public class PersonREST extends DefaultController {
 
         PersonJSON personJSON = PersonJSON.fromString(content);
 
-        System.out.println(personJSON.getName()+personJSON.getType());
-
         personsProvider.createPerson(personJSON.getName(), personJSON.getType());
 
         return ok();
@@ -215,7 +213,7 @@ public class PersonREST extends DefaultController {
             return notFound();
 
         try {
-            personsProvider.removePersonByName(foundPerson.getName());
+            personsProvider.removePerson(foundPerson.getName());
         } catch (Exception e) {
             e.printStackTrace();
             return internalServerError();

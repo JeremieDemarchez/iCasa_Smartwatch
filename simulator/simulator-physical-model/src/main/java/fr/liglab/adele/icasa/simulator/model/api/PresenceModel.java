@@ -13,10 +13,19 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.model.presence;
+package fr.liglab.adele.icasa.simulator.model.api;
 
-/**
- * Created by aygalinc on 15/02/16.
- */
-public class PresenceModelImpl {
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.icasa.location.Zone;
+
+public @ContextService interface PresenceModel {
+
+    public static final @State String CURRENT_PRESENCE = "current.presence";
+
+    public static final @State String ZONE_ATTACHED = "zone.attached";
+
+    public boolean getCurrentPresence();
+
+    public String getAttachedZone();
 }
