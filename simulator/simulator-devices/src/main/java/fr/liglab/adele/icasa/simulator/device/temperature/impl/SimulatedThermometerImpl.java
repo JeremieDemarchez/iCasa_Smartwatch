@@ -28,120 +28,119 @@
 // *   See the License for the specific language governing permissions and
 // *   limitations under the License.
 // */
-//package fr.liglab.adele.icasa.simulator.device.temperature.impl;
-//
-//import java.util.List;
-//
-//import org.apache.felix.ipojo.annotations.Component;
-//import org.apache.felix.ipojo.annotations.Invalidate;
-//import org.apache.felix.ipojo.annotations.Provides;
-//import org.apache.felix.ipojo.annotations.ServiceProperty;
-//import org.apache.felix.ipojo.annotations.StaticServiceProperty;
-//import org.apache.felix.ipojo.annotations.Validate;
-//import org.osgi.framework.Constants;
-//
-//import fr.liglab.adele.icasa.device.temperature.Thermometer;
-//import fr.liglab.adele.icasa.device.util.AbstractDevice;
-//import fr.liglab.adele.icasa.location.Zone;
-//import fr.liglab.adele.icasa.location.ZoneListener;
-//import fr.liglab.adele.icasa.simulator.SimulatedDevice;
-//import fr.liglab.adele.icasa.simulator.listener.util.BaseZoneListener;
-//
-///**
-// * Implementation of a simulated thermometer device.
-// *
-// */
-//@Component(name = "iCasa.Thermometer")
-//@Provides(properties = { @StaticServiceProperty(type = "java.lang.String", name = Constants.SERVICE_DESCRIPTION) })
-//public class SimulatedThermometerImpl extends AbstractDevice implements Thermometer, SimulatedDevice {
-//
-//	@ServiceProperty(name = Thermometer.DEVICE_SERIAL_NUMBER, mandatory = true)
-//	private String m_serialNumber;
-//
-//	private volatile Zone m_zone;
-//
-//	private ZoneListener listener = new ThermometerZoneListener();
-//
-//	public SimulatedThermometerImpl() {
-//        super();
-//        super.setPropertyValue(SimulatedDevice.LOCATION_PROPERTY_NAME, SimulatedDevice.LOCATION_UNKNOWN);
-//        super.setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, 0.0d);
-//	}
-//
-//	@Override
-//	public String getSerialNumber() {
-//		return m_serialNumber;
-//	}
-//
-//	@Override
-//	public synchronized double getTemperature() {
-//		return (Double) getPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE);
-//	}
-//
-//	@Validate
-//	public synchronized void start() {
-//
-//	}
-//
-//	@Invalidate
-//	public synchronized void stop() throws InterruptedException {
-//
-//	}
-//
-//
-//	@Override
-//	public void enterInZones(List<Zone> zones) {
-//        boolean atLeaastOne = false;
-//	/**	if (!zones.isEmpty()) {
-//			for (Zone zone : zones) {
-//				if (zone.getVariableValue("Temperature") != null) {
-//					subscribeZone(zone);
-//                    atLeaastOne = true;
-//					break;
-//				}
-//			}
-//            if (!atLeaastOne){ // if any zone has the Temperature variable.
-//                Zone fZone = zones.get(0); // get the first Zone
-//                subscribeZone(fZone);
-//            }
-//		}**/
-//	}
-//
-//    private void subscribeZone(Zone zone){
-//        m_zone = zone;
-//        getTemperatureFromZone();
-//  //      m_zone.addListener(listener);
-//    }
-//
-//	@Override
-//	public void leavingZones(List<Zone> zones) {
-//		setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, -1.0d);
-//	//	if (m_zone != null)
-//	//		m_zone.removeListener(listener);
-//	}
-//
-//	private void getTemperatureFromZone() {
-//		if (m_zone != null) {
-//	/**		Double currentTemperature = ((Double) m_zone.getVariableValue("Temperature"));
-//			if (currentTemperature != null){
-//				setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, currentTemperature);
-//            } else {
-//                setPropertyValue(Thermometer.THERMOMETER_CURRENT_TEMPERATURE, -1.0d);
-//            }**/
-//		}
-//	}
-//
-//	class ThermometerZoneListener extends BaseZoneListener {
-//
-//		@Override
-//		public void zoneVariableModified(Zone zone, String variableName, Object oldValue, Object newValue) {
-//
-//			if (m_zone == zone) {
-//				if (!(getFault().equalsIgnoreCase("yes")))
-//					if (variableName.equals("Temperature"))
-//						getTemperatureFromZone();
-//			}
-//		}
-//	}
-//
-//}
+package fr.liglab.adele.icasa.simulator.device.temperature.impl;
+
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.device.utils.Constant;
+import fr.liglab.adele.icasa.simulator.model.api.TemperatureModel;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Modified;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
+
+
+/**
+ * Implementation of a simulated thermometer device.
+ *
+ */
+@ContextEntity(services = {Thermometer.class, SimulatedDevice.class, LocatedObject.class})
+public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,LocatedObject {
+
+    public final static String SIMULATED_THERMOMETER = "iCasa.Thermometer";
+
+    @ContextEntity.State.Field(service = Thermometer.class,state=Thermometer.THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
+    private double currentSensedTemperature;
+
+    @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_THERMOMETER)
+    private String deviceType;
+
+    @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
+
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
+    private int x;
+
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
+    private int y;
+
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
+
+    @Override
+    public String getDeviceType() {
+        return deviceType;
+    }
+
+    @Override
+    public String getZone() {
+        return zoneName;
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
+    }
+
+    @Override
+    public double getTemperature() {
+        return currentSensedTemperature;
+    }
+
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    @Bind(id ="TemperatureModelDependency" ,filter = "(temperaturemodel.zone.attached=${locatedobject.object.zone})",optional = true,aggregate = true)
+    public void bindIllu(TemperatureModel model){
+        pushTemperature(model.getCurrentTemperature());
+    }
+
+    @Modified(id = "TemperatureModelDependency")
+    public void modifiedIllu(TemperatureModel model){
+        pushTemperature(model.getCurrentTemperature());
+    }
+
+    @Unbind(id = "TemperatureModelDependency")
+    public void unbindIllu(TemperatureModel model){
+        pushTemperature(FAULT_VALUE);
+    }
+
+    @ContextEntity.State.Push(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
+    public double pushTemperature(double temperature){
+        return temperature;
+    }
+
+    @ContextEntity.Relation.Field(Constant.RELATION_IS_IN)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
+
+
+}

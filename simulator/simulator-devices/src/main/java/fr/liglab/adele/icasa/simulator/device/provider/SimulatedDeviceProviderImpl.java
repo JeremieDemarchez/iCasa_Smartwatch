@@ -55,6 +55,7 @@ import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImp
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
 import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
+import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedThermometerImpl;
 import org.apache.felix.ipojo.annotations.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -75,11 +76,13 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
 
     @Creator.Field Creator.Entity<SimulatedDimmerLightImpl> simulatedDimmerLightCreator;
 
-    @Creator.Field Creator.Entity<SimulatedPhotometerImpl> simulatedPhotometerLightCreator;
+    @Creator.Field Creator.Entity<SimulatedPhotometerImpl> simulatedPhotometerCreator;
 
-    @Creator.Field Creator.Entity<SimulatedCoolerImpl> simulatedCoolerLightCreator;
+    @Creator.Field Creator.Entity<SimulatedCoolerImpl> simulatedCoolerCreator;
 
-    @Creator.Field Creator.Entity<SimulatedHeaterImpl> simulatedHeaterLightCreator;
+    @Creator.Field Creator.Entity<SimulatedHeaterImpl> simulatedHeaterCreator;
+
+    @Creator.Field Creator.Entity<SimulatedThermometerImpl> simulatedThermometerCreator;
 
     @Validate
     public void start(){
@@ -134,6 +137,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
         returnSet.add(SimulatedPhotometerImpl.SIMULATED_PHOTOMETER);
         returnSet.add(SimulatedCoolerImpl.SIMULATED_COOLER);
         returnSet.add(SimulatedHeaterImpl.SIMULATED_HEATER);
+        returnSet.add(SimulatedThermometerImpl.SIMULATED_THERMOMETER);
         return returnSet;
     }
 
@@ -141,9 +145,10 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
     public void removeAllSimulatedDevices() {
         simulatedBinaryLightCreator.deleteAll();
         simulatedDimmerLightCreator.deleteAll();
-        simulatedCoolerLightCreator.deleteAll();
-        simulatedHeaterLightCreator.deleteAll();
-        simulatedPhotometerLightCreator.deleteAll();
+        simulatedCoolerCreator.deleteAll();
+        simulatedHeaterCreator.deleteAll();
+        simulatedPhotometerCreator.deleteAll();
+        simulatedThermometerCreator.deleteAll();
     }
 
     private Creator.Entity getCreator(String deviceType){
@@ -153,11 +158,13 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
             case SimulatedDimmerLightImpl.SIMULATED_DIMMER_LIGHT:
                 return simulatedDimmerLightCreator;
             case SimulatedPhotometerImpl.SIMULATED_PHOTOMETER:
-                return simulatedPhotometerLightCreator;
+                return simulatedPhotometerCreator;
             case SimulatedHeaterImpl.SIMULATED_HEATER:
-                return simulatedHeaterLightCreator;
+                return simulatedHeaterCreator;
             case SimulatedCoolerImpl.SIMULATED_COOLER:
-                return simulatedCoolerLightCreator;
+                return simulatedCoolerCreator;
+            case SimulatedThermometerImpl.SIMULATED_THERMOMETER:
+                return simulatedThermometerCreator;
             default:return null;
         }
     }

@@ -35,13 +35,11 @@ import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.PowerObservable;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
-import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.model.api.LuminosityModel;
 import fr.liglab.adele.icasa.simulator.model.api.MomentOfTheDay;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
 
 import java.util.List;
@@ -157,4 +155,6 @@ public class SimulatedLuminosityModel implements LuminosityModel{
             default: return MORNING_EXTERNAL_SOURCE_POWER;
         }
     }
+
+
 }

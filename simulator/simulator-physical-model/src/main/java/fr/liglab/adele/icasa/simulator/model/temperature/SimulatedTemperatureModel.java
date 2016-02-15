@@ -22,15 +22,24 @@ import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.model.api.TemperatureModel;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Validate;
 
 import java.util.List;
+import java.util.function.Supplier;
 
 @ContextEntity(services = TemperatureModel.class)
-public class TemperaturePMImpl implements TemperatureModel {
+public class SimulatedTemperatureModel implements TemperatureModel {
+
+    public static final String RELATION_IS_ATTACHED="model.attached.to";
 
     @ContextEntity.State.Field(service = TemperatureModel.class,state = TemperatureModel.CURRENT_TEMPERATURE,value = "293.15")
     public double currentTemperature;
+
+    @ContextEntity.State.Field(service = TemperatureModel.class,state = TemperatureModel.ZONE_ATTACHED)
+    public String zoneName;
 
     @Override
     public double getCurrentTemperature() {
@@ -48,67 +57,88 @@ public class TemperaturePMImpl implements TemperatureModel {
 
     public static final double DEFAULT_MAX_POWER = 1000;
 
-    private volatile long m_lastUpdateTime;
+    @Validate
+    public void validate(){
+        lastUpdate = clock.currentTimeMillis();
+    }
+
+    @Invalidate
+    public void invalidate(){
+
+    }
 
     @Requires
-    private Clock _clock;
+    private Clock clock;
 
-    @Requires(specification = Zone.class)
-    Zone zoneAttached;
-
-    @Requires(specification = Cooler.class)
+    @Requires(specification = Cooler.class,filter = "(locatedobject.object.zone=${temperaturemodel.zone.attached})",optional = true)
     List<Cooler> coolersInZone;
 
-    @Requires(specification = Zone.class)
+    @Requires(specification = Heater.class,filter = "(locatedobject.object.zone=${temperaturemodel.zone.attached})",optional = true)
     List<Heater> heatersInZone;
 
-    ZoneModel zoneModel;
+    @ContextEntity.Relation.Field(RELATION_IS_ATTACHED)
+    @Requires(id="zone",specification=Zone.class,optional=false)
+    Zone zone;
 
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
 
-    /**
-     * Computes the temperature property value of specified zone according to time difference from the last computation.
-     *
-     * @param timeDiff time difference in ms from the last computation
-     * @return the temperature computed for time t + dt
-     */
-    private void computeTemperature(long timeDiff) {
+    @ContextEntity.State.Push(service = TemperatureModel.class,state = TemperatureModel.ZONE_ATTACHED)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 
+    private long lastUpdate;
 
+    private double lastTemperature = DEFAULT_TEMP_VALUE;
+
+    @ContextEntity.State.Pull(service = TemperatureModel.class,state = TemperatureModel.CURRENT_TEMPERATURE)
+    Supplier<Double> pullCurrentTemp = () -> {
+
+        double computeTemperature;
+
+        long timeDiff = clock.currentTimeMillis() - lastUpdate;
+        if (timeDiff < 0){
+            timeDiff = 0;
+        }
         double newTemperature = DEFAULT_TEMP_VALUE; // 20 degrees by default
 
         double powerLevelTotal = getPowerInZone();
         double timeDiffInSeconds = timeDiff / 1000.0d;
 
         if (powerLevelTotal == 0){
-            if ( currentTemperature > (DEFAULT_TEMP_VALUE + 0.5) ) {
+            if ( lastTemperature > (DEFAULT_TEMP_VALUE + 0.5) ) {
                 powerLevelTotal = -50.0;
-            } else if ( currentTemperature < (DEFAULT_TEMP_VALUE - 0.5) ){
+            } else if ( lastTemperature < (DEFAULT_TEMP_VALUE - 0.5) ){
                 powerLevelTotal = 50.0;
-            } else {
-                return;
+            }else {
+                return lastTemperature;
             }
         }
-
-        if ( (powerLevelTotal > 0) && (currentTemperature < DEFAULT_TEMP_VALUE) ) {
-            powerLevelTotal = 50.0 + getPowerInZone();
-        } else if( (powerLevelTotal) < 0 && (currentTemperature > DEFAULT_TEMP_VALUE) ) {
-            powerLevelTotal = -50.0 + getPowerInZone();
+        if ( (powerLevelTotal > 0) && (lastTemperature < DEFAULT_TEMP_VALUE) ) {
+            powerLevelTotal += getPowerInZone();
+        } else if( (powerLevelTotal) < 0 && (lastTemperature > DEFAULT_TEMP_VALUE) ) {
+            powerLevelTotal += getPowerInZone();
         }
 
-        double delta = (powerLevelTotal  * timeDiffInSeconds) / zoneModel.getThermalCapacity();
+        double delta = (powerLevelTotal  * timeDiffInSeconds) / getThermalCapacity();
 
-        newTemperature = currentTemperature  + delta;
-
+        newTemperature = lastTemperature  + delta;
 
         /**
          * Clipping function to saturate the temperature at a certain level
          */
         if (newTemperature > HIGHEST_TEMP)
-            currentTemperature = HIGHEST_TEMP;
+            newTemperature = HIGHEST_TEMP;
         else if (newTemperature < LOWER_TEMP)
-            currentTemperature = LOWER_TEMP;
-        else currentTemperature = newTemperature;
-    }
+            newTemperature = LOWER_TEMP;
+
+        lastTemperature = newTemperature;
+
+        return newTemperature ;
+    };
 
     private double getPowerInZone(){
         double powerInZone = 0;
@@ -127,5 +157,15 @@ public class TemperaturePMImpl implements TemperatureModel {
             }
         }
         return powerInZone;
+    }
+
+    private double getThermalCapacity() {
+        double newVolume = 2.5d; // use this value as default to avoid divide by zero
+        double zoneVolume =  (zone.getYLength()*zone.getXLength()*zone.getZLength());
+        if (zoneVolume > 0.0d){
+            newVolume =  zoneVolume;
+        }
+        return AIR_MASS * AIR_MASS_CAPACITY * newVolume;
+
     }
 }
