@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.device.provider;
 
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
@@ -39,11 +40,9 @@ public class SimulatedDeviceLocationManager {
     @Requires(id = "zones",specification = Zone.class, optional = true)
     List<Zone> zones;
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedBinaryLightImpl,Zone> isInBinaryCreator;
+    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<LocatedObject,Zone> isInLocatedObjectRelationCreator;
 
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedDimmerLightImpl,Zone> isInDimmerCreator;
-
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedPhotometerImpl,Zone> isInPhotometerCreator;
 
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedCoolerImpl,Zone> isInCoolerCreator;
 
@@ -98,13 +97,13 @@ public class SimulatedDeviceLocationManager {
 
     private Creator.Relation getCreator(SimulatedDevice device){
         if (device instanceof SimulatedBinaryLightImpl){
-            return isInBinaryCreator;
+            return isInLocatedObjectRelationCreator;
         }
         if (device instanceof SimulatedDimmerLightImpl){
             return isInDimmerCreator;
         }
         if (device instanceof SimulatedPhotometerImpl){
-            return isInPhotometerCreator;
+            return isInLocatedObjectRelationCreator;
         }
         if (device instanceof SimulatedCoolerImpl){
             return isInCoolerCreator;

@@ -53,7 +53,7 @@ public class ZoneImpl implements Zone {
 
 	public static final String RELATION_CONTAINS = "contains";
 
-	@ContextEntity.Relation.Field(RELATION_CONTAINS)
+	@ContextEntity.Relation.Field(value = RELATION_CONTAINS,owner = Zone.class)
 	@Requires(specification=LocatedObject.class,optional=true)
 	private List<LocatedObject> containedObject;
 

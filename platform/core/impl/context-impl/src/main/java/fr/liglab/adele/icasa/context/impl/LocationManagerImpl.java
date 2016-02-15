@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.context.impl;
 
 import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
@@ -35,45 +36,65 @@ public class LocationManagerImpl{
     @Requires(id = "locatedObjects",specification = LocatedObject.class,optional = true)
     List<LocatedObject> locatedObjects;
 
-    @Creator.Field(ZoneImpl.RELATION_CONTAINS) 	Creator.Relation<ZoneImpl,LocatedObject> containsCreator;
+    @Creator.Field(ZoneImpl.RELATION_CONTAINS) 	Creator.Relation<Zone,LocatedObject> containsCreator;
 
     @Bind(id = "zones")
     public synchronized void bindZone(Zone zone){
-
+        for (LocatedObject object:locatedObjects){
+            if (! zone.canContains(object.getPosition())) {
+                continue;
+            }
+            containsCreator.create(zone,object);
+        }
     }
 
     @Modified(id = "zones")
     public synchronized void modifiedZone(Zone zone){
-
-    }
-
-    @Unbind(id = "zones")
-    public synchronized void unbindZone(Zone zone){
-
-    }
-
-
-    @Bind(id = "locatedObjects")
-    public synchronized void bindLocatedObject(LocatedObject object, Map<String,Object> properties){
-        for (Zone zone : zones) {
-            if (! zone.canContains(object.getPosition())) {
-                continue;
-            }
-            containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
-        }
-    }
-
-    @Modified(id = "locatedObjects")
-    public synchronized void modifiedLocatedObject(LocatedObject object,Map<String,Object> properties){
-        for (Zone zone : zones) {
+        for (LocatedObject object:locatedObjects){
             if (zone.canContains(object.getPosition())) {
                 try{
-                    containsCreator.create(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                    containsCreator.create(zone,object);
                 }catch (IllegalArgumentException e){
 
                 }
             }else {
-                containsCreator.delete(zone.getZoneName(),(String)properties.get(ContextEntity.CONTEXT_ENTITY_ID));
+                containsCreator.delete(zone,object);
+            }
+        }
+    }
+
+    @Unbind(id = "zones")
+    public synchronized void unbindZone(Zone zone){
+        List<Relation> relations = containsCreator.getInstancesRelatedTo(zone);
+        for (Relation relation:relations){
+            String source = relation.getSource();
+            String end = relation.getTarget();
+            containsCreator.delete(source,end);
+        }
+    }
+
+
+    @Bind(id = "locatedObjects")
+    public synchronized void bindLocatedObject(LocatedObject object){
+        for (Zone zone : zones) {
+            if (! zone.canContains(object.getPosition())) {
+                continue;
+            }
+            containsCreator.create(zone,object);
+        }
+    }
+
+    @Modified(id = "locatedObjects")
+    public synchronized void modifiedLocatedObject(LocatedObject object){
+        for (Zone zone : zones) {
+            if (zone.canContains(object.getPosition())) {
+                try{
+                    containsCreator.create(zone,object);
+                }catch (IllegalArgumentException e){
+
+                }
+            }else {
+                containsCreator.delete(zone,object);
             }
         }
     }
