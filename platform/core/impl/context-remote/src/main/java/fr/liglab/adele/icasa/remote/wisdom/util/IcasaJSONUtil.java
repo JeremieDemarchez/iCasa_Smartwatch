@@ -75,7 +75,7 @@ public class IcasaJSONUtil {
         services.add(Heater.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(Heater.HEATER_POWER_LEVEL,heater.getPowerLevel(),NO_UNIT));
+        propObject.put(buildDeviceProperty("heater.powerLevel",heater.getPowerLevel(),NO_UNIT));
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
 
@@ -87,7 +87,7 @@ public class IcasaJSONUtil {
         services.add(Cooler.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(Cooler.COOLER_POWER_LEVEL,cooler.getPowerLevel(),NO_UNIT));
+        propObject.put(buildDeviceProperty("cooler.powerLevel",cooler.getPowerLevel(),NO_UNIT));
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
     }
@@ -98,7 +98,7 @@ public class IcasaJSONUtil {
         services.add(PresenceSensor.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE,presenceSensor.getSensedPresence(),NO_UNIT));
+        propObject.put(buildDeviceProperty("presenceSensor.sensedPresence",presenceSensor.getSensedPresence(),NO_UNIT));
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
     }
@@ -117,7 +117,7 @@ public class IcasaJSONUtil {
         services.add(DimmerLight.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(DimmerLight.DIMMER_LIGHT_POWER_LEVEL,dimmerLight.getPowerLevel(),NO_UNIT));
+        propObject.put(buildDeviceProperty("dimmerLight.powerLevel",dimmerLight.getPowerLevel(),NO_UNIT));
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
     }
@@ -128,7 +128,7 @@ public class IcasaJSONUtil {
         services.add(BinaryLight.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(BinaryLight.BINARY_LIGHT_POWER_STATUS,binaryLight.getPowerStatus(),NO_UNIT));
+        propObject.put(buildDeviceProperty("binaryLight.powerStatus",binaryLight.getPowerStatus(),NO_UNIT));
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
     }
