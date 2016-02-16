@@ -8,6 +8,14 @@
     padding: 20px;
 }
 
+div#JumbInfo{
+    padding: 10px;
+}
+
+div#ColumnInfo{
+    margin: 0;
+}
+
 .scroll{
     overflow-y: scroll;
 }
@@ -29,8 +37,9 @@
 
 .scroll-txt:hover{
     text-overflow: unset;
-    overflow-x: scroll;
+    overflow-x: auto;
 }
+
 a, a:hover, a:focus{
     text-decoration: none;
 }

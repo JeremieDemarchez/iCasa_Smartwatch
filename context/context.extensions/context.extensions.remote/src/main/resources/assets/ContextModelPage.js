@@ -61,7 +61,7 @@ function addNodeStatesPanel(elementId,data){
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
         console.log("KEY : " + key + " , VAL : " + val);
-        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
         stateGroupListValue.appendTo(stateGroupListItem);
         stateGroupListItem.appendTo(stateGroupList);
@@ -80,7 +80,7 @@ var panelState = $("#relationsPanel"+elementId);
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
         console.log("KEY : " + key + " , VAL : " + val);
-        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
         stateGroupListValue.appendTo(stateGroupListItem);
         stateGroupListItem.appendTo(stateGroupList);
@@ -197,23 +197,28 @@ function graphInit(time) {
     columnInfo = $("#ColumnInfo");
 
     var t = $.get("/context/entities",function(data) {
-        $.each(data,function(key,value){
-            console.log('Node Id:', key);
+        var numberOfEntities = data.size;
+        for(var i = 0; i<numberOfEntities; i++){
+            var nameId = data["entity"+i+"id"];
+            var hash = data["entity"+i+"hash"];
+            var grp = data["entity"+i+"group"];
+            console.log('Entity: ', nameId+"/"+hash+"/"+grp);
             nodes.add({
-                id: value,
-                label: key
+                id: hash,
+                label: nameId,
+                group: grp
             });
-        });
+        }
     });
 
     var y = $.get("/context/relations",function(data) {
         var numberOfRelations = data.size;
-        for(var i = 0;i<numberOfRelations;i ++){
+        for(var i = 0; i<numberOfRelations; i++){
             var name = data["relation"+i+"name"];
             var nameId = data["relation"+i+"nameId"];
             var sourceId = data["relation"+i+"sourceId"];
             var targetId = data["relation"+i+"targetId"];
-            console.log('Relation with Id: ', name+"/"+nameId+"/"+sourceId+"/"+targetId);
+            console.log('Relation: ', name+"/"+nameId+"/"+sourceId+"/"+targetId);
             if ((null != nodes.get(sourceId)) && (null != nodes.get(targetId))){
                 var edgeId = ""+nameId+""+sourceId+""+targetId;
                 console.log('Relation: ', name);
