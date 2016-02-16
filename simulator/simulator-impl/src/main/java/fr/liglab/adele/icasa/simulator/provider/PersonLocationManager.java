@@ -15,11 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulator.provider;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
-import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import fr.liglab.adele.icasa.simulator.impl.PersonImpl;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import org.apache.felix.ipojo.annotations.*;

@@ -48,20 +48,6 @@ import java.util.function.Supplier;
 @ContextEntity(services = {LuminosityModel.class})
 public class SimulatedLuminosityModel implements LuminosityModel{
 
-    public static final String RELATION_IS_ATTACHED="illuminance.model.of";
-
-    @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.CURRENT_LUMINOSITY)
-    public double currentLuminosity;
-
-    @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.ZONE_ATTACHED)
-    public String zoneName;
-
-    @Override
-    public double getCurrentLuminosity() {
-        return currentLuminosity;
-    }
-
-
     /**
      * Rought Constant to establish the correspondance between power & illuminance
      */
@@ -76,13 +62,25 @@ public class SimulatedLuminosityModel implements LuminosityModel{
     // In the night, there is no need to use the full illuminance
     public static final double  NIGHT_EXTERNAL_SOURCE_POWER = 200;
 
-    private double currentExternalSource = MORNING_EXTERNAL_SOURCE_POWER;
+    private final double DEFAUT_VALUE = 100d;
+
+    public static final String RELATION_IS_ATTACHED="illuminance.model.of";
+
+    @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.CURRENT_LUMINOSITY)
+    public double currentLuminosity;
+
+    @ContextEntity.State.Field(service = LuminosityModel.class,state = LuminosityModel.ZONE_ATTACHED)
+    public String zoneName;
 
     @Validate
     public void start(){
-        currentExternalSource = getLightFactor();
+
     }
 
+    @Override
+    public double getCurrentLuminosity() {
+        return currentLuminosity;
+    }
 
     @Requires(specification = MomentOfTheDay.class)
     MomentOfTheDay momentOfTheDay;
@@ -106,8 +104,6 @@ public class SimulatedLuminosityModel implements LuminosityModel{
     public String pushZone(String zoneName) {
         return zoneName;
     }
-
-    private final double DEFAUT_VALUE = 100d;
 
     /**
      * Computes and updates the illuminance property value of specified zone .

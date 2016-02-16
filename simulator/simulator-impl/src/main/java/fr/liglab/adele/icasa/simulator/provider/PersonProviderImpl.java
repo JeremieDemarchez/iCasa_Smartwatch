@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.simulator.provider;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
-import fr.liglab.adele.icasa.simulator.device.SimulatedDeviceProvider;
 import fr.liglab.adele.icasa.simulator.impl.PersonImpl;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import fr.liglab.adele.icasa.simulator.person.PersonProvider;
@@ -25,9 +24,11 @@ import fr.liglab.adele.icasa.simulator.person.PersonType;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.util.Logger;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 @Component(immediate = true, publicFactory=false)
 @Provides(specifications = PersonProvider.class)

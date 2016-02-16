@@ -15,7 +15,6 @@
  */
 package fr.liglab.adele.icasa.simulator.device;
 
-import java.util.Map;
 import java.util.Set;
 
 /**

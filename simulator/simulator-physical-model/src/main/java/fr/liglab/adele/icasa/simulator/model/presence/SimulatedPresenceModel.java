@@ -16,20 +16,16 @@
 package fr.liglab.adele.icasa.simulator.model.presence;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
-import fr.liglab.adele.icasa.device.motion.MotionSensor;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.model.api.PresenceModel;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Modified;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 
 import java.util.List;
-import java.util.function.Supplier;
 
 @ContextEntity(services = PresenceModel.class)
 public class SimulatedPresenceModel implements PresenceModel {

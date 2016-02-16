@@ -17,7 +17,6 @@ package fr.liglab.adele.icasa.simulator.model.api;
 
 import fr.liglab.adele.icasa.context.model.annotations.ContextService;
 import fr.liglab.adele.icasa.context.model.annotations.State;
-import fr.liglab.adele.icasa.location.Zone;
 
 public @ContextService interface PresenceModel {
 
