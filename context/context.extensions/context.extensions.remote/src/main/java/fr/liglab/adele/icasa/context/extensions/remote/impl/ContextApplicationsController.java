@@ -17,7 +17,7 @@
  * limitations under the License.
  * #L%
  */
-package fr.liglab.adele.icasa.context.extensions.remote;
+package fr.liglab.adele.icasa.context.extensions.remote.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.apache.felix.ipojo.annotations.Requires;

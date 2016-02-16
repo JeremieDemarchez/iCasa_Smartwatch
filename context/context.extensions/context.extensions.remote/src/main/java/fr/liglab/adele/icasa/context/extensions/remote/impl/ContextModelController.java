@@ -17,14 +17,13 @@
  * limitations under the License.
  * #L%
  */
-package fr.liglab.adele.icasa.context.extensions.remote;
+package fr.liglab.adele.icasa.context.extensions.remote.impl;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import fr.liglab.adele.icasa.context.extensions.remote.api.ControllerConfigurator;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import fr.liglab.adele.icasa.context.model.Relation;
-import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;
 import org.wisdom.api.annotations.Parameter;
@@ -49,6 +48,9 @@ public class ContextModelController extends DefaultController {
     @View("ContextMainPage")
     Template welcome;
 
+    @Requires(specification = ControllerConfigurator.class, optional = true, defaultimplementation = ControllerConfiguratorDefaultImpl.class)
+    ControllerConfigurator controllerConfigurator;
+
     @Requires(specification = ContextEntity.class, optional = true)
     List<ContextEntity> entities;
 
@@ -70,10 +72,18 @@ public class ContextModelController extends DefaultController {
     public Result getEntities(){
         ObjectNode result = json.newObject();
 
+        result.put("size", entities.size());
+        int i = 0;
+        String id;
         for (ContextEntity entity : entities){
-            String id = entity.getId();
-            result.put(id, id.hashCode());
+            id = entity.getId();
+            result.put("entity"+i+"id",id);
+            result.put("entity"+i+"hash",id.hashCode());
+            result.put("entity"+i+"group",controllerConfigurator.getEntityGroup(entity));
+
+            i++;
         }
+        System.out.println(result);
         return ok(result);
     }
 

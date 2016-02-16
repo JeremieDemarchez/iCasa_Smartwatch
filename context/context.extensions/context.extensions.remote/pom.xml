@@ -111,19 +111,7 @@
         	<artifactId>icasa.context.model.runtime</artifactId>
         	<version>${project.version}</version>
         </dependency>
-
-        <!--TODO-->
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>icasa.context.model.test</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>command.handler</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
+        
     </dependencies>
 
     <dependencyManagement>
@@ -141,6 +129,18 @@
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.felix</groupId>
+                <artifactId>maven-bundle-plugin</artifactId>
+                <extensions>true</extensions>
+                <configuration>
+                    <instructions>
+                        <Export-Package>fr.liglab.adele.icasa.context.extensions.remote.api</Export-Package> <!-- YOUR_EXPORTED_PACKAGES -->
+                        <Private-Package>fr.liglab.adele.icasa.context.extensions.remote.impl</Private-Package>
+                    </instructions>
+                </configuration>
+            </plugin>
+
             <plugin>
                 <groupId>org.wisdom-framework</groupId>
                 <artifactId>wisdom-maven-plugin</artifactId>

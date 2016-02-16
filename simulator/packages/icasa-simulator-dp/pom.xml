@@ -31,9 +31,14 @@
       <artifactId>simulator.impl</artifactId>
       <version>${project.version}</version>
     </dependency>
-  <dependency>
+    <dependency>
       <groupId>${project.groupId}</groupId>
       <artifactId>simulator.devices</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>${project.groupId}</groupId>
+      <artifactId>context.extensions.remote.configuration</artifactId>
       <version>${project.version}</version>
     </dependency>
     <!--    <dependency>

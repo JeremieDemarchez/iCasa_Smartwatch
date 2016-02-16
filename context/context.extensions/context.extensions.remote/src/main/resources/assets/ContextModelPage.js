@@ -197,23 +197,28 @@ function graphInit(time) {
     columnInfo = $("#ColumnInfo");
 
     var t = $.get("/context/entities",function(data) {
-        $.each(data,function(key,value){
-            console.log('Node Id:', key);
+        var numberOfEntities = data.size;
+        for(var i = 0; i<numberOfEntities; i++){
+            var nameId = data["entity"+i+"id"];
+            var hash = data["entity"+i+"hash"];
+            var grp = data["entity"+i+"group"];
+            console.log('Entity: ', nameId+"/"+hash+"/"+grp);
             nodes.add({
-                id: value,
-                label: key
+                id: hash,
+                label: nameId,
+                group: grp
             });
-        });
+        }
     });
 
     var y = $.get("/context/relations",function(data) {
         var numberOfRelations = data.size;
-        for(var i = 0;i<numberOfRelations;i ++){
+        for(var i = 0; i<numberOfRelations; i++){
             var name = data["relation"+i+"name"];
             var nameId = data["relation"+i+"nameId"];
             var sourceId = data["relation"+i+"sourceId"];
             var targetId = data["relation"+i+"targetId"];
-            console.log('Relation with Id: ', name+"/"+nameId+"/"+sourceId+"/"+targetId);
+            console.log('Relation: ', name+"/"+nameId+"/"+sourceId+"/"+targetId);
             if ((null != nodes.get(sourceId)) && (null != nodes.get(targetId))){
                 var edgeId = ""+nameId+""+sourceId+""+targetId;
                 console.log('Relation: ', name);
