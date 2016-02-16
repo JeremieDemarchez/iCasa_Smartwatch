@@ -61,7 +61,7 @@ function addNodeStatesPanel(elementId,data){
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
         console.log("KEY : " + key + " , VAL : " + val);
-        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
         stateGroupListValue.appendTo(stateGroupListItem);
         stateGroupListItem.appendTo(stateGroupList);
@@ -80,7 +80,7 @@ var panelState = $("#relationsPanel"+elementId);
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
         console.log("KEY : " + key + " , VAL : " + val);
-        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item");
+        var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
         stateGroupListValue.appendTo(stateGroupListItem);
         stateGroupListItem.appendTo(stateGroupList);
