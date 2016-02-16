@@ -16,8 +16,8 @@
 package fr.liglab.adele.icasa.simulator.device.presence.impl;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
+import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
@@ -94,7 +94,7 @@ public class SimulatedPresenceSensorImpl implements LocatedObject,PresenceSensor
      * Zone
      */
 
-    @Relation.Field(Constant.RELATION_IS_IN)
+    @Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
     @Requires(id="zone",specification=Zone.class,optional=true)
     private Zone zone;
 

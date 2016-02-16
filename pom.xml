@@ -53,9 +53,10 @@
             <module>tools</module>
             <module>distribution</module>
 
-            <module>tests</module>
-  <!--          <module>applications</module>
-            <module>installer</module>-->
+
+           <module>applications</module>
+             <!-- <module>tests</module>
+                      <module>installer</module>-->
          </modules>
       </profile>
       <profile>

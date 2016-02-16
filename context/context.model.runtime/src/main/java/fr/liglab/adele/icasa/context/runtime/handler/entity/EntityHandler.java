@@ -1,10 +1,29 @@
 package fr.liglab.adele.icasa.context.runtime.handler.entity;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
-import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
-import org.apache.felix.ipojo.*;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Dictionary;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
+
+import org.apache.felix.ipojo.ComponentInstance;
+import org.apache.felix.ipojo.ConfigurationException;
+import org.apache.felix.ipojo.ContextListener;
+import org.apache.felix.ipojo.ContextSource;
+import org.apache.felix.ipojo.HandlerFactory;
+import org.apache.felix.ipojo.InstanceManager;
+import org.apache.felix.ipojo.Pojo;
+import org.apache.felix.ipojo.PrimitiveHandler;
 import org.apache.felix.ipojo.annotations.Handler;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -17,33 +36,35 @@ import org.apache.felix.ipojo.util.Property;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 import org.wisdom.api.concurrent.ManagedScheduledFutureTask;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentSkipListSet;
-import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
+import fr.liglab.adele.icasa.context.model.ContextEntity;
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.icasa.context.model.annotations.internal.HandlerReference;
 
 @Handler(name =HandlerReference.ENTITY_HANDLER ,namespace = HandlerReference.NAMESPACE)
 @Provides(specifications = ContextEntity.class)
 
-public class EntityHandler extends PrimitiveHandler implements ContextEntity,ContextSource {
+public class EntityHandler extends PrimitiveHandler implements ContextEntity, ContextSource {
 
 	/**
 	 * The list of exposed context services
 	 */
-	private final Set<String> services 			= new HashSet<>();
+	private final Set<String> services 					= new HashSet<>();
 
 	/**
 	 * The list of states defined in the implemented context services
 	 */
-	private final Set<String> stateIds 			= new HashSet<>();
+	private final Set<String> stateIds 					= new HashSet<>();
 
+	/**
+	 * The list of interceptors in charge of handling each state field
+	 */
+	private final Set<StateInterceptor>	interceptors	= new HashSet<>();
+	
 	/**
 	 * The current values of the state properties
 	 */
-	private final Map<String,Object> stateValues = new ConcurrentHashMap<>();
+	private final Map<String,Object> stateValues 		= new ConcurrentHashMap<>();
 
 	/**
 	 * service controller to align life-cycle of the generic ContextEntity service with
@@ -58,20 +79,19 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 	private ProvidedServiceHandler providerHandler;
 
 	/**
+	 * The list of iPOJO context listeners to notify on state updates. 
+	 * 
+	 * This handler implements ContextSource to allow state variables to be used in
+	 * dependency filters.
+	 */
+	private final Set<ContextListener> contextSourceListeners	= new HashSet<>();
+	
+	/**
 	 * The Wisdom Scheduler used to handle periodic tasks
 	 */
 	@Requires(id="scheduler",proxy = false)
 	public ManagedScheduledExecutorService scheduler;
 
-	/**
-	 * The list of periodic task to execute on behalf of interceptors
-	 */
-	private final List<PeriodicTask> tasks = new ArrayList<>();
-
-	/**
-	 * The list of periodic task to execute on behalf of interceptors
-	 */
-	private final Set<ContextListener> iPOJOContextListener = new HashSet<>();
 
 	/**
 	 * Updates the value of a state property, propagating the change to the published service properties
@@ -143,10 +163,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 			propagate(new Hashtable<>(stateValues));
 
             /*
-             * restart periodic tasks
+             * restart state handlers
              */
-			for (PeriodicTask task : tasks) {
-				task.start();
+			for (StateInterceptor interceptor : interceptors) {
+				interceptor.validate();
 			}
 		}
 
@@ -154,10 +174,10 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 			instanceIsActive = false;
 
             /*
-             * stop periodic tasks
+             * stop state handlers
              */
-			for (PeriodicTask task : tasks) {
-				task.stop();
+			for (StateInterceptor interceptor : interceptors) {
+				interceptor.invalidate();
 			}
 
 		}
@@ -199,16 +219,21 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 			}
 		}
 
+		/*
+		 * Initialize interceptors for the different field management policies
+		 */
+		SynchronisationInterceptor synchronisationInterceptor 	= new SynchronisationInterceptor(this);
+		DirectAccessInterceptor directAccessInterceptor 		= new DirectAccessInterceptor(this);
+
+		interceptors.add(synchronisationInterceptor);
+		interceptors.add(directAccessInterceptor);
+
         /*
          * Parse the manifest and compare if all the state variable declared in the specification are referenced in the implementation.
          * Add the appropriate interceptors to fields and methods
          */
 
-		SynchronisationInterceptor synchronisationInterceptor 	= new SynchronisationInterceptor(this);
-		DirectAccessInterceptor directAccessInterceptor 		= new DirectAccessInterceptor(this);
-
 		List<String> implementedStates = new ArrayList<String>();
-
 		for (Element entity : optional(element.getElements(HandlerReference.ENTITY_HANDLER,HandlerReference.NAMESPACE))) {
 			for (Element state : optional(entity.getElements("state"))) {
 
@@ -356,14 +381,15 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 	 * The action to be performed is specified as a consumer that will be given access to the component
 	 * instance
 	 */
-	public void schedule(Consumer<InstanceManager> action, long period, TimeUnit unit) {
-		tasks.add(new PeriodicTask(action,period,unit));
+	public PeriodicTask schedule(Consumer<InstanceManager> action, long period, TimeUnit unit) {
+		PeriodicTask task = new PeriodicTask(action,period,unit);
+		return task;
 	}
 
 	/**
 	 * This class keeps track of all the information required to schedule periodic tasks
 	 */
-	private class PeriodicTask {
+	public class PeriodicTask {
 
 		private final Consumer<InstanceManager> action;
 
@@ -373,7 +399,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 
 		private ManagedScheduledFutureTask<?> taskHandle;
 
-		public PeriodicTask(Consumer<InstanceManager> action, long period, TimeUnit unit) {
+		private PeriodicTask(Consumer<InstanceManager> action, long period, TimeUnit unit) {
 			this.action = action;
 			this.period	= period;
 			this.unit	= unit;
@@ -390,13 +416,20 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 		 * Start executing the action periodically
 		 */
 		public void start() {
-			taskHandle = scheduler.scheduleAtFixedRate(
-					() -> {
-						if (instanceIsActive) {
-							action.accept(getInstanceManager());
-						}
-					},
-					period, period, unit);
+			
+			/*
+			 * Handle non periodic tasks, as a single shot activation
+			 */
+			if (period < 0 && instanceIsActive) {
+				action.accept(getInstanceManager());
+			}
+			else if (period > 0) {
+				taskHandle =	scheduler.scheduleAtFixedRate(	() -> {
+									if (instanceIsActive) {
+										action.accept(getInstanceManager());
+									}
+								},period,period,unit);
+			}
 		}
 
 		/**
@@ -419,6 +452,7 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 		return stateValues.get(property);
 	}
 
+	@SuppressWarnings("rawtypes")
 	@Override
 	public Dictionary getContext() {
 		return new Hashtable<>(stateValues);
@@ -426,28 +460,59 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity,Con
 
 	@Override
 	public void registerContextListener(ContextListener listener, String[] properties) {
-		if (!iPOJOContextListener.contains(listener)){
-			iPOJOContextListener.add(listener);
+		if (!contextSourceListeners.contains(listener)){
+			contextSourceListeners.add(listener);
 		}
 	}
 
 	@Override
 	public synchronized void unregisterContextListener(ContextListener listener) {
-		iPOJOContextListener.remove(listener);
+		contextSourceListeners.remove(listener);
 	}
 
 	/**
 	 * Notify All the context listener
 	 */
 	private void notifyContextListener(String property,Object value){
-		for (ContextListener listener:iPOJOContextListener){
+		for (ContextListener listener : contextSourceListeners){
 			listener.update(this,property,value);
 		}
 	}
+	
+	/**
+	 * Hanlder description
+	 */
 	@Override
 	public HandlerDescription getDescription() {
 		return new EntityHandlerDescription();
 	}
+	
+	/**
+	 * Given an iPOJO instance with the entity handler attached, return the associated context entity
+	 */
+	public static ContextEntity getContextEntity(ComponentInstance instance) {
+		
+		if (instance == null) {
+			return null;
+		}
+
+		String handlerId 						= HandlerReference.NAMESPACE+":"+HandlerReference.ENTITY_HANDLER;
+		HandlerDescription handlerDescription	= instance.getInstanceDescription().getHandlerDescription(handlerId);
+
+		if (handlerDescription instanceof EntityHandlerDescription) {
+			return (EntityHandlerDescription) handlerDescription;
+		}
+		
+		return null;
+	}
+	
+	/**
+	 * Given an iPOJO object with the entity handler attached, return the associated context entity
+	 */
+	public static ContextEntity getContextEntity(Pojo pojo) {
+		return getContextEntity(pojo.getComponentInstance());
+	}
+	
 
 	/**
 	 * The description of the handler.

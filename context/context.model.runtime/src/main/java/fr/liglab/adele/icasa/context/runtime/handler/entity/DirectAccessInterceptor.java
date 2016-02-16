@@ -13,7 +13,7 @@ import java.util.Map;
 /**
  * Interceptor to handle state fields that are directly manipulated by the entity code
  */
-public class DirectAccessInterceptor implements FieldInterceptor {
+public class DirectAccessInterceptor implements StateInterceptor, FieldInterceptor {
 
     /**
      * The associated entity handler in charge of keeping the context state
@@ -65,5 +65,13 @@ public class DirectAccessInterceptor implements FieldInterceptor {
     public void onSet(Object pojo, String fieldName, Object value) {
 		entityHandler.update(fieldToState.get(fieldName),value);
     }
+
+	@Override
+	public void validate() {
+	}
+
+	@Override
+	public void invalidate() {
+	}
 
 }

@@ -34,14 +34,14 @@ public class SimulatedTemperatureProvider {
     public void bindZone(Zone zone){
         String name = generateEntityName(zone);
         creator.create(name);
-        attachedTempModelCreator.create(name,zone.getZoneName());
+        attachedTempModelCreator.create(name,zone);
     }
 
     @Unbind(id = "zones")
     public void unbindZone(Zone zone){
         String name = generateEntityName(zone);
         creator.delete(name);
-        attachedTempModelCreator.delete(name,zone.getZoneName());
+        attachedTempModelCreator.delete(name,zone);
     }
 
     private String generateEntityName(Zone zone){

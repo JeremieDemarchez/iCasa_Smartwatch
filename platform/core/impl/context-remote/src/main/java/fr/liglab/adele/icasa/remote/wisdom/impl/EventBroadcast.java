@@ -149,17 +149,9 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("zoneId", zone.getZoneName());
 			json.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 			sendEvent("zone-moved", json);
-		} catch (JSONException e) {
-			logger.error("Building message error" + json, e);
-			e.printStackTrace();
-		}
-		JSONObject jsonResized = new JSONObject();
-		try {
-			jsonResized.put("zoneId", zone.getZoneName());
-			jsonResized.put("zone", IcasaJSONUtil.getZoneJSON(zone));
 			sendEvent("zone-resized", json);
 		} catch (JSONException e) {
-			logger.error("Building message error" + jsonResized, e);
+			logger.error("Building message error" + json, e);
 			e.printStackTrace();
 		}
 	}
@@ -236,6 +228,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", binaryLight.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getBinaryLightJSON(binaryLight));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -274,6 +267,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", dimmerLight.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getDimmerLightJSON(dimmerLight));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -312,6 +306,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", thermometer.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getThermometerJSON(thermometer));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -350,6 +345,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", cooler.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getCoolerJSON(cooler));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -375,6 +371,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", heater.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getHeaterJSON(heater));
 			sendEvent("device-added", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -388,6 +385,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", heater.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getHeaterJSON(heater));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -426,6 +424,7 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", photometer.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getPhotometerJSON(photometer));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();
@@ -464,6 +463,8 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			json.put("deviceId", presenceSensor.getSerialNumber());
 			json.put("device", IcasaJSONUtil.getPresenceSensorJSON	(presenceSensor));
 			sendEvent("device-position-update", json);
+			sendEvent("device-property-updated",json);
+		sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
 			e.printStackTrace();

@@ -20,7 +20,12 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
+import fr.liglab.adele.icasa.simulator.device.utils.Constant;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 
 /**
  * Implementation of a simulated heater device.
@@ -47,7 +52,7 @@ public class SimulatedHeaterImpl implements Heater,SimulatedDevice,LocatedObject
     private int y;
 
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zone;
+    private String zoneName;
 
     @Override
     public double getPowerLevel() {
@@ -74,7 +79,7 @@ public class SimulatedHeaterImpl implements Heater,SimulatedDevice,LocatedObject
 
     @Override
     public String getZone() {
-        return zone;
+        return zoneName;
     }
 
     @Override
@@ -88,5 +93,23 @@ public class SimulatedHeaterImpl implements Heater,SimulatedDevice,LocatedObject
         y=position.y;
     }
 
+    @ContextEntity.Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 
 }

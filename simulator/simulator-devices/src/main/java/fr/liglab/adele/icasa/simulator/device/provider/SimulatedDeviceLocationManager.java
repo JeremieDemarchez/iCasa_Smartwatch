@@ -16,15 +16,9 @@
 package fr.liglab.adele.icasa.simulator.device.provider;
 
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedBinaryLightImpl;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedDimmerLightImpl;
-import fr.liglab.adele.icasa.simulator.device.light.impl.SimulatedPhotometerImpl;
-import fr.liglab.adele.icasa.simulator.device.presence.impl.SimulatedPresenceSensorImpl;
-import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedCoolerImpl;
-import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedHeaterImpl;
-import fr.liglab.adele.icasa.simulator.device.temperature.impl.SimulatedThermometerImpl;
 import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import org.apache.felix.ipojo.annotations.*;
 
@@ -40,86 +34,66 @@ public class SimulatedDeviceLocationManager {
     @Requires(id = "zones",specification = Zone.class, optional = true)
     List<Zone> zones;
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedBinaryLightImpl,Zone> isInBinaryCreator;
+    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<LocatedObject,Zone> isInLocatedObjectRelationCreator;
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedDimmerLightImpl,Zone> isInDimmerCreator;
+    @Bind(id = "zones")
+    public void bindZone(Zone zone){
+        for (SimulatedDevice simulatedDevice : simulatedDevices){
+            if (zone.canContains(simulatedDevice.getPosition())){
+                isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+            }
+        }
+    }
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedPhotometerImpl,Zone> isInPhotometerCreator;
+    @Modified(id = "zones")
+    public void modifiedZone(Zone zone){
+        for (SimulatedDevice simulatedDevice : simulatedDevices){
+            if (zone.canContains(simulatedDevice.getPosition())){
+                try {
+                    isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+                }catch (IllegalArgumentException e){
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedCoolerImpl,Zone> isInCoolerCreator;
+                }
+            }else {
+                isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
+            }
+        }
+    }
 
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedHeaterImpl,Zone> isInHeaterCreator;
-
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedThermometerImpl,Zone> isInThermometerCreator;
-
-    @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<SimulatedPresenceSensorImpl,Zone> isInPresenceSensor;
+    @Unbind(id = "zones")
+    public void unbindZone(Zone zone){
+        for (SimulatedDevice simulatedDevice : simulatedDevices){
+            isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
+        }
+    }
 
     @Bind(id = "simulatedDevices")
     public void bindSimulatedDevice(SimulatedDevice simulatedDevice){
-        Creator.Relation creator = getCreator(simulatedDevice);
-        if (creator == null){
-            return;
-        }
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
-                creator.create(simulatedDevice.getSerialNumber(),zone.getZoneName());
+                isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
             }
         }
     }
 
     @Modified(id = "simulatedDevices")
     public void modifiedSimulatedDevice(SimulatedDevice simulatedDevice){
-        Creator.Relation creator = getCreator(simulatedDevice);
-        if (creator == null){
-            return;
-        }
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
                 try {
-                    creator.create(simulatedDevice.getSerialNumber(),zone.getZoneName());
+                    isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
                 }catch (IllegalArgumentException e){
 
                 }
             }else {
-                creator.delete(simulatedDevice.getSerialNumber(),zone.getZoneName());
+                isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
             }
         }
     }
 
     @Unbind(id = "simulatedDevices")
     public void unbindSimulatedDevice(SimulatedDevice simulatedDevice){
-        Creator.Relation creator = getCreator(simulatedDevice);
-        if (creator == null){
-            return;
-        }
-        for (Zone zone:zones){
-            if (zone.canContains(simulatedDevice.getPosition())){
-                creator.delete(simulatedDevice.getSerialNumber(),zone.getZoneName());
-            }
-        }
+        isInLocatedObjectRelationCreator.delete(simulatedDevice,simulatedDevice.getZone());
     }
 
-    private Creator.Relation getCreator(SimulatedDevice device){
-        if (device instanceof SimulatedBinaryLightImpl){
-            return isInBinaryCreator;
-        }
-        if (device instanceof SimulatedDimmerLightImpl){
-            return isInDimmerCreator;
-        }
-        if (device instanceof SimulatedPhotometerImpl){
-            return isInPhotometerCreator;
-        }
-        if (device instanceof SimulatedCoolerImpl){
-            return isInCoolerCreator;
-        }
-        if (device instanceof SimulatedHeaterImpl){
-            return isInHeaterCreator;
-        }
-        if (device instanceof SimulatedThermometerImpl) {
-            return isInThermometerCreator;
-        }
-        if (device instanceof SimulatedPresenceSensorImpl){
-        }
-        return null;
-    }
 }

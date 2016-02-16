@@ -2,6 +2,7 @@ package fr.liglab.adele.icasa.context.model.annotations.provider;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Target;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -32,7 +33,7 @@ public interface Creator {
 	 */
 	public interface Entity<E> {
 
-		Set<String> getInstances();
+		public Set<String> getInstances();
 
 		/**
 		 * Return the created instance of the context entity
@@ -40,7 +41,7 @@ public interface Creator {
 		 * TODO should return a Future because if the creator is disabled the actual instance
 		 * may not be available
 		 */
-		E getInstance(String id);
+		public E getInstance(String id);
 
 		/**
 		 * Creates a new instance of the context entity
@@ -48,13 +49,13 @@ public interface Creator {
 		 * TODO If there are errors at instantiation, and the creator is disabled how to notify
 		 * the client?
 		 */
-		void create(String id, Map<String, Object> initialization);
+		public void create(String id, Map<String, Object> initialization);
 
-		void create(String id);
+		public void create(String id);
 
-		void delete(String id);
+		public void delete(String id);
 
-		void deleteAll();
+		public void deleteAll();
 	}
 
 	/**
@@ -65,16 +66,33 @@ public interface Creator {
 	 */
 	public interface Relation<S,T> {
 
-		Set<String> getInstances();
+		public Set<String> getInstances();
 
-		String create(String sourceId, String targetId);
+		public fr.liglab.adele.icasa.context.model.Relation getInstance(String id);
 
-		void delete(String sourceId, String targetId);
+		public List<fr.liglab.adele.icasa.context.model.Relation> getInstancesRelatedTo(String sourceId);
 
+		public List<fr.liglab.adele.icasa.context.model.Relation> getInstancesRelatedTo(S source);
+
+		public String create(S source, T target);
+
+		public String create(String sourceId, String targetId);
+
+		public String create(S source, String targetId);
+
+		public String create(String sourceId, T target);
+
+		public void delete(S source, T target);
+
+		public void delete(String sourceId, String targetId);
+
+		public void delete(S source, String targetId);
+
+		public void delete(String sourceId, T target);
+		
 		void delete(String id);
 
 		void deleteAll();
 
-		fr.liglab.adele.icasa.context.model.Relation getInstance(String id);
 	}
 }
