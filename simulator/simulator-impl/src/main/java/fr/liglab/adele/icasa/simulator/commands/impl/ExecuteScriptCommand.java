@@ -15,9 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulator.commands.impl;
 
-import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
+import fr.liglab.adele.icasa.commands.Signature;
 import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -35,45 +35,45 @@ import java.util.List;
  *
  * 
  */
-//@Component(name = "ExecuteScriptCommand")
-//@Provides
-//@Instantiate(name = "execute-script-command")
-//public class ExecuteScriptCommand extends AbstractCommand {
-//
-//	@Requires
-//	private ScriptExecutor executor;
-//
-//    public ExecuteScriptCommand(){
-//        addSignature(new Signature(new String[]{ScriptLanguage.SCRIPT_NAME}));
-//    }
-//
-//	@Override
-//	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
-//        String scriptName = param.getString(ScriptLanguage.SCRIPT_NAME);
-//        List<String> scriptList = executor.getScriptList();
-//        if(scriptList.contains(scriptName)){
-//            out.println("Executing script: " + scriptName);
-//		    executor.execute(scriptName);
-//        } else {
-//            out.println("Non-existent script: " + scriptName);
-//            out.println("See command: \'show-scripts\'");
-//        }
-//		return null;
-//	}
-//
-//
-//    /**
-//     * Get the name of the  Script and command gogo.
-//     *
-//     * @return The command name.
-//     */
-//    @Override
-//    public String getName() {
-//        return "execute-script";
-//    }
-//
-//    @Override
-//    public String getDescription(){
-//        return "Execute a script.\n\t" + super.getDescription();
-//    }
-//}
+@Component(name = "ExecuteScriptCommand")
+@Provides
+@Instantiate(name = "execute-script-command")
+public class ExecuteScriptCommand extends AbstractCommand {
+
+	@Requires
+	private ScriptExecutor executor;
+
+    public ExecuteScriptCommand(){
+        addSignature(new Signature(new String[]{ScriptLanguage.SCRIPT_NAME}));
+    }
+
+	@Override
+	public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
+        String scriptName = param.getString(ScriptLanguage.SCRIPT_NAME);
+        List<String> scriptList = executor.getScriptList();
+        if(scriptList.contains(scriptName)){
+            out.println("Executing script: " + scriptName);
+		    executor.execute(scriptName);
+        } else {
+            out.println("Non-existent script: " + scriptName);
+            out.println("See command: \'show-scripts\'");
+        }
+		return null;
+	}
+
+
+    /*
+     * Get the name of the  Script and command gogo.
+     *
+     * @return The command name.
+     */
+    @Override
+    public String getName() {
+        return "execute-script";
+    }
+
+    @Override
+    public String getDescription(){
+        return "Execute a script.\n\t" + super.getDescription();
+    }
+}

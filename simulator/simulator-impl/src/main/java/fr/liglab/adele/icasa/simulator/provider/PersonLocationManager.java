@@ -37,21 +37,25 @@ public class PersonLocationManager {
     List<Person> persons;
 
     @Bind(id = "persons")
-    public void bindPersons (Person person,Map<String,Object> properties) {
+    public synchronized void bindPersons (Person person,Map<String,Object> properties) {
         for (Zone zone : zones) {
             if (! zone.canContains(person.getPosition())) {
                 continue;
             }
-            personIsContainedCreator.create(person.getName(),zone.getZoneName());
+            try{
+                personIsContainedCreator.create(person.getName(),zone.getZoneName());
+            }catch (IllegalArgumentException e){
+
+            }
         }
     }
 
     @Modified(id = "persons")
-    public void modifiedPersons (Person person,Map<String,Object> properties) {
+    public synchronized void modifiedPersons (Person person,Map<String,Object> properties) {
         for (Zone zone : zones) {
             if (zone.canContains(person.getPosition())) {
                 try{
-                   personIsContainedCreator.create(person.getName(),zone.getZoneName());
+                    personIsContainedCreator.create(person.getName(),zone.getZoneName());
                 }catch (IllegalArgumentException e){
 
                 }
@@ -62,61 +66,38 @@ public class PersonLocationManager {
     }
 
     @Unbind(id = "persons")
-    public void unbindPersons (Person person,Map<String,Object> properties) {
+    public synchronized void unbindPersons (Person person,Map<String,Object> properties) {
         personIsContainedCreator.delete(person.getName(),person.getZone());
     }
 
-    /**
-     * Add relations person-zone comparing positions
-     * @param zone
-     */
-//    private void addLocationZone(Zone zone){
-//        for (Person person: persons){
-//            if (zone.canContains(person.getPosition())){
-//                /*TODO: Bizarre...*/
-//                personIsContainedCreator.create(((ContextEntity)person).getId(),((ContextEntity)zone).getId());
-//                zoneContainsCreator.create(((ContextEntity)zone).getId(), ((ContextEntity)person).getId());
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Remove all relations person-zone with zone name
-//     * @param zone
-//     */
-//    private void removeLocationZone(Zone zone){
-//        /*TODO: ça serait mieux si CREATOR_RELATION.getInstances() retournait toutes les relations*/
-//        /*TODO: sinon ça serait bien aussi de pouvoir accéder à toutes les relations liées à une id*/
-//        for (Person person: persons){
-//            personIsContainedCreator.delete(((ContextEntity)person).getId(),((ContextEntity)zone).getId());
-//            zoneContainsCreator.delete(((ContextEntity)zone).getId(), ((ContextEntity)person).getId());
-//        }
-//    }
-//
-//    /**
-//     * Add relations person-zone comparing positions
-//     * @param person
-//     */
-//    private void addLocationPerson(Person person){
-//        Position personPosition = person.getPosition();
-//        for (Zone zone: zones){
-//            if (zone.canContains(personPosition)){
-//                personIsContainedCreator.create(((ContextEntity)person).getId(),((ContextEntity)zone).getId());
-//                zoneContainsCreator.create(((ContextEntity)zone).getId(), ((ContextEntity)person).getId());
-//            }
-//        }
-//    }
-//
-//    /**
-//     * Remove all relations person-zone with person name
-//     * @param person
-//     */
-//    private void removeLocationPerson(Person person){
-//        for (Zone zone: zones){
-//            personIsContainedCreator.delete(((ContextEntity)person).getId(),((ContextEntity)zone).getId());
-//            zoneContainsCreator.delete(((ContextEntity)zone).getId(), ((ContextEntity)person).getId());
-//        }
-//
-//    }
+    @Bind(id = "zones")
+    public synchronized void bindZone(Zone zone){
+        for (Person person : persons){
+            if (zone.canContains(person.getPosition())){
+                personIsContainedCreator.create(person.getName(),zone);
+            }
+        }
+    }
 
+    @Modified(id = "zones")
+    public synchronized void modifiedZone(Zone zone){
+        for (Person person : persons){
+            if (zone.canContains(person.getPosition())){
+                try {
+                    personIsContainedCreator.create(person.getName(),zone);
+                }catch (IllegalArgumentException e){
+
+                }
+            }else {
+                personIsContainedCreator.delete(person.getName(),zone);
+            }
+        }
+    }
+
+    @Unbind(id = "zones")
+    public synchronized void unbindZone(Zone zone){
+        for (Person person : persons){
+            personIsContainedCreator.delete(person.getName(),zone);
+        }
+    }
 }

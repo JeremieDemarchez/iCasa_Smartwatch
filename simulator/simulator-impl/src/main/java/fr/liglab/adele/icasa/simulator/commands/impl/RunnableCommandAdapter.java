@@ -15,27 +15,27 @@
  */
 package fr.liglab.adele.icasa.simulator.commands.impl;
 
-//import fr.liglab.adele.icasa.commands.ICasaCommand;
-//import org.json.JSONObject;
-//
-//public class RunnableCommandAdapter implements Runnable {
-//
-//	private ICasaCommand commandService;
-//	private JSONObject param;
-//
-//	public RunnableCommandAdapter(ICasaCommand commandService, JSONObject param) {
-//		this.commandService = commandService;
-//		this.param = param;
-//	}
-//
-//	@Override
-//	public void run() {
-//		try {
-//	      commandService.execute(System.in, System.out, param);
-//      } catch (Exception e) {
-//	      e.printStackTrace();
-//      }
-//
-//	}
-//
-//}
+import fr.liglab.adele.icasa.commands.ICasaCommand;
+import org.json.JSONObject;
+
+public class RunnableCommandAdapter implements Runnable {
+
+    private ICasaCommand commandService;
+    private JSONObject param;
+
+    public RunnableCommandAdapter(ICasaCommand commandService, JSONObject param) {
+        this.commandService = commandService;
+        this.param = param;
+    }
+
+    @Override
+    public void run() {
+        try {
+            commandService.execute(System.in, System.out, param);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
