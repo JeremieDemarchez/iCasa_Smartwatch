@@ -124,7 +124,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			event.put("time", new Date().getTime());
             publisher.publish(url, event.toString());
 		} catch (JSONException e) {
-			e.printStackTrace();
             logger.error("Building message error" + eventType, e);
 		}
 	}
@@ -138,7 +137,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("zone-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -152,7 +150,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("zone-resized", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -164,7 +161,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("zone-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -217,7 +213,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -231,7 +226,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -243,7 +237,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -256,7 +249,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -270,7 +262,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -282,7 +273,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -295,7 +285,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -309,7 +298,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -321,7 +309,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -334,7 +321,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -348,7 +334,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -360,7 +345,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -374,7 +358,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -388,7 +371,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -400,7 +382,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -413,7 +394,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -427,7 +407,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -439,7 +418,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -452,7 +430,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-added", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -467,7 +444,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 		sendEvent("device-property-updated",json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 
@@ -479,7 +455,6 @@ public class EventBroadcast extends DefaultController implements RemoteEventBroa
 			sendEvent("device-removed", json);
 		} catch (JSONException e) {
 			logger.error("Building message error" + json, e);
-			e.printStackTrace();
 		}
 	}
 

@@ -25,6 +25,7 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -61,7 +62,9 @@ public class ZoneProviderImpl implements ZoneProvider {
 
 	@Override
 	public void resizeZone(String id, int width, int height, int depth) throws Exception {
-
+		Zone zone = creator.getInstance(id);
+		if (zone == null)return;
+		zone.resize(width,height,depth);
 	}
 
 	@Override
@@ -71,7 +74,8 @@ public class ZoneProviderImpl implements ZoneProvider {
 
 	@Override
 	public Set<String> getZoneIds() {
-		return null;
+		Set<String> ids = new HashSet<>(creator.getInstances());
+		return ids;
 	}
 
 
