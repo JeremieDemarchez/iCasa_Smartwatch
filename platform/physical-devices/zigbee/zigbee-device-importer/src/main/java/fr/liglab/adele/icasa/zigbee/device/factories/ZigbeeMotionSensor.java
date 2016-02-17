@@ -131,7 +131,7 @@ public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDev
      */
     @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
     @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zone;
+    private Zone zoneAttached;
 
     @Bind(id = "zone")
     public void bindZone(Zone zone){

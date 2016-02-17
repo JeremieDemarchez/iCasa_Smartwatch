@@ -103,23 +103,13 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
     }
 
     @ContextEntity.State.Apply(service = BinaryLight.class,state = BINARY_LIGHT_POWER_STATUS)
-    Consumer<Boolean> setPowerStatus = (powerStatus) -> {
-        if (powerStatus) {
+    Consumer<Boolean> setPowerStatus = newPowerStatus -> {
+        if (newPowerStatus) {
             driver.setData(moduleAddress, "1");
         } else {
             driver.setData(moduleAddress, "0");
         }
     };
-
-    @Validate
-    public void start() {
-
-    }
-
-    @Invalidate
-    public void stop() {
-
-    }
 
     //ZigbeeDeviceTracker Methods.
     /**
@@ -184,7 +174,7 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
      */
     @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
     @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zone;
+    private Zone zoneAttached;
 
     @Bind(id = "zone")
     public void bindZone(Zone zone){
