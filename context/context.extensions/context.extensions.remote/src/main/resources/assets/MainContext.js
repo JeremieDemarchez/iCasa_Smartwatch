@@ -10,9 +10,11 @@ $(document).ready(function() {
             graphInit(800);
         }
         clickMenu(this, '#ContextModel');
+        $('#ContextModelDisplay').show();
     });
     $('#ContextProvidersMenu').click(function(e){
         e.preventDefault();
+
         clickMenu(this, '#ContextProviders');
         getListOfProviders();
     });
@@ -28,6 +30,7 @@ $(document).ready(function() {
     });
 
     function clickMenu(menu, page){
+        $('#ContextModelDisplay').hide();
         var pages = ['#ContextModel', '#ContextProviders', '#ContextFactories', '#ContextApplications'];
         $(".active").removeClass('active');
         $(menu).addClass('active');
@@ -57,3 +60,16 @@ String.hashCode = function(string) {
   }
   return hash;
 };
+
+function updateButton(button, state){
+    $(button).attr('data-state', state);
+    if(state == true){
+        $(button).removeClass('btn-warning');
+        $(button).html('true');
+        $(button).addClass('btn-success');
+    } else {
+        $(button).removeClass('btn-success');
+        $(button).html('false');
+        $(button).addClass('btn-warning');
+    }
+}

@@ -1,4 +1,4 @@
-var nodes, edges, network, columnInfo;
+var nodes, edges, groups, network, columnInfo;
 
 //function registerWebSocket() {
 //    var ws = $.easyWebSocket("ws://" + window.location.host + "/temperature");
@@ -92,6 +92,33 @@ var panelState = $("#relationsPanel"+elementId);
     div_collapse.appendTo(panelState);
 }
 
+function createModalDisplayPanel(){
+    var displayModal = document.getElementById('DisplayModalBody');
+    var table =  $("<table></table>").attr('class',"table table-responsive");
+    var tableHead =  $("<thead></thead>");
+    var tableRHead =  $("<tr><th>Context Model Group</th><th>Show</th></tr>");
+    tableRHead.appendTo(tableHead);
+    tableHead.appendTo(table);
+    var tableBody =  $("<tbody></tbody>");
+
+    groups.forEach(function(element, index, array){
+        var row = $("<tr></tr>");
+        var group =  $("<td>"+element+"</td>").attr('class', "col-md-4");
+        var status =  $("<td>"+""+"</td>").attr('class',"enabler btn col-md-2").attr('data-group', element).attr('data-index',index);
+        updateButton(status, true);
+
+        group.appendTo(row);
+        status.appendTo(row);
+        row.appendTo(tableBody);
+    });
+
+    tableBody.appendTo(table);
+    table.appendTo(displayModal);
+
+
+
+}
+
 function graphDraw(){
     // create a network
     var container = document.getElementById('ContextNetwork');
@@ -135,6 +162,7 @@ function graphDraw(){
             solver: 'forceAtlas2Based'
         }
     };
+
     network = new vis.Network(container, data, options);
 
     network.on("selectEdge", function (params) {
@@ -184,6 +212,43 @@ function graphDraw(){
             removeNodeEntityPanel(y);
         });
     });
+
+    $('#DisplayModalBody').on('click', '.enabler', function(e) {
+        e.preventDefault();
+
+        var group = $(this).attr('data-group');
+        var index = $(this).attr('data-index');
+        var state = $(this).attr('data-state');
+        var button = this;
+
+        updateButton(button, (state == 'false'));
+        groupVisibility(index, (state == 'true'));
+    });
+
+    function groupVisibility(group, hide){
+            var visOpt = {};
+            var options = {};
+
+            var true_options = {groups:{0: {hidden: true}}};
+            console.log('true options ', true_options);
+
+            visOpt[group] = {hidden: hide};
+            console.log('group options ', visOpt);
+
+            options['groups'] = visOpt;
+            console.log('options ', options);
+
+            network.setOptions(options);
+
+    //        network.redraw(); //Doesn't work
+
+    //TODO: Must be a better way to do it
+            nodes.add({id:'update'});
+            nodes.remove({id:'update'});
+            console.log(nodes);
+            //TODO: EDGES
+        }
+
 }
 
 
@@ -191,24 +256,34 @@ function graphInit(time) {
     //   registerWebSocket();
     clearBox("ColumnInfo");
     clearBox("ContextNetwork");
+    clearBox("DisplayModalBody");
 
     nodes = new vis.DataSet();
     edges = new vis.DataSet();
+    groupsSet = new Set();
     columnInfo = $("#ColumnInfo");
 
     var t = $.get("/context/entities",function(data) {
         var numberOfEntities = data.size;
+
         for(var i = 0; i<numberOfEntities; i++){
             var nameId = data["entity"+i+"id"];
             var hash = data["entity"+i+"hash"];
             var grp = data["entity"+i+"group"];
+            groupsSet.add(grp);
             console.log('Entity: ', nameId+"/"+hash+"/"+grp);
+
             nodes.add({
                 id: hash,
                 label: nameId,
-                group: grp
+                group: Array.from(groupsSet).indexOf(grp)
             });
         }
+
+        groups = Array.from(groupsSet);
+        createModalDisplayPanel();
+        console.log('Nodes ', nodes);
+        console.log('Groups ', groups);
     });
 
     var y = $.get("/context/relations",function(data) {

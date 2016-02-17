@@ -11,7 +11,7 @@ import org.apache.felix.ipojo.annotations.*;
 public class ControllerConfiguratorDefaultImpl implements ControllerConfigurator {
 
 
-    public int getEntityGroup(ContextEntity contextEntity) {
-        return 0;
+    public String getEntityGroup(ContextEntity contextEntity) {
+        return GROUP_DEFAULT;
     }
 }

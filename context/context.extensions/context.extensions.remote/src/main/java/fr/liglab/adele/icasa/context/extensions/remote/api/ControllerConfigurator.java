@@ -6,5 +6,7 @@ import java.util.Set;
 
 public interface ControllerConfigurator {
 
-    int getEntityGroup(ContextEntity contextEntity);
+    String GROUP_DEFAULT = "default";
+
+    String getEntityGroup(ContextEntity contextEntity);
 }
