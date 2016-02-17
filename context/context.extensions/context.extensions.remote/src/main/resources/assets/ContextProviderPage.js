@@ -78,16 +78,3 @@ $(document).ready(function() {
 
     });
 });
-
-function updateButton(button, state){
-    $(button).attr('data-state', state);
-    if(state == true){
-        $(button).removeClass('btn-warning');
-        $(button).html('true');
-        $(button).addClass('btn-success');
-    } else {
-        $(button).removeClass('btn-success');
-        $(button).html('false');
-        $(button).addClass('btn-warning');
-    }
-}

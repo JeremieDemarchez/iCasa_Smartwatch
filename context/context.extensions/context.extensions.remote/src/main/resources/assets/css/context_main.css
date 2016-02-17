@@ -16,6 +16,10 @@ div#ColumnInfo{
     margin: 0;
 }
 
+a#ContextModelDisplay{
+    color: #fff;
+}
+
 .scroll{
     overflow-y: scroll;
 }
