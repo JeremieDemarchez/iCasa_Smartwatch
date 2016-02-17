@@ -43,8 +43,8 @@
         <module>chat</module>
         <module>self-star</module>
         <module>homeLive</module>
-        <module>icasa-teaching-distribution-with-apps</module>
-        <module>icasa-medical-distribution</module>-->
+        <module>icasa-teaching-distribution-with-apps</module>-->
+        <module>icasa-medical-distribution</module>
     </modules>
 
     <build>

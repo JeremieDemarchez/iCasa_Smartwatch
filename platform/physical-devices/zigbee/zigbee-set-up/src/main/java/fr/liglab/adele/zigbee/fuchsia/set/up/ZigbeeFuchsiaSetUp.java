@@ -31,7 +31,7 @@ import static org.apache.felix.ipojo.configuration.Instance.instance;
 public class ZigbeeFuchsiaSetUp {
 
     Instance zigbeeImporter = instance().named("zigbeeImporter")
-            .of("fr.liglab.adele.zigbee.device.importer.ZigbeeImporter")
+            .of("fr.liglab.adele.icasa.zigbee.device.importer.ZigbeeImporter")
             .with(ImporterService.TARGET_FILTER_PROPERTY).setto("(protocol=zigbee)");
 
     Instance zigbeeImporterLinker = instance().named("zigbeeLinker")
@@ -41,7 +41,7 @@ public class ZigbeeFuchsiaSetUp {
 
 
     Instance zigbeeDiscovery = instance().named("zigbeeDiscovery")
-            .of("fr.liglab.adele.zigbee.device.discovery.ZigbeeDeviceDiscoveryImpl");
+            .of("fr.liglab.adele.icasa.zigbee.device.discovery.ZigbeeDeviceDiscoveryImpl");
 
     Instance zigbeeDriver = instance().named("zigbeeDriver")
             .of("fr.liglab.adele.icasa.device.zigbee.driver.impl.ZigbeeDriverImpl")

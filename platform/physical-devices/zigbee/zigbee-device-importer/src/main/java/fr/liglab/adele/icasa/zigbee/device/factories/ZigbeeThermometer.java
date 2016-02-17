@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zigbee.device.factories;
+package fr.liglab.adele.icasa.zigbee.device.factories;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -24,32 +24,36 @@ import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-@ContextEntity(services = {Thermometer.class,ZigbeeDevice.class,ZigbeeDeviceTracker.class})
-public class ZigbeeThermometer implements Thermometer,ZigbeeDevice, ZigbeeDeviceTracker {
+@ContextEntity(services = {Thermometer.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,LocatedObject.class})
+public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDeviceTracker,LocatedObject {
 
     @Requires
     private ZigbeeDriver driver;
 
-    @ContextEntity.State.Field(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE )
+    @ContextEntity.State.Field(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
     private double currentTemperature;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
-    private String zone;
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
 
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
     private String moduleAddress;
@@ -70,7 +74,7 @@ public class ZigbeeThermometer implements Thermometer,ZigbeeDevice, ZigbeeDevice
 
     @Override
     public String getZone() {
-        return zone;
+        return zoneName;
     }
 
     @Override
@@ -194,5 +198,28 @@ public class ZigbeeThermometer implements Thermometer,ZigbeeDevice, ZigbeeDevice
     public float pushBatteryLevel(float battery){
         return battery;
     }
+
+    /**
+     * Zone
+     */
+    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
+
 
 }

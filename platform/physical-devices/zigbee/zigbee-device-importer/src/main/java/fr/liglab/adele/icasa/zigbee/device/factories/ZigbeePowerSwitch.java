@@ -13,59 +13,59 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zigbee.device.factories;
+/**
+ *
+ */
+package fr.liglab.adele.icasa.zigbee.device.factories;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.button.PushButton;
+import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 
-@ContextEntity(services = {PushButton.class,ZigbeeDevice.class,ZigbeeDeviceTracker.class})
-public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceTracker {
+/**
+ * Zigbee power switch factory.
+ */
+@ContextEntity(services = {PowerSwitch.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,LocatedObject.class})
+public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDeviceTracker,LocatedObject {
 
     @Requires
     private ZigbeeDriver driver;
 
-    @ContextEntity.State.Field(service = PushButton.class,state = PUSH_AND_HOLD)
-    private boolean isPush;
+    @ContextEntity.State.Field(service = PowerSwitch.class,state = PowerSwitch.POWER_SWITCH_CURRENT_STATUS,value = "false")
+    private boolean status;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
-    private String zone;
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = MODULE_ADRESS)
     private String moduleAddress;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
     private float batteryLevel;
 
     @Override
-    public String getSerialNumber() {
-        return serialNumber;
-    }
-
-    @Override
-    public boolean isPushed() {
-        return isPush;
-    }
-
-    @Override
     public String getZone() {
-        return zone;
+        return zoneName;
     }
 
     @Override
@@ -77,6 +77,16 @@ public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceT
     public void setPosition(Position position) {
         x = position.x;
         y = position.y;
+    }
+
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    @Override
+    public boolean getStatus() {
+        return status;
     }
 
     /**
@@ -110,11 +120,10 @@ public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceT
         }
     }
 
-    @ContextEntity.State.Push(service = PushButton.class,state = PUSH_AND_HOLD)
-    public boolean pushStatus(boolean status){
+    @ContextEntity.State.Push(service = PowerSwitch.class,state = POWER_SWITCH_CURRENT_STATUS)
+    private boolean pushStatus(boolean status){
         return status;
     }
-
     /**
      * Called when a device battery level has changed.
      *
@@ -134,4 +143,25 @@ public class ZigbeePushButton implements PushButton, ZigbeeDevice, ZigbeeDeviceT
         return battery;
     }
 
+    /**
+     * Zone
+     */
+    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 }

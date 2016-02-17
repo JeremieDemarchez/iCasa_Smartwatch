@@ -59,6 +59,7 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Private-Package>fr.liglab.adele.icasa.zigbee.device.discovery</Private-Package>
 						<Import-Package>fr.liglab.adele.icasa.device.zigbee.driver, *</Import-Package>
 					</instructions>
 				</configuration>

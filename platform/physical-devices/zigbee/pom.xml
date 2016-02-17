@@ -33,7 +33,6 @@
 		<module>zigbee-library-install</module>
 		<module>zigbee-driver-impl</module>
 		<module>zigbee-device-discovery</module>
-		<module>zigbee-device-factories</module>
 		<module>zigbee-device-importer</module>
         <module>zigbee-set-up</module>
 	</modules>

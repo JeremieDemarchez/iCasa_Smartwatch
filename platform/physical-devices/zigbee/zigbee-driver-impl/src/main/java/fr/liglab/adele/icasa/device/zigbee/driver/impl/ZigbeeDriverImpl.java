@@ -14,53 +14,38 @@
  *   limitations under the License.
  */
 /**
- * 
+ *
  */
 package fr.liglab.adele.icasa.device.zigbee.driver.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
-
 import fr.liglab.adele.icasa.Constants;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Invalidate;
-import org.apache.felix.ipojo.annotations.Property;
-import org.apache.felix.ipojo.annotations.Provides;
-import org.apache.felix.ipojo.annotations.Unbind;
-import org.apache.felix.ipojo.annotations.Validate;
+import fr.liglab.adele.icasa.device.zigbee.driver.*;
+import fr.liglab.adele.icasa.device.zigbee.driver.serial.SerialPortHandler;
+import fr.liglab.adele.icasa.device.zigbee.driver.serial.model.ResponseType;
+import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fr.liglab.adele.icasa.device.zigbee.driver.Data;
-import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
-import fr.liglab.adele.icasa.device.zigbee.driver.TypeCode;
-import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
-import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
-import fr.liglab.adele.icasa.device.zigbee.driver.serial.SerialPortHandler;
-import fr.liglab.adele.icasa.device.zigbee.driver.serial.model.ResponseType;
+import java.io.IOException;
+import java.util.*;
 
 /**
  * Implementation class for the Zigbee Driver interface.
  *
  */
-@Component(name = "zigbee.driver.impl")
+@Component(immediate = true)
 @Provides(specifications = { ZigbeeDriver.class })
 public class ZigbeeDriverImpl implements ZigbeeDriver {
 
 	private SerialPortHandler handler;
 
-    private final BundleContext context;
-	
+	private final BundleContext context;
+
 	private static final Logger logger = LoggerFactory
 			.getLogger(Constants.ICASA_LOG_DEVICE + ".zigbee");
 
-    private static final String SERIAL_PORT_PROPERTY = "zigbee.driver.port";
+	private static final String SERIAL_PORT_PROPERTY = "zigbee.driver.port";
 
 	private static final String BAUD_RATE_PROPERTY = "baud.rate";
 
@@ -94,7 +79,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 			}
 		}
 	}
-	
+
 	@Unbind(id="zigbeeDeviceTrackers")
 	private void unbindZigbeeDeviceTracker(ZigbeeDeviceTracker tracker){
 		synchronized(trackers) {
@@ -113,27 +98,28 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 	public ZigbeeDriverImpl( BundleContext bundleContext) throws IOException {
 		handler = new SerialPortHandler(this);
 		trackers = new ArrayList<ZigbeeDeviceTracker>();
-        context = bundleContext;
+		context = bundleContext;
 	}
 
 	@Validate
 	private void start() {
-        String lport = getCOMPort();
-        if(lport.compareTo("NONE") == 0){
-            logger.warn("Please set a port for ZigBee Driver");
-            return;
-        }
+		String lport = getCOMPort();
+		if(lport.compareTo("NONE") == 0 && getBaud() == 0){
+			logger.warn("Please set a port for ZigBee Driver");
+			return;
+		}
 		Thread thread = new Thread(new Runnable() {
 
 			@Override
 			public void run() {
 				try {
-					handler.startListening(getCOMPort(), baud);
+					logger.info("Try to start listenning " + getCOMPort() + " with baud rate " + getBaud());
+					handler.startListening(getCOMPort(), getBaud());
 				} catch (Exception e) {
 					logger.warn("Unable to connect into port: " + getCOMPort());
 				}
 			};
-			
+
 		}, "zigbee driver listenning port thread");
 		thread.start();
 	}
@@ -194,7 +180,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 		}
 		return typedDevices;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -207,7 +193,7 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 		DeviceInfo deviceInfo = handler.getDeviceInfo(moduleAddress);
 		if (deviceInfo == null)
 			return null;
-		
+
 		return deviceInfo.getDeviceData();
 	}
 
@@ -222,6 +208,6 @@ public class ZigbeeDriverImpl implements ZigbeeDriver {
 	public void setData(String moduleAddress, String dataToSet) {
 		logger.debug("sending request response to device : " + moduleAddress + " with value : " + dataToSet);
 		handler.write(ResponseType.REQUEST, moduleAddress, dataToSet);
-    }
+	}
 
 }

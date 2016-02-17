@@ -13,44 +13,58 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zigbee.device.factories;
+package fr.liglab.adele.icasa.zigbee.device.factories;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
-import fr.liglab.adele.icasa.device.motion.MotionSensor;
+import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
+import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 
-/**
- *
- */
-@ContextEntity(services = {MotionSensor.class,ZigbeeDevice.class,ZigbeeDeviceTracker.class})
-public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDeviceTracker {
+@ContextEntity(services = {PresenceSensor.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,LocatedObject.class})
+public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker,LocatedObject {
+
+    @Requires
+    private ZigbeeDriver driver;
+
+    @ContextEntity.State.Field(service = PresenceSensor.class,state = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE,value = "false")
+    private boolean sensedPresence;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true)
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
     private int y;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,directAccess = true)
-    private String zone;
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = MODULE_ADRESS)
     private String moduleAddress;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
     private float batteryLevel;
 
     @Override
+    public boolean getSensedPresence() {
+        return sensedPresence;
+    }
+
+    @Override
     public String getZone() {
-        return zone;
+        return zoneName;
     }
 
     @Override
@@ -96,12 +110,20 @@ public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDev
     public void deviceDataChanged(String address, Data oldData, Data newData) {
         if(address.compareTo(this.moduleAddress) == 0){
             String data = newData.getData();
-            if (Integer.parseInt(data) == 1){
-                //TODO   this.notifyListeners(new DeviceDataEvent<Boolean>(this, DeviceEventType.DEVICE_EVENT, Boolean.TRUE));
+            boolean status;
+            if( data.compareTo("1") == 0){
+                status = true;
+            }else{
+                status = false;
             }
+            pushSensedStatus(status);
         }
     }
 
+    @ContextEntity.State.Push(service = PresenceSensor.class,state = PRESENCE_SENSOR_SENSED_PRESENCE)
+    public boolean pushSensedStatus(boolean status){
+        return status;
+    }
     /**
      * Called when a device battery level has changed.
      *
@@ -121,4 +143,25 @@ public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDev
         return battery;
     }
 
+    /**
+     * Zone
+     */
+    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zone;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
+    }
 }

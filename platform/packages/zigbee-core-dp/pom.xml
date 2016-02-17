@@ -44,11 +44,6 @@
         </dependency>
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>zigbee.device.factories</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>zigbee.device.fuchsia.set.up</artifactId>
             <version>${project.version}</version>
         </dependency>

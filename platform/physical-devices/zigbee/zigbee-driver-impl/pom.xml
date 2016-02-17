@@ -76,6 +76,8 @@
 				<extensions>true</extensions>
 				<configuration>
 					<instructions>
+						<Private-Package>fr.liglab.adele.icasa.device.zigbee.driver.impl,
+							fr.liglab.adele.icasa.device.zigbee.driver.serial</Private-Package>
 						<Import-Package>fr.liglab.adele.icasa.device.zigbee.driver, gnu.io, org.slf4j, org.osgi.framework,*</Import-Package>
 					</instructions>
 				</configuration>

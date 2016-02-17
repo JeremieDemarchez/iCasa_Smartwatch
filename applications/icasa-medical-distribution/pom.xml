@@ -33,6 +33,12 @@
     <!-- Project dependencies -->
     <dependencies>
         <dependency>
+            <groupId>fr.liglab.adele.icasa</groupId>
+            <artifactId>icasa.dashboard.distribution</artifactId>
+            <version>${project.version}</version>
+            <type>osgi-distribution</type>
+        </dependency>
+        <!--<dependency>
             <groupId>fr.liglab.adele.icasa.apps</groupId>
             <artifactId>actimetrics.dashboard</artifactId>
             <version>${project.version}</version>
@@ -51,7 +57,7 @@
             <artifactId>philips.hue.dp</artifactId>
             <version>${project.version}</version>
             <type>deployment-package</type>
-        </dependency>
+        </dependency>-->
 
         <!--Fuschia Dep-->
         <dependency>
@@ -109,16 +115,16 @@
 
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
-            <artifactId>zigbee.device.factories</artifactId>
+            <artifactId>zigbee.device.fuchsia.set.up</artifactId>
             <version>${project.version}</version>
         </dependency>
 
-        <!--ZWAVE-->
+        <!--ZWAVE
         <dependency>
             <groupId>fr.liglab.adele.icasa</groupId>
             <artifactId>zwave-device-importer</artifactId>
             <version>${project.version}</version>
-        </dependency>
+        </dependency>-->
 
         <!--SIMULATOR-->
         <dependency>
