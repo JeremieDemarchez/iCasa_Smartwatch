@@ -87,6 +87,22 @@ public class ContextModelController extends DefaultController {
         return ok(result);
     }
 
+    @Route(method = HttpMethod.GET, uri = "/context/groups")
+    public Result getGroupsDefaultState(){
+        ObjectNode result = json.newObject();
+
+        Map<String, Boolean> groups = controllerConfigurator.getGroupDefaultStates();
+        result.put("size", groups.size());
+        int i = 0;
+        for(Map.Entry<String, Boolean> group : groups.entrySet()){
+            result.put("group"+i+"name", group.getKey());
+            result.put("group"+i+"state", group.getValue());
+            i++;
+        }
+        System.out.println(result);
+        return ok(result);
+    }
+
     @Route(method = HttpMethod.GET, uri = "/context/entities/{id}")
     public Result getEntity(@Parameter(value = "id") Integer id){
         if (id == null){
@@ -161,5 +177,4 @@ public class ContextModelController extends DefaultController {
         }
         return ok(result);
     }
-
 }

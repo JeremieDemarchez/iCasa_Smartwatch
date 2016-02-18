@@ -7,7 +7,7 @@ $(document).ready(function() {
         if ($(this).is($(".active"))){
             graphInit(0);
         } else {
-            graphInit(800);
+            graphInit(700);
         }
         clickMenu(this, '#ContextModel');
         $('#ContextModelDisplay').show();

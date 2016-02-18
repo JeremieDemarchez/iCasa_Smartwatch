@@ -1,4 +1,4 @@
-var nodes, edges, groups, network, columnInfo;
+var nodes, edges, groups, defaultStateGroups, network, columnInfo;
 
 //function registerWebSocket() {
 //    var ws = $.easyWebSocket("ws://" + window.location.host + "/temperature");
@@ -43,7 +43,6 @@ function addNodeServicesPanel(elementId,data){
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var servicesGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
-        console.log("KEY : " + key + " , VAL : " + val);
         var servicesGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         servicesGroupListItem.appendTo(servicesGroupList);
         servicesGroupList.appendTo(panelBody);
@@ -60,7 +59,6 @@ function addNodeStatesPanel(elementId,data){
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
-        console.log("KEY : " + key + " , VAL : " + val);
         var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
         stateGroupListValue.appendTo(stateGroupListItem);
@@ -79,7 +77,6 @@ var panelState = $("#relationsPanel"+elementId);
     var panelBody =  $("<div></div>").attr('class',"panel-body");
     var stateGroupList =  $("<ul></ul>").attr('class',"list-group");
     $.each(data,function(key,val){
-        console.log("KEY : " + key + " , VAL : " + val);
         var stateGroupListItem =  $("<li>"+key+"</li>").attr('class',"list-group-item scroll-txt");
         var stateGroupListValue =  $("<span>"+val+"</span>").attr('class',"badge");
         stateGroupListValue.appendTo(stateGroupListItem);
@@ -94,18 +91,18 @@ var panelState = $("#relationsPanel"+elementId);
 
 function createModalDisplayPanel(){
     var displayModal = document.getElementById('DisplayModalBody');
-    var table =  $("<table></table>").attr('class',"table table-responsive");
+    var table =  $("<table></table>").attr('class',"table table-responsive").attr('id',"DisplayModalTable");
     var tableHead =  $("<thead></thead>");
     var tableRHead =  $("<tr><th>Context Model Group</th><th>Show</th></tr>");
     tableRHead.appendTo(tableHead);
     tableHead.appendTo(table);
     var tableBody =  $("<tbody></tbody>");
 
-    groups.forEach(function(element, index, array){
+    $.each(groups, function(element, index){//groups.forEach(function(element, index, array){
         var row = $("<tr></tr>");
         var group =  $("<td>"+element+"</td>").attr('class', "col-md-4");
         var status =  $("<td>"+""+"</td>").attr('class',"enabler btn col-md-2").attr('data-group', element).attr('data-index',index);
-        updateButton(status, true);
+        updateButton(status, defaultStateGroups[index]);
 
         group.appendTo(row);
         status.appendTo(row);
@@ -114,7 +111,6 @@ function createModalDisplayPanel(){
 
     tableBody.appendTo(table);
     table.appendTo(displayModal);
-
 
 
 }
@@ -128,6 +124,7 @@ function graphDraw(){
         nodes: nodes,
         edges: edges
     };
+    console.log('Data: ', data);
 
     var options = {
         nodes: {
@@ -165,6 +162,10 @@ function graphDraw(){
 
     network = new vis.Network(container, data, options);
 
+    $.each(defaultStateGroups, function(index, state){
+        groupVisibility(index, !state);
+    });
+
     network.on("selectEdge", function (params) {
         var edgeToUpdate =  params["edges"];
         console.log('selectEdge Event:', edgeToUpdate);
@@ -184,7 +185,6 @@ function graphDraw(){
 
     network.on("selectNode", function (params) {
         var nodeToUpdate =  params["nodes"];
-        console.log('selectNode Event:', nodeToUpdate);
         nodeToUpdate.forEach(function(y) {
             createNodeEntityPanel(y);
             var urlStates = "/context/entities/" + y;
@@ -214,41 +214,29 @@ function graphDraw(){
     });
 
     $('#DisplayModalBody').on('click', '.enabler', function(e) {
-        e.preventDefault();
+       e.preventDefault();
 
-        var group = $(this).attr('data-group');
-        var index = $(this).attr('data-index');
-        var state = $(this).attr('data-state');
-        var button = this;
+       var group = $(this).attr('data-group');
+       var index = $(this).attr('data-index');
+       var state = $(this).attr('data-state');
+       var button = this;
 
-        updateButton(button, (state == 'false'));
-        groupVisibility(index, (state == 'true'));
-    });
+       updateButton(button, (state == 'false'));
+       groupVisibility(index, (state == 'true'));
+   });
 
     function groupVisibility(group, hide){
-            var visOpt = {};
-            var options = {};
+        var visOpt = {};
+        var options = {};
 
-            var true_options = {groups:{0: {hidden: true}}};
-            console.log('true options ', true_options);
+        visOpt[group] = {hidden: hide};
+        options['groups'] = visOpt;
+        network.setOptions(options);
 
-            visOpt[group] = {hidden: hide};
-            console.log('group options ', visOpt);
-
-            options['groups'] = visOpt;
-            console.log('options ', options);
-
-            network.setOptions(options);
-
-    //        network.redraw(); //Doesn't work
-
-    //TODO: Must be a better way to do it
-            nodes.add({id:'update'});
-            nodes.remove({id:'update'});
-            console.log(nodes);
-            //TODO: EDGES
-        }
-
+        nodes.add({id:'update'});
+        nodes.remove({id:'update'});
+        //TODO: EDGES
+    }
 }
 
 
@@ -260,55 +248,77 @@ function graphInit(time) {
 
     nodes = new vis.DataSet();
     edges = new vis.DataSet();
-    groupsSet = new Set();
+
+    groups = {};
+    defaultStateGroups = {};
     columnInfo = $("#ColumnInfo");
 
-    var t = $.get("/context/entities",function(data) {
-        var numberOfEntities = data.size;
+    getGroups();
 
-        for(var i = 0; i<numberOfEntities; i++){
-            var nameId = data["entity"+i+"id"];
-            var hash = data["entity"+i+"hash"];
-            var grp = data["entity"+i+"group"];
-            groupsSet.add(grp);
-            console.log('Entity: ', nameId+"/"+hash+"/"+grp);
+    function getGroups(){
+        var u = $.get("/context/groups",function(data) {
 
-            nodes.add({
-                id: hash,
-                label: nameId,
-                group: Array.from(groupsSet).indexOf(grp)
-            });
-        }
+            var numberOfGroups = data["size"];
+            console.log('numberOfGroups ', numberOfGroups);
 
-        groups = Array.from(groupsSet);
-        createModalDisplayPanel();
-        console.log('Nodes ', nodes);
-        console.log('Groups ', groups);
-    });
-
-    var y = $.get("/context/relations",function(data) {
-        var numberOfRelations = data.size;
-        for(var i = 0; i<numberOfRelations; i++){
-            var name = data["relation"+i+"name"];
-            var nameId = data["relation"+i+"nameId"];
-            var sourceId = data["relation"+i+"sourceId"];
-            var targetId = data["relation"+i+"targetId"];
-            console.log('Relation: ', name+"/"+nameId+"/"+sourceId+"/"+targetId);
-            if ((null != nodes.get(sourceId)) && (null != nodes.get(targetId))){
-                var edgeId = ""+nameId+""+sourceId+""+targetId;
-                console.log('Relation: ', name);
-                edges.add({
-                    id: edgeId,
-                    from: sourceId,
-                    to: targetId,
-                    arrows:'to',
-                    name: name,
-                    font: {align: 'horizontal'}
-                });
+            for(var i = 0; i<numberOfGroups; i++){
+                var name = data["group"+i+"name"];
+                var state = data["group"+i+"state"];
+                groups[name] = i;
+                defaultStateGroups[i] = state;
             }
-        }
-    });
+            createModalDisplayPanel();
+            getEntities();
+        });
+    }
 
-    var timer = window.setTimeout(graphDraw, time);
+    function getEntities(){
+        var t = $.get("/context/entities",function(data) {
+            var numberOfEntities = data["size"];
+            console.log('numberOfEntities ', numberOfEntities);
+
+            for(var j = 0; j<numberOfEntities; j++){
+              var nameId = data["entity"+j+"id"];
+              var hash = data["entity"+j+"hash"];
+              var grp = data["entity"+j+"group"];
+
+              nodes.add({
+                  id: hash,
+                  label: nameId,
+                  group: groups[grp]
+              });
+            }
+            getRelations();
+        });
+    }
+
+    function getRelations(){
+        var y = $.get("/context/relations",function(data) {
+            var numberOfRelations = data["size"];
+            console.log('numberOfRelations ', numberOfRelations);
+            for(var i = 0; i<numberOfRelations; i++){
+                var name = data["relation"+i+"name"];
+                var nameId = data["relation"+i+"nameId"];
+                var sourceId = data["relation"+i+"sourceId"];
+                var targetId = data["relation"+i+"targetId"];
+
+                if ((null != nodes.get(sourceId)) && (null != nodes.get(targetId))){
+                    var edgeId = ""+nameId+""+sourceId+""+targetId;
+                    edges.add({
+                        id: edgeId,
+                        from: sourceId,
+                        to: targetId,
+                        arrows:'to',
+                        name: name,
+                        font: {align: 'horizontal'}
+                    });
+                }
+            }
+
+            var timer = window.setTimeout(graphDraw, time);
+        });
+    }
 }
+
+
 
