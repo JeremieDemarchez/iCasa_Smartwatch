@@ -27,6 +27,9 @@
                 <li id="ContextProvidersMenu"> <a href="#">Context Providers</a> </li>
                 <li id="ContextApplicationsMenu"> <a href="#">Applications</a> </li>
             </ul>
+            <ul class="nav navbar-nav navbar-right">
+                <li> <a id="ContextModelDisplay" href="#" data-toggle="modal" data-target="#DisplayModal">Context Model Display</a> </li>
+            </ul>
         </div>
     </nav>
 
@@ -34,8 +37,9 @@
 
         <div id="ContextModel" class="row-fluid full-height">
 
+
             <div class="col-md-4">
-                <div class="jumbotron scroll">
+                <div id="JumbInfo" class="jumbotron scroll">
                     <div id="ColumnInfo"></div>
                 </div>
             </div>
@@ -44,6 +48,23 @@
                 <div class="jumbotron">
                     <div id="ContextNetwork"></div>
 
+
+                </div>
+            </div>
+
+            <div id="DisplayModal" class="modal fade" role="dialog">
+                <div class="modal-dialog">
+
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal">&times;</button>
+                            <h4 class="modal-title">Context Model Display</h4>
+                        </div>
+                        <div id="DisplayModalBody" class="modal-body"></div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        </div>
+                    </div>
 
                 </div>
             </div>

@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.extensions.remote;
+package fr.liglab.adele.icasa.context.extensions.remote.impl;
 
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
