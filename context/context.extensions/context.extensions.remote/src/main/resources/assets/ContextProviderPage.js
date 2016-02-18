@@ -1,4 +1,4 @@
-function drawProviderPanel(providerId,data){
+function drawProviderPanel(providerId,dataImpl,dataRelation){
 
     var providersSection = $("#providersSection");
     var providerHash = String.hashCode(providerId);
@@ -12,40 +12,73 @@ function drawProviderPanel(providerId,data){
     panelPanelTitle.appendTo(panelHeading);
     panelHeading.appendTo(panel);
 
-    var div_collapse =  $("<div></div>").attr('class',"table-responsive collapse in").attr("id","provider"+providerHash);
-    var table =  $("<table></table>").attr('class',"table");
+    var div_collapse =  $("<div></div>").attr('class',"table-responsive collapse").attr("id","provider"+providerHash);
 
-    var tableHead =  $("<thead></thead>");
-    var tableRHead =  $("<tr><th>Implementation</th><th>Enabled</th></tr>");
-    tableRHead.appendTo(tableHead);
+    if(!$.isEmptyObject(dataImpl)){
+        var tableImplem =  $("<table></table>").attr('class',"table");
 
-    tableHead.appendTo(table);
-    var tableBody =  $("<tbody></tbody>");
+        var tableHead =  $("<thead></thead>");
+        var tableRHead =  $("<tr><th>Context Service Implementation</th><th>Enabled</th></tr>");
+        tableRHead.appendTo(tableHead);
 
-    $.each(data,function(key,value){
-        console.log("Draw For Each " + key + " value " + value);
-        var row = $("<tr></tr>");
-        var specification =  $("<td>"+key+"</td>").attr('class', "col-md-8");
-        var status =  $("<td>"+value+"</td>").attr('class',"enabler btn col-md-2").attr('data-provider', providerId).attr('data-implem',key);
-        updateButton(status, value);
+        tableHead.appendTo(tableImplem);
+        var tableBody =  $("<tbody></tbody>");
 
-        specification.appendTo(row);
-        status.appendTo(row);
-        row.appendTo(tableBody);
-    });
+        $.each(dataImpl,function(key,value){
+            console.log("Draw For Each " + key + " value " + value);
+            var row = $("<tr></tr>");
+            var specification =  $("<td>"+key+"</td>").attr('class', "col-md-8");
+            var status =  $("<td>"+value+"</td>").attr('class',"enabler btn col-md-2").attr('data-provider', providerId).attr('data-implem',key);
+            updateButton(status, value);
 
-    tableBody.appendTo(table);
-    table.appendTo(div_collapse);
+            specification.appendTo(row);
+            status.appendTo(row);
+            row.appendTo(tableBody);
+        });
+
+        tableBody.appendTo(tableImplem);
+        tableImplem.appendTo(div_collapse);
+    }
+
+    if(!$.isEmptyObject(dataRelation)){
+        var tableRelation =  $("<table></table>").attr('class',"table");
+
+        var tableHead =  $("<thead></thead>");
+        var tableRHead =  $("<tr><th>Relation</th><th>Enabled</th></tr>");
+        tableRHead.appendTo(tableHead);
+
+        tableHead.appendTo(tableRelation);
+        var tableBody =  $("<tbody></tbody>");
+
+        $.each(dataRelation,function(key,value){
+            console.log("Draw For Each " + key + " value " + value);
+            var row = $("<tr></tr>");
+            var specification =  $("<td>"+key+"</td>").attr('class', "col-md-8");
+            var status =  $("<td>"+value+"</td>").attr('class',"enabler btn col-md-2").attr('data-provider', providerId).attr('data-implem',key);
+            updateButton(status, value);
+
+            specification.appendTo(row);
+            status.appendTo(row);
+            row.appendTo(tableBody);
+        });
+
+        tableBody.appendTo(tableRelation);
+        tableRelation.appendTo(div_collapse);
+    }
+
+
     div_collapse.appendTo(panel);
     panel.appendTo(providersSection);
 }
 
-function getProvider(providerId){
+function getProviderPanel(providerId){
 
-    t = $.get("/context/providers/"+providerId,function(data) {
-        drawProviderPanel(providerId,data);
-        $.each(data,function(key,value){
-            console.log("For Each " + key + " value " + value);
+    t = $.get("/context/providers/"+providerId,function(dataImpl) {
+        t = $.get("/context/providers/relations/"+providerId,function(dataRelation) {
+            console.log('Provider ', providerId);
+            console.log('Impl ', dataImpl);
+            console.log('Rel ', dataRelation);
+            drawProviderPanel(providerId,dataImpl,dataRelation);
         });
     });
 }
@@ -56,7 +89,7 @@ function getListOfProviders(){
     console.log("Get List of Provider");
     t = $.get("/context/providers",function(data) {
         $.each(data,function(key,value){
-            getProvider(key)
+            getProviderPanel(key);
         });
     });
 }

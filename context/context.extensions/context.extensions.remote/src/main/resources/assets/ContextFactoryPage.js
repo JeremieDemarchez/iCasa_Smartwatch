@@ -12,7 +12,7 @@ function drawFactoryPanel(factoryId,data){
     panelPanelTitle.appendTo(panelHeading);
     panelHeading.appendTo(panel);
 
-    var div_collapse =  $("<div></div>").attr('class',"table-responsive collapse in").attr("id","factory"+factoryHash);
+    var div_collapse =  $("<div></div>").attr('class',"table-responsive collapse").attr("id","factory"+factoryHash);
     var table =  $("<table></table>").attr('class',"table  table-striped");
 
     var tableHead =  $("<thead></thead>");
