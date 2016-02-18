@@ -40,7 +40,11 @@ public class SimulatedDeviceLocationManager {
     public void bindZone(Zone zone){
         for (SimulatedDevice simulatedDevice : simulatedDevices){
             if (zone.canContains(simulatedDevice.getPosition())){
-                isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+                try {
+                    isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+                }catch (IllegalArgumentException e){
+
+                }
             }
         }
     }
@@ -71,7 +75,11 @@ public class SimulatedDeviceLocationManager {
     public void bindSimulatedDevice(SimulatedDevice simulatedDevice){
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
+                try {
                 isInLocatedObjectRelationCreator.create(simulatedDevice,zone);
+            }catch (IllegalArgumentException e){
+
+            }
             }
         }
     }
