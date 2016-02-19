@@ -164,15 +164,32 @@ public class ContextModelController extends DefaultController {
         }
 
         ObjectNode result = json.newObject();
+        Map<String, List<String>> temp = new HashMap<String, List<String>>();
 
         for (Relation relation : relations){
             String source = relation.getSource();
             if (id.equals(source.hashCode())){
-                result.put(relation.getName(),relation.getTarget());
+                String name = relation.getName();
+                String target = relation.getTarget();
 
+                List<String> previous = temp.get(name);
+                if(previous == null){
+                    previous = new ArrayList<String>();
+                }
+                previous.add(target);
+                temp.put(name, previous);
             }
-
         }
+
+        for (Map.Entry<String, List<String>> relation : temp.entrySet()){
+            List<String> targets = relation.getValue();
+            if(targets.size() == 1){
+                result.put(relation.getKey(), targets.get(0));
+            } else {
+                result.put(relation.getKey(), targets.toString());
+            }
+        }
+
         return ok(result);
     }
 }

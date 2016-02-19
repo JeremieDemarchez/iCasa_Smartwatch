@@ -19,7 +19,7 @@ public class ControllerConfiguratorDefaultImpl implements ControllerConfigurator
 
     public Map<String, Boolean> getGroupDefaultStates() {
         Map<String, Boolean> groupDefaultStates = new HashMap<String, Boolean>();
-        groupDefaultStates.put(GROUP_DEFAULT, false);
+        groupDefaultStates.put(GROUP_DEFAULT, true);
         return groupDefaultStates;
 
     }

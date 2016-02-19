@@ -1,5 +1,4 @@
-
-var nodes, edges, groups, defaultStateGroups, network, columnInfo;
+var nodes, edges, groups, stateGroups, groupsByNode, groupsByEdge, network, columnInfo;
 
 
 //function registerWebSocket() {
@@ -105,7 +104,8 @@ function createModalDisplayPanel(){
         var row = $("<tr></tr>");
         var group =  $("<td>"+element+"</td>").attr('class', "col-md-4");
         var status =  $("<td>"+""+"</td>").attr('class',"enabler btn col-md-2").attr('data-group', element).attr('data-index',index);
-        updateButton(status, defaultStateGroups[index]);
+
+        updateButton(status, stateGroups[index]);
         group.appendTo(row);
         status.appendTo(row);
         row.appendTo(tableBody);
@@ -163,7 +163,7 @@ function graphDraw(){
 
     network = new vis.Network(container, data, options);
 
-    $.each(defaultStateGroups, function(index, state){
+    $.each(stateGroups, function(index, state){
         groupVisibility(index, !state);
     });
 
@@ -230,13 +230,30 @@ function graphDraw(){
         var visOpt = {};
         var options = {};
 
-        visOpt[group] = {hidden: hide};
-        options['groups'] = visOpt;
-        network.setOptions(options);
+        stateGroups[group] = !hide;
+        updateNodes();
+        updateEdges();
+    }
 
-        nodes.add({id:'update'});
-        nodes.remove({id:'update'});
-        //TODO: EDGES
+    function updateNodes(){
+        console.log('node update');
+        console.log('groupsByNode ', groupsByNode);
+        $.each(groupsByNode,function(nodeId, group){
+            nodes.update({id:nodeId, hidden: !stateGroups[group]});
+        });
+    }
+
+    function updateEdges(){
+        console.log('edge update');
+        $.each(groupsByEdge,function(edgeId, groups){
+            var hide = false;
+            $.each(groups, function(index, group, array){
+                if(!stateGroups[group]){
+                    hide = true;
+                }
+            });
+            edges.update({id:edgeId, hidden: hide});
+        });
     }
 }
 
@@ -250,7 +267,10 @@ function graphInit(time) {
     nodes = new vis.DataSet();
     edges = new vis.DataSet();
     groups = {};
-    defaultStateGroups = {};
+    stateGroups = {};
+    groupsByNode = {};
+    groupsByEdge = {};
+    var groupIndexOfNodes = {};
     columnInfo = $("#ColumnInfo");
 
     getGroups();
@@ -265,7 +285,7 @@ function graphInit(time) {
                 var name = data["group"+i+"name"];
                 var state = data["group"+i+"state"];
                 groups[name] = i;
-                defaultStateGroups[i] = state;
+                stateGroups[i] = state;
             }
             createModalDisplayPanel();
             getEntities();
@@ -287,6 +307,8 @@ function graphInit(time) {
                   label: nameId,
                   group: groups[grp]
               });
+              groupIndexOfNodes[hash] = groups[grp];
+              groupsByNode[hash] = groups[grp];
             }
             getRelations();
         });
@@ -312,6 +334,9 @@ function graphInit(time) {
                         name: name,
                         font: {align: 'horizontal'}
                     });
+                    groupsByEdge [edgeId] = [groupIndexOfNodes[sourceId], groupIndexOfNodes[targetId]];
+
+                    console.log('groupsByEdge',groupsByEdge);
                 }
             }
 
