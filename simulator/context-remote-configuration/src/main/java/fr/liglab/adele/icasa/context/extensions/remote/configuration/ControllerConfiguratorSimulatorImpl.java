@@ -74,21 +74,24 @@ public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurat
          */
         if (groupSet.contains(GROUP_APP)){
             group = GROUP_APP;
-        } else if(groupSet.contains(GROUP_SIMULATOR)){
-            group = GROUP_SIMULATOR;
-        } else if (groupSet.contains(GROUP_PLATFORM)){
+        } else if(groupSet.contains(GROUP_PLATFORM)){
             group = GROUP_PLATFORM;
+        } else if (groupSet.contains(GROUP_SIMULATOR)){
+            group = GROUP_SIMULATOR;
         } else {
             group = GROUP_DEFAULT;
         }
 
-
-        //TODO: define priority for services group
         return group;
     }
 
     @Override
     public Map<String, Boolean> getGroupDefaultStates() {
-        return new HashMap<>();
+        Map<String, Boolean> groupDefaultStates = new HashMap<>();
+        groupDefaultStates.put(GROUP_APP, true);
+        groupDefaultStates.put(GROUP_PLATFORM, true);
+        groupDefaultStates.put(GROUP_SIMULATOR, false);
+        groupDefaultStates.put(GROUP_DEFAULT, false);
+        return groupDefaultStates;
     }
 }
