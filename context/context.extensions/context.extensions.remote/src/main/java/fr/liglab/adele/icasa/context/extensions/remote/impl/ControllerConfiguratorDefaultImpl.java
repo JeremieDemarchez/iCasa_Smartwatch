@@ -13,8 +13,6 @@ import java.util.Map;
 @Provides(specifications = ControllerConfigurator.class)
 public class ControllerConfiguratorDefaultImpl implements ControllerConfigurator {
 
-    int i =0;
-
     public String getEntityGroup(ContextEntity contextEntity) {
             return GROUP_DEFAULT;
     }
