@@ -22,7 +22,9 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 @Component(immediate = true)
@@ -83,5 +85,10 @@ public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurat
 
         //TODO: define priority for services group
         return group;
+    }
+
+    @Override
+    public Map<String, Boolean> getGroupDefaultStates() {
+        return new HashMap<>();
     }
 }

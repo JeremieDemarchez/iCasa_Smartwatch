@@ -111,7 +111,6 @@
         	<artifactId>icasa.context.model.runtime</artifactId>
         	<version>${project.version}</version>
         </dependency>
-        
     </dependencies>
 
     <dependencyManagement>

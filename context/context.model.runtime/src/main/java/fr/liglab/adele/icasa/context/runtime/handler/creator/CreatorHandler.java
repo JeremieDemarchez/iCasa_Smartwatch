@@ -28,7 +28,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 @Handler(name = HandlerReference.CREATOR_HANDLER, namespace = HandlerReference.NAMESPACE)
-@Provides(specifications = EntityProvider.class)
+@Provides(specifications = {EntityProvider.class, RelationProvider.class})
 
 public class CreatorHandler extends PrimitiveHandler implements EntityProvider, RelationProvider {
 
