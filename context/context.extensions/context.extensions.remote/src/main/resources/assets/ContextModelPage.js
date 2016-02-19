@@ -1,4 +1,4 @@
-var nodes, edges, groups, stateGroups, groupsByEdge, network, columnInfo;
+var nodes, edges, groups, stateGroups, groupsByNode, groupsByEdge, network, columnInfo;
 
 //function registerWebSocket() {
 //    var ws = $.easyWebSocket("ws://" + window.location.host + "/temperature");
@@ -230,19 +230,20 @@ function graphDraw(){
         var options = {};
 
         stateGroups[group] = !hide;
-        console.log('stateGroups ', stateGroups);
-        visOpt[group] = {hidden: hide};
-        options['groups'] = visOpt;
-        network.setOptions(options);
-
-        nodes.add({id:'update'});
-        nodes.remove({id:'update'});
-
+        updateNodes();
         updateEdges();
     }
 
-    function updateEdges(){
+    function updateNodes(){
         console.log('node update');
+        console.log('groupsByNode ', groupsByNode);
+        $.each(groupsByNode,function(nodeId, group){
+            nodes.update({id:nodeId, hidden: !stateGroups[group]});
+        });
+    }
+
+    function updateEdges(){
+        console.log('edge update');
         $.each(groupsByEdge,function(edgeId, groups){
             var hide = false;
             $.each(groups, function(index, group, array){
@@ -267,6 +268,7 @@ function graphInit(time) {
 
     groups = {};
     stateGroups = {};
+    groupsByNode = {};
     groupsByEdge = {};
     var groupIndexOfNodes = {};
     columnInfo = $("#ColumnInfo");
@@ -306,6 +308,7 @@ function graphInit(time) {
                   group: groups[grp]
               });
               groupIndexOfNodes[hash] = groups[grp];
+              groupsByNode[hash] = groups[grp];
             }
             getRelations();
         });
