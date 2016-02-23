@@ -25,8 +25,13 @@ import java.util.List;
 import java.util.Set;
 
 @Component(name="LightFollowMeApplication")
+
+@Provides(properties= {
+	@StaticServiceProperty(name="icasa.application", type="boolean", value="true", immutable=true)
+})
+
 @Instantiate
-public class LightFollowMeApplication{
+public class LightFollowMeApplication {
 
 
 

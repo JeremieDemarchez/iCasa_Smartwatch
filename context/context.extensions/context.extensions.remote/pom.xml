@@ -140,6 +140,20 @@
                 </configuration>
             </plugin>
 
+			<!-- This plugin configuration is used to indirectly set the wisdom-compiler-plugin:compile configuration
+				 It has no influence on the maven build itself as the maven-compiler-plugin is not attached to the
+				 lifecycle of a wisdom artifact
+			-->
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.5.1</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+			
             <plugin>
                 <groupId>org.wisdom-framework</groupId>
                 <artifactId>wisdom-maven-plugin</artifactId>
@@ -169,6 +183,120 @@
                 </executions>
             </plugin>
         </plugins>
+        
+		<pluginManagement>
+			<plugins>
+				
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. 
+					It has no influence on the Maven build itself. -->
+				<plugin>
+					<groupId>org.eclipse.m2e</groupId>
+					<artifactId>lifecycle-mapping</artifactId>
+					<version>1.0.0</version>
+					<configuration>
+						<lifecycleMappingMetadata>
+							<pluginExecutions>
+							    <pluginExecution>
+							      <pluginExecutionFilter>
+							        <groupId>org.wisdom-framework</groupId>
+							        <artifactId>wisdom-maven-plugin</artifactId>
+							        <versionRange>0.8.0</versionRange>
+							        <goals>
+							          <goal>initialize</goal>
+							        </goals>
+							      </pluginExecutionFilter>
+							      <action>
+							        <execute>
+							        	<runOnConfiguration>true</runOnConfiguration>
+							        	<runOnIncremental>true</runOnIncremental>
+							        </execute>
+							      </action>
+							    </pluginExecution>
+							    <pluginExecution>
+							      <pluginExecutionFilter>
+							        <groupId>org.wisdom-framework</groupId>
+							        <artifactId>wisdom-maven-plugin</artifactId>
+							        <versionRange>0.8.0</versionRange>
+							        <goals>
+							          <goal>compile</goal>
+							          <goal>testCompile</goal>
+							        </goals>
+							      </pluginExecutionFilter>
+							      <action>
+							        <configurator>
+							          <id>org.eclipse.m2e.jdt.javaConfigurator</id>
+							        </configurator>
+							      </action>
+							    </pluginExecution>
+							    <pluginExecution>
+							      <pluginExecutionFilter>
+							        <groupId>org.wisdom-framework</groupId>
+							        <artifactId>wisdom-maven-plugin</artifactId>
+							        <versionRange>0.8.0</versionRange>
+							        <goals>
+							          <goal>copy-configuration</goal>
+							          <goal>copy-resources</goal>
+							          <goal>copy-assets</goal>
+							          <goal>copy-templates</goal>
+							          <goal>compile-javascript</goal>
+							          <goal>compile-coffeescript</goal>
+							          <goal>compile-less</goal>
+							          <goal>minify-css</goal>
+							          <goal>optimize-images</goal>
+							        </goals>
+							      </pluginExecutionFilter>
+							      <action>
+							        <execute>
+							        	<runOnConfiguration>true</runOnConfiguration>
+							        </execute>
+							      </action>
+							    </pluginExecution>
+							    <pluginExecution>
+							      <pluginExecutionFilter>
+							        <groupId>org.wisdom-framework</groupId>
+							        <artifactId>wisdom-maven-plugin</artifactId>
+							        <versionRange>0.8.0</versionRange>
+							        <goals>
+							          <goal>test</goal>
+							          <goal>test-javascript</goal>
+							        </goals>
+							      </pluginExecutionFilter>
+							      <action>
+							        <ignore />
+							      </action>
+							    </pluginExecution>
+							</pluginExecutions>
+						</lifecycleMappingMetadata>
+					</configuration>
+				</plugin>
+
+				<!--This plugin's configuration is used to store Eclipse m2e settings only. 
+				
+					TODO WORKAROUND We need to configure at least one compile goal to force the
+					org.eclipse.m2e.jdt.javaConfigurator to configure the eclipse project using
+					maven compiler plugin's parameters.
+					
+					This has the annoying side-effect to execute two testCompile goals (the one
+					from wisdom and the one from maven).
+					
+					The long-term solution is to provide a project configurator specialized for
+					wisdom artifacts
+				-->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.5.1</version>
+					<executions>
+						<execution>
+							<goals>
+								<goal>testCompile</goal>
+							</goals>
+						</execution>
+					</executions>
+				</plugin>				
+			</plugins>
+		</pluginManagement>
+        
     </build>
 
     <repositories>
