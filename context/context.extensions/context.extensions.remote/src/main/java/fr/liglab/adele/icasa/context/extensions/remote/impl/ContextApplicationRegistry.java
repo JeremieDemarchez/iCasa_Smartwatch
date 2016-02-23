@@ -15,6 +15,18 @@ import org.apache.felix.ipojo.handlers.dependency.Dependency;
 public interface ContextApplicationRegistry {
 
 	/**
+	 * The list of Application id running in the platform. Extracted with the static service property exposed by the factories
+	 * @return
+     */
+	public List<String> getApplicationIds();
+
+
+	/**
+	 * The list of deployed application factories by application Id
+	 */
+	public List<String> getFactoriesByApplicationId(String applicationId);
+
+	/**
 	 * The list of deployed application factories
 	 */
 	public List<String> getFactories();
