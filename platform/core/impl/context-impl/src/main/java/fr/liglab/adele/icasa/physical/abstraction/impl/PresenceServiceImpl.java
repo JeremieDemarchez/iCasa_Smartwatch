@@ -88,7 +88,7 @@ public class PresenceServiceImpl implements PresenceService {
     @ContextEntity.State.Push(service = PresenceService.class,state = PresenceService.PRESENCE_SENSED)
     public PresenceSensing presencePush(){
         if (presenceSensors.isEmpty()){
-            return PresenceSensing.NOT_MESURED;
+            return PresenceSensing.NOT_MEASURED;
         }
         for (PresenceSensor sensor : presenceSensors){
             if (sensor.getSensedPresence()){
