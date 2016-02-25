@@ -1,5 +1,6 @@
 package fr.liglab.adele.icasa.context.extensions.remote.impl;
 
+import fr.liglab.adele.icasa.context.extensions.remote.api.ContextApplicationRegistry;
 import fr.liglab.adele.icasa.context.model.annotations.ContextService;
 import org.apache.felix.ipojo.ComponentInstance;
 import org.apache.felix.ipojo.Factory;
