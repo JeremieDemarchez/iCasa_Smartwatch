@@ -1,0 +1,44 @@
+/**
+ *
+ *   Copyright 2011-2013 Universite Joseph Fourier, LIG, ADELE Research
+ *   Group Licensed under a specific end user license agreement;
+ *   you may not use this file except in compliance with the License.
+ *   You may obtain a copy of the License at
+ *
+ *     http://adeleresearchgroup.github.com/iCasa/snapshot/license.html
+ *
+ *   Unless required by applicable law or agreed to in writing, software
+ *   distributed under the License is distributed on an "AS IS" BASIS,
+ *   WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ *   See the License for the specific language governing permissions and
+ *   limitations under the License.
+ */
+package fr.liglab.adele.icasa.physical.abstraction;
+
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
+
+/**
+ * Created by aygalinc on 25/02/16.
+ */
+public @ContextService interface PresenceService {
+
+    public @State static final String PRESENCE_SENSED="presence.sensed";
+
+    public @State static final String ZONE_ATTACHED="zone.attached";
+
+    public PresenceSensing havePresenceInZone();
+
+    public String sensePresenceIn();
+
+    public enum PresenceSensing {
+        YES(1), NO(0),NOT_MESURED(-1);
+
+        private final int presenceCode;
+
+        private PresenceSensing(int presenceCode) {
+            assert ((1 >= presenceCode) && (presenceCode >= -1));
+            this.presenceCode = presenceCode;
+        }
+    }
+}
