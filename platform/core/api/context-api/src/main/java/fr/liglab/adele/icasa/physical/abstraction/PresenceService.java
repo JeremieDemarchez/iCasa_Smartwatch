@@ -32,7 +32,7 @@ public @ContextService interface PresenceService {
     public String sensePresenceIn();
 
     public enum PresenceSensing {
-        YES(1), NO(0),NOT_MESURED(-1);
+        YES(1), NO(0),NOT_MEASURED(-1);
 
         private final int presenceCode;
 
