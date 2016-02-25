@@ -45,6 +45,7 @@
         <configuration>
           <instructions>
             <Private-Package>fr.liglab.adele.icasa.binary.light.follow.me</Private-Package>
+            <Export-Package></Export-Package>
           </instructions>
         </configuration>
       </plugin>
