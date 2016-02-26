@@ -1,63 +1,72 @@
 function drawFactoryPanel(factoryId,data){
+    var $factoriesSection = $("#factoriesSection");
 
-    var factorySection = $("#factoriesSection");
-    var factoryHash = String.hashCode(factoryId);
-
-    var panel = $("<div></div>").attr('class',"panel panel-primary factoryPanel").attr('id',"factory"+factoryId);
+    var panel = $("<div></div>").attr('class',"mix panel panel-primary factoryPanel").attr('data-name', factoryId);
     var panelHeading =  $("<div></div>").attr('class',"panel-heading");
-    var panelPanelTitle = $("<h4></h4>").attr('class',"panel-title");
-    var panelPanelTitleCollapsible = $("<a>"+factoryId+"</a>").attr('data-toggle',"collapse").attr('href',"#factory"+factoryHash);
-
-    panelPanelTitleCollapsible.appendTo(panelPanelTitle);
+    var panelPanelTitle = $("<h4>"+factoryId+"</h4>").attr('class',"panel-title");
     panelPanelTitle.appendTo(panelHeading);
     panelHeading.appendTo(panel);
+    mixItUp_addFilterCategory(panel, factoryId);
 
-    var div_collapse =  $("<div></div>").attr('class',"table-responsive collapse").attr("id","factory"+factoryHash);
+    var panelBody =  $("<div></div>").attr('class',"panel-body table-responsive");
+    mixItUp_addLink('#ContextProviders', panelBody, factoryId);
+
     var table =  $("<table></table>").attr('class',"table  table-striped");
-
     var tableHead =  $("<thead></thead>");
     var tableRHead =  $("<tr><th>Context Service</th></tr>");
     tableRHead.appendTo(tableHead);
-
     tableHead.appendTo(table);
-    var tableBody =  $("<tbody></tbody>");
 
+    var tableBody =  $("<tbody></tbody>");
     $.each(data,function(key,value){
         console.log("Draw For Each " + key + " value " + value);
         var row = $("<tr></tr>");
         var contextService =  $("<td>"+key+"</td>");
-
         contextService.appendTo(row);
         row.appendTo(tableBody);
+
+        mixItUp_addFilterCategory(panel, key);
     });
 
     tableBody.appendTo(table);
-    table.appendTo(div_collapse);
-    div_collapse.appendTo(panel);
-    panel.appendTo(factorySection);
+    table.appendTo(panelBody);
+    panelBody.appendTo(panel);
+    panel.appendTo($factoriesSection);
 }
 
 
 function getContextFactory(factoryId){
 
-    t = $.get("/context/factories/"+factoryId,function(data) {
-        drawFactoryPanel(factoryId,data);
+    $.ajax({
+        url: "/context/factories/"+factoryId,
+        success: function(data){
+            drawFactoryPanel(factoryId,data);
 
-        $.each(data,function(key,value){
-            console.log("For Each " + key + " value " + value);
-        });
+            $.each(data,function(key,value){
+                console.log("For Each " + key + " value " + value);
+            });
+        },
+        async: false
     });
+
 }
 
 function getListOfContextFactories(){
+    var $factoriesSection = $("#factoriesSection");
+    var $factoriesSectionUI = $("#factoriesSectionUI");
 
-    clearBox("factoriesSection");
     console.log("Get List of Context Entity Type");
-    t = $.get("/context/factories",function(data) {
-        $.each(data,function(key,value){
-            getContextFactory(key)
-        });
+
+    $.ajax({
+        url: "/context/factories",
+        success: function(data){
+            $.each(data,function(key,value){
+                getContextFactory(key);
+            });
+        },
+        async: false
     });
+    mixItUp_init($factoriesSection, $factoriesSectionUI);
 }
 
 

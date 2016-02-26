@@ -11,6 +11,7 @@ var nodes, edges, groups, stateGroups, groupsByNode, groupsByEdge, network, colu
 //}
 
 
+//TODO: MIX IT UP LINK TO CONTEXT FACTORY?
 function createNodeEntityPanel(elementId){
     $("#nodeEntityPanel"+elementId).remove();
     var panel = $("<div></div>").attr('class',"panel panel-primary").attr('id',"nodeEntityPanel"+elementId);
@@ -192,16 +193,16 @@ function graphDraw(){
             var urlServices = "/context/entities/" + y + "/services";
             var urlRelations = "/context/entities/" + y +"/relations";
 
-            var t = $.get(urlServices, function (data) {
+            $.get(urlServices, function (data) {
                 addNodeServicesPanel(y,data);
             });
 
-            var t = $.get(urlStates, function (data) {
+            $.get(urlStates, function (data) {
                 addNodeStatesPanel(y,data);
             });
 
 
-            var t = $.get(urlRelations, function (data) {
+            $.get(urlRelations, function (data) {
                 addNodeRelationsPanel(y,data);
             });
         });
@@ -214,7 +215,7 @@ function graphDraw(){
         });
     });
 
-    $('#DisplayModalBody').on('click', '.enabler', function(e) {
+    $('#DisplayModalBody .enabler').on('click', function(e) {
        e.preventDefault();
 
        var group = $(this).attr('data-group');
@@ -258,12 +259,8 @@ function graphDraw(){
 }
 
 
-function graphInit(time) {
+function graphInit() {
     //   registerWebSocket();
-    clearBox("ColumnInfo");
-    clearBox("ContextNetwork");
-    clearBox("DisplayModalBody");
-
     nodes = new vis.DataSet();
     edges = new vis.DataSet();
     groups = {};
@@ -276,7 +273,7 @@ function graphInit(time) {
     getGroups();
 
     function getGroups(){
-        var u = $.get("/context/groups",function(data) {
+        $.get("/context/groups",function(data) {
 
             var numberOfGroups = data["size"];
             console.log('numberOfGroups ', numberOfGroups);
@@ -293,7 +290,7 @@ function graphInit(time) {
     }
 
     function getEntities(){
-        var t = $.get("/context/entities",function(data) {
+        $.get("/context/entities",function(data) {
             var numberOfEntities = data["size"];
             console.log('numberOfEntities ', numberOfEntities);
 
@@ -315,7 +312,7 @@ function graphInit(time) {
     }
 
     function getRelations(){
-        var y = $.get("/context/relations",function(data) {
+        $.get("/context/relations",function(data) {
             var numberOfRelations = data["size"];
             console.log('numberOfRelations ', numberOfRelations);
             for(var i = 0; i<numberOfRelations; i++){
@@ -340,7 +337,7 @@ function graphInit(time) {
                 }
             }
 
-            var timer = window.setTimeout(graphDraw, time);
+            graphDraw();
         });
     }
 }

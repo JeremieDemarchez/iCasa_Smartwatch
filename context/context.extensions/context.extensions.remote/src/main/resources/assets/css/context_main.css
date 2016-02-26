@@ -20,6 +20,22 @@ a#ContextModelDisplay{
     color: #fff;
 }
 
+.mixUI{
+    margin: 10px;
+}
+
+input.search{
+    margin-right: 10px;
+}
+
+.mixSection div.mix{
+    display: none;
+}
+
+.mixSection div.panel {
+    width : 100%;
+}
+
 .scroll{
     overflow-y: scroll;
 }
@@ -30,6 +46,11 @@ a#ContextModelDisplay{
 
 .title{
     margin: 10px 0;
+}
+
+.panel-heading:hover, .mixLink:hover{
+    cursor: pointer;
+    cursor: hand;
 }
 
 .panel-title, .scroll-txt{
