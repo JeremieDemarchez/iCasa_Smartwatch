@@ -1,4 +1,4 @@
-package fr.liglab.adele.icasa.context.extensions.remote.impl;
+package fr.liglab.adele.icasa.context.extensions.remote.api;
 
 import java.util.List;
 

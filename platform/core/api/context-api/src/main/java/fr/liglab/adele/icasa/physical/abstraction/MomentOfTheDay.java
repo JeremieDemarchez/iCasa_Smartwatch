@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.simulator.model.api;
+package fr.liglab.adele.icasa.physical.abstraction;
 
 import fr.liglab.adele.icasa.context.model.annotations.ContextService;
 import fr.liglab.adele.icasa.context.model.annotations.State;

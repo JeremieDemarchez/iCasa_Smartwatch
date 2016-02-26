@@ -16,24 +16,27 @@
 package fr.liglab.adele.icasa.binary.light.follow.me;
 
 import fr.liglab.adele.icasa.device.light.BinaryLight;
-import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.physical.abstraction.PresenceService;
 import org.apache.felix.ipojo.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Component(name="LightFollowMeApplication")
 
 @Provides(properties= {
-	@StaticServiceProperty(name="icasa.application", type="String", value="Light.Follow.Me.Application", immutable=true)
+        @StaticServiceProperty(name="icasa.application", type="String", value="Light.Follow.Me.Application", immutable=true)
 })
 
 @Instantiate
 public class LightFollowMeApplication {
 
-
+private static final Logger LOG = LoggerFactory.getLogger(LightFollowMeApplication.class);
 
     /** Component Lifecycle Method */
     @Invalidate
@@ -50,12 +53,12 @@ public class LightFollowMeApplication {
     @Requires(id="lights",optional = true,specification = BinaryLight.class,filter = "(!(locatedobject.object.zone="+LocatedObject.LOCATION_UNKNOWN+"))")
     private List<BinaryLight> binaryLights;
 
-    @Requires(id="sensors",optional = true,specification = PresenceSensor.class,filter = "(!(locatedobject.object.zone="+LocatedObject.LOCATION_UNKNOWN+"))")
-    private List<PresenceSensor> presenceSensors;
+    @Requires(id="presence",optional = true,specification = PresenceService.class)
+    private List<PresenceService> presenceServices;
 
     @Bind(id="lights")
     public void bindBinaryLight(BinaryLight binaryLight){
-        if (computePresenceInZone(binaryLight.getZone())){
+        if (computePresenceInZone(getPresenceService(binaryLight.getZone()))){
             binaryLight.turnOn();
         }else {
             binaryLight.turnOff();
@@ -65,7 +68,7 @@ public class LightFollowMeApplication {
 
     @Modified(id="lights")
     public void modifiedBinaryLight(BinaryLight binaryLight){
-        if (computePresenceInZone(binaryLight.getZone())){
+        if (computePresenceInZone(getPresenceService(binaryLight.getZone()))){
             binaryLight.turnOn();
         }else {
             binaryLight.turnOff();
@@ -78,43 +81,39 @@ public class LightFollowMeApplication {
         binaryLight.turnOff();
     }
 
-    @Bind(id="sensors")
-    public void bindPresenceSensor(PresenceSensor presenceSensor){
-        String zoneName = presenceSensor.getZone();
+    @Bind(id="presence")
+    public void bindPresenceService(PresenceService presenceService){
+        managelight(presenceService);
+    }
+
+    @Modified(id="presence")
+    public void modifiedPresenceService(PresenceService presenceService){
+        managelight(presenceService);
+    }
+
+    private void managelight(PresenceService presenceService){
+        String zoneName = presenceService.sensePresenceIn();
         Set<BinaryLight> lightInZone = getLightInZone(zoneName);
-        if (computePresenceInZone(zoneName)){
+        if (presenceService.havePresenceInZone().equals(PresenceService.PresenceSensing.YES)){
             lightInZone.stream().forEach((light) ->light.turnOn() );
         }else {
             lightInZone.stream().forEach((light) ->light.turnOff() );
         }
     }
 
-    @Modified(id="sensors")
-    public void modifiedPresenceSensor(PresenceSensor presenceSensor){
-        String zoneName = presenceSensor.getZone();
-        Set<BinaryLight> lightInZone = getLightInZone(zoneName);
-        if (computePresenceInZone(zoneName)){
-            lightInZone.stream().forEach((light) ->light.turnOn() );
-        }else {
-            lightInZone.stream().forEach((light) ->light.turnOff() );
-        }
+    private boolean computePresenceInZone(PresenceService service){
+        if (service == null)return false;
+        return service.havePresenceInZone().equals(PresenceService.PresenceSensing.YES);
     }
 
-
-    @Unbind(id="sensors")
-    public void unbindPresenceSensor(PresenceSensor presenceSensor){
-        String zoneName = presenceSensor.getZone();
-        Set<BinaryLight> lightInZone = getLightInZone(zoneName);
-        if (computePresenceInZone(zoneName)){
-            lightInZone.stream().forEach((light) ->light.turnOn() );
-        }else {
-            lightInZone.stream().forEach((light) ->light.turnOff() );
+    private PresenceService getPresenceService(String zone){
+        if (zone == null)return null;
+        for (PresenceService service : presenceServices){
+            if (zone.equals(service.sensePresenceIn())){
+                return service;
+            }
         }
-    }
-
-    private boolean computePresenceInZone(String zone){
-        if (zone == null)return false;
-        return presenceSensors.stream().anyMatch((presenceSensor)-> presenceSensor.getSensedPresence() && zone.equals(presenceSensor.getZone()));
+        return null;
     }
 
     private Set<BinaryLight> getLightInZone(String zone){
@@ -123,10 +122,9 @@ public class LightFollowMeApplication {
         if (zone == null){
             return lightInZone;
         }
-        binaryLights.stream().forEach((light) -> {
-            if (zone.equals(light.getZone()))lightInZone.add(light);
-        });
-
+        lightInZone = binaryLights.stream().filter((light) ->
+                zone.equals(light.getZone())
+        ).collect(Collectors.toSet());
         return lightInZone;
     }
 

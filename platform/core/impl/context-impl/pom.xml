@@ -53,8 +53,10 @@
         <artifactId>maven-bundle-plugin</artifactId>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.context.impl, fr.liglab.adele.icasa.context.interceptor, fr.liglab.adele.icasa.commands.impl.shell</Private-Package>
-            <Export-Package>fr.liglab.adele.icasa.location.impl, fr.liglab.adele.icasa.location.util, fr.liglab.adele.icasa.commands.impl</Export-Package>
+            <Private-Package>fr.liglab.adele.icasa.context.impl,
+              fr.liglab.adele.icasa.location.impl,
+              fr.liglab.adele.icasa.commands.impl,
+              fr.liglab.adele.icasa.physical.abstraction.impl</Private-Package>
           </instructions>
         </configuration>
       </plugin>

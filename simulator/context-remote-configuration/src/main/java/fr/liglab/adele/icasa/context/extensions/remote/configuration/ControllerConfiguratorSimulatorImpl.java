@@ -17,20 +17,26 @@ package fr.liglab.adele.icasa.context.extensions.remote.configuration;
 
 
 import fr.liglab.adele.icasa.context.extensions.remote.api.ControllerConfigurator;
+import fr.liglab.adele.icasa.context.extensions.remote.api.ContextApplicationRegistry;
 import fr.liglab.adele.icasa.context.model.ContextEntity;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Provides;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Component(immediate = true)
 @Instantiate
 @Provides(specifications = ControllerConfigurator.class)
 public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurator {
+
+    private final static Logger LOG = LoggerFactory.getLogger(ControllerConfiguratorSimulatorImpl.class);
+
+    @Requires(optional = false)
+    ContextApplicationRegistry applicationRegistry;
 
     private static final String GROUP_PLATFORM = "platform";
     private static final String GROUP_SIMULATOR = "simulator";
@@ -53,13 +59,24 @@ public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurat
         int offset;
 
         Set<String> services = contextEntity.getServices();
+
+        List<String> factoId = applicationRegistry.getFactories();
+        for (String facto : factoId){
+            List<String> instancesId = applicationRegistry.getInstances(facto);
+            for (String id :instancesId){
+                ContextApplicationRegistry.Application app = applicationRegistry.getInstance(facto,id);
+                for (ContextApplicationRegistry.Requirement requirement : app.getRequirements())
+                if (services.contains(requirement.getSpecification())){
+                    groupSet.add(GROUP_APP);
+                }
+            }
+        }
+
         for(String service : services){
             if(service.startsWith(base)){
                 offset = base.length();
 
-                if(service.startsWith(application, offset)){
-                    groupSet.add(GROUP_APP);
-                } else if(service.startsWith(simulator, offset)){
+                if(service.startsWith(simulator, offset)){
                     groupSet.add(GROUP_SIMULATOR);
                 } else if(service.startsWith(platform_location, offset)
                         || service.startsWith(platform_device, offset)

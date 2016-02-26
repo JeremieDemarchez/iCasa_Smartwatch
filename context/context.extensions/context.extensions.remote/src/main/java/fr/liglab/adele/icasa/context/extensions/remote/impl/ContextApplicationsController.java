@@ -21,8 +21,9 @@ package fr.liglab.adele.icasa.context.extensions.remote.impl;
 
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.context.extensions.remote.impl.ContextApplicationRegistry.Application;
-import fr.liglab.adele.icasa.context.extensions.remote.impl.ContextApplicationRegistry.Requirement;
+import fr.liglab.adele.icasa.context.extensions.remote.api.ContextApplicationRegistry;
+import fr.liglab.adele.icasa.context.extensions.remote.api.ContextApplicationRegistry.Application;
+import fr.liglab.adele.icasa.context.extensions.remote.api.ContextApplicationRegistry.Requirement;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Controller;

@@ -17,7 +17,7 @@ package fr.liglab.adele.icasa.simulator.model.day.part;
 
 import fr.liglab.adele.icasa.clockservice.Clock;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.simulator.model.api.MomentOfTheDay;
+import fr.liglab.adele.icasa.physical.abstraction.MomentOfTheDay;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.joda.time.DateTime;
 

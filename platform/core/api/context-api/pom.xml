@@ -59,7 +59,8 @@
 							fr.liglab.adele.icasa.clockservice.util,
 							fr.liglab.adele.icasa.location,
                      		fr.liglab.adele.icasa.exception,
-							fr.liglab.adele.icasa.commands</Export-Package>
+							fr.liglab.adele.icasa.commands,
+							fr.liglab.adele.icasa.physical.abstraction</Export-Package>
 					</instructions>
 				</configuration>
 			</plugin>
