@@ -37,7 +37,7 @@ public class SimulatedDeviceLocationManager {
     @Creator.Field(Constant.RELATION_IS_IN) 	Creator.Relation<LocatedObject,Zone> isInLocatedObjectRelationCreator;
 
     @Bind(id = "zones")
-    public void bindZone(Zone zone){
+    public synchronized void bindZone(Zone zone){
         for (SimulatedDevice simulatedDevice : simulatedDevices){
             if (zone.canContains(simulatedDevice.getPosition())){
                 try {
@@ -50,7 +50,7 @@ public class SimulatedDeviceLocationManager {
     }
 
     @Modified(id = "zones")
-    public void modifiedZone(Zone zone){
+    public synchronized void modifiedZone(Zone zone){
         for (SimulatedDevice simulatedDevice : simulatedDevices){
             if (zone.canContains(simulatedDevice.getPosition())){
                 try {
@@ -65,14 +65,14 @@ public class SimulatedDeviceLocationManager {
     }
 
     @Unbind(id = "zones")
-    public void unbindZone(Zone zone){
+    public synchronized void unbindZone(Zone zone){
         for (SimulatedDevice simulatedDevice : simulatedDevices){
             isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
         }
     }
 
     @Bind(id = "simulatedDevices")
-    public void bindSimulatedDevice(SimulatedDevice simulatedDevice){
+    public synchronized void bindSimulatedDevice(SimulatedDevice simulatedDevice){
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
                 try {
@@ -85,7 +85,7 @@ public class SimulatedDeviceLocationManager {
     }
 
     @Modified(id = "simulatedDevices")
-    public void modifiedSimulatedDevice(SimulatedDevice simulatedDevice){
+    public synchronized void modifiedSimulatedDevice(SimulatedDevice simulatedDevice){
         for (Zone zone:zones){
             if (zone.canContains(simulatedDevice.getPosition())){
                 try {
@@ -100,8 +100,9 @@ public class SimulatedDeviceLocationManager {
     }
 
     @Unbind(id = "simulatedDevices")
-    public void unbindSimulatedDevice(SimulatedDevice simulatedDevice){
-        isInLocatedObjectRelationCreator.delete(simulatedDevice,simulatedDevice.getZone());
+    public synchronized void unbindSimulatedDevice(SimulatedDevice simulatedDevice){
+        //TODO: DOESN'T WORK
+//        isInLocatedObjectRelationCreator.delete(simulatedDevice,simulatedDevice.getZone());
     }
 
 }

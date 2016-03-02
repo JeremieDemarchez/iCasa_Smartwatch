@@ -227,31 +227,31 @@ public class DeviceREST extends DefaultController {
 
     private synchronized GenericDevice findDevice(String deviceSerialNumber){
         for (Heater heater:heaters){
-            if (heater.getSerialNumber().equals(deviceSerialNumber))return heater;
+            if (deviceSerialNumber.equals(heater.getSerialNumber()))return heater;
         }
         for (DimmerLight light:dimmerLights){
-            if (light.getSerialNumber().equals(deviceSerialNumber))return light;
+            if (deviceSerialNumber.equals(light.getSerialNumber()))return light;
         }
         for (Cooler cooler:coolers){
-            if (cooler.getSerialNumber().equals(deviceSerialNumber))return cooler;
+            if (deviceSerialNumber.equals(cooler.getSerialNumber()))return cooler;
         }
         for (Thermometer thermometer:thermometers){
-            if (thermometer.getSerialNumber().equals(deviceSerialNumber))return thermometer;
+            if (deviceSerialNumber.equals(thermometer.getSerialNumber()))return thermometer;
         }
         for (BinaryLight binaryLight:binaryLights){
-            if (binaryLight.getSerialNumber().equals(deviceSerialNumber))return binaryLight;
+            if (deviceSerialNumber.equals(binaryLight.getSerialNumber()))return binaryLight;
         }
         for (PresenceSensor presenceSensor:presenceSensors){
-            if (presenceSensor.getSerialNumber().equals(deviceSerialNumber))return presenceSensor;
+            if (deviceSerialNumber.equals(presenceSensor.getSerialNumber()))return presenceSensor;
         }
         for (MotionSensor motionSensor:motionSensors){
-            if (motionSensor.getSerialNumber().equals(deviceSerialNumber))return motionSensor;
+            if (deviceSerialNumber.equals(motionSensor.getSerialNumber()))return motionSensor;
         }
         for (PushButton pushButton:pushButtons){
-            if (pushButton.getSerialNumber().equals(deviceSerialNumber))return pushButton;
+            if (deviceSerialNumber.equals(pushButton.getSerialNumber()))return pushButton;
         }
         for (Photometer photometer : photometers){
-            if (photometer.getSerialNumber().equals(deviceSerialNumber))return photometer;
+            if (deviceSerialNumber.equals(photometer.getSerialNumber()))return photometer;
         }
         return null;
     }
