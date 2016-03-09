@@ -21,6 +21,8 @@ import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import org.apache.felix.ipojo.annotations.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.List;
 
@@ -102,7 +104,11 @@ public class SimulatedDeviceLocationManager {
     @Unbind(id = "simulatedDevices")
     public synchronized void unbindSimulatedDevice(SimulatedDevice simulatedDevice){
         //TODO: DOESN'T WORK
-//        isInLocatedObjectRelationCreator.delete(simulatedDevice,simulatedDevice.getZone());
+        if (! LocatedObject.LOCATION_UNKNOWN.equals(simulatedDevice.getZone())){
+            for (Zone zone : zones){
+                if (zone.getZoneName().equals(simulatedDevice.getZone()))isInLocatedObjectRelationCreator.delete(simulatedDevice,zone);
+            }
+        }
     }
 
 }
