@@ -1,0 +1,47 @@
+<behavior startdate="15/03/2016-17:00:00" factor="1440">
+
+	<create-zone id="Bathroom"      leftX="58"  topY="18"  X-Length="246" Y-Length="343" />
+    <create-zone id="Bedroom"       leftX="58"  topY="372" X-Length="246" Y-Length="197" />
+    <create-zone id="Livingroom"    leftX="410" topY="18" X-Length="238" Y-Length="343" />
+    <create-zone id="Kitchen"       leftX="410" topY="372" X-Length="238" Y-Length="197" />
+
+
+	<create-device id="PresenceSensor-001" type="iCasa.PresenceSensor" />
+	<create-device id="PresenceSensor-002" type="iCasa.PresenceSensor" />
+	<create-device id="PresenceSensor-003" type="iCasa.PresenceSensor" />
+	<create-device id="PresenceSensor-004" type="iCasa.PresenceSensor" />
+	<create-device id="PresenceSensor-005" type="iCasa.PresenceSensor" />
+	<create-device id="PresenceSensor-006" type="iCasa.PresenceSensor" />
+	<create-device id="PresenceSensor-007" type="iCasa.PresenceSensor" />
+
+	<create-device id="BinaryLight-001" type="iCasa.BinaryLight" />
+	<create-device id="BinaryLight-002" type="iCasa.BinaryLight" />
+	<create-device id="BinaryLight-003" type="iCasa.BinaryLight" />
+    <create-device id="BinaryLight-004" type="iCasa.BinaryLight" />
+    <create-device id="BinaryLight-005" type="iCasa.BinaryLight" />
+    <create-device id="BinaryLight-006" type="iCasa.BinaryLight" />
+
+
+    <move-device deviceId="PresenceSensor-001" leftX="294" topY="148"/>
+    <move-device deviceId="PresenceSensor-002" leftX="108" topY="334"/>
+    <move-device deviceId="PresenceSensor-003" leftX="231" topY="394"/>
+    <move-device deviceId="PresenceSensor-004" leftX="466" topY="73"/>
+    <move-device deviceId="PresenceSensor-005" leftX="610" topY="277"/>
+    <move-device deviceId="PresenceSensor-006" leftX="459" topY="393"/>
+    <move-device deviceId="PresenceSensor-007" leftX="552" topY="531"/>
+
+    <move-device deviceId="BinaryLight-001" leftX="180" topY="135"/>
+    <move-device deviceId="BinaryLight-002" leftX="180" topY="250"/>
+    <move-device deviceId="BinaryLight-003" leftX="180" topY="460"/>
+    <move-device deviceId="BinaryLight-004" leftX="530" topY="135"/>
+    <move-device deviceId="BinaryLight-005" leftX="530" topY="250"/>
+    <move-device deviceId="BinaryLight-006" leftX="530" topY="460"/>
+
+	
+	<create-person id="Philippe" type="Grandfather" />
+    <move-person personId="Philippe" newX="30" newY="30"/>
+    <create-person id="Colin" type="Man" />
+    <move-person personId="Colin" newX="30" newY="90"/>
+    <create-person id="Eva" type="Girl" />
+    <move-person personId="Eva" newX="30" newY="150"/>
+</behavior>
