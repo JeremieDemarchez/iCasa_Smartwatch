@@ -183,9 +183,11 @@ public class RelationHandler extends PrimitiveHandler implements ServiceTracking
     }
     
     private void recalculateDependencies(Relation relation) {
-     	for (DependencyModel dependency : dependencyToRelation.keySet()) {
-			if (dependencyToRelation.get(dependency).equals(relation.getName())) {
-				dependency.invalidateMatchingServices();
+		if (getInstanceManager().getState() > InstanceManager.INVALID) {
+			for (DependencyModel dependency : dependencyToRelation.keySet()) {
+				if (dependencyToRelation.get(dependency).equals(relation.getName())) {
+					dependency.invalidateMatchingServices();
+				}
 			}
 		}
     }
