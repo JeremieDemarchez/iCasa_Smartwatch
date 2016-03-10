@@ -1,4 +1,4 @@
-.page {
+.page{
 
     display: none;
 }
@@ -32,7 +32,7 @@ input.search{
     display: none;
 }
 
-.mixSection div.panel {
+.mixSection div.panel{
     width : 100%;
 }
 
