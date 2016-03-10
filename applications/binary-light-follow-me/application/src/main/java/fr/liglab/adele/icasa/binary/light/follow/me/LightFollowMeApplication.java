@@ -36,7 +36,7 @@ import java.util.stream.Collectors;
 @Instantiate
 public class LightFollowMeApplication {
 
-private static final Logger LOG = LoggerFactory.getLogger(LightFollowMeApplication.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LightFollowMeApplication.class);
 
     /** Component Lifecycle Method */
     @Invalidate
@@ -89,6 +89,13 @@ private static final Logger LOG = LoggerFactory.getLogger(LightFollowMeApplicati
     @Modified(id="presence")
     public void modifiedPresenceService(PresenceService presenceService){
         managelight(presenceService);
+    }
+
+    @Unbind(id="presence")
+    public void unbindPresenceService(PresenceService presenceService){
+        String zoneName = presenceService.sensePresenceIn();
+        Set<BinaryLight> lightInZone = getLightInZone(zoneName);
+        lightInZone.stream().forEach((light) ->light.turnOff() );
     }
 
     private void managelight(PresenceService presenceService){
