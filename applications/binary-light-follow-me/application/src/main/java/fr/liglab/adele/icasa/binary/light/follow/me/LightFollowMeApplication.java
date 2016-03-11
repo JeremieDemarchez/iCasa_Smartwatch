@@ -53,7 +53,7 @@ public class LightFollowMeApplication {
     @Requires(id="lights",optional = true,specification = BinaryLight.class,filter = "(!(locatedobject.object.zone="+LocatedObject.LOCATION_UNKNOWN+"))")
     private List<BinaryLight> binaryLights;
 
-    @Requires(id="presence",optional = true,specification = PresenceService.class)
+    @Requires(id="presence",optional = false,specification = PresenceService.class)
     private List<PresenceService> presenceServices;
 
     @Bind(id="lights")
