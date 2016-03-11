@@ -124,6 +124,9 @@ public class EntityHandler extends PrimitiveHandler implements ContextEntity, Co
 		if (providerHandler == null)
 			return;
 
+		if (getInstanceManager().getState() <= InstanceManager.INVALID)
+			return;
+
 		Hashtable<String,Object> property = new Hashtable<String,Object>();
 		property.put(stateId, value);
 
