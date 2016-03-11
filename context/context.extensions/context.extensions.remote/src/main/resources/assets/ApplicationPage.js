@@ -1,7 +1,7 @@
 function drawApplicationPanel(applicationId) {
     var $applicationsSection = $("#applicationsSection");
 
-    var panel = $("<div></div>").attr('class',"mix panel panel-primary applicationPanel").attr('data-name', applicationId);;
+    var panel = $("<div></div>").attr('class',"mix panel panel-primary applicationPanel").attr('data-name', applicationId);
     var panelHeading =  $("<div></div>").attr('class',"panel-heading");
     var panelPanelTitle = $("<h4>"+applicationId+"</h4>").attr('class',"panel-title");
     panelPanelTitle.appendTo(panelHeading);
@@ -10,7 +10,12 @@ function drawApplicationPanel(applicationId) {
     mixItUp_addFilterCategory(panel, applicationId);
 
     var panelBody = $("<div></div>").attr('class',"panel-body table-responsive");
+    var row = $("<div></div>").attr('class', "row");
+    var button =  $("<div>"+"Repair Providers"+"</div>").attr('class', "update btn btn-info col-md-2").attr('data-app', applicationId).attr('style', "width:100%;");
+    button.appendTo(panelBody);
+    row.appendTo(panelBody);
     panelBody.appendTo(panel);
+
     return panelBody;
 }
 
@@ -32,7 +37,7 @@ function drawApplicationContextDependencyPanel(applicationPanelBody,data) {
             var row = $("<tr></tr>");
             var specification =  $("<td>"+stringSpec+"</td>").attr('class', "col-md-6");
             var optionnal =  $("<td>"+stringOptionnal+"</td>").attr('class', "col-md-3");
-            var state =  $("<td>"+stringState+"</td>").attr('class', "col-md-3");
+            var state =  $("<td>"+stringState+"</td>").attr('class', "col-md-3").attr('data-app', applicationPanelBody.parent().attr('data-name')).attr('data-specification', stringSpec);
             specification.appendTo(row);
             optionnal.appendTo(row);
             state.appendTo(row);
@@ -107,3 +112,37 @@ function getListOfApplications(){
 
     mixItUp_init($applicationsSection, $applicationsSectionUI);
 }
+
+function updateApplicationServiceState(applicationId){
+    $.get( "/context/applications/"+applicationId, function(data){
+        $.each(data,function(applicationFactoryId,value){
+            $.get( "/context/applications/"+applicationId+"/"+applicationFactoryId, function(data){
+                $.each(data,function(applicationInstanceId,value){
+                    $.get( "/context/applications/"+applicationId+"/"+applicationFactoryId+"/"+applicationInstanceId, function(data){
+                        $.each(data,function(key,value){
+                            if(key == "requires"){
+                                $.each(value,function(key,serviceInfo){
+                                    $("td[data-specification='"+serviceInfo["service"]+"'][data-specification='"+serviceInfo["service"]+"']").html(serviceInfo["state"]);
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        });
+    });
+}
+
+$(document).ready(function() {
+    var $applicationsSection = $("#applicationsSection");
+
+    $applicationsSection.on('click', '.update', function(e) {
+        e.preventDefault();
+
+        var applicationId = $(this).attr('data-app');
+        var button = this;
+        $.post("/context/applications/update/"+applicationId, function(data) {
+            updateApplicationServiceState(applicationId);
+        });
+    });
+});

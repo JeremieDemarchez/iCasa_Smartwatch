@@ -114,7 +114,6 @@ function createModalDisplayPanel(){
 
     tableBody.appendTo(table);
     table.appendTo(displayModal);
-
 }
 
 function graphDraw(){

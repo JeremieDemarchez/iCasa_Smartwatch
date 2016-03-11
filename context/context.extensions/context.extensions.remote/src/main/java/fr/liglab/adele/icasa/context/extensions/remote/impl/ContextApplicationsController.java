@@ -45,6 +45,9 @@ public class ContextApplicationsController extends DefaultController {
     @Requires(optional=false, proxy=false)
     ContextApplicationRegistry applicationRegistry;
 
+    @Requires(optional=true,proxy=false)
+    public SimpleApplicationManager manager;
+
     @Route(method = HttpMethod.GET, uri = "/context/applications")
     public Result getApplicationFactories(){
         ObjectNode result = json.newObject();
@@ -52,6 +55,25 @@ public class ContextApplicationsController extends DefaultController {
         for(String appIds :applicationRegistry.getApplicationIds()){
             result.put(appIds,"true");
         }
+        return ok(result);
+    }
+
+    @Route(method = HttpMethod.POST, uri = "/context/applications/update/{appId}")
+    public Result updateApplication(@Parameter(value = "appId") String appId){
+        if (appId == null){
+            return internalServerError(new NullPointerException("Application id is null"));
+        }
+        if (manager == null){
+            return notFound("Application Manager is missing");
+        }
+        if (!manager.isEnabled()){
+            return notFound("Application Manager is not enabled");
+        }
+
+        ObjectNode result = json.newObject();
+
+        manager.repair(appId);
+        result.put(appId, true);
         return ok(result);
     }
 
