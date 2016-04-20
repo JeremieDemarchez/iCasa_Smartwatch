@@ -36,7 +36,7 @@
             </activation>
             <modules>
                 <module>zigbee</module>
-                <module>philips</module>
+               <!-- <module>philips</module>-->
                 <module>zwave</module>
             </modules>
         </profile>
@@ -44,7 +44,7 @@
             <id>release</id>
             <modules>
                 <module>zigbee</module>
-                <module>philips</module>
+           <!--     <module>philips</module>-->
                 <module>zwave</module>
             </modules>
         </profile>

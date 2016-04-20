@@ -41,6 +41,7 @@ public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurat
     private static final String GROUP_PLATFORM = "platform";
     private static final String GROUP_SIMULATOR = "simulator";
     private static final String GROUP_APP = "application";
+    private static final String GROUP_ZWAVE = "Zwave";
 
     private static final String base = "fr.liglab.adele.icasa.";
     private static final String platform_location = "location";
@@ -84,12 +85,17 @@ public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurat
                     groupSet.add(GROUP_PLATFORM);
                 }
             }
+            if (service.equals("fr.liglab.adele.zwave.device.api.ZwaveControllerICasa") || service.equals("fr.liglab.adele.zwave.device.api.ZwaveDevice") || service.equals("fr.liglab.adele.zwave.device.api.ZwaveRepeater") ){
+                groupSet.add(GROUP_ZWAVE);
+            }
         }
 
         /**
          * Define group by priority
          */
-        if (groupSet.contains(GROUP_APP)){
+        if (groupSet.contains(GROUP_ZWAVE)){
+            group = GROUP_ZWAVE;
+        } else if (groupSet.contains(GROUP_APP)){
             group = GROUP_APP;
         } else if(groupSet.contains(GROUP_PLATFORM)){
             group = GROUP_PLATFORM;
@@ -109,6 +115,7 @@ public class ControllerConfiguratorSimulatorImpl implements ControllerConfigurat
         groupDefaultStates.put(GROUP_PLATFORM, true);
         groupDefaultStates.put(GROUP_SIMULATOR, false);
         groupDefaultStates.put(GROUP_DEFAULT, false);
+        groupDefaultStates.put(GROUP_ZWAVE, false);
         return groupDefaultStates;
     }
 }

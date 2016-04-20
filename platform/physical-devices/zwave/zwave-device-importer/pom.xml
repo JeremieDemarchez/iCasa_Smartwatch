@@ -35,8 +35,7 @@
 		<dependency>
 			<groupId>org.openhab.binding</groupId>
 			<artifactId>org.openhab.binding.zwave</artifactId>
-			<type>eclipse-plugin</type>
-			<version>1.6.2</version>
+			<version>1.8.2</version>
 		</dependency>
 
         <dependency>
@@ -87,6 +86,13 @@
 			<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-ipojo-plugin</artifactId>
+				<dependencies>
+					<dependency>
+						<groupId>fr.liglab.adele.icasa</groupId>
+						<artifactId>icasa.context.ipojo.module</artifactId>
+						<version>${project.version}</version>
+					</dependency>
+				</dependencies>
 				<executions>
 					<execution>
 						<goals>
