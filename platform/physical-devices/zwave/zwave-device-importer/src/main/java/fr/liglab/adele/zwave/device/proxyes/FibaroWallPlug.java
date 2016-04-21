@@ -121,11 +121,7 @@ public class FibaroWallPlug implements ZwaveDevice,ZwaveRepeater,ZWaveEventListe
             if (event instanceof ZWaveCommandClassValueEvent) {
                 ZWaveCommandClassValueEvent commandClass = (ZWaveCommandClassValueEvent) event;
                 if (commandClass.getCommandClass().getLabel().equals(ZWaveCommandClass.CommandClass.SWITCH_BINARY.getLabel())) {
-                    if (commandClass.getValue().equals(255)) {
-                        pushStatus(true);
-                    } else {
-                        pushStatus(false);
-                    }
+                        pushStatus(commandClass.getValue().equals(255));
                 }
             }
 
