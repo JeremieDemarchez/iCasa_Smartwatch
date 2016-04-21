@@ -29,6 +29,7 @@ import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -132,11 +133,10 @@ public class FibaroWallPlug implements ZwaveDevice,ZwaveRepeater,ZWaveEventListe
                 ZWaveMultiLevelSensorCommandClass.ZWaveMultiLevelSensorValueEvent castEvent = (ZWaveMultiLevelSensorCommandClass.ZWaveMultiLevelSensorValueEvent) event;
 
                 ZWaveMultiLevelSensorCommandClass.SensorType sensorType = castEvent.getSensorType();
-
                 if (sensorType.getLabel().equals(ZWaveMultiLevelSensorCommandClass.SensorType.POWER.getLabel())){
                     Object value = castEvent.getValue();
-                    if (value instanceof Float){
-                        pushConsumption((Float) value);
+                    if (value instanceof BigDecimal){
+                        pushConsumption(((BigDecimal) value).floatValue());
                     }
                 }
             }
