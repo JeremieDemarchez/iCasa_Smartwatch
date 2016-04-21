@@ -15,12 +15,14 @@
  */
 package fr.liglab.adele.icasa.device.doorWindow;
 
+import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.icasa.context.model.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
-public interface DoorWindowSensor extends GenericDevice {
+public @ContextService interface DoorWindowSensor extends GenericDevice {
 
-	String DOOR_WINDOW_SENSOR_OPENING_DETECTCION = "doorWindowSensor.opneningDetection";
+	@State String DOOR_WINDOW_SENSOR_OPENING_DETECTCION = "status";
 
-	boolean isOpened ();
+	boolean isOpened();
 
 }

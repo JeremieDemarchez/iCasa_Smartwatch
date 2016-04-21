@@ -16,16 +16,36 @@
 package fr.liglab.adele.zwave.device.proxyes;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
+import fr.liglab.adele.icasa.device.power.SmartPlug;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.annotations.*;
+import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveBinarySensorCommandClass;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextEntity(services = {ZwaveDevice.class})
-public class FibaroDoorWindowSensor implements ZwaveDevice {
+@ContextEntity(services = {ZwaveDevice.class,DoorWindowSensor.class, LocatedObject.class})
+public class FibaroDoorWindowSensor implements ZwaveDevice,DoorWindowSensor,LocatedObject,ZWaveEventListener {
+
+    /**
+     * iPOJO Require
+     */
+    @Requires(optional = false,id = "zwaveNetworkController")
+    private ZwaveControllerICasa controller;
+
+    private static final Logger LOG = LoggerFactory.getLogger(FibaroDoorWindowSensor.class);
 
     /**
      * STATES
@@ -36,6 +56,24 @@ public class FibaroDoorWindowSensor implements ZwaveDevice {
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_ID)
     private Integer zwaveId;
 
+    @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
+
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
+    private int x;
+
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
+    private int y;
+
+    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
+    private String zoneName;
+
+    @ContextEntity.State.Field(service = DoorWindowSensor.class,state = DoorWindowSensor.DOOR_WINDOW_SENSOR_OPENING_DETECTCION,value = "false")
+    private boolean status;
+
+    /**
+     * SERVICE
+     */
     @Override
     public List<Integer> getNeighbors() {
         return neighbors;
@@ -44,6 +82,68 @@ public class FibaroDoorWindowSensor implements ZwaveDevice {
     @Override
     public int getZwaveId() {
         return zwaveId;
+    }
+
+    @Override
+    public String getZone() {
+        return zoneName;
+    }
+
+    @Override
+    public Position getPosition() {
+        return new Position(x,y);
+    }
+
+    @Override
+    public void setPosition(Position position) {
+        x = position.x;
+        y = position.y;
+    }
+
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
+    }
+
+    @Override
+    public boolean isOpened() {
+        return status;
+    }
+
+    /**
+     * LIFECYCLE
+     */
+
+    @Validate
+    private void start() {
+        controller.addEventListener(this);
+    }
+
+    @Invalidate
+    private void stop() {
+        controller.removeEventListener(this);
+    }
+
+    /**
+     * Zone
+     */
+    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
+    @Requires(id="zone",specification=Zone.class,optional=true)
+    private Zone zoneAttached;
+
+    @Bind(id = "zone")
+    public void bindZone(Zone zone){
+        pushZone(zone.getZoneName());
+    }
+
+    @Unbind(id= "zone")
+    public void unbindZone(Zone zone){
+        pushZone(LOCATION_UNKNOWN);
+    }
+
+    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
+    public String pushZone(String zoneName) {
+        return zoneName;
     }
 
     /**
@@ -70,5 +170,24 @@ public class FibaroDoorWindowSensor implements ZwaveDevice {
             neighbors.add(device.getZwaveId());
         }
         return neighbors;
+    }
+
+    @Override
+    public void ZWaveIncomingEvent(ZWaveEvent event) {
+        if (event.getNodeId() == zwaveId) {
+            if (event instanceof ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent){
+                ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent castEvent = (ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent) event;
+                ZWaveCommandClass.CommandClass commandClass = castEvent.getCommandClass();
+                if (commandClass.getLabel().equals(ZWaveCommandClass.CommandClass.SENSOR_BINARY.getLabel())){
+                    Object value = castEvent.getValue();
+                    pushStatus(value.equals(255));
+                }
+            }
+        }
+    }
+
+    @ContextEntity.State.Push(service = DoorWindowSensor.class,state =DoorWindowSensor.DOOR_WINDOW_SENSOR_OPENING_DETECTCION)
+    public boolean pushStatus(boolean newStatus){
+        return newStatus;
     }
 }
