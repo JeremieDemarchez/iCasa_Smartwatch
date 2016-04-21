@@ -236,7 +236,10 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
                 removeDeclaration(endPoint);
             }
 
-            if (event instanceof ZWaveNetworkEvent) {
+            /**
+             * Maybe can be compute in a less intensive way ...
+             */
+            if (discovered) {
                 computeRelation();
             }
         }
