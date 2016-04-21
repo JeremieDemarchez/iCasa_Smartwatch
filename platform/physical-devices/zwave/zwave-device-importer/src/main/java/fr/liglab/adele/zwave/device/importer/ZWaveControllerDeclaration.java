@@ -25,7 +25,7 @@ import org.ow2.chameleon.fuchsia.core.exceptions.InvalidFilterException;
 
 import java.util.Map;
 
-public class ZWaveDeclaration {
+public class ZWaveControllerDeclaration {
 
     private final static Filter MATCHING_DECLARATION_FILTER = buildMatchFilter();
 
@@ -42,7 +42,7 @@ public class ZWaveDeclaration {
         }
     }
 
-    public static ZWaveDeclaration from(ImportDeclaration importDeclaration) throws BinderException {
+    public static ZWaveControllerDeclaration from(ImportDeclaration importDeclaration) throws BinderException {
         
     	Map<String, Object> metadata = importDeclaration.getMetadata();
 
@@ -50,7 +50,7 @@ public class ZWaveDeclaration {
             throw new BinderException("Not enough information in the metadata to be used by the zwave importer");
         }
         
-        ZWaveDeclaration declaration = new ZWaveDeclaration();
+        ZWaveControllerDeclaration declaration = new ZWaveControllerDeclaration();
 
         declaration.id		= (String) metadata.get("id");
         declaration.port	= (String) metadata.get("port");
@@ -59,7 +59,7 @@ public class ZWaveDeclaration {
     }
 
 
-    private ZWaveDeclaration() {
+    private ZWaveControllerDeclaration() {
     }
     
     public String getId() {

@@ -26,7 +26,7 @@ public @ContextService interface ZwaveControllerICasa extends ZwaveRepeater{
 
     public static @State  String MASTER="Zwave.Master";
 
-    public static @State  String CONTROLLER="Zwave.Controller";
+    public static @State  String SERIAL_PORT="serial.port";
 
     public boolean isMaster();
 

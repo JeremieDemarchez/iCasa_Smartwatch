@@ -23,7 +23,6 @@ import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import fr.liglab.adele.zwave.device.importer.ZWaveImporter;
 import org.apache.felix.ipojo.annotations.*;
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveAlarmCommandClass.ZWaveAlarmValueEvent;
