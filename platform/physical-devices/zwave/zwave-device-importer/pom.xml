@@ -72,6 +72,7 @@
                         <Private-Package>
                         	org.openhab.binding.zwave.internal.protocol.initialization;-split-package:=merge-first,
                         	org.openhab.binding.zwave.internal.protocol.*,
+							org.openhab.binding.zwave.internal.config.*,
                         	org.openhab.binding.zwave.internal
                         </Private-Package>
                         <Import-Package>

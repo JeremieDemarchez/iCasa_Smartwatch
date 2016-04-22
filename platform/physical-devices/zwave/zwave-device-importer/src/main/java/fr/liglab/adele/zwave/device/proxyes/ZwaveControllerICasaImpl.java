@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.zwave.device.proxyes;
 
+import fr.liglab.adele.icasa.context.model.Relation;
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
@@ -23,11 +24,10 @@ import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 import fr.liglab.adele.zwave.device.importer.ZwaveDeviceImportDeclaration;
 import org.apache.felix.ipojo.annotations.*;
 import org.openhab.binding.zwave.internal.protocol.*;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveBatteryCommandClass;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveWakeUpCommandClass;
-import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
-import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
-import org.openhab.binding.zwave.internal.protocol.event.ZWaveNodeInfoEvent;
-import org.openhab.binding.zwave.internal.protocol.event.ZWaveTransactionCompletedEvent;
+import org.openhab.binding.zwave.internal.protocol.event.*;
 import org.osgi.framework.BundleContext;
 import org.ow2.chameleon.fuchsia.core.component.AbstractDiscoveryComponent;
 import org.ow2.chameleon.fuchsia.core.component.DiscoveryIntrospection;
@@ -36,13 +36,13 @@ import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclaration;
 import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclarationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.wisdom.api.concurrent.ManagedFutureTask;
+import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentSkipListSet;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 @ContextEntity(services = {ZwaveControllerICasa.class,ZwaveDevice.class, ZwaveRepeater.class})
@@ -52,6 +52,9 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
     private static final Logger LOG = LoggerFactory.getLogger(ZwaveControllerICasaImpl.class);
 
     private ControllerManager manager;
+
+    @Requires(filter = "(name=" + ManagedScheduledExecutorService.SYSTEM + ")", proxy = false)
+    ManagedScheduledExecutorService scheduler;
 
     @Creator.Field("isZwaveNeighbor") 	Creator.Relation<ZwaveDevice,ZwaveDevice> neighborsRelationCreator;
 
@@ -164,13 +167,16 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
     @Override
     public String getName() {
-        return "Zwave Device Discovery";
+        return "ZwaveDeviceDiscovery";
     }
 
+    public ManagedScheduledExecutorService getScheduler() {
+        return scheduler;
+    }
     /**
      * This class handles the import for a given controller
      */
-    private class ControllerManager implements ZWaveEventListener  {
+    private class ControllerManager implements ZWaveEventListener,Runnable  {
 
         private final String			serialPort;
 
@@ -178,11 +184,21 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
         private final ZwaveControllerICasaImpl 	parent;
 
+        private final long 	watchDog = 30;
+
+        private final TimeUnit watchDogUnit = TimeUnit.SECONDS;
+
+        private ManagedFutureTask managedFutureTask;
+
         private Map<EndPointIdentifier,String> proxiesWaiting = new ConcurrentHashMap<>();
 
         private Map<EndPointIdentifier,String> proxies = new ConcurrentHashMap<>();
 
         private Set<String> relationProxies = new ConcurrentSkipListSet<>();
+
+        private Map<Integer,Boolean> listeningNode = new HashMap<>();
+
+        private final Object listeningLock = new Object();
 
         public ControllerManager(String serialPort,ZwaveControllerICasaImpl parent) throws SerialInterfaceException {
 
@@ -199,11 +215,14 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
         public void open() {
             controller.initialize();
             controller.addEventListener(this);
+            managedFutureTask =  getScheduler().scheduleAtFixedRate(this,watchDog,watchDog,watchDogUnit);
         }
 
         public void close() {
+            managedFutureTask.cancel(false);
             controller.close();
             controller.removeEventListener(this);
+
         }
 
         public Integer getManagerZwaveId(){
@@ -231,9 +250,6 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
            /*( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeState.ALIVE)) ) ||
                     ( (event instanceof ZWaveInclusionEvent) && (! ((ZWaveInclusionEvent)event).getEvent().equals(ZWaveInclusionEvent.Type.ExcludeDone)) ) ;*/
 
-            LOG.info("Event : " + event.getClass());
-            LOG.info("EndPoint : " + event.getEndpoint());
-            LOG.info("NodeId : " + event.getNodeId());
             ZWaveNode node = controller.getNode(event.getNodeId());
             if (node == null ) {
                 if (isManaged(endPoint)){
@@ -241,15 +257,6 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
                 }
                 return;
             }
-            LOG.info("is Dead : " + controller.getNode(event.getNodeId()).isDead());
-
-            LOG.info("is Listening : " + controller.getNode(event.getNodeId()).isListening());
-
-            LOG.info("is Routing : " + controller.getNode(event.getNodeId()).isRouting());
-
-            LOG.info("State : " + controller.getNode(event.getNodeId()).getNodeState());
-
-            LOG.info("Name : " + controller.getNode(event.getNodeId()).getName());
 
             if (event instanceof ZWaveCommandClassValueEvent){
                 discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
@@ -261,15 +268,19 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
             if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent){
                 ZWaveWakeUpCommandClass.ZWaveWakeUpEvent wakeUpEvent = (ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) event;
-                LOG.info("Wke up Info" + wakeUpEvent.getEvent());
                 discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
             }
 
-
             if (event instanceof ZWaveTransactionCompletedEvent){
-               if (proxiesWaiting.containsKey(endPoint)){
-                   discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
-               }
+                if (proxiesWaiting.containsKey(endPoint)){
+                    discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
+                }
+            }
+
+            synchronized (listeningLock) {
+                if (discovered  && node.isListening() && listeningNode.containsKey(node.getNodeId())) {
+                    listeningNode.put(node.getNodeId(), true);
+                }
             }
 
             boolean undiscovered 	= node.getNodeState().equals(ZWaveNodeState.DEAD) || node.getNodeState().equals(ZWaveNodeState.FAILED);
@@ -282,8 +293,6 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
                 removeDeclaration(endPoint);
             }
 
-
-
             /**
              * Maybe can be compute in a less intensive way ...
              */
@@ -292,14 +301,22 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
             }
         }
 
-        private void computeRelation(){
+        private final void computeRelation(){
             /**
              * Relation Management
              */
             for (ZWaveNode node : controller.getNodes()){
                 EndPointIdentifier nodeEndpoint = new EndPointIdentifier(serialPort, node.getNodeId());
                 List<Integer> neighbors = node.getNeighbors();
-                if (neighbors == null || !isManaged(nodeEndpoint)){
+                if (!isManaged(nodeEndpoint)){
+                    List<Relation> relations = neighborsRelationCreator.getInstancesRelatedTo("ZwaveDevice#"+node.getNodeId());
+                    for(Relation relation:relations){
+                        neighborsRelationCreator.delete(relation.getSource(),relation.getTarget());
+                        neighborsRelationCreator.delete(relation.getTarget(),relation.getSource());
+                    }
+                    continue;
+                }
+                if (neighbors == null){
                     continue;
                 }
                 for (Integer neighbor : neighbors){
@@ -336,23 +353,6 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
                 return;
             }
 
-    		/*
-    		 * verify end-point is defined in the controller
-    		 */
-    //        if (endPoint.endPointId != 0) {
-/**
- ZWaveMultiInstanceCommandClass multiInstanceCommandClass = (ZWaveMultiInstanceCommandClass) node.getCommandClass(ZWaveCommandClass.CommandClass.MULTI_INSTANCE);
- if (multiInstanceCommandClass == null) {
- LOG.error("Error creating proxy, unknown endpoint "+endPoint.endPointId+" for node "+endPoint.nodeId);
- return;
- }
- else if (multiInstanceCommandClass.getVersion() == 2 &&  multiInstanceCommandClass.getEndpoint(endPoint.endPointId) == null) {
- LOG.error("Error creating proxy, unknown endpoint "+endPoint.endPointId+" for node "+endPoint.nodeId);
- return;
- }**/
-     //           LOG.warn("Endpoint != 0");
-          //  }
-
             if (node.getManufacturer() == Integer.MAX_VALUE ||node.getDeviceId()==Integer.MAX_VALUE||node.getDeviceType() == Integer.MAX_VALUE ){
                 LOG.warn("Node " + node.getNodeId() + " need to be wake up in order to provide enought information to be handle by an iCasa Proxy ! ");
                 if (!proxiesWaiting.containsKey(endPoint)){
@@ -370,6 +370,13 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
                     .key("scope").value("generic")
                     .build();
             proxies.put(endPoint,"");
+
+            synchronized (listeningLock) {
+                if (node.isListening()) {
+                    listeningNode.put(node.getNodeId(), true);
+                }
+            }
+
             proxiesWaiting.remove(endPoint);
             parent.registerZwaveDeviceImportDeclaration(endPoint,zigbeeDeclaration);
 
@@ -377,9 +384,32 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
         private final void removeDeclaration(EndPointIdentifier endPoint) {
             proxies.remove(endPoint);
+            synchronized (listeningLock){
+                listeningNode.remove(endPoint.nodeId);
+            }
             parent.unregisterZwaveDeviceImportDeclaration(endPoint);
+            computeRelation();
         }
 
+
+        @Override
+        public final void run() {
+            Set<Integer> nodeToRemove = new HashSet<>();
+            synchronized (listeningLock){
+                for (Map.Entry<Integer,Boolean> nodeListening:listeningNode.entrySet()){
+                    if (nodeListening.getValue().equals(true)){
+                        controller.requestNodeInfo(nodeListening.getKey());
+                        controller.requestNodeNeighborUpdate(nodeListening.getKey());
+                        nodeListening.setValue(false);
+                    }else {
+                        nodeToRemove.add(nodeListening.getKey());
+                    }
+                }
+            }
+            for (Integer nodeId : nodeToRemove){
+                removeDeclaration(new EndPointIdentifier(serialPort,nodeId));
+            }
+        }
     }
 
     /**
