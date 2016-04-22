@@ -23,10 +23,11 @@ import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 import fr.liglab.adele.zwave.device.importer.ZwaveDeviceImportDeclaration;
 import org.apache.felix.ipojo.annotations.*;
 import org.openhab.binding.zwave.internal.protocol.*;
-import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
-import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveMultiInstanceCommandClass;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveWakeUpCommandClass;
-import org.openhab.binding.zwave.internal.protocol.event.*;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveNodeInfoEvent;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveTransactionCompletedEvent;
 import org.osgi.framework.BundleContext;
 import org.ow2.chameleon.fuchsia.core.component.AbstractDiscoveryComponent;
 import org.ow2.chameleon.fuchsia.core.component.DiscoveryIntrospection;
@@ -177,6 +178,8 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
         private final ZwaveControllerICasaImpl 	parent;
 
+        private Map<EndPointIdentifier,String> proxiesWaiting = new ConcurrentHashMap<>();
+
         private Map<EndPointIdentifier,String> proxies = new ConcurrentHashMap<>();
 
         private Set<String> relationProxies = new ConcurrentSkipListSet<>();
@@ -190,7 +193,7 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
             /**
              * Put the controller in the zwaveDevice Managed list
              */
-            proxies.put(new EndPointIdentifier(serialPort,getManagerZwaveId(),0),"");
+            proxies.put(new EndPointIdentifier(serialPort,getManagerZwaveId()),"");
         }
 
         public void open() {
@@ -218,15 +221,58 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
         public void ZWaveIncomingEvent(ZWaveEvent event) {
             LOG.debug("Zwave event from node "+event.getNodeId()+" on port "+serialPort);
 
-            EndPointIdentifier endPoint = new EndPointIdentifier(serialPort, event.getNodeId(), event.getEndpoint());
+            EndPointIdentifier endPoint = new EndPointIdentifier(serialPort, event.getNodeId());
 
-            boolean discovered 		= 	( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeState.ALIVE)) ) ||
+            boolean discovered 		=  false;	/*( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeState.ALIVE)) ) ||
                     ( (event instanceof ZWaveInclusionEvent) && (! ((ZWaveInclusionEvent)event).getEvent().equals(ZWaveInclusionEvent.Type.IncludeDone)) ) ||
                     ( (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent)) ||
-                    ( (event instanceof ZWaveCommandClassValueEvent));
+                    ( (event instanceof ZWaveCommandClassValueEvent));*/
 
-            boolean undiscovered 	= 	( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeState.ALIVE)) ) ||
-                    ( (event instanceof ZWaveInclusionEvent) && (! ((ZWaveInclusionEvent)event).getEvent().equals(ZWaveInclusionEvent.Type.ExcludeDone)) ) ;
+           /*( (event instanceof ZWaveNodeStatusEvent) && (! ((ZWaveNodeStatusEvent)event).getState().equals(ZWaveNodeState.ALIVE)) ) ||
+                    ( (event instanceof ZWaveInclusionEvent) && (! ((ZWaveInclusionEvent)event).getEvent().equals(ZWaveInclusionEvent.Type.ExcludeDone)) ) ;*/
+
+            LOG.info("Event : " + event.getClass());
+            LOG.info("EndPoint : " + event.getEndpoint());
+            LOG.info("NodeId : " + event.getNodeId());
+            ZWaveNode node = controller.getNode(event.getNodeId());
+            if (node == null ) {
+                if (isManaged(endPoint)){
+                    removeDeclaration(endPoint);
+                }
+                return;
+            }
+            LOG.info("is Dead : " + controller.getNode(event.getNodeId()).isDead());
+
+            LOG.info("is Listening : " + controller.getNode(event.getNodeId()).isListening());
+
+            LOG.info("is Routing : " + controller.getNode(event.getNodeId()).isRouting());
+
+            LOG.info("State : " + controller.getNode(event.getNodeId()).getNodeState());
+
+            LOG.info("Name : " + controller.getNode(event.getNodeId()).getName());
+
+            if (event instanceof ZWaveCommandClassValueEvent){
+                discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
+            }
+
+            if (event instanceof ZWaveNodeInfoEvent){
+                discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
+            }
+
+            if (event instanceof ZWaveWakeUpCommandClass.ZWaveWakeUpEvent){
+                ZWaveWakeUpCommandClass.ZWaveWakeUpEvent wakeUpEvent = (ZWaveWakeUpCommandClass.ZWaveWakeUpEvent) event;
+                LOG.info("Wke up Info" + wakeUpEvent.getEvent());
+                discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
+            }
+
+
+            if (event instanceof ZWaveTransactionCompletedEvent){
+               if (proxiesWaiting.containsKey(endPoint)){
+                   discovered = node.getNodeState().equals(ZWaveNodeState.ALIVE);
+               }
+            }
+
+            boolean undiscovered 	= node.getNodeState().equals(ZWaveNodeState.DEAD) || node.getNodeState().equals(ZWaveNodeState.FAILED);
 
             if (discovered && ! isManaged(endPoint) ) {
                 createDeclaration(endPoint);
@@ -235,6 +281,8 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
             if (undiscovered && isManaged(endPoint) ) {
                 removeDeclaration(endPoint);
             }
+
+
 
             /**
              * Maybe can be compute in a less intensive way ...
@@ -249,13 +297,13 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
              * Relation Management
              */
             for (ZWaveNode node : controller.getNodes()){
-                EndPointIdentifier nodeEndpoint = new EndPointIdentifier(serialPort, node.getNodeId(),0);
+                EndPointIdentifier nodeEndpoint = new EndPointIdentifier(serialPort, node.getNodeId());
                 List<Integer> neighbors = node.getNeighbors();
                 if (neighbors == null || !isManaged(nodeEndpoint)){
                     continue;
                 }
                 for (Integer neighbor : neighbors){
-                    EndPointIdentifier endPointNeighbor = new EndPointIdentifier(serialPort, neighbor,0);
+                    EndPointIdentifier endPointNeighbor = new EndPointIdentifier(serialPort, neighbor);
 
                     ZWaveNode neighborNode = controller.getNode(neighbor);
                     if (( neighborNode == null ) || !isManaged(endPointNeighbor)){
@@ -291,21 +339,26 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
     		/*
     		 * verify end-point is defined in the controller
     		 */
-            if (endPoint.endPointId != 0) {
-
-                ZWaveMultiInstanceCommandClass multiInstanceCommandClass = (ZWaveMultiInstanceCommandClass) node.getCommandClass(ZWaveCommandClass.CommandClass.MULTI_INSTANCE);
-                if (multiInstanceCommandClass == null) {
-                    LOG.error("Error creating proxy, unknown endpoint "+endPoint.endPointId+" for node "+endPoint.nodeId);
-                    return;
-                }
-                else if (multiInstanceCommandClass.getVersion() == 2 &&  multiInstanceCommandClass.getEndpoint(endPoint.endPointId) == null) {
-                    LOG.error("Error creating proxy, unknown endpoint "+endPoint.endPointId+" for node "+endPoint.nodeId);
-                    return;
-                }
-            }
+    //        if (endPoint.endPointId != 0) {
+/**
+ ZWaveMultiInstanceCommandClass multiInstanceCommandClass = (ZWaveMultiInstanceCommandClass) node.getCommandClass(ZWaveCommandClass.CommandClass.MULTI_INSTANCE);
+ if (multiInstanceCommandClass == null) {
+ LOG.error("Error creating proxy, unknown endpoint "+endPoint.endPointId+" for node "+endPoint.nodeId);
+ return;
+ }
+ else if (multiInstanceCommandClass.getVersion() == 2 &&  multiInstanceCommandClass.getEndpoint(endPoint.endPointId) == null) {
+ LOG.error("Error creating proxy, unknown endpoint "+endPoint.endPointId+" for node "+endPoint.nodeId);
+ return;
+ }**/
+     //           LOG.warn("Endpoint != 0");
+          //  }
 
             if (node.getManufacturer() == Integer.MAX_VALUE ||node.getDeviceId()==Integer.MAX_VALUE||node.getDeviceType() == Integer.MAX_VALUE ){
                 LOG.warn("Node " + node.getNodeId() + " need to be wake up in order to provide enought information to be handle by an iCasa Proxy ! ");
+                if (!proxiesWaiting.containsKey(endPoint)){
+                    controller.requestNodeInfo(node.getNodeId());
+                    proxiesWaiting.put(endPoint,"");
+                }
                 return;
             }
 
@@ -317,11 +370,13 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
                     .key("scope").value("generic")
                     .build();
             proxies.put(endPoint,"");
+            proxiesWaiting.remove(endPoint);
             parent.registerZwaveDeviceImportDeclaration(endPoint,zigbeeDeclaration);
 
         }
 
         private final void removeDeclaration(EndPointIdentifier endPoint) {
+            proxies.remove(endPoint);
             parent.unregisterZwaveDeviceImportDeclaration(endPoint);
         }
 
@@ -334,16 +389,14 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
         public final String 	serialPort;
         public final int 		nodeId;
-        public final int 		endPointId;
 
         private final int 		hash;
         private final String	label;
 
-        public EndPointIdentifier(String serialPort, int nodeId, int endPointId) {
+        public EndPointIdentifier(String serialPort, int nodeId) {
 
             this.serialPort 	= serialPort;
             this.nodeId			= nodeId;
-            this.endPointId		= endPointId;
 
             hash 				= hash();
             label				= label();
@@ -354,13 +407,12 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
 
             hash = (hash ^ (serialPort.hashCode() >>> 32));
             hash = (hash ^ (nodeId >>> 32));
-            hash = (hash ^ (endPointId >>> 32));
 
             return hash;
         }
 
         private String label() {
-            return "node "+nodeId+" end point "+endPointId+ " on port "+serialPort;
+            return "node "+nodeId + " on port "+serialPort;
         }
 
         @Override
@@ -377,8 +429,7 @@ public class ZwaveControllerICasaImpl extends AbstractDiscoveryComponent impleme
             EndPointIdentifier that = ((EndPointIdentifier)obj);
 
             return 	this.serialPort.equals(that.serialPort) &&
-                    this.nodeId == that.nodeId &&
-                    this.endPointId == that.endPointId;
+                    this.nodeId == that.nodeId;
         }
 
         @Override
