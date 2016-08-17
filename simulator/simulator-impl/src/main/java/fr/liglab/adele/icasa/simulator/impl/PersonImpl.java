@@ -15,9 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulator.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity.Relation;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;

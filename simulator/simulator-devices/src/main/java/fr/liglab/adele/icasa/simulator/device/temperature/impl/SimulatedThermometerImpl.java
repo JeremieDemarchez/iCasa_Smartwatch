@@ -30,7 +30,7 @@
 // */
 package fr.liglab.adele.icasa.simulator.device.temperature.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.location.LocatedObject;

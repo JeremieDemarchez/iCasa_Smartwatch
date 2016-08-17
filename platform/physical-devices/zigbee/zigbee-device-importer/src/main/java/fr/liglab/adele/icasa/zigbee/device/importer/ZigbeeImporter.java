@@ -18,8 +18,8 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.importer;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.zigbee.driver.TypeCode;

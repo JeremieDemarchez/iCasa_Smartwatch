@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.zwave.device.proxyes;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;

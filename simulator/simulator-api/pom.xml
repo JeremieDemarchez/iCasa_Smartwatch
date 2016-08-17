@@ -27,10 +27,10 @@
        <artifactId>context.api</artifactId>
        <version>${project.version}</version>
     </dependency>
+
     <dependency>
-      <groupId>fr.liglab.adele.icasa</groupId>
-      <artifactId>icasa.context.model</artifactId>
-      <version>${project.version}</version>
+      <groupId>fr.liglab.adele.cream</groupId>
+      <artifactId>cream.core</artifactId>
     </dependency>
   </dependencies>
 

@@ -18,7 +18,7 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.factories;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;

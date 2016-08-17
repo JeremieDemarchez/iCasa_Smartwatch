@@ -75,9 +75,9 @@
                 <artifactId>maven-ipojo-plugin</artifactId>
                 <dependencies>
                     <dependency>
-                        <groupId>fr.liglab.adele.icasa</groupId>
-                        <artifactId>icasa.context.ipojo.module</artifactId>
-                        <version>${project.version}</version>
+                        <groupId>fr.liglab.adele.cream</groupId>
+                        <artifactId>cream.ipojo.module</artifactId>
+                        <version>${context.socm.version}</version>
                     </dependency>
                 </dependencies>
                 <executions>

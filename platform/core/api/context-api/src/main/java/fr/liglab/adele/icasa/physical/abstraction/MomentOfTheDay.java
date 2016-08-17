@@ -15,13 +15,15 @@
  */
 package fr.liglab.adele.icasa.physical.abstraction;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 
 /**
  * Created by aygalinc on 10/02/16.
  */
-public @ContextService interface MomentOfTheDay {
+public @ContextService
+interface MomentOfTheDay {
 
     public static final @State String CURRENT_MOMENT_OF_THE_DAY = "current.moment.of.the.day";
 

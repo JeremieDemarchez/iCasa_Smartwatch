@@ -15,8 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.location.LocatedObject;
+
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.person.Person;
@@ -39,9 +38,7 @@ import org.wisdom.api.http.MimeTypes;
 import org.wisdom.api.http.Result;
 
 import java.io.IOException;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 
 /**

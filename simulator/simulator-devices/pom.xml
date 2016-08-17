@@ -57,10 +57,10 @@
 			<artifactId>simulator.physical.model</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>icasa.context.model</artifactId>
-			<version>1.2.7-SNAPSHOT</version>
+			<groupId>fr.liglab.adele.cream</groupId>
+			<artifactId>cream.core</artifactId>
 		</dependency>
 	</dependencies>
 
@@ -84,9 +84,9 @@
 				<artifactId>maven-ipojo-plugin</artifactId>
 				<dependencies>
 					<dependency>
-						<groupId>fr.liglab.adele.icasa</groupId>
-						<artifactId>icasa.context.ipojo.module</artifactId>
-						<version>${project.version}</version>
+						<groupId>fr.liglab.adele.cream</groupId>
+						<artifactId>cream.ipojo.module</artifactId>
+						<version>${context.socm.version}</version>
 					</dependency>
 				</dependencies>
 				<executions>

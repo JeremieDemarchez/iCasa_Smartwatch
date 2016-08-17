@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.model.temperature;
 
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Component;

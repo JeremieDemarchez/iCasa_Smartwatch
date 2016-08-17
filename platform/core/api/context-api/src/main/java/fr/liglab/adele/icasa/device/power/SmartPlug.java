@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.device.power;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 
 /**
  * Created by aygalinc on 21/04/16.

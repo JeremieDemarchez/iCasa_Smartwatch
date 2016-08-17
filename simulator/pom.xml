@@ -30,7 +30,6 @@
 
 	<modules>
 		<module>clock-simulated-impl</module>
-        <module>context-remote-configuration</module>
 		<module>simulator-api</module>
         <module>simulator-physical-model</module>
         <module>simulator-devices</module>

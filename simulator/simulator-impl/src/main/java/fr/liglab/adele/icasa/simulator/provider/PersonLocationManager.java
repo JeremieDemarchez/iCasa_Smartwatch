@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.provider;
 
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.impl.PersonImpl;
 import fr.liglab.adele.icasa.simulator.person.Person;

@@ -15,9 +15,9 @@
  */
 package fr.liglab.adele.zwave.device.proxyes;
 
-import fr.liglab.adele.icasa.context.model.Relation;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.model.Relation;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import fr.liglab.adele.zwave.device.api.ZwaveRepeater;

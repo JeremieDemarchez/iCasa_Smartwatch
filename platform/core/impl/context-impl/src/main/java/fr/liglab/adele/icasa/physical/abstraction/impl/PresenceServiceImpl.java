@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.physical.abstraction.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.physical.abstraction.PresenceService;

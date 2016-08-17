@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.zwave.device.api;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 
 /**

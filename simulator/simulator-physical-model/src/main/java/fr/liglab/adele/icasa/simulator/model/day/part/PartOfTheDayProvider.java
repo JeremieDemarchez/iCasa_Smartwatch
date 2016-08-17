@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.simulator.model.day.part;
 
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;

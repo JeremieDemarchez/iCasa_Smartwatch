@@ -63,10 +63,10 @@
 			<artifactId>org.ow2.chameleon.fuchsia.core</artifactId>
 			<version>${fuchsia.version}</version>
 		</dependency>
+
 		<dependency>
-			<groupId>fr.liglab.adele.icasa</groupId>
-			<artifactId>icasa.context.model</artifactId>
-			<version>1.2.7-SNAPSHOT</version>
+			<groupId>fr.liglab.adele.cream</groupId>
+			<artifactId>cream.core</artifactId>
 		</dependency>
 	</dependencies>
 

@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.icasa.device.motion;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**

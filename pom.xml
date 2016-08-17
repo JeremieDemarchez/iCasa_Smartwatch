@@ -46,7 +46,6 @@
          </activation>
          <modules>
             <module>parent</module>
-             <module>context</module>
             <module>platform</module>
             <module>simulator</module>
             <module>frontend</module>

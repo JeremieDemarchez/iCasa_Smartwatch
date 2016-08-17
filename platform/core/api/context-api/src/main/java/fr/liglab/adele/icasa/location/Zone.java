@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.location;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 
 /**
  * This interface represents a Zone (a rectangular surface) into the iCasa platform. Zones can be embeded, a zone can

@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulator.person;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 import fr.liglab.adele.icasa.location.LocatedObject;
 
 /**

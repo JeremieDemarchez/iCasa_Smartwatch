@@ -18,8 +18,8 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.api;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 
 /**
  * Generic interface for zigbee devices.

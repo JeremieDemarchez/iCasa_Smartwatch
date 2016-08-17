@@ -15,15 +15,17 @@
  */
 package fr.liglab.adele.icasa.simulator.model.api;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
+//import fr.liglab.adele.cream.annotations.State;
 
 /**
  * Created by aygalinc on 10/02/16.
  */
 public @ContextService interface TemperatureModel {
 
-    public static final @State String CURRENT_TEMPERATURE = "current.temperature";
+    public static final @State
+    String CURRENT_TEMPERATURE = "current.temperature";
 
     public static final @State String ZONE_ATTACHED = "zone.attached";
 

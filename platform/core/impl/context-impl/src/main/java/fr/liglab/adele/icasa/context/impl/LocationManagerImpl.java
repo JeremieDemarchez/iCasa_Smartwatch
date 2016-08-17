@@ -15,16 +15,15 @@
  */
 package fr.liglab.adele.icasa.context.impl;
 
-import fr.liglab.adele.icasa.context.model.ContextEntity;
-import fr.liglab.adele.icasa.context.model.Relation;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+
+import fr.liglab.adele.cream.annotations.provider.Creator;
+import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import org.apache.felix.ipojo.annotations.*;
 
 import java.util.List;
-import java.util.Map;
 
 @Component(immediate = true,publicFactory=false)
 @Instantiate(name = "LocationManagerImpl-0")

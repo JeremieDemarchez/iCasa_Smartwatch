@@ -48,6 +48,8 @@ See the License for the specific language governing permissions and
         <netty.version>4.0.23.Final</netty.version>
         <wisdom.version>0.8.0</wisdom.version>
         <jackson.version>2.4.4</jackson.version>
+
+        <context.socm.version>0.1-SNAPSHOT</context.socm.version>
     </properties>
 
     <developers>
@@ -403,6 +405,26 @@ See the License for the specific language governing permissions and
                 <version>1.1.0.Final</version>
             </dependency>
 
+
+            <!--CONTEXT - SOCM
+            -->
+            <dependency>
+                <groupId>fr.liglab.adele.cream</groupId>
+                <artifactId>cream.core</artifactId>
+                <version>${context.socm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>fr.liglab.adele.cream</groupId>
+                <artifactId>cream.model.runtime</artifactId>
+                <version>${context.socm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>fr.liglab.adele.cream</groupId>
+                <artifactId>cream.ipojo.module</artifactId>
+                <version>${context.socm.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
