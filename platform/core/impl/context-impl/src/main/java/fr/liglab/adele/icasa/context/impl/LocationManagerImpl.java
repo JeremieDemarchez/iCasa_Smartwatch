@@ -32,7 +32,7 @@ public class LocationManagerImpl{
     @Requires(id = "zones",specification = Zone.class,optional = true)
     List<Zone> zones;
 
-    @Requires(id = "locatedObjects",specification = LocatedObject.class,optional = true)
+    @Requires(id = "locatedObjects",specification = LocatedObject.class,optional = true,proxy = false)
     List<LocatedObject> locatedObjects;
 
     @Creator.Field(ZoneImpl.RELATION_CONTAINS) 	Creator.Relation<Zone,LocatedObject> containsCreator;

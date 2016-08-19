@@ -15,10 +15,12 @@
  */
 package fr.liglab.adele.zwave.device.proxyes;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
@@ -55,8 +57,9 @@ import java.util.List;
  @StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_DEFAULT_PROXY,	type="java.lang.String", value = "true")
  }
  )*/
-@ContextEntity(services = {ZwaveDevice.class,LocatedObject.class,MotionSensor.class})
-public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObject,ZWaveEventListener  {
+@ContextEntity(services = {ZwaveDevice.class,MotionSensor.class})
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventListener,GenericDevice  {
 
     /**
      * iPOJO Require
@@ -71,15 +74,6 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
      */
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
     private List<Integer> neighbors;
@@ -98,22 +92,6 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
     @Override
     public int getZwaveId() {
         return zwaveId;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @Override
@@ -203,30 +181,6 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
         }
 
     }
-
-
-    /**
-     * Zone
-     */
-    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zoneAttached;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
-    }
-
 
     /**
      * Neighbors Synchro

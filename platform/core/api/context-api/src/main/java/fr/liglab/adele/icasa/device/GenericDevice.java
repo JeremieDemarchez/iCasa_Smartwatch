@@ -17,10 +17,9 @@ package fr.liglab.adele.icasa.device;
 
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
-import fr.liglab.adele.icasa.location.LocatedObject;
 
 
-public @ContextService interface GenericDevice extends LocatedObject {
+public @ContextService interface GenericDevice{
 
 	public final static @State String DEVICE_SERIAL_NUMBER = "device.serialNumber";
 

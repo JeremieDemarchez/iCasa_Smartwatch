@@ -18,6 +18,7 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.factories;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -26,6 +27,7 @@ import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
 import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
@@ -34,23 +36,15 @@ import org.apache.felix.ipojo.annotations.*;
 import java.util.function.Consumer;
 
 
-@ContextEntity(services = {BinaryLight.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,LocatedObject.class})
-public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDeviceTracker,LocatedObject{
+@ContextEntity(services = {BinaryLight.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDeviceTracker,GenericDevice{
 
     @ContextEntity.State.Field(service = BinaryLight.class,state = BinaryLight.BINARY_LIGHT_POWER_STATUS,value = "false")
     private boolean powerStatus;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
 
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
     private String moduleAddress;
@@ -84,22 +78,6 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
     @Override
     public void turnOff() {
         powerStatus = false;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @ContextEntity.State.Apply(service = BinaryLight.class,state = BINARY_LIGHT_POWER_STATUS)
@@ -167,27 +145,5 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
     @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
-    }
-
-    /**
-     * Zone
-     */
-    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zoneAttached;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
     }
 }

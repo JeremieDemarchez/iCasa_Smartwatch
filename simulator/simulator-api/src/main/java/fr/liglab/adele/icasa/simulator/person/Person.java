@@ -23,7 +23,7 @@ import fr.liglab.adele.icasa.location.LocatedObject;
  * This interface represents a person in the icasa simulated Environment
  *
  */
-public @ContextService interface Person extends LocatedObject {
+public @ContextService interface Person {
 
 	@State String NAME 	= "name";
 

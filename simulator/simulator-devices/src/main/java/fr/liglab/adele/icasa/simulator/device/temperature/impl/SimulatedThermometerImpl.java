@@ -33,15 +33,10 @@ package fr.liglab.adele.icasa.simulator.device.temperature.impl;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import fr.liglab.adele.icasa.simulator.model.api.TemperatureModel;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Modified;
-import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 
 
@@ -49,8 +44,8 @@ import org.apache.felix.ipojo.annotations.Unbind;
  * Implementation of a simulated thermometer device.
  *
  */
-@ContextEntity(services = {Thermometer.class, SimulatedDevice.class, LocatedObject.class})
-public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,LocatedObject {
+@ContextEntity(services = {Thermometer.class, SimulatedDevice.class})
+public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,GenericDevice {
 
     public final static String SIMULATED_THERMOMETER = "iCasa.Thermometer";
 
@@ -63,34 +58,9 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
-
     @Override
     public String getDeviceType() {
         return deviceType;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @Override
@@ -104,17 +74,17 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
     }
 
     @Bind(id ="TemperatureModelDependency" ,filter = "(temperaturemodel.zone.attached=${locatedobject.object.zone})",optional = true,aggregate = true)
-    public void bindIllu(TemperatureModel model){
+    public void bindTemperature(TemperatureModel model){
         pushTemperature(model.getCurrentTemperature());
     }
 
     @Modified(id = "TemperatureModelDependency")
-    public void modifiedIllu(TemperatureModel model){
+    public void modifiedTemperature(TemperatureModel model){
         pushTemperature(model.getCurrentTemperature());
     }
 
     @Unbind(id = "TemperatureModelDependency")
-    public void unbindIllu(TemperatureModel model){
+    public void unbindTemperature(TemperatureModel model){
         pushTemperature(FAULT_VALUE);
     }
 
@@ -122,25 +92,5 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
     public double pushTemperature(double temperature){
         return temperature;
     }
-
-    @ContextEntity.Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zone;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
-    }
-
 
 }

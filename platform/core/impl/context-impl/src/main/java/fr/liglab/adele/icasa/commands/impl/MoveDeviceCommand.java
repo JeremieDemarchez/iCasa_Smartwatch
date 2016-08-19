@@ -43,6 +43,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
@@ -68,31 +69,31 @@ import java.util.List;
 @Instantiate(name = "move-device-command")
 public class MoveDeviceCommand extends AbstractCommand {
 
-    @Requires(specification = BinaryLight.class,optional = true)
+    @Requires(specification = BinaryLight.class,optional = true,proxy = false)
     List<BinaryLight> binaryLights;
 
-    @Requires(specification = DimmerLight.class,optional = true)
+    @Requires(specification = DimmerLight.class,optional = true,proxy = false)
     List<DimmerLight> dimmerLights;
 
-    @Requires(specification = PresenceSensor.class,optional = true)
+    @Requires(specification = PresenceSensor.class,optional = true,proxy = false)
     List<PresenceSensor> presenceSensors;
 
-    @Requires(specification = MotionSensor.class,optional = true)
+    @Requires(specification = MotionSensor.class,optional = true,proxy = false)
     List<MotionSensor> motionSensors;
 
-    @Requires(specification = PushButton.class,optional = true)
+    @Requires(specification = PushButton.class,optional = true,proxy = false)
     List<PushButton> pushButtons;
 
-    @Requires(specification = Photometer.class, optional = true)
+    @Requires(specification = Photometer.class, optional = true,proxy = false)
     List<Photometer> photometers;
 
-    @Requires(specification = Thermometer.class,optional = true)
+    @Requires(specification = Thermometer.class,optional = true,proxy = false)
     List<Thermometer> thermometers;
 
-    @Requires(specification = Cooler.class,optional = true)
+    @Requires(specification = Cooler.class,optional = true,proxy = false)
     List<Cooler> coolers;
 
-    @Requires(specification = Heater.class,optional = true)
+    @Requires(specification = Heater.class,optional = true,proxy = false)
     List<Heater> heaters;
 
     private static Signature MOVE = new Signature(new String[]{ScriptLanguage.DEVICE_ID, ScriptLanguage.LEFT_X, ScriptLanguage.TOP_Y} );
@@ -107,7 +108,7 @@ public class MoveDeviceCommand extends AbstractCommand {
     public Object execute(InputStream in, PrintStream out,JSONObject param, Signature signature) throws Exception {
         String deviceId = param.getString(ScriptLanguage.DEVICE_ID);
 
-        GenericDevice deviceToMove = findDevice(deviceId);
+        LocatedObject deviceToMove = findDevice(deviceId);
         if (deviceToMove == null) {
             throw new IllegalArgumentException("Device ("+ deviceId +") does not exist");
         }
@@ -119,33 +120,33 @@ public class MoveDeviceCommand extends AbstractCommand {
         return null;
     }
 
-    private GenericDevice findDevice(String deviceSerialNumber){
+    private LocatedObject findDevice(String deviceSerialNumber){
         for (Heater heater:heaters){
-            if (deviceSerialNumber.equals(heater.getSerialNumber()))return heater;
+            if (heater instanceof LocatedObject && deviceSerialNumber.equals(heater.getSerialNumber()))return (LocatedObject) heater;
         }
         for (DimmerLight light:dimmerLights){
-            if (deviceSerialNumber.equals(light.getSerialNumber()))return light;
+            if (light instanceof LocatedObject &&deviceSerialNumber.equals(light.getSerialNumber()))return (LocatedObject)light;
         }
         for (Cooler cooler:coolers){
-            if (deviceSerialNumber.equals(cooler.getSerialNumber()))return cooler;
+            if (cooler instanceof LocatedObject &&deviceSerialNumber.equals(cooler.getSerialNumber()))return (LocatedObject)cooler;
         }
         for (Thermometer thermometer:thermometers){
-            if (deviceSerialNumber.equals(thermometer.getSerialNumber()))return thermometer;
+            if (thermometer instanceof LocatedObject &&deviceSerialNumber.equals(thermometer.getSerialNumber()))return (LocatedObject)thermometer;
         }
         for (BinaryLight binaryLight:binaryLights){
-            if (deviceSerialNumber.equals(binaryLight.getSerialNumber()))return binaryLight;
+            if (binaryLight instanceof LocatedObject && deviceSerialNumber.equals(binaryLight.getSerialNumber()))return (LocatedObject)binaryLight;
         }
         for (PresenceSensor presenceSensor:presenceSensors){
-            if (deviceSerialNumber.equals(presenceSensor.getSerialNumber()))return presenceSensor;
+            if (presenceSensor instanceof LocatedObject && deviceSerialNumber.equals(presenceSensor.getSerialNumber()))return (LocatedObject)presenceSensor;
         }
         for (MotionSensor motionSensor:motionSensors){
-            if (deviceSerialNumber.equals(motionSensor.getSerialNumber()))return motionSensor;
+            if (motionSensor instanceof LocatedObject && deviceSerialNumber.equals(motionSensor.getSerialNumber()))return (LocatedObject)motionSensor;
         }
         for (PushButton pushButton:pushButtons){
-            if (deviceSerialNumber.equals(pushButton.getSerialNumber()))return pushButton;
+            if (pushButton instanceof LocatedObject && deviceSerialNumber.equals(pushButton.getSerialNumber()))return (LocatedObject)pushButton;
         }
         for (Photometer photometer : photometers){
-            if (deviceSerialNumber.equals(photometer.getSerialNumber()))return photometer;
+            if (photometer instanceof LocatedObject && deviceSerialNumber.equals(photometer.getSerialNumber()))return (LocatedObject)photometer;
         }
         return null;
     }

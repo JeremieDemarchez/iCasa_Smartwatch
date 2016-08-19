@@ -16,6 +16,7 @@
 package fr.liglab.adele.icasa.simulator.remote.wisdom.impl;
 
 
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
 import fr.liglab.adele.icasa.simulator.person.Person;
@@ -50,7 +51,7 @@ import java.util.List;
 @Path("/icasa/persons")
 public class PersonREST extends DefaultController {
 
-    @Requires(specification = Person.class, optional = true)
+    @Requires(specification = Person.class, optional = true,proxy = false)
     List<Person> persons;
 
     @Requires(specification = PersonProvider.class)
@@ -188,8 +189,12 @@ public class PersonREST extends DefaultController {
         if (foundPerson == null)
       	  return notFound();
 
+        if (! (foundPerson instanceof LocatedObject)){
+            return forbidden();
+        }
+        LocatedObject locatedPerson = (LocatedObject) foundPerson;
         if ((personJSON.getPositionX() != null) && (personJSON.getPositionY() != null)) {
-            foundPerson.setPosition(new Position(personJSON.getPositionX(), personJSON.getPositionY()));
+            locatedPerson.setPosition(new Position(personJSON.getPositionX(), personJSON.getPositionY()));
         }
 
         return ok();
