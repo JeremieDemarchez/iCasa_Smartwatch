@@ -19,7 +19,10 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.icasa.orange.service.TestRunningException;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestResult;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestStrategy;
+import fr.liglab.adele.zwave.device.api.ZwaveDevice;
+import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Path;
@@ -35,6 +38,11 @@ import java.util.List;
 @Path(value = "/orange")
 public class OrangeRemoteController extends DefaultController {
 
+    @Requires(id="zwaveDevices",specification = ZwaveDevice.class,optional = true)
+    List<ZwaveDevice> zwaveDevices;
+
+
+
     @Requires(specification = ZwaveTestStrategy.class,optional = true)
     List<ZwaveTestStrategy> testStrategies ;
 
@@ -45,6 +53,28 @@ public class OrangeRemoteController extends DefaultController {
     Json json;
 
     private final String websocketURI = "/orange/websocket";
+
+    @Bind(id="zwaveDevices")
+    public void bindZwaveDevices(ZwaveDevice device){
+        ObjectNode result = json.newObject();
+        result.put("nodeId", device.getZwaveId());
+        result.put("manufacturerId", 1);
+        result.put("deviceId", 1);
+        result.put("deviceType", 1);
+        result.put("event", "device-discovered");
+        webSocketPublisher.publish(websocketURI,result);
+    }
+
+    @Unbind(id="zwaveDevices")
+    public void unbindZwaveDevices(ZwaveDevice device){
+        ObjectNode result = json.newObject();
+        result.put("nodeId", device.getZwaveId());
+        result.put("manufacturerId", 1);
+        result.put("deviceId", 1);
+        result.put("deviceType", 1);
+        result.put("event", "device-undiscovered");
+        webSocketPublisher.publish(websocketURI,result);
+    }
 
     @Route(method = HttpMethod.GET,uri = "/zwaves")
     public Result getZwaveDevices(){
@@ -81,6 +111,7 @@ public class OrangeRemoteController extends DefaultController {
                                     (String zwaveID, ZwaveTestResult testResult) -> {
                                         ObjectNode result = json.newObject();
                                         result.put("nodeId", zwaveID);
+                                        result.put("event", "test-result");
                                         result.put("result", testResult.toString());
                                         webSocketPublisher.publish(websocketURI,result);
                                     },
