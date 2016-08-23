@@ -20,14 +20,25 @@ import fr.liglab.adele.icasa.context.model.annotations.State;
 
 import java.util.List;
 
-public @ContextService interface ZwaveDevice{
+public @ContextService interface ZwaveDevice {
 
-    static final @State String ZWAVE_NEIGHBORS = "Zwave.Neighbors";
-
-    static final @State String ZWAVE_ID = "Zwave.Id";
+    static final @State String NEIGHBORS = "zwave.neighbors";
 
     public List<Integer> getNeighbors();
 
-    public int getZwaveId();
+    /**
+     * The network home id
+     */
+    public static @State  String HOME_ID="zwave.homeId";
+    
+    public int getHomeId();
+
+    /**
+     * The network node id
+     */
+    static final @State String NODE_ID = "zwave.nodeId";
+
+    public int getNodeId();
+
 
 }

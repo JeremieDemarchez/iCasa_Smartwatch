@@ -17,20 +17,45 @@ package fr.liglab.adele.zwave.device.api;
 
 import fr.liglab.adele.icasa.context.model.annotations.ContextService;
 import fr.liglab.adele.icasa.context.model.annotations.State;
-import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 
 /**
  * Created by aygalinc on 19/04/16.
  */
-public @ContextService interface ZwaveControllerICasa extends ZwaveRepeater{
+public @ContextService interface ZwaveController extends ZwaveRepeater {
+	
 
-    public static @State  String MASTER="Zwave.Master";
-
+	/**
+	 * The configured serial port
+	 */
     public static @State  String SERIAL_PORT="serial.port";
+
+    /**
+     * Whether thi is the master controller
+     */
+    public static @State  String MASTER="wwave.controller.isMaster";
 
     public boolean isMaster();
 
-    public void addEventListener(ZWaveEventListener eventListener);
+    /**
+     * The operation mode of the controller
+     */
+    public static @State  String MODE="zwave.controller.mode";
 
-    public void removeEventListener(ZWaveEventListener eventListener);
+	public enum Mode {
+		NORMAL,
+		INCLUSION,
+		EXCLUSION
+	}
+
+    public Mode getMode();
+
+    public void changeMode(Mode mode);
+ 
+    /**
+     * The last network event
+     */
+    public static @State  String NETWORK_EVENT="zwave.controller.event";
+
+    public ZWaveNetworkEvent getLastEvent();
+    
 }

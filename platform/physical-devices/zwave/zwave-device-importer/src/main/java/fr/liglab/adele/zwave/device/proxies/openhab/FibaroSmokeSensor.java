@@ -13,11 +13,11 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.proxyes;
+package fr.liglab.adele.zwave.device.proxies.openhab;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
+
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
@@ -31,11 +31,14 @@ public class FibaroSmokeSensor implements ZwaveDevice{
     /**
      * STATES
      */
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_ID)
-    private Integer zwaveId;
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
+    private Integer zwaveHomeId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
+    private Integer zwaveNodeId;
 
     @Override
     public List<Integer> getNeighbors() {
@@ -43,8 +46,13 @@ public class FibaroSmokeSensor implements ZwaveDevice{
     }
 
     @Override
-    public int getZwaveId() {
-        return zwaveId;
+    public int getNodeId() {
+        return zwaveNodeId;
+    }
+    
+    @Override
+    public int getHomeId() {
+    	return zwaveHomeId;
     }
 
     /**
@@ -64,11 +72,11 @@ public class FibaroSmokeSensor implements ZwaveDevice{
         pushNeighbors();
     }
 
-    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     public List<Integer> pushNeighbors() {
         List<Integer> neighbors = new ArrayList<>();
         for (ZwaveDevice device : zwaveDevices){
-            neighbors.add(device.getZwaveId());
+            neighbors.add(device.getNodeId());
         }
         return neighbors;
     }

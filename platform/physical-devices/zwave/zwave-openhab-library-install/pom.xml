@@ -19,11 +19,11 @@
 	</parent>
 
 	<!-- Project coordinates -->
-	<artifactId>zwave.thirdparty.library.install</artifactId>
+	<artifactId>zwave.openhab.library.install</artifactId>
 	<packaging>pom</packaging>
 	
 	<!-- Project description -->
-	<name>${productName} :: ${projectName} :: ZWave Third-party Library Installer</name>
+	<name>${productName} :: ${projectName} :: ZWave Openhab Library Installer</name>
 
 
 	<build>

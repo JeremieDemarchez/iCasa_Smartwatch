@@ -22,7 +22,7 @@ import java.util.Map;
 /**
  * Created by aygalinc on 20/04/16.
  */
-public class ZwaveDeviceImportDeclaration {
+public class DeviceDeclaration {
 
     public final static String DEVICE_MANUFACTURER = "zwave.device.manufacturer.id";
 
@@ -30,24 +30,38 @@ public class ZwaveDeviceImportDeclaration {
 
     public final static String DEVICE_TYPE = "zwave.device.type.id";
 
-    public final static String ZWAVE_ID = "zwave.node.id";
+    public final static String HOME_ID = "zwave.home.id";
 
-    private final int zwaveNodeId;
+    public final static String NODE_ID = "zwave.node.id";
 
-    private final int zwaveDeviceId;
-
-    private final int zwaveDeviceType;
 
     private final int zwaveManufacturerId;
 
-    public ZwaveDeviceImportDeclaration(ImportDeclaration declaration){
+    private final int zwaveDeviceType;
+
+    private final int zwaveDeviceId;
+
+
+    private final int zwaveHomeId;
+
+    private final int zwaveNodeId;
+    
+    public DeviceDeclaration(ImportDeclaration declaration){
         Map<String,Object> metadatas = declaration.getMetadata();
-        zwaveNodeId = (int)metadatas.get(ZWAVE_ID);
-        zwaveDeviceId = (int)metadatas.get(DEVICE_ID);
-        zwaveDeviceType = (int)metadatas.get(DEVICE_TYPE);
+
         zwaveManufacturerId = (int)metadatas.get(DEVICE_MANUFACTURER);
+        zwaveDeviceType 	= (int)metadatas.get(DEVICE_TYPE);
+        zwaveDeviceId 		= (int)metadatas.get(DEVICE_ID);
+        
+        zwaveHomeId 		= (int)metadatas.get(HOME_ID);
+        zwaveNodeId 		= (int)metadatas.get(NODE_ID);
+        
     }
 
+    public int getZwaveHomeId() {
+        return zwaveHomeId;
+    }
+    
     public int getZwaveNodeId() {
         return zwaveNodeId;
     }

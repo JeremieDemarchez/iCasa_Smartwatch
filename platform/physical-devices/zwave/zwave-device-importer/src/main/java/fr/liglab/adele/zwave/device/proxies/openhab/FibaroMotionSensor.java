@@ -13,7 +13,7 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.proxyes;
+package fr.liglab.adele.zwave.device.proxies.openhab;
 
 import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
@@ -21,8 +21,8 @@ import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
+
 import org.apache.felix.ipojo.annotations.*;
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveAlarmCommandClass.ZWaveAlarmValueEvent;
@@ -61,8 +61,8 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
     /**
      * iPOJO Require
      */
-    @Requires(optional = false,id = "zwaveNetworkController")
-    private ZwaveControllerICasa controller;
+    @Requires(optional = false, proxy=false)
+    private OpenhabController controller;
 
     private static final Logger LOG = LoggerFactory.getLogger(FibaroMotionSensor.class);
 
@@ -81,11 +81,14 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
     private String zoneName;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_ID)
-    private Integer zwaveId;
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
+    private Integer zwaveHomeId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
+    private Integer zwaveNodeId;
 
     /**
      * Services
@@ -96,8 +99,13 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
     }
 
     @Override
-    public int getZwaveId() {
-        return zwaveId;
+    public int getNodeId() {
+    	return zwaveNodeId;
+    }
+
+    @Override
+    public int getHomeId() {
+    	return zwaveHomeId;
     }
 
     @Override
@@ -139,7 +147,7 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
     @Override
     public void ZWaveIncomingEvent(ZWaveEvent event) {
 
-        if (event.getNodeId() == zwaveId ) {
+        if (event.getNodeId() == zwaveNodeId ) {
 
             if (event instanceof ZWaveAlarmSensorValueEvent) {
 
@@ -195,8 +203,8 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
 
                 ZWaveCommandClassValueEvent changedValue = (ZWaveCommandClassValueEvent) event;
                 if (changedValue.getCommandClass().equals(CommandClass.BATTERY)) {
-                    Integer batteryLevel = (Integer) changedValue.getValue();
-                    //			setPropertyValue("zwave.batteryLevel", batteryLevel);
+                    // Integer batteryLevel = (Integer) changedValue.getValue();
+                    // setPropertyValue("zwave.batteryLevel", batteryLevel);
                 }
             }
 
@@ -245,11 +253,11 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,LocatedObjec
         pushNeighbors();
     }
 
-    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     public List<Integer> pushNeighbors() {
         List<Integer> neighbors = new ArrayList<>();
         for (ZwaveDevice device : zwaveDevices){
-            neighbors.add(device.getZwaveId());
+            neighbors.add(device.getNodeId());
         }
         return neighbors;
     }
