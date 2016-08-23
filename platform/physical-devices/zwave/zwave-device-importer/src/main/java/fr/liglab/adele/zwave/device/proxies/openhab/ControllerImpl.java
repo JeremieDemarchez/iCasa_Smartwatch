@@ -58,10 +58,11 @@ import org.slf4j.LoggerFactory;
 import org.wisdom.api.concurrent.ManagedFutureTask;
 import org.wisdom.api.concurrent.ManagedScheduledExecutorService;
 
-import fr.liglab.adele.icasa.context.model.Relation;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.provider.Creator;
+
+import fr.liglab.adele.cream.model.Relation;
+
 import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent;
 import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent.Type;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
@@ -71,6 +72,7 @@ import fr.liglab.adele.zwave.device.importer.DeviceDeclaration;
 
 @ContextEntity(services = {OpenhabController.class,ZwaveController.class,ZwaveDevice.class, ZwaveRepeater.class})
 @Provides(specifications = {DiscoveryService.class, DiscoveryIntrospection.class})
+
 public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController, OpenhabController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ControllerImpl.class);
@@ -161,7 +163,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
     @ContextEntity.State.Apply(service = ZwaveController.class,state = ZwaveController.MODE)
     private Consumer<ZwaveController.Mode> requestChangeMode =  (requestedMode) -> manager.requestChangeMode(requestedMode); 
     
-	@State.Push(service = ZwaveController.class,state = ZwaveController.MODE)
+    @ContextEntity.State.Push(service = ZwaveController.class,state = ZwaveController.MODE)
 	private ZwaveController.Mode changeModeNotification(ZwaveController.Mode newMode) {
 		return newMode;
 	} 
@@ -173,7 +175,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
 	private ZWaveNetworkEvent event;
 
-	@State.Push(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
+	@ContextEntity.State.Push(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
 	private ZWaveNetworkEvent notifyEvent(ZWaveNode node, boolean isInclusion) {
 		
 		ZWaveNetworkEvent event = new ZWaveNetworkEvent();

@@ -15,7 +15,7 @@
  */
 package fr.liglab.adele.zwave.device.api;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.ContextService;
 
 /**
  * Created by aygalinc on 19/04/16.

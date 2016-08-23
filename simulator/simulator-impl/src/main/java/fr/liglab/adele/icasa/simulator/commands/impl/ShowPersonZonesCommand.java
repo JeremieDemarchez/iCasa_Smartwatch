@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import org.apache.felix.ipojo.annotations.Component;
@@ -74,8 +75,10 @@ public class ShowPersonZonesCommand extends AbstractCommand {
         if (personToMove != null) {
             out.println("Zones: ");
             for (Zone zone : zones) {
-                if (zone.canContains(personToMove.getPosition())) {
-                    out.println("Zone : " + zone);
+                if (personToMove instanceof LocatedObject){
+                    if (zone.canContains(((LocatedObject)personToMove).getPosition())) {
+                        out.println("Zone : " + zone);
+                    }
                 }
             }
         }

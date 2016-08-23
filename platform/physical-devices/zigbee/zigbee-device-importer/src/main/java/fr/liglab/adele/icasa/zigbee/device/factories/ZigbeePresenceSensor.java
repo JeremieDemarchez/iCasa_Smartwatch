@@ -15,23 +15,18 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.factories;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
-import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
 
-@ContextEntity(services = {PresenceSensor.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,LocatedObject.class})
-public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker,LocatedObject {
+@ContextEntity(services = {PresenceSensor.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
 
     @Requires
     private ZigbeeDriver driver;
@@ -42,15 +37,6 @@ public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, Zigb
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
-
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = MODULE_ADRESS)
     private String moduleAddress;
 
@@ -60,22 +46,6 @@ public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, Zigb
     @Override
     public boolean getSensedPresence() {
         return sensedPresence;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @Override
@@ -141,27 +111,5 @@ public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, Zigb
     @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
-    }
-
-    /**
-     * Zone
-     */
-    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zoneAttached;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
     }
 }

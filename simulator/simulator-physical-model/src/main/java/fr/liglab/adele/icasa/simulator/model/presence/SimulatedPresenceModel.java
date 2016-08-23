@@ -15,9 +15,9 @@
  */
 package fr.liglab.adele.icasa.simulator.model.presence;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity.Relation;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.model.api.PresenceModel;
 import fr.liglab.adele.icasa.simulator.person.Person;

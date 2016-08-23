@@ -15,15 +15,15 @@
  */
 package fr.liglab.adele.icasa.simulator.remote.wisdom.util;
 
+import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
+import fr.liglab.adele.icasa.simulator.person.Person;
 import fr.liglab.adele.icasa.simulator.person.PersonType;
+import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 import org.json.JSONException;
 import org.json.JSONObject;
-
-import fr.liglab.adele.icasa.clockservice.util.DateTextUtil;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.simulator.person.Person;
-import fr.liglab.adele.icasa.simulator.script.executor.ScriptExecutor;
 
 public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 
@@ -34,13 +34,14 @@ public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 			personJSON.putOnce(PersonJSON.ID_PROP, person.getName());
 			personJSON.putOnce(PersonJSON.NAME_PROP, person.getName());
 			personJSON.putOnce(PersonJSON.TYPE_PROP, person.getPersonType().getName());
-
-			Position personPosition = person.getPosition();
-			if (personPosition != null) {
-				personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
-				personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
+			if (person instanceof LocatedObject) {
+				Position personPosition = ((LocatedObject) person).getPosition();
+				if (personPosition != null) {
+					personJSON.put(PersonJSON.POSITION_X_PROP, personPosition.x);
+					personJSON.put(PersonJSON.POSITION_Y_PROP, personPosition.y);
+				}
+				personJSON.putOnce(PersonJSON.LOCATION_PROP,((LocatedObject) person).getZone());
 			}
-			personJSON.putOnce(PersonJSON.LOCATION_PROP, person.getZone());
 		} catch (JSONException e) {
 			e.printStackTrace();
 			personJSON = null;
@@ -62,10 +63,10 @@ public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 
 		return personTypeJSON;
 	}
-	
 
-	
-	
+
+
+
 	public static JSONObject getScriptJSON(String scriptName, ScriptExecutor _scriptExecutor) {
 		JSONObject scriptJSON = null;
 		try {
@@ -84,12 +85,12 @@ public class IcasaSimulatorJSONUtil extends IcasaJSONUtil {
 		}
 		return scriptJSON;
 	}
-	
 
 
-	
-	
-	
-	
-	
+
+
+
+
+
+
 }

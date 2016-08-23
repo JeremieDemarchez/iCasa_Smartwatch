@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.physical.abstraction;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 
 /**
  * Created by aygalinc on 25/02/16.

@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.location;
 
-import fr.liglab.adele.icasa.context.model.annotations.ContextService;
-import fr.liglab.adele.icasa.context.model.annotations.State;
+import fr.liglab.adele.cream.annotations.ContextService;
+import fr.liglab.adele.cream.annotations.State;
 
 /**
  * This interface represents a object that can be placed using a point into a coordinate system.

@@ -15,24 +15,21 @@
  */
 package fr.liglab.adele.icasa.simulator.device.light.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.DimmerLight;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.device.utils.Constant;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
 
 /**
  * Implementation of a simulated dimmer light device.
  *
  */
-@ContextEntity(services = {DimmerLight.class,SimulatedDevice.class,LocatedObject.class})
-public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice,LocatedObject{
+@ContextEntity(services = {DimmerLight.class,SimulatedDevice.class})
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice,GenericDevice{
 
     public final static String SIMULATED_DIMMER_LIGHT = "iCasa.DimmerLight";
 
@@ -45,34 +42,9 @@ public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice,Lo
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
-
     @Override
     public String getDeviceType() {
         return deviceType;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @Override
@@ -91,24 +63,5 @@ public class SimulatedDimmerLightImpl implements DimmerLight, SimulatedDevice,Lo
             throw new IllegalArgumentException("Invalid power level : " + level);
         }
         powerLevel = level;
-    }
-
-    @ContextEntity.Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zone;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
     }
 }

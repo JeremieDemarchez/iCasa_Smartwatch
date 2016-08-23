@@ -15,8 +15,8 @@
  */
 package fr.liglab.adele.icasa.simulator.provider;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.icasa.simulator.impl.PersonImpl;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import fr.liglab.adele.icasa.simulator.person.PersonProvider;

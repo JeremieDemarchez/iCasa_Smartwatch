@@ -28,6 +28,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.remote.wisdom.util.DeviceJSON;
 import fr.liglab.adele.icasa.remote.wisdom.util.IcasaJSONUtil;
@@ -63,31 +64,31 @@ public class DeviceREST extends DefaultController {
 
     private final static Logger LOG = LoggerFactory.getLogger(DeviceREST.class);
 
-    @Requires(specification = BinaryLight.class,optional = true)
+    @Requires(specification = BinaryLight.class,optional = true,proxy = false)
     List<BinaryLight> binaryLights;
 
-    @Requires(specification = DimmerLight.class,optional = true)
+    @Requires(specification = DimmerLight.class,optional = true,proxy = false)
     List<DimmerLight> dimmerLights;
 
-    @Requires(specification = PresenceSensor.class,optional = true)
+    @Requires(specification = PresenceSensor.class,optional = true,proxy = false)
     List<PresenceSensor> presenceSensors;
 
-    @Requires(specification = MotionSensor.class,optional = true)
+    @Requires(specification = MotionSensor.class,optional = true,proxy = false)
     List<MotionSensor> motionSensors;
 
-    @Requires(specification = PushButton.class,optional = true)
+    @Requires(specification = PushButton.class,optional = true,proxy = false)
     List<PushButton> pushButtons;
 
-    @Requires(specification = Photometer.class, optional = true)
+    @Requires(specification = Photometer.class, optional = true,proxy = false)
     List<Photometer> photometers;
 
-    @Requires(specification = Thermometer.class,optional = true)
+    @Requires(specification = Thermometer.class,optional = true,proxy = false)
     List<Thermometer> thermometers;
 
-    @Requires(specification = Cooler.class,optional = true)
+    @Requires(specification = Cooler.class,optional = true,proxy = false)
     List<Cooler> coolers;
 
-    @Requires(specification = Heater.class,optional = true)
+    @Requires(specification = Heater.class,optional = true,proxy = false)
     List<Heater> heaters;
 
     @Route(method = HttpMethod.GET, uri = "/devices")
@@ -213,12 +214,15 @@ public class DeviceREST extends DefaultController {
         if (device == null){
             return notFound();
         }
-
+        if (! (device instanceof LocatedObject)){
+            return forbidden();
+        }
+        LocatedObject locatedObject = (LocatedObject) device;
         DeviceJSON updatedDevice = DeviceJSON.fromString(content);
         if (updatedDevice != null) {
             if (updatedDevice.getPositionX() != null && updatedDevice.getPositionY() != null){
                 Position newPostion = new Position(updatedDevice.getPositionX(),updatedDevice.getPositionY());
-                device.setPosition(newPostion);
+                locatedObject.setPosition(newPostion);
             }
         }
 

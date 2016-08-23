@@ -19,6 +19,7 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.simulator.person.Person;
@@ -43,7 +44,7 @@ import java.util.List;
 @Instantiate(name = "move-person-zone-command")
 public class MovePersonIntoZoneCommand extends AbstractCommand {
 
-    @Requires(specification = Person.class,optional = true)
+    @Requires(specification = Person.class,optional = true,proxy = false)
     private List<Person> persons;
 
     @Requires(specification = Zone.class,optional = true)
@@ -78,7 +79,10 @@ public class MovePersonIntoZoneCommand extends AbstractCommand {
         if (zoneToMove == null){
             throw new IllegalArgumentException("Zone ("+ personId +") does not exist");
         }
-        personToMove.setPosition(getRandomPositionIntoZone(zoneToMove));
+        if (personToMove instanceof LocatedObject){
+            ((LocatedObject) personToMove).setPosition(getRandomPositionIntoZone(zoneToMove));
+        }
+
         return null;
     }
 

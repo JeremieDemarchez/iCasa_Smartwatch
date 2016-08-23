@@ -15,16 +15,14 @@
  */
 package fr.liglab.adele.icasa.simulator.device.presence.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.Relation;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.device.utils.Constant;
 import fr.liglab.adele.icasa.simulator.model.api.PresenceModel;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Modified;
@@ -35,8 +33,9 @@ import org.apache.felix.ipojo.annotations.Unbind;
  * Implementation of a simulated binary light device.
  *
  */
-@ContextEntity(services = {LocatedObject.class,PresenceSensor.class,SimulatedDevice.class})
-public class SimulatedPresenceSensorImpl implements LocatedObject,PresenceSensor,SimulatedDevice{
+@ContextEntity(services = {PresenceSensor.class,SimulatedDevice.class})
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+public class SimulatedPresenceSensorImpl implements PresenceSensor,SimulatedDevice,GenericDevice{
 
     public final static String SIMULATED_PRESENCE_SENSOR = "iCasa.PresenceSensor";
 
@@ -49,35 +48,9 @@ public class SimulatedPresenceSensorImpl implements LocatedObject,PresenceSensor
     @State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
-
-
     @Override
     public String getDeviceType() {
         return deviceType;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @Override
@@ -88,29 +61,6 @@ public class SimulatedPresenceSensorImpl implements LocatedObject,PresenceSensor
     @Override
     public boolean getSensedPresence() {
         return currentSensedPresence;
-    }
-
-    /**
-     * Zone
-     */
-
-    @Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zone;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
     }
 
     /**

@@ -27,6 +27,7 @@ import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.device.temperature.Heater;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import fr.liglab.adele.icasa.remote.wisdom.impl.ClockREST;
 import org.json.JSONArray;
@@ -152,9 +153,12 @@ public class IcasaJSONUtil {
     }
 
     private static void addDevicePosition(JSONObject jsonObject,GenericDevice device) throws JSONException{
-        jsonObject.put(DeviceJSON.POSITION_X_PROP, device.getPosition().x);
-        jsonObject.put(DeviceJSON.POSITION_Y_PROP, device.getPosition().y);
-        jsonObject.put(DeviceJSON.LOCATION_PROP, NO_UNIT); //TODO change
+        if (device instanceof LocatedObject){
+            LocatedObject object = (LocatedObject) device;
+            jsonObject.put(DeviceJSON.POSITION_X_PROP, object.getPosition().x);
+            jsonObject.put(DeviceJSON.POSITION_Y_PROP, object.getPosition().y);
+            jsonObject.put(DeviceJSON.LOCATION_PROP, NO_UNIT); //TODO change
+        }
     }
 
     private static void addSerialNumber(JSONObject jsonObject,GenericDevice device)throws JSONException{

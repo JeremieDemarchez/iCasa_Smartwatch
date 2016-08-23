@@ -15,25 +15,22 @@
  */
 package fr.liglab.adele.icasa.simulator.device.temperature.impl;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Cooler;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
+import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
-import fr.liglab.adele.icasa.simulator.device.utils.Constant;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
 
 
 /**
  * Implementation of a simulated cooler device.
  *
  */
-@ContextEntity(services = {Cooler.class,SimulatedDevice.class,LocatedObject.class})
-public class SimulatedCoolerImpl implements Cooler, SimulatedDevice,LocatedObject {
+@ContextEntity(services = {Cooler.class,SimulatedDevice.class})
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+public class SimulatedCoolerImpl implements Cooler, SimulatedDevice,GenericDevice {
 
     public final static String SIMULATED_COOLER = "iCasa.Cooler";
 
@@ -45,15 +42,6 @@ public class SimulatedCoolerImpl implements Cooler, SimulatedDevice,LocatedObjec
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
 
     @Override
     public double getPowerLevel() {
@@ -78,38 +66,4 @@ public class SimulatedCoolerImpl implements Cooler, SimulatedDevice,LocatedObjec
         return serialNumber;
     }
 
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x= position.x;
-        y=position.y;
-    }
-
-    @ContextEntity.Relation.Field(value = Constant.RELATION_IS_IN,owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zone;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
-    }
 }

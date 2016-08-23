@@ -50,7 +50,7 @@ public class LightFollowMeApplication {
         // do nothing
     }
 
-    @Requires(id="lights",optional = true,specification = BinaryLight.class,filter = "(!(locatedobject.object.zone="+LocatedObject.LOCATION_UNKNOWN+"))")
+    @Requires(id="lights",optional = true,specification = BinaryLight.class,filter = "(!(locatedobject.object.zone="+LocatedObject.LOCATION_UNKNOWN+"))",proxy = false)
     private List<BinaryLight> binaryLights;
 
     @Requires(id="presence",optional = false,specification = PresenceService.class)
@@ -58,7 +58,7 @@ public class LightFollowMeApplication {
 
     @Bind(id="lights")
     public void bindBinaryLight(BinaryLight binaryLight){
-        if (computePresenceInZone(getPresenceService(binaryLight.getZone()))){
+        if (computePresenceInZone(getPresenceService(((LocatedObject)binaryLight).getZone()))){
             binaryLight.turnOn();
         }else {
             binaryLight.turnOff();
@@ -68,7 +68,7 @@ public class LightFollowMeApplication {
 
     @Modified(id="lights")
     public void modifiedBinaryLight(BinaryLight binaryLight){
-        if (computePresenceInZone(getPresenceService(binaryLight.getZone()))){
+        if (computePresenceInZone(getPresenceService(((LocatedObject)binaryLight).getZone()))){
             binaryLight.turnOn();
         }else {
             binaryLight.turnOff();
@@ -130,7 +130,7 @@ public class LightFollowMeApplication {
             return lightInZone;
         }
         lightInZone = binaryLights.stream().filter((light) ->
-                zone.equals(light.getZone())
+                zone.equals(((LocatedObject)light).getZone())
         ).collect(Collectors.toSet());
         return lightInZone;
     }

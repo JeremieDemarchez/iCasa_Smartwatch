@@ -38,9 +38,11 @@ import org.zwave4j.Options;
 import org.zwave4j.ValueId;
 import org.zwave4j.ZWave4j;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity.State;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
+
+
+
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
@@ -48,6 +50,7 @@ import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 
 @ContextEntity(services = { ZwaveController.class, ZwaveDevice.class, ZwaveRepeater.class })
 @Provides(specifications = { DiscoveryService.class, DiscoveryIntrospection.class })
+
 public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController {
 
 	private Manager manager;
@@ -123,7 +126,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.MODE)
 	private ZwaveController.Mode mode;
 
-	@State.Push(service = ZwaveController.class, state = ZwaveController.MODE)
+	@ContextEntity.State.Push(service = ZwaveController.class, state = ZwaveController.MODE)
 	public ZwaveController.Mode changeModeNotification(ZwaveController.Mode newMode) {
 		return newMode;
 	}
@@ -135,7 +138,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
 	private ZWaveNetworkEvent event;
 
-	@State.Push(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
+	@ContextEntity.State.Push(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
 	public ZWaveNetworkEvent notifyEvent() {
 		return null;
 	}

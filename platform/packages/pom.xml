@@ -46,27 +46,27 @@
                 <module>tikitag-core-dp</module>
                 -->
                 <module>zigbee-core-dp</module>
-                <module>philips-hue-dp</module>
-            </modules>
-        </profile>
-        <profile>
-            <id>release</id>
-            <modules>
-                <module>icasa-platform-dp</module>
-                <module>icasa-device-handler-dp</module>
-                <module>zigbee-core-dp</module>
-                <module>philips-hue-dp</module>
-            </modules>
-        </profile>
-    </profiles>
-   <build>
-      <plugins>
-         <plugin>
-            <artifactId>maven-deploy-plugin</artifactId>
-            <configuration>
-               <skip>true</skip>
-            </configuration>
-         </plugin>
-      </plugins>
-   </build>
-</project>
+                <!--      <module>philips-hue-dp</module>-->
+             </modules>
+         </profile>
+         <profile>
+             <id>release</id>
+             <modules>
+                 <module>icasa-platform-dp</module>
+                 <module>icasa-device-handler-dp</module>
+                 <module>zigbee-core-dp</module>
+                 <module>philips-hue-dp</module>
+             </modules>
+         </profile>
+     </profiles>
+    <build>
+       <plugins>
+          <plugin>
+             <artifactId>maven-deploy-plugin</artifactId>
+             <configuration>
+                <skip>true</skip>
+             </configuration>
+          </plugin>
+       </plugins>
+    </build>
+ </project>

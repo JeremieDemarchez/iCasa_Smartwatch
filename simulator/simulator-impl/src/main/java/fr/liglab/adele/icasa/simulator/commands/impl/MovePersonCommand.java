@@ -19,6 +19,7 @@ package fr.liglab.adele.icasa.simulator.commands.impl;
 import fr.liglab.adele.icasa.commands.AbstractCommand;
 import fr.liglab.adele.icasa.commands.ScriptLanguage;
 import fr.liglab.adele.icasa.commands.Signature;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Position;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import org.apache.felix.ipojo.annotations.Component;
@@ -42,7 +43,7 @@ import java.util.List;
 @Instantiate(name = "move-person-command")
 public class MovePersonCommand extends AbstractCommand {
 
-    @Requires(specification = Person.class,optional = true)
+    @Requires(specification = Person.class,optional = true,proxy = false)
     private List<Person> persons;
 
     private static Signature MOVE = new Signature(new String[]{ScriptLanguage.PERSON_ID, ScriptLanguage.NEW_X, ScriptLanguage.NEW_Y});
@@ -58,18 +59,20 @@ public class MovePersonCommand extends AbstractCommand {
     public Object execute(InputStream in, PrintStream out, JSONObject param, Signature signature) throws Exception {
         String personId = param.getString(ScriptLanguage.PERSON_ID);
         Person personToMove = null;
-        for (Person person : persons){
-            if (person.getName().equals(personId)){
+        for (Person person : persons) {
+            if (person.getName().equals(personId)) {
                 personToMove = person;
                 continue;
             }
         }
-        if (personToMove == null){
-            throw new IllegalArgumentException("Person ("+ personId +") does not exist");
+        if (personToMove == null) {
+            throw new IllegalArgumentException("Person (" + personId + ") does not exist");
         }
         int newX = param.getInt(ScriptLanguage.NEW_X);
         int newY = param.getInt(ScriptLanguage.NEW_Y);
-        personToMove.setPosition(new Position(newX,newY));
+        if (personToMove instanceof LocatedObject){
+            ((LocatedObject) personToMove).setPosition(new Position(newX, newY));
+        }
         return null;
     }
 
