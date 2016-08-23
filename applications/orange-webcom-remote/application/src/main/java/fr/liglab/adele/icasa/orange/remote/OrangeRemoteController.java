@@ -52,28 +52,16 @@ public class OrangeRemoteController extends DefaultController {
     @Requires
     Json json;
 
-    private final String websocketURI = "/orange/websocket";
+    private final String websocketURI = "/orange/devices";
 
     @Bind(id="zwaveDevices")
     public void bindZwaveDevices(ZwaveDevice device){
-        ObjectNode result = json.newObject();
-        result.put("nodeId", device.getZwaveId());
-        result.put("manufacturerId", 1);
-        result.put("deviceId", 1);
-        result.put("deviceType", 1);
-        result.put("event", "device-discovered");
-        webSocketPublisher.publish(websocketURI,result);
+        webSocketPublisher.publish(websocketURI,buildDiscoveryZwaveEvent(device,ZwaveEvent.DEVICE_ADDED));
     }
 
     @Unbind(id="zwaveDevices")
     public void unbindZwaveDevices(ZwaveDevice device){
-        ObjectNode result = json.newObject();
-        result.put("nodeId", device.getZwaveId());
-        result.put("manufacturerId", 1);
-        result.put("deviceId", 1);
-        result.put("deviceType", 1);
-        result.put("event", "device-undiscovered");
-        webSocketPublisher.publish(websocketURI,result);
+        webSocketPublisher.publish(websocketURI,buildDiscoveryZwaveEvent(device,ZwaveEvent.DEVICE_REMOVED));
     }
 
     @Route(method = HttpMethod.GET,uri = "/zwaves")
@@ -109,11 +97,7 @@ public class OrangeRemoteController extends DefaultController {
                         try {
                             testStrategy.beginTest(zwaveId,
                                     (String zwaveID, ZwaveTestResult testResult) -> {
-                                        ObjectNode result = json.newObject();
-                                        result.put("nodeId", zwaveID);
-                                        result.put("event", "test-result");
-                                        result.put("result", testResult.toString());
-                                        webSocketPublisher.publish(websocketURI,result);
+                                        webSocketPublisher.publish(websocketURI,buildZwaveTestEvent(zwaveID,testResult,""));
                                     },
                                     true
                             );
@@ -133,30 +117,62 @@ public class OrangeRemoteController extends DefaultController {
         return ok();
     }
 
+    private ObjectNode buildZwaveTestEvent(String zwaveId,ZwaveTestResult testResult,String testMessage){
+        ObjectNode node = json.newObject();
+        node.put("nodeId",zwaveId);
+        node.put("event", ZwaveEvent.DEVICE_TESTED.eventType);
+        node.put("test-status",testResult.status);
+        node.put("test-message",testMessage);
+
+        return node;
+    }
+
+    private ObjectNode buildDiscoveryZwaveEvent(ZwaveDevice device,ZwaveEvent event){
+        ObjectNode result = json.newObject();
+        result.put("nodeId", device.getZwaveId());
+        result.put("manufacturerId", 1);
+        result.put("deviceId", 1);
+        result.put("deviceType", 1);
+        result.put("event", event.eventType);
+
+        return result;
+    }
 
     private enum DiscoveryMode{
         DISCOVERY("discovery"),
         NORMAL("normal"),
         UNDISCOVERY("undiscovery");
 
-        private final String mode;
-
+        public final String mode;
 
         DiscoveryMode(String mode){
             this.mode = mode;
         }
 
         public static DiscoveryMode getMode(String mode){
-            if ("discovery".equalsIgnoreCase(mode)){
+            if (DISCOVERY.mode.equalsIgnoreCase(mode)){
                 return DISCOVERY;
             }
-            else if ("normal".equalsIgnoreCase(mode)){
+            else if (NORMAL.mode.equalsIgnoreCase(mode)){
                 return NORMAL;
             }
-            else if ("undiscovery".equalsIgnoreCase(mode)) {
+            else if (UNDISCOVERY.mode.equalsIgnoreCase(mode)) {
                 return UNDISCOVERY;
             }
             return null;
         }
     }
+
+    private enum ZwaveEvent {
+        DEVICE_ADDED("zwave-added"),
+        DEVICE_REMOVED("zwave-removed"),
+        DEVICE_TESTED("zwave-tested");
+
+        public final String eventType;
+
+        ZwaveEvent(String eventType){
+            this.eventType = eventType;
+        }
+    }
+
 }

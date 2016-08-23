@@ -11,11 +11,11 @@ public enum  ZwaveTestResult {
 
     FAILED("failed"),
 
-    SUCCESS("succes"),
+    SUCCESS("success"),
 
     RUNNING("running");
 
-    private final String status;
+    public final String status;
 
     ZwaveTestResult(String testStatus) {
         status = testStatus;
