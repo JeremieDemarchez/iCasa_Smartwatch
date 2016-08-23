@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.zwave.device.importer;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.context.model.annotations.provider.Creator;
 
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Provides;
@@ -25,7 +23,8 @@ import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 
-
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.provider.Creator;
 
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;

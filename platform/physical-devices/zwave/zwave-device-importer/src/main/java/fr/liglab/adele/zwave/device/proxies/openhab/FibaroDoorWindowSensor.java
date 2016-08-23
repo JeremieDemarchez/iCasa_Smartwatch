@@ -15,15 +15,22 @@
  */
 package fr.liglab.adele.zwave.device.proxies.openhab;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+import org.apache.felix.ipojo.annotations.Validate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Unbind;
+
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
-import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 
-import org.apache.felix.ipojo.annotations.*;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
+
+import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveBinarySensorCommandClass;
@@ -33,8 +40,10 @@ import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextEntity(services = {ZwaveDevice.class,DoorWindowSensor.class, LocatedObject.class})
-public class FibaroDoorWindowSensor implements ZwaveDevice, DoorWindowSensor, LocatedObject, ZWaveEventListener {
+@ContextEntity(services = {ZwaveDevice.class, DoorWindowSensor.class})
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+
+public class FibaroDoorWindowSensor implements ZwaveDevice, GenericDevice, DoorWindowSensor, ZWaveEventListener {
 
     /**
      * iPOJO Require
@@ -57,15 +66,6 @@ public class FibaroDoorWindowSensor implements ZwaveDevice, DoorWindowSensor, Lo
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
-    private int x;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_Y,directAccess = true,value = "0")
-    private int y;
-
-    @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.ZONE,value = LOCATION_UNKNOWN)
-    private String zoneName;
-
     @ContextEntity.State.Field(service = DoorWindowSensor.class,state = DoorWindowSensor.DOOR_WINDOW_SENSOR_OPENING_DETECTCION,value = "false")
     private boolean status;
 
@@ -85,22 +85,6 @@ public class FibaroDoorWindowSensor implements ZwaveDevice, DoorWindowSensor, Lo
     @Override
     public int getHomeId() {
     	return zwaveHomeId;
-    }
-
-    @Override
-    public String getZone() {
-        return zoneName;
-    }
-
-    @Override
-    public Position getPosition() {
-        return new Position(x,y);
-    }
-
-    @Override
-    public void setPosition(Position position) {
-        x = position.x;
-        y = position.y;
     }
 
     @Override
@@ -125,28 +109,6 @@ public class FibaroDoorWindowSensor implements ZwaveDevice, DoorWindowSensor, Lo
     @Invalidate
     private void stop() {
         controller.removeEventListener(this);
-    }
-
-    /**
-     * Zone
-     */
-    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
-    @Requires(id="zone",specification=Zone.class,optional=true)
-    private Zone zoneAttached;
-
-    @Bind(id = "zone")
-    public void bindZone(Zone zone){
-        pushZone(zone.getZoneName());
-    }
-
-    @Unbind(id= "zone")
-    public void unbindZone(Zone zone){
-        pushZone(LOCATION_UNKNOWN);
-    }
-
-    @ContextEntity.State.Push(service = LocatedObject.class,state = LocatedObject.ZONE)
-    public String pushZone(String zoneName) {
-        return zoneName;
     }
 
     /**

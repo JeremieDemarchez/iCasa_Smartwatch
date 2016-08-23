@@ -24,19 +24,22 @@ import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
+
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveMultiLevelSensorCommandClass;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
 
-import fr.liglab.adele.icasa.context.model.annotations.entity.ContextEntity;
+
 import fr.liglab.adele.icasa.device.power.SmartPlug;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 
 @ContextEntity(services = {ZwaveDevice.class, ZwaveRepeater.class,SmartPlug.class})
-public class FibaroWallPlug implements ZwaveDevice,ZwaveRepeater,ZWaveEventListener,SmartPlug{
+public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventListener, SmartPlug {
 
 
     @Requires(optional = false, proxy=false)
