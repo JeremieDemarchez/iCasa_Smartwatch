@@ -66,11 +66,15 @@ public class OrangeRemoteController extends DefaultController {
 
     @Route(method = HttpMethod.GET,uri = "/zwaves")
     public Result getZwaveDevices(){
+
+        //Maybe To Remove
         return ok();
     }
 
     @Route(method = HttpMethod.GET,uri = "/zwaves/{id}")
     public Result getZwaveDevice(@Parameter("id") String appId){
+
+        //Maybe to remove
         return ok();
     }
 
