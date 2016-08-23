@@ -51,7 +51,7 @@ import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 @ContextEntity(services = { ZwaveController.class, ZwaveDevice.class, ZwaveRepeater.class })
 @Provides(specifications = { DiscoveryService.class, DiscoveryIntrospection.class })
 
-public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController {
+public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController, NotificationWatcher {
 
 	private Manager manager;
 
@@ -72,7 +72,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	private short zwaveNodeId;
 	
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
-    Supplier<Short> pullNodeId=()-> manager.getControllerNodeId(zwaveHomeId);
+    Supplier<Short> pullNodeId=()-> zwaveHomeId != -1 ? manager.getControllerNodeId(zwaveHomeId) : -1;
 
 	/**
 	 * Whether this is the master controller
@@ -81,7 +81,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	private boolean master;
 
     @ContextEntity.State.Pull(service = ZwaveController.class,state = ZwaveController.MASTER)
-    Supplier<Boolean> pullMaster=()-> manager.isPrimaryController(zwaveHomeId);
+    Supplier<Boolean> pullMaster=()-> zwaveHomeId != -1 ? manager.isPrimaryController(zwaveHomeId) : false;
 	
 	/**
 	 * Relation to the neighbor devices
@@ -200,9 +200,10 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
         options.addOptionBool("ConsoleOutput", false);
         options.lock();
 
+        zwaveHomeId = -1;
         
         manager = Manager.create();
-        manager.addWatcher(watcher, null);
+        manager.addWatcher(this, this);
         manager.addDriver(serialPort);
 
 		super.start();
@@ -212,7 +213,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	protected synchronized void stop() {
 		super.stop();
 		
-        manager.removeWatcher(watcher, null);
+		manager.removeWatcher(this, this);
         manager.removeDriver(serialPort);
         Manager.destroy();
         Options.destroy();		
@@ -223,151 +224,150 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		return "Zwave4jDeviceDiscovery";
 	}
 
-	private final NotificationWatcher watcher = new NotificationWatcher() {
-		@Override
-		public void onNotification(Notification notification, Object context) {
-			switch (notification.getType()) {
-			case DRIVER_READY:
+	public void onNotification(Notification notification, Object context) {
+		switch (notification.getType()) {
+		case DRIVER_READY:
+			synchronized (this) {
 				System.out.println(String.format("Driver ready\n"
 						+ "\thome id: %d", notification.getHomeId()));
 				zwaveHomeId = notification.getHomeId();
-				break;
-			case DRIVER_FAILED:
-				System.out.println("Driver failed");
-				break;
-			case DRIVER_RESET:
-				System.out.println("Driver reset");
-				break;
-			case AWAKE_NODES_QUERIED:
-				System.out.println("Awake nodes queried");
-				break;
-			case ALL_NODES_QUERIED:
-				System.out.println("All nodes queried");
-				manager.writeConfig(zwaveHomeId);
-				break;
-			case ALL_NODES_QUERIED_SOME_DEAD:
-				System.out.println("All nodes queried some dead");
-				manager.writeConfig(zwaveHomeId);
-				break;
-			case POLLING_ENABLED:
-				System.out.println("Polling enabled");
-				break;
-			case POLLING_DISABLED:
-				System.out.println("Polling disabled");
-				break;
-			case NODE_NEW:
-				System.out.println(String.format(
-						"Node new\n" + "\tnode id: %d",
-						notification.getNodeId()));
-				break;
-			case NODE_ADDED:
-				System.out.println(String.format("Node added\n"
-						+ "\tnode id: %d", notification.getNodeId()));
-				break;
-			case NODE_REMOVED:
-				System.out.println(String.format("Node removed\n"
-						+ "\tnode id: %d", notification.getNodeId()));
-				break;
-			case ESSENTIAL_NODE_QUERIES_COMPLETE:
-				System.out.println(String.format(
-						"Node essential queries complete\n" + "\tnode id: %d",
-						notification.getNodeId()));
-				break;
-			case NODE_QUERIES_COMPLETE:
-				System.out.println(String.format("Node queries complete\n"
-						+ "\tnode id: %d", notification.getNodeId()));
-				break;
-			case NODE_EVENT:
-				System.out.println(String.format("Node event\n"
-						+ "\tnode id: %d\n" + "\tevent id: %d",
-						notification.getNodeId(), notification.getEvent()));
-				break;
-			case NODE_NAMING:
-				System.out.println(String.format("Node naming\n"
-						+ "\tnode id: %d", notification.getNodeId()));
-				break;
-			case NODE_PROTOCOL_INFO:
-				System.out.println(String.format("Node protocol info\n"
-						+ "\tnode id: %d\n" + "\ttype: %s", notification
-						.getNodeId(), manager.getNodeType(
-						notification.getHomeId(), notification.getNodeId())));
-				break;
-			case VALUE_ADDED:
-				System.out.println(String.format("Value added\n"
-						+ "\tnode id: %d\n" + "\tcommand class: %d\n"
-						+ "\tinstance: %d\n" + "\tindex: %d\n"
-						+ "\tgenre: %s\n" + "\ttype: %s\n" + "\tlabel: %s\n"
-						+ "\tvalue: %s", notification.getNodeId(), notification
-						.getValueId().getCommandClassId(), notification
-						.getValueId().getInstance(), notification.getValueId()
-						.getIndex(), notification.getValueId().getGenre()
-						.name(), notification.getValueId().getType().name(),
-						manager.getValueLabel(notification.getValueId()),
-						getValue(notification.getValueId())));
-				break;
-			case VALUE_REMOVED:
-				System.out.println(String.format("Value removed\n"
-						+ "\tnode id: %d\n" + "\tcommand class: %d\n"
-						+ "\tinstance: %d\n" + "\tindex: %d", notification
-						.getNodeId(), notification.getValueId()
-						.getCommandClassId(), notification.getValueId()
-						.getInstance(), notification.getValueId().getIndex()));
-				break;
-			case VALUE_CHANGED:
-				System.out.println(String.format("Value changed\n"
-						+ "\tnode id: %d\n" + "\tcommand class: %d\n"
-						+ "\tinstance: %d\n" + "\tindex: %d\n" + "\tvalue: %s",
-						notification.getNodeId(), notification.getValueId()
-								.getCommandClassId(), notification.getValueId()
-								.getInstance(), notification.getValueId()
-								.getIndex(),
-						getValue(notification.getValueId())));
-				break;
-			case VALUE_REFRESHED:
-				System.out.println(String.format("Value refreshed\n"
-						+ "\tnode id: %d\n" + "\tcommand class: %d\n"
-						+ "\tinstance: %d\n" + "\tindex: %d" + "\tvalue: %s",
-						notification.getNodeId(), notification.getValueId()
-								.getCommandClassId(), notification.getValueId()
-								.getInstance(), notification.getValueId()
-								.getIndex(),
-						getValue(notification.getValueId())));
-				break;
-			case GROUP:
-				System.out.println(String.format("Group\n" + "\tnode id: %d\n"
-						+ "\tgroup id: %d", notification.getNodeId(),
-						notification.getGroupIdx()));
-				break;
-
-			case SCENE_EVENT:
-				System.out.println(String.format("Scene event\n"
-						+ "\tscene id: %d", notification.getSceneId()));
-				break;
-			case CREATE_BUTTON:
-				System.out.println(String.format("Button create\n"
-						+ "\tbutton id: %d", notification.getButtonId()));
-				break;
-			case DELETE_BUTTON:
-				System.out.println(String.format("Button delete\n"
-						+ "\tbutton id: %d", notification.getButtonId()));
-				break;
-			case BUTTON_ON:
-				System.out.println(String.format("Button on\n"
-						+ "\tbutton id: %d", notification.getButtonId()));
-				break;
-			case BUTTON_OFF:
-				System.out.println(String.format("Button off\n"
-						+ "\tbutton id: %d", notification.getButtonId()));
-				break;
-			case NOTIFICATION:
-				System.out.println("Notification "+notification.getByte());
-				break;
-			default:
-				System.out.println(notification.getType().name());
-				break;
 			}
+			break;
+		case DRIVER_FAILED:
+			System.out.println("Driver failed");
+			break;
+		case DRIVER_RESET:
+			System.out.println("Driver reset");
+			break;
+		case AWAKE_NODES_QUERIED:
+			System.out.println("Awake nodes queried");
+			break;
+		case ALL_NODES_QUERIED:
+			System.out.println("All nodes queried");
+			manager.writeConfig(zwaveHomeId);
+			break;
+		case ALL_NODES_QUERIED_SOME_DEAD:
+			System.out.println("All nodes queried some dead");
+			manager.writeConfig(zwaveHomeId);
+			break;
+		case POLLING_ENABLED:
+			System.out.println("Polling enabled");
+			break;
+		case POLLING_DISABLED:
+			System.out.println("Polling disabled");
+			break;
+		case NODE_NEW:
+			System.out.println(String.format(
+					"Node new\n" + "\tnode id: %d",
+					notification.getNodeId()));
+			break;
+		case NODE_ADDED:
+			System.out.println(String.format("Node added\n"
+					+ "\tnode id: %d", notification.getNodeId()));
+			break;
+		case NODE_REMOVED:
+			System.out.println(String.format("Node removed\n"
+					+ "\tnode id: %d", notification.getNodeId()));
+			break;
+		case ESSENTIAL_NODE_QUERIES_COMPLETE:
+			System.out.println(String.format(
+					"Node essential queries complete\n" + "\tnode id: %d",
+					notification.getNodeId()));
+			break;
+		case NODE_QUERIES_COMPLETE:
+			System.out.println(String.format("Node queries complete\n"
+					+ "\tnode id: %d", notification.getNodeId()));
+			break;
+		case NODE_EVENT:
+			System.out.println(String.format("Node event\n"
+					+ "\tnode id: %d\n" + "\tevent id: %d",
+					notification.getNodeId(), notification.getEvent()));
+			break;
+		case NODE_NAMING:
+			System.out.println(String.format("Node naming\n"
+					+ "\tnode id: %d", notification.getNodeId()));
+			break;
+		case NODE_PROTOCOL_INFO:
+			System.out.println(String.format("Node protocol info\n"
+					+ "\tnode id: %d\n" + "\ttype: %s", notification
+					.getNodeId(), manager.getNodeType(
+					notification.getHomeId(), notification.getNodeId())));
+			break;
+		case VALUE_ADDED:
+			System.out.println(String.format("Value added\n"
+					+ "\tnode id: %d\n" + "\tcommand class: %d\n"
+					+ "\tinstance: %d\n" + "\tindex: %d\n"
+					+ "\tgenre: %s\n" + "\ttype: %s\n" + "\tlabel: %s\n"
+					+ "\tvalue: %s", notification.getNodeId(), notification
+					.getValueId().getCommandClassId(), notification
+					.getValueId().getInstance(), notification.getValueId()
+					.getIndex(), notification.getValueId().getGenre()
+					.name(), notification.getValueId().getType().name(),
+					manager.getValueLabel(notification.getValueId()),
+					getValue(notification.getValueId())));
+			break;
+		case VALUE_REMOVED:
+			System.out.println(String.format("Value removed\n"
+					+ "\tnode id: %d\n" + "\tcommand class: %d\n"
+					+ "\tinstance: %d\n" + "\tindex: %d", notification
+					.getNodeId(), notification.getValueId()
+					.getCommandClassId(), notification.getValueId()
+					.getInstance(), notification.getValueId().getIndex()));
+			break;
+		case VALUE_CHANGED:
+			System.out.println(String.format("Value changed\n"
+					+ "\tnode id: %d\n" + "\tcommand class: %d\n"
+					+ "\tinstance: %d\n" + "\tindex: %d\n" + "\tvalue: %s",
+					notification.getNodeId(), notification.getValueId()
+							.getCommandClassId(), notification.getValueId()
+							.getInstance(), notification.getValueId()
+							.getIndex(),
+					getValue(notification.getValueId())));
+			break;
+		case VALUE_REFRESHED:
+			System.out.println(String.format("Value refreshed\n"
+					+ "\tnode id: %d\n" + "\tcommand class: %d\n"
+					+ "\tinstance: %d\n" + "\tindex: %d" + "\tvalue: %s",
+					notification.getNodeId(), notification.getValueId()
+							.getCommandClassId(), notification.getValueId()
+							.getInstance(), notification.getValueId()
+							.getIndex(),
+					getValue(notification.getValueId())));
+			break;
+		case GROUP:
+			System.out.println(String.format("Group\n" + "\tnode id: %d\n"
+					+ "\tgroup id: %d", notification.getNodeId(),
+					notification.getGroupIdx()));
+			break;
+
+		case SCENE_EVENT:
+			System.out.println(String.format("Scene event\n"
+					+ "\tscene id: %d", notification.getSceneId()));
+			break;
+		case CREATE_BUTTON:
+			System.out.println(String.format("Button create\n"
+					+ "\tbutton id: %d", notification.getButtonId()));
+			break;
+		case DELETE_BUTTON:
+			System.out.println(String.format("Button delete\n"
+					+ "\tbutton id: %d", notification.getButtonId()));
+			break;
+		case BUTTON_ON:
+			System.out.println(String.format("Button on\n"
+					+ "\tbutton id: %d", notification.getButtonId()));
+			break;
+		case BUTTON_OFF:
+			System.out.println(String.format("Button off\n"
+					+ "\tbutton id: %d", notification.getButtonId()));
+			break;
+		case NOTIFICATION:
+			System.out.println("Notification "+notification.getByte());
+			break;
+		default:
+			System.out.println(notification.getType().name());
+			break;
 		}
-	};
+	}
 
 	private static Object getValue(ValueId valueId) {
 		switch (valueId.getType()) {

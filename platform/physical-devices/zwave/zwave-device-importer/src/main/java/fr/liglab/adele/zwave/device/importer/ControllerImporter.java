@@ -124,7 +124,7 @@ public class ControllerImporter extends AbstractImporterComponent  {
 
 		LOG.info("Removing imported declaration for zwave device '{}' at port {}",declaration.getId(),declaration.getPort());
 
-		contextCreator.create(declaration.getId());
+		contextCreator.delete(declaration.getId());
 		unhandleImportDeclaration(importDeclaration);
 	}
 
