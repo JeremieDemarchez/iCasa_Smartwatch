@@ -22,9 +22,7 @@ import fr.liglab.adele.icasa.orange.service.ZwaveTestResult;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestStrategy;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.annotations.*;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Body;
 import org.wisdom.api.annotations.Parameter;
@@ -42,7 +40,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
-@org.wisdom.api.annotations.Controller
+@Component
+@Instantiate
+@Provides(specifications = org.wisdom.api.Controller.class)
 @Path(value = "/orange")
 public class OrangeRemoteController extends DefaultController {
 
