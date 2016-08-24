@@ -17,11 +17,12 @@ package fr.liglab.adele.icasa.device.power;
 
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
+import fr.liglab.adele.icasa.device.GenericDevice;
 
 /**
  * Created by aygalinc on 21/04/16.
  */
-public @ContextService interface SmartPlug {
+public @ContextService interface SmartPlug extends GenericDevice {
 
     @State  String SMART_PLUG_STATUS = "status";
 
