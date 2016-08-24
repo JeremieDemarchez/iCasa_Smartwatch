@@ -204,6 +204,8 @@ public class DeviceImporter extends AbstractImporterComponent  {
 	@Override
 	protected void useImportDeclaration(ImportDeclaration importDeclaration) throws BinderException {
 		
+		String libraryName 		= (String) importDeclaration.getMetadata().get("library");
+		ZWaveLibrary library 	= libraryName != null ? ZWaveLibrary.valueOf(libraryName) : null;
 		
 		if (library == null) {
 			LOG.warn("Zwave library"+ libraryName +" not supported by iCasa");
