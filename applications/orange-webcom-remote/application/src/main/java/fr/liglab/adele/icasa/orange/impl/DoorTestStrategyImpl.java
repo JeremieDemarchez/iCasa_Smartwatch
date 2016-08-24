@@ -61,7 +61,7 @@ public class DoorTestStrategyImpl extends AbstractZwaveTestStrategy implements Z
         }
         for (DoorWindowSensor doorWindowSensor : doorWindowSensors){
             if (doorWindowSensor instanceof ZwaveDevice){
-                returnList.add(String.valueOf( ((ZwaveDevice)doorWindowSensor).getZwaveId()));
+                returnList.add(String.valueOf( ((ZwaveDevice)doorWindowSensor).getNodeId()));
             }
         }
         return returnList;
@@ -78,6 +78,6 @@ public class DoorTestStrategyImpl extends AbstractZwaveTestStrategy implements Z
     }
 
     private String getZwaveIdFromDoorSensor(DoorWindowSensor doorWindowSensor){
-        return String.valueOf(((ZwaveDevice)doorWindowSensor).getZwaveId());
+        return String.valueOf(((ZwaveDevice)doorWindowSensor).getNodeId());
     }
 }

@@ -18,27 +18,44 @@ package fr.liglab.adele.zwave.device.api;
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
 
-import java.util.List;
+/**
+ * Created by aygalinc on 19/04/16.
+ */
+public @ContextService interface ZwaveController extends ZwaveRepeater {
+	
 
-public @ContextService interface ZwaveDevice {
-
-    static final @State String NEIGHBORS = "zwave.neighbors";
-
-    public List<Integer> getNeighbors();
+	/**
+	 * The configured serial port
+	 */
+    public static @State  String SERIAL_PORT="serial.port";
 
     /**
-     * The network home id
+     * Whether thi is the master controller
      */
-    public static @State  String HOME_ID="zwave.homeId";
+    public static @State  String MASTER="wwave.controller.isMaster";
+
+    public boolean isMaster();
+
+    /**
+     * The operation mode of the controller
+     */
+    public static @State  String MODE="zwave.controller.mode";
+
+	public enum Mode {
+		NORMAL,
+		INCLUSION,
+		EXCLUSION
+	}
+
+    public Mode getMode();
+
+    public void changeMode(Mode mode);
+ 
+    /**
+     * The last network event
+     */
+    public static @State  String NETWORK_EVENT="zwave.controller.event";
+
+    public ZWaveNetworkEvent getLastEvent();
     
-    public int getHomeId();
-
-    /**
-     * The network node id
-     */
-    static final @State String NODE_ID = "zwave.nodeId";
-
-    public int getNodeId();
-
-
 }

@@ -13,16 +13,18 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.importer;
+package fr.liglab.adele.zwave.device.importer.openhab;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import fr.liglab.adele.zwave.device.proxyes.FibaroDoorWindowSensor;
-import fr.liglab.adele.zwave.device.proxyes.FibaroMotionSensor;
-import fr.liglab.adele.zwave.device.proxyes.FibaroSmokeSensor;
-import fr.liglab.adele.zwave.device.proxyes.FibaroWallPlug;
+import fr.liglab.adele.zwave.device.importer.DeviceDeclaration;
+import fr.liglab.adele.zwave.device.proxies.openhab.FibaroDoorWindowSensor;
+import fr.liglab.adele.zwave.device.proxies.openhab.FibaroMotionSensor;
+import fr.liglab.adele.zwave.device.proxies.openhab.FibaroSmokeSensor;
+import fr.liglab.adele.zwave.device.proxies.openhab.FibaroWallPlug;
+
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.*;
 import org.osgi.framework.BundleContext;
@@ -45,8 +47,6 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 
 	private static final Logger LOG = LoggerFactory.getLogger(ZWaveDeviceImporter.class);
 
-	private final BundleContext context;
-
 	@Creator.Field Creator.Entity<FibaroMotionSensor> motionSensorCreator;
 
 	@Creator.Field Creator.Entity<FibaroWallPlug> wallPlugCreator;
@@ -62,7 +62,6 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 	private String filter;
 
 	public ZWaveDeviceImporter(BundleContext context) {
-		this.context = context;
 	}
 
 	@Validate
@@ -82,9 +81,9 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 
 	@Override
 	protected void useImportDeclaration(ImportDeclaration importDeclaration) throws BinderException {
-		ZwaveDeviceImportDeclaration deviceDeclaration = new ZwaveDeviceImportDeclaration(importDeclaration);
+		DeviceDeclaration deviceDeclaration = new DeviceDeclaration(importDeclaration);
 
-		Creator.Entity creator = getCreator(deviceDeclaration.getZwaveManufacturerId(),deviceDeclaration.getzwaveDeviceType(),deviceDeclaration.getZwaveDeviceId());
+		Creator.Entity<? extends ZwaveDevice> creator = getCreator(deviceDeclaration.getZwaveManufacturerId(),deviceDeclaration.getzwaveDeviceType(),deviceDeclaration.getZwaveDeviceId());
 
 		if (creator == null){
 			LOG.warn("Zwave device"+ deviceDeclaration.getZwaveNodeId() +" not support by iCasa");
@@ -93,8 +92,9 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 
 		LOG.info(" Try to create ZWave Device");
 		Map<String,Object> properties = new HashMap<>();
-		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.ZWAVE_ID),deviceDeclaration.getZwaveNodeId());
-		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.ZWAVE_NEIGHBORS),new ArrayList<>());
+		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.HOME_ID),deviceDeclaration.getZwaveHomeId());
+		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.NODE_ID),deviceDeclaration.getZwaveNodeId());
+		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.NEIGHBORS),new ArrayList<>());
 		properties.put(ContextEntity.State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),"ZwaveDevice#"+deviceDeclaration.getZwaveNodeId());
 
 		creator.create("ZwaveDevice#"+deviceDeclaration.getZwaveNodeId(),properties);
@@ -103,13 +103,13 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 	@Override
 	protected void denyImportDeclaration(ImportDeclaration importDeclaration) throws BinderException {
 
-		ZwaveDeviceImportDeclaration deviceDeclaration = new ZwaveDeviceImportDeclaration(importDeclaration);
+		DeviceDeclaration deviceDeclaration = new DeviceDeclaration(importDeclaration);
 		LOG.debug("Zwave destroying proxy for end point "+deviceDeclaration.getZwaveNodeId());
 
 		/**
 		 * Looking for the appropriate Creator
 		 */
-		Creator.Entity creator = getCreator(deviceDeclaration.getZwaveManufacturerId(),deviceDeclaration.getzwaveDeviceType(),deviceDeclaration.getZwaveDeviceId());
+		Creator.Entity<? extends ZwaveDevice> creator = getCreator(deviceDeclaration.getZwaveManufacturerId(),deviceDeclaration.getzwaveDeviceType(),deviceDeclaration.getZwaveDeviceId());
 
 		if (creator == null){
 			LOG.error("Unable to destroy iCasa proxy related to Node " + deviceDeclaration.getZwaveNodeId());
@@ -118,7 +118,7 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 		creator.delete("ZwaveDevice#"+deviceDeclaration.getZwaveNodeId());
 	}
 
-	private Creator.Entity getCreator(int manufacturerId,int deviceType,int deviceId){
+	private Creator.Entity<? extends ZwaveDevice> getCreator(int manufacturerId,int deviceType,int deviceId){
 		if (isFibaroGFMS001(manufacturerId, deviceType, deviceId)){
 			LOG.info("Fibaro Multi Sensor detected");
 			return motionSensorCreator;

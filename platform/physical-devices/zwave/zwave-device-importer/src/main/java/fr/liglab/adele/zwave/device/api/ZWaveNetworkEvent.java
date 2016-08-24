@@ -15,22 +15,38 @@
  */
 package fr.liglab.adele.zwave.device.api;
 
-import fr.liglab.adele.cream.annotations.ContextService;
-import fr.liglab.adele.cream.annotations.State;
-import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
-
 /**
- * Created by aygalinc on 19/04/16.
+ * The basic information concerning network configuration events
+ *
  */
-public @ContextService interface ZwaveControllerICasa extends ZwaveRepeater{
+public class ZWaveNetworkEvent {
+	
+	/**
+	 * The type of event
+	 *
+	 */
+	public enum Type {
+		INCLUSION,
+		EXCLUSION
+	}
 
-    public static @State  String MASTER="Zwave.Master";
-
-    public static @State  String SERIAL_PORT="serial.port";
-
-    public boolean isMaster();
-
-    public void addEventListener(ZWaveEventListener eventListener);
-
-    public void removeEventListener(ZWaveEventListener eventListener);
+	public Type type;
+	
+	public long timeStamp;
+	
+	/**
+	 * The concerned node 
+	 */
+	public int homeId;
+	
+	public int nodeId;
+	
+	/**
+	 * Device identification
+	 */
+	public int manufacturerId;
+	
+	public int deviceType;
+	
+	public int deviceId;
 }

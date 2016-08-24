@@ -13,49 +13,55 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.proxyes;
+package fr.liglab.adele.zwave.device.proxies.openhab;
+
+import org.apache.felix.ipojo.annotations.Validate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Unbind;
 
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
+
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
+
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import org.apache.felix.ipojo.annotations.*;
+
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveBinarySensorCommandClass;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextEntity(services = {ZwaveDevice.class,DoorWindowSensor.class})
+@ContextEntity(services = {ZwaveDevice.class, DoorWindowSensor.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class FibaroDoorWindowSensor implements ZwaveDevice,GenericDevice,DoorWindowSensor,ZWaveEventListener {
+
+public class FibaroDoorWindowSensor implements ZwaveDevice, GenericDevice, DoorWindowSensor, ZWaveEventListener {
 
     /**
      * iPOJO Require
      */
-    @Requires(optional = false,id = "zwaveNetworkController")
-    private ZwaveControllerICasa controller;
-
-    private static final Logger LOG = LoggerFactory.getLogger(FibaroDoorWindowSensor.class);
+    @Requires(optional = false, proxy=false)
+    private OpenhabController controller;
 
     /**
      * STATES
      */
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_ID)
-    private Integer zwaveId;
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
+    private Integer zwaveHomeId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
+    private Integer zwaveNodeId;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
@@ -72,8 +78,13 @@ public class FibaroDoorWindowSensor implements ZwaveDevice,GenericDevice,DoorWin
     }
 
     @Override
-    public int getZwaveId() {
-        return zwaveId;
+    public int getNodeId() {
+        return zwaveNodeId;
+    }
+    
+    @Override
+    public int getHomeId() {
+    	return zwaveHomeId;
     }
 
     @Override
@@ -117,18 +128,18 @@ public class FibaroDoorWindowSensor implements ZwaveDevice,GenericDevice,DoorWin
         pushNeighbors();
     }
 
-    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     public List<Integer> pushNeighbors() {
         List<Integer> neighbors = new ArrayList<>();
         for (ZwaveDevice device : zwaveDevices){
-            neighbors.add(device.getZwaveId());
+            neighbors.add(device.getNodeId());
         }
         return neighbors;
     }
 
     @Override
     public void ZWaveIncomingEvent(ZWaveEvent event) {
-        if (event.getNodeId() == zwaveId) {
+        if (event.getNodeId() == zwaveNodeId) {
             if (event instanceof ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent){
                 ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent castEvent = (ZWaveBinarySensorCommandClass.ZWaveBinarySensorValueEvent) event;
                 ZWaveCommandClass.CommandClass commandClass = castEvent.getCommandClass();

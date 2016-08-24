@@ -23,7 +23,7 @@ import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 
 @BehaviorProvider(spec = LocatedObject.class)
-public class LocatedObjectBehaviorProvider implements LocatedObject{
+public class LocatedObjectBehaviorProvider implements LocatedObject {
 
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;

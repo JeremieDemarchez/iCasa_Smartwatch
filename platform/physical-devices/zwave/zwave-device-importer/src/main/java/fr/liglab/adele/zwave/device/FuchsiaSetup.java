@@ -29,10 +29,12 @@ public class FuchsiaSetup {
             .of("org.ow2.chameleon.fuchsia.discovery.filebased.FileBasedDiscoveryImport");
 
     Instance zwaveControllerImporter = instance().named("zwaveControllerImporter")
-            .of("fr.liglab.adele.zwave.device.importer.ZWaveControllerImporter");
+            .of("fr.liglab.adele.zwave.device.importer.ControllerImporter")
+            //.with("library").setto("openhab");
+    		.with("library").setto("zwave4j");
 
-    Instance zwaveDeviceImporter = instance().named("zwaveDeviceImporter")
-            .of("fr.liglab.adele.zwave.device.importer.ZWaveDeviceImporter");
+    		Instance zwaveDeviceImporter = instance().named("zwaveDeviceImporter")
+            .of("fr.liglab.adele.zwave.device.importer.openhab.ZWaveDeviceImporter");
 
     Instance zwaveImporterLinker = instance()
             .of(FuchsiaConstants.DEFAULT_IMPORTATION_LINKER_FACTORY_NAME)
@@ -41,7 +43,7 @@ public class FuchsiaSetup {
 
     Instance zwaveDeviceImporterLinker = instance()
             .of(FuchsiaConstants.DEFAULT_IMPORTATION_LINKER_FACTORY_NAME)
-            .with(ImportationLinker.FILTER_IMPORTDECLARATION_PROPERTY).setto("(&(scope=generic)(zwave.device.manufacturer.id=*)(zwave.device.id=*)(zwave.node.id=*)(zwave.device.type.id=*))")
+            .with(ImportationLinker.FILTER_IMPORTDECLARATION_PROPERTY).setto("(&(scope=generic)(zwave.device.manufacturer.id=*)(zwave.device.type.id=*)(zwave.device.id=*)(zwave.home.id=*)(zwave.node.id=*))")
             .with(ImportationLinker.FILTER_IMPORTERSERVICE_PROPERTY).setto("(instance.name=zwaveDeviceImporter)");
 
 }

@@ -13,32 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.api;
+package fr.liglab.adele.zwave.device.proxies.openhab;
+
+import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 
 import fr.liglab.adele.cream.annotations.ContextService;
-import fr.liglab.adele.cream.annotations.State;
+import fr.liglab.adele.zwave.device.api.ZwaveController;
 
-import java.util.List;
 
-public @ContextService interface ZwaveDevice {
+@ContextService
+public interface OpenhabController extends ZwaveController {
 
-    static final @State String NEIGHBORS = "zwave.neighbors";
+	
+    public void addEventListener(ZWaveEventListener eventListener);
 
-    public List<Integer> getNeighbors();
-
-    /**
-     * The network home id
-     */
-    public static @State  String HOME_ID="zwave.homeId";
-    
-    public int getHomeId();
-
-    /**
-     * The network node id
-     */
-    static final @State String NODE_ID = "zwave.nodeId";
-
-    public int getNodeId();
-
+    public void removeEventListener(ZWaveEventListener eventListener);
 
 }

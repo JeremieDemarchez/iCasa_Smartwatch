@@ -139,7 +139,7 @@ public class OrangeRemoteController extends DefaultController {
 
     private ObjectNode buildDiscoveryZwaveEvent(ZwaveDevice device,ZwaveEvent event){
         ObjectNode result = json.newObject();
-        result.put("nodeId", device.getZwaveId());
+        result.put("nodeId", device.getNodeId());
         result.put("manufacturerId", 1);
         result.put("deviceId", 1);
         result.put("deviceType", 1);

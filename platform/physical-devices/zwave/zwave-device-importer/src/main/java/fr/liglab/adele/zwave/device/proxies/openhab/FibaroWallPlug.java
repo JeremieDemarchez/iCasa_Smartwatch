@@ -13,42 +13,49 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.proxyes;
-
-import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.device.power.SmartPlug;
-import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
-import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
-import org.apache.felix.ipojo.annotations.*;
-import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
-import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
-import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveMultiLevelSensorCommandClass;
-import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
-import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+package fr.liglab.adele.zwave.device.proxies.openhab;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.annotations.Validate;
+
+import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+
+import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClass;
+import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveMultiLevelSensorCommandClass;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
+import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
+
+
+import fr.liglab.adele.icasa.device.power.SmartPlug;
+import fr.liglab.adele.zwave.device.api.ZwaveDevice;
+import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
+
 @ContextEntity(services = {ZwaveDevice.class, ZwaveRepeater.class,SmartPlug.class})
-public class FibaroWallPlug implements ZwaveDevice,ZwaveRepeater,ZWaveEventListener,SmartPlug{
+public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventListener, SmartPlug {
 
-    private static final Logger LOG = LoggerFactory.getLogger(FibaroWallPlug.class);
 
-    @Requires(specification = ZwaveControllerICasa.class)
-    public ZwaveControllerICasa controller;
+    @Requires(optional = false, proxy=false)
+    private OpenhabController controller;
 
     /**
      * STATES
      */
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_ID)
-    private Integer zwaveId;
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
+    private Integer zwaveHomeId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
+    private Integer zwaveNodeId;
 
     @ContextEntity.State.Field(service = SmartPlug.class,state = SmartPlug.SMART_PLUG_STATUS,value = "false")
     private boolean status;
@@ -62,8 +69,13 @@ public class FibaroWallPlug implements ZwaveDevice,ZwaveRepeater,ZWaveEventListe
     }
 
     @Override
-    public int getZwaveId() {
-        return zwaveId;
+    public int getHomeId() {
+    	return zwaveHomeId;
+    }
+    
+    @Override
+    public int getNodeId() {
+        return zwaveNodeId;
     }
 
     @Override
@@ -106,18 +118,18 @@ public class FibaroWallPlug implements ZwaveDevice,ZwaveRepeater,ZWaveEventListe
         pushNeighbors();
     }
 
-    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     public List<Integer> pushNeighbors() {
         List<Integer> neighbors = new ArrayList<>();
         for (ZwaveDevice device : zwaveDevices){
-            neighbors.add(device.getZwaveId());
+            neighbors.add(device.getNodeId());
         }
         return neighbors;
     }
 
     @Override
     public void ZWaveIncomingEvent(ZWaveEvent event) {
-        if (event.getNodeId() == zwaveId) {
+        if (event.getNodeId() == zwaveNodeId) {
             if (event instanceof ZWaveCommandClassValueEvent) {
                 ZWaveCommandClassValueEvent commandClass = (ZWaveCommandClassValueEvent) event;
                 if (commandClass.getCommandClass().getLabel().equals(ZWaveCommandClass.CommandClass.SWITCH_BINARY.getLabel())) {

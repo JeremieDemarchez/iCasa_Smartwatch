@@ -14,7 +14,8 @@
   <name>${productName} :: ${projectName}</name>
   
   <modules>
-  	<module>zwave-library-install</module>
+  	<module>zwave-openhab-library-install</module>
   	<module>zwave-device-importer</module>
+  	<module>zwave4j.osgi</module>
   </modules>
 </project>

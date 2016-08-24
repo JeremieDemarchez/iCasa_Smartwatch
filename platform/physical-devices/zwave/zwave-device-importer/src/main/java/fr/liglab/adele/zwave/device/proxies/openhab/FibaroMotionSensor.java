@@ -13,19 +13,25 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.zwave.device.proxyes;
+package fr.liglab.adele.zwave.device.proxies.openhab;
 
-import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
+
+import org.apache.felix.ipojo.annotations.Validate;
+import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Requires;
+import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Unbind;
+
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
+
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
-import fr.liglab.adele.icasa.location.Position;
-import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.zwave.device.api.ZwaveControllerICasa;
+
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import org.apache.felix.ipojo.annotations.*;
+
 import org.openhab.binding.zwave.internal.protocol.ZWaveEventListener;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveAlarmCommandClass.ZWaveAlarmValueEvent;
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveAlarmSensorCommandClass.ZWaveAlarmSensorValueEvent;
@@ -34,38 +40,23 @@ import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveCommandClas
 import org.openhab.binding.zwave.internal.protocol.commandclass.ZWaveMultiLevelSensorCommandClass.ZWaveMultiLevelSensorValueEvent;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveCommandClassValueEvent;
 import org.openhab.binding.zwave.internal.protocol.event.ZWaveEvent;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
-
- @Component(name="FibaroMotionSensor")
-
- @Provides(
-
- specifications	= {
- MotionSensor.class, GenericDevice.class
- },
-
- properties 		= {
- @StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_MANUFACTURER,	type="java.lang.String", value = "010F"),
- @StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_DEVICE_ID, 		type="java.lang.String", value = "1001"),
- @StaticServiceProperty(immutable = true, name = ZWaveImporter.FACTORY_PROPERTY_DEFAULT_PROXY,	type="java.lang.String", value = "true")
- }
- )*/
-@ContextEntity(services = {ZwaveDevice.class,MotionSensor.class})
+@ContextEntity(services = {ZwaveDevice.class, MotionSensor.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventListener,GenericDevice  {
+
+public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEventListener, GenericDevice  {
 
     /**
      * iPOJO Require
      */
-    @Requires(optional = false,id = "zwaveNetworkController")
-    private ZwaveControllerICasa controller;
+    @Requires(optional = false, proxy=false)
+    private OpenhabController controller;
 
     private static final Logger LOG = LoggerFactory.getLogger(FibaroMotionSensor.class);
 
@@ -75,11 +66,14 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventLi
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_ID)
-    private Integer zwaveId;
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
+    private Integer zwaveHomeId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
+    private Integer zwaveNodeId;
 
     /**
      * Services
@@ -90,8 +84,13 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventLi
     }
 
     @Override
-    public int getZwaveId() {
-        return zwaveId;
+    public int getNodeId() {
+    	return zwaveNodeId;
+    }
+
+    @Override
+    public int getHomeId() {
+    	return zwaveHomeId;
     }
 
     @Override
@@ -117,7 +116,7 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventLi
     @Override
     public void ZWaveIncomingEvent(ZWaveEvent event) {
 
-        if (event.getNodeId() == zwaveId ) {
+        if (event.getNodeId() == zwaveNodeId ) {
 
             if (event instanceof ZWaveAlarmSensorValueEvent) {
 
@@ -173,8 +172,8 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventLi
 
                 ZWaveCommandClassValueEvent changedValue = (ZWaveCommandClassValueEvent) event;
                 if (changedValue.getCommandClass().equals(CommandClass.BATTERY)) {
-                    Integer batteryLevel = (Integer) changedValue.getValue();
-                    //			setPropertyValue("zwave.batteryLevel", batteryLevel);
+                    // Integer batteryLevel = (Integer) changedValue.getValue();
+                    // setPropertyValue("zwave.batteryLevel", batteryLevel);
                 }
             }
 
@@ -199,11 +198,11 @@ public class FibaroMotionSensor implements MotionSensor,ZwaveDevice,ZWaveEventLi
         pushNeighbors();
     }
 
-    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.ZWAVE_NEIGHBORS)
+    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     public List<Integer> pushNeighbors() {
         List<Integer> neighbors = new ArrayList<>();
         for (ZwaveDevice device : zwaveDevices){
-            neighbors.add(device.getZwaveId());
+            neighbors.add(device.getNodeId());
         }
         return neighbors;
     }
