@@ -96,6 +96,13 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!--ORange Remote -->
+		<dependency>
+			<groupId>fr.liglab.adele.icasa.apps</groupId>
+			<artifactId>orange.webcom.remote</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -139,7 +146,7 @@
 									<version>0.3</version>
 									<type>zip</type>
 									<classifier>ozw_config</classifier>
-									<outputDirectory>zwave/config</outputDirectory>
+									<outputDirectory>target/zwave/config</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
