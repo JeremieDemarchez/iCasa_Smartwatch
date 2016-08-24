@@ -165,6 +165,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
     
     @ContextEntity.State.Push(service = ZwaveController.class,state = ZwaveController.MODE)
 	private ZwaveController.Mode changeModeNotification(ZwaveController.Mode newMode) {
+        LOG.debug("Zwave mode changed"+newMode);
 		return newMode;
 	} 
     
@@ -402,6 +403,8 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
         	 * We request the mode change, notice that we don't update the current mode until the controller
         	 * has notified the actual change.
         	 */
+            LOG.debug("Zwave mode change requested"+requestedMode);
+
 			switch (currentMode) {
 
 				case NORMAL:

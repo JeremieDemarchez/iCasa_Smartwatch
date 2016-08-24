@@ -139,7 +139,7 @@
 									<version>0.3</version>
 									<type>zip</type>
 									<classifier>ozw_config</classifier>
-									<outputDirectory>zwave/config</outputDirectory>
+									<outputDirectory>zwave/conf/zwave4j</outputDirectory>
 								</artifactItem>
 							</artifactItems>
 						</configuration>
