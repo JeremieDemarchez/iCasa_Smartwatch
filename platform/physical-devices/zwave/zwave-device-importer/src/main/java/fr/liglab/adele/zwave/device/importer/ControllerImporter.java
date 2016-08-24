@@ -78,12 +78,14 @@ public class ControllerImporter extends AbstractImporterComponent  {
 	public final static String PROXY_PROPERTY_NODE 				= "zwave.node";
 	public final static String PROXY_PROPERTY_ENDPOINT 			= "zwave.endpoint";
 
-	public ControllerImporter(@Property(name="library", mandatory=true, value="openhab") String library) {
+	public ControllerImporter(@Property(name="library", mandatory=true, value="openhab") String libraryName) {
 		
-		if 	("openhab".equals(library)) {
+		ZWaveLibrary library = ZWaveLibrary.valueOf(libraryName);
+		
+		if 	(library == ZWaveLibrary.openhab) {
 			contextCreator	= openhabCreator;
 		}
-		else if ("zwave4j".equals(library)) {
+		else if (library == ZWaveLibrary.zwave4j) {
 			contextCreator	= zwave4jCreator;
 		}
 		else {

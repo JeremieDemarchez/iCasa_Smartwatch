@@ -30,11 +30,11 @@ public class FuchsiaSetup {
 
     Instance zwaveControllerImporter = instance().named("zwaveControllerImporter")
             .of("fr.liglab.adele.zwave.device.importer.ControllerImporter")
-            //.with("library").setto("openhab");
-    		.with("library").setto("zwave4j");
+            .with("library").setto("openhab");
+    		//.with("library").setto("zwave4j");
 
     		Instance zwaveDeviceImporter = instance().named("zwaveDeviceImporter")
-            .of("fr.liglab.adele.zwave.device.importer.openhab.ZWaveDeviceImporter");
+            .of("fr.liglab.adele.zwave.device.importer.DeviceImporter");
 
     Instance zwaveImporterLinker = instance()
             .of(FuchsiaConstants.DEFAULT_IMPORTATION_LINKER_FACTORY_NAME)

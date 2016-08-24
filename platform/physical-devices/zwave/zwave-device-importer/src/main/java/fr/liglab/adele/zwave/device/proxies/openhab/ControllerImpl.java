@@ -650,6 +650,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
                     .key(DeviceDeclaration.HOME_ID).value(node.getHomeId())
                     .key(DeviceDeclaration.NODE_ID).value(node.getNodeId())
                     .key("scope").value("generic")
+                    .key("library").value("openhab")
                     .build();
             proxies.put(nodeIdentifier,"");
 
