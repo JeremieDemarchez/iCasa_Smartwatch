@@ -1,5 +1,6 @@
 package fr.liglab.adele.icasa.orange.utils;
 
+import fr.liglab.adele.icasa.orange.service.TestReport;
 import fr.liglab.adele.icasa.orange.service.TestRunningException;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestResult;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestStrategy;
@@ -17,7 +18,7 @@ public abstract class AbstractZwaveTestStrategy implements ZwaveTestStrategy{
 
     private final Map<String,ZwaveTestResult> testResultMap = new HashMap<>();
 
-    private final Map<String,BiConsumer<String,ZwaveTestResult>> testResultCallback = new HashMap<>();
+    private final Map<String,BiConsumer<String,TestReport>> testResultCallback = new HashMap<>();
 
     protected void stop(){
         synchronized (lock){
@@ -28,7 +29,7 @@ public abstract class AbstractZwaveTestStrategy implements ZwaveTestStrategy{
 
 
     @Override
-    public void beginTest(String nodeId, BiConsumer<String, ZwaveTestResult> callback, boolean interrupt) throws TestRunningException {
+    public void beginTest(String nodeId, BiConsumer<String, TestReport> callback, boolean interrupt) throws TestRunningException {
         if (nodeId == null){
             return;
         }
@@ -76,16 +77,16 @@ public abstract class AbstractZwaveTestStrategy implements ZwaveTestStrategy{
         }
     }
 
-    protected void finishTest(String nodeId,ZwaveTestResult testResult){
+    protected void finishTest(String nodeId,ZwaveTestResult testResult,String testMessage){
         if (nodeId == null || testResult == null){
             return;
         }
         synchronized (lock) {
             if (ZwaveTestResult.RUNNING.equals(testResultMap.get(nodeId))){
                 testResultMap.put(nodeId, testResult);
-                BiConsumer toCall = testResultCallback.get(nodeId);
+                BiConsumer<String,TestReport> toCall = testResultCallback.get(nodeId);
                 if (toCall != null){
-                    toCall.accept(nodeId,testResult);
+                    toCall.accept(nodeId,new TestReport(testMessage,testResult));
                 }
             }
         }

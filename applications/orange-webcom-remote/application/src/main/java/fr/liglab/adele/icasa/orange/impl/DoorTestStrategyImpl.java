@@ -2,6 +2,7 @@ package fr.liglab.adele.icasa.orange.impl;
 
 import fr.liglab.adele.cream.event.handler.annotation.ContextUpdate;
 import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
+import fr.liglab.adele.icasa.orange.service.TestReport;
 import fr.liglab.adele.icasa.orange.service.TestRunningException;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestResult;
 import fr.liglab.adele.icasa.orange.service.ZwaveTestStrategy;
@@ -37,7 +38,7 @@ public class DoorTestStrategyImpl extends AbstractZwaveTestStrategy implements Z
             if (futureTaskMap.get(id) != null){
                 futureTaskMap.remove(id).cancel(true);
             }
-            finishTest(getZwaveIdFromDoorSensor(doorWindowSensor),ZwaveTestResult.SUCCESS);
+            finishTest(getZwaveIdFromDoorSensor(doorWindowSensor),ZwaveTestResult.SUCCESS,"success");
         }
     }
 
@@ -47,10 +48,10 @@ public class DoorTestStrategyImpl extends AbstractZwaveTestStrategy implements Z
     }
 
     @Override
-    public void beginTest(String nodeId, BiConsumer<String, ZwaveTestResult> callback, boolean interrupt) throws TestRunningException {
+    public void beginTest(String nodeId, BiConsumer<String, TestReport> callback, boolean interrupt) throws TestRunningException {
         super.beginTest(nodeId, callback, interrupt);
 
-        futureTaskMap.put(nodeId, scheduler.schedule(()-> finishTest(nodeId,ZwaveTestResult.FAILED),20, TimeUnit.SECONDS));
+        futureTaskMap.put(nodeId, scheduler.schedule(()-> finishTest(nodeId,ZwaveTestResult.FAILED,"No event detected during 20 seconds"),20, TimeUnit.SECONDS));
     }
     @Override
     public List<String> getTestTargets() {

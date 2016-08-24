@@ -152,7 +152,16 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	public ZWaveNetworkEvent notifyEvent() {
 		return null;
 	}
-	
+
+	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+	private Integer deviceType;
+
+	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+	private Integer manufacturerId;
+
+	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+	private Integer deviceId;
+
 	/**
 	 * Constructor
 	 */
@@ -196,7 +205,22 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	public ZWaveNetworkEvent getLastEvent() {
 		return event;
 	}
-	
+
+	@Override
+	public int getManufacturerId() {
+		return manufacturerId;
+	}
+
+	@Override
+	public int getDeviceId() {
+		return deviceId;
+	}
+
+	@Override
+	public int getDeviceType() {
+		return deviceType;
+	}
+
 	/**
 	 * LifeCycle
 	 */

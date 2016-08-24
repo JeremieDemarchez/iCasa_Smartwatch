@@ -40,6 +40,15 @@ public class FibaroSmokeSensor implements ZwaveDevice{
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
     private Integer zwaveNodeId;
 
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    private Integer deviceType;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    private Integer manufacturerId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    private Integer deviceId;
+
     @Override
     public List<Integer> getNeighbors() {
         return neighbors;
@@ -53,6 +62,21 @@ public class FibaroSmokeSensor implements ZwaveDevice{
     @Override
     public int getHomeId() {
     	return zwaveHomeId;
+    }
+
+    @Override
+    public int getManufacturerId() {
+        return manufacturerId;
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    @Override
+    public int getDeviceType() {
+        return deviceType;
     }
 
     /**

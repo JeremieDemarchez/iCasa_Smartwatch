@@ -94,6 +94,9 @@ public class ZWaveDeviceImporter extends AbstractImporterComponent  {
 		Map<String,Object> properties = new HashMap<>();
 		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.HOME_ID),deviceDeclaration.getZwaveHomeId());
 		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.NODE_ID),deviceDeclaration.getZwaveNodeId());
+		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.DEVICE_ID),deviceDeclaration.getZwaveDeviceId());
+		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.DEVICE_TYPE),deviceDeclaration.getzwaveDeviceType());
+		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.MANUFACTURER_ID),deviceDeclaration.getZwaveManufacturerId());
 		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.NEIGHBORS),new ArrayList<>());
 		properties.put(ContextEntity.State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),"ZwaveDevice#"+deviceDeclaration.getZwaveNodeId());
 

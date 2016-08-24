@@ -142,7 +142,24 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
     @Requires(id="zwavesNeighbors",specification=ZwaveDevice.class,optional=true)
     private List<ZwaveDevice> neighborDevices;
 
-    
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    private Integer deviceType;
+
+    @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    Supplier<Integer> pullDeviceType=()-> manager.controller.getDeviceType();
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    private Integer manufacturerId;
+
+    @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    Supplier<Integer> pullManufacturerId=()-> manager.controller.getManufactureId();
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    private Integer deviceId;
+
+    @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    Supplier<Integer> pullDeviceId=()-> manager.controller.getDeviceId();
+
     @Bind(id = "zwavesNeighbors")
     private void bindZDevice(ZwaveDevice device){
         pushNeighbors();
@@ -300,7 +317,22 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	public ZWaveNetworkEvent getLastEvent() {
 		return event;
 	}
-    
+
+    @Override
+    public int getManufacturerId() {
+        return manufacturerId;
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    @Override
+    public int getDeviceType() {
+        return deviceType;
+    }
+
     
     /**
      * LifeCycle
