@@ -42,9 +42,28 @@ public @ContextService interface ZwaveController extends ZwaveRepeater {
     public static @State  String MODE="zwave.controller.mode";
 
 	public enum Mode {
-		NORMAL,
-		INCLUSION,
-		EXCLUSION
+		NORMAL("normal"),
+		INCLUSION("discovery"),
+		EXCLUSION("undiscovery");
+
+        public static Mode getMode(String mode){
+            if (INCLUSION.mode.equalsIgnoreCase(mode)){
+                return INCLUSION;
+            }
+            else if (NORMAL.mode.equalsIgnoreCase(mode)){
+                return NORMAL;
+            }
+            else if (EXCLUSION.mode.equalsIgnoreCase(mode)) {
+                return EXCLUSION;
+            }
+            return null;
+        }
+
+        private final String mode;
+
+        Mode(String mode){
+            this.mode = mode;
+        }
 	}
 
     public Mode getMode();

@@ -75,6 +75,15 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEvent
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
     private Integer zwaveNodeId;
 
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    private Integer deviceType;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    private Integer manufacturerId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    private Integer deviceId;
+
     /**
      * Services
      */
@@ -91,6 +100,21 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEvent
     @Override
     public int getHomeId() {
     	return zwaveHomeId;
+    }
+
+    @Override
+    public int getManufacturerId() {
+        return manufacturerId;
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    @Override
+    public int getDeviceType() {
+        return deviceType;
     }
 
     @Override

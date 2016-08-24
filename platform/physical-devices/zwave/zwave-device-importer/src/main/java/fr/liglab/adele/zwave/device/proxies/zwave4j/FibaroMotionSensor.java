@@ -28,12 +28,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
-
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,20 +45,30 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, GenericDev
     @Requires(optional = false, proxy=false)
     private ZwaveController controller;
 
-    private static final Logger LOG = LoggerFactory.getLogger(FibaroMotionSensor.class);
-
     /**
      * STATES
      */
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
+    private Integer zwaveHomeId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
+    private Integer zwaveNodeId;
+    
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    private Integer manufacturerId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    private Integer deviceType;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    private Integer deviceId;
+    
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
 
-    /**
-     * Neighbors Synchro
-     */
     @ContextEntity.Relation.Field(value = "isZwaveNeighbor",owner = ZwaveDevice.class)
     @Requires(id="zwavesNeighbors",specification=ZwaveDevice.class,optional=true)
     private List<ZwaveDevice> zwaveDevices;
@@ -86,11 +92,6 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, GenericDev
         return neighbors;
     }
     
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
-    private Integer zwaveHomeId;
-
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
-    private Integer zwaveNodeId;
 
     /**
      * Services
@@ -101,8 +102,8 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, GenericDev
     }
 
     @Override
-    public int getNodeId() {
-    	return zwaveNodeId;
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
     @Override
@@ -111,10 +112,25 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, GenericDev
     }
 
     @Override
-    public String getSerialNumber() {
-        return serialNumber;
+    public int getNodeId() {
+    	return zwaveNodeId;
     }
 
+    @Override
+    public int getManufacturerId() {
+        return manufacturerId;
+    }
+
+    @Override
+    public int getDeviceType() {
+        return deviceType;
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
+    }
+    
     @Validate
     private void start() {
     }

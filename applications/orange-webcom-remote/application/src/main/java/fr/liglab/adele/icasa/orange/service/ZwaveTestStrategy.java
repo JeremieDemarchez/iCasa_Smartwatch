@@ -11,7 +11,7 @@ public interface ZwaveTestStrategy {
 
     List<String> getTestTargets();
 
-    void beginTest(String nodeId, BiConsumer<String,ZwaveTestResult> callback,boolean interrupt) throws TestRunningException;
+    void beginTest(String nodeId, BiConsumer<String,TestReport> callback,boolean interrupt) throws TestRunningException;
 
     ZwaveTestResult getLastTestResult(String nodeId);
 

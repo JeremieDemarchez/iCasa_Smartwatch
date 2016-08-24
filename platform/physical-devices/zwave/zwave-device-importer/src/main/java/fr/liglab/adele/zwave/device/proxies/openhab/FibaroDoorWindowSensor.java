@@ -63,6 +63,15 @@ public class FibaroDoorWindowSensor implements ZwaveDevice, GenericDevice, DoorW
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
     private Integer zwaveNodeId;
 
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    private Integer deviceType;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    private Integer manufacturerId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    private Integer deviceId;
+
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
@@ -81,7 +90,22 @@ public class FibaroDoorWindowSensor implements ZwaveDevice, GenericDevice, DoorW
     public int getNodeId() {
         return zwaveNodeId;
     }
-    
+
+    @Override
+    public int getManufacturerId() {
+        return manufacturerId;
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    @Override
+    public int getDeviceType() {
+        return deviceType;
+    }
+
     @Override
     public int getHomeId() {
     	return zwaveHomeId;

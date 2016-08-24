@@ -57,6 +57,15 @@ public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventLis
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
     private Integer zwaveNodeId;
 
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+    private Integer deviceType;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+    private Integer manufacturerId;
+
+    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+    private Integer deviceId;
+
     @ContextEntity.State.Field(service = SmartPlug.class,state = SmartPlug.SMART_PLUG_STATUS,value = "false")
     private boolean status;
 
@@ -76,6 +85,21 @@ public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventLis
     @Override
     public int getNodeId() {
         return zwaveNodeId;
+    }
+
+    @Override
+    public int getManufacturerId() {
+        return manufacturerId;
+    }
+
+    @Override
+    public int getDeviceId() {
+        return deviceId;
+    }
+
+    @Override
+    public int getDeviceType() {
+        return deviceType;
     }
 
     @Override

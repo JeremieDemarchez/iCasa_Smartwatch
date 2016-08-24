@@ -40,5 +40,26 @@ public @ContextService interface ZwaveDevice {
 
     public int getNodeId();
 
+    /**
+     * The network node id
+     */
+    static final @State String MANUFACTURER_ID = "zwave.manufacturerId";
+
+    public int getManufacturerId();
+
+
+    /**
+     * The network node id
+     */
+    static final @State String DEVICE_ID = "zwave.deviceId";
+
+    public int getDeviceId();
+
+    /**
+     * The network node id
+     */
+    static final @State String DEVICE_TYPE = "zwave.deviceType";
+
+    public int getDeviceType();
 
 }
