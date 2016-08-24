@@ -87,7 +87,44 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	private short zwaveNodeId;
 	
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
-    Supplier<Short> pullNodeId=()-> zwaveHomeId != -1 ? manager.getControllerNodeId(zwaveHomeId) : -1;
+    Supplier<Short> pullNodeId = ()-> safe(manager.getControllerNodeId(zwaveHomeId), (short)-1);
+
+	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+	private int manufacturerId;
+
+    @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
+	Supplier<Integer> pullManufactererId =()-> optional(safe(manager.getNodeManufacturerId(zwaveHomeId, zwaveNodeId),null),-1,Integer::decode);
+	
+	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+	private int deviceType;
+
+    @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
+	Supplier<Integer> pullDeviceType = ()-> optional(safe(manager.getNodeProductType(zwaveHomeId, zwaveNodeId),null),-1,Integer::decode);
+	
+	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+	private int deviceId;
+	
+    @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
+	Supplier<Integer> pullDeviceId = ()-> optional(safe(manager.getNodeProductId(zwaveHomeId, zwaveNodeId),null),-1,Integer::decode);
+
+	/**
+	 * Get the value of a parameter of the manager that may not have been initialized. Returns a default value if the driver
+	 * is not initialized.
+	 * 
+	 * TODO it will be better to validate this component only after the driver is properly initialized, but we prefer to
+	 * create the manager on validation and destroy it on invalidation to save resources.
+	 */
+	private final <T> T safe(T value, T defaultValue) {
+		return zwaveHomeId != -1 ? value : defaultValue;
+	}
+
+	private static final <T> T optional(T value, T defaultValue) {
+		return value != null ? value : defaultValue;
+	}
+
+	private static final <S,T> T optional(S value, T defaultValue, Function<S, T> map) {
+		return value != null ? map.apply(value) : defaultValue;
+	}
 
 	/**
 	 * Whether this is the master controller
@@ -163,8 +200,13 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		return null;
 	}
 	
+
+	/**
+	 * Configuration parameters
+	 */
 	private final File		configDirectory;
 	private final String 	optionsValue;
+
 	/**
 	 * Constructor
 	 */
@@ -176,14 +218,6 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		
         LOG.debug("Zwave zwave4j : config directory = "+configDirectory+ " options = "+optionsValue);
 
-	}
-
-	private static final <T> T optional(T value, T defaultValue) {
-		return value != null ? value : defaultValue;
-	}
-
-	private static final <S,T> T optional(S value, T defaultValue, Function<S, T> map) {
-		return value != null ? map.apply(value) : defaultValue;
 	}
 
 	/**
@@ -222,7 +256,22 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	public ZWaveNetworkEvent getLastEvent() {
 		return event;
 	}
-	
+
+	@Override
+	public int getManufacturerId() {
+		return manufacturerId;
+	}
+
+	@Override
+	public int getDeviceId() {
+		return deviceId;
+	}
+
+	@Override
+	public int getDeviceType() {
+		return deviceType;
+	}
+
 	/**
 	 * LifeCycle
 	 */
@@ -349,6 +398,9 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		}
 	}
 
+	/**
+	 * Handle notifications from the controller to perform device discovery and initialization
+	 */
 	@Override
 	public void onNotification(Notification notification, Object context) {
 		switch (notification.getType()) {
