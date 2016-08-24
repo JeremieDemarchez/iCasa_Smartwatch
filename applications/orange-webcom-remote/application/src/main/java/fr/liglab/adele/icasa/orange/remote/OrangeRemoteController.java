@@ -139,6 +139,7 @@ public class OrangeRemoteController extends DefaultController {
     }
     @Route(method = HttpMethod.PUT,uri = "/zwaves/{id}")
     public Result updateZwaveDevice(@Parameter("id") String zwaveId, @Body WebcomRequestBody data){
+        System.out.print(" Zwave id" + zwaveId +" mode " + data.discoveryMode + " test " + data.beginTest);
         if (zwaveId == null){
             return notFound();
         }

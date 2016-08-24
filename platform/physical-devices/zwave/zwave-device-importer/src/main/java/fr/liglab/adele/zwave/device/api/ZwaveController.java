@@ -69,12 +69,5 @@ public @ContextService interface ZwaveController extends ZwaveRepeater {
     public Mode getMode();
 
     public void changeMode(Mode mode);
- 
-    /**
-     * The last network event
-     */
-    public static @State  String NETWORK_EVENT="zwave.controller.event";
 
-    public ZWaveNetworkEvent getLastEvent();
-    
 }

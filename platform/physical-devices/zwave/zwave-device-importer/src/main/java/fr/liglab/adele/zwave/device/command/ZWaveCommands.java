@@ -75,18 +75,4 @@ public class ZWaveCommands {
 	}
 
 
-	@Command
-	public void event() {
-		if (controller != null) {
-			
-			ZWaveNetworkEvent event = controller.getLastEvent();
-			if (event != null) {
-				System.out.println(" Event " + event.type+ " 	at "+new Date(event.timeStamp));
-				System.out.println("       " + event.homeId+ " "+event.nodeId);
-				System.out.println("       " + event.manufacturerId+ " "+event.deviceType+ " "+ event.deviceId);
-			}
-		}
-	}
-	
-
 }
