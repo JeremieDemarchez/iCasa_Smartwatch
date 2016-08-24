@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
+import fr.liglab.adele.icasa.device.GenericDevice;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -72,6 +73,9 @@ public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventLis
     @ContextEntity.State.Field(service = SmartPlug.class,state = SmartPlug.SMART_PLUG_CONSUMPTION,value = "0.0")
     private float consumption;
 
+    @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
+    private String serialNumber;
+
     @Override
     public List<Integer> getNeighbors() {
         return neighbors;
@@ -110,6 +114,11 @@ public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventLis
     @Override
     public float currentConsumption() {
         return consumption;
+    }
+
+    @Override
+    public String getSerialNumber() {
+        return serialNumber;
     }
 
     /**
@@ -184,5 +193,4 @@ public class FibaroWallPlug implements ZwaveDevice, ZwaveRepeater, ZWaveEventLis
     public float pushConsumption(float newConso){
         return newConso;
     }
-
 }

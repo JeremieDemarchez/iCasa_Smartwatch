@@ -52,8 +52,8 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
-            <Private-Package>fr.liglab.adele.icasa.binary.light.follow.me</Private-Package>
-            <Export-Package></Export-Package>
+            <Export-Package>fr.liglab.adele.icasa.orange.service,
+            fr.liglab.adele.icasa.orange.utils</Export-Package>
           </instructions>
         </configuration>
       </plugin>

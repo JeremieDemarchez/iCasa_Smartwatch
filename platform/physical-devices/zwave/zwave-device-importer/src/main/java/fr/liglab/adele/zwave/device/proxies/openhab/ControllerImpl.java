@@ -63,8 +63,6 @@ import fr.liglab.adele.cream.annotations.provider.Creator;
 
 import fr.liglab.adele.cream.model.Relation;
 
-import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent;
-import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent.Type;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
@@ -186,31 +184,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		return newMode;
 	} 
     
-	/**
-	 * The last network event
-	 */
 
-	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
-	private ZWaveNetworkEvent event;
-
-	@ContextEntity.State.Push(service = ZwaveController.class, state = ZwaveController.NETWORK_EVENT)
-	private ZWaveNetworkEvent notifyEvent(ZWaveNode node, boolean isInclusion) {
-		
-		ZWaveNetworkEvent event = new ZWaveNetworkEvent();
-		
-		event.type 				= isInclusion ? Type.INCLUSION : Type.EXCLUSION;
-		event.timeStamp			= System.currentTimeMillis();
-		
-		event.homeId			= node.getHomeId();
-		event.nodeId			= node.getNodeId();
-			
-		event.manufacturerId	= node.getManufacturer();
-		event.deviceType		= node.getDeviceType();
-		event.deviceId			= node.getDeviceId();
-		
-		return event;
-	}
-	
     /**
      * A class to represent a uniquely identify an end-point of a z-wave node
      */
@@ -225,7 +199,11 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
             this.nodeId		= node.getNodeId();
         }
 
-        @Override
+        public EndPointIdentifier(int homeId, int nodeId) {
+            this.homeId 	= homeId;
+            this.nodeId		= nodeId;
+        }
+            @Override
         public int hashCode() {
             return Objects.hash(homeId,nodeId);
         }
@@ -313,11 +291,6 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
     public int getNodeId() {
         return zwaveNodeId;
     }
-    
-	@Override
-	public ZWaveNetworkEvent getLastEvent() {
-		return event;
-	}
 
     @Override
     public int getManufacturerId() {
@@ -502,7 +475,6 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 					switch (event.getEvent()) {
 						case IncludeSlaveFound :
 						case IncludeControllerFound :
-							ControllerImpl.this.notifyEvent(controller.getNode(event.getNodeId()), true);
 							break;
 						case IncludeDone:
 						case IncludeFail:
@@ -516,8 +488,9 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 				case EXCLUSION:
 					switch (event.getEvent()) {
 						case ExcludeSlaveFound :
+                            removeDeclaration(new EndPointIdentifier(zwaveHomeId,event.getNodeId()));
+                            break;
 						case ExcludeControllerFound :
-							ControllerImpl.this.notifyEvent(controller.getNode(event.getNodeId()), true);
 							break;
 						case ExcludeDone:
 						case ExcludeFail:
@@ -692,22 +665,28 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
         }
 
         private final void removeDeclaration(ZWaveNode node) {
-        	EndPointIdentifier nodeIdentifier = new EndPointIdentifier(node);
+            removeDeclaration(new EndPointIdentifier(node));
+        }
 
+        private final void removeDeclaration(EndPointIdentifier nodeIdentifier) {
         	proxies.remove(nodeIdentifier);
             synchronized (listeningLock){
                 listeningNode.remove(nodeIdentifier.nodeId);
             }
             
-            ControllerImpl.this.unregisterZwaveDeviceImportDeclaration(new EndPointIdentifier(node));
+            ControllerImpl.this.unregisterZwaveDeviceImportDeclaration(nodeIdentifier);
             computeRelation();
         }
 
 
         @Override
         public final void run() {
+            if (mode != Mode.NORMAL){
+                return;
+            }
             Set<ZWaveNode> nodeToRemove = new HashSet<>();
             synchronized (listeningLock){
+
                 for (Map.Entry<Integer,Boolean> nodeListening:listeningNode.entrySet()){
                     if (nodeListening.getValue().equals(true)){
                         controller.requestNodeInfo(nodeListening.getKey());

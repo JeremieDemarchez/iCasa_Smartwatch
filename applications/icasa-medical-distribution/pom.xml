@@ -96,6 +96,13 @@
 			<version>${project.version}</version>
 		</dependency>
 
+		<!--ORange Remote -->
+		<dependency>
+			<groupId>fr.liglab.adele.icasa.apps</groupId>
+			<artifactId>orange.webcom.remote</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>

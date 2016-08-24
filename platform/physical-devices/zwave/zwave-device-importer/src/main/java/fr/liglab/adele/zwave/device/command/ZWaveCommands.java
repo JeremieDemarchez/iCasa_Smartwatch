@@ -15,8 +15,6 @@
  */
 package fr.liglab.adele.zwave.device.command;
 
-import java.util.Date;
-
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
 
@@ -25,8 +23,6 @@ import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Modified;
 import org.apache.felix.ipojo.annotations.Requires;
 
-
-import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveController.Mode;
 
@@ -57,6 +53,7 @@ public class ZWaveCommands {
 	public void info() {
 		if (controller != null) {
 			System.out.println(" controller homeId = " + controller.getHomeId()+" nodeId = "+controller.getNodeId());
+			System.out.println("            manufacturerId = " + controller.getManufacturerId()+" deviceType  = "+controller.getDeviceType()+" deviceId = "+controller.getDeviceId());
 		}
 	}
 
@@ -74,19 +71,5 @@ public class ZWaveCommands {
 		}
 	}
 
-
-	@Command
-	public void event() {
-		if (controller != null) {
-			
-			ZWaveNetworkEvent event = controller.getLastEvent();
-			if (event != null) {
-				System.out.println(" Event " + event.type+ " 	at "+new Date(event.timeStamp));
-				System.out.println("       " + event.homeId+ " "+event.nodeId);
-				System.out.println("       " + event.manufacturerId+ " "+event.deviceType+ " "+ event.deviceId);
-			}
-		}
-	}
-	
 
 }
