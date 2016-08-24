@@ -18,6 +18,7 @@ package fr.liglab.adele.zwave.device.proxies.zwave4j;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 import org.apache.felix.ipojo.annotations.Bind;
@@ -30,6 +31,10 @@ import org.osgi.framework.BundleContext;
 import org.ow2.chameleon.fuchsia.core.component.AbstractDiscoveryComponent;
 import org.ow2.chameleon.fuchsia.core.component.DiscoveryIntrospection;
 import org.ow2.chameleon.fuchsia.core.component.DiscoveryService;
+import org.zwave4j.ControllerCallback;
+import org.zwave4j.ControllerCommand;
+import org.zwave4j.ControllerError;
+import org.zwave4j.ControllerState;
 import org.zwave4j.Manager;
 import org.zwave4j.NativeLibraryLoader;
 import org.zwave4j.Notification;
@@ -37,6 +42,7 @@ import org.zwave4j.NotificationWatcher;
 import org.zwave4j.Options;
 import org.zwave4j.ValueId;
 import org.zwave4j.ZWave4j;
+
 
 
 
@@ -51,7 +57,7 @@ import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 @ContextEntity(services = { ZwaveController.class, ZwaveDevice.class, ZwaveRepeater.class })
 @Provides(specifications = { DiscoveryService.class, DiscoveryIntrospection.class })
 
-public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController, NotificationWatcher {
+public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController, NotificationWatcher, ControllerCallback {
 
 	private Manager manager;
 
@@ -126,10 +132,14 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.MODE)
 	private ZwaveController.Mode mode;
 
+    @ContextEntity.State.Apply(service = ZwaveController.class,state = ZwaveController.MODE)
+    private Consumer<ZwaveController.Mode> requestChangeMode =  (requestedMode) -> requestChangeMode(requestedMode); 
+	
 	@ContextEntity.State.Push(service = ZwaveController.class, state = ZwaveController.MODE)
 	public ZwaveController.Mode changeModeNotification(ZwaveController.Mode newMode) {
 		return newMode;
 	}
+	
 
 	/**
 	 * The last network event
@@ -197,7 +207,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
         NativeLibraryLoader.loadLibrary(ZWave4j.LIBRARY_NAME, ZWave4j.class);
 
         final Options options = Options.create("config", "", "");
-        options.addOptionBool("ConsoleOutput", false);
+        options.addOptionBool("ConsoleOutput", true);
         options.lock();
 
         zwaveHomeId = -1;
@@ -206,6 +216,8 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
         manager.addWatcher(this, this);
         manager.addDriver(serialPort);
 
+        changeModeNotification(ZwaveController.Mode.NORMAL);
+        
 		super.start();
 	}
 
@@ -224,6 +236,91 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		return "Zwave4jDeviceDiscovery";
 	}
 
+	/**
+	 * Handle mode change requests by sending the appropriate command to the controller and tracking
+	 * progress of the operation.
+	 * 
+	 */
+    private void requestChangeMode(ZwaveController.Mode requestedMode) {
+    	
+		switch (mode) {
+
+			case NORMAL:
+				switch (requestedMode) {
+					case EXCLUSION:
+						changeModeNotification(requestedMode);
+						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.REMOVE_DEVICE,this);
+						break;
+	
+					case INCLUSION:
+						changeModeNotification(requestedMode);
+						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.ADD_DEVICE, this);
+						break;
+	
+					case NORMAL:
+						break;
+				}
+
+				break;
+
+			case INCLUSION:
+				switch (requestedMode) {
+					case NORMAL:
+						changeModeNotification(requestedMode);
+						manager.cancelControllerCommand(zwaveHomeId);
+						break;
+					default:
+						break;
+				}
+
+				break;
+
+			case EXCLUSION:
+				switch (requestedMode) {
+					case NORMAL:
+						changeModeNotification(requestedMode);
+						manager.cancelControllerCommand(zwaveHomeId);
+						break;
+					default:
+						break;
+				}
+				break;
+
+			}
+	}
+    
+    /**
+     * Tracks mode change progress.
+     * 
+     * Inclusion/Exclusion is automatically left when a device is added/removed, or otherwise 
+     * a failure is reported by the controller.
+     * 
+     * Notice however that in Inclusion/Exclusion mode while the controller is waiting for some
+     * user action messages from the network are not processed, so some form of timeout has to
+     * be handled outside this controller.
+     * 
+     */
+	
+	@Override
+	public void onCallback(ControllerState state, ControllerError err, Object context) {
+		switch (mode) {
+			case INCLUSION:
+			case EXCLUSION:
+				switch (state) {
+					case COMPLETED:
+					case FAILED:
+					case CANCEL:
+						changeMode(Mode.NORMAL); 
+					default:
+						break;
+				}
+				break;
+			default:
+				break;
+		}
+	}
+
+	@Override
 	public void onNotification(Notification notification, Object context) {
 		switch (notification.getType()) {
 		case DRIVER_READY:
@@ -409,4 +506,5 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 			return null;
 		}
 	}
+
 }

@@ -17,12 +17,15 @@ package fr.liglab.adele.zwave.device.command;
 
 import java.util.Date;
 
-import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
-import org.apache.felix.ipojo.annotations.Requires;
-
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
+
+import org.apache.felix.ipojo.annotations.Component;
+import org.apache.felix.ipojo.annotations.Instantiate;
+import org.apache.felix.ipojo.annotations.Modified;
+import org.apache.felix.ipojo.annotations.Requires;
+
+
 import fr.liglab.adele.zwave.device.api.ZWaveNetworkEvent;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveController.Mode;
@@ -32,9 +35,24 @@ import fr.liglab.adele.zwave.device.api.ZwaveController.Mode;
 @Instantiate
 public class ZWaveCommands {
 
-	@Requires(optional=true, proxy = false)
+	@Requires(id="controller", optional=true, proxy=false)
 	ZwaveController controller;
 
+	private boolean tracking = false;
+
+	@Command
+	public void track(boolean track) {
+		this.tracking = track;
+	} 
+	
+	@Modified(id="controller")
+	public void updated(ZwaveController controller) {
+		if (tracking) {
+			info();
+			mode();
+		}
+	}
+	
 	@Command
 	public void info() {
 		if (controller != null) {
@@ -55,7 +73,8 @@ public class ZWaveCommands {
 			controller.changeMode(Mode.valueOf(mode));
 		}
 	}
-	
+
+
 	@Command
 	public void event() {
 		if (controller != null) {
