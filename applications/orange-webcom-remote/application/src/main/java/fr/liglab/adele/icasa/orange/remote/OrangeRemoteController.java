@@ -24,6 +24,7 @@ import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.wisdom.api.DefaultController;
+import org.wisdom.api.annotations.Body;
 import org.wisdom.api.annotations.Parameter;
 import org.wisdom.api.annotations.Path;
 import org.wisdom.api.annotations.Route;
@@ -80,20 +81,25 @@ public class OrangeRemoteController extends DefaultController {
 
 
     @Route(method = HttpMethod.PUT,uri = "/zwaves/{id}")
-    public Result updateZwaveDevice(@Parameter("id") String zwaveId,@Parameter("discoveryMode") String discoveryMode,@Parameter("beginTest") Boolean test){
+    public Result updateZwaveDevice(@Parameter("id") String zwaveId, @Body WebcomRequestBody data){
         if (zwaveId == null){
             return notFound();
         }
 
-        DiscoveryMode mode = DiscoveryMode.getMode(discoveryMode);
+        if (data == null){
+            return internalServerError();
+        }
+
+
+        DiscoveryMode mode = DiscoveryMode.getMode(data.discoveryMode);
         if (mode != null){
             // Check if the device id correspond to a controller, and change the mode
         }
 
 
-        if (test != null){
+        if (data.beginTest != null){
 
-            if (test) {
+            if (data.beginTest) {
                 boolean testLaunch = false;
                 for (ZwaveTestStrategy testStrategy : testStrategies) {
                     if (testStrategy.getTestTargets().contains(zwaveId)) {
@@ -177,6 +183,11 @@ public class OrangeRemoteController extends DefaultController {
         ZwaveEvent(String eventType){
             this.eventType = eventType;
         }
+    }
+
+    private static class WebcomRequestBody{
+        public String discoveryMode;
+        public Boolean beginTest;
     }
 
 }
