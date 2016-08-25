@@ -46,7 +46,7 @@ import java.util.concurrent.TimeUnit;
 @Path(value = "/orange")
 public class OrangeRemoteController extends DefaultController {
 
-    @Requires(id="zwaveDevices",specification = ZwaveDevice.class,optional = true)
+    @Requires(id="zwaveDevices",specification = ZwaveDevice.class,optional = true,proxy = false)
     List<ZwaveDevice> zwaveDevices;
 
     @Requires(id="zwaveController",specification = ZwaveController.class,optional = true)

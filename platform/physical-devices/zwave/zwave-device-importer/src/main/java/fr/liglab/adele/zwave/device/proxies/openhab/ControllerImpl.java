@@ -65,13 +65,12 @@ import fr.liglab.adele.cream.model.Relation;
 
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 import fr.liglab.adele.zwave.device.importer.DeviceDeclaration;
 
-@ContextEntity(services = {OpenhabController.class,ZwaveController.class,ZwaveDevice.class, ZwaveRepeater.class})
+@ContextEntity(services = {OpenhabController.class,ZwaveController.class,ZwaveDevice.class})
 @Provides(specifications = {DiscoveryService.class, DiscoveryIntrospection.class})
 
-public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController, OpenhabController {
+public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveDevice, ZwaveController, OpenhabController {
 
     private static final Logger LOG = LoggerFactory.getLogger(ControllerImpl.class);
 
@@ -283,27 +282,27 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
     }
 
     @Override
-    public int getHomeId() {
+    public Integer getHomeId() {
         return zwaveHomeId;
     }
 
     @Override
-    public int getNodeId() {
+    public Integer getNodeId() {
         return zwaveNodeId;
     }
 
     @Override
-    public int getManufacturerId() {
+    public Integer getManufacturerId() {
         return manufacturerId;
     }
 
     @Override
-    public int getDeviceId() {
+    public Integer getDeviceId() {
         return deviceId;
     }
 
     @Override
-    public int getDeviceType() {
+    public Integer getDeviceType() {
         return deviceType;
     }
 

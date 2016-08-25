@@ -21,7 +21,7 @@ import fr.liglab.adele.cream.annotations.State;
 /**
  * Created by aygalinc on 19/04/16.
  */
-public @ContextService interface ZwaveController extends ZwaveRepeater {
+public @ContextService interface ZwaveController extends ZwaveDevice {
 	
 
 	/**

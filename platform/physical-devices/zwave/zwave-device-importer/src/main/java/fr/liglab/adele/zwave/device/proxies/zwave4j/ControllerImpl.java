@@ -54,13 +54,12 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
-import fr.liglab.adele.zwave.device.api.ZwaveRepeater;
 
 
-@ContextEntity(services = { ZwaveController.class, ZwaveDevice.class, ZwaveRepeater.class })
+@ContextEntity(services = { ZwaveController.class, ZwaveDevice.class})
 @Provides(specifications = { DiscoveryService.class, DiscoveryIntrospection.class })
 
-public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveRepeater, ZwaveDevice, ZwaveController, NotificationWatcher, ControllerCallback {
+public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveDevice, ZwaveController, NotificationWatcher, ControllerCallback {
 
     private static final Logger LOG = LoggerFactory.getLogger(ControllerImpl.class);
 
@@ -80,10 +79,10 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	 * The network identifier of the controller
 	 */
 	@ContextEntity.State.Field(service = ZwaveDevice.class, state = ZwaveDevice.HOME_ID, directAccess=true)
-	private long zwaveHomeId;
+	private Integer zwaveHomeId;
 
 	@ContextEntity.State.Field(service = ZwaveDevice.class, state = ZwaveDevice.NODE_ID)
-	private short zwaveNodeId;
+	private Integer zwaveNodeId;
 	
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
     Supplier<Short> pullNodeId = () -> {
@@ -95,7 +94,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
 	Supplier<Integer> pullManufactererId = () -> {
-		String value = zwaveHomeId != -1 ? manager.getNodeManufacturerId(zwaveHomeId,zwaveNodeId) : null;
+		String value = zwaveHomeId != -1 ? manager.getNodeManufacturerId(zwaveHomeId,zwaveNodeId.shortValue()) : null;
 		return value != null ? Integer.parseInt(value,16) : -1;
 	};
 	
@@ -104,7 +103,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
 	Supplier<Integer> pullDeviceType = () -> {
-		String value = zwaveHomeId != -1 ? manager.getNodeProductType(zwaveHomeId,zwaveNodeId) : null;
+		String value = zwaveHomeId != -1 ? manager.getNodeProductType(zwaveHomeId,zwaveNodeId.shortValue()) : null;
 		return value != null ? Integer.parseInt(value,16) : -1;
 	};
 	
@@ -113,7 +112,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
 	Supplier<Integer> pullDeviceId =  () -> {
-		String value = zwaveHomeId != -1 ? manager.getNodeProductId(zwaveHomeId,zwaveNodeId) : null;
+		String value = zwaveHomeId != -1 ? manager.getNodeProductId(zwaveHomeId,zwaveNodeId.shortValue()) : null;
 		return value != null ? Integer.parseInt(value,16) : -1;
 	};
 	
@@ -231,27 +230,27 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 	}
 
 	@Override
-	public int getHomeId() {
+	public Integer getHomeId() {
 		return (int) zwaveHomeId;
 	}
 
 	@Override
-	public int getNodeId() {
+	public Integer getNodeId() {
 		return zwaveNodeId;
 	}
 
 	@Override
-	public int getManufacturerId() {
+	public Integer getManufacturerId() {
 		return manufacturerId;
 	}
 
 	@Override
-	public int getDeviceId() {
+	public Integer getDeviceId() {
 		return deviceId;
 	}
 
 	@Override
-	public int getDeviceType() {
+	public Integer getDeviceType() {
 		return deviceType;
 	}
 
@@ -390,7 +389,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveR
 		case DRIVER_READY:
 			synchronized (this) {
 				LOG.debug("Driver ready home id: "+notification.getHomeId());
-				zwaveHomeId = notification.getHomeId();
+				zwaveHomeId = ((Long)notification.getHomeId()).intValue();
 			}
 			break;
 		case DRIVER_FAILED:

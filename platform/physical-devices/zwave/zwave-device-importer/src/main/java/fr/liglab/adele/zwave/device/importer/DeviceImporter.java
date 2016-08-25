@@ -149,7 +149,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(DeviceImporter.class);
 
-	private final Map<SupportedDeviceType, Creator.Entity<? extends ZwaveDevice>> openhabCreators; 
+	private final Map<SupportedDeviceType, Creator.Entity<?>> openhabCreators;
 	
 	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.openhab.FibaroMotionSensor> 		openhabMotionSensorCreator;
 
@@ -161,7 +161,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 
 
 	
-	private final Map<SupportedDeviceType, Creator.Entity<? extends ZwaveDevice>> zwave4jCreators; 
+	private final Map<SupportedDeviceType, Creator.Entity<?>> zwave4jCreators;
 
 	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroMotionSensor> 		zwave4jMotionSensorCreator;
 			
@@ -212,7 +212,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 			return;
 		}
 
-		Map<SupportedDeviceType, Creator.Entity<? extends ZwaveDevice>> creators = null;
+		Map<SupportedDeviceType, Creator.Entity<?>> creators = null;
 		if 	(library == ZWaveLibrary.openhab) {
 			creators	= openhabCreators;
 		}
@@ -233,7 +233,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 			return;
 		}
 		
-		Creator.Entity<? extends ZwaveDevice> creator = creators.get(deviceType);
+		Creator.Entity<?> creator = creators.get(deviceType);
 
 		if (creator == null){
 			LOG.warn("Zwave device type for node "+ deviceDeclaration.getZwaveNodeId() +" not supported by iCasa using library "+library);
@@ -265,7 +265,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 			return;
 		}
 
-		Map<SupportedDeviceType, Creator.Entity<? extends ZwaveDevice>> creators = null;
+		Map<SupportedDeviceType, Creator.Entity<?>> creators = null;
 		if 	(library == ZWaveLibrary.openhab) {
 			creators	= openhabCreators;
 		}
@@ -286,7 +286,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 			return;
 		}
 		
-		Creator.Entity<? extends ZwaveDevice> creator = creators.get(deviceType);
+		Creator.Entity<?> creator = creators.get(deviceType);
 
 		if (creator == null){
 			LOG.warn("Zwave device type for node "+ deviceDeclaration.getZwaveNodeId() +" not supported by iCasa using library "+library);

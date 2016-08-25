@@ -31,21 +31,21 @@ public @ContextService interface ZwaveDevice {
      */
     public static @State  String HOME_ID="zwave.homeId";
     
-    public int getHomeId();
+    public Integer getHomeId();
 
     /**
      * The network node id
      */
     static final @State String NODE_ID = "zwave.nodeId";
 
-    public int getNodeId();
+    public Integer getNodeId();
 
     /**
      * The network node id
      */
     static final @State String MANUFACTURER_ID = "zwave.manufacturerId";
 
-    public int getManufacturerId();
+    public Integer getManufacturerId();
 
 
     /**
@@ -53,13 +53,13 @@ public @ContextService interface ZwaveDevice {
      */
     static final @State String DEVICE_ID = "zwave.deviceId";
 
-    public int getDeviceId();
+    public Integer getDeviceId();
 
     /**
      * The network node id
      */
     static final @State String DEVICE_TYPE = "zwave.deviceType";
 
-    public int getDeviceType();
+    public Integer getDeviceType();
 
 }

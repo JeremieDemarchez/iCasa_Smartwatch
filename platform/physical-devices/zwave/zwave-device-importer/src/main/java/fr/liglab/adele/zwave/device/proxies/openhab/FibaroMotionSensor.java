@@ -15,9 +15,11 @@
  */
 package fr.liglab.adele.zwave.device.proxies.openhab;
 
+import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 
+import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.apache.felix.ipojo.annotations.Invalidate;
 import org.apache.felix.ipojo.annotations.Requires;
@@ -47,10 +49,11 @@ import org.slf4j.LoggerFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-@ContextEntity(services = {ZwaveDevice.class, MotionSensor.class})
+@ContextEntity(services = {MotionSensor.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+@Behavior(id="ZwaveBehavior",spec = ZwaveDevice.class,implem = ZwaveDeviceBehaviorProvider.class)
 
-public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEventListener, GenericDevice  {
+public class FibaroMotionSensor implements MotionSensor, ZWaveEventListener, GenericDevice  {
 
     /**
      * iPOJO Require
@@ -66,57 +69,15 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEvent
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
-    private List<Integer> neighbors;
-
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
-    private Integer zwaveHomeId;
-
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
-    private Integer zwaveNodeId;
-
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
-    private Integer deviceType;
-
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
-    private Integer manufacturerId;
-
-    @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
-    private Integer deviceId;
+    /**
+     * Injected Behavior
+     */
+    @InjectedBehavior(id="ZwaveBehavior")
+    ZwaveDevice device;
 
     /**
      * Services
      */
-    @Override
-    public List<Integer> getNeighbors() {
-        return neighbors;
-    }
-
-    @Override
-    public int getNodeId() {
-    	return zwaveNodeId;
-    }
-
-    @Override
-    public int getHomeId() {
-    	return zwaveHomeId;
-    }
-
-    @Override
-    public int getManufacturerId() {
-        return manufacturerId;
-    }
-
-    @Override
-    public int getDeviceId() {
-        return deviceId;
-    }
-
-    @Override
-    public int getDeviceType() {
-        return deviceType;
-    }
-
     @Override
     public String getSerialNumber() {
         return serialNumber;
@@ -140,7 +101,7 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEvent
     @Override
     public void ZWaveIncomingEvent(ZWaveEvent event) {
 
-        if (event.getNodeId() == zwaveNodeId ) {
+        if (event.getNodeId() == device.getNodeId() ) {
 
             if (event instanceof ZWaveAlarmSensorValueEvent) {
 
@@ -203,32 +164,6 @@ public class FibaroMotionSensor implements MotionSensor, ZwaveDevice, ZWaveEvent
 
         }
 
-    }
-
-    /**
-     * Neighbors Synchro
-     */
-    @ContextEntity.Relation.Field(value = "isZwaveNeighbor",owner = ZwaveDevice.class)
-    @Requires(id="zwavesNeighbors",specification=ZwaveDevice.class,optional=true)
-    private List<ZwaveDevice> zwaveDevices;
-
-    @Bind(id = "zwavesNeighbors")
-    public void bindZDevice(ZwaveDevice device){
-        pushNeighbors();
-    }
-
-    @Unbind(id= "zwavesNeighbors")
-    public void unbindZDevice(ZwaveDevice device){
-        pushNeighbors();
-    }
-
-    @ContextEntity.State.Push(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
-    public List<Integer> pushNeighbors() {
-        List<Integer> neighbors = new ArrayList<>();
-        for (ZwaveDevice device : zwaveDevices){
-            neighbors.add(device.getNodeId());
-        }
-        return neighbors;
     }
 
 }
