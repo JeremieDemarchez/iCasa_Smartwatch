@@ -100,8 +100,8 @@ public class ZigbeeImporter extends AbstractImporterComponent {
 
 
                 Hashtable properties = new Hashtable();
-                properties.put(ContextEntity.State.ID(ZigbeeDevice.class,ZigbeeDevice.MODULE_ADRESS), moduleAddress);
-                properties.put(ContextEntity.State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER), serialNumber);
+                properties.put(ContextEntity.State.id(ZigbeeDevice.class,ZigbeeDevice.MODULE_ADRESS), moduleAddress);
+                properties.put(ContextEntity.State.id(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER), serialNumber);
 
                 Creator.Entity creator = getCreator(deviceType);
                 if (creator != null){

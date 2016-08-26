@@ -111,8 +111,8 @@ public class ControllerImporter extends AbstractImporterComponent  {
 		LOG.info("Importing declaration for zwave device '{}' at port {}",declaration.getId(),declaration.getPort());
 
 		Map<String,Object> properties= new HashMap<>();
-		properties.put(ContextEntity.State.ID(ZwaveController.class,ZwaveController.SERIAL_PORT),declaration.getPort());
-		properties.put(ContextEntity.State.ID(ZwaveDevice.class,ZwaveDevice.NEIGHBORS),new ArrayList<>());
+		properties.put(ContextEntity.State.id(ZwaveController.class,ZwaveController.SERIAL_PORT),declaration.getPort());
+		properties.put(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.NEIGHBORS),new ArrayList<>());
 
 		contextCreator.create(declaration.getId(),properties);
 		handleImportDeclaration(importDeclaration);

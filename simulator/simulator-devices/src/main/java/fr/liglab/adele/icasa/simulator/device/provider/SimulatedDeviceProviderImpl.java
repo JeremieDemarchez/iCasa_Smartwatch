@@ -112,7 +112,7 @@ public class SimulatedDeviceProviderImpl implements SimulatedDeviceProvider{
             return;
         }
 
-        entityParam.put(ContextEntity.State.ID(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),deviceId);
+        entityParam.put(ContextEntity.State.id(GenericDevice.class,GenericDevice.DEVICE_SERIAL_NUMBER),deviceId);
         creator.create(deviceId,entityParam);
     }
 

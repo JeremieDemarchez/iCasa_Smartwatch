@@ -40,13 +40,13 @@ public class ZoneProviderImpl implements ZoneProvider {
 	@Override
 	public void createZone(String id, int leftX, int topY, int bottomZ, int width, int height, int depth) {
 		Map propertiesInit = new HashMap<>();
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.NAME),id);
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.X),leftX);
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Y),topY);
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Z),bottomZ);
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.X_LENGHT),width);
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Y_LENGHT),height);
-		propertiesInit.put(ContextEntity.State.ID(Zone.class,Zone.Z_LENGHT),depth);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.NAME),id);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.X),leftX);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.Y),topY);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.Z),bottomZ);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.X_LENGHT),width);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.Y_LENGHT),height);
+		propertiesInit.put(ContextEntity.State.id(Zone.class,Zone.Z_LENGHT),depth);
 		creator.create(id,propertiesInit);
 	}
 

@@ -40,8 +40,8 @@ public class PersonProviderImpl implements PersonProvider {
     @Override
     public void createPerson(String personName, String personType) {
         Map<String, Object> properties = new HashMap<>();
-        properties.put(State.ID(Person.class,Person.NAME), personName);
-        properties.put(State.ID(Person.class,Person.TYPE), PersonType.getPersonType(personType));
+        properties.put(State.id(Person.class,Person.NAME), personName);
+        properties.put(State.id(Person.class,Person.TYPE), PersonType.getPersonType(personType));
 
         personCreator.create(personName, properties);
     }
