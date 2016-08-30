@@ -85,7 +85,7 @@ public class OrangeRemoteController extends DefaultController {
     /**
      * Lifecycle
      */
-
+    @Invalidate
     public void invalidate(){
         for (Map.Entry<String,ManagedFutureTask> entry : managedFutureTaskMap.entrySet()){
             entry.getValue().cancel(true);
