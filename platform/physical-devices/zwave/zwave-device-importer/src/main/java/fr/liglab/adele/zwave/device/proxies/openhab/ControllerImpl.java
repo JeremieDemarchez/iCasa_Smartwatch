@@ -282,27 +282,27 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
     }
 
     @Override
-    public Integer getHomeId() {
+    public int getHomeId() {
         return zwaveHomeId;
     }
 
     @Override
-    public Integer getNodeId() {
+    public int getNodeId() {
         return zwaveNodeId;
     }
 
     @Override
-    public Integer getManufacturerId() {
+    public int getManufacturerId() {
         return manufacturerId;
     }
 
     @Override
-    public Integer getDeviceId() {
+    public int getDeviceId() {
         return deviceId;
     }
 
     @Override
-    public Integer getDeviceType() {
+    public int getDeviceType() {
         return deviceType;
     }
 
@@ -609,7 +609,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
                 
                 for (Integer neighbor : neighbors){
 
-                    ZWaveNode neighborNode 				= controller.getNode(neighbor);
+                    ZWaveNode neighborNode 	= controller.getNode(neighbor);
                     if (( neighborNode == null ) || !isManaged(node)){
                         continue;
                     }

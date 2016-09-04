@@ -22,12 +22,6 @@ import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 
 import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;
-import org.apache.felix.ipojo.annotations.Bind;
-import org.apache.felix.ipojo.annotations.Requires;
-import org.apache.felix.ipojo.annotations.Unbind;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @ContextEntity(services = {})
 @Behavior(id="ZwaveBehavior",spec = ZwaveDevice.class,implem = ZwaveDeviceBehaviorProvider.class)

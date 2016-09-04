@@ -29,19 +29,19 @@ import java.util.List;
 public class ZwaveDeviceBehaviorProvider implements ZwaveDevice{
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.HOME_ID)
-    private Integer zwaveHomeId;
+    private int zwaveHomeId;
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
-    private Integer zwaveNodeId;
+    private int zwaveNodeId;
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
-    private Integer manufacturerId;
+    private int manufacturerId;
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
-    private Integer deviceType;
+    private int deviceType;
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
-    private Integer deviceId;
+    private int deviceId;
 
     @ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.NEIGHBORS)
     private List<Integer> neighbors;
@@ -71,27 +71,27 @@ public class ZwaveDeviceBehaviorProvider implements ZwaveDevice{
 
 
     @Override
-    public Integer getHomeId() {
+    public int getHomeId() {
         return zwaveHomeId;
     }
 
     @Override
-    public Integer getNodeId() {
+    public int getNodeId() {
         return zwaveNodeId;
     }
 
     @Override
-    public Integer getManufacturerId() {
+    public int getManufacturerId() {
         return manufacturerId;
     }
 
     @Override
-    public Integer getDeviceType() {
+    public int getDeviceType() {
         return deviceType;
     }
 
     @Override
-    public Integer getDeviceId() {
+    public int getDeviceId() {
         return deviceId;
     }
 

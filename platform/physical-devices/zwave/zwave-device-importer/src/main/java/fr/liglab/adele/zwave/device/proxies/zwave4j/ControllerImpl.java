@@ -17,27 +17,34 @@ package fr.liglab.adele.zwave.device.proxies.zwave4j;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
 import org.apache.felix.ipojo.annotations.Bind;
+import org.apache.felix.ipojo.annotations.Controller;
 import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Property;
 import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;
 import org.apache.felix.ipojo.annotations.Validate;
-
 import org.osgi.framework.BundleContext;
-
 import org.ow2.chameleon.fuchsia.core.component.AbstractDiscoveryComponent;
 import org.ow2.chameleon.fuchsia.core.component.DiscoveryIntrospection;
 import org.ow2.chameleon.fuchsia.core.component.DiscoveryService;
-
+import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclaration;
+import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclarationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.zwave4j.ControllerCallback;
 import org.zwave4j.ControllerCommand;
 import org.zwave4j.ControllerError;
@@ -49,11 +56,12 @@ import org.zwave4j.NotificationWatcher;
 import org.zwave4j.Options;
 import org.zwave4j.ZWave4j;
 
-
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.provider.Creator;
+import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
+import fr.liglab.adele.zwave.device.importer.DeviceDeclaration;
 
 
 @ContextEntity(services = { ZwaveController.class, ZwaveDevice.class})
@@ -69,20 +77,27 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 	private Manager manager;
 
 	/**
+	 * Whether the manager's serial port driver was properly initialized
+	 */
+	@Controller
+	private boolean driverOk = true;
+	
+	/**
 	 * The configured serial port
 	 */
 	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.SERIAL_PORT, directAccess = true)
 	private String serialPort;
 
-
+	@Property(name=fr.liglab.adele.cream.model.ContextEntity.CONTEXT_ENTITY_ID)
+	private String contextId;
 	/**
 	 * The network identifier of the controller
 	 */
 	@ContextEntity.State.Field(service = ZwaveDevice.class, state = ZwaveDevice.HOME_ID, directAccess=true)
-	private Integer zwaveHomeId;
+	private int zwaveHomeId;
 
 	@ContextEntity.State.Field(service = ZwaveDevice.class, state = ZwaveDevice.NODE_ID)
-	private Integer zwaveNodeId;
+	private short zwaveNodeId;
 	
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.NODE_ID)
     Supplier<Short> pullNodeId = () -> {
@@ -94,8 +109,8 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.MANUFACTURER_ID)
 	Supplier<Integer> pullManufactererId = () -> {
-		String value = zwaveHomeId != -1 ? manager.getNodeManufacturerId(zwaveHomeId,zwaveNodeId.shortValue()) : null;
-		return value != null ? Integer.parseInt(value,16) : -1;
+		String value = zwaveHomeId != -1 ? manager.getNodeManufacturerId(zwaveHomeId,zwaveNodeId) : null;
+		return value != null ? hex(value) : -1;
 	};
 	
 	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
@@ -103,8 +118,8 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_TYPE)
 	Supplier<Integer> pullDeviceType = () -> {
-		String value = zwaveHomeId != -1 ? manager.getNodeProductType(zwaveHomeId,zwaveNodeId.shortValue()) : null;
-		return value != null ? Integer.parseInt(value,16) : -1;
+		String value = zwaveHomeId != -1 ? manager.getNodeProductType(zwaveHomeId,zwaveNodeId) : null;
+		return value != null ? hex(value) : -1;
 	};
 	
 	@ContextEntity.State.Field(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
@@ -112,8 +127,8 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 	
     @ContextEntity.State.Pull(service = ZwaveDevice.class,state = ZwaveDevice.DEVICE_ID)
 	Supplier<Integer> pullDeviceId =  () -> {
-		String value = zwaveHomeId != -1 ? manager.getNodeProductId(zwaveHomeId,zwaveNodeId.shortValue()) : null;
-		return value != null ? Integer.parseInt(value,16) : -1;
+		String value = zwaveHomeId != -1 ? manager.getNodeProductId(zwaveHomeId,zwaveNodeId) : null;
+		return value != null ? hex(value) : -1;
 	};
 	
 
@@ -196,8 +211,24 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 		configDirectory		= optional(bundleContext.getProperty("zwave4j.config.directory"),new File("conf","zwave4j"),File::new);
 		
         LOG.debug("Zwave zwave4j : config directory = "+configDirectory+ " options = "+optionsValue);
+		
+        ClassLoader ccl = Thread.currentThread().getContextClassLoader();
+        try {
+            Thread.currentThread().setContextClassLoader(ZWave4j.class.getClassLoader());
+    		NativeLibraryLoader.loadLibrary(ZWave4j.LIBRARY_NAME, ZWave4j.class);
 
-	}
+    		Options options = Options.create(configDirectory.getPath(),configDirectory.getPath(), optionsValue);
+    		options.addOptionBool("Logging", false);
+    		options.addOptionBool("ConsoleOutput", false);
+    		options.lock();
+        	
+        }
+        finally {
+            Thread.currentThread().setContextClassLoader(ccl);
+        }
+		
+
+ 	}
 
 	private static final <T> T optional(T value, T defaultValue) {
 		return value != null ? value : defaultValue;
@@ -230,63 +261,141 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 	}
 
 	@Override
-	public Integer getHomeId() {
+	public int getHomeId() {
 		return (int) zwaveHomeId;
 	}
 
 	@Override
-	public Integer getNodeId() {
+	public int getNodeId() {
 		return zwaveNodeId;
 	}
 
 	@Override
-	public Integer getManufacturerId() {
+	public int getManufacturerId() {
 		return manufacturerId;
 	}
 
 	@Override
-	public Integer getDeviceId() {
+	public int getDeviceId() {
 		return deviceId;
 	}
 
 	@Override
-	public Integer getDeviceType() {
+	public int getDeviceType() {
 		return deviceType;
 	}
-
+	
+	private ManagerThread launcher;
+	
 	/**
 	 * LifeCycle
 	 */
 	@Validate
 	protected synchronized void start() {
-		
-        Thread.currentThread().setContextClassLoader(ZWave4j.class.getClassLoader());
-        NativeLibraryLoader.loadLibrary(ZWave4j.LIBRARY_NAME, ZWave4j.class);
-
-        Options options = Options.create(configDirectory.getPath(),configDirectory.getPath(),optionsValue);
-        options.addOptionBool("Logging", false);
-        options.addOptionBool("ConsoleOutput", false);
-        options.lock();
 
         zwaveHomeId = -1;
-        
-        manager = Manager.create();
-        manager.addWatcher(this, this);
-        manager.addDriver(serialPort);
 
-        changeModeNotification(ZwaveController.Mode.NORMAL);
+        launcher	= new ManagerThread(serialPort,this);
+        launcher.start();
         
+        manager		= launcher.getManager();
+        
+        changeModeNotification(ZwaveController.Mode.NORMAL);
 		super.start();
 	}
 
 	@Invalidate
 	protected synchronized void stop() {
 		super.stop();
+
+		launcher.invalidate();
+		manager = null;
 		
-		manager.removeWatcher(this, this);
-        manager.removeDriver(serialPort);
-        Manager.destroy();
-        Options.destroy();		
+	}
+	
+	private static class ManagerThread extends Thread {
+		
+		private Manager 					manager;
+		private CountDownLatch 				initialization;
+		private CountDownLatch 				termination;
+		
+		private final String 				serialPort;
+		private final NotificationWatcher 	watcher;
+		
+		public ManagerThread(String serialPort,NotificationWatcher watcher) {
+			
+			super("Zwave4jManagerThread");
+			
+			this.manager 			= null;
+			this.initialization		= new CountDownLatch(1);
+			this.termination		= new CountDownLatch(1);
+			
+			this.serialPort			= serialPort;
+			this.watcher			= watcher;
+			
+			this.setContextClassLoader(ZWave4j.class.getClassLoader());
+		}
+		
+		public Manager getManager() {
+			try {
+				initialization.await();
+				return manager;
+			} catch (InterruptedException e) {
+				return null;
+			}
+			
+		}
+		
+		public void invalidate() {
+			termination.countDown();
+		}
+		
+		@Override
+		public void run() {
+
+			/*
+			 * Initialize manager
+			 */
+
+			manager = Manager.create();
+	        
+	        /*
+	         * signal initialization
+	         */
+	        initialization.countDown();
+	        
+	        /*
+	         * Try to access network
+	         */
+	        manager.addWatcher(watcher,null);
+	        manager.addDriver(serialPort);
+
+	        /*
+	         * Wait for termination order
+	         */
+	        
+	        try {
+				termination.await();
+				
+				/*
+				 * remove listeners
+				 */
+				manager.removeWatcher(watcher, null);
+		        manager.removeDriver(serialPort);
+		        
+		        manager	= null;
+		        
+		        /*
+		         * dispose managers
+		         */
+		        Manager.destroy();
+
+	        } catch (InterruptedException e) {
+			}
+	        
+		}
+		
+		
 	}
 
 	@Override
@@ -380,6 +489,28 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 		}
 	}
 
+    private Map<NodeReference,Zwave4jDevice> proxies = new ConcurrentHashMap<>();
+
+    @Bind(id="Zwave4jProxies", proxy=false, optional=true, aggregate = true)
+    private void addProxy(Zwave4jDevice proxy, Map<String, Object> properties) {
+    	
+    	int homeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.HOME_ID));
+    	int nodeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.NODE_ID));
+    	
+    	proxy.initialize(manager);
+    	proxies.put(new NodeReference(homeId,(short)nodeId), proxy);
+    }
+    
+    @Unbind(id="Zwave4jProxies",proxy=false, optional=true, aggregate = true)
+    private void removeProxy(Zwave4jDevice proxy, Map<String, Object> properties) {
+
+    	int homeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.HOME_ID));
+    	int nodeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.NODE_ID));
+    	
+    	proxies.remove(new NodeReference(homeId, (short)nodeId));
+    	
+    }
+    
 	/**
 	 * Handle notifications from the controller to perform device discovery and initialization
 	 */
@@ -394,6 +525,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 			break;
 		case DRIVER_FAILED:
 			LOG.error("Driver failed");
+			driverOk = false;
 			break;
 		case DRIVER_RESET:
 			LOG.error("Driver reset");
@@ -413,29 +545,158 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 		case NODE_ADDED:
 			LOG.debug("Node added node id: "+notification.getNodeId());
 			break;
+		case NODE_NAMING:
+			LOG.debug("Node named node id: "+notification.getNodeId());
+			createDeclaration((int)notification.getHomeId(),notification.getNodeId());
+			break;
+
 		case ESSENTIAL_NODE_QUERIES_COMPLETE:
 			LOG.debug("Node essential queries completed node id: "+notification.getNodeId());
 			break;
 		case NODE_QUERIES_COMPLETE:
 			LOG.debug("Node complete queries completed node id: "+notification.getNodeId());
 			manager.writeConfig(zwaveHomeId);
+			updateNodeNeighbors((int)notification.getHomeId(),notification.getNodeId());
 			break;
 
 		case NODE_REMOVED:
 			LOG.debug("Node removed node id: "+notification.getNodeId());
 			manager.writeConfig(zwaveHomeId);
+			removeDeclaration((int)notification.getHomeId(),notification.getNodeId());
+			removeNodeNeighbors((int)notification.getHomeId(),notification.getNodeId());
 			break;
 		
 		
 		case NOTIFICATION:
+		case VALUE_CHANGED:
 			LOG.debug("Event "+notification.getType().name()+ " node id "+notification.getNodeId()+ " "+notification.getByte());
+			
+			Zwave4jDevice proxy = proxies.get(new NodeReference((int)notification.getHomeId(),notification.getNodeId()));
+			if (proxy != null) {
+				proxy.notification(manager,notification);
+			}
 			break;
-		
+			
 		default:
 			LOG.debug("Event "+notification.getType().name()+ " node id "+notification.getNodeId());
 			break;
 		}
 	}
 
+	
+    private Map<NodeReference,ImportDeclaration> declarations = new ConcurrentHashMap<>();
+    
+    private final void createDeclaration(int homeId, short nodeId) {
+
+        ImportDeclaration declaration = ImportDeclarationBuilder.empty()
+                .key(DeviceDeclaration.HOME_ID).value(homeId)
+                .key(DeviceDeclaration.NODE_ID).value((int)nodeId)
+                .key(DeviceDeclaration.DEVICE_MANUFACTURER).value(hex(manager.getNodeManufacturerId(homeId,nodeId)))
+                .key(DeviceDeclaration.DEVICE_TYPE).value(hex(manager.getNodeProductType(homeId,nodeId)))
+                .key(DeviceDeclaration.DEVICE_ID).value(hex(manager.getNodeProductId(homeId,nodeId)))
+                .key("scope").value("generic")
+                .key("library").value("zwave4j")
+                .build();
+        
+        declarations.put(new NodeReference(homeId,nodeId),declaration);
+        registerImportDeclaration(declaration);
+    }
+
+    private final void removeDeclaration(int homeId, short nodeId) {
+    	ImportDeclaration declaration = declarations.remove(new NodeReference(homeId,nodeId));
+    	if (declaration != null) {
+        	unregisterImportDeclaration(declaration);
+    	}
+    }
+
+    private final void updateNodeNeighbors(int homeId, short nodeId) {
+    	
+    	String nodeContextId = nodeId == zwaveNodeId ? contextId : "ZwaveDevice#"+nodeId;
+    	
+    	/*
+    	 * Calculate the contextIds for the current list of neighbors
+    	 */
+    	Set<String> currentNeighborContextIds	= new HashSet<>();
+        List<Relation> relations				= neighborsRelationCreator.getInstancesRelatedTo(nodeContextId);
+        
+        for(Relation relation:relations) {
+        	currentNeighborContextIds.add(relation.getTarget());
+        }
+        
+    	/*
+    	 * Calculate the  contextIds for the updated new list of neighbors
+    	 */
+    	Set<String> updatedNeighborContextIds		= new HashSet<>();
+    	AtomicReference<short[]> neighborNodeIds	= new AtomicReference<>();
+    	
+    	manager.getNodeNeighbors(homeId, nodeId, neighborNodeIds);
+    	
+    	for (int i = 0; i < neighborNodeIds.get().length; i++) {
+			
+    		short neighborNodeId 		= neighborNodeIds.get()[i];
+	    	String neighborContextId 	= neighborNodeId == zwaveNodeId ? contextId : "ZwaveDevice#"+neighborNodeId;
+			
+	    	updatedNeighborContextIds.add(neighborContextId);
+		}
+    	
+    	/*
+    	 * add new neighbors
+    	 */
+    	for (String neighborContextId : updatedNeighborContextIds) {
+			if (! currentNeighborContextIds.contains(neighborContextId)) {
+	            neighborsRelationCreator.create(nodeContextId,neighborContextId);
+			}
+		}
+
+    	/*
+    	 * remove nodes that are no longer neighbors
+    	 */
+    	for (String neighborContextId : currentNeighborContextIds) {
+			if (! updatedNeighborContextIds.contains(neighborContextId)) {
+	            neighborsRelationCreator.delete(nodeContextId,neighborContextId);
+			}
+		}
+    }
+    
+    private final void removeNodeNeighbors(int homeId, short nodeId) {
+    	
+    	String removedContextId 	= nodeId == zwaveNodeId ? contextId : "ZwaveDevice#"+nodeId;
+        List<Relation> relations	= neighborsRelationCreator.getInstancesRelatedTo(removedContextId);
+        
+        for(Relation relation:relations) {
+            neighborsRelationCreator.delete(relation.getSource(),relation.getTarget());
+            neighborsRelationCreator.delete(relation.getTarget(),relation.getSource());
+        }
+    }
+    
+    private static class NodeReference {
+    	public final int 	homeId;
+    	public final short 	nodeId;
+    	
+    	public NodeReference(int homeId, short nodeId) {
+    		this.homeId = homeId;
+    		this.nodeId	= nodeId;
+    	}
+    	
+    	@Override
+    	public int hashCode() {
+    		return Objects.hash(homeId,nodeId);
+    	}
+    	
+    	@Override
+    	public boolean equals(Object object) {
+    		
+    		if (object instanceof NodeReference) {
+    			NodeReference that = (NodeReference) object;
+    			return this.nodeId == that.nodeId && this.homeId == that.homeId;
+    		}
+    		
+    		return false;
+    	}
+    }
+
+	private final static int hex(String value) {
+		return Integer.parseInt(value,16);
+	}
 
 }

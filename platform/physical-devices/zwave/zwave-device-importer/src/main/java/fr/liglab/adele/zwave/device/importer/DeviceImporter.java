@@ -163,7 +163,9 @@ public class DeviceImporter extends AbstractImporterComponent  {
 	
 	private final Map<SupportedDeviceType, Creator.Entity<?>> zwave4jCreators;
 
-	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroMotionSensor> 		zwave4jMotionSensorCreator;
+	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroDoorWindowSensor>	zwave4jDoorWindowSensorCreator;
+
+	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroWallPlug> 			zwave4jWallPlugCreator;
 			
 	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
 	private String name;
@@ -182,7 +184,8 @@ public class DeviceImporter extends AbstractImporterComponent  {
 		
 		zwave4jCreators = new HashMap<>();
 
-		zwave4jCreators.put(SupportedDeviceType.FibaroGFMS001,zwave4jMotionSensorCreator);
+		zwave4jCreators.put(SupportedDeviceType.FibaroFGK101,zwave4jDoorWindowSensorCreator);
+		zwave4jCreators.put(SupportedDeviceType.FibaroFGWPE101,zwave4jWallPlugCreator);
 		
 	}
 
