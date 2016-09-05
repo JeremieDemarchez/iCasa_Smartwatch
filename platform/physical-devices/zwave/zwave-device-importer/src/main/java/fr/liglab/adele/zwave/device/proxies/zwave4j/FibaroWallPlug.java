@@ -20,6 +20,8 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 
 import org.apache.felix.ipojo.annotations.ServiceController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zwave4j.Manager;
 import org.zwave4j.Notification;
 import org.zwave4j.ValueId;
@@ -41,6 +43,9 @@ import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;
 
 public class FibaroWallPlug extends AbstractZwave4jDevice implements  GenericDevice, Zwave4jDevice, SmartPlug  {
 
+	private static final Logger LOG = LoggerFactory.getLogger(FibaroWallPlug.class);
+
+
     /**
      * Injected Behavior
      */
@@ -53,15 +58,6 @@ public class FibaroWallPlug extends AbstractZwave4jDevice implements  GenericDev
 	@ServiceController(value=true, specification=SmartPlug.class)
 	private boolean active;
 
-	@Override
-	protected int getHomeId() {
-		return device.getHomeId();
-	}
-	
-	@Override
-	protected int getNodeId() {
-		return device.getNodeId();
-	}
 	
 	@Override
 	public void initialize(Manager manager) {
@@ -77,12 +73,40 @@ public class FibaroWallPlug extends AbstractZwave4jDevice implements  GenericDev
 	protected void nodeStatusChanged(Manager manager, short status) {
 		active = isActive(manager);
 	}
-	
+
 	@Override
 	protected void valueChanged(Manager manager, ValueId valueId) {
+		ZWaveCommandClass command = ZWaveCommandClass.valueOf(valueId.getCommandClassId());
+		LOG.debug("Value changed = "+command+" instance "+valueId.getInstance()+" index "+valueId.getIndex()+" type "+valueId.getType());
+		
+		switch (command) {
+		case SWITCH_BINARY:
+			statusChange((Boolean)getValue(manager,valueId));
+			break;
+		case SENSOR_MULTILEVEL:
+			consumptionChange((Float)getValue(manager,valueId));
+			break;
+		case POWERLEVEL:
+			break;
+		case METER:
+			break;
+		default:
+			break;
+		}
+		
 	}
 	
-    /**
+	protected final boolean isActive(Manager manager) {
+
+		boolean listening = manager.isNodeListeningDevice(device.getHomeId(),(short) device.getNodeId());
+		boolean awake = manager.isNodeAwake(device.getHomeId(),(short) device.getNodeId());
+		boolean failed = manager.isNodeFailed(device.getHomeId(),(short) device.getNodeId());
+
+		return (listening && !failed) || (!listening && awake);
+	}
+
+	
+	/**
      * STATES
      */
     @ContextEntity.State.Field(service = SmartPlug.class,state = SmartPlug.SMART_PLUG_STATUS,value = "false")

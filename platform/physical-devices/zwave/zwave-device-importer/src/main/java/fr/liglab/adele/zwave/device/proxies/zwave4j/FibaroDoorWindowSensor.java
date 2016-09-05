@@ -20,13 +20,14 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 
 import org.apache.felix.ipojo.annotations.ServiceController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.zwave4j.Manager;
 import org.zwave4j.Notification;
 import org.zwave4j.ValueId;
 
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
-import fr.liglab.adele.icasa.device.power.SmartPlug;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
 
@@ -42,6 +43,8 @@ import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;
 
 public class FibaroDoorWindowSensor extends AbstractZwave4jDevice implements  GenericDevice, Zwave4jDevice, DoorWindowSensor  {
 
+	private static final Logger LOG = LoggerFactory.getLogger(FibaroWallPlug.class);
+
     /**
      * Injected Behavior
      */
@@ -51,23 +54,15 @@ public class FibaroDoorWindowSensor extends AbstractZwave4jDevice implements  Ge
     /**
      * Device network status
      */
-	@ServiceController(value=true, specification=SmartPlug.class)
+	@ServiceController(value=true, specification=DoorWindowSensor.class)
 	private boolean active;
 
-	@Override
-	protected int getHomeId() {
-		return device.getHomeId();
-	}
-	
-	@Override
-	protected int getNodeId() {
-		return device.getNodeId();
-	}
 	
 	@Override
 	public void initialize(Manager manager) {
 		active = isActive(manager);
 	}
+
 	
 	@Override
 	public void notification(Manager manager, Notification notification) {
@@ -78,11 +73,34 @@ public class FibaroDoorWindowSensor extends AbstractZwave4jDevice implements  Ge
 	protected void nodeStatusChanged(Manager manager, short status) {
 		active = isActive(manager);
 	}
-	
+
 	@Override
 	protected void valueChanged(Manager manager, ValueId valueId) {
+		
+		ZWaveCommandClass command = ZWaveCommandClass.valueOf(valueId.getCommandClassId());
+		LOG.debug("Value changed = "+command+" instance "+valueId.getInstance()+" index "+valueId.getIndex()+" type "+valueId.getType());
+		
+		switch (command) {
+		case SENSOR_BINARY:
+			openingDetectionChanged((Boolean)getValue(manager,valueId));
+			break;
+		case BATTERY:
+			break;
+		default:
+			break;
+		}
 	}
-	    
+	
+	protected final boolean isActive(Manager manager) {
+
+		boolean listening = manager.isNodeListeningDevice(device.getHomeId(),(short) device.getNodeId());
+		boolean awake = manager.isNodeAwake(device.getHomeId(),(short) device.getNodeId());
+		boolean failed = manager.isNodeFailed(device.getHomeId(),(short) device.getNodeId());
+
+		return (listening && !failed) || (!listening && awake);
+	}
+
+	
     @ContextEntity.State.Field(service = DoorWindowSensor.class,state = DoorWindowSensor.DOOR_WINDOW_SENSOR_OPENING_DETECTCION,value = "false")
     private boolean status;
 
