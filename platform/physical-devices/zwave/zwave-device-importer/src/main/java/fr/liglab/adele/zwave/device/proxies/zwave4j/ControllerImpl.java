@@ -181,6 +181,11 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 	 * The current operation mode
 	 */
 
+	private ZwaveController.Mode currentMode;
+	
+	/**
+	 * State variable to track or request change of mode
+	 */
 	@ContextEntity.State.Field(service = ZwaveController.class, state = ZwaveController.MODE)
 	private ZwaveController.Mode mode;
 
@@ -300,7 +305,8 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
         
         manager		= launcher.getManager();
         
-        changeModeNotification(ZwaveController.Mode.NORMAL);
+        currentMode = changeModeNotification(ZwaveController.Mode.NORMAL);
+                
 		super.start();
 	}
 
@@ -408,22 +414,24 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 	 * progress of the operation.
 	 * 
 	 */
+	
+
     private void requestChangeMode(ZwaveController.Mode requestedMode) {
     	
-        LOG.debug("Zwave mode change requested"+requestedMode);
+        LOG.debug("Zwave mode change requested "+requestedMode);
 
-		switch (mode) {
+		switch (currentMode) {
 
 			case NORMAL:
 				switch (requestedMode) {
 					case EXCLUSION:
-						changeModeNotification(requestedMode);
-						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.REMOVE_DEVICE,this);
+						currentMode = changeModeNotification(requestedMode);
+						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.REMOVE_DEVICE, this, true);
 						break;
 	
 					case INCLUSION:
-						changeModeNotification(requestedMode);
-						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.ADD_DEVICE, this);
+						currentMode = changeModeNotification(requestedMode);
+						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.ADD_DEVICE, this, true);
 						break;
 	
 					case NORMAL:
@@ -435,7 +443,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 			case INCLUSION:
 				switch (requestedMode) {
 					case NORMAL:
-						changeModeNotification(requestedMode);
+						currentMode = changeModeNotification(requestedMode);
 						manager.cancelControllerCommand(zwaveHomeId);
 						break;
 					default:
@@ -447,7 +455,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 			case EXCLUSION:
 				switch (requestedMode) {
 					case NORMAL:
-						changeModeNotification(requestedMode);
+						currentMode = changeModeNotification(requestedMode);
 						manager.cancelControllerCommand(zwaveHomeId);
 						break;
 					default:
@@ -464,22 +472,23 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
      * Inclusion/Exclusion is automatically left when a device is added/removed, or otherwise 
      * a failure is reported by the controller.
      * 
-     * Notice however that in Inclusion/Exclusion mode while the controller is waiting for some
-     * user action messages from the network are not processed, so some form of timeout has to
+     * Notice however that report messages from the network are not processed in Inclusion/Exclusion
+     * mode (while the controller is waiting for some user action) , so some form of timeout has to
      * be handled outside this controller.
      * 
      */
 	
 	@Override
 	public void onCallback(ControllerState state, ControllerError err, Object context) {
-		switch (mode) {
+		switch (currentMode) {
 			case INCLUSION:
 			case EXCLUSION:
 				switch (state) {
 					case COMPLETED:
 					case FAILED:
 					case CANCEL:
-						changeMode(Mode.NORMAL); 
+						currentMode = changeModeNotification(ZwaveController.Mode.NORMAL); 
+						break;
 					default:
 						break;
 				}
