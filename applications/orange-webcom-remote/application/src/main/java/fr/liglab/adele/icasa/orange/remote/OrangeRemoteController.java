@@ -74,11 +74,26 @@ public class OrangeRemoteController extends DefaultController {
 
     @Bind(id="zwaveDevices")
     public void bindZwaveDevices(ZwaveDevice device){
+
+        for (Map.Entry<String,ManagedFutureTask> entry : managedFutureTaskMap.entrySet()){
+            ManagedFutureTask task = entry.getValue();
+            if (task != null){
+                task.cancel(true);
+            }
+        }
+        managedFutureTaskMap.clear();
         webSocketPublisher.publish(websocketURI,buildDiscoveryZwaveEvent(device,ZwaveEvent.DEVICE_ADDED));
     }
 
     @Unbind(id="zwaveDevices")
     public void unbindZwaveDevices(ZwaveDevice device){
+        for (Map.Entry<String,ManagedFutureTask> entry : managedFutureTaskMap.entrySet()){
+            ManagedFutureTask task = entry.getValue();
+            if (task != null){
+                task.cancel(true);
+            }
+        }
+        managedFutureTaskMap.clear();
         webSocketPublisher.publish(websocketURI,buildDiscoveryZwaveEvent(device,ZwaveEvent.DEVICE_REMOVED));
     }
 
