@@ -84,7 +84,7 @@ public abstract class AbstractZwaveTestStrategy implements ZwaveTestStrategy{
         synchronized (lock) {
             if (ZwaveTestResult.RUNNING.equals(testResultMap.get(nodeId))){
                 testResultMap.put(nodeId, testResult);
-                BiConsumer<String,TestReport> toCall = testResultCallback.get(nodeId);
+                BiConsumer<String,TestReport> toCall = testResultCallback.remove(nodeId);
                 if (toCall != null){
                     toCall.accept(nodeId,new TestReport(testMessage,testResult));
                 }

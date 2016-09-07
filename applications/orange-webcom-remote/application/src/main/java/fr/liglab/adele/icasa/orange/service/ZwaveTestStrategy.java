@@ -9,6 +9,8 @@ import java.util.function.Consumer;
  */
 public interface ZwaveTestStrategy {
 
+    String getStrategyName();
+
     List<String> getTestTargets();
 
     void beginTest(String nodeId, BiConsumer<String,TestReport> callback,boolean interrupt) throws TestRunningException;

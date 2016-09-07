@@ -1,6 +1,7 @@
 package fr.liglab.adele.icasa.orange.impl;
 
-import fr.liglab.adele.cream.event.handler.annotation.ContextUpdate;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextUpdate;
 import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
 import fr.liglab.adele.icasa.orange.service.TestReport;
 import fr.liglab.adele.icasa.orange.service.TestRunningException;
@@ -25,15 +26,19 @@ import java.util.function.BiConsumer;
 public class DoorTestStrategyImpl extends AbstractZwaveTestStrategy implements ZwaveTestStrategy {
 
     @Requires(specification = DoorWindowSensor.class,proxy = false)
+    @ContextRequirement(spec = ZwaveDevice.class)
     public List<DoorWindowSensor> doorWindowSensors;
 
     @Requires(filter = "(name=" + ManagedScheduledExecutorService.SYSTEM + ")", proxy = false)
     ManagedScheduledExecutorService scheduler;
 
     private final Map<String,ManagedFutureTask> futureTaskMap = new ConcurrentHashMap<>();
+
     @ContextUpdate(specification = DoorWindowSensor.class,stateId = DoorWindowSensor.DOOR_WINDOW_SENSOR_OPENING_DETECTCION)
     public void updateDoorSensor(DoorWindowSensor doorWindowSensor,Object newP,Object old){
+        System.out.println(" test Event detected");
         if (isTestRunning(doorWindowSensor)){
+            System.out.println(" test Event must be annalyzed");
             String id = getZwaveIdFromDoorSensor(doorWindowSensor);
             if (futureTaskMap.get(id) != null){
                 futureTaskMap.remove(id).cancel(true);
@@ -53,25 +58,26 @@ public class DoorTestStrategyImpl extends AbstractZwaveTestStrategy implements Z
 
         futureTaskMap.put(nodeId, scheduler.schedule(()-> finishTest(nodeId,ZwaveTestResult.FAILED,"No event detected during 20 seconds"),20, TimeUnit.SECONDS));
     }
+
+    @Override
+    public String getStrategyName() {
+        return "Zwave DoorSensor Test Strategy";
+    }
+
     @Override
     public List<String> getTestTargets() {
         List<String> returnList = new ArrayList<>();
 
-        if (doorWindowSensors != null){
+        if (doorWindowSensors == null){
             return returnList;
         }
         for (DoorWindowSensor doorWindowSensor : doorWindowSensors){
-            if (doorWindowSensor instanceof ZwaveDevice){
                 returnList.add(String.valueOf( ((ZwaveDevice)doorWindowSensor).getNodeId()));
-            }
         }
         return returnList;
     }
 
     private boolean isTestRunning(DoorWindowSensor doorWindowSensor){
-        if (! (doorWindowSensor instanceof ZwaveDevice)){
-            return false;
-        }
         if (getLastTestResult(getZwaveIdFromDoorSensor(doorWindowSensor) ).equals(ZwaveTestResult.RUNNING) ){
             return true;
         }
