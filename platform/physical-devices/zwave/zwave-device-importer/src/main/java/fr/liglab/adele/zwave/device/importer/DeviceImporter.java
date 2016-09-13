@@ -43,7 +43,26 @@ import java.util.Map;
 public class DeviceImporter extends AbstractImporterComponent  {
 
 	public enum SupportedDeviceType {
-		
+
+		FibaroGSS001 {
+
+			public String getDescription() {
+				return "Fibaro Smoke Sensor";
+			};
+
+			public boolean matches(DeviceDeclaration importDeclaration) {
+
+				int manufactererId 	= importDeclaration.getZwaveManufacturerId();
+				int deviceType 		= importDeclaration.getzwaveDeviceType();
+				int deviceId 		= importDeclaration.getZwaveDeviceId();
+
+				return (manufactererId == 0x10F) &&
+						(deviceType == 0x0C02) &&
+						(deviceId == 0x1002);
+
+			}
+		},
+
 		FibaroGFMS001 {
 			
 			public String getDescription() {
@@ -166,7 +185,11 @@ public class DeviceImporter extends AbstractImporterComponent  {
 	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroDoorWindowSensor>	zwave4jDoorWindowSensorCreator;
 
 	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroWallPlug> 			zwave4jWallPlugCreator;
-			
+
+	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroMotionSensor> 			zwave4jFibaroMotionSensorCreator;
+
+	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroSmokeSensor> 			zwave4jFibaroSmokeSensorCreator;
+
 	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
 	private String name;
 
@@ -186,7 +209,9 @@ public class DeviceImporter extends AbstractImporterComponent  {
 
 		zwave4jCreators.put(SupportedDeviceType.FibaroFGK101,zwave4jDoorWindowSensorCreator);
 		zwave4jCreators.put(SupportedDeviceType.FibaroFGWPE101,zwave4jWallPlugCreator);
-		
+		zwave4jCreators.put(SupportedDeviceType.FibaroGFMS001,zwave4jFibaroMotionSensorCreator);
+		zwave4jCreators.put(SupportedDeviceType.FibaroGSS001,zwave4jFibaroSmokeSensorCreator);
+
 	}
 
 	@Validate

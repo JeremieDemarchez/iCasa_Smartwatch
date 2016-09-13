@@ -585,7 +585,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 				proxy.notification(manager,notification);
 			}
 			break;
-			
+			//TODO : NODE_EVENT case, inspect what it contains
 		default:
 			LOG.debug("Event "+notification.getType().name()+ " node id "+notification.getNodeId());
 			break;
