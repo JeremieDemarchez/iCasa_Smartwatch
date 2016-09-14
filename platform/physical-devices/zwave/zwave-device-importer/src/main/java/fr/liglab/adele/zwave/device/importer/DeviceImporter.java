@@ -44,6 +44,24 @@ public class DeviceImporter extends AbstractImporterComponent  {
 
 	public enum SupportedDeviceType {
 
+		AeonDSD37 {
+
+			public String getDescription() {
+				return "Aeon Repeater Slave";
+			};
+
+			public boolean matches(DeviceDeclaration importDeclaration) {
+
+				int manufactererId 	= importDeclaration.getZwaveManufacturerId();
+				int deviceType 		= importDeclaration.getzwaveDeviceType();
+				int deviceId 		= importDeclaration.getZwaveDeviceId();
+
+				return (manufactererId == 0x0086) &&
+						(deviceType == 0x0004) &&
+						(deviceId == 0x0025);
+
+			}
+		},
 		FibaroGSS001 {
 
 			public String getDescription() {
@@ -190,6 +208,8 @@ public class DeviceImporter extends AbstractImporterComponent  {
 
 	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.FibaroSmokeSensor> 			zwave4jFibaroSmokeSensorCreator;
 
+	@Creator.Field Creator.Entity<fr.liglab.adele.zwave.device.proxies.zwave4j.AeonRepeaterSlave> 			zwave4jAeonRepeaterSlave;
+
 	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
 	private String name;
 
@@ -211,6 +231,8 @@ public class DeviceImporter extends AbstractImporterComponent  {
 		zwave4jCreators.put(SupportedDeviceType.FibaroFGWPE101,zwave4jWallPlugCreator);
 		zwave4jCreators.put(SupportedDeviceType.FibaroGFMS001,zwave4jFibaroMotionSensorCreator);
 		zwave4jCreators.put(SupportedDeviceType.FibaroGSS001,zwave4jFibaroSmokeSensorCreator);
+		zwave4jCreators.put(SupportedDeviceType.AeonDSD37,zwave4jAeonRepeaterSlave);
+
 
 	}
 
