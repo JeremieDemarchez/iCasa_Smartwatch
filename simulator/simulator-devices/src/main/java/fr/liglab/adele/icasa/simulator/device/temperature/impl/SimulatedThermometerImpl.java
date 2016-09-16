@@ -30,9 +30,12 @@
 // */
 package fr.liglab.adele.icasa.simulator.device.temperature.impl;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.model.api.TemperatureModel;
 import org.apache.felix.ipojo.annotations.Bind;
@@ -45,6 +48,8 @@ import org.apache.felix.ipojo.annotations.Unbind;
  *
  */
 @ContextEntity(services = {Thermometer.class, SimulatedDevice.class})
+
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
 public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,GenericDevice {
 
     public final static String SIMULATED_THERMOMETER = "iCasa.Thermometer";

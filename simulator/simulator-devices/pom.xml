@@ -48,6 +48,11 @@
 		</dependency>
 		<dependency>
 			<groupId>${project.groupId}</groupId>
+			<artifactId>context.impl.helpers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>${project.groupId}</groupId>
 			<artifactId>simulator.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>

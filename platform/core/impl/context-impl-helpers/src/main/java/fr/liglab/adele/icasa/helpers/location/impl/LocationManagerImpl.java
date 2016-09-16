@@ -13,15 +13,15 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.context.impl;
+package fr.liglab.adele.icasa.helpers.location.impl;
 
 
 import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
-import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 import org.apache.felix.ipojo.annotations.*;
+import fr.liglab.adele.icasa.location.impl.ZoneImpl;
 
 import java.util.List;
 

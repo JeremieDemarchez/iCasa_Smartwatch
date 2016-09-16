@@ -29,7 +29,7 @@ import org.zwave4j.ValueId;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.power.SmartPlug;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 
 
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;

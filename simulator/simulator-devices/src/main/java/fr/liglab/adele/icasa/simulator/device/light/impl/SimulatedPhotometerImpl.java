@@ -20,7 +20,7 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.model.api.LuminosityModel;
 import org.apache.felix.ipojo.annotations.Bind;

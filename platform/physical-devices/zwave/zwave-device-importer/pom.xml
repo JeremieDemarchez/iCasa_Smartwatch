@@ -25,6 +25,12 @@
 			<artifactId>context.api</artifactId>
 			<version>${project.version}</version>
 		</dependency>
+
+		<dependency>
+			<groupId>fr.liglab.adele.icasa</groupId>
+			<artifactId>context.impl.helpers</artifactId>
+			<version>${project.version}</version>
+		</dependency>
     
         <dependency>
             <groupId>org.ow2.chameleon.fuchsia</groupId>

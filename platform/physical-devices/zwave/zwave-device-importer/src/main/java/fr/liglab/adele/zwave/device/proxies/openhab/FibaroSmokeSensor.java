@@ -18,7 +18,7 @@ package fr.liglab.adele.zwave.device.proxies.openhab;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 
 import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;

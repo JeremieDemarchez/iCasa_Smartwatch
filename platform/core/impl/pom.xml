@@ -31,6 +31,7 @@
 
 
     <modules>
+        <module>context-impl-helpers</module>
         <module>context-impl</module>
         <module>gogo-adapter</module>
         <module>context-remote</module>

@@ -16,10 +16,9 @@
 package fr.liglab.adele.icasa.orange.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
-import fr.liglab.adele.icasa.orange.service.TestReport;
-import fr.liglab.adele.icasa.orange.service.TestRunningException;
-import fr.liglab.adele.icasa.orange.service.ZwaveTestResult;
-import fr.liglab.adele.icasa.orange.service.ZwaveTestStrategy;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
+import fr.liglab.adele.icasa.device.testable.TestReport;
+import fr.liglab.adele.icasa.device.testable.Testable;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import org.apache.felix.ipojo.annotations.*;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @Component
 @Instantiate
@@ -52,8 +52,9 @@ public class OrangeRemoteController extends DefaultController {
     @Requires(id="zwaveController",specification = ZwaveController.class,optional = true)
     List<ZwaveController> zwaveControllers;
 
-    @Requires(specification = ZwaveTestStrategy.class,optional = true)
-    List<ZwaveTestStrategy> testStrategies ;
+    @Requires(id = "TestableZwave" , specification = ZwaveDevice.class,optional = true,proxy = false)
+    @ContextRequirement(spec = Testable.class)
+    List<ZwaveDevice> testStrategies ;
 
     @Requires
     Publisher webSocketPublisher;
@@ -153,70 +154,58 @@ public class OrangeRemoteController extends DefaultController {
         }
     }
     @Route(method = HttpMethod.PUT,uri = "/zwaves/{id}")
-    public Result updateZwaveDevice(@Parameter("id") String zwaveId, @Body WebcomRequestBody data){
-        System.out.print(" Zwave id" + zwaveId +" mode " + data.discoveryMode + " test " + data.beginTest);
-        if (zwaveId == null){
+    public Result updateZwaveDevice(@Parameter("id") String zwaveId, @Body WebcomRequestBody data) {
+        System.out.print(" Zwave id" + zwaveId + " mode " + data.discoveryMode + " test " + data.beginTest);
+        if (zwaveId == null) {
             return notFound();
         }
 
-        if (data == null){
+        if (data == null) {
             return internalServerError();
         }
 
 
         ZwaveController.Mode mode = ZwaveController.Mode.getMode(data.discoveryMode);
-        if (mode != null){
-            for (ZwaveController controller:zwaveControllers){
-                if (controller.getNodeId() == Integer.parseInt(zwaveId)){
+        if (mode != null) {
+            for (ZwaveController controller : zwaveControllers) {
+                if (controller.getNodeId() == Integer.parseInt(zwaveId)) {
                     controller.changeMode(mode);
-                    if (mode != ZwaveController.Mode.NORMAL ){
-                        if (managedFutureTaskMap.containsKey(zwaveId)){
+                    if (mode != ZwaveController.Mode.NORMAL) {
+                        if (managedFutureTaskMap.containsKey(zwaveId)) {
                             managedFutureTaskMap.remove(zwaveId).cancel(true);
                         }
-                        ManagedFutureTask futurTask = scheduler.schedule(new ControllerBackToNormalTask(zwaveId),discoveryTime,discoveryTimeUnit );
-                        managedFutureTaskMap.put(zwaveId,futurTask);
+                        ManagedFutureTask futurTask = scheduler.schedule(new ControllerBackToNormalTask(zwaveId), discoveryTime, discoveryTimeUnit);
+                        managedFutureTaskMap.put(zwaveId, futurTask);
                     }
                 }
             }
         }
 
 
-        if (data.beginTest != null){
+        if (data.beginTest != null) {
 
             if (data.beginTest) {
                 boolean testLaunch = false;
-                for (ZwaveTestStrategy testStrategy : testStrategies) {
-                    if (testStrategy.getTestTargets().contains(zwaveId)) {
+                for (ZwaveDevice zwaveTestDevice : testStrategies) {
+                    if (String.valueOf(zwaveTestDevice.getNodeId()).equals(zwaveId)){
                         testLaunch = true;
-                        try {
-                            testStrategy.beginTest(zwaveId,
-                                    (String zwaveID, TestReport testResult) -> {
-                                        webSocketPublisher.publish(websocketURI,buildZwaveTestEvent(zwaveID,testResult.testResult,testResult.testMessage));
-                                    },
-                                    true
-                            );
-                        } catch (TestRunningException e) {
-                            return unauthorized();
-                        }
+                        ((Testable)zwaveTestDevice).beginTest(new TestConsumer(zwaveId));
                     }
                 }
-
-                if (!testLaunch){
+                if (!testLaunch) {
                     return notFound();
                 }
-
             }
         }
-
         return ok();
     }
 
-    private ObjectNode buildZwaveTestEvent(String zwaveId,ZwaveTestResult testResult,String testMessage){
+    private ObjectNode buildZwaveTestEvent(String zwaveId, TestReport testReport){
         ObjectNode node = json.newObject();
         node.put("nodeId",zwaveId);
         node.put("event", ZwaveEvent.DEVICE_TESTED.eventType);
-        node.put("test-status",testResult.status);
-        node.put("test-message",testMessage);
+        node.put("test-status",testReport.testResult.toString());
+        node.put("test-message",testReport.testMessage);
 
         return node;
     }
@@ -248,6 +237,20 @@ public class OrangeRemoteController extends DefaultController {
     private static class WebcomRequestBody{
         public String discoveryMode;
         public Boolean beginTest;
+    }
+
+    private class TestConsumer implements Consumer<TestReport> {
+
+        private final String nodeId;
+
+        public TestConsumer(String nodeId) {
+            this.nodeId = nodeId;
+        }
+
+        @Override
+        public void accept(TestReport testReport) {
+            webSocketPublisher.publish(websocketURI, buildZwaveTestEvent(nodeId,testReport));
+        }
     }
 
 }

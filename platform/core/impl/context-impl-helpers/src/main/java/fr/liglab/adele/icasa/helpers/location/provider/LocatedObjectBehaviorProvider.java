@@ -13,11 +13,13 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-package fr.liglab.adele.icasa.location;
+package fr.liglab.adele.icasa.helpers.location.provider;
 
 import fr.liglab.adele.cream.annotations.behavior.BehaviorProvider;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
-import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.location.Position;
+import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.apache.felix.ipojo.annotations.Unbind;

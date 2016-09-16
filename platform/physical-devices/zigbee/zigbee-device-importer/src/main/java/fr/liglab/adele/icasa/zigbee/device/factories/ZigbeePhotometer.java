@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.factories;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.Photometer;
@@ -22,12 +23,17 @@ import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 import org.apache.felix.ipojo.annotations.Requires;
 
 import java.text.DecimalFormat;
 
 @ContextEntity(services = {Photometer.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
+
 public class ZigbeePhotometer implements Photometer, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
 
     @ContextEntity.State.Field(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,value = "-1")

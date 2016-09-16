@@ -19,7 +19,7 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity.State;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.simulator.person.Person;
 import fr.liglab.adele.icasa.simulator.person.PersonType;
 

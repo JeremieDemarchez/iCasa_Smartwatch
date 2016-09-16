@@ -15,6 +15,7 @@
  */
 package fr.liglab.adele.icasa.zigbee.device.factories;
 
+import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
@@ -22,10 +23,14 @@ import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
+import fr.liglab.adele.icasa.location.LocatedObject;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 import org.apache.felix.ipojo.annotations.Requires;
 
 @ContextEntity(services = {PresenceSensor.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+
+@Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
 public class ZigbeePresenceSensor  implements PresenceSensor, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
 
     @Requires

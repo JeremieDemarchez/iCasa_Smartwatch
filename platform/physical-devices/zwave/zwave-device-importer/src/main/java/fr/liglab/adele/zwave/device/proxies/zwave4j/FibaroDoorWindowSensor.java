@@ -19,6 +19,8 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 
+import fr.liglab.adele.icasa.helpers.device.provider.TestableDoorWindowSensor;
+import fr.liglab.adele.icasa.device.testable.Testable;
 import org.apache.felix.ipojo.annotations.ServiceController;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +31,7 @@ import org.zwave4j.ValueId;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.doorWindow.DoorWindowSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
-import fr.liglab.adele.icasa.location.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 
 
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
@@ -40,6 +42,7 @@ import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;
 
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
 @Behavior(id="ZwaveBehavior",spec = ZwaveDevice.class,implem = ZwaveDeviceBehaviorProvider.class)
+@Behavior(id="testable",spec = Testable.class,implem = TestableDoorWindowSensor.class)
 
 public class FibaroDoorWindowSensor extends AbstractZwave4jDevice implements  GenericDevice, Zwave4jDevice, DoorWindowSensor  {
 

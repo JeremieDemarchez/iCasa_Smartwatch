@@ -15,61 +15,58 @@
  */
 package fr.liglab.adele.icasa.orange.command;
 
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
-import fr.liglab.adele.icasa.orange.service.TestReport;
-import fr.liglab.adele.icasa.orange.service.TestRunningException;
-import fr.liglab.adele.icasa.orange.service.ZwaveTestStrategy;
+import fr.liglab.adele.icasa.device.testable.TestReport;
+import fr.liglab.adele.icasa.device.testable.Testable;
+import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
 
 import java.util.List;
-import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @CommandProvider(namespace = "zwave-test")
 @Component
 @Instantiate
 public class StrategyTestCommand {
 
-	@Requires(id="testStrategies", specification = ZwaveTestStrategy.class,optional=true, proxy=false)
-	List<ZwaveTestStrategy> testStrategies;
+	@Requires(id="testableDevice", specification = ZwaveDevice.class,optional=true, proxy=false)
+	@ContextRequirement(spec = Testable.class)
+	List<ZwaveDevice> testableDevice;
 
 	private boolean tracking = false;
 
 	@Command
 	public void testStrategyPresent() {
-		for (ZwaveTestStrategy test : testStrategies){
-			System.out.println("Zwave Test strategy name " + test.getStrategyName());
-			System.out.println("Can launch test on : ");
-
-			for (String targetId : test.getTestTargets()){
-				System.out.println("Zwave ID :" + targetId);
-			}
+		for (ZwaveDevice test : testableDevice){
+			System.out.println("Zwave ID :" + test.getNodeId());
 		}
 	}
 
 	@Command
 	public void testBegin(String nodeId) {
-		for (ZwaveTestStrategy test : testStrategies){
-			for (String targetId : test.getTestTargets()){
-				if (targetId.equals(nodeId)){
-					System.out.println("Test launch on " + nodeId + " with strategy " + test.getTestTargets());
-					try {
-						test.beginTest(nodeId,new TestBiConsumer(),true);
-					} catch (TestRunningException e) {
-						System.out.println("Start test fail, because " + e.toString());
-					}
-				}
+		for (ZwaveDevice test : testableDevice){
+			if (String.valueOf(test.getNodeId()).equals(nodeId)){
+				System.out.println("Test launch on " + nodeId);
+				((Testable)test).beginTest(new TestConsumer(nodeId));
 			}
 		}
 	}
 
-	public class TestBiConsumer implements BiConsumer<String,TestReport>{
 
+	public class TestConsumer implements Consumer<TestReport> {
+
+		private final String nodeId;
+
+		public TestConsumer(String nodeId){
+			this.nodeId = nodeId;
+		}
 		@Override
-		public void accept(String s, TestReport testReport) {
-			System.out.println("Test result on " + s + " , RESULT : " + testReport.testResult + " , result message : " + testReport.testMessage);
+		public void accept( TestReport testReport) {
+			System.out.println("Test result on " + nodeId + " , RESULT : " + testReport.testResult + " , result message : " + testReport.testMessage);
 		}
 	}
 }
