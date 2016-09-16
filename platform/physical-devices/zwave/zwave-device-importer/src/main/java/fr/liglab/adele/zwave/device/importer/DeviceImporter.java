@@ -44,6 +44,24 @@ public class DeviceImporter extends AbstractImporterComponent  {
 
 	public enum SupportedDeviceType {
 
+		AeonSMARTENERGYILLUMINATOR {
+
+			public String getDescription() {
+				return "Aeon Smart Energy Illuminator";
+			};
+
+			public boolean matches(DeviceDeclaration importDeclaration) {
+
+				int manufactererId 	= importDeclaration.getZwaveManufacturerId();
+				int deviceType 		= importDeclaration.getzwaveDeviceType();
+				int deviceId 		= importDeclaration.getZwaveDeviceId();
+
+				return (manufactererId == 0x0086) &&
+						(deviceType == 0x0003) &&
+						(deviceId == 0x0008);
+
+			}
+		},
 		AeonDSD37 {
 
 			public String getDescription() {
@@ -232,6 +250,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 		zwave4jCreators.put(SupportedDeviceType.FibaroGFMS001,zwave4jFibaroMotionSensorCreator);
 		zwave4jCreators.put(SupportedDeviceType.FibaroGSS001,zwave4jFibaroSmokeSensorCreator);
 		zwave4jCreators.put(SupportedDeviceType.AeonDSD37,zwave4jAeonRepeaterSlave);
+		zwave4jCreators.put(SupportedDeviceType.AeonSMARTENERGYILLUMINATOR,zwave4jWallPlugCreator);
 
 
 	}
