@@ -22,6 +22,7 @@ import fr.liglab.adele.icasa.device.testable.Testable;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import org.apache.felix.ipojo.annotations.*;
+import org.slf4j.Logger;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Body;
 import org.wisdom.api.annotations.Parameter;
@@ -45,6 +46,7 @@ import java.util.function.Consumer;
 @Provides(specifications = org.wisdom.api.Controller.class)
 @Path(value = "/orange")
 public class OrangeRemoteController extends DefaultController {
+
 
     @Requires(id="zwaveDevices",specification = ZwaveDevice.class,optional = true,proxy = false)
     List<ZwaveDevice> zwaveDevices;
@@ -144,6 +146,7 @@ public class OrangeRemoteController extends DefaultController {
 
         @Override
         public void run() {
+            logger().info("zwave Timeout task triggered ");
             ZwaveController controller = getController();
             if (controller != null){
                 controller.changeMode(ZwaveController.Mode.NORMAL);
@@ -155,7 +158,7 @@ public class OrangeRemoteController extends DefaultController {
     }
     @Route(method = HttpMethod.PUT,uri = "/zwaves/{id}")
     public Result updateZwaveDevice(@Parameter("id") String zwaveId, @Body WebcomRequestBody data) {
-        System.out.print(" Zwave id" + zwaveId + " mode " + data.discoveryMode + " test " + data.beginTest);
+        logger().info(" Zwave id" + zwaveId + " mode " + data.discoveryMode + " test " + data.beginTest);
         if (zwaveId == null) {
             return notFound();
         }
@@ -167,8 +170,10 @@ public class OrangeRemoteController extends DefaultController {
 
         ZwaveController.Mode mode = ZwaveController.Mode.getMode(data.discoveryMode);
         if (mode != null) {
+            logger().info(" Discovery Mode branch");
             for (ZwaveController controller : zwaveControllers) {
                 if (controller.getNodeId() == Integer.parseInt(zwaveId)) {
+                    logger().info("Change Mode " + mode);
                     controller.changeMode(mode);
                     if (mode != ZwaveController.Mode.NORMAL) {
                         if (managedFutureTaskMap.containsKey(zwaveId)) {
@@ -183,11 +188,12 @@ public class OrangeRemoteController extends DefaultController {
 
 
         if (data.beginTest != null) {
-
+            logger().info("Test Branch ");
             if (data.beginTest) {
                 boolean testLaunch = false;
                 for (ZwaveDevice zwaveTestDevice : testStrategies) {
                     if (String.valueOf(zwaveTestDevice.getNodeId()).equals(zwaveId)){
+                        logger().info("Test Launch ");
                         testLaunch = true;
                         ((Testable)zwaveTestDevice).beginTest(new TestConsumer(zwaveId));
                     }
