@@ -17,12 +17,12 @@ package fr.liglab.adele.icasa.orange.remote;
 
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextUpdate;
 import fr.liglab.adele.icasa.device.testable.TestReport;
 import fr.liglab.adele.icasa.device.testable.Testable;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import org.apache.felix.ipojo.annotations.*;
-import org.slf4j.Logger;
 import org.wisdom.api.DefaultController;
 import org.wisdom.api.annotations.Body;
 import org.wisdom.api.annotations.Parameter;
@@ -100,6 +100,30 @@ public class OrangeRemoteController extends DefaultController {
         webSocketPublisher.publish(websocketURI,buildDiscoveryZwaveEvent(device,ZwaveEvent.DEVICE_REMOVED));
     }
 
+    @ContextUpdate(specification = ZwaveController.class,stateId = ZwaveController.MODE)
+    public void modeChange(ZwaveController controller, Object newP,Object old){
+        logger().info(" Change on discovery mode detected !");
+        ZwaveController.Mode newMode = (ZwaveController.Mode) newP;
+        if (newMode != ZwaveController.Mode.NORMAL) {
+            String zwaveId = String.valueOf(controller.getNodeId());
+            if (managedFutureTaskMap.containsKey(zwaveId)) {
+                managedFutureTaskMap.remove(zwaveId).cancel(true);
+            }
+            ManagedFutureTask futurTask = scheduler.schedule(new ControllerBackToNormalTask(zwaveId), discoveryTime, discoveryTimeUnit);
+            managedFutureTaskMap.put(zwaveId, futurTask);
+            ObjectNode node = json.newObject();
+            if (newMode.equals(ZwaveController.Mode.INCLUSION)){
+
+                node.put("event", ZwaveEvent.DISCOVERY.eventType);
+                webSocketPublisher.publish(websocketURI,node);
+            }else {
+
+                node.put("event", ZwaveEvent.UNDISCOVERY.eventType);
+                webSocketPublisher.publish(websocketURI,node);
+            }
+        }
+    }
+
     /**
      * Lifecycle
      */
@@ -149,7 +173,7 @@ public class OrangeRemoteController extends DefaultController {
             logger().info("zwave Timeout task triggered ");
             ZwaveController controller = getController();
             if (controller != null){
-                controller.changeMode(ZwaveController.Mode.NORMAL);
+                controller.demandChangeMode(ZwaveController.Mode.NORMAL);
                 ObjectNode node = json.newObject();
                 node.put("event", ZwaveEvent.DISCOVERY_TIMEOUT.eventType);
                 webSocketPublisher.publish(websocketURI,node);
@@ -174,14 +198,7 @@ public class OrangeRemoteController extends DefaultController {
             for (ZwaveController controller : zwaveControllers) {
                 if (controller.getNodeId() == Integer.parseInt(zwaveId)) {
                     logger().info("Change Mode " + mode);
-                    controller.changeMode(mode);
-                    if (mode != ZwaveController.Mode.NORMAL) {
-                        if (managedFutureTaskMap.containsKey(zwaveId)) {
-                            managedFutureTaskMap.remove(zwaveId).cancel(true);
-                        }
-                        ManagedFutureTask futurTask = scheduler.schedule(new ControllerBackToNormalTask(zwaveId), discoveryTime, discoveryTimeUnit);
-                        managedFutureTaskMap.put(zwaveId, futurTask);
-                    }
+                    controller.demandChangeMode(mode);
                 }
             }
         }
@@ -231,6 +248,8 @@ public class OrangeRemoteController extends DefaultController {
         DEVICE_ADDED("zwave-added"),
         DEVICE_REMOVED("zwave-removed"),
         DISCOVERY_TIMEOUT("zwave-discovery-timeout"),
+        DISCOVERY("zwave-discovery"),
+        UNDISCOVERY("zwave-undiscovery"),
         DEVICE_TESTED("zwave-tested");
 
         public final String eventType;

@@ -47,7 +47,7 @@ public class DeviceImporter extends AbstractImporterComponent  {
 		AeonMULTISENSOR{
 
 			public String getDescription() {
-				return "Aeon Smart Energy Illuminator";
+				return "Aeon Multi Sensor";
 			};
 
 			public boolean matches(DeviceDeclaration importDeclaration) {

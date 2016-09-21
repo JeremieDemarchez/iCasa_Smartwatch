@@ -68,6 +68,6 @@ public @ContextService interface ZwaveController extends ZwaveDevice {
 
     public Mode getMode();
 
-    public void changeMode(Mode mode);
+    public void demandChangeMode(Mode mode);
 
 }

@@ -261,7 +261,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
     	return mode;
     }
     
-    public void changeMode(ZwaveController.Mode requestedMode) {
+    public void demandChangeMode(ZwaveController.Mode requestedMode) {
     	this.mode = requestedMode;
     }
     

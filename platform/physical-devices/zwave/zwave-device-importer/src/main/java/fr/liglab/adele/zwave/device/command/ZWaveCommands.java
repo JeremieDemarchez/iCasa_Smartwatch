@@ -67,7 +67,7 @@ public class ZWaveCommands {
 	@Command
 	public void mode(String mode) {
 		if (controller != null) {
-			controller.changeMode(Mode.valueOf(mode));
+			controller.demandChangeMode(Mode.valueOf(mode));
 		}
 	}
 

@@ -24,6 +24,7 @@ import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.function.Function;
@@ -75,6 +76,10 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
      * The zwave4j manager
      */
 	private Manager manager;
+
+	private AtomicBoolean inTransition = new AtomicBoolean(false);
+
+	private ZwaveController.Mode modeRequest = Mode.NORMAL;
 
 	/**
 	 * Whether the manager's serial port driver was properly initialized
@@ -256,7 +261,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 		return mode;
 	}
 
-	public void changeMode(ZwaveController.Mode requestedMode) {
+	public void demandChangeMode(ZwaveController.Mode requestedMode) {
 		this.mode = requestedMode;
 	}
 
@@ -304,9 +309,11 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
         launcher.start();
         
         manager		= launcher.getManager();
-        
+
+		modeRequest = Mode.NORMAL;
+		inTransition= new AtomicBoolean(false);
         currentMode = changeModeNotification(ZwaveController.Mode.NORMAL);
-                
+
 		super.start();
 	}
 
@@ -420,50 +427,57 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
     	
         LOG.debug("Zwave mode change requested "+requestedMode);
 
-		switch (currentMode) {
+		if (inTransition.compareAndSet(false,true)) {
+			LOG.debug("NOT IN TRANSITION ");
 
-			case NORMAL:
-				switch (requestedMode) {
-					case EXCLUSION:
-						currentMode = changeModeNotification(requestedMode);
-						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.REMOVE_DEVICE, this, true);
-						break;
-	
-					case INCLUSION:
-						currentMode = changeModeNotification(requestedMode);
-						manager.beginControllerCommand(zwaveHomeId, ControllerCommand.ADD_DEVICE, this, true);
-						break;
-	
-					case NORMAL:
-						break;
-				}
+			switch (currentMode) {
 
-				break;
+				case NORMAL:
+					switch (requestedMode) {
+						case EXCLUSION:
+							modeRequest = Mode.EXCLUSION;
+							manager.beginControllerCommand(zwaveHomeId, ControllerCommand.REMOVE_DEVICE, this, true);
+							break;
+						case INCLUSION:
+							modeRequest = Mode.INCLUSION;
+							manager.beginControllerCommand(zwaveHomeId, ControllerCommand.ADD_DEVICE, this, true);
+							break;
+						case NORMAL:
+							inTransition.set(false);
+							break;
+					}
 
-			case INCLUSION:
-				switch (requestedMode) {
-					case NORMAL:
-						currentMode = changeModeNotification(requestedMode);
-						manager.cancelControllerCommand(zwaveHomeId);
-						break;
-					default:
-						break;
-				}
+					break;
 
-				break;
+				case INCLUSION:
+					switch (requestedMode) {
+						case NORMAL:
+							LOG.debug("INCLUSION/NORMAL ");
+							modeRequest = Mode.NORMAL;
+							manager.cancelControllerCommand(zwaveHomeId);
+							break;
+						default:
+							LOG.debug("INCLUSION/DEFAULT ");
+							inTransition.set(false);
+							break;
+					}
 
-			case EXCLUSION:
-				switch (requestedMode) {
-					case NORMAL:
-						currentMode = changeModeNotification(requestedMode);
-						manager.cancelControllerCommand(zwaveHomeId);
-						break;
-					default:
-						break;
-				}
-				break;
+					break;
+
+				case EXCLUSION:
+					switch (requestedMode) {
+						case NORMAL:
+							modeRequest = Mode.NORMAL;
+							manager.cancelControllerCommand(zwaveHomeId);
+							break;
+						default:
+							inTransition.set(false);
+							break;
+					}
+					break;
 
 			}
+		}
 	}
     
     /**
@@ -480,6 +494,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 	
 	@Override
 	public void onCallback(ControllerState state, ControllerError err, Object context) {
+		LOG.debug(" Current Mode " + currentMode + " state received " + state + " request mode " + modeRequest);
 		switch (currentMode) {
 			case INCLUSION:
 			case EXCLUSION:
@@ -487,9 +502,20 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 					case COMPLETED:
 					case FAILED:
 					case CANCEL:
-						currentMode = changeModeNotification(ZwaveController.Mode.NORMAL); 
+						inTransition.set(false);
+						currentMode = changeModeNotification(ZwaveController.Mode.NORMAL);
 						break;
 					default:
+						break;
+				}
+				break;
+			case NORMAL:
+				switch (state) {
+					case COMPLETED:
+					case FAILED:
+					case WAITING:
+						inTransition.set(false);
+						currentMode = changeModeNotification(modeRequest);
 						break;
 				}
 				break;
