@@ -22,6 +22,8 @@ import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
+import fr.liglab.adele.icasa.device.testable.Testable;
+import fr.liglab.adele.icasa.helpers.device.provider.TestablePresenceSensor;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
@@ -37,6 +39,7 @@ import org.zwave4j.ValueId;
 
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
 @Behavior(id="ZwaveBehavior",spec = ZwaveDevice.class,implem = ZwaveDeviceBehaviorProvider.class)
+@Behavior(id="Testable",spec = Testable.class,implem = TestablePresenceSensor.class)
 
 public class FibaroMotionSensor extends AbstractZwave4jDevice implements  GenericDevice, Zwave4jDevice, PresenceSensor,Thermometer,Photometer {
 
@@ -53,15 +56,9 @@ public class FibaroMotionSensor extends AbstractZwave4jDevice implements  Generi
 
 	}
 
-
 	@Override
-	public void notification(Manager manager, Notification notification) {
-		super.notification(manager, notification);
-	}
-
-	@Override
-	protected void nodeStatusChanged(Manager manager, short status) {
-
+	protected void nodeEvent(Manager manager, short status) {
+		presenceValueChange(status == 255);
 	}
 
 	@Override

@@ -24,9 +24,17 @@ import org.zwave4j.ValueId;
 public abstract class AbstractZwave4jDevice implements Zwave4jDevice {
 
 
-	protected abstract void valueChanged(Manager manager, ValueId valueId);
+	protected void valueChanged(Manager manager, ValueId valueId){
 
-	protected abstract void nodeStatusChanged(Manager manager, short status);
+	}
+
+	protected void nodeStatusChanged(Manager manager, short status){
+
+	}
+
+	protected void nodeEvent(Manager manager, short value){
+
+	}
 
 	@Override
 	public void notification(Manager manager, Notification notification) {
@@ -37,6 +45,9 @@ public abstract class AbstractZwave4jDevice implements Zwave4jDevice {
 		case VALUE_CHANGED:
 			valueChanged(manager, notification.getValueId());
 			break;
+			case NODE_EVENT:
+				nodeEvent(manager,notification.getEvent());
+				break;
 		default:
 			break;
 		}
