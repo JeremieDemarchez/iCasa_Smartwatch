@@ -67,7 +67,7 @@ public class OrangeRemoteController extends DefaultController {
     @Requires(filter = "(name=" + ManagedScheduledExecutorService.SYSTEM + ")", proxy = false)
     ManagedScheduledExecutorService scheduler;
 
-    private int discoveryTime = 20;
+    private int discoveryTime = 40;
 
     private TimeUnit discoveryTimeUnit = TimeUnit.SECONDS;
 
@@ -102,8 +102,9 @@ public class OrangeRemoteController extends DefaultController {
 
     @ContextUpdate(specification = ZwaveController.class,stateId = ZwaveController.MODE)
     public void modeChange(ZwaveController controller, Object newP,Object old){
-        logger().info(" Change on discovery mode detected !");
+
         ZwaveController.Mode newMode = (ZwaveController.Mode) newP;
+        logger().info(" Change on discovery mode detected : " + newMode );
         if (newMode != ZwaveController.Mode.NORMAL) {
             String zwaveId = String.valueOf(controller.getNodeId());
             if (managedFutureTaskMap.containsKey(zwaveId)) {
@@ -113,11 +114,9 @@ public class OrangeRemoteController extends DefaultController {
             managedFutureTaskMap.put(zwaveId, futurTask);
             ObjectNode node = json.newObject();
             if (newMode.equals(ZwaveController.Mode.INCLUSION)){
-
                 node.put("event", ZwaveEvent.DISCOVERY.eventType);
                 webSocketPublisher.publish(websocketURI,node);
             }else {
-
                 node.put("event", ZwaveEvent.UNDISCOVERY.eventType);
                 webSocketPublisher.publish(websocketURI,node);
             }
