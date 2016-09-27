@@ -18,6 +18,7 @@
  */
 package fr.liglab.adele.icasa.remote.wisdom.impl;
 
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.button.PushButton;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
@@ -65,30 +66,39 @@ public class DeviceREST extends DefaultController {
     private final static Logger LOG = LoggerFactory.getLogger(DeviceREST.class);
 
     @Requires(specification = BinaryLight.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<BinaryLight> binaryLights;
 
     @Requires(specification = DimmerLight.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<DimmerLight> dimmerLights;
 
     @Requires(specification = PresenceSensor.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<PresenceSensor> presenceSensors;
 
     @Requires(specification = MotionSensor.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<MotionSensor> motionSensors;
 
     @Requires(specification = PushButton.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<PushButton> pushButtons;
 
     @Requires(specification = Photometer.class, optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<Photometer> photometers;
 
     @Requires(specification = Thermometer.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<Thermometer> thermometers;
 
     @Requires(specification = Cooler.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<Cooler> coolers;
 
     @Requires(specification = Heater.class,optional = true,proxy = false)
+    @ContextRequirement(spec = {LocatedObject.class})
     List<Heater> heaters;
 
     @Route(method = HttpMethod.GET, uri = "/devices")
