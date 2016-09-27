@@ -27,6 +27,8 @@ import org.apache.felix.ipojo.annotations.Unbind;
 @BehaviorProvider(spec = LocatedObject.class)
 public class LocatedObjectBehaviorProvider implements LocatedObject {
 
+    public final static String IS_IN_RELATION = "IsIn";
+
     @ContextEntity.State.Field(service = LocatedObject.class,state = LocatedObject.OBJECT_X,directAccess = true,value = "0")
     private int x;
 
@@ -55,7 +57,7 @@ public class LocatedObjectBehaviorProvider implements LocatedObject {
     /**
      * Zone
      */
-    @ContextEntity.Relation.Field(value = "isIn",owner = LocatedObject.class)
+    @ContextEntity.Relation.Field(value = IS_IN_RELATION,owner = LocatedObject.class)
     @Requires(id="zone",specification=Zone.class,optional=true)
     private Zone zoneAttached;
 

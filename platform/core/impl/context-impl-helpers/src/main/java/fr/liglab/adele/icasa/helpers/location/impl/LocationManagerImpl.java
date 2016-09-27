@@ -18,6 +18,7 @@ package fr.liglab.adele.icasa.helpers.location.impl;
 
 import fr.liglab.adele.cream.annotations.provider.Creator;
 import fr.liglab.adele.cream.model.Relation;
+import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.location.Zone;
 import org.apache.felix.ipojo.annotations.*;
@@ -37,6 +38,8 @@ public class LocationManagerImpl{
 
     @Creator.Field(ZoneImpl.RELATION_CONTAINS) 	Creator.Relation<Zone,LocatedObject> containsCreator;
 
+    @Creator.Field(LocatedObjectBehaviorProvider.IS_IN_RELATION) 	Creator.Relation<LocatedObject,Zone> isContainsCreator;
+
     @Bind(id = "zones")
     public synchronized void bindZone(Zone zone){
         for (LocatedObject object:locatedObjects){
@@ -44,6 +47,8 @@ public class LocationManagerImpl{
                 continue;
             }
             containsCreator.create(zone,object);
+            isContainsCreator.create(object,zone);
+
         }
     }
 
@@ -53,11 +58,13 @@ public class LocationManagerImpl{
             if (zone.canContains(object.getPosition())) {
                 try{
                     containsCreator.create(zone,object);
+                    isContainsCreator.create(object,zone);
                 }catch (IllegalArgumentException e){
 
                 }
             }else {
                 containsCreator.delete(zone,object);
+                isContainsCreator.delete(object,zone);
             }
         }
     }
@@ -69,7 +76,9 @@ public class LocationManagerImpl{
             String source = relation.getSource();
             String end = relation.getTarget();
             containsCreator.delete(source,end);
+            isContainsCreator.delete(end,zone);
         }
+
     }
 
 
@@ -80,6 +89,7 @@ public class LocationManagerImpl{
                 continue;
             }
             containsCreator.create(zone,object);
+            isContainsCreator.create(object,zone);
         }
     }
 
@@ -89,11 +99,13 @@ public class LocationManagerImpl{
             if (zone.canContains(object.getPosition())) {
                 try{
                     containsCreator.create(zone,object);
+                    isContainsCreator.create(object,zone);
                 }catch (IllegalArgumentException e){
 
                 }
             }else {
                 containsCreator.delete(zone,object);
+                isContainsCreator.delete(object,zone);
             }
         }
     }
@@ -101,5 +113,6 @@ public class LocationManagerImpl{
     @Unbind(id = "locatedObjects")
     public synchronized void unbindLocatedObject(LocatedObject object){
         containsCreator.delete(object.getZone(),object);
+        isContainsCreator.delete(object,object.getZone());
     }
 }
