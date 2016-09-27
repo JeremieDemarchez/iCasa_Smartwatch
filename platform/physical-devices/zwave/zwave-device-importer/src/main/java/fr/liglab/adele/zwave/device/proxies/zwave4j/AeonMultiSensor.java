@@ -36,6 +36,7 @@ import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.Units;
 
 import javax.measure.Quantity;
+import javax.measure.quantity.Illuminance;
 import javax.measure.quantity.Temperature;
 
 
@@ -100,11 +101,11 @@ public class AeonMultiSensor extends AbstractZwave4jDevice implements  GenericDe
 	@ContextEntity.State.Field(service = PresenceSensor.class,state = PresenceSensor.PRESENCE_SENSOR_SENSED_PRESENCE,value = "false")
 	private boolean status;
 
-	@ContextEntity.State.Field(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
+	@ContextEntity.State.Field(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
 	private Quantity<Temperature> temperature;
 
-	@ContextEntity.State.Field(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,value = "-1")
-	private double luminosity;
+	@ContextEntity.State.Field(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
+	private Quantity<Illuminance> luminosity;
 
 	@ContextEntity.State.Field(service = HumiditySensor.class,state = HumiditySensor.HUMIDITY,value = "-1")
 	private double humidity;
@@ -115,13 +116,13 @@ public class AeonMultiSensor extends AbstractZwave4jDevice implements  GenericDe
 	}
 
 	@ContextEntity.State.Push(service = Photometer.class,state =Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
-	public double luminosityValueChange(float newLuminosity){
-		return newLuminosity;
+	public Quantity<Illuminance> luminosityValueChange(float newLuminosity){
+		return Quantities.getQuantity(newLuminosity,Units.LUX);
 	}
 
 	@ContextEntity.State.Push(service = Thermometer.class,state =Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
 	public Quantity<Temperature> temperatureValueChange(float newTemperature){
-		return Quantities.getQuantity(newTemperature, Units.KELVIN);
+		return Quantities.getQuantity(newTemperature, Units.CELSIUS);
 	}
 
 	@ContextEntity.State.Push(service = HumiditySensor.class,state =HumiditySensor.HUMIDITY)
@@ -145,7 +146,7 @@ public class AeonMultiSensor extends AbstractZwave4jDevice implements  GenericDe
 	}
 
 	@Override
-	public double getIlluminance() {
+	public Quantity<Illuminance> getIlluminance() {
 		return luminosity;
 	}
 

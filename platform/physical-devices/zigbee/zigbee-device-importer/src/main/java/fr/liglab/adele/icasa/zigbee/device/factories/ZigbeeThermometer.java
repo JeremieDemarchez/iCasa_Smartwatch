@@ -43,7 +43,7 @@ public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDevic
     @Requires
     private ZigbeeDriver driver;
 
-    @ContextEntity.State.Field(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
+    @ContextEntity.State.Field(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE)
     private Quantity<Temperature> currentTemperature;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)

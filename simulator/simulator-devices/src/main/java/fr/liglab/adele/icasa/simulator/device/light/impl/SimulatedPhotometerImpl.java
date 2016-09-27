@@ -26,6 +26,11 @@ import fr.liglab.adele.icasa.simulator.model.api.LuminosityModel;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Modified;
 import org.apache.felix.ipojo.annotations.Unbind;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Illuminance;
 
 /**
  * Implementation of a simulated photometer device.
@@ -37,8 +42,8 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Gene
 
     public final static String SIMULATED_PHOTOMETER = "iCasa.Photometer";
 
-    @ContextEntity.State.Field(service = Photometer.class,state=PHOTOMETER_CURRENT_ILLUMINANCE,value = "-1")
-    private double currentSensedIlluminance;
+    @ContextEntity.State.Field(service = Photometer.class,state=PHOTOMETER_CURRENT_ILLUMINANCE)
+    private Quantity<Illuminance> currentSensedIlluminance;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_PHOTOMETER)
     private String deviceType;
@@ -52,7 +57,7 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Gene
     }
 
     @Override
-    public double getIlluminance() {
+    public Quantity<Illuminance> getIlluminance() {
         return currentSensedIlluminance;
     }
 
@@ -77,8 +82,8 @@ public class SimulatedPhotometerImpl implements Photometer, SimulatedDevice,Gene
     }
 
     @ContextEntity.State.Push(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
-    public double pushIlluminance(double illuminance){
-        return illuminance;
+    public Quantity<Illuminance> pushIlluminance(double illuminance){
+        return Quantities.getQuantity(illuminance, Units.LUX);
     }
 
 }

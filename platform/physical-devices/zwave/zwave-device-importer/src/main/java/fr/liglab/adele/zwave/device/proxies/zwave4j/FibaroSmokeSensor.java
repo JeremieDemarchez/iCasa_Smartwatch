@@ -88,12 +88,12 @@ public class FibaroSmokeSensor extends AbstractZwave4jDevice implements  Generic
 		}
 	}
 
-	@ContextEntity.State.Field(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
+	@ContextEntity.State.Field(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
 	private Quantity<Temperature> temperature;
 
 	@ContextEntity.State.Push(service = Thermometer.class,state =Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
 	public Quantity<Temperature> temperatureValueChange(float newTemperature){
-		return Quantities.getQuantity(newTemperature, Units.KELVIN);
+		return Quantities.getQuantity(newTemperature, Units.CELSIUS);
 	}
 
 	@ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)

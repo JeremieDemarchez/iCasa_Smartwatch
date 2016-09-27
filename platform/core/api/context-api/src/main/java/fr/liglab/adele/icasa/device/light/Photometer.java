@@ -19,6 +19,9 @@ import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Illuminance;
+
 /**
  * Service definition of a simple photometer device.
  *
@@ -49,6 +52,6 @@ public @ContextService interface Photometer extends GenericDevice {
      *         lux (lx).
      * @see #PHOTOMETER_CURRENT_ILLUMINANCE
      */
-    double getIlluminance();
+    Quantity<Illuminance> getIlluminance();
 
 }

@@ -27,7 +27,11 @@ import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 import org.apache.felix.ipojo.annotations.Requires;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Illuminance;
 import java.text.DecimalFormat;
 
 @ContextEntity(services = {Photometer.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
@@ -36,8 +40,8 @@ import java.text.DecimalFormat;
 
 public class ZigbeePhotometer implements Photometer, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
 
-    @ContextEntity.State.Field(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,value = "-1")
-    private double currentIlluminance;
+    @ContextEntity.State.Field(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE)
+    private Quantity<Illuminance> currentIlluminance;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
@@ -57,7 +61,7 @@ public class ZigbeePhotometer implements Photometer, ZigbeeDevice, ZigbeeDeviceT
     }
 
     @Override
-    public double getIlluminance() {
+    public Quantity<Illuminance> getIlluminance() {
         return currentIlluminance;
     }
 
@@ -81,8 +85,8 @@ public class ZigbeePhotometer implements Photometer, ZigbeeDevice, ZigbeeDeviceT
     }
 
     @ContextEntity.State.Push(service = Photometer.class,state = PHOTOMETER_CURRENT_ILLUMINANCE)
-    public double pushIlluminance(double computeIlluminance){
-        return computeIlluminance;
+    public Quantity<Illuminance> pushIlluminance(double computeIlluminance){
+        return Quantities.getQuantity(computeIlluminance, Units.LUX);
     }
     /**
      * Compute Illuminance from the given data.

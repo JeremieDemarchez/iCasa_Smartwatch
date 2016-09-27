@@ -107,8 +107,6 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
 
     @ContextEntity.State.Push(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
     public Quantity<Temperature> pushTemperature(double temperature){
-        System.out.println("Update of thermometer " + temperature);
-        System.out.println("Update of thermometer " + Quantities.getQuantity(temperature, Units.KELVIN).getValue());
         return Quantities.getQuantity(temperature, Units.KELVIN);
     }
 
