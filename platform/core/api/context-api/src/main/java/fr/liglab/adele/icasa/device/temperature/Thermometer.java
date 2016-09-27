@@ -19,6 +19,9 @@ import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
 import fr.liglab.adele.icasa.device.GenericDevice;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Temperature;
+
 /**
  * Service definition of a simple thermometer device.
  *
@@ -49,6 +52,6 @@ public @ContextService interface Thermometer extends GenericDevice {
      * @return the current temperature sensed by this thermometer, expressed in
      *         Kelvins (K).
      */
-    double getTemperature();
+    Quantity<Temperature> getTemperature();
 
 }

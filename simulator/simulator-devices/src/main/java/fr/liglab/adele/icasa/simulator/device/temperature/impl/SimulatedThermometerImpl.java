@@ -34,13 +34,19 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
-import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.simulator.device.SimulatedDevice;
 import fr.liglab.adele.icasa.simulator.model.api.TemperatureModel;
 import org.apache.felix.ipojo.annotations.Bind;
 import org.apache.felix.ipojo.annotations.Modified;
 import org.apache.felix.ipojo.annotations.Unbind;
+import org.apache.felix.ipojo.annotations.Validate;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Temperature;
 
 
 /**
@@ -54,8 +60,8 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
 
     public final static String SIMULATED_THERMOMETER = "iCasa.Thermometer";
 
-    @ContextEntity.State.Field(service = Thermometer.class,state=Thermometer.THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
-    private double currentSensedTemperature;
+    @ContextEntity.State.Field(service = Thermometer.class,state=Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
+    private Quantity<Temperature> currentSensedTemperature;
 
     @ContextEntity.State.Field(service = SimulatedDevice.class,state = SIMULATED_DEVICE_TYPE,value = SIMULATED_THERMOMETER)
     private String deviceType;
@@ -63,13 +69,19 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
+
+    @Validate
+    public void validate(){
+
+    }
+
     @Override
     public String getDeviceType() {
         return deviceType;
     }
 
     @Override
-    public double getTemperature() {
+    public Quantity<Temperature> getTemperature() {
         return currentSensedTemperature;
     }
 
@@ -94,8 +106,10 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
     }
 
     @ContextEntity.State.Push(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
-    public double pushTemperature(double temperature){
-        return temperature;
+    public Quantity<Temperature> pushTemperature(double temperature){
+        System.out.println("Update of thermometer " + temperature);
+        System.out.println("Update of thermometer " + Quantities.getQuantity(temperature, Units.KELVIN).getValue());
+        return Quantities.getQuantity(temperature, Units.KELVIN);
     }
 
 }

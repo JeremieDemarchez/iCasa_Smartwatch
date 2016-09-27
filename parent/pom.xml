@@ -432,6 +432,17 @@ See the License for the specific language governing permissions and
                 <version>${context.socm.version}</version>
             </dependency>
 
+
+            <dependency>
+                <groupId>tec.units</groupId>
+                <artifactId>unit-ri</artifactId>
+                <version>1.0</version>
+            </dependency>
+            <dependency>
+                <groupId>javax.measure</groupId>
+                <artifactId>unit-api</artifactId>
+                <version>1.0</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 

@@ -35,6 +35,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import tec.units.ri.unit.Units;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -140,7 +141,12 @@ public class IcasaJSONUtil {
         services.add(Thermometer.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(Thermometer.THERMOMETER_CURRENT_TEMPERATURE,thermometer.getTemperature(),"Kelvin"));
+        if (thermometer.getTemperature() != null){
+            propObject.put(buildDeviceProperty(Thermometer.THERMOMETER_CURRENT_TEMPERATURE,thermometer.getTemperature().to(Units.KELVIN).getValue(),"Kelvin"));
+        }else {
+            propObject.put(buildDeviceProperty(Thermometer.THERMOMETER_CURRENT_TEMPERATURE,"none","Kelvin"));
+        }
+
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
     }

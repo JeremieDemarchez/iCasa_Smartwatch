@@ -111,6 +111,19 @@
                  <version>${project.version}</version>
                 </dependency>
               -->
+        <dependency>
+            <groupId>tec.units</groupId>
+            <artifactId>unit-ri</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.measure</groupId>
+            <artifactId>unit-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>common.metrics</artifactId>
+            <version>${project.version}</version>
+        </dependency>
     </dependencies>
 
     <build>

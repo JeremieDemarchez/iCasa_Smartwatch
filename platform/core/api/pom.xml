@@ -30,6 +30,7 @@
 
     <modules>
         <module>common</module>
+        <module>common-metrics</module>
         <module>context-api</module>
         <module>application-api</module>
         <module>device-manager-api</module>

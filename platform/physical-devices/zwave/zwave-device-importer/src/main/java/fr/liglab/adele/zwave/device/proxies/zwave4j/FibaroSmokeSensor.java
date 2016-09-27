@@ -29,6 +29,11 @@ import org.slf4j.LoggerFactory;
 import org.zwave4j.Manager;
 import org.zwave4j.Notification;
 import org.zwave4j.ValueId;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Temperature;
 
 
 @ContextEntity(services = {Thermometer.class,Zwave4jDevice.class,})
@@ -84,11 +89,11 @@ public class FibaroSmokeSensor extends AbstractZwave4jDevice implements  Generic
 	}
 
 	@ContextEntity.State.Field(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
-	private double temperature;
+	private Quantity<Temperature> temperature;
 
 	@ContextEntity.State.Push(service = Thermometer.class,state =Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
-	public double temperatureValueChange(float newTemperature){
-		return newTemperature;
+	public Quantity<Temperature> temperatureValueChange(float newTemperature){
+		return Quantities.getQuantity(newTemperature, Units.KELVIN);
 	}
 
 	@ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
@@ -100,7 +105,7 @@ public class FibaroSmokeSensor extends AbstractZwave4jDevice implements  Generic
 	}
 
 	@Override
-	public double getTemperature() {
+	public Quantity<Temperature> getTemperature() {
 		return temperature;
 	}
 }

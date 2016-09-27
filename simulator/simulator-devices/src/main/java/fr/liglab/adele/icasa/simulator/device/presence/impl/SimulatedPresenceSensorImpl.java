@@ -66,7 +66,6 @@ public class SimulatedPresenceSensorImpl implements PresenceSensor,SimulatedDevi
     /**
      * Presence
      */
-
     @Requires(id="presence.model",specification=PresenceModel.class,optional=true,filter = "(presencemodel.zone.attached=${locatedobject.object.zone})")
     private PresenceModel presenceModel;
 

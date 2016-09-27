@@ -27,7 +27,11 @@ import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 import org.apache.felix.ipojo.annotations.Requires;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
 
+import javax.measure.Quantity;
+import javax.measure.quantity.Temperature;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
@@ -40,7 +44,7 @@ public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDevic
     private ZigbeeDriver driver;
 
     @ContextEntity.State.Field(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
-    private double currentTemperature;
+    private Quantity<Temperature> currentTemperature;
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
@@ -53,7 +57,7 @@ public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDevic
 
 
     @Override
-    public double getTemperature() {
+    public Quantity<Temperature> getTemperature() {
         return currentTemperature;
     }
 
@@ -103,8 +107,8 @@ public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDevic
     }
 
     @ContextEntity.State.Push(service = Thermometer.class,state = THERMOMETER_CURRENT_TEMPERATURE)
-    public double pushTemperature(double temperature){
-        return temperature;
+    public Quantity<Temperature> pushTemperature(double temperature){
+        return Quantities.getQuantity(temperature, Units.KELVIN);
     }
 
     /**

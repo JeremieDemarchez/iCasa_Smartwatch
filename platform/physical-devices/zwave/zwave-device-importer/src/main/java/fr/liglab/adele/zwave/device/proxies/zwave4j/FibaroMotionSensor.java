@@ -33,6 +33,11 @@ import org.slf4j.LoggerFactory;
 import org.zwave4j.Manager;
 import org.zwave4j.Notification;
 import org.zwave4j.ValueId;
+import tec.units.ri.quantity.Quantities;
+import tec.units.ri.unit.Units;
+
+import javax.measure.Quantity;
+import javax.measure.quantity.Temperature;
 
 
 @ContextEntity(services = {PresenceSensor.class,Thermometer.class,Photometer.class,Zwave4jDevice.class,})
@@ -90,7 +95,7 @@ public class FibaroMotionSensor extends AbstractZwave4jDevice implements  Generi
 	private boolean status;
 
 	@ContextEntity.State.Field(service = Thermometer.class,state = Thermometer.THERMOMETER_CURRENT_TEMPERATURE,value = "-1")
-	private double temperature;
+	private Quantity<Temperature> temperature;
 
 	@ContextEntity.State.Field(service = Photometer.class,state = Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,value = "-1")
 	private double luminosity;
@@ -106,8 +111,8 @@ public class FibaroMotionSensor extends AbstractZwave4jDevice implements  Generi
 	}
 
 	@ContextEntity.State.Push(service = Thermometer.class,state =Thermometer.THERMOMETER_CURRENT_TEMPERATURE)
-	public double temperatureValueChange(float newTemperature){
-		return newTemperature;
+	public Quantity<Temperature> temperatureValueChange(float newTemperature){
+		return Quantities.getQuantity(newTemperature, Units.KELVIN);
 	}
 
 	@ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
@@ -130,7 +135,7 @@ public class FibaroMotionSensor extends AbstractZwave4jDevice implements  Generi
 	}
 
 	@Override
-	public double getTemperature() {
+	public Quantity<Temperature> getTemperature() {
 		return temperature;
 	}
 }
