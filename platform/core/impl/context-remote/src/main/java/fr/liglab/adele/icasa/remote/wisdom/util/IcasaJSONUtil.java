@@ -66,7 +66,12 @@ public class IcasaJSONUtil {
         services.add(Photometer.class.getName());
         deviceJSON.putOnce(DeviceJSON.SERVICES,services);
         JSONArray propObject = new JSONArray();
-        propObject.put(buildDeviceProperty(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,photometer.getIlluminance(),"Lux"));
+        if (photometer.getIlluminance() != null){
+            propObject.put(buildDeviceProperty(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,photometer.getIlluminance().to(Units.LUX).getValue(),"Lux"));
+        }else {
+            propObject.put(buildDeviceProperty(Photometer.PHOTOMETER_CURRENT_ILLUMINANCE,"none","Lux"));
+        }
+
         deviceJSON.putOnce(DeviceJSON.PROPERTIES_PROP,propObject);
         return deviceJSON;
     }
