@@ -21,22 +21,23 @@ package fr.liglab.adele.icasa.zigbee.device.factories;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.battery.BatteryObservable;
 import fr.liglab.adele.icasa.device.power.PowerSwitch;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
-import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 import org.apache.felix.ipojo.annotations.Requires;
 
 /**
  * Zigbee power switch factory.
  */
-@ContextEntity(services = {PowerSwitch.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+@ContextEntity(services = {PowerSwitch.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,BatteryObservable.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
+public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice,BatteryObservable {
 
     @Requires
     private ZigbeeDriver driver;
@@ -50,7 +51,7 @@ public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDevic
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = MODULE_ADRESS)
     private String moduleAddress;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = BatteryObservable.class,state = BATTERY_LEVEL)
     private float batteryLevel;
 
     @Override
@@ -112,8 +113,14 @@ public class ZigbeePowerSwitch implements PowerSwitch, ZigbeeDevice, ZigbeeDevic
         }
     }
 
-    @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Push(service = BatteryObservable.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
     }
+
+    @Override
+    public double getBatteryPercentage() {
+        return batteryLevel;
+    }
+
 }

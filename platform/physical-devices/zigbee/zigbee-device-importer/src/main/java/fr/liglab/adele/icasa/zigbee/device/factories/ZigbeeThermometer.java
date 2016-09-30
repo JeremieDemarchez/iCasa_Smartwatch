@@ -18,13 +18,14 @@ package fr.liglab.adele.icasa.zigbee.device.factories;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.battery.BatteryObservable;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
-import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 import org.apache.felix.ipojo.annotations.Requires;
 import tec.units.ri.quantity.Quantities;
@@ -36,9 +37,9 @@ import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
 import java.util.Locale;
 
-@ContextEntity(services = {Thermometer.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+@ContextEntity(services = {Thermometer.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,BatteryObservable.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
+public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice,BatteryObservable {
 
     @Requires
     private ZigbeeDriver driver;
@@ -52,7 +53,7 @@ public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDevic
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
     private String moduleAddress;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = BatteryObservable.class,state = BatteryObservable.BATTERY_LEVEL)
     private float batteryLevel;
 
 
@@ -171,8 +172,13 @@ public class ZigbeeThermometer implements Thermometer, ZigbeeDevice, ZigbeeDevic
         }
     }
 
-    @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Push(service = BatteryObservable.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
+    }
+
+    @Override
+    public double getBatteryPercentage() {
+        return batteryLevel;
     }
 }

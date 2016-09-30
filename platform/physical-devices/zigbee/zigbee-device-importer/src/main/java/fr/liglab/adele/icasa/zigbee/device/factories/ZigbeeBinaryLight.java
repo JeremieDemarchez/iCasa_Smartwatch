@@ -21,22 +21,23 @@ package fr.liglab.adele.icasa.zigbee.device.factories;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.battery.BatteryObservable;
 import fr.liglab.adele.icasa.device.light.BinaryLight;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDriver;
-import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
-import org.apache.felix.ipojo.annotations.*;
+import org.apache.felix.ipojo.annotations.Requires;
 
 import java.util.function.Consumer;
 
 
-@ContextEntity(services = {BinaryLight.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+@ContextEntity(services = {BinaryLight.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,BatteryObservable.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDeviceTracker,GenericDevice{
+public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDeviceTracker,GenericDevice,BatteryObservable{
 
     @ContextEntity.State.Field(service = BinaryLight.class,state = BinaryLight.BINARY_LIGHT_POWER_STATUS,value = "false")
     private boolean powerStatus;
@@ -47,7 +48,7 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.MODULE_ADRESS)
     private String moduleAddress;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = ZigbeeDevice.BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = BatteryObservable.class,state = BATTERY_LEVEL)
     private float batteryLevel;
 
     @Requires
@@ -140,8 +141,13 @@ public class ZigbeeBinaryLight implements BinaryLight, ZigbeeDevice,ZigbeeDevice
         }
     }
 
-    @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Push(service = BatteryObservable.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
-        return battery;
+        return battery*100;
+    }
+
+    @Override
+    public double getBatteryPercentage() {
+        return batteryLevel;
     }
 }

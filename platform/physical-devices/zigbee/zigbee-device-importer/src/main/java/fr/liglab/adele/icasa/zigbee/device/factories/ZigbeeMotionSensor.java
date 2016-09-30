@@ -18,20 +18,21 @@ package fr.liglab.adele.icasa.zigbee.device.factories;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.battery.BatteryObservable;
 import fr.liglab.adele.icasa.device.motion.MotionSensor;
 import fr.liglab.adele.icasa.device.zigbee.driver.Data;
 import fr.liglab.adele.icasa.device.zigbee.driver.DeviceInfo;
 import fr.liglab.adele.icasa.device.zigbee.driver.ZigbeeDeviceTracker;
-import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
+import fr.liglab.adele.icasa.location.LocatedObject;
 import fr.liglab.adele.icasa.zigbee.device.api.ZigbeeDevice;
 
 /**
  *
  */
-@ContextEntity(services = {MotionSensor.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class})
+@ContextEntity(services = {MotionSensor.class, ZigbeeDevice.class,ZigbeeDeviceTracker.class,BatteryObservable.class})
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice {
+public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDeviceTracker,GenericDevice,BatteryObservable {
 
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
@@ -39,7 +40,7 @@ public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDev
     @ContextEntity.State.Field(service = ZigbeeDevice.class,state = MODULE_ADRESS)
     private String moduleAddress;
 
-    @ContextEntity.State.Field(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Field(service = BatteryObservable.class,state = BATTERY_LEVEL)
     private float batteryLevel;
 
     @Override
@@ -94,8 +95,13 @@ public class ZigbeeMotionSensor implements MotionSensor, ZigbeeDevice, ZigbeeDev
         }
     }
 
-    @ContextEntity.State.Push(service = ZigbeeDevice.class,state = BATTERY_LEVEL)
+    @ContextEntity.State.Push(service = BatteryObservable.class,state = BATTERY_LEVEL)
     public float pushBatteryLevel(float battery){
         return battery;
+    }
+
+    @Override
+    public double getBatteryPercentage() {
+        return batteryLevel;
     }
 }

@@ -13,19 +13,20 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-/**
- * 
- */
-package fr.liglab.adele.icasa.zigbee.device.api;
+package fr.liglab.adele.icasa.device.battery;
 
 import fr.liglab.adele.cream.annotations.ContextService;
 import fr.liglab.adele.cream.annotations.State;
 
 /**
- * Generic interface for zigbee devices.
+ * Created by aygalinc on 29/09/16.
  */
-public @ContextService interface ZigbeeDevice {
+public @ContextService interface BatteryObservable {
 
-    static final @State String MODULE_ADRESS = "ZigBeeDevice.module.adress";
+    /**
+     * Device battery level.
+     */
+    static final @State   String BATTERY_LEVEL = "batteryLevel";
 
+    double getBatteryPercentage();
 }

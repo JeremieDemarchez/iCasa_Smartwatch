@@ -78,6 +78,11 @@
 			<artifactId>wisdom-api</artifactId>
 		</dependency>
 
+		<dependency>
+			<groupId>fr.liglab.adele.cream</groupId>
+			<artifactId>cream.runtime.facilities</artifactId>
+		</dependency>
+
     </dependencies>
 	
 	
@@ -106,7 +111,7 @@
                         	org.openhab.binding.zwave.internal
                         </Private-Package>
                         <Import-Package>
-                        	!org.openhab.*,
+							!org.openhab.*,
                         	!com.thoughtworks.*,
                         	*
                         </Import-Package>
@@ -114,7 +119,7 @@
                 </configuration>
 			</plugin>
 
-			<plugin>
+		<plugin>
 				<groupId>org.apache.felix</groupId>
 				<artifactId>maven-ipojo-plugin</artifactId>
 				<dependencies>

@@ -1,0 +1,98 @@
+<!--
+  #%L
+  Wisdom-Framework
+  %%
+  Copyright (C) 2013 - 2014 Wisdom Framework
+  %%
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+  
+       http://www.apache.org/licenses/LICENSE-2.0
+  
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  #L%
+  -->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head lang="en">
+    <title>Visualize your fuel</title>
+    <link rel="shortcut icon" href="/assets/home-loope.png"/>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+
+    <link rel="stylesheet" href="/libs/css/bootstrap.css" media="screen"/>
+    <link rel="stylesheet" href="/assets/main.css"/>
+    <link rel="stylesheet"  href="/assets/javascripts/libs/chartist/chartist.min.css"/>
+    <script src="/assets/javascripts/libs/chartist/chartist.min.js"/>
+    <style type="text/css">
+        .ct-chart-donut .ct-series-a .ct-slice-donut {
+            stroke: red;
+        }
+        .ct-chart-donut .ct-series-b .ct-slice-donut  {
+            stroke: orange;
+        }
+        .ct-chart-donut .ct-series-c .ct-slice-donut {
+            stroke: green;
+        }
+        .ct-chart-donut .ct-series-d .ct-slice-donut  {
+            stroke: grey;
+        }
+        .ct-chart-donut .ct-series-e .ct-slice-donut  {
+            stroke: black;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+
+    <div class="header">
+        <h3 class="text-danger">Battery Monitoring Page</h3>
+    </div>
+
+    <!--<blockquote class="lead">iCasa kicking ass</blockquote>-->
+    <div class="row">
+        <p></p>
+    </div>
+    <div class="row">
+        <div class="col-md-8 col-md-offset-2">
+
+            <div class="row">
+                <div class="jumbotron">
+                    <p>Here you can see the battery level of your devices</p>
+                </div>
+            </div>
+
+            <div class="row" id="devices-chart">
+
+
+            </div>
+        </div>
+    </div>
+
+    <hr/>
+
+    <div class="footer">
+        <p><span class="text-muted pull-right">${project.name} - ${project.version}</span></p>
+    </div>
+
+</div>
+
+<!-- Scripts -->
+<script src="/libs/jquery.min.js"></script>
+<script src="/libs/js/bootstrap.min.js"></script>
+<script src="/assets/javascripts/gracefulWebsocket-min.js"></script>
+<script src="/assets/javascripts/battery-min.js"></script>
+
+<script>
+    $.ready(new function () {
+        init();
+    });
+</script>
+</body>
+</html>

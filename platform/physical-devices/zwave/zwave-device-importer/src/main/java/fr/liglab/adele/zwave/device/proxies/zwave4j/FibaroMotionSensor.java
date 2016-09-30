@@ -19,6 +19,7 @@ import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.behavior.InjectedBehavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.battery.BatteryObservable;
 import fr.liglab.adele.icasa.device.light.Photometer;
 import fr.liglab.adele.icasa.device.presence.PresenceSensor;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
@@ -30,9 +31,7 @@ import fr.liglab.adele.zwave.device.api.ZwaveDevice;
 import fr.liglab.adele.zwave.device.proxies.ZwaveDeviceBehaviorProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.zwave4j.Manager;
-import org.zwave4j.Notification;
-import org.zwave4j.ValueId;
+import org.zwave4j.*;
 import tec.units.ri.quantity.Quantities;
 import tec.units.ri.unit.Units;
 
@@ -41,13 +40,13 @@ import javax.measure.quantity.Illuminance;
 import javax.measure.quantity.Temperature;
 
 
-@ContextEntity(services = {PresenceSensor.class,Thermometer.class,Photometer.class,Zwave4jDevice.class,})
+@ContextEntity(services = {PresenceSensor.class,Thermometer.class,Photometer.class,Zwave4jDevice.class,BatteryObservable.class})
 
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
 @Behavior(id="ZwaveBehavior",spec = ZwaveDevice.class,implem = ZwaveDeviceBehaviorProvider.class)
 @Behavior(id="Testable",spec = Testable.class,implem = TestablePresenceSensor.class)
 
-public class FibaroMotionSensor extends AbstractZwave4jDevice implements  GenericDevice, Zwave4jDevice, PresenceSensor,Thermometer,Photometer {
+public class FibaroMotionSensor extends AbstractZwave4jDevice implements  GenericDevice, Zwave4jDevice, PresenceSensor,Thermometer,Photometer,BatteryObservable {
 
 	private static final Logger LOG = LoggerFactory.getLogger(FibaroMotionSensor.class);
 
@@ -86,6 +85,11 @@ public class FibaroMotionSensor extends AbstractZwave4jDevice implements  Generi
 				}
 				break;
 			case BATTERY:
+				System.out.println("Battery Level " +getValue(manager,valueId) );
+
+				if (valueId.getIndex() == 0){
+					pushBatteryLevel((Short)getValue(manager,valueId));
+				}
 				break;
 			default:
 				break;
@@ -138,5 +142,19 @@ public class FibaroMotionSensor extends AbstractZwave4jDevice implements  Generi
 	@Override
 	public Quantity<Temperature> getTemperature() {
 		return temperature;
+	}
+
+	@ContextEntity.State.Field(service = BatteryObservable.class,state = BatteryObservable.BATTERY_LEVEL,value = "-1")
+	private double batteryLevel;
+
+	@ContextEntity.State.Push(service = BatteryObservable.class,state =BatteryObservable.BATTERY_LEVEL)
+	public double pushBatteryLevel(short newStatus){
+		return newStatus;
+	}
+
+
+	@Override
+	public double getBatteryPercentage() {
+		return batteryLevel;
 	}
 }

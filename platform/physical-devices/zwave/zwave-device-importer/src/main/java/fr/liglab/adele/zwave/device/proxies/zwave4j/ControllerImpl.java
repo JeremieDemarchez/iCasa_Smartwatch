@@ -17,6 +17,7 @@ package fr.liglab.adele.zwave.device.proxies.zwave4j;
 
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.cream.annotations.provider.Creator;
+import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
 import fr.liglab.adele.cream.model.Relation;
 import fr.liglab.adele.zwave.device.api.ZwaveController;
 import fr.liglab.adele.zwave.device.api.ZwaveDevice;
@@ -507,21 +508,25 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 
 	private Map<NodeReference,Zwave4jDevice> proxies = new ConcurrentHashMap<>();
 
-	@Bind(id="Zwave4jProxies", proxy=false, optional=true, aggregate = true)
-	private void addProxy(Zwave4jDevice proxy, Map<String, Object> properties) {
+	@Requires(id="Zwave4jProxies",specification = ZwaveDevice.class,proxy=false, optional=true)
+	@ContextRequirement(spec = Zwave4jDevice.class)
+	List<Zwave4jDevice> zwave4jDevices;
 
-		int homeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.HOME_ID));
-		int nodeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.NODE_ID));
+	@Bind(id="Zwave4jProxies" )
+	private void addProxy(ZwaveDevice proxy, Map<String, Object> properties) {
 
-		proxy.initialize(manager);
-		proxies.put(new NodeReference(homeId,(short)nodeId), proxy);
+		int homeId = proxy.getHomeId();;
+		int nodeId = proxy.getNodeId();
+
+		((Zwave4jDevice)proxy).initialize(manager);
+		proxies.put(new NodeReference(homeId,(short)nodeId), ((Zwave4jDevice)proxy));
 	}
 
-	@Unbind(id="Zwave4jProxies",proxy=false, optional=true, aggregate = true)
-	private void removeProxy(Zwave4jDevice proxy, Map<String, Object> properties) {
+	@Unbind(id="Zwave4jProxies")
+	private void removeProxy(ZwaveDevice proxy, Map<String, Object> properties) {
 
-		int homeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.HOME_ID));
-		int nodeId = (Integer) properties.get(ContextEntity.State.id(ZwaveDevice.class,ZwaveDevice.NODE_ID));
+		int homeId = proxy.getHomeId();;
+		int nodeId = proxy.getNodeId();
 
 		proxies.remove(new NodeReference(homeId, (short)nodeId));
 

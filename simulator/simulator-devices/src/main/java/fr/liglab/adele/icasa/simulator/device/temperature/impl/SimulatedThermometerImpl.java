@@ -33,6 +33,7 @@ package fr.liglab.adele.icasa.simulator.device.temperature.impl;
 import fr.liglab.adele.cream.annotations.behavior.Behavior;
 import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 import fr.liglab.adele.icasa.device.GenericDevice;
+import fr.liglab.adele.icasa.device.battery.BatteryObservable;
 import fr.liglab.adele.icasa.device.temperature.Thermometer;
 import fr.liglab.adele.icasa.helpers.location.provider.LocatedObjectBehaviorProvider;
 import fr.liglab.adele.icasa.location.LocatedObject;
@@ -53,10 +54,10 @@ import javax.measure.quantity.Temperature;
  * Implementation of a simulated thermometer device.
  *
  */
-@ContextEntity(services = {Thermometer.class, SimulatedDevice.class})
+@ContextEntity(services = {Thermometer.class, SimulatedDevice.class,BatteryObservable.class})
 
 @Behavior(id="LocatedBehavior",spec = LocatedObject.class,implem = LocatedObjectBehaviorProvider.class)
-public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,GenericDevice {
+public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,GenericDevice,BatteryObservable {
 
     public final static String SIMULATED_THERMOMETER = "iCasa.Thermometer";
 
@@ -69,6 +70,8 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
     @ContextEntity.State.Field(service = GenericDevice.class,state = GenericDevice.DEVICE_SERIAL_NUMBER)
     private String serialNumber;
 
+    @ContextEntity.State.Field(service = BatteryObservable.class,state = BatteryObservable.BATTERY_LEVEL,directAccess = true,value = "48")
+    private double batteryLevel;
 
     @Validate
     public void validate(){
@@ -110,4 +113,8 @@ public class SimulatedThermometerImpl   implements Thermometer, SimulatedDevice,
         return Quantities.getQuantity(temperature, Units.KELVIN);
     }
 
+    @Override
+    public double getBatteryPercentage() {
+        return batteryLevel;
+    }
 }
