@@ -404,10 +404,10 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 
 	private void requestChangeMode(ZwaveController.Mode requestedMode) {
 
-		LOG.debug("Zwave mode change requested "+requestedMode);
+		LOG.debug("Zwave demand of change on " + requestedMode );
 
 		if (inTransition.compareAndSet(false,true)) {
-			LOG.debug("NOT IN TRANSITION ");
+			LOG.debug("NOT IN TRANSITION, request mode " + requestedMode + " actual mode " + currentMode);
 
 			switch (currentMode) {
 
@@ -422,6 +422,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 							manager.beginControllerCommand(zwaveHomeId, ControllerCommand.ADD_DEVICE, this, true);
 							break;
 						case NORMAL:
+							LOG.warn(" DO NOTHING ");
 							inTransition.set(false);
 							break;
 					}
@@ -431,12 +432,12 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 				case INCLUSION:
 					switch (requestedMode) {
 						case NORMAL:
-							LOG.debug("INCLUSION/NORMAL ");
+							LOG.warn(" Demand of cancel actual mode");
 							modeRequest = Mode.NORMAL;
 							manager.cancelControllerCommand(zwaveHomeId);
 							break;
 						default:
-							LOG.debug("INCLUSION/DEFAULT ");
+							LOG.warn(" DO NOTHING ");
 							inTransition.set(false);
 							break;
 					}
@@ -446,10 +447,12 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 				case EXCLUSION:
 					switch (requestedMode) {
 						case NORMAL:
+							LOG.warn(" Demand of cancel actual mode");
 							modeRequest = Mode.NORMAL;
 							manager.cancelControllerCommand(zwaveHomeId);
 							break;
 						default:
+							LOG.warn(" DO NOTHING ");
 							inTransition.set(false);
 							break;
 					}
@@ -457,7 +460,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 
 			}
 		}else {
-			LOG.warn(" Zwave dongle is on transition, retry later");
+			LOG.warn(" Zwave dongle is on transition, retry later waiting to change for " + modeRequest );
 		}
 	}
 
@@ -475,7 +478,7 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 
 	@Override
 	public void onCallback(ControllerState state, ControllerError err, Object context) {
-		LOG.debug(" Current Mode " + currentMode + " state received " + state + " request mode " + modeRequest);
+		LOG.warn(" Callback received  " + currentMode + " state received " + state + " request mode " + modeRequest);
 		switch (currentMode) {
 			case INCLUSION:
 			case EXCLUSION:
@@ -483,9 +486,10 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 					case COMPLETED:
 					case FAILED:
 					case CANCEL:
-						inTransition.set(false);
+						LOG.warn(" Back to normal");
 						modeRequest = Mode.NORMAL;
 						currentMode = changeModeNotification(ZwaveController.Mode.NORMAL);
+						inTransition.set(false);
 						break;
 					default:
 						break;
@@ -496,12 +500,14 @@ public class ControllerImpl extends AbstractDiscoveryComponent implements ZwaveD
 					case COMPLETED:
 					case FAILED:
 					case WAITING:
-						inTransition.set(false);
+						LOG.warn(" Change to " + modeRequest);
 						currentMode = changeModeNotification(modeRequest);
+						inTransition.set(false);
 						break;
 				}
 				break;
 			default:
+				LOG.error(" Default Case ! WEIRD ! ");
 				break;
 		}
 	}
