@@ -105,11 +105,11 @@ public class OrangeRemoteController extends DefaultController {
 
         ZwaveController.Mode newMode = (ZwaveController.Mode) newP;
         logger().info(" Change on discovery mode detected : " + newMode );
+        String zwaveId = String.valueOf(controller.getNodeId());
+        if (managedFutureTaskMap.containsKey(zwaveId)) {
+            managedFutureTaskMap.remove(zwaveId).cancel(true);
+        }
         if (newMode != ZwaveController.Mode.NORMAL) {
-            String zwaveId = String.valueOf(controller.getNodeId());
-            if (managedFutureTaskMap.containsKey(zwaveId)) {
-                managedFutureTaskMap.remove(zwaveId).cancel(true);
-            }
             ManagedFutureTask futurTask = scheduler.schedule(new ControllerBackToNormalTask(zwaveId), discoveryTime, discoveryTimeUnit);
             managedFutureTaskMap.put(zwaveId, futurTask);
             ObjectNode node = json.newObject();
