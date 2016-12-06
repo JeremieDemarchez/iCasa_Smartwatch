@@ -11,7 +11,7 @@ public class ServerBoard extends JFrame {
 
     public ServerBoard() {
 
-        super("ServerBoard");
+        super("MyServerBoard");
 
         JPanel panelFields = new JPanel();
         panelFields.setLayout(new BoxLayout(panelFields,BoxLayout.X_AXIS));
