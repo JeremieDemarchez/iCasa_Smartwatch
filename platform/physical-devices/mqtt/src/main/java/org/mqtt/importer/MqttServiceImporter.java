@@ -32,10 +32,8 @@ public class MqttServiceImporter extends AbstractImporterComponent {
 	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
 	private String name;
 	
-	@ServiceProperty(name = "target", value = "(&(scope=generic)(protocol=mqtt)(port=*))")
+	@ServiceProperty(name = "target", value = "(&(scope=generic)(protocol=mqtt))")
 	private String filter;
-
-	private Creator.Entity<? extends MqttService> contextCreator; 
 
 	
 	@Validate
@@ -63,6 +61,7 @@ public class MqttServiceImporter extends AbstractImporterComponent {
 		String serviceName = SmartwatchOperations.getIcasaServiceName((int)Integer.parseInt(declaration.getServiceCode()));
 		if(serviceName != null)
 		{
+			
 			Map<String,Object> properties= new HashMap<>();
 			properties.put(ContextEntity.State.id(MqttService.class, MqttServiceDeclaration.PROVIDER_ID),declaration.getProviderId());
 			properties.put(ContextEntity.State.id(MqttService.class, MqttServiceDeclaration.SERVICE_NAME),declaration.getServiceCode());

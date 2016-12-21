@@ -20,7 +20,7 @@ public class FuchsiaSetup {
 
     Instance mqttImporterLinker = instance()
             .of(FuchsiaConstants.DEFAULT_IMPORTATION_LINKER_FACTORY_NAME)
-            .with(ImportationLinker.FILTER_IMPORTDECLARATION_PROPERTY).setto("(&(scope=generic)(protocol=mqtt)(port=*))")
+            .with(ImportationLinker.FILTER_IMPORTDECLARATION_PROPERTY).setto("(&(scope=generic)(protocol=mqtt))")
             .with(ImportationLinker.FILTER_IMPORTERSERVICE_PROPERTY).setto("(instance.name=mqttServiceImporter)");
 
    /* Instance zwaveDeviceImporterLinker = instance()
