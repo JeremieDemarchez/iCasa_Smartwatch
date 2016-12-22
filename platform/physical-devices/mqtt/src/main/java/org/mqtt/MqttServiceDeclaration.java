@@ -41,7 +41,7 @@ public class MqttServiceDeclaration {
     private static Filter buildMatchFilter() {
     	
         try {
-        	return FuchsiaUtils.getFilter("(&(scope=generic)(protocol=mqtt)(id=*)(port=*))");
+        	return FuchsiaUtils.getFilter("(&(scope=generic)(protocol=mqtt))");
         } catch (InvalidFilterException e) {
             throw new IllegalStateException(e);
         }

@@ -24,7 +24,7 @@ public @ContextService interface MqttService {
 	 /**
      * The distant device id
      */
-    static final @State String PROVIDER_ID = "mqtt.deviceId";
+    static final @State String PROVIDER_ID = "mqtt.providerId";
     
     /**
      * the distant service name

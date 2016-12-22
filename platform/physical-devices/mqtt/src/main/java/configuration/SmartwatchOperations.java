@@ -111,7 +111,9 @@ package configuration;
 		public static String getIcasaServiceName(int code){
 			switch (code) {
 			case GYROSCOPE_SERVICE:
-				return "MqttGyroscopeService";
+				return "MqttGyroscopeServiceImpl";
+			case STEP_COUNTER_SERVICE:
+				return "MqttStepCounterServiceImpl";
 			default:
 				break;
 			}
@@ -123,6 +125,9 @@ package configuration;
 			
 			if(serviceName.equals("MqttGyroscopeService")){
 				return GYROSCOPE_SERVICE;
+			}
+			else if(serviceName.equals("MqttStepCounterServiceImpl")){
+				return STEP_COUNTER_SERVICE;
 			}
 			return -1;
 		}
@@ -143,7 +148,16 @@ package configuration;
 				}
 				break;
 			case STEP_COUNTER_SERVICE:
-						
+				switch (methodCode) {
+				case GET_NUMBER_OF_STEP:
+					return "askNumberOfStep";
+				case GET_NUMBER_OF_STEP_HISTORY:
+					return "askHistoryOfStepCounter";
+				case GET_DEVICE_TYPE:
+					return "askDeviceType";
+				default:
+					break;
+				}	
 				break;
 			default:
 				break;
@@ -160,6 +174,17 @@ package configuration;
 				}
 				else if(methodName.equals("askHistory")){
 					return GET_GYROSCOPE_HISTORY;
+				}
+				else if(methodName.equals("askDeviceType")){
+					return GET_DEVICE_TYPE;
+				}
+			}
+			else if(serviceName.equals("MqttStepCounterServiceImpl")){
+				if(methodName.equals("askNumberOfStep")){
+					return GET_NUMBER_OF_STEP;
+				}
+				else if(methodName.equals("askHistoryOfStepCounter")){
+					return GET_NUMBER_OF_STEP_HISTORY;
 				}
 				else if(methodName.equals("askDeviceType")){
 					return GET_DEVICE_TYPE;

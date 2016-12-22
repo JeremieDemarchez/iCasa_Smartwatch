@@ -29,7 +29,7 @@ public class FuchsiaSetup {
             .of("org.mqtt.MqttServiceDiscovery");
 
     Instance mqttServiceImporter = instance().named("mqttServiceImporter")
-            .of("org.mqtt.MqttServiceImporter");
+            .of("org.mqtt.importer.MqttServiceImporter");
             //.with("library").setto("openhab");
     		//.with("library").setto("zwave4j");
 

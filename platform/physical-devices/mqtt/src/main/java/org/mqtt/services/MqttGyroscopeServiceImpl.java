@@ -29,12 +29,18 @@ import fr.liglab.adele.cream.annotations.entity.ContextEntity;
 @ContextEntity(services = { MqttGyroscopeService.class })
 public class MqttGyroscopeServiceImpl implements MqttGyroscopeService{
 
-	@ContextEntity.State.Field(service = MqttGyroscopeService.class,state = MqttGyroscopeService.PROVIDER_ID)
+	@ContextEntity.State.Field(service = MqttService.class,state = MqttGyroscopeService.PROVIDER_ID)
 	private String providerId;
 	
-	@ContextEntity.State.Field(service = MqttGyroscopeService.class,state = MqttGyroscopeService.SERVICE_NAME)
+	@ContextEntity.State.Field(service = MqttService.class,state = MqttGyroscopeService.SERVICE_NAME)
 	private String serviceName;
 	
+	private MqttRequester mqttRequester;
+	
+	private MqttRequester getMqttRequester(){
+		if(mqttRequester == null) mqttRequester = new MqttRequester();
+		return mqttRequester;
+	}
 
 
 	@Override
@@ -51,7 +57,8 @@ public class MqttGyroscopeServiceImpl implements MqttGyroscopeService{
 	public void askXYZAxisValues(Consumer<String[]> callback) {
 		
 		int codeMethod = SmartwatchOperations.getIcasaMethodCode("MqttGyroscopeServiceImpl", "askXYZAxisValues");
-		MqttRequester.getInstance().runRequest(callback, providerId, codeMethod, null);
+		if(codeMethod != -1) 
+			getMqttRequester().runRequest(callback, providerId, codeMethod, null);
 		//convert result in the appropriate format -> à la charge du développeur... bof bof comme méthode
 	}
 
@@ -59,17 +66,15 @@ public class MqttGyroscopeServiceImpl implements MqttGyroscopeService{
 	public void askHistory(Consumer<String[]> callback) {
 		
 		int codeMethod = SmartwatchOperations.getIcasaMethodCode("MqttGyroscopeServiceImpl", "askHistory");
-		MqttRequester.getInstance().runRequest(callback, providerId, codeMethod, null);
+		if(codeMethod != -1) 
+			getMqttRequester().runRequest(callback, providerId, codeMethod, null);
 	}
 
 	@Override
 	public void askDeviceType(Consumer<String[]> callback) {
 		
 		int codeMethod = SmartwatchOperations.getIcasaMethodCode("MqttGyroscopeServiceImpl", "askDeviceType");
-		MqttRequester.getInstance().runRequest(callback, providerId, codeMethod, null);
+		if(codeMethod != -1) 
+			getMqttRequester().runRequest(callback, providerId, codeMethod, null);
 	}
-	
-	
-	
-	
 }

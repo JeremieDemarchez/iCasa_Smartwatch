@@ -21,11 +21,16 @@ import java.util.Map;
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.mqtt.MqttServiceDeclaration;
+import org.mqtt.services.MqttGyroscopeServiceImpl;
 import org.mqtt.services.MqttService;
+import org.mqtt.services.MqttStepCounterServiceImpl;
 import org.ow2.chameleon.fuchsia.core.component.AbstractImporterComponent;
+import org.ow2.chameleon.fuchsia.core.component.ImporterIntrospection;
+import org.ow2.chameleon.fuchsia.core.component.ImporterService;
 import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclaration;
 import org.ow2.chameleon.fuchsia.core.exceptions.BinderException;
 import org.slf4j.Logger;
@@ -40,9 +45,14 @@ import fr.liglab.adele.cream.annotations.provider.Creator;
  *
  */
 @Component
+@Provides(specifications={ImporterIntrospection.class,ImporterService.class})
 public class MqttServiceImporter extends AbstractImporterComponent {
 	
 	private static final Logger LOG = LoggerFactory.getLogger(MqttServiceImporter.class);
+	
+	private @Creator.Field  Creator.Entity<MqttGyroscopeServiceImpl> gyroscopeServiceCreator;
+	private @Creator.Field  Creator.Entity<MqttStepCounterServiceImpl> stepServiceCreator;
+	
 	
 	@ServiceProperty(name = Factory.INSTANCE_NAME_PROPERTY)
 	private String name;
@@ -54,10 +64,12 @@ public class MqttServiceImporter extends AbstractImporterComponent {
 	@Validate
 	protected void start() {
 		super.start();
+		System.out.println("Component MqttServiceImporter is starting.");
 	}
 
 	@Invalidate
 	protected void stop() {
+		System.out.println("Component MqttServiceImporter is stopping.");
 		super.stop();
 	}
 	
@@ -73,20 +85,29 @@ public class MqttServiceImporter extends AbstractImporterComponent {
 		LOG.info("Importing declaration from mqtt provider '{}' of service {}",declaration.getProviderId(),declaration.getServiceCode());
 
 		//si le service distant existe dans iCasa alors on l'instancie
-		String serviceName = SmartwatchOperations.getIcasaServiceName((int)Integer.parseInt(declaration.getServiceCode()));
-		if(serviceName != null)
-		{
+		try{
+			String serviceName = SmartwatchOperations.getIcasaServiceName((int)Integer.parseInt(declaration.getServiceCode()));
+		
+			System.out.println("MqttServiceImporter received an ImportDeclaration for service "+serviceName);
 			
-			Map<String,Object> properties= new HashMap<>();
-			properties.put(ContextEntity.State.id(MqttService.class, MqttServiceDeclaration.PROVIDER_ID),declaration.getProviderId());
-			properties.put(ContextEntity.State.id(MqttService.class, MqttServiceDeclaration.SERVICE_NAME),declaration.getServiceCode());
-
-			String declarationId = MqttServiceDeclaration.createDeclarationId(declaration.getProviderId(), declaration.getServiceCode());
-
-			IndexCreator.getContextCreator(serviceName).create(declarationId,properties);
-			handleImportDeclaration(importDeclaration);		
-
-			LOG.info("MqttServiceImporter : instaciation of remote service : "+declaration.getServiceCode());
+			if(serviceName != null)
+			{
+				
+				Map<String,Object> properties= new HashMap<>();
+				properties.put(ContextEntity.State.id(MqttService.class, MqttServiceDeclaration.PROVIDER_ID),declaration.getProviderId());
+				properties.put(ContextEntity.State.id(MqttService.class, MqttServiceDeclaration.SERVICE_NAME),declaration.getServiceCode());
+	
+				String declarationId = MqttServiceDeclaration.createDeclarationId(declaration.getProviderId(), declaration.getServiceCode());
+				
+				System.out.println("MqttServiceImporter : declarationId = "+declarationId+", declaration.getProviderId() = "+declaration.getProviderId()+", declaration.getServiceCode() = "+declaration.getServiceCode());
+	
+				getContextCreator(serviceName).create(declarationId,properties);
+				handleImportDeclaration(importDeclaration);		
+	
+				LOG.info("MqttServiceImporter : instaciation of remote service : "+declaration.getServiceCode());
+			}
+		}catch(NumberFormatException e){
+			System.err.println("MqttServiceImporter : ERROR IN NUMBER FORMAT OF SERVICE : code == "+declaration.getServiceCode());	
 		}
 	}
 
@@ -100,9 +121,19 @@ public class MqttServiceImporter extends AbstractImporterComponent {
 		
 		String declarationId = MqttServiceDeclaration.createDeclarationId(declaration.getProviderId(), declaration.getServiceCode());
 
-		IndexCreator.getContextCreator(serviceName).delete(declarationId);
+		getContextCreator(serviceName).delete(declarationId);
 		unhandleImportDeclaration(importDeclaration);
 		
 		LOG.info("MqttServiceImporter : deletion of remote service : "+declaration.getServiceCode());
+	}
+	
+	public Creator.Entity<? extends MqttService> getContextCreator(String icasaServiceName){
+		if(icasaServiceName.equals("MqttGyroscopeServiceImpl")){
+			return gyroscopeServiceCreator;
+		}
+		else if(icasaServiceName.equals("MqttStepCounterServiceImpl")){
+			return stepServiceCreator;
+		}
+		return null;
 	}
 }

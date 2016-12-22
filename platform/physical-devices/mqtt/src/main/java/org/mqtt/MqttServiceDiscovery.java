@@ -17,30 +17,32 @@ package org.mqtt;
 
 import org.apache.felix.ipojo.Factory;
 import org.apache.felix.ipojo.annotations.Component;
-import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Invalidate;
+import org.apache.felix.ipojo.annotations.Provides;
 import org.apache.felix.ipojo.annotations.ServiceProperty;
 import org.apache.felix.ipojo.annotations.Validate;
 import org.eclipse.paho.client.mqttv3.IMqttDeliveryToken;
 import org.eclipse.paho.client.mqttv3.MqttCallback;
 import org.eclipse.paho.client.mqttv3.MqttClient;
-import org.eclipse.paho.client.mqttv3.MqttConnectOptions;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
-import org.eclipse.paho.client.mqttv3.persist.MemoryPersistence;
-import org.mqtt.importer.MqttServiceImporter;
 import org.osgi.framework.BundleContext;
 import org.ow2.chameleon.fuchsia.core.component.AbstractDiscoveryComponent;
+import org.ow2.chameleon.fuchsia.core.component.DiscoveryIntrospection;
+import org.ow2.chameleon.fuchsia.core.component.DiscoveryService;
 import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclaration;
 import org.ow2.chameleon.fuchsia.core.declaration.ImportDeclarationBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import configuration.SmartwatchOperations;
 
 /**
  * Hello world!
  *
  */
 @Component
+@Provides(specifications = {DiscoveryService.class,DiscoveryIntrospection.class})
 public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements MqttCallback{
 
 	private static final Logger LOG = LoggerFactory.getLogger(MqttServiceDiscovery.class);
@@ -70,6 +72,7 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
         // MemoryPersistence persistence = new MemoryPersistence();
 
 		LOG.debug("MqttServiceDiscovery : component is starting.");
+		System.out.println("MqttServiceDiscovery : component is starting.");
 
          try {
              mqttClient = new MqttClient(broker, clientId);
@@ -83,7 +86,7 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
              System.out.println("Connected");
              
              mqttClient.subscribe(topicIotServices);
-             System.out.println("Subscribed to topic: "+broker);
+             System.out.println("Subscribed to topic: "+topicIotServices);
              
          } catch(MqttException me) {
              System.out.println("reason "+me.getReasonCode());
@@ -111,6 +114,7 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
 			}
 		}
 		LOG.debug("MqttServiceDiscovery : component is stopping.");
+		System.out.println("MqttServiceDiscovery : component is stopping.");
 	}
 
 	
@@ -119,13 +123,23 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
 
 		String message = mqttMessage.toString();
 		LOG.debug("MqttServiceDiscovery : message arrived ! Topic = \""+topic+"\", and message = \""+message+"\"");
+		System.out.println("MqttServiceDiscovery : message arrived ! Topic = \""+topic+"\", and message = \""+message+"\"");
 		
-		if(topic.equals(this.topicIotServices)){
-			//TODO : décortiquer le message pour récupérer les infos utiles
+		if(topic.equals(MqttServiceDiscovery.topicIotServices)){
+			//System.out.println("MqttServiceDiscovery : interested by topic '"+topic+"' -> going to create ImportDeclaration");
 			String idProvider = getPart(0, message);
-			String providedService = getPart(1, message);
+			//System.out.println("getPart 0 done : idProvider == "+idProvider);
+			String codeProvidedService = getPart(1, message);
+			//System.out.println("getPart 1 done : codeProvidedService == "+codeProvidedService);
+			//String providedService = SmartwatchOperations.getIcasaServiceName((int)Integer.parseInt(codeProvidedService));
+			
+			System.out.println("MqttServiceDiscovery : interested by topic '"+topic+"' -> provider id is "+idProvider+" and provided service is '"+SmartwatchOperations.getIcasaServiceName((int)Integer.parseInt(codeProvidedService))+"'");
 			//String deviceType = getPart(2, message);
-			createDeclaration(idProvider, providedService);
+			createDeclaration(idProvider, codeProvidedService);
+			//System.out.println("declaration created");
+		}
+		else{
+			System.out.println("MqttServiceDiscovery : not interested by topic '"+topic+"'");
 		}
 
 	}
@@ -141,29 +155,35 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
 		
 		while(i>0){
 			try{
-			tmp = tmp.substring(tmp.indexOf("-"));
+			tmp = tmp.substring(tmp.indexOf("-")+1);
+			i--;
 			}catch(IndexOutOfBoundsException e){
 				LOG.error("MqttServiceDiscovery : getPart("+i+", "+message+") throws IndexOutOfBoundsException.");
+				System.out.println("MqttServiceDiscovery : getPart("+i+", "+message+") throws IndexOutOfBoundsException.");
 				e.printStackTrace();
 				return null;
 			}
 		}
-		
+		//System.out.println("tmp == "+tmp);
 		int end = tmp.indexOf("-") != -1 ? tmp.indexOf("-") : tmp.length();
+		//System.out.println("end == "+end);
 		return tmp.substring(0, end);
 	}
 	
 	
 	private final void createDeclaration(String providerId, String serviceName) {
+		
+		System.out.println("MqttServiceDiscovery : create declaration for service '"+serviceName+"'");
 
 		ImportDeclaration declaration = ImportDeclarationBuilder.empty()
 				.key(MqttServiceDeclaration.PROVIDER_ID).value(providerId)
 				.key(MqttServiceDeclaration.SERVICE_NAME).value(serviceName)
 				.key("scope").value("generic")
-				.key("library").value("mqtt")
+				.key("protocol").value("mqtt")
 				.build();
 
 		LOG.debug("MqttServiceDiscovery : ImportDeclaration created for provider \""+providerId+"\" and service \""+serviceName+"\"");
+		System.out.println("MqttServiceDiscovery : ImportDeclaration created for provider \""+providerId+"\" and service \""+serviceName+"\"");
 		
 		registerImportDeclaration(declaration);
 	}
@@ -172,6 +192,7 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
 	@Override
 	public void connectionLost(Throwable arg0) {
 		LOG.error("MqttServiceDiscovery : Connection lost.");
+		//TODO : fermer tous les services mqtt instancié (iCasa a perdu la connexion au broker)
 	}
 	
 

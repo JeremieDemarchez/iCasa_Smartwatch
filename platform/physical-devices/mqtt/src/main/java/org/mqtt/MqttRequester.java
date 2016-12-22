@@ -36,7 +36,7 @@ public class MqttRequester implements MqttCallback{
 	private List<Couple<String, Consumer<String[]>>> listCoupleTopicCallback = new ArrayList<Couple<String, Consumer<String[]>>>();
 	
 	
-	private MqttRequester(){
+	public MqttRequester(){
 		try {
              mqttClient = new MqttClient(broker, consumerId);
              System.out.println("Service connecting to broker: "+broker);
@@ -55,14 +55,6 @@ public class MqttRequester implements MqttCallback{
 	}
 	
 	
-	public static MqttRequester getInstance(){
-		if(requester == null){
-			requester = new MqttRequester();
-		}
-		return requester;
-	}
-	
-	
 	public void runRequest(Consumer<String[]> callback, String providerId, int methodCode, List<String> argList){
 		String result = null;
 		
@@ -72,13 +64,13 @@ public class MqttRequester implements MqttCallback{
 		}
 		listArgs = listArgs.substring(0, listArgs.length()-1);
 		
-		String topicResult = consumerId+methodCode+listArgs;
+		String topicResult = consumerId+"-"+methodCode+"-"+listArgs;
 		String topicRequest = providerId;
 		String request = topicResult;
 		
         try {
 			mqttClient.subscribe(topicResult);
-            System.out.println("Service subscribed to topic: "+broker);
+            System.out.println("Service subscribed to topic: "+topicResult);
             
             MqttMessage message = new MqttMessage(request.getBytes());
             mqttClient.publish(topicRequest, message);
@@ -116,14 +108,12 @@ public class MqttRequester implements MqttCallback{
 
 	@Override
 	public void connectionLost(Throwable arg0) {
-		// TODO Auto-generated method stub
-		
+		//TODO : supprimer le service mqtt associé (icasa a perdu la connexion au broker)
 	}
 	
 
 	@Override
 	public void deliveryComplete(IMqttDeliveryToken arg0) {
-		// TODO Auto-generated method stub
 		
 	}
 	
