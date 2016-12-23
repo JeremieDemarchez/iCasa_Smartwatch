@@ -168,7 +168,7 @@ package configuration;
 		
 		public static int getIcasaMethodCode(String serviceName, String methodName){
 			
-			if(serviceName.equals("MqttGyroscopeService")){
+			if(serviceName.equals("MqttGyroscopeServiceImpl")){
 				if(methodName.equals("askXYZAxisValues")){
 					return GET_XYZ_AXIS_VALUES;
 				}

@@ -56,25 +56,45 @@ public class MqttGyroscopeServiceImpl implements MqttGyroscopeService{
 	@Override
 	public void askXYZAxisValues(Consumer<String[]> callback) {
 		
+		System.out.println("MqttGyroscopeServiceImpl : askXYZAxisValues ");
+		
 		int codeMethod = SmartwatchOperations.getIcasaMethodCode("MqttGyroscopeServiceImpl", "askXYZAxisValues");
-		if(codeMethod != -1) 
+		if(codeMethod != -1) {
 			getMqttRequester().runRequest(callback, providerId, codeMethod, null);
-		//convert result in the appropriate format -> à la charge du développeur... bof bof comme méthode
+			System.out.println("-> succed to run request");
+		}
+		else{
+			System.out.println("-> failed to run request : codeMethod is equal to '-1' (invalid) ...");
+		}
 	}
 
 	@Override
 	public void askHistory(Consumer<String[]> callback) {
 		
+		System.out.print("MqttGyroscopeServiceImpl : askHistory");
+		
 		int codeMethod = SmartwatchOperations.getIcasaMethodCode("MqttGyroscopeServiceImpl", "askHistory");
-		if(codeMethod != -1) 
+		if(codeMethod != -1) {
 			getMqttRequester().runRequest(callback, providerId, codeMethod, null);
+			System.out.println("-> succed to run request");
+		}
+		else{
+			System.out.println("-> failed to run request : codeMethod is equal to '-1' (invalid) ...");
+		}
 	}
 
 	@Override
 	public void askDeviceType(Consumer<String[]> callback) {
 		
+		System.out.print("MqttGyroscopeServiceImpl : askDeviceType");
+		
 		int codeMethod = SmartwatchOperations.getIcasaMethodCode("MqttGyroscopeServiceImpl", "askDeviceType");
-		if(codeMethod != -1) 
+		if(codeMethod != -1) {
 			getMqttRequester().runRequest(callback, providerId, codeMethod, null);
+			System.out.println("-> succed to run request");
+		}
+		else{
+			System.out.println("-> failed to run request : codeMethod is equal to '-1' (invalid) ...");
+		}
 	}
 }

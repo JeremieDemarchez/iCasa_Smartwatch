@@ -25,13 +25,13 @@ import org.eclipse.paho.client.mqttv3.MqttClient;
 import org.eclipse.paho.client.mqttv3.MqttException;
 import org.eclipse.paho.client.mqttv3.MqttMessage;
 
+import utils.DateTool;
+
 public class MqttRequester implements MqttCallback{
 	
-	private static MqttRequester requester = null;
-	
-	private final static String broker 				= MqttBroker.getUri();
-	private final static String consumerId 			= "iCasa";
-	private MqttClient mqttClient = null;
+	private final static String broker 			= MqttBroker.getUri();
+	private final static String consumerId 		= "iCasa_MqttRequester_"+(DateTool.getDateAsString().replaceAll(" ", "_"));
+	private MqttClient mqttClient 				= null;
 	
 	private List<Couple<String, Consumer<String[]>>> listCoupleTopicCallback = new ArrayList<Couple<String, Consumer<String[]>>>();
 	
@@ -39,7 +39,7 @@ public class MqttRequester implements MqttCallback{
 	public MqttRequester(){
 		try {
              mqttClient = new MqttClient(broker, consumerId);
-             System.out.println("Service connecting to broker: "+broker);
+             System.out.println("MqttRequester connecting to broker '"+broker+"' with id '"+consumerId+"' (mqttClient = "+mqttClient+").");
              mqttClient.connect();
              mqttClient.setCallback(this);
              System.out.println("Service connected");
@@ -56,59 +56,89 @@ public class MqttRequester implements MqttCallback{
 	
 	
 	public void runRequest(Consumer<String[]> callback, String providerId, int methodCode, List<String> argList){
-		String result = null;
+
+		System.out.println("MqttRequester : runRequest with provider id = '"+providerId+"', methodCode = "+methodCode);
 		
+		//récupération des arguments
 		String listArgs = "";
-		for(String arg : argList){
-			listArgs += arg+"-";
+		if(argList != null){
+			for(String arg : argList){
+				listArgs += arg+"-";
+			}
+			listArgs = listArgs.substring(0, listArgs.length()-1);
 		}
-		listArgs = listArgs.substring(0, listArgs.length()-1);
 		
 		String topicResult = consumerId+"-"+methodCode+"-"+listArgs;
 		String topicRequest = providerId;
 		String request = topicResult;
 		
-        try {
+        try {//abonnement au topic sur lequel le résultat sera retourné
+        	System.out.println("Client "+mqttClient+" is subscribing to topic '"+topicResult+"' ...");
 			mqttClient.subscribe(topicResult);
-            System.out.println("Service subscribed to topic: "+topicResult);
+            System.out.println("MqttRequester : subscribed to topic: '"+topicResult+"' for getting result for request '"+request+"' on topic '"+topicRequest+"'.");
             
+            //création et publication du message
             MqttMessage message = new MqttMessage(request.getBytes());
             mqttClient.publish(topicRequest, message);
             
+            //enregistrement du topic et du callback à appeler lorsqu'on recevra la réponse.
             Couple<String, Consumer<String[]>> coupleTopicCallback = new Couple<String, Consumer<String[]>>(topicResult, callback);
             listCoupleTopicCallback.add(coupleTopicCallback);
             
 		} catch (MqttException e) {
-			// TODO Auto-generated catch block
+			System.err.println("MqttRequester : runRequest failed -> "+e.getMessage());
+			e.printStackTrace();
+		} catch (NullPointerException e) {
+			System.err.println("MqttRequester : runRequest failed -> "+e.getMessage());
 			e.printStackTrace();
 		}
 	}
 	
 	@Override
 	public void messageArrived(String topic, MqttMessage mqttMessage) throws Exception {
-		Couple toRemove = null;
+		Couple<String, Consumer<String[]>> toRemove = null;
 		
-		for(Couple<String, Consumer<String[]>> couple : listCoupleTopicCallback){
+		try{
+			System.out.println("MqttRequester : message arrived on topic '"+topic+"' : message = '"+mqttMessage.toString()+"'.");
 			
-			if(couple.getFirst().equals(topic)){
-				toRemove = couple;
-				Consumer<String[]> callback = (Consumer<String[]>)couple.second;
-				
-				String[] toReturn = new String[2];
-				toReturn[0] = topic;
-				toReturn[1] = mqttMessage.toString();
-				
-				callback.accept(toReturn);
-				break;
+			for(Couple<String, Consumer<String[]>> couple : listCoupleTopicCallback){
+	
+				//si c'est une réponse à une de nos requètes alors on appel le callback avec le topic et le résultat
+				if(couple.getFirst().equals(topic)){
+					toRemove = couple;
+					Consumer<String[]> callback = (Consumer<String[]>)couple.second;
+					
+					String[] toReturn = new String[2];
+					toReturn[0] = topic;
+					toReturn[1] = mqttMessage.toString();
+					
+					mqttClient.unsubscribe(topic);
+					callback.accept(toReturn);
+					break;
+				}
 			}
+			if(toRemove != null) listCoupleTopicCallback.remove(toRemove);
+		}catch(MqttException e){
+			System.err.println("MqttRequester : failed to interpret arrived message ... "+e.getMessage());
+			e.printStackTrace();
 		}
-		if(toRemove != null) listCoupleTopicCallback.remove(toRemove);
 	}
 	
 
 	@Override
-	public void connectionLost(Throwable arg0) {
-		//TODO : supprimer le service mqtt associé (icasa a perdu la connexion au broker)
+	public void connectionLost(Throwable arg)  {
+		try{
+			//TODO : supprimer le service mqtt associé (icasa a perdu la connexion au broker)
+			System.err.println("MqttRequester : connection lost ... Try to reconnect ...");
+			
+			mqttClient.connect();
+
+			System.err.println("MqttRequester : connected.");
+		} catch (MqttException e) {
+			// TODO Auto-generated catch block
+			System.err.println("MqttRequester : reconnection failed ...");
+			e.printStackTrace();
+		}
 	}
 	
 

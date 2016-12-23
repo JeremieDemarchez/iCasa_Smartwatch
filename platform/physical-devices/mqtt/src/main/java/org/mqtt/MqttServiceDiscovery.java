@@ -152,6 +152,11 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
 	 */
 	private String getPart(int i, String message){
 		String tmp = message;
+
+		if(tmp.indexOf('-') == 0) tmp = tmp.substring(1);
+		
+		//String test = "-1";
+		//System.out.println("test == "+test+", test.indexOf('-') == "+test.indexOf('-'));
 		
 		while(i>0){
 			try{
@@ -190,8 +195,9 @@ public class MqttServiceDiscovery extends AbstractDiscoveryComponent implements 
 	
 
 	@Override
-	public void connectionLost(Throwable arg0) {
-		LOG.error("MqttServiceDiscovery : Connection lost.");
+	public void connectionLost(Throwable arg) {
+		LOG.error("MqttServiceDiscovery : Connection lost...");
+		arg.printStackTrace();
 		//TODO : fermer tous les services mqtt instancié (iCasa a perdu la connexion au broker)
 	}
 	

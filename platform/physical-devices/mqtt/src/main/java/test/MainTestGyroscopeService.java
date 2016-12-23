@@ -1,4 +1,4 @@
-package org.mqtt;
+package test;
 import fr.liglab.adele.cream.facilities.ipojo.annotation.ContextRequirement;
 import fr.liglab.adele.icasa.command.handler.Command;
 import fr.liglab.adele.icasa.command.handler.CommandProvider;
@@ -8,6 +8,7 @@ import org.apache.felix.ipojo.annotations.Component;
 import org.apache.felix.ipojo.annotations.Instantiate;
 import org.apache.felix.ipojo.annotations.Requires;
 import org.mqtt.services.MqttGyroscopeService;
+import org.mqtt.services.MqttGyroscopeServiceImpl;
 import org.mqtt.services.MqttService;
 
 import java.util.List;
@@ -31,7 +32,7 @@ public class MainTestGyroscopeService {
 	}
 
 	@Command
-	public void testAskGyroscopeHistorye(String nodeId) {
+	public void testAskGyroscopeHistory() {
 		for (MqttGyroscopeService test : testableGyroscopeServices){
 			System.out.println("Ask for gyroscope history to provider " + test.getProviderId());
 			test.askHistory(new TestConsumer());
